@@ -1,3 +1,5 @@
+archivesBaseName = archivesBaseName + "-Core"
+
 eclipse.project {
 	name = group + "-core"
 }

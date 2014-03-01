@@ -21,10 +21,8 @@ ext.configFile.withReader {
 
 subprojects {
     apply plugin: "forge"
-    apply plugin: "eclipse"
-    apply plugin: "idea"
 
-    version = config.minecraft_version + "" + config.build_number
+    version = config.minecraft_version + "-2." + config.build_number
     group = config.group
     archivesBaseName = config.archivesBaseName
 

@@ -1,3 +1,5 @@
+archivesBaseName = archivesBaseName + "-Chat"
+
 eclipse.project {
 	name = group + "-chat"
 }

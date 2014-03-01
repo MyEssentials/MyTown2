@@ -1,3 +1,5 @@
+archivesBaseName = archivesBaseName + "-Extra"
+
 eclipse.project {
 	name = group + "-extra"
 }
