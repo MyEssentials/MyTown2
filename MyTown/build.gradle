@@ -1,3 +1,7 @@
+dependencies {
+	compile project(":Core")
+}
+
 eclipse.project {
 	name = group
 }
