@@ -22,7 +22,7 @@ ext.configFile.withReader {
 subprojects {
     apply plugin: "forge"
 
-    version = config.minecraft_version + "-2." + config.build_number
+    version = config.minecraft_version + "-" + config.mod_version + "." + config.build_number
     group = config.group
     archivesBaseName = config.archivesBaseName
 
@@ -33,12 +33,10 @@ subprojects {
     processResources {
         from(sourceSets.main.resources.srcDirs) {
             include 'mcmod.info'
-            include 'version.properties'
             expand 'version':project.version, 'mcversion':project.minecraft.version
         }
         from(sourceSets.main.resources.srcDirs) {
             exclude 'mcmod.info'
-            exclude 'version.properties'
         }
     }
 }
