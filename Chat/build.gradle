@@ -1,5 +1,9 @@
 archivesBaseName = archivesBaseName + "-Chat"
 
+dependencies {
+	compile project(":Core")
+}
+
 eclipse.project {
 	name = group + "-chat"
 }
