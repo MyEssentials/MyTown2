@@ -9,9 +9,13 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = Constants.MODID, name=Constants.MODNAME, version=Constants.VERSION, dependencies=Constants.DEPENDENCIES)
 public class MyTown {
+	@Mod.Instance
+	public static MyTown INSTANCE;
+	
 	// Loggers
 	Log coreLog;
 	Log dbLog;
+	Log bypassLog;
 	
 	// Configs
 	Config config;
@@ -21,6 +25,7 @@ public class MyTown {
 		// Setup Loggers
 		coreLog = new Log("MyTown", FMLLog.getLogger());
 		dbLog = new Log("MyTownDB", coreLog.getLogger());
+		bypassLog = new Log("MyTownBypass", coreLog.getLogger());
 		
 		// Read Configs
 		config = new Config(new File(ev.getModConfigurationDirectory(), "MyTown/MyTown.cfg"));
