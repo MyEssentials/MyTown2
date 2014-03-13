@@ -9,7 +9,21 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 
+/**
+ * Local Channel Type. Sends messages to people within a specific radius
+ * @author Joe Goett
+ */
 public class Local implements IChannelType{
+	/**
+	 * {@inheritDoc}
+	 */
+	public String name(){
+		return "Local";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<ICommandSender> getRecipients(ICommandSender sender, Channel channel) {
 		List<ICommandSender> recipients = new ArrayList<ICommandSender>();

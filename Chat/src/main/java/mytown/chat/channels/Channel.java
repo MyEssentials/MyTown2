@@ -10,6 +10,7 @@ import net.minecraft.command.ICommandSender;
  * @author Joe Goett
  */
 public class Channel {
+	public String configKey; // Used for flat-file based configs
 	public String name;
 	public String abbreviation;
 	public String format;
@@ -52,5 +53,10 @@ public class Channel {
 		for (ICommandSender recipient : recipients){
 			ChatUtils.sendChat(recipient, message);
 		}
+	}
+
+	@Override
+	public String toString(){
+		return String.format("%s,%s,%s,%s,%s", name, abbreviation, format, radius, type);
 	}
 }
