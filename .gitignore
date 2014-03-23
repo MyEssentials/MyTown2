@@ -2,6 +2,7 @@
 .classpath
 .project
 .gradle
+.idea
 eclipse
 bin
 build
