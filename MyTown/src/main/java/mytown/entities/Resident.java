@@ -1,19 +1,22 @@
 package mytown.entities;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import mytown.core.ChatUtils;
+import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Defines a player
+ * 
  * @author Joe Goett
  */
-public class Resident extends TownBlockOwner{
-	public enum Rank{
+public class Resident {
+	public enum Rank {
 		Outsider, Resident, Assistant, Mayor;
 
 		/**
-		 * Gets the rank based on [R, A, M]
+		 * Gets the rank based on [O, R, A, M]
 		 */
 		public static Rank parse(String rank) {
 			for (Rank type : values()) {
@@ -21,104 +24,154 @@ public class Resident extends TownBlockOwner{
 					return type;
 				}
 			}
-			return Rank.Resident;
+			return Rank.Outsider;
+		}
+
+		@Override
+		public String toString() {
+			return super.toString().substring(0, 2);
 		}
 	}
-	
-	private int id;
-	private String name;
+
+	private String playerUUID;
 	private boolean isOnline = false;
 	private boolean isNPC = false;
-	private Map<Town, Rank> towns = new HashMap<Town, Rank>();
+	private EntityPlayer player = null;
 
 	/**
 	 * Creates a Player with the given name
+	 * 
 	 * @param name
 	 */
-	public Resident(String name){
-		this.name = name;
-	}
-	
-	/**
-	 * Used internally only!
-	 * @param id
-	 * @param name
-	 */
-	public Resident(int id, String name){
-		this(name);
-		this.id = id;
-	}
-	
-	/**
-	 * Returns the id of the player
-	 * @return
-	 */
-	public int getId() {
-		return id;
+	public Resident(String name) {
+		playerUUID = name;
 	}
 
 	/**
-	 * Returns the name of the player
+	 * Returns the UUID (Name atm) of the player
+	 * 
 	 * @return
 	 */
-	public String getName() {
-		return name;
+	public String getUUID() {
+		return playerUUID;
 	}
 
 	/**
 	 * Returns if the player is online or not
+	 * 
 	 * @return
 	 */
-	public boolean isOnline(){
+	public boolean isOnline() {
 		return isOnline;
 	}
 
 	/**
 	 * Sets the online status of the player
+	 * 
 	 * @param online
 	 */
-	public void setOnline(boolean online){
+	public void setOnline(boolean online) {
 		isOnline = online;
 	}
 
 	/**
 	 * Makes this Player an NPC
 	 */
-	public void setNPC(){
+	public void setNPC() {
 		isNPC = true;
 	}
-	
+
 	/**
 	 * Returns if this Player is an NPC
+	 * 
 	 * @return
 	 */
-	public boolean isNPC(){
+	public boolean isNPC() {
 		return isNPC;
 	}
 
 	/**
-	 * Returns a Collection of Towns this Resident is part of
+	 * Returns the EntityPlayer, or null if offline
+	 * 
 	 * @return
 	 */
-	public Collection<Town> getTowns(){
-		return towns.keySet();
+	public EntityPlayer getPlayer() {
+		return player;
 	}
-	
+
 	/**
-	 * Returns a Map of all Towns and the players rank in them
-	 * @return
+	 * Sets the EntityPlayer
+	 * 
+	 * @param player
 	 */
-	public Map<Town, Rank> getTownsAndRanks(){
-		return towns;
+	public void setPlayer(EntityPlayer player) {
+		this.player = player;
 	}
-	
+
 	/**
-	 * Returns the Rank of the Resident at the given town
+	 * Helper to send chat message to Resident
+	 * 
+	 * @param msg
+	 * @param args
+	 */
+	public void sendMessage(String msg, Object... args) {
+		if (!isOnline() || getPlayer() == null)
+			return;
+		ChatUtils.sendChat(getPlayer(), msg, args);
+	}
+
+	// //////////////////////////////////////
+	// Towns
+	// //////////////////////////////////////
+	private List<Town> towns = new ArrayList<Town>();
+
+	/**
+	 * Adds a Town
+	 * 
+	 * @param town
+	 */
+	public void addTown(Town town) {
+		towns.add(town);
+	}
+
+	/**
+	 * Checks if this Resident is part of the Town
+	 * 
 	 * @param town
 	 * @return
 	 */
-	public Rank getRank(Town town){
-		if (!towns.containsKey(town)) return Rank.Outsider;  // Resident is an outsider!
-		return towns.get(town);
+	public boolean isPartOfTown(Town town) {
+		return towns.contains(town);
+	}
+
+	/**
+	 * Returns a Collection of Towns this Resident is part of
+	 * 
+	 * @return
+	 */
+	public List<Town> getTowns() {
+		return towns;
+	}
+
+	/**
+	 * Returns the Rank of the Resident at the given town
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public Rank getTownRank(Town town) {
+		return town.getResidentRank(this);
+	}
+
+	/**
+	 * Sets the Rank of this Resident in the Town
+	 * 
+	 * @param town
+	 * @param rank
+	 */
+	public void setTownRank(Town town, Rank rank) {
+		if (!isPartOfTown(town))
+			return; // TODO Log/Throw Exception?
+		town.promoteResident(this, rank);
 	}
 }

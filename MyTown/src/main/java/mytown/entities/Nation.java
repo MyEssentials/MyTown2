@@ -1,48 +1,75 @@
 package mytown.entities;
 
-import java.util.List;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Defines a Nation
+ * 
  * @author Joe Goett
  */
 public class Nation {
+	public enum Rank {
+		None, Town, Capital;
+
+		/**
+		 * Gets the rank based on [O, R, A, M]
+		 */
+		public static Rank parse(String rank) {
+			for (Rank type : values()) {
+				if (type.toString().toLowerCase().startsWith(rank.toLowerCase())) {
+					return type;
+				}
+			}
+			return Rank.None;
+		}
+
+		@Override
+		public String toString() {
+			return super.toString().substring(0, 2);
+		}
+	}
+
 	private int id;
 	private String name;
 	private int extraBlocksPerTown;
-	private List<Town> towns;
-	
+
 	/**
 	 * Creates a Nation with the given name and extraBlocksPerTown
+	 * 
 	 * @param name
 	 * @param extraBlocksPerTown
 	 */
-	public Nation(String name, int extraBlocksPerTown){
+	public Nation(String name, int extraBlocksPerTown) {
 		this.name = name;
 		this.extraBlocksPerTown = extraBlocksPerTown;
 	}
 
 	/**
 	 * Creates a Nation with the given name
+	 * 
 	 * @param name
 	 */
-	public Nation(String name){
-		this(name ,0);
+	public Nation(String name) {
+		this(name, 0);
 	}
-	
+
 	/**
 	 * Used internally only!
+	 * 
 	 * @param id
 	 * @param name
 	 * @param extraBlocksPerTown
 	 */
-	public Nation(int id, String name, int extraBlocksPerTown){
+	public Nation(int id, String name, int extraBlocksPerTown) {
 		this(name, extraBlocksPerTown);
 		this.id = id;
 	}
-	
+
 	/**
 	 * Returns the id of the Nation
+	 * 
 	 * @return
 	 */
 	public int getId() {
@@ -50,7 +77,17 @@ public class Nation {
 	}
 
 	/**
+	 * Used internally only!
+	 * 
+	 * @param id
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/**
 	 * Returns the name of the nation
+	 * 
 	 * @return
 	 */
 	public String getName() {
@@ -59,14 +96,16 @@ public class Nation {
 
 	/**
 	 * Sets the name of the Nation
+	 * 
 	 * @param name
 	 */
-	public void setName(String name){
+	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * Returns the number of extra blocks each town receives
+	 * 
 	 * @return
 	 */
 	public int getExtraBlocksPerTown() {
@@ -75,17 +114,79 @@ public class Nation {
 
 	/**
 	 * Sets the number of extra blocks each town gets per new town
+	 * 
 	 * @param extra
 	 */
-	public void setExtraBlocksPerTown(int extra){
+	public void setExtraBlocksPerTown(int extra) {
 		extraBlocksPerTown = extra;
 	}
-	
+
+	// //////////////////////////////////////
+	// Towns
+	// //////////////////////////////////////
+	private Map<Town, Rank> towns = new Hashtable<Town, Rank>();
+
 	/**
 	 * Returns the towns associated with this Nation
+	 * 
 	 * @return
 	 */
-	public List<Town> getTowns() {
-		return towns;
+	public Set<Town> getTowns() {
+		return towns.keySet();
+	}
+
+	/**
+	 * Returns the Rank of the Town
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public Nation.Rank getTownRank(Town town) {
+		if (hasTown(town)) {
+			return towns.get(town);
+		} else {
+			return Rank.None;
+		}
+	}
+
+	/**
+	 * Adds a Town with the given Rank
+	 * 
+	 * @param town
+	 * @param rank
+	 */
+	public void addTown(Town town, Rank rank) {
+		towns.put(town, rank);
+	}
+
+	/**
+	 * Checks if the Town is part of this Nation
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public boolean hasTown(Town town) {
+		return towns.containsKey(town);
+	}
+
+	/**
+	 * Promotes a Town to the given Rank
+	 * 
+	 * @param town
+	 * @param rank
+	 */
+	public void setTownRank(Town town, Rank rank) {
+		if (!hasTown(town))
+			return; // TODO Log/Throw Exception
+		addTown(town, rank);
+	}
+
+	/**
+	 * Removes the given Town
+	 * 
+	 * @param town
+	 */
+	public void removeTown(Town town) {
+		towns.remove(town);
 	}
 }
