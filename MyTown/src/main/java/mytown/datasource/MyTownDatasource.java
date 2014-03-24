@@ -26,6 +26,8 @@ import net.minecraftforge.common.Configuration;
  * @author Joe Goett
  */
 public abstract class MyTownDatasource {
+	protected String configCat = "datasource";
+	
 	protected Log log;
 	protected Map<String, Town> towns;
 	protected Map<String, Resident> residents;

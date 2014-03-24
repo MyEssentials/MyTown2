@@ -37,12 +37,12 @@ public class MyTown {
 
 		// Read Configs
 		config = new Config(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
-		config.load();
 	}
 
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent ev) {
 		try { // Try to load the Datasource
+			// TODO Change how datasources are loaded
 			datasource = (MyTownDatasource) Class.forName("mytown.datasource.impl.MyTownDatasource_" + config.dbType.toLowerCase()).newInstance();
 			datasource.configure(config, datasourceLog);
 			if (config.hasChanged())

@@ -36,7 +36,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	protected Connection conn;
 	protected Object lock = new Object();
 	protected String prefix = "";
-	protected String configCat = "database";
 
 	// //////////////////////////////////////
 	// Helpers

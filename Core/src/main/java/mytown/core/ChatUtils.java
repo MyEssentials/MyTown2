@@ -1,4 +1,4 @@
-package mytown.core.utils;
+package mytown.core;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatMessageComponent;
@@ -16,14 +16,5 @@ public class ChatUtils {
 	 */
 	public static void sendChat(ICommandSender sender, String msg, Object...args){
 		sender.sendChatToPlayer(ChatMessageComponent.createFromText(String.format(msg, args)));
-	}
-	
-	/**
-	 * Sends msg to sender
-	 * @param sender
-	 * @param msg
-	 */
-	public static void sendChat(ICommandSender sender, String msg){
-		sendChat(sender, msg);
 	}
 }

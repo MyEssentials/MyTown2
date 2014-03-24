@@ -2,7 +2,7 @@ package mytown.chat.channels;
 
 import java.util.List;
 
-import mytown.core.utils.ChatUtils;
+import mytown.core.ChatUtils;
 import net.minecraft.command.ICommandSender;
 
 /**
