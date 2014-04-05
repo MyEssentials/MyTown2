@@ -1,4 +1,4 @@
-package mytown.core.utils;
+package mytown.core.utils.command;
 
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
@@ -21,8 +21,8 @@ public class CommandUtils {
 		}
 	}
 	
-	public static void registerCommand(ICommand command, String permNode) {
-		if (command == null) return;
+	public static void registerCommand(ICommand command, String permNode, boolean enabled) {
+		if (!enabled || command == null) return;
 		if (permNode.trim().isEmpty()) permNode = command.getClass().getName();
 		if (method == -1) {
 			commandHandler.registerCommand(command);
@@ -31,12 +31,20 @@ public class CommandUtils {
 		}
 	}
 	
-	public static void registerCommand(ICommand command) {
+	public static void registerCommand(ICommand command, String permNode) {
+		registerCommand(command, permNode, true);
+	}
+	
+	public static void registerCommand(ICommand command, boolean enabled) {
 		if (command == null) return;
 		String permNode = command.getClass().getName();
 		if (command.getClass().isAnnotationPresent(Permission.class)) {
 			permNode = command.getClass().getAnnotation(Permission.class).node();
 		}
-		registerCommand(command, permNode);
+		registerCommand(command, permNode, enabled);
+	}
+	
+	public static void registerCommand(ICommand command) {
+		registerCommand(command, true);
 	}
 }

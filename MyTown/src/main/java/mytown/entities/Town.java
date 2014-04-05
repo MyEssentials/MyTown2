@@ -14,7 +14,6 @@ import java.util.Set;
  * @author Joe Goett
  */
 public class Town {
-	private int id;
 	private String name;
 	private int extraBlocks = 0;
 
@@ -28,35 +27,10 @@ public class Town {
 	public Town(String name) {
 		this.name = name;
 	}
-
-	/**
-	 * Used internally only!
-	 * 
-	 * @param id
-	 * @param name
-	 */
-	public Town(int id, String name, int extraBlocks) {
-		this(name);
-		this.id = id;
+	
+	public Town(String name, int extraBlocks) {
+		this.name = name;
 		this.extraBlocks = extraBlocks;
-	}
-
-	/**
-	 * Returns the ID of the town
-	 * 
-	 * @return
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * Sets the id. Used internally only!
-	 * 
-	 * @param id
-	 */
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	/**
@@ -67,7 +41,7 @@ public class Town {
 	public String getName() {
 		return name;
 	}
-
+	
 	// //////////////////////////////////////
 	// Nations
 	// //////////////////////////////////////

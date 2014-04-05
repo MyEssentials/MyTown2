@@ -10,6 +10,7 @@ public class TownBlock {
 	private int dim;
 	private int x, z;
 	private Town town;
+	private String key;
 
 	// TODO Add flags/permissions
 
@@ -38,6 +39,7 @@ public class TownBlock {
 		this.z = z;
 		this.dim = dim;
 		this.town = town;
+		key = dim + ";" + x + ";" + z;
 	}
 
 	/**
@@ -86,12 +88,11 @@ public class TownBlock {
 	}
 
 	/**
-	 * Returns the TownID associated with the block
-	 * 
+	 * Returns the Town that this TownBlock belongs to
 	 * @return
 	 */
-	public int getTownID() {
-		return town.getId();
+	public Town getTown() {
+		return town;
 	}
 
 	/**
@@ -100,6 +101,6 @@ public class TownBlock {
 	 * @return
 	 */
 	public String getKey() {
-		return dim + ";" + x + ";" + z;
+		return key;
 	}
 }

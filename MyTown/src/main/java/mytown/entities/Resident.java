@@ -29,7 +29,7 @@ public class Resident {
 
 		@Override
 		public String toString() {
-			return super.toString().substring(0, 2);
+			return super.toString().substring(0, 1);
 		}
 	}
 

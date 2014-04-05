@@ -1,4 +1,4 @@
-package mytown.core.utils;
+package mytown.core.utils.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

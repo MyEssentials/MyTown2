@@ -14,7 +14,7 @@ public class Nation {
 		None, Town, Capital;
 
 		/**
-		 * Gets the rank based on [O, R, A, M]
+		 * Gets the rank based on [N, T, C]
 		 */
 		public static Rank parse(String rank) {
 			for (Rank type : values()) {
@@ -27,11 +27,10 @@ public class Nation {
 
 		@Override
 		public String toString() {
-			return super.toString().substring(0, 2);
+			return super.toString().substring(0, 1);
 		}
 	}
 
-	private int id;
 	private String name;
 	private int extraBlocksPerTown;
 
@@ -53,36 +52,6 @@ public class Nation {
 	 */
 	public Nation(String name) {
 		this(name, 0);
-	}
-
-	/**
-	 * Used internally only!
-	 * 
-	 * @param id
-	 * @param name
-	 * @param extraBlocksPerTown
-	 */
-	public Nation(int id, String name, int extraBlocksPerTown) {
-		this(name, extraBlocksPerTown);
-		this.id = id;
-	}
-
-	/**
-	 * Returns the id of the Nation
-	 * 
-	 * @return
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * Used internally only!
-	 * 
-	 * @param id
-	 */
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	/**

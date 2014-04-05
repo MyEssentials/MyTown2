@@ -1,6 +1,6 @@
 package mytown.core;
 
-import mytown.core.utils.CommandUtils;
+import mytown.core.utils.command.CommandUtils;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 

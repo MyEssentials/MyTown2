@@ -12,13 +12,17 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.TownPlot;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.Configuration;
 
+// TODO Datasource pool?
 // TODO Add logging
+// TODO More error reporting
 // TODO Link Residents to their Towns
 // TODO Link Towns to their Nations
 // TODO Load Plots
 // TODO Link Residents to their Plots
+// TODO Map of TownIds to their Towns?
 
 /**
  * Abstract Datasource class. Extend to add more support
@@ -49,7 +53,7 @@ public abstract class MyTownDatasource {
 		residents = new Hashtable<String, Resident>();
 		nations = new Hashtable<String, Nation>();
 		blocks = new Hashtable<String, TownBlock>();
-		plots = new ArrayList<TownPlot>(); // TODO: Use a List implementation that doesn't allow nulls
+		plots = new ArrayList<TownPlot>(); // TODO: Use a List implementation that doesn't allow nulls, maybe?
 	}
 
 	/**
@@ -218,6 +222,46 @@ public abstract class MyTownDatasource {
 		return getTownBlock(dim + ";" + x + ";" + z);
 	}
 
+	// /////////////////////////////////////////////////////////////
+	// Checkers?
+	// /////////////////////////////////////////////////////////////
+	
+	/**
+	 * Checks if a Town with the given name exists
+	 * @param townName
+	 * @return
+	 */
+	public boolean hasTown(String townName) {
+		return towns.containsKey(townName);
+	}
+	
+	/**
+	 * Checks if the Resident with the given UUID exists
+	 * @param residentUUID
+	 * @return
+	 */
+	public boolean hasResident(String residentUUID) {
+		return residents.containsKey(residentUUID);
+	}
+	
+	/**
+	 * Checks if the Nation with the given name exists
+	 * @param nationName
+	 * @return
+	 */
+	public boolean hasNation(String nationName) {
+		return nations.containsKey(nationName);
+	}
+
+	/**
+	 * Checks if the TownBlock with the given key exists
+	 * @param key
+	 * @return
+	 */
+	public boolean hasTownBlock(String key) {
+		return blocks.containsKey(key);
+	}
+	
 	// /////////////////////////////////////////////////////////////
 	// Loaders
 	// /////////////////////////////////////////////////////////////
@@ -687,10 +731,18 @@ public abstract class MyTownDatasource {
 		}
 	}
 
-	// //////////////////////////////////////
+	// /////////////////////////////////////////////////////////////
 	// Linkages
-	// //////////////////////////////////////
+	// /////////////////////////////////////////////////////////////
+	
+	/**
+	 * Loads all stored links between Residents and Towns
+	 * @throws Exception
+	 */
+	public abstract void loadResidentToTownLinks() throws Exception;
 
+	public abstract void loadTownToNationLinks() throws Exception;
+	
 	/**
 	 * Links the Resident with the given Rank to the Town
 	 * 
@@ -734,4 +786,33 @@ public abstract class MyTownDatasource {
 	// /////////////////////////////////////////////////////////////
 
 	public abstract void dump() throws Exception;
+
+	// /////////////////////////////////////////////////////////////
+	// Unknown Group?					  TODO Change/Move Later? //
+	// /////////////////////////////////////////////////////////////
+	
+	/**
+	 * Gets or makes a new Resident from the playerName
+	 * @param playerName
+	 * @return
+	 * @throws Exception
+	 */
+	public Resident getOrMakeResident(String playerName) throws Exception {
+		Resident res = residents.get(playerName);
+		if (res == null) {
+			res = new Resident(playerName);
+			insertResident(res);
+		}
+		return res;
+	}
+	
+	/**
+	 * Gets or makes a new Resident from the EntityPlayer
+	 * @param player
+	 * @return
+	 * @throws Exception
+	 */
+	public Resident getOrMakeResident(EntityPlayer player) throws Exception {
+		return getOrMakeResident(player.getCommandSenderName());
+	}
 }

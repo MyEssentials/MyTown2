@@ -34,8 +34,12 @@ public class TownPlot {
 		return this;
 	}
 
-	public int getTownId() {
-		return town.getId();
+	/**
+	 * Returns the Town this TownPlot belongs to
+	 * @return
+	 */
+	public Town getTown() {
+		return town;
 	}
 
 	public float getPrice() {
