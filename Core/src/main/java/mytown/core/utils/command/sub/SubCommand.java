@@ -49,7 +49,7 @@ public interface SubCommand {
 	 * @throws CommandException
 	 * @throws NoAccessException
 	 */
-	public void process(ICommandSender sender, String[] args) throws CommandException;
+	public void process(ICommandSender sender, String[] args) throws Exception;
 
 	/**
 	 * Returns the tab completion for the sub command

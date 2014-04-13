@@ -2,13 +2,14 @@ package mytown.core.utils.command.sub;
 
 import java.util.List;
 
+import mytown.core.utils.Assert;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
 public abstract class SubCommandBase implements SubCommand {
 	@Override
 	public void canUse(ICommandSender sender) throws CommandException {
-		// TODO: Assert.Perm(sender, getPermNode(), canUseByConsole());
+		Assert.Perm(sender, getPermNode(), canUseByConsole());
 	}
 
 	@Override

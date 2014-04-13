@@ -2,19 +2,19 @@ package mytown.core.utils.command;
 
 import java.util.List;
 
+import mytown.core.utils.Assert;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 
 public abstract class CommandBase implements Command {
-	protected String permNode = "";
+	protected String permNode;
 	
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
-		// TODO: ForgePermsAPI.Perm(sender, getPermNode(), canConsoleUse());
+		Assert.Perm(sender, getPermNode(), canConsoleUse());
 		return true;
 	}
 	
-	@Override
 	public String getPermNode() {
 		return permNode;
 	}

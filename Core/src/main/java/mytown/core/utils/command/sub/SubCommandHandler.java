@@ -5,6 +5,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import mytown.core.ChatUtils;
+import mytown.core.Log;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import net.minecraft.command.CommandException;
@@ -18,13 +20,16 @@ import net.minecraft.command.ICommandSender;
 public class SubCommandHandler extends CommandBase {
 	private String name = "";
 	private Map<String, SubCommand> subCommands;
+	private Log log;
 	
 	/**
 	 * Creates a SubCommandHandler with the given name. Checks if it has Permission Annotation and uses that to get the permission node
 	 * @param name
 	 */
 	public SubCommandHandler(String name) {
+		subCommands = new Hashtable<String, SubCommand>();
 		this.name = name;
+		log = new Log(name);
 		
 		Permission permAnnot = getClass().getAnnotation(Permission.class);
 		if (permAnnot != null) {
@@ -90,12 +95,12 @@ public class SubCommandHandler extends CommandBase {
 			cmd.canUse(sender);
 			cmd.process(sender, Arrays.copyOfRange(args, 1, args.length));
 		} catch (NumberFormatException ex) {
-//			MyTown.sendChatToPlayer(sender, Formatter.commandError(Level.WARNING, Term.TownErrCmdNumberFormatException.toString()));
+			ChatUtils.sendChat(sender, "Number Format Error");
 		} catch (CommandException ex) {
 			throw ex;
 		} catch (Throwable ex) {
-//			MyTown.instance.coreLog.log(Level.WARNING, String.format("Command execution error by %s", sender), ex);
-//			MyTown.sendChatToPlayer(sender, Formatter.commandError(Level.SEVERE, ex.toString()));
+			ChatUtils.sendChat(sender, ex.toString());
+			log.severe("Commane execution error by %s", ex, sender);
 		}
 	}
 }
