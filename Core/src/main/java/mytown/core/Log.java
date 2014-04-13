@@ -39,7 +39,7 @@ public class Log {
 	 * @param args
 	 */
 	public void log(Level level, String msg, Throwable t, Object... args) {
-		logger.log(level, String.format(msg, args), t);
+		logger.log(level, String.format("[%s] ", logger.getName()) + String.format(msg, args), t);
 	}
 
 	/**
@@ -143,25 +143,6 @@ public class Log {
 	 */
 	public void config(String msg, Throwable t, Object... args){
 		log(Level.CONFIG, msg, t, args);
-	}
-	
-	/**
-	 * Logs a Level.ALL (AKA: debug)
-	 * @param msg
-	 * @param args
-	 */
-	public void debug(String msg, Object... args) {
-		log(Level.ALL, msg, args);
-	}
-
-	/**
-	 * Logs a Level.ALL (AKA: debug) including a throwable in the log
-	 * @param msg
-	 * @param t
-	 * @param args
-	 */
-	public void debug(String msg, Throwable t, Object... args) {
-		log(Level.ALL, msg, t, args);
 	}
 	
 	/**

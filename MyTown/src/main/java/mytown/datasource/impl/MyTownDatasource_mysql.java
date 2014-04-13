@@ -5,7 +5,6 @@ import java.util.Properties;
 
 import mytown.datasource.types.MyTownDatasource_SQL;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
 
 //TODO Test
 //TODO Add comments
@@ -62,23 +61,9 @@ public class MyTownDatasource_mysql extends MyTownDatasource_SQL {
 	@Override
 	protected void doConfig(Configuration config) {
 		super.doConfig(config);
-
-		Property prop;
-
-		prop = config.get("database", "Username", "");
-		prop.comment = "Username to use when connecting";
-		username = prop.getString();
-
-		prop = config.get("database", "Password", "");
-		prop.comment = "Password to use when connecting";
-		password = prop.getString();
-
-		prop = config.get("database", "Host", "localhost");
-		prop.comment = "Hostname:Port of the db server";
-		host = prop.getString();
-
-		prop = config.get("database", "Database", "mytown");
-		prop.comment = "The database name";
-		database = prop.getString();
+		username = config.get(configCat, "Username", "", "Username to use when connecting").getString();
+		password = config.get(configCat, "Password", "", "Password to use when connecting").getString();
+		host = config.get(configCat, "Host", "localhost", "Hostname:Port of the db server").getString();
+		database = config.get(configCat, "Database", "mytown", "The database name").getString();
 	}
 }

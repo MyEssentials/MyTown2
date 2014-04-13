@@ -3,6 +3,7 @@ package mytown.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import mytown.MyTown;
 import mytown.core.ChatUtils;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -115,15 +116,48 @@ public class Resident {
 	 * @param args
 	 */
 	public void sendMessage(String msg, Object... args) {
-		if (!isOnline() || getPlayer() == null)
+		if (!isOnline() || getPlayer() == null) {
+			MyTown.instance.coreLog.info("Player is not online!"); // TODO Remove later
 			return;
+		}
 		ChatUtils.sendChat(getPlayer(), msg, args);
+	}
+	
+	public void sendMap(int dim, int cx, int cz) {
+		int heightRad = 4;
+		int widthRad = 9;
+		StringBuilder sb = new StringBuilder();
+		String c;
+
+		sendMessage("---------- Town Map ----------");
+		for (int z = cz - heightRad; z <= cz + heightRad; z++) {
+			sb.setLength(0);
+			for (int x = cx - widthRad; x <= cx + widthRad; x++) {
+				TownBlock b = MyTown.instance.datasource.getTownBlock(dim, x, z);
+
+				boolean mid = z == cz && x == cx;
+				boolean isTown = b != null && b.getTown() != null;
+				boolean ownTown = isTown && isPartOfTown(b.getTown());
+
+				if (mid) {
+					c = ownTown ? "§a" : isTown ? "§c" : "§f";
+				} else {
+					c = ownTown ? "§2" : isTown ? "§4" : "§7";
+				}
+
+				c += isTown ? "O" : "_";
+
+				sb.append(c);
+			}
+			sendMessage(sb.toString());
+		}
 	}
 
 	// //////////////////////////////////////
 	// Towns
 	// //////////////////////////////////////
 	private List<Town> towns = new ArrayList<Town>();
+	private Town selectedTown = null;
 
 	/**
 	 * Adds a Town
@@ -173,5 +207,20 @@ public class Resident {
 		if (!isPartOfTown(town))
 			return; // TODO Log/Throw Exception?
 		town.promoteResident(this, rank);
+	}
+	
+	/**
+	 * Returns the currently selected town, the first town, or null
+	 * @return
+	 */
+	public Town getSelectedTown() {
+		if (selectedTown == null) {
+			if (towns.isEmpty()) {
+				return null;
+			} else {
+				return towns.get(0);
+			}
+		}
+		return selectedTown;
 	}
 }

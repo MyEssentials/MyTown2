@@ -1,0 +1,12 @@
+mytown.cmd.unimplemented=%s is currently unimplemented!
+mytown.cmd.err.failedToClaim=Failed to claim block!
+
+# /t new [townname]
+mytown.cmd.err.newtown.nameinuse=Town name %s already in use!
+mytown.cmd.usage.newtown=Usage: /t new [townname]
+
+# Notifications
+mytown.notification.town.created=Town %s created!
+mytown.notification.town.deleted=Town %s deleted!
+mytown.notification.nation.created=Nation %s created!
+mytown.notification.nation.deleted=Nation %s deleted!

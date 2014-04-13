@@ -26,7 +26,7 @@ public class Localization {
 	 * Specifies the file to load via a File
 	 * @param file
 	 */
-	public Localization(File file){
+	public Localization(File file) {
 		this.file = file;
 		localizations = new HashMap<String, String>();
 	}
@@ -35,7 +35,7 @@ public class Localization {
 	 * Specifies the file to load via a filename
 	 * @param filename
 	 */
-	public Localization(String filename){
+	public Localization(String filename) {
 		this(new File(filename));
 	}
 	
@@ -43,7 +43,7 @@ public class Localization {
 	 * Do the actual loading of the Localization file
 	 * @throws IOException
 	 */
-	public void load() throws IOException{
+	public void load() throws IOException {
 		FileReader fr = new FileReader(file); 
 		BufferedReader br = new BufferedReader(fr);
 		
@@ -57,14 +57,19 @@ public class Localization {
 		
 		br.close();
 	}
-
+	
+	private String getLocalizationFromKey(String key){
+		String localized = localizations.get(key);
+		return localized == null ? key : localized;
+	}
+	
 	/**
 	 * Returns the localized version of the given unlocalized key
 	 * @param key
+	 * @param args
 	 * @return
 	 */
-	public String getLocalization(String key){
-		String localized = localizations.get(key);
-		return localized == null ? key : localized;
+	public String getLocalization(String key, Object... args) {
+		return String.format(getLocalizationFromKey(key), args);
 	}
 }

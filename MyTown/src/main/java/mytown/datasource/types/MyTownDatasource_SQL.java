@@ -449,7 +449,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				continue; // Skip updates already done
 
 			// Update!
-			MyTown.INSTANCE.datasourceLog.info("Running update %s - %s", update.id, update.code);
+			MyTown.instance.datasourceLog.info("Running update %s - %s", update.id, update.code);
 			statement = prepare(update.sql);
 			statement.execute();
 

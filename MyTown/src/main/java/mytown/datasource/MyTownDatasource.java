@@ -201,7 +201,7 @@ public abstract class MyTownDatasource {
 	}
 
 	/**
-	 * Gets a TownBlock with the given key Key Format: dimID;x;z
+	 * Gets a TownBlock with the given key, or null if it doesn't exist. Key Format: dimID;x;z
 	 * 
 	 * @param key
 	 * @return
@@ -237,7 +237,7 @@ public abstract class MyTownDatasource {
 	
 	/**
 	 * Checks if the Resident with the given UUID exists
-	 * @param residentUUID
+	 * @param residentUUID 1.6 is player name, 1.7> is player UUID
 	 * @return
 	 */
 	public boolean hasResident(String residentUUID) {
@@ -304,6 +304,7 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 */
 	public void addTown(Town town) throws Exception {
+		log.info("Adding town %s", town.getName()); // TODO Remove later
 		towns.put(town.getName(), town);
 	}
 
@@ -741,6 +742,10 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract void loadResidentToTownLinks() throws Exception;
 
+	/**
+	 * Loads all stored links between Towns and Nations
+	 * @throws Exception
+	 */
 	public abstract void loadTownToNationLinks() throws Exception;
 	
 	/**
@@ -788,7 +793,7 @@ public abstract class MyTownDatasource {
 	public abstract void dump() throws Exception;
 
 	// /////////////////////////////////////////////////////////////
-	// Unknown Group?					  TODO Change/Move Later? //
+	// Unknown Group/Helpers?			  TODO Change/Move Later? //
 	// /////////////////////////////////////////////////////////////
 	
 	/**

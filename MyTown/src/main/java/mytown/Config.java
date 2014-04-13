@@ -1,28 +1,23 @@
 package mytown;
 
-import java.io.File;
+import mytown.core.utils.config.ConfigProperty;
 
-import net.minecraftforge.common.Configuration;
-
-// TODO Do config
-public class Config extends Configuration {
-	public String dbType = "";
+// TODO More config!
+public class Config {
+	//////////////////////////////
+	// General Config
+	//////////////////////////////
 	
-	public Config(File file){
-		super(file);
-		load();
-		loadDatasource();
-		save();
-	}
+	@ConfigProperty(category = "general", name = "Localization", comment = "Localization file without file extension. Loaded from config/MyTown/localization/")
+	public static String localization = "en_US";
 	
-	private void loadDatasource() {
-		dbType = get("datasource", "Type", "SQLite", "Datasource Type. Eg: MySQL, SQLite, etc").getString();
-	}
+	@ConfigProperty(category = "general", name = "SafeModeMessage", comment = "Message to display to users when MyTown is in safemode")
+	public static String safeModeMsg = "MyTown is in safe mode. Please tell a server admin!";
 	
-	@Override
-	public void save() {
-		if (hasChanged()) {
-			super.save();
-		}
-	}
+	//////////////////////////////
+	// Datasource Config
+	//////////////////////////////
+	
+	@ConfigProperty(category = "datasource", name = "Type", comment = "Datasource Type. Eg: MySQL, SQLite, etc")
+	public static String dbType = "SQLite";
 }

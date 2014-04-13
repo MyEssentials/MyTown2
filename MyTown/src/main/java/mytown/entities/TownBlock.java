@@ -6,6 +6,8 @@ package mytown.entities;
  * @author Joe Goett
  */
 public class TownBlock {
+	public static String keyFormat = "%s;%s;%s";
+	
 	private int id;
 	private int dim;
 	private int x, z;
@@ -39,7 +41,7 @@ public class TownBlock {
 		this.z = z;
 		this.dim = dim;
 		this.town = town;
-		key = dim + ";" + x + ";" + z;
+		key = String.format(keyFormat, dim, x, z);
 	}
 
 	/**

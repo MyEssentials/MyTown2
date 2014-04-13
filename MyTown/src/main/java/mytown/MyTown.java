@@ -1,23 +1,37 @@
 package mytown;
 
 import java.io.File;
+import java.util.Hashtable;
+import java.util.Map;
 
-import mytown.commands.CmdNewTown;
+import mytown.commands.admin.CmdTownAdmin;
+import mytown.commands.town.CmdTown;
+import mytown.core.Localization;
 import mytown.core.Log;
 import mytown.core.utils.command.CommandUtils;
+import mytown.core.utils.config.ConfigProcessor;
+import mytown.core.utils.tick.TickHandler;
 import mytown.datasource.MyTownDatasource;
-import net.minecraftforge.common.MinecraftForge;
+import mytown.datasource.impl.MyTownDatasource_mysql;
+import mytown.datasource.impl.MyTownDatasource_sqlite;
+import mytown.tick.SafeModeTicker;
+import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
+
+// TODO Add a way to safely reload
 
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class MyTown {
 	@Mod.Instance
-	public static MyTown INSTANCE;
+	public static MyTown instance;
 
 	// Loggers
 	public Log coreLog;
@@ -25,9 +39,13 @@ public class MyTown {
 	public Log datasourceLog;
 
 	// Configs
-	public Config config;
+	public Configuration config;
+	
+	// MyTown Localization instance
+	public Localization local;
 
 	// Datasource
+	public Map<String, Class<?>> datasourceTypes;
 	public MyTownDatasource datasource;
 	
 	// Set to true to kick all non-admin users out with a custom kick message
@@ -35,22 +53,53 @@ public class MyTown {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent ev) {
+		// Register Datasource Types
+		datasourceTypes = new Hashtable<String, Class<?>>();
+		datasourceTypes.put("mysql", MyTownDatasource_mysql.class);
+		datasourceTypes.put("sqlite", MyTownDatasource_sqlite.class);
+		
 		// Setup Loggers
 		coreLog = new Log("MyTown2", FMLLog.getLogger());
 		datasourceLog = new Log("Datasource", coreLog.getLogger());
 		bypassLog = new Log("Bypass", coreLog.getLogger());
 
-		Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory() + "/MyTown/";
+		Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyTown/";
 
 		// Read Configs
-		config = new Config(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
+		config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
+		ConfigProcessor.processConfig(config, Config.class);
+
+		// Localization
+		try {
+			local = new Localization(new File(Constants.CONFIG_FOLDER, "localization/" + Config.localization + ".lang"));
+			local.load();
+		} catch(Exception e) {
+			coreLog.warning("Localization file %s missing!", Config.localization);
+		}
+		registerHandlers();
+	}
+	
+	@Mod.EventHandler
+	public void imcEvent(FMLInterModComms.IMCEvent ev) {
+		for (FMLInterModComms.IMCMessage msg : ev.getMessages()) {
+			if (msg.key == "registerDatasourceType") {
+				String[] msgSplit = msg.getStringValue().split(",");
+				String datasourceName = msgSplit[0].toLowerCase();
+				String datasourceClassName = msgSplit[1];
+				
+				try {
+					datasourceTypes.put(datasourceName, Class.forName(datasourceClassName));
+				} catch (ClassNotFoundException e) {
+					coreLog.warning("Failed to register datasource type %s from mod %s. %s", datasourceName, msg.getSender(), e.getLocalizedMessage());
+				}
+			}
+		}
 	}
 
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent ev) {
 		startDatasource();
 		registerCommands();
-		registerHandlers();
 	}
 
 	@Mod.EventHandler
@@ -68,9 +117,13 @@ public class MyTown {
 	 * Configures and Loads the Datasource
 	 */
 	private void startDatasource() {
+		if (!datasourceTypes.containsKey(Config.dbType.toLowerCase())) {
+			datasourceLog.severe("Failed to find datasource type: %s", Config.dbType.toLowerCase());
+			return;
+		}
+		
 		try {
-			// TODO Change how datasources are loaded
-			datasource = (MyTownDatasource) Class.forName("mytown.datasource.impl.MyTownDatasource_" + config.dbType.toLowerCase()).newInstance();
+			datasource = (MyTownDatasource) datasourceTypes.get(Config.dbType.toLowerCase()).newInstance();
 			datasource.configure(config, datasourceLog);
 			config.save();
 			if (!datasource.connect()) {
@@ -86,13 +139,8 @@ public class MyTown {
 			// Load links
 			datasource.loadResidentToTownLinks();
 			datasource.loadTownToNationLinks();
-		} catch (ClassNotFoundException ex) {
-			datasourceLog.severe("Failed to find datasource type: %s", config.dbType);
-		} catch (InstantiationException e) {
-			datasourceLog.severe("Failed to create datasource. %s", e.getLocalizedMessage());
 		} catch (Exception e) {
-			safemode = true;
-			e.printStackTrace(); // TODO Maybe change?
+			datasourceLog.severe("Failed to create datasource!", e);
 		}
 	}
 	
@@ -100,16 +148,19 @@ public class MyTown {
 	 * Registers all commands
 	 */
 	private void registerCommands() {
-		CommandUtils.registerCommand(new CmdNewTown());
+		CommandUtils.registerCommand(new CmdTown());
+		CommandUtils.registerCommand(new CmdTownAdmin());
 	}
 	
 	/**
 	 * Registers IPlayerTrackers and EventHandlers
 	 */
 	private void registerHandlers() {
-		EventHandler handler = new EventHandler();
-		
-		MinecraftForge.EVENT_BUS.register(handler);
+		PlayerTracker handler = new PlayerTracker();
 		GameRegistry.registerPlayerTracker(handler);
+		
+		TickHandler tickHandler = new TickHandler("MyTown Tick Handler");
+		tickHandler.addTickHandler(new SafeModeTicker());
+		TickRegistry.registerTickHandler(tickHandler, Side.SERVER);
 	}
 }

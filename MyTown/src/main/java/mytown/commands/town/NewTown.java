@@ -1,38 +1,60 @@
 package mytown.commands.town;
 
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.utils.Assert;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 
+/**
+ * Sub command to create a new town
+ * @author Joe Goett
+ */
 public class NewTown extends SubCommandBase {
 	@Override
 	public String getName() {
-		return null;
+		return "new";
 	}
 
 	@Override
 	public String getPermNode() {
 		return "mytown.cmd.town.new";
 	}
+	
+	@Override
+	public void canUse(ICommandSender sender) throws CommandException {
+		super.canUse(sender);
+		try {
+			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
+			Assert.Perm(sender, "mytown.cmd.town.new." + (res.getTowns().size()+1));
+		} catch(CommandException ce){
+			throw (ce);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws CommandException {
-		if (MyTown.INSTANCE.datasource.hasTown(args[1])) {
-			ChatUtils.sendChat(sender, "Town name %s already used!", args[1]);
-			return;
+	public void process(ICommandSender sender, String[] args) throws Exception {
+		if (args.length < 1) {
+			throw new WrongUsageException(MyTown.instance.local.getLocalization("mytown.cmd.usage.newtown"));
+		}
+		if (MyTown.instance.datasource.hasTown(args[0])) {
+			throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.newtown.nameinuse", (Object[])args));
 		}
 		
 		try {
-			Town town = new Town(args[1]);
+			Town town = new Town(args[0]);
 			getDatasource().insertTown(town);
 			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 			getDatasource().linkResidentToTown(res, town);
-			ChatUtils.sendChat(sender, "Town %s created", town.getName());
+			ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.created", town.getName());
 		} catch (Exception e) {
 			e.printStackTrace();  // TODO Change later
 		}
@@ -43,6 +65,6 @@ public class NewTown extends SubCommandBase {
 	 * @return
 	 */
 	private MyTownDatasource getDatasource() {
-		return MyTown.INSTANCE.datasource;
+		return MyTown.instance.datasource;
 	}
 }
