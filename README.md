@@ -19,3 +19,8 @@ Requesting Features
 ===================
 
 When requesting a new feature, be clear with what your requesting, and mark it as enhancement.
+
+Contacting
+==========
+* On Espernet #mytown
+* On the Minecraft Forum
