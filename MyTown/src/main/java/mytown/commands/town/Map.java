@@ -21,7 +21,8 @@ public class Map extends SubCommandBase {
 	public void process(ICommandSender sender, String[] args) throws CommandException {
 		try {
 			Resident res = MyTown.instance.datasource.getOrMakeResident(sender.getCommandSenderName());
-			res.sendMap(res.getPlayer().dimension,
+			res.sendMap(
+					res.getPlayer().dimension,
 					res.getPlayer().chunkCoordX,
 					res.getPlayer().chunkCoordZ);
 		} catch (Exception e) {

@@ -12,6 +12,7 @@ public class CmdTownAdmin extends SubCommandHandler {
 		
 		// Subcommands
 		addSubCommand(new Reload());
+		addSubCommand(new SafeMode());
 	}
 
 	@Override

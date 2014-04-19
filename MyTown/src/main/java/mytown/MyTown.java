@@ -10,11 +10,9 @@ import mytown.core.Localization;
 import mytown.core.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.core.utils.tick.TickHandler;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.impl.MyTownDatasource_mysql;
 import mytown.datasource.impl.MyTownDatasource_sqlite;
-import mytown.tick.SafeModeTicker;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -23,8 +21,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 // TODO Add a way to safely reload
 
@@ -158,9 +154,5 @@ public class MyTown {
 	private void registerHandlers() {
 		PlayerTracker handler = new PlayerTracker();
 		GameRegistry.registerPlayerTracker(handler);
-		
-		TickHandler tickHandler = new TickHandler("MyTown Tick Handler");
-		tickHandler.addTickHandler(new SafeModeTicker());
-		TickRegistry.registerTickHandler(tickHandler, Side.SERVER);
 	}
 }
