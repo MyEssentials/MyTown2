@@ -3,6 +3,8 @@
 .project
 .gradle
 .idea
+.syntastic_javac_config
+.vim.local
 eclipse
 bin
 build

@@ -40,3 +40,5 @@ subprojects {
         }
     }
 }
+
+apply from: "vim.gradle"
