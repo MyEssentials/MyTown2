@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import mytown.MyTown;
@@ -13,26 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
  * @author Joe Goett
  */
 public class Resident {
-	public enum Rank {
-		Outsider, Resident, Assistant, Mayor;
-
-		/**
-		 * Gets the rank based on [O, R, A, M]
-		 */
-		public static Rank parse(String rank) {
-			for (Rank type : values()) {
-				if (type.toString().toLowerCase().startsWith(rank.toLowerCase())) {
-					return type;
-				}
-			}
-			return Rank.Outsider;
-		}
-
-		@Override
-		public String toString() {
-			return super.toString().substring(0, 1);
-		}
-	}
 
 	private String playerUUID;
 	private boolean isOnline = false;

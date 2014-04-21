@@ -11,6 +11,7 @@ import java.util.List;
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Nation;
+import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
@@ -308,7 +309,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			while(set.next()) {
 				Resident res = getResident(set.getString("Owner"));
 				Town town = getTown(set.getString("TownName"));
-				Resident.Rank rank = Resident.Rank.parse(set.getString("Rank"));
+				Rank rank = getRank(set.getString("Rank"), town);
 				
 				// Do actual link
 				res.addTown(town);
@@ -336,7 +337,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	}
 	
 	@Override
-	public void linkResidentToTown(Resident resident, Town town, Resident.Rank rank) throws Exception {
+	public void linkResidentToTown(Resident resident, Town town, Rank rank) throws Exception {
 		synchronized (lock) {
 			resident.addTown(town);
 			town.addResident(resident, rank);
