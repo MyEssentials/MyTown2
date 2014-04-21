@@ -100,7 +100,7 @@ public class SubCommandHandler extends CommandBase {
 			throw ex;
 		} catch (Throwable ex) {
 			ChatUtils.sendChat(sender, ex.toString());
-			log.severe("Commane execution error by %s", ex, sender);
+			log.severe("Command execution error by %s", ex, sender);
 		}
 	}
 }

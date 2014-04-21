@@ -29,13 +29,10 @@ public class CmdTown extends SubCommandHandler {
 		aliases.add("t");
 	}
 	
-
 	@Override
 	public boolean canConsoleUse() {
 		return true;
 	}
-
-
 
 	@Override
 	public List<?> getCommandAliases() {
