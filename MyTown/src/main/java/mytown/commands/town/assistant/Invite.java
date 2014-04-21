@@ -1,4 +1,4 @@
-package mytown.commands.town;
+package mytown.commands.town.assistant;
 
 import java.util.List;
 

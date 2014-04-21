@@ -1,4 +1,4 @@
-package mytown.commands.town;
+package mytown.commands.town.assistant;
 
 import mytown.MyTown;
 import mytown.core.utils.command.sub.SubCommandBase;

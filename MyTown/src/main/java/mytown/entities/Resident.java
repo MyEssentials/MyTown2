@@ -37,6 +37,7 @@ public class Resident {
 	private String playerUUID;
 	private boolean isOnline = false;
 	private boolean isNPC = false;
+	private boolean mapOn = false;
 	private EntityPlayer player = null;
 
 	/**
@@ -116,20 +117,32 @@ public class Resident {
 	 * @param args
 	 */
 	public void sendMessage(String msg, Object... args) {
-		if (!isOnline() || getPlayer() == null) {
-			MyTown.instance.coreLog.info("Player is not online!"); // TODO Remove later
-			return;
-		}
+		if (!isOnline() || getPlayer() == null) return;
 		ChatUtils.sendChat(getPlayer(), msg, args);
 	}
 	
+	/**
+	 * Send a "map" of the Blocks directly around the player
+	 */
+	public void sendMap() {
+		if (!isOnline() || getPlayer() == null) return;
+		sendMap(getPlayer().dimension, getPlayer().chunkCoordX, getPlayer().chunkCoordZ);
+	}
+	
+	/**
+	 * Sends a "map" of the Blocks around cx, cz in dim
+	 * @param dim
+	 * @param cx
+	 * @param cz
+	 */
 	public void sendMap(int dim, int cx, int cz) {
 		int heightRad = 4;
 		int widthRad = 9;
 		StringBuilder sb = new StringBuilder();
 		String c;
 
-		sendMessage("---------- Town Map ----------");
+		sb.append("---------- Town Map ----------");
+		sb.setLength(0);
 		for (int z = cz - heightRad; z <= cz + heightRad; z++) {
 			sb.setLength(0);
 			for (int x = cx - widthRad; x <= cx + widthRad; x++) {
@@ -149,8 +162,16 @@ public class Resident {
 
 				sb.append(c);
 			}
-			sendMessage(sb.toString());
 		}
+		sendMessage(sb.toString());
+	}
+	
+	public void setMapOn(boolean on) {
+		mapOn = on;
+	}
+	
+	public boolean isMapOn() {
+		return mapOn;
 	}
 
 	// //////////////////////////////////////
