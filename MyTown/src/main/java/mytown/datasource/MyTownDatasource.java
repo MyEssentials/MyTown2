@@ -820,4 +820,5 @@ public abstract class MyTownDatasource {
 	public Resident getOrMakeResident(EntityPlayer player) throws Exception {
 		return getOrMakeResident(player.getCommandSenderName());
 	}
+	
 }
