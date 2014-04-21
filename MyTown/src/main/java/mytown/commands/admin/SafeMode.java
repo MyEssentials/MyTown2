@@ -12,6 +12,10 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 
+/**
+ * Command to enable/disable safemode
+ * @author Joe Goett
+ */
 public class SafeMode extends SubCommandBase {
 	@Override
 	public String getName() {
@@ -32,7 +36,7 @@ public class SafeMode extends SubCommandBase {
 			safemode = (args[0].equalsIgnoreCase("on") || args[0].equalsIgnoreCase("true") || args[0].equalsIgnoreCase("enable"));
 		}
 		Assert.Perm(sender, "mytown.adm.cmd.safemode." + (safemode ? "on" : "off"));
-		// TODO Kick anyone that shouldn't be on
+		kickPlayers();
 		MyTown.instance.safemode = safemode;
 	}
 
@@ -41,14 +45,24 @@ public class SafeMode extends SubCommandBase {
 		return CommandUtils.getListOfStringsMatchingLastWord(args, "on", "true", "enable", "off", "false", "disable");
 	}
 	
-	protected void kickPlayers() {
+	/**
+	 * Kicks all players that can't bypass safemode (mytown.adm.safemode)
+	 */
+	public static void kickPlayers() {
 		for (Object obj : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
 			if (!(obj instanceof EntityPlayerMP)) {
-				EntityPlayerMP pl = (EntityPlayerMP) obj;
-				if (!ForgePermsAPI.permManager.canAccess(pl.getCommandSenderName(), pl.worldObj.provider.getDimensionName(), "mytown.adm.safemode")) {
-					pl.playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
-				}
+				kickPlayer((EntityPlayerMP) obj);
 			}
+		}
+	}
+	
+	/**
+	 * Kicks the given EntityPlayerMP if they dont have mytown.adm.safemode
+	 * @param pl
+	 */
+	public static void kickPlayer(EntityPlayerMP pl) {
+		if (!ForgePermsAPI.permManager.canAccess(pl.getCommandSenderName(), pl.worldObj.provider.getDimensionName(), "mytown.adm.safemode")) {
+			pl.playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
 		}
 	}
 }

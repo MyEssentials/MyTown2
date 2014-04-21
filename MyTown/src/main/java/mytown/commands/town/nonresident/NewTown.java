@@ -1,4 +1,4 @@
-package mytown.commands.town;
+package mytown.commands.town.nonresident;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;

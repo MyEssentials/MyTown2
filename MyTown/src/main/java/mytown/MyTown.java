@@ -1,6 +1,10 @@
 package mytown;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -66,6 +70,31 @@ public class MyTown {
 		ConfigProcessor.processConfig(config, Config.class);
 
 		// Localization
+		File localFile = new File(Constants.CONFIG_FOLDER, "localization/"+Config.localization+".lang");
+		if(!localFile.getParentFile().exists()){
+			localFile.getParentFile().mkdir();
+		}
+		if (!localFile.exists()){
+			InputStream is = MyTown.class.getResourceAsStream("/localization/"+Config.localization+".lang");
+			if (is != null){
+				OutputStream resStreamOut = null;
+			    int readBytes;
+			    byte[] buffer = new byte[4096];
+			    try {
+			        resStreamOut = new FileOutputStream(localFile);
+			        while ((readBytes = is.read(buffer)) > 0) {
+			            resStreamOut.write(buffer, 0, readBytes);
+			        }
+			    } catch (IOException e1) {
+			        // TODO Handle this
+			    } finally {
+			    	try {
+			    		is.close();
+			    		resStreamOut.close();
+			    	} catch (Exception ignored) {}
+			    }
+			}
+		}
 		try {
 			local = new Localization(new File(Constants.CONFIG_FOLDER, "localization/" + Config.localization + ".lang"));
 			local.load();
