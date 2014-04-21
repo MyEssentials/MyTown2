@@ -199,4 +199,12 @@ public class Town {
 			return Resident.Rank.Outsider;
 		}
 	}
+	
+	// //////////////////////////////////////
+	// Helper?
+	// //////////////////////////////////////
+	@Override
+	public String toString() {
+		return getName()+"["+getResidents().size()+"]";
+	}
 }
