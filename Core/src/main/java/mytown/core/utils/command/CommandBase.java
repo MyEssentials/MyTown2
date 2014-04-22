@@ -48,4 +48,3 @@ public abstract class CommandBase implements Command {
 		return this.compareTo((ICommand) obj);
 	}
 }
-
