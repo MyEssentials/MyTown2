@@ -31,7 +31,7 @@ public abstract class CommandBase implements Command {
 
 	@Override
 	public boolean canConsoleUse() {
-		return true;
+		return false;
 	}
 
 	@Override
