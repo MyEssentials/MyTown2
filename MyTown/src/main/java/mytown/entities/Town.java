@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import mytown.Constants;
+
 // TODO Add Comments
 
 /**
@@ -17,6 +19,8 @@ public class Town {
 	private String name;
 	private int extraBlocks = 0;
 
+	private List<Rank> otherRanks;
+	
 	// TODO Add flags/permissions
 
 	/**
@@ -26,13 +30,27 @@ public class Town {
 	 */
 	public Town(String name) {
 		this.name = name;
+		setInitialPermission();
 	}
 	
 	public Town(String name, int extraBlocks) {
 		this.name = name;
 		this.extraBlocks = extraBlocks;
+		setInitialPermission();
 	}
 
+	public void setInitialPermission()
+	{
+		otherRanks = new ArrayList<Rank>();
+	}
+	
+	public List<Rank> getAdditionalRanks()
+	{
+		return this.otherRanks;
+	}
+	
+	
+	
 	/**
 	 * Returns the name of the town
 	 * 
@@ -140,7 +158,7 @@ public class Town {
 	// //////////////////////////////////////
 	// Residents
 	// //////////////////////////////////////
-	private Map<Resident, Resident.Rank> residents = new Hashtable<Resident, Resident.Rank>();
+	private Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
 
 	/**
 	 * Returns the Residents
@@ -157,7 +175,7 @@ public class Town {
 	 * @param resident
 	 * @param rank
 	 */
-	public void addResident(Resident resident, Resident.Rank rank) {
+	public void addResident(Resident resident, Rank rank) {
 		residents.put(resident, rank);
 	}
 
@@ -186,17 +204,17 @@ public class Town {
 	 * @param resident
 	 * @param rank
 	 */
-	public void promoteResident(Resident resident, Resident.Rank rank) {
+	public void promoteResident(Resident resident, Rank rank) {
 		if (!hasResident(resident))
 			return; // TODO Log/Throw Exception
 		addResident(resident, rank);
 	}
 
-	public Resident.Rank getResidentRank(Resident resident) {
+	public Rank getResidentRank(Resident resident) {
 		if (hasResident(resident)) {
 			return residents.get(resident);
 		} else {
-			return Resident.Rank.Outsider;
+			return Constants.DEFAULT_RANKS[0];
 		}
 	}
 	

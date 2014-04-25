@@ -6,8 +6,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import mytown.Constants;
 import mytown.core.Log;
 import mytown.entities.Nation;
+import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
@@ -180,6 +182,21 @@ public abstract class MyTownDatasource {
 		return towns.get(name);
 	}
 
+	public Rank getRank(String rank, Town town)
+	{
+		for(Rank r : Constants.DEFAULT_RANKS)
+		{
+			if(r.parse(rank))
+				return r;
+		}
+		for(Rank r : town.getAdditionalRanks())
+		{
+			if(r.parse(rank))
+				return r;
+		}
+		return null;
+	}
+	
 	/**
 	 * Gets a Resident with the given name
 	 * 
@@ -755,7 +772,7 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 * @param rank
 	 */
-	public abstract void linkResidentToTown(Resident resident, Town town, Resident.Rank rank) throws Exception;
+	public abstract void linkResidentToTown(Resident resident, Town town, Rank rank) throws Exception;
 
 	/**
 	 * Links the Resident to the Town with a Rank of Resident
@@ -764,7 +781,7 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 */
 	public void linkResidentToTown(Resident resident, Town town) throws Exception {
-		linkResidentToTown(resident, town, Resident.Rank.Resident);
+		linkResidentToTown(resident, town, Constants.DEFAULT_RANKS[1]);
 	}
 
 	/**
