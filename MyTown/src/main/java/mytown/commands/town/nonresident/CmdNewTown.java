@@ -47,8 +47,8 @@ public class CmdNewTown extends SubCommandBase {
 		}
 
 		Town town = new Town(args[0]);
-		getDatasource().insertTown(town);
 		Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
+		getDatasource().insertTown(town);
 		getDatasource().linkResidentToTown(res, town);
 		res.sendLocalizedMessage("mytown.notification.town.created", MyTown.instance.local, town.getName());
 	}
