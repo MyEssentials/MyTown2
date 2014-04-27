@@ -2,9 +2,10 @@ package mytown.datasource;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import mytown.Constants;
 import mytown.core.Log;
@@ -35,10 +36,10 @@ public abstract class MyTownDatasource {
 	protected String configCat = "datasource";
 
 	protected Log log;
-	protected Map<String, Town> towns;
-	protected Map<String, Resident> residents;
-	protected Map<String, Nation> nations;
-	protected Map<String, TownBlock> blocks;
+	protected ConcurrentMap<String, Town> towns;
+	protected ConcurrentMap<String, Resident> residents;
+	protected ConcurrentMap<String, Nation> nations;
+	protected ConcurrentMap<String, TownBlock> blocks;
 	protected List<TownPlot> plots;
 
 	/**
@@ -51,10 +52,10 @@ public abstract class MyTownDatasource {
 	public void configure(Configuration config, Log log) {
 		this.log = log;
 		doConfig(config);
-		towns = new Hashtable<String, Town>();
-		residents = new Hashtable<String, Resident>();
-		nations = new Hashtable<String, Nation>();
-		blocks = new Hashtable<String, TownBlock>();
+		towns = new ConcurrentHashMap<String, Town>();
+		residents = new ConcurrentHashMap<String, Resident>();
+		nations = new ConcurrentHashMap<String, Nation>();
+		blocks = new ConcurrentHashMap<String, TownBlock>();
 		plots = new ArrayList<TownPlot>(); // TODO: Use a List implementation
 											// that doesn't allow nulls, maybe?
 	}
