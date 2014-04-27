@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import mytown.Constants;
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Nation;
@@ -309,7 +310,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			while(set.next()) {
 				Resident res = getResident(set.getString("Owner"));
 				Town town = getTown(set.getString("TownName"));
-				Rank rank = getRank(set.getString("Rank"), town);
+				Rank rank = Constants.DEFAULT_RANKS[3]; //getRank(set.getString("Rank"), town);
 				
 				// Do actual link
 				res.addTown(town);

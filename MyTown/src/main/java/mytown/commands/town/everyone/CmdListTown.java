@@ -2,22 +2,20 @@ package mytown.commands.town.everyone;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import net.minecraft.command.ICommandSender;
 
 import com.google.common.base.Joiner;
 
-public class ListTown extends SubCommandBase {
+@Permission(node="mytown.cmd.town.list")
+public class CmdListTown extends SubCommandBase {
 
-	@Override
-	public String getName() {
-		return "list";
+	public CmdListTown(String name)
+	{
+		super(name);
 	}
-
-	@Override
-	public String getPermNode() {
-		return "mytown.cmd.town.list";
-	}
+	
 	
 	@Override
 	public boolean canUseByConsole() {
@@ -30,5 +28,4 @@ public class ListTown extends SubCommandBase {
 		String townList = Joiner.on(", ").join(MyTown.instance.datasource.getTowns());
 		ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.list", townList);
 	}
-
 }

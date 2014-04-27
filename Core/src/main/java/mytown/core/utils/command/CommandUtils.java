@@ -1,7 +1,9 @@
 package mytown.core.utils.command;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import mytown.core.Log;
@@ -16,6 +18,9 @@ public class CommandUtils {
 	private static CommandHandler commandHandler;
 	private static MethodAccess access;
 	private static int method = -1;
+	
+	public static Map<String, String> permissionList = new Hashtable<String, String>();
+	
 	
 	public static void init() throws Exception {
 		log = new Log("CommandUtils");

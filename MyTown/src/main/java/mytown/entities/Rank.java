@@ -1,6 +1,5 @@
 package mytown.entities;
 
-import mytown.Constants;
 
 
 public class Rank {
@@ -14,6 +13,12 @@ public class Rank {
 		this.permissions = permissions;
 	}
 	
+	/**
+	 * Checks if the string given is the name of the rank
+	 * 
+	 * @param rank
+	 * @return
+	 */
 	public boolean parse(String rank)
 	{
 		if(rank == this.name)

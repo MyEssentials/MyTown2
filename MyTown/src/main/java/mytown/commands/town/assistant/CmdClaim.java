@@ -1,6 +1,7 @@
 package mytown.commands.town.assistant;
 
 import mytown.MyTown;
+import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
@@ -14,17 +15,14 @@ import net.minecraft.entity.player.EntityPlayer;
  * Command to claim TownBlocks
  * @author Joe Goett
  */
-public class Claim extends SubCommandBase {
-	@Override
-	public String getName() {
-		return "claim";
+@Permission(node = "mytown.cmd.town.claim")
+public class CmdClaim extends SubCommandBase {
+	
+	public CmdClaim(String name)
+	{
+		super(name);
 	}
-
-	@Override
-	public String getPermNode() {
-		return "mytown.cmd.town.claim";
-	}
-
+	
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		try {

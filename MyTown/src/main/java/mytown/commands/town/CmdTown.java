@@ -3,9 +3,11 @@ package mytown.commands.town;
 import java.util.ArrayList;
 import java.util.List;
 
-import mytown.commands.town.assistant.Claim;
-import mytown.commands.town.everyone.Map;
-import mytown.commands.town.nonresident.NewTown;
+import mytown.commands.town.assistant.CmdClaim;
+import mytown.commands.town.assistant.CmdInvite;
+import mytown.commands.town.everyone.CmdListTown;
+import mytown.commands.town.everyone.CmdMap;
+import mytown.commands.town.nonresident.CmdNewTown;
 import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandHandler;
 
@@ -17,13 +19,16 @@ import mytown.core.utils.command.sub.SubCommandHandler;
 public class CmdTown extends SubCommandHandler {
 	List<String> aliases = new ArrayList<String>();
 	
-	public CmdTown() {
-		super("town");
+	
+	public CmdTown(String name) {
+		super(name);
 		
 		// Add commands
-		addSubCommand(new NewTown());
-		addSubCommand(new Claim());
-		addSubCommand(new Map());
+		addSubCommand(new CmdNewTown("new"));
+		addSubCommand(new CmdClaim("claim"));
+		addSubCommand(new CmdMap("map"));
+		addSubCommand(new CmdListTown("list"));
+		addSubCommand(new CmdInvite("invite"));
 		
 		// Add Aliases
 		aliases.add("t");
