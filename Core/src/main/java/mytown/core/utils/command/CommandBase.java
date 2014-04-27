@@ -11,8 +11,10 @@ public abstract class CommandBase implements Command {
 	
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
+		
 		Assert.Perm(sender, getPermNode(), canConsoleUse());
 		return true;
+		
 	}
 	
 	public String getPermNode() {

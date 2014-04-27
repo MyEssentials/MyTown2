@@ -10,4 +10,6 @@ public class Constants {
 	public static String CONFIG_FOLDER = "";
 	
 	public static final Rank[] DEFAULT_RANKS = { new Rank("outsider", null), new Rank("resident", null), new Rank("assistant", null), new Rank("mayor", null)};
+
+	
 }
