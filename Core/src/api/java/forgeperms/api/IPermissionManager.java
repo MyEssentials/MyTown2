@@ -14,8 +14,7 @@ public interface IPermissionManager {
 	public String getName();
 
 	/**
-	 * Loads the PermissionHandler, typically used to check if the Permission
-	 * Manager is there and register anything with the manager
+	 * Loads the PermissionHandler, typically used to check if the Permission Manager is there and register anything with the manager
 	 * 
 	 * @return
 	 */

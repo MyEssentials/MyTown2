@@ -36,6 +36,7 @@ public class TownPlot {
 
 	/**
 	 * Returns the Town this TownPlot belongs to
+	 * 
 	 * @return
 	 */
 	public Town getTown() {

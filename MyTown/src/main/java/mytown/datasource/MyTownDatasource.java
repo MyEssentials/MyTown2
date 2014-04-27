@@ -33,7 +33,7 @@ import net.minecraftforge.common.Configuration;
  */
 public abstract class MyTownDatasource {
 	protected String configCat = "datasource";
-	
+
 	protected Log log;
 	protected Map<String, Town> towns;
 	protected Map<String, Resident> residents;
@@ -55,7 +55,8 @@ public abstract class MyTownDatasource {
 		residents = new Hashtable<String, Resident>();
 		nations = new Hashtable<String, Nation>();
 		blocks = new Hashtable<String, TownBlock>();
-		plots = new ArrayList<TownPlot>(); // TODO: Use a List implementation that doesn't allow nulls, maybe?
+		plots = new ArrayList<TownPlot>(); // TODO: Use a List implementation
+											// that doesn't allow nulls, maybe?
 	}
 
 	/**
@@ -182,19 +183,16 @@ public abstract class MyTownDatasource {
 		return towns.get(name);
 	}
 
-	public Rank getRank(String rank, Town town)
-	{
-		for(Rank r : Constants.DEFAULT_RANKS) {
-			if(r.parse(rank))
-				return r;
+	public Rank getRank(String rank, Town town) {
+		for (Rank r : Constants.DEFAULT_RANKS) {
+			if (r.parse(rank)) return r;
 		}
-		for(Rank r : town.getAdditionalRanks()) {
-			if(r.parse(rank))
-				return r;
+		for (Rank r : town.getAdditionalRanks()) {
+			if (r.parse(rank)) return r;
 		}
-		return null;
+		return Constants.DEFAULT_RANKS[0]; // TODO Change later?
 	}
-	
+
 	/**
 	 * Gets a Resident with the given name
 	 * 
@@ -240,27 +238,31 @@ public abstract class MyTownDatasource {
 	// /////////////////////////////////////////////////////////////
 	// Checkers?
 	// /////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Checks if a Town with the given name exists
+	 * 
 	 * @param townName
 	 * @return
 	 */
 	public boolean hasTown(String townName) {
 		return towns.containsKey(townName);
 	}
-	
+
 	/**
 	 * Checks if the Resident with the given UUID exists
-	 * @param residentUUID 1.6 is player name, 1.7> is player UUID
+	 * 
+	 * @param residentUUID
+	 *            1.6 is player name, 1.7> is player UUID
 	 * @return
 	 */
 	public boolean hasResident(String residentUUID) {
 		return residents.containsKey(residentUUID);
 	}
-	
+
 	/**
 	 * Checks if the Nation with the given name exists
+	 * 
 	 * @param nationName
 	 * @return
 	 */
@@ -270,13 +272,14 @@ public abstract class MyTownDatasource {
 
 	/**
 	 * Checks if the TownBlock with the given key exists
+	 * 
 	 * @param key
 	 * @return
 	 */
 	public boolean hasTownBlock(String key) {
 		return blocks.containsKey(key);
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Loaders
 	// /////////////////////////////////////////////////////////////
@@ -750,19 +753,21 @@ public abstract class MyTownDatasource {
 	// /////////////////////////////////////////////////////////////
 	// Linkages
 	// /////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Loads all stored links between Residents and Towns
+	 * 
 	 * @throws Exception
 	 */
 	public abstract void loadResidentToTownLinks() throws Exception;
 
 	/**
 	 * Loads all stored links between Towns and Nations
+	 * 
 	 * @throws Exception
 	 */
 	public abstract void loadTownToNationLinks() throws Exception;
-	
+
 	/**
 	 * Links the Resident with the given Rank to the Town
 	 * 
@@ -808,11 +813,12 @@ public abstract class MyTownDatasource {
 	public abstract void dump() throws Exception;
 
 	// /////////////////////////////////////////////////////////////
-	// Unknown Group/Helpers?			  TODO Change/Move Later? //
+	// Unknown Group/Helpers? TODO Change/Move Later? //
 	// /////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Gets or makes a new Resident from the playerName
+	 * 
 	 * @param playerName
 	 * @return
 	 * @throws Exception
@@ -825,9 +831,10 @@ public abstract class MyTownDatasource {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Gets or makes a new Resident from the EntityPlayer
+	 * 
 	 * @param player
 	 * @return
 	 * @throws Exception
@@ -835,5 +842,5 @@ public abstract class MyTownDatasource {
 	public Resident getOrMakeResident(EntityPlayer player) throws Exception {
 		return getOrMakeResident(player.getCommandSenderName());
 	}
-	
+
 }

@@ -13,33 +13,33 @@ public class TickHandler implements ITickHandler {
 	private List<TickBase> handlers;
 	private long tick = 0;
 	private Log log;
-	
+
 	public TickHandler(String label, Log log) {
 		handlers = new ArrayList<TickBase>();
 		this.label = label;
 		this.log = log;
 	}
-	
+
 	public TickHandler(String label) {
 		this(label, new Log(label));
 	}
-	
+
 	public TickHandler(Log log) {
 		this(log.getLogger().getName(), log);
 	}
-	
+
 	public TickHandler() {
 		this("TickHandler");
 	}
-	
+
 	public void addTickHandler(TickBase base) {
-		synchronized(handlers) {
+		synchronized (handlers) {
 			handlers.add(base);
 		}
 	}
-	
+
 	public void removeTickHandler(TickBase base) {
-		synchronized(handlers) {
+		synchronized (handlers) {
 			handlers.remove(base);
 		}
 	}
@@ -52,16 +52,16 @@ public class TickHandler implements ITickHandler {
 
 		tick++;
 
-		synchronized(handlers) {
+		synchronized (handlers) {
 			for (TickBase t : handlers) {
 				if (!t.enabled()) {
 					continue;
 				}
-	
+
 				if (tick % t.getWaitTimeTicks() != 0) {
 					continue;
 				}
-	
+
 				try {
 					t.run();
 				} catch (Throwable e) {
@@ -72,8 +72,7 @@ public class TickHandler implements ITickHandler {
 	}
 
 	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-	}
+	public void tickEnd(EnumSet<TickType> type, Object... tickData) {}
 
 	@Override
 	public EnumSet<TickType> ticks() {

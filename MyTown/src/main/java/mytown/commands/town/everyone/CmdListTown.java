@@ -12,23 +12,20 @@ import net.minecraft.command.ICommandSender;
 
 import com.google.common.base.Joiner;
 
-@Permission(node="mytown.cmd.town.list")
+@Permission(node = "mytown.cmd.town.list")
 public class CmdListTown extends SubCommandBase {
-
-	public CmdListTown(String name)
-	{
+	public CmdListTown(String name) {
 		super(name);
 	}
-	
-	
+
 	@Override
 	public boolean canUseByConsole() {
 		return true;
 	};
-	
+
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		List<Town> sortedTowns = (List<Town>)MyTown.instance.datasource.getTowns();
+		List<Town> sortedTowns = (List<Town>) MyTown.instance.datasource.getTowns();
 		Collections.sort(sortedTowns); // TODO Cache the sort?
 		String townList = Joiner.on(", ").join(sortedTowns);
 		ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.list", townList);

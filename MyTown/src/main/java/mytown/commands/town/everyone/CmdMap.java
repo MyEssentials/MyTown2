@@ -8,13 +8,10 @@ import net.minecraft.command.ICommandSender;
 
 @Permission(node = "mytown.cmd.map")
 public class CmdMap extends SubCommandBase {
-	
-	public CmdMap(String name)
-	{
+	public CmdMap(String name) {
 		super(name);
 	}
-			
-	
+
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		Resident res = MyTown.instance.datasource.getOrMakeResident(sender.getCommandSenderName());

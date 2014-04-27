@@ -2,6 +2,7 @@ package forgeperms.api;
 
 /**
  * Includes this in your mod. ForgePerms will automatically set the 3 managers.
+ * 
  * @author Joe Goett
  */
 public class ForgePermsAPI {

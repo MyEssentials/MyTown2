@@ -9,13 +9,14 @@ import net.minecraft.server.MinecraftServer;
 
 /**
  * Global Channel Type. Broadcasts to everyone on the server
+ * 
  * @author Joe Goett
  */
-public class Global implements IChannelType{
+public class Global implements IChannelType {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String name(){
+	public String name() {
 		return "Global";
 	}
 

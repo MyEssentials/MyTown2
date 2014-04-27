@@ -30,8 +30,7 @@ import com.google.common.collect.Lists;
  */
 public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	/**
-	 * Used to determine how to auto increment. MySQL and SQLite uses different
-	 * names
+	 * Used to determine how to auto increment. MySQL and SQLite uses different names
 	 */
 	protected static String autoIncrement = "AUTO_INCREMENT";
 
@@ -392,8 +391,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	 */
 	protected class DBUpdate {
 		/**
-		 * Formatted mm.dd.yyyy.e where e increments by 1 for every update
-		 * released on the same date
+		 * Formatted mm.dd.yyyy.e where e increments by 1 for every update released on the same date
 		 */
 		public String id;
 		public String code;
@@ -414,20 +412,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	protected void setUpdates() {
 		updates.add(new DBUpdate("03.08.2014.1", "Add Updates Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Updates (Id varchar(50) NOT NULL, Code varchar(50) NOT NULL, PRIMARY KEY(Id));"));
 		updates.add(new DBUpdate("03.08.2014.2", "Add Towns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Towns (Name varchar(50) NOT NULL, ExtraBlocks int NOT NULL DEFAULT 0, PRIMARY KEY (Name));"));
-		updates.add(new DBUpdate("03.08.2014.3", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Residents (UUID varchar(255) NOT NULL, IsNPC boolean DEFAULT false, Joined int NOT NULL, LastLogin int NOT NULL, PRIMARY KEY (UUID));")); // MC
-																																																															// Version
-																																																															// <
-																																																															// 1.7
-																																																															// UUID
-																																																															// is
-																																																															// Player
-																																																															// name.
-																																																															// 1.7
-																																																															// >=
-																																																															// UUID
-																																																															// is
-																																																															// Player's
-																																																															// UUID
+		updates.add(new DBUpdate("03.08.2014.3", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Residents (UUID varchar(255) NOT NULL, IsNPC boolean DEFAULT false, Joined int NOT NULL, LastLogin int NOT NULL, PRIMARY KEY (UUID));")); // MC Version < 1.7 UUID is Player name. 1.7 >= UUID is Player's UUID
 		updates.add(new DBUpdate("03.08.2014.4", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Nations (Name varchar(50) NOT NULL, ExtraBlocks int NOT NULL DEFAULT 0, PRIMARY KEY(Name));"));
 		updates.add(new DBUpdate("03.08.2014.5", "Add TownBlocks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownBlocks (Id int " + autoIncrement + ", X int NOT NULL, Z int NOT NULL, Dim int NOT NULL, TownName varchar(50) NOT NULL, PRIMARY KEY(Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
 		updates.add(new DBUpdate("03.15.2014.1", "Add TownPlots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownPlots (Id int " + autoIncrement + ", X1 int NOT NULL, Y1 int NOT NULL, Z1 int NOT NULL, X2 int NOT NULL, Y2 int NOT NULL, Z2 int NOT NULL, Dim int NOT NULL, TownName varchar(50) NOT NULL, Owner varchar(255) DEFAULT NULL, PRIMARY KEY(Id), FOREIGN KEY (TownName) REFERENCES "
@@ -453,8 +438,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			while (rs.next()) {
 				ids.add(rs.getString("Id"));
 			}
-		} catch (Exception e) {} // Ignore. Just missing the updates table for
-									// now
+		} catch (Exception e) {} // Ignore. Just missing the updates table for now
 
 		for (DBUpdate update : updates) {
 			if (ids.contains(update.id)) continue; // Skip updates already done

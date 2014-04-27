@@ -16,8 +16,7 @@ public class CmdChannel extends CommandBase {
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] args) {
-	}
+	public void processCommand(ICommandSender sender, String[] args) {}
 
 	@Override
 	public int compareTo(Object o) {

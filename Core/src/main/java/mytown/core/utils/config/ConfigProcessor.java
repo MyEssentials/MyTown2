@@ -13,28 +13,14 @@ public class ConfigProcessor {
 	/**
 	 * Maps classes to the appropriate Property.Type
 	 */
-	protected static Map<Class<?>, Property.Type> CONFIG_TYPES = ImmutableMap.<Class<?>, Property.Type> builder()
-			.put(Integer.class, Property.Type.INTEGER)
-			.put(int.class, Property.Type.INTEGER)
-			.put(Boolean.class, Property.Type.BOOLEAN)
-			.put(boolean.class, Property.Type.BOOLEAN)
-			.put(Byte.class, Property.Type.INTEGER)
-			.put(byte.class, Property.Type.INTEGER)
-			.put(Double.class, Property.Type.DOUBLE)
-			.put(double.class, Property.Type.DOUBLE)
-			.put(Float.class, Property.Type.DOUBLE)
-			.put(float.class, Property.Type.DOUBLE)
-			.put(Long.class, Property.Type.INTEGER)
-			.put(long.class, Property.Type.INTEGER)
-			.put(Short.class, Property.Type.INTEGER)
-			.put(short.class, Property.Type.INTEGER)
-			.put(String.class, Property.Type.STRING)
-			.build();
-	
+	protected static Map<Class<?>, Property.Type> CONFIG_TYPES = ImmutableMap.<Class<?>, Property.Type> builder().put(Integer.class, Property.Type.INTEGER).put(int.class, Property.Type.INTEGER).put(Boolean.class, Property.Type.BOOLEAN).put(boolean.class, Property.Type.BOOLEAN).put(Byte.class, Property.Type.INTEGER).put(byte.class, Property.Type.INTEGER).put(Double.class, Property.Type.DOUBLE)
+			.put(double.class, Property.Type.DOUBLE).put(Float.class, Property.Type.DOUBLE).put(float.class, Property.Type.DOUBLE).put(Long.class, Property.Type.INTEGER).put(long.class, Property.Type.INTEGER).put(Short.class, Property.Type.INTEGER).put(short.class, Property.Type.INTEGER).put(String.class, Property.Type.STRING).build();
+
 	protected static Log log;
-	
+
 	/**
 	 * Processes all static fields in c with ConfigProperty annotation and loads their value from the given config
+	 * 
 	 * @param config
 	 * @param c
 	 */
@@ -50,23 +36,23 @@ public class ConfigProcessor {
 			setField(f, prop);
 		}
 	}
-	
+
 	protected static void setField(Field f, Property prop) {
 		Object val = null;
 		Object defaultValue = getFieldValue(f);
 		if (CONFIG_TYPES.get(f.getType()).equals(Property.Type.BOOLEAN)) {
-			val = prop.getBoolean(defaultValue == null ? false : (Boolean)defaultValue);
+			val = prop.getBoolean(defaultValue == null ? false : (Boolean) defaultValue);
 		} else if (CONFIG_TYPES.get(f.getType()).equals(Property.Type.INTEGER)) {
 			val = prop.getInt();
 		} else if (CONFIG_TYPES.get(f.getType()).equals(Property.Type.DOUBLE)) {
-			val = prop.getDouble(defaultValue == null ? 0 : (Integer)defaultValue);
+			val = prop.getDouble(defaultValue == null ? 0 : (Integer) defaultValue);
 		} else {
 			val = prop.getString();
 		}
 		getLog().info("Property: Name: %s, Type: %s, Value: %s", prop.getName(), prop.getType(), prop.getString());
 		setField(f, val);
 	}
-	
+
 	protected static void setField(Field f, Object value) {
 		try {
 			getLog().info("Setting field %s to %s", f.getName(), value);
@@ -76,7 +62,7 @@ public class ConfigProcessor {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected static Object getFieldValue(Field f) {
 		try {
 			return f.get(null);
@@ -86,9 +72,9 @@ public class ConfigProcessor {
 		}
 		return null;
 	}
-	
+
 	public static Log getLog() {
-		if (log == null){
+		if (log == null) {
 			log = new Log("ConfigProcessor");
 		}
 		return log;

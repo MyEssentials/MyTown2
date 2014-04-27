@@ -15,8 +15,7 @@ import net.minecraft.server.MinecraftServer;
 @Permission(node = "mytown.cmd.invite")
 public class CmdInvite extends SubCommandBase {
 
-	public CmdInvite(String name)
-	{
+	public CmdInvite(String name) {
 		super(name);
 	}
 
@@ -38,7 +37,7 @@ public class CmdInvite extends SubCommandBase {
 			throw new WrongUsageException(MyTown.instance.local.getLocalization("mytown.cmd.usage.invite"));
 		}
 	}
-	
+
 	@Override
 	public List<String> tabComplete(ICommandSender sender, String[] args) {
 		return CommandUtils.getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());

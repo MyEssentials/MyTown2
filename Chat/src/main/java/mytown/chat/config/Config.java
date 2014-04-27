@@ -6,10 +6,11 @@ import net.minecraftforge.common.Configuration;
 
 /**
  * Loads Chat Config
+ * 
  * @author Joe Goett
  */
 public class Config extends Configuration {
-	public Config(File file){
+	public Config(File file) {
 		super(file);
 	}
 }

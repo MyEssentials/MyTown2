@@ -10,17 +10,17 @@ import net.minecraft.command.ICommandSender;
 
 /**
  * Command to reload MyTown
+ * 
  * @author Joe Goett
  */
-@Permission(node="mytown.adm.cmd.reload")
+@Permission(node = "mytown.adm.cmd.reload")
 public class CmdReload extends SubCommandBase {
-	
-	public CmdReload(String name)
-	{
+
+	public CmdReload(String name) {
 		super(name);
-		
+
 	}
-	
+
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.unimplemented", getName()));

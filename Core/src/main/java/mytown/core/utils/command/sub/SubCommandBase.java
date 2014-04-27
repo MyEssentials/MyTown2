@@ -9,14 +9,12 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
 public class SubCommandBase implements SubCommand {
-	
 	public String permNode;
 	public String name;
-	
-	public SubCommandBase(String name)
-	{
+
+	public SubCommandBase(String name) {
 		this.name = name;
-		
+
 		Permission permAnnot = getClass().getAnnotation(Permission.class);
 		if (permAnnot != null) {
 			permNode = permAnnot.node();
@@ -25,8 +23,7 @@ public class SubCommandBase implements SubCommand {
 		}
 		CommandUtils.permissionList.put(name, permNode);
 	}
-	
-	
+
 	@Override
 	public void canUse(ICommandSender sender) throws CommandException {
 		Assert.Perm(sender, getPermNode(), canUseByConsole());
@@ -57,16 +54,11 @@ public class SubCommandBase implements SubCommand {
 
 	@Override
 	public String getPermNode() {
-		String node = this.getClass().getAnnotation(Permission.class).node();
-		if(node != null)
-			return node;
-		else
-			return null;
+		return permNode;
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception
-	{
-		
+	public void process(ICommandSender sender, String[] args) throws Exception {
+
 	}
 }
