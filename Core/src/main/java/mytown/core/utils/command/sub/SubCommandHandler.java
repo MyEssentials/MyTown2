@@ -8,6 +8,7 @@ import java.util.Map;
 import mytown.core.ChatUtils;
 import mytown.core.Log;
 import mytown.core.utils.command.CommandBase;
+import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandNotFoundException;
@@ -18,9 +19,10 @@ import net.minecraft.command.ICommandSender;
  * @author Joe Goett
  */
 public class SubCommandHandler extends CommandBase {
-	private String name = "";
-	private Map<String, SubCommand> subCommands;
-	private Log log;
+	protected String name = "";
+	protected Map<String, SubCommand> subCommands;
+	protected Log log;
+	
 	
 	/**
 	 * Creates a SubCommandHandler with the given name. Checks if it has Permission Annotation and uses that to get the permission node
@@ -30,13 +32,16 @@ public class SubCommandHandler extends CommandBase {
 		subCommands = new Hashtable<String, SubCommand>();
 		this.name = name;
 		log = new Log(name);
-		
-		Permission permAnnot = getClass().getAnnotation(Permission.class);
+
+		Permission permAnnot = this.getClass().getAnnotation(Permission.class);
 		if (permAnnot != null) {
 			permNode = permAnnot.node();
 		} else {
 			permNode = "";
 		}
+		CommandUtils.permissionList.put(name, permNode);
+		
+		
 	}
 	
 	/**
@@ -103,4 +108,10 @@ public class SubCommandHandler extends CommandBase {
 			log.severe("Command execution error by %s", ex, sender);
 		}
 	}
+	
+	public Map<String, SubCommand> getSubCommands()
+	{
+		return this.subCommands;
+	}
+	
 }

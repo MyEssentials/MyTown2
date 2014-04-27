@@ -5,22 +5,21 @@ import java.util.List;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Town;
 import net.minecraft.command.ICommandSender;
 
 import com.google.common.base.Joiner;
 
-public class ListTown extends SubCommandBase {
-	@Override
-	public String getName() {
-		return "list";
-	}
+@Permission(node="mytown.cmd.town.list")
+public class CmdListTown extends SubCommandBase {
 
-	@Override
-	public String getPermNode() {
-		return "mytown.cmd.town.list";
+	public CmdListTown(String name)
+	{
+		super(name);
 	}
+	
 	
 	@Override
 	public boolean canUseByConsole() {

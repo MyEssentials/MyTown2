@@ -2,6 +2,7 @@ package mytown.commands.town.nonresident;
 
 import mytown.MyTown;
 import mytown.core.utils.Assert;
+import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
@@ -14,15 +15,12 @@ import net.minecraft.command.WrongUsageException;
  * Sub command to create a new town
  * @author Joe Goett
  */
-public class NewTown extends SubCommandBase {
-	@Override
-	public String getName() {
-		return "new";
-	}
+@Permission(node = "mytown.cmd.town.new")
+public class CmdNewTown extends SubCommandBase {
 
-	@Override
-	public String getPermNode() {
-		return "mytown.cmd.town.new";
+	public CmdNewTown(String name)
+	{
+		super(name);
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import java.util.List;
 
 import mytown.MyTown;
 import mytown.core.utils.command.CommandUtils;
+import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Resident;
 import net.minecraft.command.CommandException;
@@ -11,15 +12,12 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 
-public class Invite extends SubCommandBase {
-	@Override
-	public String getName() {
-		return "invite";
-	}
+@Permission(node = "mytown.cmd.invite")
+public class CmdInvite extends SubCommandBase {
 
-	@Override
-	public String getPermNode() {
-		return "mytown.cmd.invite";
+	public CmdInvite(String name)
+	{
+		super(name);
 	}
 
 	@Override

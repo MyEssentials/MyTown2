@@ -2,24 +2,27 @@ package mytown.commands.admin;
 
 import java.util.List;
 
-import forgeperms.api.ForgePermsAPI;
 import mytown.Config;
 import mytown.MyTown;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.CommandUtils;
+import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import forgeperms.api.ForgePermsAPI;
 
 /**
  * Command to enable/disable safemode
  * @author Joe Goett
  */
-public class SafeMode extends SubCommandBase {
-	@Override
-	public String getName() {
-		return "safemode";
+@Permission(node = "mytown.adm.cmd.safemode")
+public class CmdSafeMode extends SubCommandBase {
+
+	public CmdSafeMode(String name)
+	{
+		super(name);
 	}
 
 	@Override

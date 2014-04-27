@@ -1,25 +1,20 @@
 package mytown.commands.town.everyone;
 
 import mytown.MyTown;
+import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Resident;
 import net.minecraft.command.ICommandSender;
 
-/**
- * Displays a "map" of claimed/unclaimed plots relative to the sender
- * @author Joe Goett
- */
-public class Map extends SubCommandBase {
-	@Override
-	public String getName() {
-		return "map";
+@Permission(node = "mytown.cmd.map")
+public class CmdMap extends SubCommandBase {
+	
+	public CmdMap(String name)
+	{
+		super(name);
 	}
-
-	@Override
-	public String getPermNode() {
-		return "mytown.cmd.map";
-	}
-
+			
+	
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		Resident res = MyTown.instance.datasource.getOrMakeResident(sender.getCommandSenderName());

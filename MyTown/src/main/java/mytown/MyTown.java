@@ -25,6 +25,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
+import forgeperms.api.ForgePermsAPI;
 
 // TODO Add a way to safely reload
 
@@ -33,6 +34,9 @@ public class MyTown {
 	@Mod.Instance
 	public static MyTown instance;
 
+	// Permission Manager
+	public PermissionManager permManager;
+	
 	// Loggers
 	public Log coreLog;
 	public Log bypassLog;
@@ -125,6 +129,7 @@ public class MyTown {
 	public void serverStarting(FMLServerStartingEvent ev) {
 		startDatasource();
 		registerCommands();
+		registerPermissions();
 	}
 
 	@Mod.EventHandler
@@ -173,8 +178,18 @@ public class MyTown {
 	 * Registers all commands
 	 */
 	private void registerCommands() {
-		CommandUtils.registerCommand(new CmdTown());
-		CommandUtils.registerCommand(new CmdTownAdmin());
+
+		CommandUtils.registerCommand(new CmdTown("town"));
+		CommandUtils.registerCommand(new CmdTownAdmin("townadmin"));
+	}
+	
+	/**
+	 * Registers permission manager
+	 */
+	private void registerPermissions()
+	{
+		permManager = new PermissionManager("MyTownPermManager");
+		ForgePermsAPI.permManager = permManager;
 	}
 	
 	/**
