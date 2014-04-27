@@ -1,9 +1,13 @@
 mytown.cmd.unimplemented=%s is currently unimplemented!
-mytown.cmd.err.failedToClaim=Failed to claim block!
+mytown.cmd.err.partOfTown=You need to be part of a town!
 
 # /t new [townname]
 mytown.cmd.err.newtown.nameinuse=Town name %s already in use!
 mytown.cmd.usage.newtown=Usage: /t new [townname]
+
+# /t claim
+mytown.cmd.err.claim.failed=Failed to claim block!
+mytown.cmd.err.claim.already=That block has already been claimed!
 
 # Notifications
 mytown.notification.town.created=Town %s created!
