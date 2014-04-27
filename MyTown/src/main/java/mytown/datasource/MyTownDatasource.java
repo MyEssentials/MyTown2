@@ -184,13 +184,11 @@ public abstract class MyTownDatasource {
 
 	public Rank getRank(String rank, Town town)
 	{
-		for(Rank r : Constants.DEFAULT_RANKS)
-		{
+		for(Rank r : Constants.DEFAULT_RANKS) {
 			if(r.parse(rank))
 				return r;
 		}
-		for(Rank r : town.getAdditionalRanks())
-		{
+		for(Rank r : town.getAdditionalRanks()) {
 			if(r.parse(rank))
 				return r;
 		}

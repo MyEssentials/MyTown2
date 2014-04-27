@@ -1,11 +1,11 @@
 package mytown.entities;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.Localization;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -92,7 +92,7 @@ public class Resident {
 	}
 
 	/**
-	 * Helper to send chat message to Resident
+	 * Helper to send a message to Resident
 	 * 
 	 * @param msg
 	 * @param args
@@ -100,6 +100,18 @@ public class Resident {
 	public void sendMessage(String msg, Object... args) {
 		if (!isOnline() || getPlayer() == null) return;
 		ChatUtils.sendChat(getPlayer(), msg, args);
+	}
+	
+	/**
+	 * Helper to send a localized message to Resident
+	 * 
+	 * @param msg
+	 * @param local
+	 * @param args
+	 */
+	public void sendLocalizedMessage(String msg, Localization local, Object... args) {
+		if (!isOnline() || getPlayer() == null) return;
+		ChatUtils.sendLocalizedChat(getPlayer(), local, msg, args);
 	}
 	
 	/**
@@ -224,5 +236,21 @@ public class Resident {
 			}
 		}
 		return selectedTown;
+	}
+	
+	/**
+	 * Helper getTownRank(getSelectedTown())
+	 * @return
+	 */
+	public Rank getTownRank() {
+		return getTownRank(getSelectedTown());
+	}
+	
+	/**
+	 * Helper setTownRank(getSelectedTown(), rank)
+	 * @param rank
+	 */
+	public void setTownRank(Rank rank) {
+		setTownRank(getSelectedTown(), rank);
 	}
 }

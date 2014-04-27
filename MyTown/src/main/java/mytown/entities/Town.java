@@ -15,10 +15,9 @@ import mytown.Constants;
  * 
  * @author Joe Goett
  */
-public class Town {
+public class Town implements Comparable<Town> {
 	private String name;
 	private int extraBlocks = 0;
-
 	private List<Rank> otherRanks;
 	
 	// TODO Add flags/permissions
@@ -48,8 +47,6 @@ public class Town {
 	{
 		return this.otherRanks;
 	}
-	
-	
 	
 	/**
 	 * Returns the name of the town
@@ -223,6 +220,21 @@ public class Town {
 	// //////////////////////////////////////
 	@Override
 	public String toString() {
-		return getName()+"["+getResidents().size()+"]";
+		return getName()+"[# of residents: "+getResidents().size()+", # of extra blocks: " + extraBlocks +"]";
+	}
+	
+
+	@Override
+	public int compareTo(Town t) { // TODO Flesh this out more for ranking towns?
+		int thisNumberOfResidents = residents.size(), thatNumberOfResidents = t.getResidents().size();
+		if (thisNumberOfResidents > thatNumberOfResidents) {
+			return -1;
+		} else if (thisNumberOfResidents == thatNumberOfResidents) {
+			return 0;
+		} else if (thisNumberOfResidents < thatNumberOfResidents) {
+			return 1;
+		}
+		
+		return -1;
 	}
 }
