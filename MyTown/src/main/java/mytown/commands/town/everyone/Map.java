@@ -5,6 +5,10 @@ import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Resident;
 import net.minecraft.command.ICommandSender;
 
+/**
+ * Displays a "map" of claimed/unclaimed plots relative to the sender
+ * @author Joe Goett
+ */
 public class Map extends SubCommandBase {
 	@Override
 	public String getName() {
@@ -22,7 +26,7 @@ public class Map extends SubCommandBase {
 		if (args.length == 0) {
 			res.sendMap();
 		} else {
-			res.setMapOn((args[1] == "on" || args[1] == "enable" || args[1] == "true"));
+			res.setMapOn(args[1] == "on" || args[1] == "enable" || args[1] == "true");
 		}
 	}
 }

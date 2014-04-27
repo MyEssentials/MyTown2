@@ -1,7 +1,6 @@
 package mytown.commands.town.nonresident;
 
 import mytown.MyTown;
-import mytown.core.ChatUtils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.datasource.MyTownDatasource;
@@ -49,15 +48,11 @@ public class NewTown extends SubCommandBase {
 			throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.newtown.nameinuse", (Object[])args));
 		}
 		
-		try {
-			Town town = new Town(args[0]);
-			getDatasource().insertTown(town);
-			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
-			getDatasource().linkResidentToTown(res, town);
-			ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.created", town.getName());
-		} catch (Exception e) {
-			e.printStackTrace();  // TODO Change later
-		}
+		Town town = new Town(args[0]);
+		getDatasource().insertTown(town);
+		Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
+		getDatasource().linkResidentToTown(res, town);
+		res.sendLocalizedMessage("mytown.notification.town.created", MyTown.instance.local, town.getName());
 	}
 
 	/**
