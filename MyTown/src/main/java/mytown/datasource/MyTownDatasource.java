@@ -1,8 +1,6 @@
 package mytown.datasource;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -14,7 +12,6 @@ import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
-import mytown.entities.TownPlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.Configuration;
 
@@ -40,7 +37,6 @@ public abstract class MyTownDatasource {
 	protected ConcurrentMap<String, Resident> residents;
 	protected ConcurrentMap<String, Nation> nations;
 	protected ConcurrentMap<String, TownBlock> blocks;
-	protected List<TownPlot> plots;
 
 	/**
 	 * Used for connecting to Databases. Returns if connection was successful
@@ -56,8 +52,6 @@ public abstract class MyTownDatasource {
 		residents = new ConcurrentHashMap<String, Resident>();
 		nations = new ConcurrentHashMap<String, Nation>();
 		blocks = new ConcurrentHashMap<String, TownBlock>();
-		plots = new ArrayList<TownPlot>(); // TODO: Use a List implementation
-											// that doesn't allow nulls, maybe?
 	}
 
 	/**
@@ -159,15 +153,6 @@ public abstract class MyTownDatasource {
 	 */
 	public Collection<TownBlock> getTownBlocks() {
 		return blocks.values();
-	}
-
-	/**
-	 * Returns a Collection of the TownPlots
-	 * 
-	 * @return
-	 */
-	public Collection<TownPlot> getTownPlots() {
-		return plots;
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -305,14 +290,6 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract void loadTownBlocks(Town town) throws Exception;
 
-	/**
-	 * Loads all TownPlots for the given town
-	 * 
-	 * @param town
-	 * @throws Exception
-	 */
-	public abstract void loadTownPlots(Town town) throws Exception;
-
 	// /////////////////////////////////////////////////////////////
 	// Add Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -352,16 +329,6 @@ public abstract class MyTownDatasource {
 	 */
 	public void addTownBlock(TownBlock townBlock) throws Exception {
 		blocks.put(townBlock.getKey(), townBlock);
-	}
-
-	/**
-	 * Adds the TownPlot to the Datasource
-	 * 
-	 * @param plot
-	 * @throws Exception
-	 */
-	public void addTownPlot(TownPlot plot) throws Exception {
-		plots.add(plot);
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -416,16 +383,6 @@ public abstract class MyTownDatasource {
 		}
 	}
 
-	/**
-	 * Adds all the TownPlots
-	 * 
-	 * @param townPlots
-	 * @throws Exception
-	 */
-	public void addTownPlots(TownPlot... townPlots) throws Exception {
-		plots.addAll(plots);
-	}
-
 	// /////////////////////////////////////////////////////////////
 	// Insert Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -461,14 +418,6 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void insertTownBlock(TownBlock townBlock) throws Exception;
-
-	/**
-	 * Adds a TownPlot to the Datasource and executes a query
-	 * 
-	 * @param townPlot
-	 * @throws Exception
-	 */
-	public abstract void insertTownPlot(TownPlot townPlot) throws Exception;
 
 	// /////////////////////////////////////////////////////////////
 	// Insert Multiple Entities
@@ -522,18 +471,6 @@ public abstract class MyTownDatasource {
 		}
 	}
 
-	/**
-	 * Adds multiple TownPlots to the Datasource and executes a query
-	 * 
-	 * @param plots
-	 * @throws Exception
-	 */
-	public void insertTownPlots(TownPlot... plots) throws Exception {
-		for (TownPlot plot : plots) {
-			insertTownPlot(plot);
-		}
-	}
-
 	// /////////////////////////////////////////////////////////////
 	// Remove Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -572,16 +509,6 @@ public abstract class MyTownDatasource {
 	 */
 	public boolean removeTownBlock(TownBlock townBlock) {
 		return blocks.remove(townBlock.getKey()) != null;
-	}
-
-	/**
-	 * Removes the TownPlot from the Datasource
-	 * 
-	 * @param plot
-	 * @return
-	 */
-	public boolean removeTownPlot(TownPlot plot) {
-		return plots.remove(plot);
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -632,17 +559,6 @@ public abstract class MyTownDatasource {
 		}
 	}
 
-	/**
-	 * Removes the TownPlots from the Datasource
-	 * 
-	 * @param plots
-	 */
-	public void removeTownPlots(TownPlot... plots) {
-		for (TownPlot plot : plots) {
-			removeTownPlot(plot);
-		}
-	}
-
 	// /////////////////////////////////////////////////////////////
 	// Update Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -678,14 +594,6 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void updateTownBlock(TownBlock block) throws Exception;
-
-	/**
-	 * Updates the TownPlot
-	 * 
-	 * @param plot
-	 * @throws Exception
-	 */
-	public abstract void updateTownPlot(TownPlot plot) throws Exception;
 
 	// /////////////////////////////////////////////////////////////
 	// Update Multiple Entities
@@ -736,18 +644,6 @@ public abstract class MyTownDatasource {
 	public void updateTownBlocks(TownBlock... blocks) throws Exception {
 		for (TownBlock block : blocks) {
 			updateTownBlock(block);
-		}
-	}
-
-	/**
-	 * Updates all the given TownPlots
-	 * 
-	 * @param plots
-	 * @throws Exception
-	 */
-	public void updateTownPlots(TownPlot... plots) throws Exception {
-		for (TownPlot plot : plots) {
-			updateTownPlot(plot);
 		}
 	}
 
