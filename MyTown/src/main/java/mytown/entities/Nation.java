@@ -145,8 +145,7 @@ public class Nation {
 	 * @param rank
 	 */
 	public void setTownRank(Town town, Rank rank) {
-		if (!hasTown(town))
-			return; // TODO Log/Throw Exception
+		if (!hasTown(town)) return; // TODO Log/Throw Exception
 		addTown(town, rank);
 	}
 

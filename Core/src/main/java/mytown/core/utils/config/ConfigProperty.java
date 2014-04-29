@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ConfigProperty {
 	String name() default "";
+
 	String category();
+
 	String comment() default "";
 }

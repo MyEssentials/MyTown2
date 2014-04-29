@@ -1,10 +1,9 @@
 package mytown.datasource;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import mytown.Constants;
 import mytown.core.Log;
@@ -13,7 +12,6 @@ import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
-import mytown.entities.TownPlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.Configuration;
 
@@ -33,13 +31,12 @@ import net.minecraftforge.common.Configuration;
  */
 public abstract class MyTownDatasource {
 	protected String configCat = "datasource";
-	
+
 	protected Log log;
-	protected Map<String, Town> towns;
-	protected Map<String, Resident> residents;
-	protected Map<String, Nation> nations;
-	protected Map<String, TownBlock> blocks;
-	protected List<TownPlot> plots;
+	protected ConcurrentMap<String, Town> towns;
+	protected ConcurrentMap<String, Resident> residents;
+	protected ConcurrentMap<String, Nation> nations;
+	protected ConcurrentMap<String, TownBlock> blocks;
 
 	/**
 	 * Used for connecting to Databases. Returns if connection was successful
@@ -51,11 +48,10 @@ public abstract class MyTownDatasource {
 	public void configure(Configuration config, Log log) {
 		this.log = log;
 		doConfig(config);
-		towns = new Hashtable<String, Town>();
-		residents = new Hashtable<String, Resident>();
-		nations = new Hashtable<String, Nation>();
-		blocks = new Hashtable<String, TownBlock>();
-		plots = new ArrayList<TownPlot>(); // TODO: Use a List implementation that doesn't allow nulls, maybe?
+		towns = new ConcurrentHashMap<String, Town>();
+		residents = new ConcurrentHashMap<String, Resident>();
+		nations = new ConcurrentHashMap<String, Nation>();
+		blocks = new ConcurrentHashMap<String, TownBlock>();
 	}
 
 	/**
@@ -159,15 +155,6 @@ public abstract class MyTownDatasource {
 		return blocks.values();
 	}
 
-	/**
-	 * Returns a Collection of the TownPlots
-	 * 
-	 * @return
-	 */
-	public Collection<TownPlot> getTownPlots() {
-		return plots;
-	}
-
 	// /////////////////////////////////////////////////////////////
 	// Single Instance Getters
 	// /////////////////////////////////////////////////////////////
@@ -182,21 +169,16 @@ public abstract class MyTownDatasource {
 		return towns.get(name);
 	}
 
-	public Rank getRank(String rank, Town town)
-	{
-		for(Rank r : Constants.DEFAULT_RANKS)
-		{
-			if(r.parse(rank))
-				return r;
+	public Rank getRank(String rank, Town town) {
+		for (Rank r : Constants.DEFAULT_RANKS) {
+			if (r.parse(rank)) return r;
 		}
-		for(Rank r : town.getAdditionalRanks())
-		{
-			if(r.parse(rank))
-				return r;
+		for (Rank r : town.getAdditionalRanks()) {
+			if (r.parse(rank)) return r;
 		}
-		return null;
+		return Constants.DEFAULT_RANKS[0]; // TODO Change later?
 	}
-	
+
 	/**
 	 * Gets a Resident with the given name
 	 * 
@@ -242,27 +224,31 @@ public abstract class MyTownDatasource {
 	// /////////////////////////////////////////////////////////////
 	// Checkers?
 	// /////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Checks if a Town with the given name exists
+	 * 
 	 * @param townName
 	 * @return
 	 */
 	public boolean hasTown(String townName) {
 		return towns.containsKey(townName);
 	}
-	
+
 	/**
 	 * Checks if the Resident with the given UUID exists
-	 * @param residentUUID 1.6 is player name, 1.7> is player UUID
+	 * 
+	 * @param residentUUID
+	 *            1.6 is player name, 1.7> is player UUID
 	 * @return
 	 */
 	public boolean hasResident(String residentUUID) {
 		return residents.containsKey(residentUUID);
 	}
-	
+
 	/**
 	 * Checks if the Nation with the given name exists
+	 * 
 	 * @param nationName
 	 * @return
 	 */
@@ -272,13 +258,14 @@ public abstract class MyTownDatasource {
 
 	/**
 	 * Checks if the TownBlock with the given key exists
+	 * 
 	 * @param key
 	 * @return
 	 */
 	public boolean hasTownBlock(String key) {
 		return blocks.containsKey(key);
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Loaders
 	// /////////////////////////////////////////////////////////////
@@ -302,14 +289,6 @@ public abstract class MyTownDatasource {
 	 * Loads all TownBlocks for the given town into the Datasource
 	 */
 	public abstract void loadTownBlocks(Town town) throws Exception;
-
-	/**
-	 * Loads all TownPlots for the given town
-	 * 
-	 * @param town
-	 * @throws Exception
-	 */
-	public abstract void loadTownPlots(Town town) throws Exception;
 
 	// /////////////////////////////////////////////////////////////
 	// Add Single Entity
@@ -350,16 +329,6 @@ public abstract class MyTownDatasource {
 	 */
 	public void addTownBlock(TownBlock townBlock) throws Exception {
 		blocks.put(townBlock.getKey(), townBlock);
-	}
-
-	/**
-	 * Adds the TownPlot to the Datasource
-	 * 
-	 * @param plot
-	 * @throws Exception
-	 */
-	public void addTownPlot(TownPlot plot) throws Exception {
-		plots.add(plot);
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -414,16 +383,6 @@ public abstract class MyTownDatasource {
 		}
 	}
 
-	/**
-	 * Adds all the TownPlots
-	 * 
-	 * @param townPlots
-	 * @throws Exception
-	 */
-	public void addTownPlots(TownPlot... townPlots) throws Exception {
-		plots.addAll(plots);
-	}
-
 	// /////////////////////////////////////////////////////////////
 	// Insert Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -459,14 +418,6 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void insertTownBlock(TownBlock townBlock) throws Exception;
-
-	/**
-	 * Adds a TownPlot to the Datasource and executes a query
-	 * 
-	 * @param townPlot
-	 * @throws Exception
-	 */
-	public abstract void insertTownPlot(TownPlot townPlot) throws Exception;
 
 	// /////////////////////////////////////////////////////////////
 	// Insert Multiple Entities
@@ -520,18 +471,6 @@ public abstract class MyTownDatasource {
 		}
 	}
 
-	/**
-	 * Adds multiple TownPlots to the Datasource and executes a query
-	 * 
-	 * @param plots
-	 * @throws Exception
-	 */
-	public void insertTownPlots(TownPlot... plots) throws Exception {
-		for (TownPlot plot : plots) {
-			insertTownPlot(plot);
-		}
-	}
-
 	// /////////////////////////////////////////////////////////////
 	// Remove Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -570,16 +509,6 @@ public abstract class MyTownDatasource {
 	 */
 	public boolean removeTownBlock(TownBlock townBlock) {
 		return blocks.remove(townBlock.getKey()) != null;
-	}
-
-	/**
-	 * Removes the TownPlot from the Datasource
-	 * 
-	 * @param plot
-	 * @return
-	 */
-	public boolean removeTownPlot(TownPlot plot) {
-		return plots.remove(plot);
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -630,17 +559,6 @@ public abstract class MyTownDatasource {
 		}
 	}
 
-	/**
-	 * Removes the TownPlots from the Datasource
-	 * 
-	 * @param plots
-	 */
-	public void removeTownPlots(TownPlot... plots) {
-		for (TownPlot plot : plots) {
-			removeTownPlot(plot);
-		}
-	}
-
 	// /////////////////////////////////////////////////////////////
 	// Update Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -676,14 +594,6 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void updateTownBlock(TownBlock block) throws Exception;
-
-	/**
-	 * Updates the TownPlot
-	 * 
-	 * @param plot
-	 * @throws Exception
-	 */
-	public abstract void updateTownPlot(TownPlot plot) throws Exception;
 
 	// /////////////////////////////////////////////////////////////
 	// Update Multiple Entities
@@ -737,34 +647,24 @@ public abstract class MyTownDatasource {
 		}
 	}
 
-	/**
-	 * Updates all the given TownPlots
-	 * 
-	 * @param plots
-	 * @throws Exception
-	 */
-	public void updateTownPlots(TownPlot... plots) throws Exception {
-		for (TownPlot plot : plots) {
-			updateTownPlot(plot);
-		}
-	}
-
 	// /////////////////////////////////////////////////////////////
 	// Linkages
 	// /////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Loads all stored links between Residents and Towns
+	 * 
 	 * @throws Exception
 	 */
 	public abstract void loadResidentToTownLinks() throws Exception;
 
 	/**
 	 * Loads all stored links between Towns and Nations
+	 * 
 	 * @throws Exception
 	 */
 	public abstract void loadTownToNationLinks() throws Exception;
-	
+
 	/**
 	 * Links the Resident with the given Rank to the Town
 	 * 
@@ -810,11 +710,12 @@ public abstract class MyTownDatasource {
 	public abstract void dump() throws Exception;
 
 	// /////////////////////////////////////////////////////////////
-	// Unknown Group/Helpers?			  TODO Change/Move Later? //
+	// Unknown Group/Helpers? TODO Change/Move Later? //
 	// /////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Gets or makes a new Resident from the playerName
+	 * 
 	 * @param playerName
 	 * @return
 	 * @throws Exception
@@ -827,9 +728,10 @@ public abstract class MyTownDatasource {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Gets or makes a new Resident from the EntityPlayer
+	 * 
 	 * @param player
 	 * @return
 	 * @throws Exception
@@ -837,5 +739,5 @@ public abstract class MyTownDatasource {
 	public Resident getOrMakeResident(EntityPlayer player) throws Exception {
 		return getOrMakeResident(player.getCommandSenderName());
 	}
-	
+
 }

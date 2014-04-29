@@ -11,13 +11,14 @@ import forgeperms.api.ForgePermsAPI;
 
 /**
  * Permission Channel Type. Sends messages to anyone with the specified permission node
+ * 
  * @author Joe Goett
  */
 public class Permission implements IChannelType {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String name(){
+	public String name() {
 		return "Permission";
 	}
 
@@ -29,7 +30,7 @@ public class Permission implements IChannelType {
 		List<ICommandSender> recipients = new ArrayList<ICommandSender>();
 		for (Object obj : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
 			ICommandSender r = (ICommandSender) obj;
-			if (ForgePermsAPI.permManager.canAccess(r.getCommandSenderName(), r.getEntityWorld().provider.getDimensionName(), channel.permission)){
+			if (ForgePermsAPI.permManager.canAccess(r.getCommandSenderName(), r.getEntityWorld().provider.getDimensionName(), channel.permission)) {
 				recipients.add(r);
 			}
 		}

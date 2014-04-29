@@ -36,7 +36,7 @@ public class MyTown {
 
 	// Permission Manager
 	public PermissionManager permManager;
-	
+
 	// Loggers
 	public Log coreLog;
 	public Log bypassLog;
@@ -44,14 +44,14 @@ public class MyTown {
 
 	// Configs
 	public Configuration config;
-	
+
 	// MyTown Localization instance
 	public Localization local;
 
 	// Datasource
 	public Map<String, Class<?>> datasourceTypes;
 	public MyTownDatasource datasource;
-	
+
 	// Set to true to kick all non-admin users out with a custom kick message
 	public boolean safemode = false;
 
@@ -61,7 +61,7 @@ public class MyTown {
 		datasourceTypes = new Hashtable<String, Class<?>>();
 		datasourceTypes.put("mysql", MyTownDatasource_mysql.class);
 		datasourceTypes.put("sqlite", MyTownDatasource_sqlite.class);
-		
+
 		// Setup Loggers
 		coreLog = new Log("MyTown2", FMLLog.getLogger());
 		datasourceLog = new Log("Datasource", coreLog.getLogger());
@@ -74,40 +74,40 @@ public class MyTown {
 		ConfigProcessor.processConfig(config, Config.class);
 
 		// Localization
-		File localFile = new File(Constants.CONFIG_FOLDER, "localization/"+Config.localization+".lang");
-		if(!localFile.getParentFile().exists()){
+		File localFile = new File(Constants.CONFIG_FOLDER, "localization/" + Config.localization + ".lang");
+		if (!localFile.getParentFile().exists()) {
 			localFile.getParentFile().mkdir();
 		}
-		if (!localFile.exists()){
-			InputStream is = MyTown.class.getResourceAsStream("/localization/"+Config.localization+".lang");
-			if (is != null){
+		if (!localFile.exists()) {
+			InputStream is = MyTown.class.getResourceAsStream("/localization/" + Config.localization + ".lang");
+			if (is != null) {
 				OutputStream resStreamOut = null;
-			    int readBytes;
-			    byte[] buffer = new byte[4096];
-			    try {
-			        resStreamOut = new FileOutputStream(localFile);
-			        while ((readBytes = is.read(buffer)) > 0) {
-			            resStreamOut.write(buffer, 0, readBytes);
-			        }
-			    } catch (IOException e1) {
-			        // TODO Handle this
-			    } finally {
-			    	try {
-			    		is.close();
-			    		resStreamOut.close();
-			    	} catch (Exception ignored) {}
-			    }
+				int readBytes;
+				byte[] buffer = new byte[4096];
+				try {
+					resStreamOut = new FileOutputStream(localFile);
+					while ((readBytes = is.read(buffer)) > 0) {
+						resStreamOut.write(buffer, 0, readBytes);
+					}
+				} catch (IOException e1) {
+					// TODO Handle this
+				} finally {
+					try {
+						is.close();
+						resStreamOut.close();
+					} catch (Exception ignored) {}
+				}
 			}
 		}
 		try {
 			local = new Localization(new File(Constants.CONFIG_FOLDER, "localization/" + Config.localization + ".lang"));
 			local.load();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			coreLog.warning("Localization file %s missing!", Config.localization);
 		}
 		registerHandlers();
 	}
-	
+
 	@Mod.EventHandler
 	public void imcEvent(FMLInterModComms.IMCEvent ev) {
 		for (FMLInterModComms.IMCMessage msg : ev.getMessages()) {
@@ -115,7 +115,7 @@ public class MyTown {
 				String[] msgSplit = msg.getStringValue().split(",");
 				String datasourceName = msgSplit[0].toLowerCase();
 				String datasourceClassName = msgSplit[1];
-				
+
 				try {
 					datasourceTypes.put(datasourceName, Class.forName(datasourceClassName));
 				} catch (ClassNotFoundException e) {
@@ -151,7 +151,7 @@ public class MyTown {
 			datasourceLog.severe("Failed to find datasource type: %s", Config.dbType.toLowerCase());
 			return;
 		}
-		
+
 		try {
 			datasource = (MyTownDatasource) datasourceTypes.get(Config.dbType.toLowerCase()).newInstance();
 			datasource.configure(config, datasourceLog);
@@ -160,12 +160,12 @@ public class MyTown {
 				datasourceLog.severe("Failed to connect to datasource!");
 				safemode = true;
 			}
-			
+
 			// Load everything
 			datasource.loadResidents();
 			datasource.loadTowns();
 			datasource.loadNations();
-			
+
 			// Load links
 			datasource.loadResidentToTownLinks();
 			datasource.loadTownToNationLinks();
@@ -173,7 +173,7 @@ public class MyTown {
 			datasourceLog.severe("Failed to create datasource!", e);
 		}
 	}
-	
+
 	/**
 	 * Registers all commands
 	 */
@@ -182,16 +182,15 @@ public class MyTown {
 		CommandUtils.registerCommand(new CmdTown("town"));
 		CommandUtils.registerCommand(new CmdTownAdmin("townadmin"));
 	}
-	
+
 	/**
 	 * Registers permission manager
 	 */
-	private void registerPermissions()
-	{
+	private void registerPermissions() {
 		permManager = new PermissionManager("MyTownPermManager");
 		ForgePermsAPI.permManager = permManager;
 	}
-	
+
 	/**
 	 * Registers IPlayerTrackers and EventHandlers
 	 */

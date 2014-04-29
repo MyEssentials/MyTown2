@@ -9,17 +9,16 @@ import net.minecraft.tileentity.TileEntityCommandBlock;
 
 /**
  * Includes this in your mod. ForgePerms will automatically set the 3 managers.
+ * 
  * @author Joe Goett
  */
 public class ForgePermsAPI {
 	public static IChatManager chatManager;
 	public static IEconomyManager econManager;
 	public static IPermissionManager permManager;
-	
-	
+
 	/**
-	 * Checks if command server has the given permission node. Does NOT allow
-	 * console to access.
+	 * Checks if command server has the given permission node. Does NOT allow console to access.
 	 * 
 	 * @param cs
 	 * @param node
@@ -47,8 +46,7 @@ public class ForgePermsAPI {
 				throw new CommandException("commands.generic.permission");
 			}
 		}
-		if (node == null)
-			return;
+		if (node == null) return;
 		EntityPlayer p = (EntityPlayer) cs;
 		if (permManager.canAccess(p.username, p.worldObj.provider.getDimensionName(), node)) {
 			return;

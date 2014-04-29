@@ -16,16 +16,17 @@ import net.minecraft.command.ICommandSender;
 
 /**
  * Handler for multiple SubCommands
+ * 
  * @author Joe Goett
  */
 public class SubCommandHandler extends CommandBase {
 	protected String name = "";
 	protected Map<String, SubCommand> subCommands;
 	protected Log log;
-	
-	
+
 	/**
 	 * Creates a SubCommandHandler with the given name. Checks if it has Permission Annotation and uses that to get the permission node
+	 * 
 	 * @param name
 	 */
 	public SubCommandHandler(String name) {
@@ -40,12 +41,12 @@ public class SubCommandHandler extends CommandBase {
 			permNode = "";
 		}
 		CommandUtils.permissionList.put(name, permNode);
-		
-		
+
 	}
-	
+
 	/**
 	 * Creates a SubCommandHandler with the given name and permission node
+	 * 
 	 * @param name
 	 * @param permNode
 	 */
@@ -54,17 +55,19 @@ public class SubCommandHandler extends CommandBase {
 		this.name = name;
 		this.permNode = permNode;
 	}
-	
+
 	/**
 	 * Adds the SubCommand to this handler
+	 * 
 	 * @param subCmd
 	 */
 	public void addSubCommand(SubCommand subCmd) {
 		subCommands.put(subCmd.getName(), subCmd);
 	}
-	
+
 	/**
 	 * Removes the SubCommand from this handler
+	 * 
 	 * @param subCmd
 	 */
 	public void removeSubCommand(SubCommand subCmd) {
@@ -95,8 +98,7 @@ public class SubCommandHandler extends CommandBase {
 		}
 		try {
 			SubCommand cmd = subCommands.get(args[0]);
-			if (cmd == null)
-				throw new CommandNotFoundException();
+			if (cmd == null) throw new CommandNotFoundException();
 			cmd.canUse(sender);
 			cmd.process(sender, Arrays.copyOfRange(args, 1, args.length));
 		} catch (NumberFormatException ex) {
@@ -108,10 +110,9 @@ public class SubCommandHandler extends CommandBase {
 			log.severe("Command execution error by %s", ex, sender);
 		}
 	}
-	
-	public Map<String, SubCommand> getSubCommands()
-	{
+
+	public Map<String, SubCommand> getSubCommands() {
 		return this.subCommands;
 	}
-	
+
 }

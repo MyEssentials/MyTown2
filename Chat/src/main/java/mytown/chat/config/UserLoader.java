@@ -15,16 +15,16 @@ import net.minecraftforge.common.Property.Type;
 public class UserLoader extends Configuration implements UsersConfig {
 	ConfigCategory users;
 	ChannelHandler channelHandler;
-	
-	public UserLoader(File file){
+
+	public UserLoader(File file) {
 		super(file);
 		users = getCategory("users");
 		channelHandler = MyTownChat.INSTANCE.chatHandler.getChannelHandler();
 	}
-	
+
 	@Override
 	public void loadUsers() {
-		for (Property userProp : users.getValues().values()){
+		for (Property userProp : users.getValues().values()) {
 			ChannelUser user = new ChannelUser(userProp.getName());
 			user.joinChannels(userProp.getStringList());
 		}
@@ -37,7 +37,7 @@ public class UserLoader extends Configuration implements UsersConfig {
 
 	@Override
 	public void saveUsers(List<ChannelUser> users) {
-		for (ChannelUser user : users){
+		for (ChannelUser user : users) {
 			saveUser(user);
 		}
 		save();

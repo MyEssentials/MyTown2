@@ -15,13 +15,13 @@ import forgeperms.api.ForgePermsAPI;
 
 /**
  * Command to enable/disable safemode
+ * 
  * @author Joe Goett
  */
 @Permission(node = "mytown.adm.cmd.safemode")
 public class CmdSafeMode extends SubCommandBase {
 
-	public CmdSafeMode(String name)
-	{
+	public CmdSafeMode(String name) {
 		super(name);
 	}
 
@@ -47,7 +47,7 @@ public class CmdSafeMode extends SubCommandBase {
 	public List<String> tabComplete(ICommandSender sender, String[] args) {
 		return CommandUtils.getListOfStringsMatchingLastWord(args, "on", "true", "enable", "off", "false", "disable");
 	}
-	
+
 	/**
 	 * Kicks all players that can't bypass safemode (mytown.adm.safemode)
 	 */
@@ -58,9 +58,10 @@ public class CmdSafeMode extends SubCommandBase {
 			}
 		}
 	}
-	
+
 	/**
 	 * Kicks the given EntityPlayerMP if they dont have mytown.adm.safemode
+	 * 
 	 * @param pl
 	 */
 	public static void kickPlayer(EntityPlayerMP pl) {

@@ -8,15 +8,15 @@ import net.minecraft.command.ICommandSender;
 
 public abstract class CommandBase implements Command {
 	protected String permNode;
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
-		
+
 		Assert.Perm(sender, getPermNode(), canConsoleUse());
 		return true;
-		
+
 	}
-	
+
 	public String getPermNode() {
 		return permNode;
 	}

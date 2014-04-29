@@ -6,6 +6,8 @@ import mytown.MyTown;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
+import mytown.entities.Resident;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
@@ -13,9 +15,20 @@ import net.minecraft.server.MinecraftServer;
 @Permission(node = "mytown.cmd.invite")
 public class CmdInvite extends SubCommandBase {
 
-	public CmdInvite(String name)
-	{
+	public CmdInvite(String name) {
 		super(name);
+	}
+
+	@Override
+	public void canUse(ICommandSender sender) throws CommandException {
+		super.canUse(sender);
+		Resident res = null;
+		try {
+			res = MyTown.instance.datasource.getOrMakeResident(sender.getCommandSenderName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (!res.getTownRank().hasPermission("assistant.invite")) throw new CommandException("commands.generic.permission");
 	}
 
 	@Override
@@ -24,7 +37,7 @@ public class CmdInvite extends SubCommandBase {
 			throw new WrongUsageException(MyTown.instance.local.getLocalization("mytown.cmd.usage.invite"));
 		}
 	}
-	
+
 	@Override
 	public List<String> tabComplete(ICommandSender sender, String[] args) {
 		return CommandUtils.getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());

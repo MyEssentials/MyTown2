@@ -7,7 +7,7 @@ package mytown.entities;
  */
 public class TownBlock {
 	public static String keyFormat = "%s;%s;%s";
-	
+
 	private int id;
 	private int dim;
 	private int x, z;
@@ -91,6 +91,7 @@ public class TownBlock {
 
 	/**
 	 * Returns the Town that this TownBlock belongs to
+	 * 
 	 * @return
 	 */
 	public Town getTown() {
