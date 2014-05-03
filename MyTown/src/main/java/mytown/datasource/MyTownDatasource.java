@@ -680,7 +680,7 @@ public abstract class MyTownDatasource {
 	public abstract boolean deleteTown(Town town) throws Exception;
 	
 	/**
-	 * Deletes the town from Datasource and executes a query
+	 * Deletes the nation from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
@@ -688,7 +688,7 @@ public abstract class MyTownDatasource {
 	public abstract boolean deleteNation(Nation nation) throws Exception;
 	
 	/**
-	 * Deletes the town from Datasource and executes a query
+	 * Deletes the townblock from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
@@ -696,7 +696,7 @@ public abstract class MyTownDatasource {
 	public abstract boolean deleteTownBlock(TownBlock townBlock) throws Exception;
 	
 	/**
-	 * Deletes the town from Datasource and executes a query
+	 * Deletes the resident from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
@@ -709,7 +709,7 @@ public abstract class MyTownDatasource {
 	// /////////////////////////////////////////////////////////////
 	
 	/**
-	 * Deletes the town from Datasource and executes a query
+	 * Deletes the towns from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
@@ -721,7 +721,7 @@ public abstract class MyTownDatasource {
 	}
 	
 	/**
-	 * Deletes the town from Datasource and executes a query
+	 * Deletes the nations from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
@@ -733,7 +733,7 @@ public abstract class MyTownDatasource {
 	}
 	
 	/**
-	 * Deletes the town from Datasource and executes a query
+	 * Deletes the townblocks from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
@@ -745,7 +745,7 @@ public abstract class MyTownDatasource {
 	}
 	
 	/**
-	 * Deletes the town from Datasource and executes a query
+	 * Deletes the residents from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
