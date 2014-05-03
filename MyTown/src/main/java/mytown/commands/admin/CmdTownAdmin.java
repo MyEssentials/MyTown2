@@ -20,7 +20,9 @@ public class CmdTownAdmin extends SubCommandHandler {
 		// Subcommands
 		addSubCommand(new CmdReload("reload"));
 		addSubCommand(new CmdSafeMode("safemode"));
-
+		addSubCommand(new CmdDelete("delete"));
+		
+		
 		// Add aliases
 		aliases.add("ta");
 	}

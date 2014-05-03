@@ -1,5 +1,6 @@
 package mytown.commands.town.everyone;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,9 +26,9 @@ public class CmdListTown extends SubCommandBase {
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		List<Town> sortedTowns = (List<Town>) MyTown.instance.datasource.getTowns();
+		List<Town> sortedTowns =  new ArrayList<Town>( MyTown.instance.datasource.getTowns());
 		Collections.sort(sortedTowns); // TODO Cache the sort?
-		String townList = Joiner.on(", ").join(sortedTowns);
+		String townList = "\n" + Joiner.on("\n").join(sortedTowns);
 		ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.list", townList);
 	}
 }

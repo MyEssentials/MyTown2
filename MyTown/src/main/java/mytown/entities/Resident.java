@@ -256,4 +256,16 @@ public class Resident {
 	public void setTownRank(Rank rank) {
 		setTownRank(getSelectedTown(), rank);
 	}
+	/**
+	 * Removes resident from town. Called when resident is removed from a town.
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public boolean removeResidentFromTown(Town town)
+	{
+		if(towns.contains(town))
+			return towns.remove(town);
+		return false;
+	}
 }
