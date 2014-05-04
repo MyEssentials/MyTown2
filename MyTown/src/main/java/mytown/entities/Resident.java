@@ -256,4 +256,29 @@ public class Resident {
 	public void setTownRank(Rank rank) {
 		setTownRank(getSelectedTown(), rank);
 	}
+	/**
+	 * Removes resident from town. Called when resident is removed from a town.
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public boolean removeResidentFromTown(Town town)
+	{
+		if(towns.contains(town))
+			return towns.remove(town);
+		return false;
+	}
+	/**
+	 * Sets the primary town of this resident.
+	 * 
+	 * @param town
+	 * @return False if the resident isn't part of the town given. True if process succeeded.
+	 */
+	public boolean setSelectedTown(Town town)
+	{
+		if(!towns.contains(town))
+			return false;
+		this.selectedTown = town;
+		return true;
+	}
 }

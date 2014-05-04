@@ -180,6 +180,7 @@ public class Town implements Comparable<Town> {
 	 */
 	public void removeResident(Resident resident) {
 		residents.remove(resident);
+		resident.removeResidentFromTown(this);
 	}
 
 	/**
