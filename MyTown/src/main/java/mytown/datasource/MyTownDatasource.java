@@ -173,8 +173,9 @@ public abstract class MyTownDatasource {
 		for (Rank r : Constants.DEFAULT_RANKS) {
 			if (r.parse(rank)) return r;
 		}
-		for (Rank r : town.getAdditionalRanks()) {
-			if (r.parse(rank)) return r;
+		if(town != null)
+			for (Rank r : town.getAdditionalRanks()) {
+				if (r.parse(rank)) return r;
 		}
 		return Constants.DEFAULT_RANKS[0]; // TODO Change later?
 	}
@@ -481,7 +482,16 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 */
 	public boolean removeTown(Town town) {
-		return towns.remove(town.getName()) != null;
+		boolean result = towns.remove(town.getName()) != null;
+	
+		for(Nation n : nations.values())
+			if(n.hasTown(town))
+				n.removeTown(town);
+	
+		for(Resident r : town.getResidents())
+			r.removeResidentFromTown(town);
+		
+		return result;
 	}
 
 	/**
@@ -490,7 +500,13 @@ public abstract class MyTownDatasource {
 	 * @param resident
 	 */
 	public boolean removeResident(Resident resident) {
-		return residents.remove(resident.getUUID()) != null;
+		boolean result = residents.remove(resident.getUUID()) != null;
+		
+		for(Town t : towns.values())
+			if(t.hasResident(resident))
+				t.removeResident(resident);
+		
+		return result;
 	}
 
 	/**
@@ -499,7 +515,11 @@ public abstract class MyTownDatasource {
 	 * @param nation
 	 */
 	public boolean removeNation(Nation nation) {
-		return nations.remove(nation.getName()) != null;
+		boolean result = nations.remove(nation.getName()) != null;
+		for(Town t : towns.values())
+			if(t.hasNation(nation))
+				t.removeNation(nation);
+		return result;
 	}
 
 	/**
@@ -648,6 +668,95 @@ public abstract class MyTownDatasource {
 	}
 
 	// /////////////////////////////////////////////////////////////
+	// Delete Single Entities
+	// /////////////////////////////////////////////////////////////
+	
+	/**
+	 * Deletes the town from Datasource and executes a query
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public abstract boolean deleteTown(Town town) throws Exception;
+	
+	/**
+	 * Deletes the nation from Datasource and executes a query
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public abstract boolean deleteNation(Nation nation) throws Exception;
+	
+	/**
+	 * Deletes the townblock from Datasource and executes a query
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public abstract boolean deleteTownBlock(TownBlock townBlock) throws Exception;
+	
+	/**
+	 * Deletes the resident from Datasource and executes a query
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public abstract boolean deleteResident(Resident resident) throws Exception;
+	
+		
+	// /////////////////////////////////////////////////////////////
+	// Delete Multiple Entities
+	// /////////////////////////////////////////////////////////////
+	
+	/**
+	 * Deletes the towns from Datasource and executes a query
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public void deleteTowns(Town... towns) throws Exception
+	{
+		for(Town t : towns)
+			deleteTown(t);
+	}
+	
+	/**
+	 * Deletes the nations from Datasource and executes a query
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public void deleteNations(Nation... nations) throws Exception
+	{
+		for(Nation n : nations)
+			deleteNation(n);
+	}
+	
+	/**
+	 * Deletes the townblocks from Datasource and executes a query
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public void deleteTownBlocks(TownBlock... townBlocks) throws Exception
+	{
+		for(TownBlock b : townBlocks)
+			deleteTownBlock(b);
+	}
+	
+	/**
+	 * Deletes the residents from Datasource and executes a query
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public void deleteResidents(Resident... residents) throws Exception
+	{
+		for(Resident r : residents)
+			deleteResident(r);
+	}
+	
+	// /////////////////////////////////////////////////////////////
 	// Linkages
 	// /////////////////////////////////////////////////////////////
 
@@ -702,6 +811,27 @@ public abstract class MyTownDatasource {
 	public void linkTownToNation(Town town, Nation nation) throws Exception {
 		linkTownToNation(town, nation, Nation.Rank.Town);
 	}
+	
+	/**
+	 * Removes link of a Resident to the specified Town
+	 * 
+	 * @param resident
+	 * @param town
+	 * @throws Exception
+	 */
+	
+	public abstract void unlinkResidentFromTown(Resident resident, Town town) throws Exception;
+	
+	/**
+	 * Removes link of a Town to the specified Nation
+	 * 
+	 * @param town
+	 * @param nation
+	 * @throws Exception
+	 */
+	
+	public abstract void unlinkTownFromNation(Town town, Nation nation) throws Exception;
+	
 
 	// /////////////////////////////////////////////////////////////
 	// Extras

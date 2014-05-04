@@ -5,8 +5,10 @@ import java.util.List;
 
 import mytown.commands.town.assistant.CmdClaim;
 import mytown.commands.town.assistant.CmdInvite;
+import mytown.commands.town.everyone.CmdInfo;
 import mytown.commands.town.everyone.CmdListTown;
 import mytown.commands.town.everyone.CmdMap;
+import mytown.commands.town.everyone.CmdSelect;
 import mytown.commands.town.nonresident.CmdNewTown;
 import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandHandler;
@@ -16,7 +18,7 @@ import mytown.core.utils.command.sub.SubCommandHandler;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd.town")
+@Permission(node = "mytown.cmd")
 public class CmdTown extends SubCommandHandler {
 	List<String> aliases = new ArrayList<String>();
 
@@ -29,7 +31,8 @@ public class CmdTown extends SubCommandHandler {
 		addSubCommand(new CmdMap("map"));
 		addSubCommand(new CmdListTown("list"));
 		addSubCommand(new CmdInvite("invite"));
-
+		addSubCommand(new CmdInfo("info"));
+		addSubCommand(new CmdSelect("select"));
 		// Add Aliases
 		aliases.add("t");
 	}

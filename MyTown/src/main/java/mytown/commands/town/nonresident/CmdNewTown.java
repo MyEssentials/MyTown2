@@ -16,7 +16,7 @@ import net.minecraft.command.WrongUsageException;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd.town.new")
+@Permission(node = "mytown.cmd.new")
 public class CmdNewTown extends SubCommandBase {
 
 	public CmdNewTown(String name) {
@@ -27,8 +27,8 @@ public class CmdNewTown extends SubCommandBase {
 	public void canUse(ICommandSender sender) throws CommandException {
 		super.canUse(sender);
 		try {
-			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
-			Assert.Perm(sender, "mytown.cmd.town.new." + (res.getTowns().size() + 1));
+			//Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
+			Assert.Perm(sender, this.permNode);
 		} catch (CommandException ce) {
 			throw (ce);
 		} catch (Exception e) {
@@ -53,6 +53,7 @@ public class CmdNewTown extends SubCommandBase {
 		res.sendLocalizedMessage("mytown.notification.town.created", MyTown.instance.local, town.getName());
 	}
 
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 
@@ -61,4 +62,5 @@ public class CmdNewTown extends SubCommandBase {
 	private MyTownDatasource getDatasource() {
 		return MyTown.instance.datasource;
 	}
+	
 }
