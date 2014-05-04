@@ -268,4 +268,17 @@ public class Resident {
 			return towns.remove(town);
 		return false;
 	}
+	/**
+	 * Sets the primary town of this resident.
+	 * 
+	 * @param town
+	 * @return False if the resident isn't part of the town given. True if process succeeded.
+	 */
+	public boolean setSelectedTown(Town town)
+	{
+		if(!towns.contains(town))
+			return false;
+		this.selectedTown = town;
+		return true;
+	}
 }

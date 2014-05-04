@@ -9,11 +9,12 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Town;
+import mytown.entities.comparator.TownComparator;
 import net.minecraft.command.ICommandSender;
 
 import com.google.common.base.Joiner;
 
-@Permission(node = "mytown.cmd.town.list")
+@Permission(node = "mytown.cmd.list")
 public class CmdListTown extends SubCommandBase {
 	public CmdListTown(String name) {
 		super(name);
@@ -27,7 +28,8 @@ public class CmdListTown extends SubCommandBase {
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		List<Town> sortedTowns =  new ArrayList<Town>( MyTown.instance.datasource.getTowns());
-		Collections.sort(sortedTowns); // TODO Cache the sort?
+		TownComparator comp = new TownComparator(TownComparator.Order.Name);
+		Collections.sort(sortedTowns, comp); // TODO Cache the sort?
 		String townList = "\n" + Joiner.on("\n").join(sortedTowns);
 		ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.list", townList);
 	}

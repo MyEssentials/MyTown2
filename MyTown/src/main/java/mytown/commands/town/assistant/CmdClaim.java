@@ -16,7 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd.town.claim")
+@Permission(node = "mytown.cmd.claim")
 public class CmdClaim extends SubCommandBase {
 
 	public CmdClaim(String name) {

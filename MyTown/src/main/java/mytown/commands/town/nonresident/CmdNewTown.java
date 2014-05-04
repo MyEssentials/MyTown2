@@ -16,7 +16,7 @@ import net.minecraft.command.WrongUsageException;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd.town.new")
+@Permission(node = "mytown.cmd.new")
 public class CmdNewTown extends SubCommandBase {
 
 	public CmdNewTown(String name) {

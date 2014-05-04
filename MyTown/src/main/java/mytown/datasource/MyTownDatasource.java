@@ -811,6 +811,27 @@ public abstract class MyTownDatasource {
 	public void linkTownToNation(Town town, Nation nation) throws Exception {
 		linkTownToNation(town, nation, Nation.Rank.Town);
 	}
+	
+	/**
+	 * Removes link of a Resident to the specified Town
+	 * 
+	 * @param resident
+	 * @param town
+	 * @throws Exception
+	 */
+	
+	public abstract void unlinkResidentFromTown(Resident resident, Town town) throws Exception;
+	
+	/**
+	 * Removes link of a Town to the specified Nation
+	 * 
+	 * @param town
+	 * @param nation
+	 * @throws Exception
+	 */
+	
+	public abstract void unlinkTownFromNation(Town town, Nation nation) throws Exception;
+	
 
 	// /////////////////////////////////////////////////////////////
 	// Extras

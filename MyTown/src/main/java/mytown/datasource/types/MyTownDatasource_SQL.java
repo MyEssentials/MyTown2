@@ -286,7 +286,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	{
 		synchronized(lock) {
 			removeTownBlock(townBlock);
-			PreparedStatement statement = prepare("DELETE FROM "+ prefix +" TownBlocks WHERE X=? Z=? Dim=?", false);
+			PreparedStatement statement = prepare("DELETE FROM "+ prefix +" TownBlocks WHERE X=? AND Z=? AND Dim=?", false);
 			statement.setInt(1, townBlock.getX());
 			statement.setInt(2, townBlock.getZ());
 			statement.setInt(3, townBlock.getDim());
@@ -314,7 +314,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	@Override
 	public void loadResidentToTownLinks() throws Exception {
 		synchronized (lock) {
-			PreparedStatement statement = prepare("SELECT * FROM " + prefix + "ResidentsToTowns", true);
+			PreparedStatement statement = prepare("SELECT * FROM " + prefix + " ResidentsToTowns", true);
 			ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
@@ -332,7 +332,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	@Override
 	public void loadTownToNationLinks() throws Exception {
 		synchronized (lock) {
-			PreparedStatement statement = prepare("SELECT * FROM " + prefix + "TownsToNations", true);
+			PreparedStatement statement = prepare("SELECT * FROM " + prefix + " TownsToNations", true);
 			ResultSet set = statement.executeQuery();
 
 			while (set.next()) {
@@ -353,7 +353,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			resident.addTown(town);
 			town.addResident(resident, rank);
 
-			PreparedStatement statement = prepare("INSERT INTO " + prefix + "ResidentsToTowns (TownName, Owner, Rank) VALUES (?, ?, ?)", true);
+			PreparedStatement statement = prepare("INSERT INTO " + prefix + " ResidentsToTowns (TownName, Owner, Rank) VALUES (?, ?, ?)", true);
 			statement.setString(1, town.getName());
 			statement.setString(2, resident.getUUID());
 			statement.setString(3, rank.toString());
@@ -367,12 +367,40 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			town.addNation(nation);
 			nation.addTown(town, rank);
 
-			PreparedStatement statement = prepare("INSERT INTO " + prefix + "TownsToNations (TownName, NationName, Rank) VALUES(?, ?, ?)", true);
+			PreparedStatement statement = prepare("INSERT INTO " + prefix + " TownsToNations (TownName, NationName, Rank) VALUES(?, ?, ?)", true);
 			statement.setString(1, town.getName());
 			statement.setString(2, nation.getName());
 			statement.setString(3, rank.toString());
 			statement.executeQuery();
 		}
+	}
+	
+	@Override
+	public void unlinkResidentFromTown(Resident resident, Town town) throws Exception
+	{
+		synchronized(lock) {
+			resident.removeResidentFromTown(town);
+			town.removeResident(resident);
+			
+			PreparedStatement statement = prepare("DELETE FROM " + prefix + " ResidentsToTowns WHERE TownName=? AND Owner=?", false);
+			statement.setString(1, town.getName());
+			statement.setString(2, resident.getUUID());
+			statement.executeUpdate();
+		}
+	}
+	
+	@Override
+	public void unlinkTownFromNation(Town town, Nation nation) throws Exception
+	{
+		synchronized(lock) {
+			nation.removeTown(town);
+			town.removeNation(nation);
+			
+			PreparedStatement statement = prepare("DELETE FROM " + prefix + " TownsToNations WHERE TownName=? AND NationName=?", false);
+			statement.setString(1, town.getName());
+			statement.setString(2, nation.getName());
+			statement.executeUpdate();
+		}		
 	}
 
 	@Override

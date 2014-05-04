@@ -1,6 +1,7 @@
 package mytown.commands.admin;
 
 import mytown.MyTown;
+import mytown.core.ChatUtils;
 import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.datasource.MyTownDatasource;
@@ -20,21 +21,26 @@ public class CmdDelete extends SubCommandBase{
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		if(args.length < 1)
-			throw new WrongUsageException("Wrong usage");
+			throw new WrongUsageException(MyTown.instance.local.getLocalization("mytown.adm.cmd.delete.usage"));
 		if(!getDatasource().hasTown(args[0]))
-			throw new CommandException("Town non-existant");
+			throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.town.notexist"), args[0]);
 		
 		if(args.length == 1)
 		{
 			if(getDatasource().deleteTown(getDatasource().getTown(args[0])))
-				System.out.println("Town " + args[0] + " has been deleted.");
+				ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.deleted", args[0]);
 		}
 		else
+		{
+			for(String s : args)
+				if(getDatasource().getTown(s) == null)
+					throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.town.notexist"), s);
 			for(String s : args)
 			{
 				if(getDatasource().deleteTown(getDatasource().getTown(s)))
-					System.out.println("Town " + s + " has been deleted.");
+					ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.deleted", s);
 			}
+		}
 	}
 	
 	/**
