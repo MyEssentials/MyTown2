@@ -14,9 +14,6 @@ public class CmdTownAdmin extends SubCommandHandler {
 	public CmdTownAdmin(String name) {
 		super(name);
 
-		// CommandUtils.permissionList.put(name,
-		// this.getClass().getAnnotation(Permission.class).node());
-
 		// Subcommands
 		addSubCommand(new CmdReload("reload"));
 		addSubCommand(new CmdSafeMode("safemode"));

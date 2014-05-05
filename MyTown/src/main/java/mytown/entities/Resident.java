@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
  * @author Joe Goett
  */
 public class Resident {
-
 	private String playerUUID;
 	private boolean isOnline = false;
 	private boolean isNPC = false;
@@ -113,6 +112,14 @@ public class Resident {
 		if (!isOnline() || getPlayer() == null) return;
 		ChatUtils.sendLocalizedChat(getPlayer(), local, msg, args);
 	}
+	
+	public void setMapOn(boolean on) {
+		mapOn = on;
+	}
+
+	public boolean isMapOn() {
+		return mapOn;
+	}
 
 	/**
 	 * Send a "map" of the Blocks directly around the player
@@ -159,13 +166,16 @@ public class Resident {
 		}
 		sendMessage(sb.toString());
 	}
-
-	public void setMapOn(boolean on) {
-		mapOn = on;
-	}
-
-	public boolean isMapOn() {
-		return mapOn;
+	
+	public void checkLocation() {
+		TownBlock block = MyTown.instance.datasource.getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ);
+		if (block == null) {
+			sendLocalizedMessage("mytown.notification.enter.wild", MyTown.instance.local);
+		} else if (isPartOfTown(block.getTown())) {
+			sendLocalizedMessage("mytown.notification.enter.ownTown", MyTown.instance.local);
+		} else {
+			sendLocalizedMessage("mytown.notification.enter.town", MyTown.instance.local, block.getTown().getName());
+		}
 	}
 
 	// //////////////////////////////////////

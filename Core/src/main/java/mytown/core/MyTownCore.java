@@ -4,6 +4,7 @@ import java.io.File;
 
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
+import mytown.core.utils.teleport.TeleportHandler;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -15,10 +16,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 public class MyTownCore {
 	@Mod.Instance
 	public static MyTownCore Instance;
+	public static boolean IS_MCPC = false;
 
 	public Log log;
-
-	Configuration config;
+	public Configuration config;
 
 	@Mod.EventHandler
 	public void preinit(FMLPreInitializationEvent ev) {
@@ -31,10 +32,13 @@ public class MyTownCore {
 
 		// Register handlers/trackers
 		GameRegistry.registerPlayerTracker(new PlayerTracker());
+		TeleportHandler.init();
 	}
 
 	@Mod.EventHandler
 	public void serverAboutToStart(FMLServerAboutToStartEvent ev) {
+		IS_MCPC = ev.getServer().getServerModName().contains("mcpc");
+
 		try {
 			CommandUtils.init();
 		} catch (Exception e) {

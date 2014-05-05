@@ -16,7 +16,7 @@ public class Rank {
 	 * @return
 	 */
 	public boolean parse(String rank) {
-		return name.startsWith(rank);
+		return name.equals(rank);
 	}
 
 	/**

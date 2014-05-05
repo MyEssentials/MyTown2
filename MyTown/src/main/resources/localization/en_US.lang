@@ -15,3 +15,6 @@ mytown.notification.town.deleted=Town %s deleted!
 mytown.notification.nation.created=Nation %s created!
 mytown.notification.nation.deleted=Nation %s deleted!
 mytown.notification.town.list=Towns: %s
+mytown.notification.enter.wild=You just entered the wild!
+mytown.notification.enter.town=Welcome to %s
+mytown.notification.enter.ownTown=Welcome back!

@@ -54,7 +54,7 @@ public class PlayerTracker implements IPlayerTracker {
 		EntityPlayer pl = (EntityPlayer) ev.entity;
 		try {
 			Resident res = MyTown.instance.datasource.getOrMakeResident(pl);
-			// TODO Tell player if entered town/plot/wild/etc.
+			res.checkLocation();
 			if (res.isMapOn()) res.sendMap();
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change?
