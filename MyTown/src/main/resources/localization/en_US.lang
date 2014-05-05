@@ -1,5 +1,7 @@
 mytown.cmd.unimplemented=%s is currently unimplemented!
 mytown.cmd.err.partOfTown=You need to be part of a town!
+mytown.cmd.err.town.notexist=The town %s does not exist!
+mytown.cmd.err.resident.notexist=The player %s does not exist!
 
 # /t new [townname]
 mytown.cmd.err.newtown.nameinuse=Town name %s already in use!
@@ -9,12 +11,36 @@ mytown.cmd.usage.newtown=Usage: /t new [townname]
 mytown.cmd.err.claim.failed=Failed to claim block!
 mytown.cmd.err.claim.already=That block has already been claimed!
 
+# /t info
+mytown.cmd.usage.info=Usage: /t info <townname>
+mytown.cmd.err.info.notpart=You are not part of a town. Alternative usage: /t info <townname>
+
+# /t select
+mytown.cmd.usage.select=Usage: /t select <townname>
+mytown.cmd.err.select.notpart=You are not part of town %s. Please choose a town that you're a member of.
+
+# /ta delete
+mytown.adm.cmd.delete.usage=Usage: /ta delete [townname] <townname2 townname3...>
+mytown.adm.cmd.delete.success=Deleted town with name %s!
+
+# /ta rem
+mytown.adm.cmd.usage.rem=Usage: /ta rem [resident] [fromTown]
+mytown.adm.cmd.err.rem.resident=Player %s is not part of the town %s
+
+# /ta add
+mytown.adm.cmd.usage.add=Usage: /ta add [resident] [toTown]
+mytown.adm.cmd.err.add.already=Player %s is already a resident of the town %s
+
 # Notifications
 mytown.notification.town.created=Town %s created!
 mytown.notification.town.deleted=Town %s deleted!
 mytown.notification.nation.created=Nation %s created!
 mytown.notification.nation.deleted=Nation %s deleted!
-mytown.notification.town.list=Towns: %s
 mytown.notification.enter.wild=You just entered the wild!
 mytown.notification.enter.town=Welcome to %s
 mytown.notification.enter.ownTown=Welcome back!
+mytown.notification.town.list=Towns: %s
+mytown.notification.town.info=%sResidents: %s
+mytown.notification.town.select=The town %s has been selected as your primary town!
+mytown.notification.town.resident.remove=Resident %s has been removed from town %s!
+mytown.notification.town.resident.add=Resident %s has been added to town %s!

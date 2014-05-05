@@ -189,6 +189,8 @@ public class MyTown {
 	private void registerPermissions() {
 		permManager = new PermissionManager("MyTownPermManager");
 		ForgePermsAPI.permManager = permManager;
+		permManager.load();
+		
 	}
 
 	/**
