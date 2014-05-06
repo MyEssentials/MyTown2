@@ -8,13 +8,18 @@ import mytown.core.utils.command.sub.SubCommandHandler;
 
 @Permission(node = "mytown.adm.cmd")
 public class CmdTownAdmin extends SubCommandHandler {
+
 	List<String> aliases = new ArrayList<String>();
-	public CmdTownAdmin() {
-		super("townadmin");
-		
+
+	public CmdTownAdmin(String name) {
+		super(name);
+
 		// Subcommands
-		addSubCommand(new Reload());
-		addSubCommand(new SafeMode());
+		addSubCommand(new CmdReload("reload"));
+		addSubCommand(new CmdSafeMode("safemode"));
+		addSubCommand(new CmdDelete("delete"));
+		addSubCommand(new CmdRem("rem"));
+		addSubCommand(new CmdAdd("add"));
 		
 		// Add aliases
 		aliases.add("ta");

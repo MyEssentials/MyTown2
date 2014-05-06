@@ -10,8 +10,7 @@ import forgeperms.api.ForgePermsAPI;
 
 public class Assert {
 	/**
-	 * Checks if command server has the given permission node. Does NOT allow
-	 * console to access.
+	 * Checks if command server has the given permission node. Does NOT allow console to access.
 	 * 
 	 * @param cs
 	 * @param node
@@ -39,8 +38,7 @@ public class Assert {
 				throw new CommandException("commands.generic.permission");
 			}
 		}
-		if (node == null)
-			return;
+		if (node == null) return;
 		EntityPlayer p = (EntityPlayer) cs;
 		if (ForgePermsAPI.permManager.canAccess(p.username, p.worldObj.provider.getDimensionName(), node)) {
 			return;

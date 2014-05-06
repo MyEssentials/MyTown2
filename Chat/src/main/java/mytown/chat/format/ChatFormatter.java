@@ -4,9 +4,10 @@ import net.minecraft.command.ICommandSender;
 
 /**
  * Default ChatFormatter for MyTownChat
+ * 
  * @author Joe Goett
  */
-public class ChatFormatter implements IChatFormatter{
+public class ChatFormatter implements IChatFormatter {
 	/**
 	 * {@inheritDoc}
 	 */

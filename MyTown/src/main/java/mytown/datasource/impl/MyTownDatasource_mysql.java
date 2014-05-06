@@ -36,8 +36,7 @@ public class MyTownDatasource_mysql extends MyTownDatasource_SQL {
 
 	@Override
 	public boolean connect() throws Exception {
-		if (conn != null)
-			return true;
+		if (conn != null) return true;
 
 		Class.forName("com.mysql.jdbc.Driver");
 

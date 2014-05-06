@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 /**
  * Basic log wrapper class
+ * 
  * @author Joe Goett
  */
 public class Log {
@@ -12,27 +13,30 @@ public class Log {
 	 * Underlying Logger object
 	 */
 	protected Logger logger;
-	
+
 	/**
 	 * Creates a logger with the given name and parent
+	 * 
 	 * @param name
 	 * @param parent
 	 */
-	public Log(String name, Logger parent){
+	public Log(String name, Logger parent) {
 		this(name);
 		logger.setParent(parent);
 	}
-	
+
 	/**
 	 * Creates a logger with the given name
+	 * 
 	 * @param name
 	 */
-	public Log(String name){
+	public Log(String name) {
 		logger = Logger.getLogger(name);
 	}
-	
+
 	/**
 	 * Writes a log msg with the given Logging level, arguments, and throwable
+	 * 
 	 * @param level
 	 * @param msg
 	 * @param t
@@ -44,6 +48,7 @@ public class Log {
 
 	/**
 	 * Writes the given message to the logger with the given level
+	 * 
 	 * @param level
 	 * @param msg
 	 * @param args
@@ -54,6 +59,7 @@ public class Log {
 
 	/**
 	 * Logs a Level.FINE
+	 * 
 	 * @param msg
 	 * @param args
 	 */
@@ -63,6 +69,7 @@ public class Log {
 
 	/**
 	 * Logs a Level.FINER
+	 * 
 	 * @param msg
 	 * @param args
 	 */
@@ -72,6 +79,7 @@ public class Log {
 
 	/**
 	 * Logs a Level.FINEST
+	 * 
 	 * @param msg
 	 * @param args
 	 */
@@ -81,6 +89,7 @@ public class Log {
 
 	/**
 	 * Logs a Level.INFO
+	 * 
 	 * @param msg
 	 * @param args
 	 */
@@ -90,6 +99,7 @@ public class Log {
 
 	/**
 	 * Logs a Level.SEVERE
+	 * 
 	 * @param msg
 	 * @param args
 	 */
@@ -99,6 +109,7 @@ public class Log {
 
 	/**
 	 * Logs a Level.SEVERE including the throwable in the log
+	 * 
 	 * @param msg
 	 * @param t
 	 * @param args
@@ -109,6 +120,7 @@ public class Log {
 
 	/**
 	 * Logs a Level.WARNING
+	 * 
 	 * @param msg
 	 * @param args
 	 */
@@ -118,6 +130,7 @@ public class Log {
 
 	/**
 	 * Logs a Level.WARNING including a throwable in the log
+	 * 
 	 * @param msg
 	 * @param t
 	 * @param args
@@ -128,28 +141,31 @@ public class Log {
 
 	/**
 	 * Logs a Level.CONFIG
+	 * 
 	 * @param msg
 	 * @param args
 	 */
-	public void config(String msg, Object... args){
+	public void config(String msg, Object... args) {
 		log(Level.CONFIG, msg, args);
 	}
-	
+
 	/**
 	 * Logs a Level.CONFIG including a throwable in the log
+	 * 
 	 * @param msg
 	 * @param t
 	 * @param args
 	 */
-	public void config(String msg, Throwable t, Object... args){
+	public void config(String msg, Throwable t, Object... args) {
 		log(Level.CONFIG, msg, t, args);
 	}
-	
+
 	/**
 	 * Returns the underlying logger
+	 * 
 	 * @return
 	 */
-	public Logger getLogger(){
+	public Logger getLogger() {
 		return logger;
 	}
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import mytown.Constants;
+
 // TODO Add Comments
 
 /**
@@ -13,9 +15,10 @@ import java.util.Set;
  * 
  * @author Joe Goett
  */
-public class Town {
+public class Town implements Comparable<Town> {
 	private String name;
 	private int extraBlocks = 0;
+	private List<Rank> otherRanks;
 
 	// TODO Add flags/permissions
 
@@ -26,11 +29,21 @@ public class Town {
 	 */
 	public Town(String name) {
 		this.name = name;
+		setInitialPermission();
 	}
-	
+
 	public Town(String name, int extraBlocks) {
 		this.name = name;
 		this.extraBlocks = extraBlocks;
+		setInitialPermission();
+	}
+
+	public void setInitialPermission() {
+		otherRanks = new ArrayList<Rank>();
+	}
+
+	public List<Rank> getAdditionalRanks() {
+		return this.otherRanks;
 	}
 
 	/**
@@ -41,7 +54,7 @@ public class Town {
 	public String getName() {
 		return name;
 	}
-	
+
 	// //////////////////////////////////////
 	// Nations
 	// //////////////////////////////////////
@@ -68,8 +81,7 @@ public class Town {
 	}
 
 	public void promoteTown(Nation nation, Nation.Rank rank) {
-		if (!hasNation(nation))
-			return; // TODO Log/Throw Exception
+		if (!hasNation(nation)) return; // TODO Log/Throw Exception
 		nation.setTownRank(this, rank);
 	}
 
@@ -140,7 +152,7 @@ public class Town {
 	// //////////////////////////////////////
 	// Residents
 	// //////////////////////////////////////
-	private Map<Resident, Resident.Rank> residents = new Hashtable<Resident, Resident.Rank>();
+	private Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
 
 	/**
 	 * Returns the Residents
@@ -157,7 +169,7 @@ public class Town {
 	 * @param resident
 	 * @param rank
 	 */
-	public void addResident(Resident resident, Resident.Rank rank) {
+	public void addResident(Resident resident, Rank rank) {
 		residents.put(resident, rank);
 	}
 
@@ -168,6 +180,7 @@ public class Town {
 	 */
 	public void removeResident(Resident resident) {
 		residents.remove(resident);
+		resident.removeResidentFromTown(this);
 	}
 
 	/**
@@ -186,25 +199,39 @@ public class Town {
 	 * @param resident
 	 * @param rank
 	 */
-	public void promoteResident(Resident resident, Resident.Rank rank) {
-		if (!hasResident(resident))
-			return; // TODO Log/Throw Exception
+	public void promoteResident(Resident resident, Rank rank) {
+		if (!hasResident(resident)) return; // TODO Log/Throw Exception
 		addResident(resident, rank);
 	}
 
-	public Resident.Rank getResidentRank(Resident resident) {
+	public Rank getResidentRank(Resident resident) {
 		if (hasResident(resident)) {
 			return residents.get(resident);
 		} else {
-			return Resident.Rank.Outsider;
+			return Constants.DEFAULT_RANKS[0];
 		}
 	}
-	
+
 	// //////////////////////////////////////
 	// Helper?
 	// //////////////////////////////////////
 	@Override
 	public String toString() {
-		return getName()+"["+getResidents().size()+"]";
+		return getName() + "[# of residents: " + getResidents().size() + ", # of extra blocks: " + extraBlocks + "]";
+	}
+
+	@Override
+	public int compareTo(Town t) { // TODO Flesh this out more for ranking
+									// towns?
+		int thisNumberOfResidents = residents.size(), thatNumberOfResidents = t.getResidents().size();
+		if (thisNumberOfResidents > thatNumberOfResidents) {
+			return -1;
+		} else if (thisNumberOfResidents == thatNumberOfResidents) {
+			return 0;
+		} else if (thisNumberOfResidents < thatNumberOfResidents) {
+			return 1;
+		}
+
+		return -1;
 	}
 }

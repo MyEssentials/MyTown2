@@ -20,8 +20,7 @@ public class MyTownDatasource_sqlite extends MyTownDatasource_SQL {
 
 	@Override
 	public boolean connect() throws Exception {
-		if (conn != null)
-			return true;
+		if (conn != null) return true;
 
 		Class.forName("org.sqlite.JDBC");
 
@@ -30,7 +29,8 @@ public class MyTownDatasource_sqlite extends MyTownDatasource_SQL {
 			return false; // TODO Log error?
 		}
 
-		autoIncrement = ""; // SQLite auto increment is a little different than MySQL
+		autoIncrement = ""; // SQLite auto increment is a little different than
+							// MySQL
 
 		// Update DB
 		setUpdates();
@@ -42,7 +42,7 @@ public class MyTownDatasource_sqlite extends MyTownDatasource_SQL {
 	@Override
 	protected void doConfig(Configuration config) {
 		super.doConfig(config);
-		dbPath= config.get(configCat, "Path", Constants.CONFIG_FOLDER + "data.db", "The database file path. Used by SQLite").getString();
+		dbPath = config.get(configCat, "Path", Constants.CONFIG_FOLDER + "data.db", "The database file path. Used by SQLite").getString();
 		// TODO Finish Config
 	}
 }

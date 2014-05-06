@@ -1,19 +1,15 @@
 package mytown.commands.town.everyone;
 
 import mytown.MyTown;
+import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Resident;
 import net.minecraft.command.ICommandSender;
 
-public class Map extends SubCommandBase {
-	@Override
-	public String getName() {
-		return "map";
-	}
-
-	@Override
-	public String getPermNode() {
-		return "mytown.cmd.map";
+@Permission(node = "mytown.cmd.map")
+public class CmdMap extends SubCommandBase {
+	public CmdMap(String name) {
+		super(name);
 	}
 
 	@Override
@@ -22,7 +18,7 @@ public class Map extends SubCommandBase {
 		if (args.length == 0) {
 			res.sendMap();
 		} else {
-			res.setMapOn((args[1] == "on" || args[1] == "enable" || args[1] == "true"));
+			res.setMapOn(args[1] == "on" || args[1] == "enable" || args[1] == "true");
 		}
 	}
 }

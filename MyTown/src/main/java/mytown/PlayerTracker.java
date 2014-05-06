@@ -13,16 +13,16 @@ public class PlayerTracker implements IPlayerTracker {
 	public void onPlayerLogin(EntityPlayer player) {
 		if (player == null) return; // Never know ;)
 		if (MyTown.instance.safemode && player instanceof EntityPlayerMP && !ForgePermsAPI.permManager.canAccess(player.username, player.worldObj.provider.getDimensionName(), "mytown.adm.safemode")) {
-			((EntityPlayerMP)player).playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
+			((EntityPlayerMP) player).playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
 			return;
 		}
-		
+
 		try {
 			Resident res = MyTown.instance.datasource.getOrMakeResident(player);
 			res.setOnline(true);
 			res.setPlayer(player);
 		} catch (Exception e) {
-			e.printStackTrace();  // TODO Change later?
+			e.printStackTrace(); // TODO Change later?
 		}
 	}
 
@@ -34,7 +34,7 @@ public class PlayerTracker implements IPlayerTracker {
 			res.setOnline(false);
 			res.setPlayer(null);
 		} catch (Exception e) {
-			e.printStackTrace();  // TODO Change later?
+			e.printStackTrace(); // TODO Change later?
 		}
 	}
 
@@ -47,17 +47,17 @@ public class PlayerTracker implements IPlayerTracker {
 	public void onPlayerRespawn(EntityPlayer player) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@ForgeSubscribe
 	public void onEnterChunk(EntityEvent.EnteringChunk ev) {
 		if (!(ev.entity instanceof EntityPlayer)) return;
 		EntityPlayer pl = (EntityPlayer) ev.entity;
 		try {
 			Resident res = MyTown.instance.datasource.getOrMakeResident(pl);
-			// TODO Tell player if entered town/plot/wild/etc.
+			res.checkLocation();
 			if (res.isMapOn()) res.sendMap();
 		} catch (Exception e) {
-			e.printStackTrace();  // TODO Change?
+			e.printStackTrace(); // TODO Change?
 		}
 	}
 }

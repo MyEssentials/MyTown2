@@ -6,7 +6,7 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 
 // TODO Change name?
-public interface Command extends ICommand{
+public interface Command extends ICommand {
 	/**
 	 * Dumps this command and any associated sub-commands to a list
 	 * 

@@ -7,12 +7,12 @@ import net.minecraft.command.ICommandSender;
 
 /**
  * Interface for SubCommands
+ * 
  * @author Joe Goett
  */
 public interface SubCommand {
 	/**
-	 * Returns the name of the command. Used to determine which sub-command to
-	 * run.
+	 * Returns the name of the command. Used to determine which sub-command to run.
 	 * 
 	 * @return
 	 */
