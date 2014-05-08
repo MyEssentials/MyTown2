@@ -1,6 +1,8 @@
 package mytown;
 
-import mytown.entities.Rank;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Constants {
 	public static final String VERSION = "${version}";
@@ -9,6 +11,6 @@ public class Constants {
 	public static final String DEPENDENCIES = "after:*;required-after:Forge;required-after:MyTownCore";
 	public static String CONFIG_FOLDER = "";
 
-	public static final Rank[] DEFAULT_RANKS = { new Rank("outsider", null), new Rank("resident", null), new Rank("assistant", null), new Rank("mayor", null) };
+	public static Map<String, List<String>> DEFAULT_RANK_VALUES = new HashMap<String, List<String>>();
 
 }

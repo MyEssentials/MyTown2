@@ -16,7 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd.claim")
+@Permission(node = "mytown.cmd.assistant.claim")
 public class CmdClaim extends SubCommandBase {
 
 	public CmdClaim(String name) {
@@ -26,6 +26,7 @@ public class CmdClaim extends SubCommandBase {
 	@Override
 	public void canUse(ICommandSender sender) throws CommandException {
 		super.canUse(sender);
+		
 		Resident res = null;
 		try {
 			res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
@@ -34,6 +35,7 @@ public class CmdClaim extends SubCommandBase {
 		}
 		if (res.getTowns().size() == 0) throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.partOfTown"));
 		if (!res.getTownRank().hasPermission("assistant.claim")) throw new CommandException("commands.generic.permission");
+		
 	}
 
 	@Override

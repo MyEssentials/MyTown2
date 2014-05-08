@@ -14,7 +14,7 @@ import net.minecraft.command.ICommandSender;
 
 import com.google.common.base.Joiner;
 
-@Permission(node = "mytown.cmd.list")
+@Permission(node = "mytown.cmd.outsider.list")
 public class CmdListTown extends SubCommandBase {
 	public CmdListTown(String name) {
 		super(name);

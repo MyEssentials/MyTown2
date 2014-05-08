@@ -12,7 +12,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 
-@Permission(node = "mytown.cmd.invite")
+@Permission(node = "mytown.cmd.assistant.invite")
 public class CmdInvite extends SubCommandBase {
 
 	public CmdInvite(String name) {

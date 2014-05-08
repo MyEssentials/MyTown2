@@ -19,6 +19,9 @@ mytown.cmd.err.info.notpart=You are not part of a town. Alternative usage: /t in
 mytown.cmd.usage.select=Usage: /t select <townname>
 mytown.cmd.err.select.notpart=You are not part of town %s. Please choose a town that you're a member of.
 
+# /t ranks
+mytown.cmd.usage.ranks=Usage: /t ranks <townname>
+
 # /ta delete
 mytown.adm.cmd.delete.usage=Usage: /ta delete [townname] <townname2 townname3...>
 mytown.adm.cmd.delete.success=Deleted town with name %s!
@@ -40,7 +43,8 @@ mytown.notification.enter.wild=You just entered the wild!
 mytown.notification.enter.town=Welcome to %s
 mytown.notification.enter.ownTown=Welcome back!
 mytown.notification.town.list=Towns: %s
-mytown.notification.town.info=%sResidents: %s
+mytown.notification.town.info=%sResidents: %sRanks: %s
 mytown.notification.town.select=The town %s has been selected as your primary town!
 mytown.notification.town.resident.remove=Resident %s has been removed from town %s!
 mytown.notification.town.resident.add=Resident %s has been added to town %s!
+mytown.notification.town.ranks=Ranks: %s

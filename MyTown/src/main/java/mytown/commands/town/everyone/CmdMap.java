@@ -6,7 +6,7 @@ import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Resident;
 import net.minecraft.command.ICommandSender;
 
-@Permission(node = "mytown.cmd.map")
+@Permission(node = "mytown.cmd.outsider.map")
 public class CmdMap extends SubCommandBase {
 	public CmdMap(String name) {
 		super(name);

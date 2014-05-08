@@ -1,4 +1,4 @@
-package mytown.commands.town.nonresident;
+package mytown.commands.town.everyone;
 
 import mytown.MyTown;
 import mytown.core.utils.Assert;
@@ -16,7 +16,7 @@ import net.minecraft.command.WrongUsageException;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd.new")
+@Permission(node = "mytown.cmd.outsider.new")
 public class CmdNewTown extends SubCommandBase {
 
 	public CmdNewTown(String name) {

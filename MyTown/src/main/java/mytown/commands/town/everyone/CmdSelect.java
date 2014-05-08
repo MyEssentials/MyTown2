@@ -9,7 +9,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 
 
-@Permission(node="mytown.cmd.select")
+@Permission(node="mytown.cmd.outsider.select")
 public class CmdSelect extends SubCommandBase{
 	
 	public CmdSelect(String name)

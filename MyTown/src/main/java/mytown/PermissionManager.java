@@ -29,6 +29,47 @@ public class PermissionManager implements IPermissionManager {
 	@Override
 	public boolean load() {
 
+		// Testing
+		/*
+		List<String> permsToBeAdded = new ArrayList<String>();
+		for(String s : CommandUtils.permissionList.values())
+		{
+			permsToBeAdded.add(s);
+			System.out.println(s);
+		}
+		groups.put("Troll", permsToBeAdded);
+		List<String> groupsToBeAdded = new ArrayList<String>();
+		groupsToBeAdded.add("Troll");
+		players.put("DerBanhammer", groupsToBeAdded);
+		*/
+		// #addAllThePerms
+		
+		List<String> pOutsider = new ArrayList<String>();
+		List<String> pResident = new ArrayList<String>();
+		List<String> pAssistant = new ArrayList<String>();
+		List<String> pMayor = new ArrayList<String>();
+		
+		for(String s : CommandUtils.permissionList.values())
+		{
+			if(s.startsWith("mytown.cmd"))
+			{
+				pMayor.add(s);
+				if(s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider"))
+					pAssistant.add(s);
+				if(s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider"))
+					pResident.add(s);
+				if(s.startsWith("mytown.cmd.outsider"))
+					pOutsider.add(s);
+			}
+		}
+		
+		Constants.DEFAULT_RANK_VALUES.put("Outsider", pOutsider);
+		Constants.DEFAULT_RANK_VALUES.put("Resident", pResident);
+		Constants.DEFAULT_RANK_VALUES.put("Assistant", pAssistant);
+		Constants.DEFAULT_RANK_VALUES.put("Mayor", pMayor);
+		
+		
+		
 		return false;
 	}
 
@@ -42,9 +83,9 @@ public class PermissionManager implements IPermissionManager {
 	public boolean canAccess(String player, String world, String node) {
 
 		// For now ignoring per world permissions
-
 		List<String> groups2 = players.get(player);
-		if (groups2 == null) return false;
+		if (groups2 == null) 
+			return false;
 		for (String group : groups2) {
 			List<String> perms = groups.get(group);
 			if (perms == null) continue;

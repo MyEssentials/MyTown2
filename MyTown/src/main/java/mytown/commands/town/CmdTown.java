@@ -8,8 +8,9 @@ import mytown.commands.town.assistant.CmdInvite;
 import mytown.commands.town.everyone.CmdInfo;
 import mytown.commands.town.everyone.CmdListTown;
 import mytown.commands.town.everyone.CmdMap;
+import mytown.commands.town.everyone.CmdNewTown;
+import mytown.commands.town.everyone.CmdRanks;
 import mytown.commands.town.everyone.CmdSelect;
-import mytown.commands.town.nonresident.CmdNewTown;
 import mytown.core.utils.command.Permission;
 import mytown.core.utils.command.sub.SubCommandHandler;
 
@@ -33,6 +34,8 @@ public class CmdTown extends SubCommandHandler {
 		addSubCommand(new CmdInvite("invite"));
 		addSubCommand(new CmdInfo("info"));
 		addSubCommand(new CmdSelect("select"));
+		addSubCommand(new CmdRanks("ranks"));
+		
 		// Add Aliases
 		aliases.add("t");
 	}

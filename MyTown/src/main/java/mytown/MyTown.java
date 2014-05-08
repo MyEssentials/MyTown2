@@ -165,6 +165,7 @@ public class MyTown {
 			datasource.loadResidents();
 			datasource.loadTowns();
 			datasource.loadNations();
+			datasource.loadRanks();
 
 			// Load links
 			datasource.loadResidentToTownLinks();
