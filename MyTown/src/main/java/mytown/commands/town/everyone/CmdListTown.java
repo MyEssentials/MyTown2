@@ -6,8 +6,8 @@ import java.util.List;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Town;
 import mytown.entities.comparator.TownComparator;
 import net.minecraft.command.ICommandSender;
@@ -15,13 +15,13 @@ import net.minecraft.command.ICommandSender;
 import com.google.common.base.Joiner;
 
 @Permission(node = "mytown.cmd.outsider.list")
-public class CmdListTown extends SubCommandBase {
-	public CmdListTown(String name) {
-		super(name);
+public class CmdListTown extends CommandBase {
+	public CmdListTown(String name, CommandBase parent) {
+		super(name, parent);
 	}
 
 	@Override
-	public boolean canUseByConsole() {
+	public boolean canConsoleUse() {
 		return true;
 	};
 

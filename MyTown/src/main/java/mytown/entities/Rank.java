@@ -1,12 +1,13 @@
 package mytown.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Rank {
 	
 	private String key;
 	private String name;
-	private List<String> permissions; // Lists > Arrays
+	private ArrayList<String> permissions; // Lists > Arrays
 	private Town town;
 	
 	
@@ -17,13 +18,23 @@ public class Rank {
 	 * @param permissions
 	 * @param town null only if it's a default rank
 	 */
-	public Rank(String name, List<String> permissions, Town town) {
+	public Rank(String name, ArrayList<String> permissions, Town town) {
 		this.name = name;
 		this.permissions = permissions;
 		this.town = town;
 		updateKey();
 	}
 
+	public void addPermission(String perm)
+	{
+		permissions.add(perm);
+	}
+	
+	public boolean removePermission(String perm)
+	{
+		return permissions.remove(perm);
+	}
+	
 	/**
 	 * Gets the name of the Rank
 	 * @return
@@ -37,7 +48,7 @@ public class Rank {
 	 * Gets all the permission of the Rank
 	 * @return
 	 */
-	public List<String> getPermissions()
+	public ArrayList<String> getPermissions()
 	{
 		return this.permissions;
 	}

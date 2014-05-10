@@ -11,8 +11,9 @@ import mytown.commands.town.everyone.CmdMap;
 import mytown.commands.town.everyone.CmdNewTown;
 import mytown.commands.town.everyone.CmdRanks;
 import mytown.commands.town.everyone.CmdSelect;
+import mytown.core.utils.command.CommandBase;
+import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandHandler;
 
 /**
  * MyTown command
@@ -20,21 +21,21 @@ import mytown.core.utils.command.sub.SubCommandHandler;
  * @author Joe Goett
  */
 @Permission(node = "mytown.cmd")
-public class CmdTown extends SubCommandHandler {
+public class CmdTown extends CommandHandler {
 	List<String> aliases = new ArrayList<String>();
 
 	public CmdTown(String name) {
-		super(name);
+		super(name, null);
 
 		// Add commands
-		addSubCommand(new CmdNewTown("new"));
-		addSubCommand(new CmdClaim("claim"));
-		addSubCommand(new CmdMap("map"));
-		addSubCommand(new CmdListTown("list"));
-		addSubCommand(new CmdInvite("invite"));
-		addSubCommand(new CmdInfo("info"));
-		addSubCommand(new CmdSelect("select"));
-		addSubCommand(new CmdRanks("ranks"));
+		addSubCommand(new CmdNewTown("new", this));
+		addSubCommand(new CmdClaim("claim", this));
+		addSubCommand(new CmdMap("map", this));
+		addSubCommand(new CmdListTown("list", this));
+		addSubCommand(new CmdInvite("invite", this));
+		addSubCommand(new CmdInfo("info", this));
+		addSubCommand(new CmdSelect("select", this));
+		addSubCommand(new CmdRanks("ranks", this));
 		
 		// Add Aliases
 		aliases.add("t");

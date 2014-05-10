@@ -1,7 +1,7 @@
 package mytown;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Constants {
@@ -11,6 +11,6 @@ public class Constants {
 	public static final String DEPENDENCIES = "after:*;required-after:Forge;required-after:MyTownCore";
 	public static String CONFIG_FOLDER = "";
 
-	public static Map<String, List<String>> DEFAULT_RANK_VALUES = new HashMap<String, List<String>>();
+	public static Map<String, ArrayList<String>> DEFAULT_RANK_VALUES = new HashMap<String, ArrayList<String>>();
 
 }

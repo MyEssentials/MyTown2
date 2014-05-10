@@ -2,8 +2,8 @@ package mytown.commands.admin;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.datasource.MyTownDatasource;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -11,11 +11,11 @@ import net.minecraft.command.WrongUsageException;
 
 
 @Permission(node="mytown.adm.cmd.delete")
-public class CmdDelete extends SubCommandBase{
+public class CmdDelete extends CommandBase{
 
-	public CmdDelete(String name)
+	public CmdDelete(String name, CommandBase parent)
 	{
-		super(name);
+		super(name, parent);
 	}
 	
 	@Override

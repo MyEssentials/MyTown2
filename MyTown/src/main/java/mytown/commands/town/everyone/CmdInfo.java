@@ -6,8 +6,8 @@ import java.util.List;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -17,11 +17,11 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
 
 @Permission(node="mytown.cmd.outsider.info")
-public class CmdInfo extends SubCommandBase{
+public class CmdInfo extends CommandBase{
 
-	public CmdInfo(String name)
+	public CmdInfo(String name, CommandBase parent)
 	{
-		super(name);
+		super(name, parent);
 	}
 	
 	@Override

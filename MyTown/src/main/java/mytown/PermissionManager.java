@@ -41,35 +41,9 @@ public class PermissionManager implements IPermissionManager {
 		List<String> groupsToBeAdded = new ArrayList<String>();
 		groupsToBeAdded.add("Troll");
 		players.put("DerBanhammer", groupsToBeAdded);
-		*/
+		
 		// #addAllThePerms
-		
-		List<String> pOutsider = new ArrayList<String>();
-		List<String> pResident = new ArrayList<String>();
-		List<String> pAssistant = new ArrayList<String>();
-		List<String> pMayor = new ArrayList<String>();
-		
-		for(String s : CommandUtils.permissionList.values())
-		{
-			if(s.startsWith("mytown.cmd"))
-			{
-				pMayor.add(s);
-				if(s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider"))
-					pAssistant.add(s);
-				if(s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider"))
-					pResident.add(s);
-				if(s.startsWith("mytown.cmd.outsider"))
-					pOutsider.add(s);
-			}
-		}
-		
-		Constants.DEFAULT_RANK_VALUES.put("Outsider", pOutsider);
-		Constants.DEFAULT_RANK_VALUES.put("Resident", pResident);
-		Constants.DEFAULT_RANK_VALUES.put("Assistant", pAssistant);
-		Constants.DEFAULT_RANK_VALUES.put("Mayor", pMayor);
-		
-		
-		
+		*/
 		return false;
 	}
 

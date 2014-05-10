@@ -2,18 +2,18 @@ package mytown.commands.admin;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 
 @Permission(node="mytown.adm.cmd.rem")
-public class CmdRem extends SubCommandBase{
+public class CmdRem extends CommandBase{
 
-	public CmdRem(String name)
+	public CmdRem(String name, CommandBase parent)
 	{
-		super(name);
+		super(name, parent);
 	}
 	
 	@Override

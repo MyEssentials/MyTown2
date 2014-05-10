@@ -153,14 +153,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			
 			while(set.next())
 			{
-				Rank rank = new Rank(set.getString("Name"), Arrays.asList(set.getString("Nodes").split(" ")), towns.get(set.getString("TownName")));
+				ArrayList<String> list = new ArrayList<String>(); list.addAll(Arrays.asList(set.getString("Nodes").split(" "))); // Worst workaround, need to be changed
+				Rank rank = new Rank(set.getString("Name"), list , towns.get(set.getString("TownName")));
 				rank.getTown().addRank(rank); // 
 				addRank(rank);
-			}
-			for(String s : Constants.DEFAULT_RANK_VALUES.keySet())
-			{
-				Rank rank = new Rank(s, Constants.DEFAULT_RANK_VALUES.get(s), null);
-				addRank(rank);
+				log.info("Adding rank " + rank.getName() + ", " + rank.getTown().getName());
 			}
 		}
 	}
@@ -235,6 +232,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setString(1, town.getName());
 			statement.setInt(2, town.getExtraBlocks());
 			statement.executeUpdate();
+			for(String s : Constants.DEFAULT_RANK_VALUES.keySet())
+				insertRank(new Rank(s, Constants.DEFAULT_RANK_VALUES.get(s), town));
 		}
 	}
 
@@ -286,12 +285,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	{
 		synchronized(lock) {
 			addRank(rank);
+			rank.getTown().addRank(rank);
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Ranks (Key, Name, Nodes, TownName) VALUES (?, ?, ?, ?)", true);
 			statement.setString(1, rank.getKey());
 			statement.setString(2, rank.getName());
 			statement.setString(3, rank.getPermissionsWithFormat());
 			statement.setString(4, rank.getTown().getName());
 			statement.executeUpdate();
+			System.out.println(rank.getPermissionsWithFormat());
 		}
 	}
 			
@@ -303,16 +304,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			removeTown(town);
 			PreparedStatement statement;
 			
-			statement = prepare("DELETE FROM " + prefix + " ResidentsToTowns WHERE TownName=?", false);
+			statement = prepare("DELETE FROM " + prefix + "ResidentsToTowns WHERE TownName=?", false);
 			statement.setString(1, town.getName());
 			statement.executeUpdate();
-			statement = prepare("DELETE FROM " + prefix + " TownBlocks WHERE TownName=?", false);
+			statement = prepare("DELETE FROM " + prefix + "TownBlocks WHERE TownName=?", false);
 			statement.setString(1, town.getName());
 			statement.executeUpdate();
-			statement = prepare("DELETE FROM " + prefix + " TownsToNations WHERE TownName=?", false);
+			statement = prepare("DELETE FROM " + prefix + "TownsToNations WHERE TownName=?", false);
 			statement.setString(1, town.getName());
 			statement.executeUpdate();
-			statement = prepare("DELETE FROM "+ prefix +" Towns WHERE Name=?", false);
+			statement = prepare("DELETE FROM " + prefix + "Ranks WHERE TownName=?", false);
+			statement.setString(1, town.getName());
+			statement.executeUpdate();
+			statement = prepare("DELETE FROM "+ prefix +"Towns WHERE Name=?", false);
 			statement.setString(1, town.getName());
 			
 			return statement.executeUpdate() != 0;
@@ -369,8 +373,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	@Override
 	public boolean deleteRank(Rank rank) throws Exception
 	{
+		if(rank.getName().equals("Resident"))
+			return false;
 		synchronized(lock) {
 			removeRank(rank);
+			rank.getTown().removeRank(rank);
+			for(Resident res : rank.getTown().getResidents())
+				if(res.getTownRank(rank.getTown()) == null)
+					res.setTownRank(rank.getTown(), rank.getTown().getRank("Resident"));
 			PreparedStatement statement;
 			
 			statement = prepare("DELETE FROM " + prefix + "Ranks WHERE Key=?", false);
@@ -390,7 +400,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			while (set.next()) {
 				Resident res = getResident(set.getString("Owner"));
 				Town town = getTown(set.getString("TownName"));
-				Rank rank = getRank(set.getString("Rank"));
+				Rank rank = getRank(set.getString("Rank"), town);
+					
 				
 				// Do actual link
 				res.addTown(town);

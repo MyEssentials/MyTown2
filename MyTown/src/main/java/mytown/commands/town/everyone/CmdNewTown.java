@@ -2,8 +2,8 @@ package mytown.commands.town.everyone;
 
 import mytown.MyTown;
 import mytown.core.utils.Assert;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -17,16 +17,16 @@ import net.minecraft.command.WrongUsageException;
  * @author Joe Goett
  */
 @Permission(node = "mytown.cmd.outsider.new")
-public class CmdNewTown extends SubCommandBase {
+public class CmdNewTown extends CommandBase {
 
-	public CmdNewTown(String name) {
-		super(name);
+	public CmdNewTown(String name, CommandBase parent) {
+		super(name, parent);
 	}
 
 	@Override
-	public void canUse(ICommandSender sender) throws CommandException {
-		super.canUse(sender);
-		try {
+	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
+		super.canCommandSenderUseCommand(sender);
+		try { // Unnecessary try-catch syntax
 			//Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 			Assert.Perm(sender, this.permNode);
 		} catch (CommandException ce) {
@@ -35,6 +35,7 @@ public class CmdNewTown extends SubCommandBase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return true;
 	}
 
 	@Override

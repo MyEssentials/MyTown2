@@ -55,7 +55,6 @@ public abstract class MyTownDatasource {
 		blocks = new ConcurrentHashMap<String, TownBlock>();
 		ranks = new ConcurrentHashMap<String, Rank>();
 	}
-
 	/**
 	 * Does implementation specific configuration
 	 * 
@@ -349,8 +348,6 @@ public abstract class MyTownDatasource {
 	 */
 	public void addTown(Town town) throws Exception {
 		log.info("Adding town %s", town.getName()); // TODO Remove later
-		for(String s : Constants.DEFAULT_RANK_VALUES.keySet()) // TODO: Hardcoded much?
-			town.addRank(new Rank(s, Constants.DEFAULT_RANK_VALUES.get(s), town));
 		towns.put(town.getName(), town);
 	}
 
@@ -938,7 +935,8 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 */
 	public void linkResidentToTown(Resident resident, Town town) throws Exception {
-		linkResidentToTown(resident, town, new Rank("Resident", Constants.DEFAULT_RANK_VALUES.get("Resident"), town));
+		Rank rank = new Rank("Mayor", Constants.DEFAULT_RANK_VALUES.get("Mayor"), town);
+		linkResidentToTown(resident, town, rank);
 	}
 
 	/**

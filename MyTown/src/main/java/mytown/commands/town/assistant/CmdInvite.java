@@ -3,9 +3,9 @@ package mytown.commands.town.assistant;
 import java.util.List;
 
 import mytown.MyTown;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.entities.Resident;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -13,15 +13,15 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 
 @Permission(node = "mytown.cmd.assistant.invite")
-public class CmdInvite extends SubCommandBase {
+public class CmdInvite extends CommandBase {
 
-	public CmdInvite(String name) {
-		super(name);
+	public CmdInvite(String name, CommandBase parent) {
+		super(name, parent);
 	}
 
 	@Override
-	public void canUse(ICommandSender sender) throws CommandException {
-		super.canUse(sender);
+	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
+		super.canCommandSenderUseCommand(sender);
 		Resident res = null;
 		try {
 			res = MyTown.instance.datasource.getOrMakeResident(sender.getCommandSenderName());
@@ -29,6 +29,7 @@ public class CmdInvite extends SubCommandBase {
 			e.printStackTrace();
 		}
 		if (!res.getTownRank().hasPermission("assistant.invite")) throw new CommandException("commands.generic.permission");
+		return true;
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class CmdInvite extends SubCommandBase {
 	}
 
 	@Override
-	public List<String> tabComplete(ICommandSender sender, String[] args) {
+	public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
 		return CommandUtils.getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
 	}
 }

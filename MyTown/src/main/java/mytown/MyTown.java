@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import mytown.commands.admin.CmdTownAdmin;
@@ -17,6 +19,7 @@ import mytown.core.utils.config.ConfigProcessor;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.impl.MyTownDatasource_mysql;
 import mytown.datasource.impl.MyTownDatasource_sqlite;
+import net.minecraft.command.ICommand;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -127,9 +130,10 @@ public class MyTown {
 
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent ev) {
-		startDatasource();
 		registerCommands();
 		registerPermissions();
+		addDefaultPermissions();
+		startDatasource();
 	}
 
 	@Mod.EventHandler
@@ -175,13 +179,42 @@ public class MyTown {
 		}
 	}
 
+	/*
+	 * Adds all the default permissions
+	 */
+	private void addDefaultPermissions()
+	{
+		ArrayList<String> pOutsider = new ArrayList<String>();
+		ArrayList<String> pResident = new ArrayList<String>();
+		ArrayList<String> pAssistant = new ArrayList<String>();
+		ArrayList<String> pMayor = new ArrayList<String>();
+		
+		for(String s : CommandUtils.permissionList.values())
+		{
+			if(s.startsWith("mytown.cmd"))
+			{
+				pMayor.add(s);
+				if(s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider"))
+					pAssistant.add(s);
+				if(s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider"))
+					pResident.add(s);
+				if(s.startsWith("mytown.cmd.outsider"))
+					pOutsider.add(s);
+			}
+		}
+		Constants.DEFAULT_RANK_VALUES.put("Outsider", pOutsider);
+		Constants.DEFAULT_RANK_VALUES.put("Resident", pResident);
+		Constants.DEFAULT_RANK_VALUES.put("Assistant", pAssistant);
+		Constants.DEFAULT_RANK_VALUES.put("Mayor", pMayor);
+	}
+	
 	/**
 	 * Registers all commands
 	 */
 	private void registerCommands() {
 
-		CommandUtils.registerCommand(new CmdTown("town"));
-		CommandUtils.registerCommand(new CmdTownAdmin("townadmin"));
+		CommandUtils.registerCommand((ICommand)(new CmdTown("town")));
+		CommandUtils.registerCommand((ICommand)(new CmdTownAdmin("townadmin")));
 	}
 
 	/**

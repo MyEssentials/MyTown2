@@ -1,8 +1,8 @@
 package mytown.commands.town.assistant;
 
 import mytown.MyTown;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -17,15 +17,15 @@ import net.minecraft.entity.player.EntityPlayer;
  * @author Joe Goett
  */
 @Permission(node = "mytown.cmd.assistant.claim")
-public class CmdClaim extends SubCommandBase {
+public class CmdClaim extends CommandBase {
 
-	public CmdClaim(String name) {
-		super(name);
+	public CmdClaim(String name, CommandBase parent) {
+		super(name, parent);
 	}
 
 	@Override
-	public void canUse(ICommandSender sender) throws CommandException {
-		super.canUse(sender);
+	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
+		super.canCommandSenderUseCommand(sender);
 		
 		Resident res = null;
 		try {
@@ -35,7 +35,7 @@ public class CmdClaim extends SubCommandBase {
 		}
 		if (res.getTowns().size() == 0) throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.partOfTown"));
 		if (!res.getTownRank().hasPermission("assistant.claim")) throw new CommandException("commands.generic.permission");
-		
+		return true;
 	}
 
 	@Override

@@ -228,7 +228,7 @@ public class Town implements Comparable<Town> {
 	public Rank getRank(String name)
 	{
 		for(Rank r : ranks)
-			if(r.getName() == name)
+			if(r.getName().equals(name))
 				return r;
 		return null;
 	}
@@ -260,6 +260,14 @@ public class Town implements Comparable<Town> {
 		return this.ranks.contains(rank);
 	}
 
+	public boolean hasRankName(String name)
+	{
+		for(Rank r : ranks)
+			if(r.getName().equals(name))
+				return true;
+		return false;
+	}
+	
 	// //////////////////////////////////////
 	// Helper?
 	// //////////////////////////////////////

@@ -20,7 +20,7 @@ mytown.cmd.usage.select=Usage: /t select <townname>
 mytown.cmd.err.select.notpart=You are not part of town %s. Please choose a town that you're a member of.
 
 # /t ranks
-mytown.cmd.usage.ranks=Usage: /t ranks <townname>
+mytown.cmd.usage.ranks=Usage: /t ranks <add|remove> <rankname> <rankTemplate>
 
 # /ta delete
 mytown.adm.cmd.delete.usage=Usage: /ta delete [townname] <townname2 townname3...>
