@@ -4,6 +4,7 @@ import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
+import mytown.entities.Resident;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -15,6 +16,7 @@ public class CmdAdd extends CommandBase{
 	{
 		super(name, parent);
 	}
+	
 	
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception

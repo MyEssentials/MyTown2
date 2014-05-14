@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import mytown.Formatter;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
@@ -59,26 +60,15 @@ public class CmdInfo extends CommandBase{
 		for(int i = 0; i < msg.length / 3; i++)
 			ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.info", msg[i*3], msg[i*3+1], msg[i*3+2]);
 	}
-	// Prepare method, most of modifications go here
+
 	public String[] prepare(String[] msg, Town... towns)
 	{
 		int i = 0;
 		for(Town t : towns)
 		{
 			msg[i*3] = EnumChatFormatting.RED + t.getName() + '\n';
-			
-			for(Resident r : t.getResidents())
-				if(msg[i*3+1] == null)
-					msg[i*3+1] = EnumChatFormatting.WHITE + r.getUUID();
-				else
-					msg[i*3+1] += ", " + r.getUUID();
-			msg[i*3+1] += "\n" + EnumChatFormatting.RED;
-			for(Rank r : t.getRanks())
-				if(msg[i*3+2] == null)
-					msg[i*3+2] = EnumChatFormatting.WHITE + r.getName();
-				else
-					msg[i*3+2] += ", " + r.getName();
-			i++;
+			msg[i*3+1] = Formatter.formatResidentsToString(t.getResidents(), t) + "\n";
+			msg[i*3+2] = Formatter.formatRanksToString(t.getRanks());
 		}
 		return msg;
 	}

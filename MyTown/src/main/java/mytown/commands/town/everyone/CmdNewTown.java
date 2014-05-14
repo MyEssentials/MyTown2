@@ -24,21 +24,6 @@ public class CmdNewTown extends CommandBase {
 	}
 
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
-		super.canCommandSenderUseCommand(sender);
-		try { // Unnecessary try-catch syntax
-			//Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
-			Assert.Perm(sender, this.permNode);
-		} catch (CommandException ce) {
-			throw (ce);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return true;
-	}
-
-	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		if (args.length < 1) {
 			throw new WrongUsageException(MyTown.instance.local.getLocalization("mytown.cmd.usage.newtown"));

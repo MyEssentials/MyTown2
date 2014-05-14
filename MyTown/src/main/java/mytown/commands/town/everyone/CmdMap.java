@@ -12,6 +12,8 @@ public class CmdMap extends CommandBase {
 		super(name, parent);
 	}
 
+	
+	
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		Resident res = MyTown.instance.datasource.getOrMakeResident(sender.getCommandSenderName());

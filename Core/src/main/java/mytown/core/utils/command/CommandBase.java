@@ -21,24 +21,25 @@ public class CommandBase implements Command {
 		} else {
 			permNode = "";
 		}
-		
+		String temp;
 		if(parent != null)
 		{
 			this.parentName = parent.getCommandName();
-			CommandUtils.permissionList.put(parentName + '.' + name, permNode);
-		}
-		else
-		{
+			temp = parentName + '.' + name;
+		} else {
 			this.parentName = "";
-			CommandUtils.permissionList.put(name, permNode);
+			temp = name;
 		}
+		if(permNode.startsWith("mytown.adm"))
+			CommandUtils.permissionListAdmin.put(temp, permNode);
+		else
+			CommandUtils.permissionList.put(temp, permNode);
 	}
 
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		Assert.Perm(sender, getPermNode(), canConsoleUse());
 		return true;
-
 	}
 
 	public String getPermNode() {

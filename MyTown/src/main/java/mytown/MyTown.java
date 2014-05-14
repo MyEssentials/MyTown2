@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 import mytown.commands.admin.CmdTownAdmin;
@@ -131,7 +130,7 @@ public class MyTown {
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent ev) {
 		registerCommands();
-		registerPermissions();
+		ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
 		addDefaultPermissions();
 		startDatasource();
 	}
@@ -215,16 +214,6 @@ public class MyTown {
 
 		CommandUtils.registerCommand((ICommand)(new CmdTown("town")));
 		CommandUtils.registerCommand((ICommand)(new CmdTownAdmin("townadmin")));
-	}
-
-	/**
-	 * Registers permission manager
-	 */
-	private void registerPermissions() {
-		permManager = new PermissionManager("MyTownPermManager");
-		ForgePermsAPI.permManager = permManager;
-		permManager.load();
-		
 	}
 
 	/**

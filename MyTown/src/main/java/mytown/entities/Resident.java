@@ -18,6 +18,7 @@ public class Resident {
 	private boolean isOnline = false;
 	private boolean isNPC = false;
 	private boolean mapOn = false;
+	private List<Town> invitationForms = null; 
 	private EntityPlayer player = null;
 
 	/**
@@ -27,6 +28,7 @@ public class Resident {
 	 */
 	public Resident(String name) {
 		playerUUID = name;
+		invitationForms = new ArrayList<Town>();
 	}
 
 	/**
@@ -290,5 +292,51 @@ public class Resident {
 			return false;
 		this.selectedTown = town;
 		return true;
+	}
+	
+	/**
+	 * Confirms a form that has been sent to the player
+	 * 
+	 * @param accepted
+	 * @param townName
+	 */
+	public void confirmForm(boolean accepted, String townName)
+	{
+		if(invitationForms.size() != 0)
+		{
+			if(accepted)
+			{
+				try {
+					MyTown.instance.datasource.linkResidentToTown(this, getTownFromInvitations(townName));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			this.invitationForms.remove(getTownFromInvitations(townName));
+		}
+	}
+	
+	/**
+	 * Returns town from a string. Returns null if no town was found with the specified name.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	protected Town getTownFromInvitations(String name)
+	{
+		for(Town t : invitationForms)
+			if(t.getName().equals(name))
+				return t;
+		return null;
+	}
+	
+	/**
+	 * Gets the towns that this player has been invited in.
+	 * 
+	 * @return
+	 */
+	public List<Town> getInvitations()
+	{
+		return this.invitationForms;
 	}
 }

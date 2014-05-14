@@ -25,9 +25,11 @@ public class Rank {
 		updateKey();
 	}
 
-	public void addPermission(String perm)
+	public boolean addPermission(String perm)
 	{
-		permissions.add(perm);
+		if(hasPermission(perm))
+			return false;
+		return permissions.add(perm);
 	}
 	
 	public boolean removePermission(String perm)
@@ -112,7 +114,7 @@ public class Rank {
 	public boolean hasPermission(String perm) {
 		if (permissions == null) return false;
 		for (String p : permissions) {
-			if (p == perm) return true;
+			if (p.equals(perm)) return true;
 		}
 		return false;
 	}

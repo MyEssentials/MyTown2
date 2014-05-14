@@ -1,6 +1,6 @@
 package mytown.commands.town.everyone;
 
-import mytown.Constants;
+import mytown.Formatter;
 import mytown.MyTown;
 import mytown.commands.town.assistant.CmdRanksAdd;
 import mytown.commands.town.assistant.CmdRanksPerm;
@@ -9,11 +9,9 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
-import mytown.entities.Rank;
 import mytown.entities.Town;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.EnumChatFormatting;
 
 @Permission(node="mytown.cmd.outsider.ranks")
 public class CmdRanks extends CommandHandler {
@@ -37,32 +35,16 @@ public class CmdRanks extends CommandHandler {
 			if(args.length < 1)
 			{
 				temp = MyTown.instance.datasource.getResident(sender.getCommandSenderName()).getSelectedTown();
+				if(temp == null) throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.partOfTown"));
 			}
 			if(args.length >= 1)
 			{
 				temp = MyTown.instance.datasource.getTown(args[0]);
+				if(temp == null) throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.town.notexist", args[0]));
 			}
-			if(temp == null)
-				throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.partOfTown"));
 
-			String jupiter = null;
-			String color;
-			for(Rank r : temp.getRanks())
-			{
-				if(Constants.DEFAULT_RANK_VALUES.keySet().contains(r.getName()))
-				{
-					if(r.getName().equals("Resident"))
-						color = EnumChatFormatting.RED + "";
-					else
-						color = EnumChatFormatting.GREEN + "";
-				}
-				else
-					color = "";
-				if(jupiter == null)
-					jupiter = color + r.getName() + EnumChatFormatting.WHITE;
-				else
-					jupiter += ", " + color + r.getName() + EnumChatFormatting.WHITE;
-			}
+
+			String jupiter = Formatter.formatRanksToString(temp.getRanks());
 			ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.town.ranks", jupiter);
 
 		}

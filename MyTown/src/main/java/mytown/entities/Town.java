@@ -154,8 +154,10 @@ public class Town implements Comparable<Town> {
 	 * 
 	 * @return
 	 */
-	public Set<Resident> getResidents() {
-		return residents.keySet();
+	public List<Resident> getResidents() {
+		List<Resident> res = new ArrayList<Resident>();
+		res.addAll(residents.keySet());
+		return res;
 	}
 
 	/**
@@ -188,6 +190,20 @@ public class Town implements Comparable<Town> {
 		return residents.containsKey(resident);
 	}
 
+	/**
+	 * Checks if the Resident is part of this Town
+	 * 
+	 * @param resident
+	 * @return
+	 */
+	
+	public boolean hasResident(String UUID) {
+		for(Resident r : residents.keySet())
+			if(r.getUUID().equals(UUID))
+				return true;
+		return false;
+	}
+	
 	/**
 	 * Promotes the Resident to the Rank
 	 * 

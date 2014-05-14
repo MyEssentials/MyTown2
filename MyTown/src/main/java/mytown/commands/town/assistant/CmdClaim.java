@@ -33,8 +33,10 @@ public class CmdClaim extends CommandBase {
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change later
 		}
+		
 		if (res.getTowns().size() == 0) throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission("assistant.claim")) throw new CommandException("commands.generic.permission");
+		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
+		
 		return true;
 	}
 

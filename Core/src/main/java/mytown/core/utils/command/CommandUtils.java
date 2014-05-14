@@ -20,6 +20,7 @@ public class CommandUtils {
 	private static int method = -1;
 
 	public static Map<String, String> permissionList = new Hashtable<String, String>();
+	public static Map<String, String> permissionListAdmin = new Hashtable<String, String>();
 
 	public static void init() throws Exception {
 		log = new Log("CommandUtils");
