@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import mytown.Constants;
-import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Nation;
 import mytown.entities.Rank;
@@ -23,6 +22,7 @@ import net.minecraftforge.common.Property;
 import com.google.common.collect.Lists;
 
 // TODO Add logging
+// TODO Optimize if needed?
 
 /**
  * Base class for all SQL based datasources
@@ -142,20 +142,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			}
 		}
 	}
-	
+
 	@Override
-	public void loadRanks() throws Exception
-	{
-		synchronized(lock) {
+	public void loadRanks() throws Exception {
+		synchronized (lock) {
 			ResultSet set = null;
 			PreparedStatement statement = prepare("SELECT * FROM " + prefix + "Ranks");
 			set = statement.executeQuery();
-			
-			while(set.next())
-			{
-				ArrayList<String> list = new ArrayList<String>(); list.addAll(Arrays.asList(set.getString("Nodes").split(" "))); // Worst workaround, need to be changed
-				Rank rank = new Rank(set.getString("Name"), list , towns.get(set.getString("TownName")));
-				rank.getTown().addRank(rank); // 
+
+			while (set.next()) {
+				ArrayList<String> list = new ArrayList<String>();
+				list.addAll(Arrays.asList(set.getString("Nodes").split(" "))); // Worst workaround, need to be changed
+				Rank rank = new Rank(set.getString("Name"), list, towns.get(set.getString("TownName")));
+				rank.getTown().addRank(rank); //
 				addRank(rank);
 				log.info("Adding rank " + rank.getName() + ", " + rank.getTown().getName());
 			}
@@ -163,8 +162,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	}
 
 	@Override
-	public void updateTown(Town town) throws Exception { // TODO Allow changing
-															// Town name?
+	public void updateTown(Town town) throws Exception { // TODO Allow changing Town name?
 		synchronized (lock) {
 			PreparedStatement statement = prepare("UPDATE " + prefix + "Towns SET Name=?,ExtraBlocks=? WHERE Name=?", true);
 			statement.setString(1, town.getName());
@@ -184,9 +182,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	}
 
 	@Override
-	public void updateNation(Nation nation) throws Exception { // TODO Allow
-																// changing
-																// Nation name?
+	public void updateNation(Nation nation) throws Exception { // TODO Allow changing Nation name?
 		synchronized (lock) {
 			PreparedStatement statement = prepare("UPDATE " + prefix + "Nations SET Name=?,ExtraBlocks=? WHERE Name=?", true);
 			statement.setString(1, nation.getName());
@@ -207,12 +203,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.executeUpdate();
 		}
 	}
-	
+
 	@Override
-	public void updateRank(Rank rank) throws Exception
-	{
-		synchronized(lock)
-		{
+	public void updateRank(Rank rank) throws Exception {
+		synchronized (lock) {
 			PreparedStatement statement = prepare("UPDATE " + prefix + "Ranks SET Name=?,Nodes=?,TownName=? WHERE Key=?");
 			statement.setString(1, rank.getName());
 			statement.setString(2, rank.getPermissionsWithFormat());
@@ -222,7 +216,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			rank.updateKey();
 		}
 	}
-			
 
 	@Override
 	public void insertTown(Town town) throws Exception {
@@ -232,7 +225,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setString(1, town.getName());
 			statement.setInt(2, town.getExtraBlocks());
 			statement.executeUpdate();
-			for(String s : Constants.DEFAULT_RANK_VALUES.keySet())
+			for (String s : Constants.DEFAULT_RANK_VALUES.keySet())
 				insertRank(new Rank(s, Constants.DEFAULT_RANK_VALUES.get(s), town));
 		}
 	}
@@ -279,11 +272,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			townBlock.setId(rs.getInt(1));
 		}
 	}
-	
+
 	@Override
-	public void insertRank(Rank rank) throws Exception
-	{
-		synchronized(lock) {
+	public void insertRank(Rank rank) throws Exception {
+		synchronized (lock) {
 			addRank(rank);
 			rank.getTown().addRank(rank);
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Ranks (Key, Name, Nodes, TownName) VALUES (?, ?, ?, ?)", true);
@@ -295,102 +287,96 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			System.out.println(rank.getPermissionsWithFormat());
 		}
 	}
-			
 
 	@Override
-	public boolean deleteTown(Town town) throws Exception
-	{
-		synchronized(lock) {
+	public boolean deleteTown(Town town) throws Exception {
+		synchronized (lock) {
 			removeTown(town);
 			PreparedStatement statement;
-			
-			statement = prepare("DELETE FROM " + prefix + "ResidentsToTowns WHERE TownName=?", false);
+
+			// None of the commented out stuff should be needed. The constraints on the tables *should* handle removing everything else for us. Keeping for now, just in case
+			// statement = prepare("DELETE FROM " + prefix + "ResidentsToTowns WHERE TownName=?", false);
+			// statement.setString(1, town.getName());
+			// statement.executeUpdate();
+			// statement = prepare("DELETE FROM " + prefix + "TownBlocks WHERE TownName=?", false);
+			// statement.setString(1, town.getName());
+			// statement.executeUpdate();
+			// statement = prepare("DELETE FROM " + prefix + "TownsToNations WHERE TownName=?", false);
+			// statement.setString(1, town.getName());
+			// statement.executeUpdate();
+			// statement = prepare("DELETE FROM " + prefix + "Ranks WHERE TownName=?", false);
+			// statement.setString(1, town.getName());
+			// statement.executeUpdate();
+			statement = prepare("DELETE FROM " + prefix + "Towns WHERE Name=?", false);
 			statement.setString(1, town.getName());
-			statement.executeUpdate();
-			statement = prepare("DELETE FROM " + prefix + "TownBlocks WHERE TownName=?", false);
-			statement.setString(1, town.getName());
-			statement.executeUpdate();
-			statement = prepare("DELETE FROM " + prefix + "TownsToNations WHERE TownName=?", false);
-			statement.setString(1, town.getName());
-			statement.executeUpdate();
-			statement = prepare("DELETE FROM " + prefix + "Ranks WHERE TownName=?", false);
-			statement.setString(1, town.getName());
-			statement.executeUpdate();
-			statement = prepare("DELETE FROM "+ prefix +"Towns WHERE Name=?", false);
-			statement.setString(1, town.getName());
-			
+
 			return statement.executeUpdate() != 0;
 		}
 	}
-	
+
 	@Override
-	public boolean deleteNation(Nation nation) throws Exception
-	{
-		synchronized(lock) {
+	public boolean deleteNation(Nation nation) throws Exception {
+		synchronized (lock) {
 			removeNation(nation);
 			PreparedStatement statement;
-			
-			statement = prepare("DELETE FROM " + prefix + " TownsToNations WHERE NationName=?", false);
+
+			// None of the commented out stuff should be needed. The constraints on the tables *should* handle removing everything else for us. Keeping for now, just in case
+			// statement = prepare("DELETE FROM " + prefix + " TownsToNations WHERE NationName=?", false);
+			// statement.setString(1, nation.getName());
+			// statement.executeUpdate();
+			statement = prepare("DELETE FROM " + prefix + " Nations WHERE Name=?", false);
 			statement.setString(1, nation.getName());
-			statement.executeUpdate();
-			statement = prepare("DELETE FROM "+ prefix +" Nations WHERE Name=?", false);
-			statement.setString(1, nation.getName());
-			
+
 			return statement.executeUpdate() != 0;
 		}
 	}
-	
+
 	@Override
-	public boolean deleteTownBlock(TownBlock townBlock) throws Exception
-	{
-		synchronized(lock) {
+	public boolean deleteTownBlock(TownBlock townBlock) throws Exception {
+		synchronized (lock) {
 			removeTownBlock(townBlock);
-			PreparedStatement statement = prepare("DELETE FROM "+ prefix +" TownBlocks WHERE X=? AND Z=? AND Dim=?", false);
+			PreparedStatement statement = prepare("DELETE FROM " + prefix + " TownBlocks WHERE X=? AND Z=? AND Dim=?", false);
 			statement.setInt(1, townBlock.getX());
 			statement.setInt(2, townBlock.getZ());
 			statement.setInt(3, townBlock.getDim());
 			return statement.executeUpdate() != 0;
 		}
 	}
-	
+
 	@Override
-	public boolean deleteResident(Resident resident) throws Exception
-	{
-		synchronized(lock) {
+	public boolean deleteResident(Resident resident) throws Exception {
+		synchronized (lock) {
 			removeResident(resident);
 			PreparedStatement statement;
 
-			statement = prepare("DELETE FROM " + prefix + " ResidentsToTowns WHERE Owner=?", false);
-			statement.setString(1, resident.getUUID());		
-			statement.executeUpdate();
-			statement = prepare("DELETE FROM "+ prefix +" Residents WHERE UUID=?", false);
+			// None of the commented out stuff should be needed. The constraints on the tables *should* handle removing everything else for us. Keeping for now, just in case
+			// statement = prepare("DELETE FROM " + prefix + " ResidentsToTowns WHERE Owner=?", false);
+			// statement.setString(1, resident.getUUID());
+			// statement.executeUpdate();
+			statement = prepare("DELETE FROM " + prefix + " Residents WHERE UUID=?", false);
 			statement.setString(1, resident.getUUID());
-			
+
 			return statement.executeUpdate() != 0;
 		}
 	}
-	
+
 	@Override
-	public boolean deleteRank(Rank rank) throws Exception
-	{
-		if(rank.getName().equals("Resident"))
-			return false;
-		synchronized(lock) {
+	public boolean deleteRank(Rank rank) throws Exception {
+		if (rank.getName().equals("Resident")) return false;
+		synchronized (lock) {
 			removeRank(rank);
 			rank.getTown().removeRank(rank);
-			for(Resident res : rank.getTown().getResidents())
-				if(res.getTownRank(rank.getTown()) == null)
-					res.setTownRank(rank.getTown(), rank.getTown().getRank("Resident"));
+			for (Resident res : rank.getTown().getResidents())
+				if (res.getTownRank(rank.getTown()) == null) res.setTownRank(rank.getTown(), rank.getTown().getRank("Resident"));
 			PreparedStatement statement;
-			
+
 			statement = prepare("DELETE FROM " + prefix + "Ranks WHERE Key=?", false);
 			statement.setString(1, rank.getKey());
-			
+
 			return statement.executeUpdate() != 0;
 		}
 	}
-			
-	
+
 	@Override
 	public void loadResidentToTownLinks() throws Exception {
 		synchronized (lock) {
@@ -401,8 +387,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				Resident res = getResident(set.getString("Owner"));
 				Town town = getTown(set.getString("TownName"));
 				Rank rank = getRank(set.getString("Rank"), town);
-					
-				
+
 				// Do actual link
 				res.addTown(town);
 				town.addResident(res, rank);
@@ -435,7 +420,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			resident.addTown(town);
 			town.addResident(resident, rank);
 			town.addRank(rank);
-			
+
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + " ResidentsToTowns (TownName, Owner, Rank) VALUES (?, ?, ?)", true);
 			statement.setString(1, town.getName());
 			statement.setString(2, resident.getUUID());
@@ -457,33 +442,31 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.executeQuery();
 		}
 	}
-	
+
 	@Override
-	public void unlinkResidentFromTown(Resident resident, Town town) throws Exception
-	{
-		synchronized(lock) {
+	public void unlinkResidentFromTown(Resident resident, Town town) throws Exception {
+		synchronized (lock) {
 			resident.removeResidentFromTown(town);
 			town.removeResident(resident);
-			
+
 			PreparedStatement statement = prepare("DELETE FROM " + prefix + " ResidentsToTowns WHERE TownName=? AND Owner=?", false);
 			statement.setString(1, town.getName());
 			statement.setString(2, resident.getUUID());
 			statement.executeUpdate();
 		}
 	}
-	
+
 	@Override
-	public void unlinkTownFromNation(Town town, Nation nation) throws Exception
-	{
-		synchronized(lock) {
+	public void unlinkTownFromNation(Town town, Nation nation) throws Exception {
+		synchronized (lock) {
 			nation.removeTown(town);
 			town.removeNation(nation);
-			
+
 			PreparedStatement statement = prepare("DELETE FROM " + prefix + " TownsToNations WHERE TownName=? AND NationName=?", false);
 			statement.setString(1, town.getName());
 			statement.setString(2, nation.getName());
 			statement.executeUpdate();
-		}		
+		}
 	}
 
 	@Override
@@ -500,8 +483,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		if (!conn.getAutoCommit()) conn.commit();
 		conn.close();
 	}
-	
-	
+
 	// //////////////////////////////////////
 	// Update System
 	// //////////////////////////////////////
@@ -537,11 +519,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		updates.add(new DBUpdate("03.08.2014.3", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Residents (UUID varchar(255) NOT NULL, IsNPC boolean DEFAULT false, Joined int NOT NULL, LastLogin int NOT NULL, PRIMARY KEY (UUID));")); // MC Version < 1.7 UUID is Player name. 1.7 >= UUID is Player's UUID
 		updates.add(new DBUpdate("03.08.2014.4", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Nations (Name varchar(50) NOT NULL, ExtraBlocks int NOT NULL DEFAULT 0, PRIMARY KEY(Name));"));
 		updates.add(new DBUpdate("03.08.2014.5", "Add TownBlocks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownBlocks (Id int " + autoIncrement + ", X int NOT NULL, Z int NOT NULL, Dim int NOT NULL, TownName varchar(50) NOT NULL, PRIMARY KEY(Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		updates.add(new DBUpdate("03.22.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "ResidentsToTowns (Id int " + autoIncrement + ", TownName varchar(50) NOT NULL, Owner varchar(255) NOT NULL, Rank varchar(50), PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix
-				+ "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (Owner) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE);"));
+		updates.add(new DBUpdate("03.22.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "ResidentsToTowns (Id int " + autoIncrement + ", TownName varchar(50) NOT NULL, Owner varchar(255) NOT NULL, Rank varchar(50), PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (Owner) REFERENCES "
+				+ prefix + "Residents(UUID) ON DELETE CASCADE, FOREIGN KEY (Rank) REFERENCES " + prefix + "Ranks ON UPDATE CASCADE);"));
 		updates.add(new DBUpdate("03.22.2014.2", "Add TownsToNations", "CREATE TABLE IF NOT EXISTS " + prefix + "TownsToNations (Id int " + autoIncrement + ", TownName varchar(50) NOT NULL, NationName varchar(50) NOT NULL, Rank varchar(1) DEFAULT 'T', PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix
 				+ "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (NationName) REFERENCES " + prefix + "Nations(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		updates.add(new DBUpdate("05.03.2014.1", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Ranks (Key varchar(100) NOT NULL, Name varchar(50) NOT NULL, Nodes text(10000), TownName varchar(50), PRIMARY KEY(Key), FOREIGN KEY (TownName) REFERENCES "+ prefix +" Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("05.03.2014.1", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Ranks (Key varchar(100) NOT NULL, Name varchar(50) NOT NULL, Nodes text(10000), TownName varchar(50), PRIMARY KEY(Key), FOREIGN KEY (TownName) REFERENCES " + prefix + " Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
 	}
 
 	/**
@@ -565,7 +547,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			if (ids.contains(update.id)) continue; // Skip updates already done
 
 			// Update!
-			MyTown.instance.datasourceLog.info("Running update %s - %s", update.id, update.code);
+			log.info("Running update %s - %s", update.id, update.code);
 			statement = prepare(update.sql);
 			statement.execute();
 

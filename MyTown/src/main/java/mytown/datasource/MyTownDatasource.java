@@ -38,7 +38,7 @@ public abstract class MyTownDatasource {
 	protected ConcurrentMap<String, Nation> nations;
 	protected ConcurrentMap<String, TownBlock> blocks;
 	protected ConcurrentMap<String, Rank> ranks;
-	
+
 	/**
 	 * Used for connecting to Databases. Returns if connection was successful
 	 * 
@@ -55,6 +55,7 @@ public abstract class MyTownDatasource {
 		blocks = new ConcurrentHashMap<String, TownBlock>();
 		ranks = new ConcurrentHashMap<String, Rank>();
 	}
+
 	/**
 	 * Does implementation specific configuration
 	 * 
@@ -115,9 +116,8 @@ public abstract class MyTownDatasource {
 	public Map<String, TownBlock> getTownBlocksMap() {
 		return blocks;
 	}
-	
-	public Map<String, Rank> getRanksMap()
-	{
+
+	public Map<String, Rank> getRanksMap() {
 		return ranks;
 	}
 
@@ -160,14 +160,13 @@ public abstract class MyTownDatasource {
 	public Collection<TownBlock> getTownBlocks() {
 		return blocks.values();
 	}
-	
+
 	/**
 	 * Returns a Collection of the Ranks
 	 * 
 	 * @return
 	 */
-	public Collection<Rank> getRanks()
-	{
+	public Collection<Rank> getRanks() {
 		return ranks.values();
 	}
 
@@ -234,22 +233,23 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public Rank getRank(String rank, Town town) {
-		if(town == null) return null;
-		if(ranks.get(town.getName() + ":" + rank) == null)
-			return null;
+		if (town == null) return null;
+		if (ranks.get(town.getName() + ":" + rank) == null) return null;
 		return ranks.get(town.getName() + ":" + rank);
 	}
-	
+
 	/**
 	 * 
 	 * Gets a Rank
-	 * @param key should look like this: TownName:Rank
+	 * 
+	 * @param key
+	 *            should look like this: TownName:Rank
 	 * @return
 	 */
-	public Rank getRank(String key)
-	{
+	public Rank getRank(String key) {
 		return ranks.get(key);
 	}
+
 	// /////////////////////////////////////////////////////////////
 	// Checkers?
 	// /////////////////////////////////////////////////////////////
@@ -294,17 +294,17 @@ public abstract class MyTownDatasource {
 	public boolean hasTownBlock(String key) {
 		return blocks.containsKey(key);
 	}
+
 	/**
 	 * Checks if the Rank with the given key exists in the Datasource
 	 * 
 	 * @param rankName
 	 * @return
 	 */
-	public boolean hasRank(String rankName)
-	{
+	public boolean hasRank(String rankName) {
 		return ranks.containsKey(rankName);
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Loaders
 	// /////////////////////////////////////////////////////////////
@@ -336,117 +336,6 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void loadRanks() throws Exception;
-	
-	// /////////////////////////////////////////////////////////////
-	// Add Single Entity
-	// /////////////////////////////////////////////////////////////
-
-	/**
-	 * Adds a Town to the Datasource
-	 * 
-	 * @param town
-	 */
-	public void addTown(Town town) throws Exception {
-		log.info("Adding town %s", town.getName()); // TODO Remove later
-		towns.put(town.getName(), town);
-	}
-
-	/**
-	 * Adds a Resident to the Datasource
-	 * 
-	 * @param resident
-	 */
-	public void addResident(Resident resident) throws Exception {
-		residents.put(resident.getUUID(), resident);
-	}
-
-	/**
-	 * Adds a Nation to the Datasource
-	 * 
-	 * @param nation
-	 */
-	public void addNation(Nation nation) throws Exception {
-		nations.put(nation.getName(), nation);
-	}
-
-	/**
-	 * Adds a TownBlock to the Datasource
-	 * 
-	 * @param townBlock
-	 */
-	public void addTownBlock(TownBlock townBlock) throws Exception {
-		blocks.put(townBlock.getKey(), townBlock);
-	}
-	
-	/**
-	 * 
-	 * Adds a Rank to the Datasource
-	 * 
-	 * @param rank
-	 * @throws Exception
-	 */
-	public void addRank(Rank rank) throws Exception
-	{
-		ranks.put(rank.getKey(), rank);
-	}
-
-	// /////////////////////////////////////////////////////////////
-	// Add Multiple Entities
-	// /////////////////////////////////////////////////////////////
-
-	/**
-	 * Adds multiple Towns to the Datasource
-	 * 
-	 * @param towns
-	 * @throws Exception
-	 */
-	public void addTowns(Town... towns) throws Exception {
-		for (Town town : towns) {
-			addTown(town);
-		}
-	}
-
-	/**
-	 * Adds multiple Residents to the Datasource
-	 * 
-	 * @param residents
-	 * @throws Exception
-	 */
-	public void addResidents(Resident... residents) throws Exception {
-		for (Resident res : residents) {
-			addResident(res);
-		}
-	}
-
-	/**
-	 * Adds multiple Nations to the Datasource
-	 * 
-	 * @param nations
-	 * @throws Exception
-	 */
-	public void addNations(Nation... nations) throws Exception {
-		for (Nation nation : nations) {
-			addNation(nation);
-		}
-	}
-
-	/**
-	 * Adds multiple TownBlocks to the Datasource
-	 * 
-	 * @param townBlocks
-	 * @throws Exception
-	 */
-	public void addTownBlocks(TownBlock... townBlocks) throws Exception {
-		for (TownBlock block : townBlocks) {
-			addTownBlocks(block);
-		}
-	}
-	
-	public void addRanks(Rank... ranks) throws Exception 
-	{
-		for (Rank r : ranks)
-			addRank(r);
-	}
 
 	// /////////////////////////////////////////////////////////////
 	// Insert Single Entity
@@ -492,6 +381,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void insertRank(Rank rank) throws Exception;
+
 	// /////////////////////////////////////////////////////////////
 	// Insert Multiple Entities
 	// /////////////////////////////////////////////////////////////
@@ -543,7 +433,7 @@ public abstract class MyTownDatasource {
 			insertTownBlock(block);
 		}
 	}
-	
+
 	/**
 	 * Adds multiple Ranks to the Datasource and executes a query
 	 * 
@@ -551,136 +441,9 @@ public abstract class MyTownDatasource {
 	 * @param ranks
 	 * @throws Exception
 	 */
-	public void insertRanks(Rank... ranks) throws Exception
-	{
-		for(Rank r : ranks)
+	public void insertRanks(Rank... ranks) throws Exception {
+		for (Rank r : ranks)
 			insertRank(r);
-	}
-
-	// /////////////////////////////////////////////////////////////
-	// Remove Single Entity
-	// /////////////////////////////////////////////////////////////
-
-	/**
-	 * Removes a Town from the Datasource
-	 * 
-	 * @param town
-	 */
-	public boolean removeTown(Town town) {
-		for(Nation n : nations.values())
-			if(n.hasTown(town))
-				n.removeTown(town);
-	
-		for(Resident r : town.getResidents())
-			r.removeResidentFromTown(town);
-		
-		return towns.remove(town.getName()) != null;
-	}
-
-	/**
-	 * Removes a Resident from the Datasource
-	 * 
-	 * @param resident
-	 */
-	public boolean removeResident(Resident resident) {
-		for(Town t : towns.values())
-			if(t.hasResident(resident))
-				t.removeResident(resident);
-		
-		return residents.remove(resident.getUUID()) != null;
-	}
-
-	/**
-	 * Removes a Nation from the Datasource
-	 * 
-	 * @param nation
-	 */
-	public boolean removeNation(Nation nation) {
-		for(Town t : towns.values())
-			if(t.hasNation(nation))
-				t.removeNation(nation);
-		return nations.remove(nation.getName()) != null;
-	}
-
-	/**
-	 * Removes a TownBlock from the Datasource
-	 * 
-	 * @param townBlock
-	 */
-	public boolean removeTownBlock(TownBlock townBlock) {
-		for(Town t : towns.values())
-			if(t.getTownBlocks().contains(townBlock))
-				t.removeTownBlock(townBlock);
-		return blocks.remove(townBlock.getKey()) != null;
-	}
-	
-	/**
-	 * Removes a Rank from the Datasource
-	 * 
-	 * @param rank
-	 * @return
-	 */
-	public boolean removeRank(Rank rank)
-	{
-		for(Town t : towns.values())
-			if(t.getRanks().contains(rank))
-				t.removeRank(rank);
-		return ranks.remove(rank.getTown().getName() + ":" + rank.getName()) != null;
-	}
-			
-
-	// /////////////////////////////////////////////////////////////
-	// Remove Multiple Entities
-	// /////////////////////////////////////////////////////////////
-
-	/**
-	 * Removes the Towns from the Datasource
-	 * 
-	 * @param towns
-	 */
-	public void removeTowns(Town... towns) {
-		for (Town town : towns) {
-			removeTown(town);
-		}
-	}
-
-	/**
-	 * Removes the Residents from the Datasource
-	 * 
-	 * @param residents
-	 */
-	public void removeResidents(Resident... residents) {
-		for (Resident res : residents) {
-			removeResident(res);
-		}
-	}
-
-	/**
-	 * Removes the Nations from the Datasource
-	 * 
-	 * @param nations
-	 */
-	public void removeNations(Nation... nations) {
-		for (Nation nation : nations) {
-			removeNation(nation);
-		}
-	}
-
-	/**
-	 * Removes the TownBlocks from the Datasource
-	 * 
-	 * @param blocks
-	 */
-	public void removeTownBlocks(TownBlock... blocks) {
-		for (TownBlock block : blocks) {
-			removeTownBlock(block);
-		}
-	}
-	
-	public void removeRanks(Rank... ranks)
-	{
-		for(Rank r : ranks)
-			removeRank(r);
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -721,12 +484,13 @@ public abstract class MyTownDatasource {
 
 	/**
 	 * Updates the Rank
+	 * 
 	 * @param town
 	 * @param rank
 	 * @throws Exception
 	 */
 	public abstract void updateRank(Rank rank) throws Exception;
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Update Multiple Entities
 	// /////////////////////////////////////////////////////////////
@@ -778,25 +542,23 @@ public abstract class MyTownDatasource {
 			updateTownBlock(block);
 		}
 	}
-	
+
 	/**
 	 * Updates all the given Ranks
+	 * 
 	 * @param town
 	 * @param ranks
 	 * @throws Exception
 	 */
-	public void updateRanks(Rank... ranks) throws Exception
-	{
-		for(Rank r : ranks)
+	public void updateRanks(Rank... ranks) throws Exception {
+		for (Rank r : ranks)
 			updateRank(r);
 	}
-	
-	
 
 	// /////////////////////////////////////////////////////////////
 	// Delete Single Entities
 	// /////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Deletes the town from Datasource and executes a query
 	 * 
@@ -804,7 +566,7 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public abstract boolean deleteTown(Town town) throws Exception;
-	
+
 	/**
 	 * Deletes the nation from Datasource and executes a query
 	 * 
@@ -812,7 +574,7 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public abstract boolean deleteNation(Nation nation) throws Exception;
-	
+
 	/**
 	 * Deletes the townblock from Datasource and executes a query
 	 * 
@@ -820,7 +582,7 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public abstract boolean deleteTownBlock(TownBlock townBlock) throws Exception;
-	
+
 	/**
 	 * Deletes the resident from Datasource and executes a query
 	 * 
@@ -828,79 +590,76 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public abstract boolean deleteResident(Resident resident) throws Exception;
-	
+
 	/**
 	 * Deletes a rank from the town specified from Datasource and executes a query
+	 * 
 	 * @param rank
 	 * @return
 	 * @throws Exception
 	 */
 	public abstract boolean deleteRank(Rank rank) throws Exception;
-		
+
 	// /////////////////////////////////////////////////////////////
 	// Delete Multiple Entities
 	// /////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Deletes the towns from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
 	 */
-	public void deleteTowns(Town... towns) throws Exception
-	{
-		for(Town t : towns)
+	public void deleteTowns(Town... towns) throws Exception {
+		for (Town t : towns)
 			deleteTown(t);
 	}
-	
+
 	/**
 	 * Deletes the nations from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
 	 */
-	public void deleteNations(Nation... nations) throws Exception
-	{
-		for(Nation n : nations)
+	public void deleteNations(Nation... nations) throws Exception {
+		for (Nation n : nations)
 			deleteNation(n);
 	}
-	
+
 	/**
 	 * Deletes the townblocks from Datasource and executes a query
 	 * 
-	 * @param town
+	 * @param townBlocks
 	 * @return
 	 */
-	public void deleteTownBlocks(TownBlock... townBlocks) throws Exception
-	{
-		for(TownBlock b : townBlocks)
+	public void deleteTownBlocks(TownBlock... townBlocks) throws Exception {
+		for (TownBlock b : townBlocks)
 			deleteTownBlock(b);
 	}
-	
+
 	/**
 	 * Deletes the residents from Datasource and executes a query
 	 * 
 	 * @param town
 	 * @return
 	 */
-	public void deleteResidents(Resident... residents) throws Exception
-	{
-		for(Resident r : residents)
+	public void deleteResidents(Resident... residents) throws Exception {
+		for (Resident r : residents)
 			deleteResident(r);
 	}
-	
+
 	/**
 	 * Deletes the ranks from the specified town from Datasource and executes a query
+	 * 
 	 * @param town
 	 * @param ranks
 	 * @throws Exception
 	 */
-	public void deleteRanks(Rank... ranks) throws Exception
-	{
-		for(Rank r : ranks)
+	public void deleteRanks(Rank... ranks) throws Exception {
+		for (Rank r : ranks)
 			deleteRank(r);
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Linkages
 	// /////////////////////////////////////////////////////////////
@@ -957,7 +716,7 @@ public abstract class MyTownDatasource {
 	public void linkTownToNation(Town town, Nation nation) throws Exception {
 		linkTownToNation(town, nation, Nation.Rank.Town);
 	}
-	
+
 	/**
 	 * Removes link of a Resident to the specified Town
 	 * 
@@ -965,9 +724,8 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 * @throws Exception
 	 */
-	
 	public abstract void unlinkResidentFromTown(Resident resident, Town town) throws Exception;
-	
+
 	/**
 	 * Removes link of a Town to the specified Nation
 	 * 
@@ -975,9 +733,7 @@ public abstract class MyTownDatasource {
 	 * @param nation
 	 * @throws Exception
 	 */
-	
 	public abstract void unlinkTownFromNation(Town town, Nation nation) throws Exception;
-	
 
 	// /////////////////////////////////////////////////////////////
 	// Extras
@@ -986,7 +742,7 @@ public abstract class MyTownDatasource {
 	public abstract void dump() throws Exception;
 
 	// /////////////////////////////////////////////////////////////
-	// Unknown Group/Helpers? TODO Change/Move Later? //
+	// Unknown Group/Helpers? TODO Change/Move Later?
 	// /////////////////////////////////////////////////////////////
 
 	/**
@@ -1014,6 +770,254 @@ public abstract class MyTownDatasource {
 	 */
 	public Resident getOrMakeResident(EntityPlayer player) throws Exception {
 		return getOrMakeResident(player.getCommandSenderName());
+	}
+
+	// ***** Everything below here is for internal use only! *****
+
+	// /////////////////////////////////////////////////////////////
+	// Add Single Entity - Internal Only
+	// /////////////////////////////////////////////////////////////
+
+	/**
+	 * Adds a Town to the Datasource
+	 * 
+	 * @param town
+	 */
+	protected void addTown(Town town) throws Exception {
+		log.info("Adding town %s", town.getName()); // TODO Remove later
+		towns.put(town.getName(), town);
+	}
+
+	/**
+	 * Adds a Resident to the Datasource
+	 * 
+	 * @param resident
+	 */
+	protected void addResident(Resident resident) throws Exception {
+		residents.put(resident.getUUID(), resident);
+	}
+
+	/**
+	 * Adds a Nation to the Datasource
+	 * 
+	 * @param nation
+	 */
+	protected void addNation(Nation nation) throws Exception {
+		nations.put(nation.getName(), nation);
+	}
+
+	/**
+	 * Adds a TownBlock to the Datasource
+	 * 
+	 * @param townBlock
+	 */
+	protected void addTownBlock(TownBlock townBlock) throws Exception {
+		blocks.put(townBlock.getKey(), townBlock);
+	}
+
+	/**
+	 * 
+	 * Adds a Rank to the Datasource
+	 * 
+	 * @param rank
+	 * @throws Exception
+	 */
+	protected void addRank(Rank rank) throws Exception {
+		ranks.put(rank.getKey(), rank);
+	}
+
+	// /////////////////////////////////////////////////////////////
+	// Add Multiple Entities - Internal Only
+	// /////////////////////////////////////////////////////////////
+
+	/**
+	 * Adds multiple Towns to the towns Map
+	 * 
+	 * @param towns
+	 * @throws Exception
+	 */
+	protected void addTowns(Town... towns) throws Exception {
+		for (Town town : towns) {
+			addTown(town);
+		}
+	}
+
+	/**
+	 * Adds multiple Residents to the residents Map
+	 * 
+	 * @param residents
+	 * @throws Exception
+	 */
+	protected void addResidents(Resident... residents) throws Exception {
+		for (Resident res : residents) {
+			addResident(res);
+		}
+	}
+
+	/**
+	 * Adds multiple Nations to the nations Map
+	 * 
+	 * @param nations
+	 * @throws Exception
+	 */
+	protected void addNations(Nation... nations) throws Exception {
+		for (Nation nation : nations) {
+			addNation(nation);
+		}
+	}
+
+	/**
+	 * Adds multiple TownBlocks to the blocks Map
+	 * 
+	 * @param townBlocks
+	 * @throws Exception
+	 */
+	protected void addTownBlocks(TownBlock... townBlocks) throws Exception {
+		for (TownBlock block : townBlocks) {
+			addTownBlocks(block);
+		}
+	}
+
+	/**
+	 * Adds multiple Ranks to the ranks Map
+	 * 
+	 * @param ranks
+	 * @throws Exception
+	 */
+	protected void addRanks(Rank... ranks) throws Exception {
+		for (Rank r : ranks)
+			addRank(r);
+	}
+
+	// /////////////////////////////////////////////////////////////
+	// Remove Single Entity - Internal Only
+	// /////////////////////////////////////////////////////////////
+
+	/**
+	 * Removes a Town from the Datasource
+	 * 
+	 * @param town
+	 */
+	protected boolean removeTown(Town town) {
+		for (Nation n : town.getNations())
+			n.removeTown(town);
+		for (Resident r : town.getResidents())
+			r.removeResidentFromTown(town);
+		for (TownBlock block : town.getTownBlocks())
+			removeTownBlock(block);
+		return towns.remove(town.getName()) != null;
+	}
+
+	/**
+	 * Removes a Resident from the Datasource
+	 * 
+	 * @param resident
+	 */
+	protected boolean removeResident(Resident resident) {
+		for (Town t : resident.getTowns())
+			t.removeResident(resident);
+		return residents.remove(resident.getUUID()) != null;
+	}
+
+	/**
+	 * Removes a Nation from the Datasource
+	 * 
+	 * @param nation
+	 */
+	protected boolean removeNation(Nation nation) {
+		for (Town t : nation.getTowns())
+			t.removeNation(nation);
+		return nations.remove(nation.getName()) != null;
+	}
+
+	/**
+	 * Removes a TownBlock from the Datasource
+	 * 
+	 * @param townBlock
+	 */
+	protected boolean removeTownBlock(TownBlock townBlock) {
+		townBlock.getTown().removeTownBlock(townBlock);
+		return blocks.remove(townBlock.getKey()) != null;
+	}
+
+	/**
+	 * Removes a Rank from the Datasource
+	 * 
+	 * @param rank
+	 * @return
+	 */
+	protected boolean removeRank(Rank rank) {
+		for (Town t : towns.values())
+			if (t.getRanks().contains(rank)) t.removeRank(rank);
+		return ranks.remove(rank.getTown().getName() + ":" + rank.getName()) != null;
+	}
+
+	// /////////////////////////////////////////////////////////////
+	// Remove Multiple Entities - Internal Only
+	// /////////////////////////////////////////////////////////////
+
+	/**
+	 * Removes the Towns from the towns Map
+	 * 
+	 * Should not be used outside the Datasource!
+	 * 
+	 * @param towns
+	 */
+	protected void removeTowns(Town... towns) {
+		for (Town town : towns) {
+			removeTown(town);
+		}
+	}
+
+	/**
+	 * Removes the Residents from the residents Map
+	 * 
+	 * Should not be used outside the Datasource!
+	 * 
+	 * @param residents
+	 */
+	protected void removeResidents(Resident... residents) {
+		for (Resident res : residents) {
+			removeResident(res);
+		}
+	}
+
+	/**
+	 * Removes the Nations from the nations Map
+	 * 
+	 * Should not be used outside the Datasource!
+	 * 
+	 * @param nations
+	 */
+	protected void removeNations(Nation... nations) {
+		for (Nation nation : nations) {
+			removeNation(nation);
+		}
+	}
+
+	/**
+	 * Removes the TownBlocks from the blocks Map
+	 * 
+	 * Should not be used outside the Datasource!
+	 * 
+	 * @param blocks
+	 */
+	protected void removeTownBlocks(TownBlock... blocks) {
+		for (TownBlock block : blocks) {
+			removeTownBlock(block);
+		}
+	}
+
+	/**
+	 * Removes multiple Ranks from the ranks Map
+	 * 
+	 * Should not be used outside the Datasource!
+	 * 
+	 * @param ranks
+	 */
+	protected void removeRanks(Rank... ranks) {
+		for (Rank r : ranks)
+			removeRank(r);
 	}
 
 }
