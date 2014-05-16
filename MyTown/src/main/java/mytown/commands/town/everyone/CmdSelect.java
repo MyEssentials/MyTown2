@@ -2,19 +2,19 @@ package mytown.commands.town.everyone;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 
 
-@Permission(node="mytown.cmd.select")
-public class CmdSelect extends SubCommandBase{
+@Permission(node="mytown.cmd.outsider.select")
+public class CmdSelect extends CommandBase{
 	
-	public CmdSelect(String name)
+	public CmdSelect(String name, CommandBase parent)
 	{
-		super(name);
+		super(name, parent);
 	}
 	
 	@Override

@@ -37,7 +37,8 @@ public abstract class MyTownDatasource {
 	protected ConcurrentMap<String, Resident> residents;
 	protected ConcurrentMap<String, Nation> nations;
 	protected ConcurrentMap<String, TownBlock> blocks;
-
+	protected ConcurrentMap<String, Rank> ranks;
+	
 	/**
 	 * Used for connecting to Databases. Returns if connection was successful
 	 * 
@@ -52,8 +53,8 @@ public abstract class MyTownDatasource {
 		residents = new ConcurrentHashMap<String, Resident>();
 		nations = new ConcurrentHashMap<String, Nation>();
 		blocks = new ConcurrentHashMap<String, TownBlock>();
+		ranks = new ConcurrentHashMap<String, Rank>();
 	}
-
 	/**
 	 * Does implementation specific configuration
 	 * 
@@ -114,6 +115,11 @@ public abstract class MyTownDatasource {
 	public Map<String, TownBlock> getTownBlocksMap() {
 		return blocks;
 	}
+	
+	public Map<String, Rank> getRanksMap()
+	{
+		return ranks;
+	}
 
 	// /////////////////////////////////////////////////////////////
 	// Collection Getters
@@ -154,6 +160,16 @@ public abstract class MyTownDatasource {
 	public Collection<TownBlock> getTownBlocks() {
 		return blocks.values();
 	}
+	
+	/**
+	 * Returns a Collection of the Ranks
+	 * 
+	 * @return
+	 */
+	public Collection<Rank> getRanks()
+	{
+		return ranks.values();
+	}
 
 	// /////////////////////////////////////////////////////////////
 	// Single Instance Getters
@@ -167,17 +183,6 @@ public abstract class MyTownDatasource {
 	 */
 	public Town getTown(String name) {
 		return towns.get(name);
-	}
-
-	public Rank getRank(String rank, Town town) {
-		for (Rank r : Constants.DEFAULT_RANKS) {
-			if (r.parse(rank)) return r;
-		}
-		if(town != null)
-			for (Rank r : town.getAdditionalRanks()) {
-				if (r.parse(rank)) return r;
-		}
-		return Constants.DEFAULT_RANKS[0]; // TODO Change later?
 	}
 
 	/**
@@ -222,6 +227,29 @@ public abstract class MyTownDatasource {
 		return getTownBlock(dim + ";" + x + ";" + z);
 	}
 
+	/**
+	 * Gets a Rank from the Town specified
+	 * 
+	 * @param rank
+	 * @return
+	 */
+	public Rank getRank(String rank, Town town) {
+		if(town == null) return null;
+		if(ranks.get(town.getName() + ":" + rank) == null)
+			return null;
+		return ranks.get(town.getName() + ":" + rank);
+	}
+	
+	/**
+	 * 
+	 * Gets a Rank
+	 * @param key should look like this: TownName:Rank
+	 * @return
+	 */
+	public Rank getRank(String key)
+	{
+		return ranks.get(key);
+	}
 	// /////////////////////////////////////////////////////////////
 	// Checkers?
 	// /////////////////////////////////////////////////////////////
@@ -266,7 +294,17 @@ public abstract class MyTownDatasource {
 	public boolean hasTownBlock(String key) {
 		return blocks.containsKey(key);
 	}
-
+	/**
+	 * Checks if the Rank with the given key exists in the Datasource
+	 * 
+	 * @param rankName
+	 * @return
+	 */
+	public boolean hasRank(String rankName)
+	{
+		return ranks.containsKey(rankName);
+	}
+	
 	// /////////////////////////////////////////////////////////////
 	// Loaders
 	// /////////////////////////////////////////////////////////////
@@ -291,6 +329,14 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract void loadTownBlocks(Town town) throws Exception;
 
+	/**
+	 * Loads all Ranks for the given town into the Datasource
+	 * 
+	 * @param town
+	 * @throws Exception
+	 */
+	public abstract void loadRanks() throws Exception;
+	
 	// /////////////////////////////////////////////////////////////
 	// Add Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -330,6 +376,18 @@ public abstract class MyTownDatasource {
 	 */
 	public void addTownBlock(TownBlock townBlock) throws Exception {
 		blocks.put(townBlock.getKey(), townBlock);
+	}
+	
+	/**
+	 * 
+	 * Adds a Rank to the Datasource
+	 * 
+	 * @param rank
+	 * @throws Exception
+	 */
+	public void addRank(Rank rank) throws Exception
+	{
+		ranks.put(rank.getKey(), rank);
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -383,6 +441,12 @@ public abstract class MyTownDatasource {
 			addTownBlocks(block);
 		}
 	}
+	
+	public void addRanks(Rank... ranks) throws Exception 
+	{
+		for (Rank r : ranks)
+			addRank(r);
+	}
 
 	// /////////////////////////////////////////////////////////////
 	// Insert Single Entity
@@ -420,6 +484,14 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract void insertTownBlock(TownBlock townBlock) throws Exception;
 
+	/**
+	 * Adds a Rank to the Datasource and executes a query
+	 * 
+	 * @param town
+	 * @param rank
+	 * @throws Exception
+	 */
+	public abstract void insertRank(Rank rank) throws Exception;
 	// /////////////////////////////////////////////////////////////
 	// Insert Multiple Entities
 	// /////////////////////////////////////////////////////////////
@@ -471,6 +543,19 @@ public abstract class MyTownDatasource {
 			insertTownBlock(block);
 		}
 	}
+	
+	/**
+	 * Adds multiple Ranks to the Datasource and executes a query
+	 * 
+	 * @param town
+	 * @param ranks
+	 * @throws Exception
+	 */
+	public void insertRanks(Rank... ranks) throws Exception
+	{
+		for(Rank r : ranks)
+			insertRank(r);
+	}
 
 	// /////////////////////////////////////////////////////////////
 	// Remove Single Entity
@@ -482,8 +567,6 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 */
 	public boolean removeTown(Town town) {
-		boolean result = towns.remove(town.getName()) != null;
-	
 		for(Nation n : nations.values())
 			if(n.hasTown(town))
 				n.removeTown(town);
@@ -491,7 +574,11 @@ public abstract class MyTownDatasource {
 		for(Resident r : town.getResidents())
 			r.removeResidentFromTown(town);
 		
-		return result;
+		for(TownBlock tb : blocks.values())
+			if(tb.getTown() == town)
+				blocks.remove(tb.getKey());
+			
+		return towns.remove(town.getName()) != null;
 	}
 
 	/**
@@ -500,13 +587,11 @@ public abstract class MyTownDatasource {
 	 * @param resident
 	 */
 	public boolean removeResident(Resident resident) {
-		boolean result = residents.remove(resident.getUUID()) != null;
-		
 		for(Town t : towns.values())
 			if(t.hasResident(resident))
 				t.removeResident(resident);
 		
-		return result;
+		return residents.remove(resident.getUUID()) != null;
 	}
 
 	/**
@@ -515,11 +600,10 @@ public abstract class MyTownDatasource {
 	 * @param nation
 	 */
 	public boolean removeNation(Nation nation) {
-		boolean result = nations.remove(nation.getName()) != null;
 		for(Town t : towns.values())
 			if(t.hasNation(nation))
 				t.removeNation(nation);
-		return result;
+		return nations.remove(nation.getName()) != null;
 	}
 
 	/**
@@ -528,8 +612,26 @@ public abstract class MyTownDatasource {
 	 * @param townBlock
 	 */
 	public boolean removeTownBlock(TownBlock townBlock) {
+		for(Town t : towns.values())
+			if(t.getTownBlocks().contains(townBlock))
+				t.removeTownBlock(townBlock);
 		return blocks.remove(townBlock.getKey()) != null;
 	}
+	
+	/**
+	 * Removes a Rank from the Datasource
+	 * 
+	 * @param rank
+	 * @return
+	 */
+	public boolean removeRank(Rank rank)
+	{
+		for(Town t : towns.values())
+			if(t.getRanks().contains(rank))
+				t.removeRank(rank);
+		return ranks.remove(rank.getTown().getName() + ":" + rank.getName()) != null;
+	}
+			
 
 	// /////////////////////////////////////////////////////////////
 	// Remove Multiple Entities
@@ -578,6 +680,12 @@ public abstract class MyTownDatasource {
 			removeTownBlock(block);
 		}
 	}
+	
+	public void removeRanks(Rank... ranks)
+	{
+		for(Rank r : ranks)
+			removeRank(r);
+	}
 
 	// /////////////////////////////////////////////////////////////
 	// Update Single Entity
@@ -615,6 +723,14 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract void updateTownBlock(TownBlock block) throws Exception;
 
+	/**
+	 * Updates the Rank
+	 * @param town
+	 * @param rank
+	 * @throws Exception
+	 */
+	public abstract void updateRank(Rank rank) throws Exception;
+	
 	// /////////////////////////////////////////////////////////////
 	// Update Multiple Entities
 	// /////////////////////////////////////////////////////////////
@@ -666,6 +782,20 @@ public abstract class MyTownDatasource {
 			updateTownBlock(block);
 		}
 	}
+	
+	/**
+	 * Updates all the given Ranks
+	 * @param town
+	 * @param ranks
+	 * @throws Exception
+	 */
+	public void updateRanks(Rank... ranks) throws Exception
+	{
+		for(Rank r : ranks)
+			updateRank(r);
+	}
+	
+	
 
 	// /////////////////////////////////////////////////////////////
 	// Delete Single Entities
@@ -703,6 +833,13 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract boolean deleteResident(Resident resident) throws Exception;
 	
+	/**
+	 * Deletes a rank from the town specified from Datasource and executes a query
+	 * @param rank
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract boolean deleteRank(Rank rank) throws Exception;
 		
 	// /////////////////////////////////////////////////////////////
 	// Delete Multiple Entities
@@ -756,6 +893,18 @@ public abstract class MyTownDatasource {
 			deleteResident(r);
 	}
 	
+	/**
+	 * Deletes the ranks from the specified town from Datasource and executes a query
+	 * @param town
+	 * @param ranks
+	 * @throws Exception
+	 */
+	public void deleteRanks(Rank... ranks) throws Exception
+	{
+		for(Rank r : ranks)
+			deleteRank(r);
+	}
+	
 	// /////////////////////////////////////////////////////////////
 	// Linkages
 	// /////////////////////////////////////////////////////////////
@@ -790,7 +939,8 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 */
 	public void linkResidentToTown(Resident resident, Town town) throws Exception {
-		linkResidentToTown(resident, town, Constants.DEFAULT_RANKS[1]);
+		Rank rank = new Rank("Mayor", Constants.DEFAULT_RANK_VALUES.get("Mayor"), town);
+		linkResidentToTown(resident, town, rank);
 	}
 
 	/**

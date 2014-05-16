@@ -7,9 +7,12 @@ mytown.cmd.err.resident.notexist=The player %s does not exist!
 mytown.cmd.err.newtown.nameinuse=Town name %s already in use!
 mytown.cmd.usage.newtown=Usage: /t new [townname]
 
+# /t invite
+mytown.cmd.err.invite.already=Resident %s already exists in town %s!
+
 # /t claim
 mytown.cmd.err.claim.failed=Failed to claim block!
-mytown.cmd.err.claim.already=That block has already been claimed!
+mytown.cmd.err.claim.already=This block has already been claimed!
 
 # /t info
 mytown.cmd.usage.info=Usage: /t info <townname>
@@ -18,6 +21,16 @@ mytown.cmd.err.info.notpart=You are not part of a town. Alternative usage: /t in
 # /t select
 mytown.cmd.usage.select=Usage: /t select <townname>
 mytown.cmd.err.select.notpart=You are not part of town %s. Please choose a town that you're a member of.
+
+# /t ranks
+mytown.cmd.usage.ranks=Usage: /t ranks <add|remove|perm>
+mytown.cmd.usage.ranks.perm=Usage: /t ranks perm add <rank> <permission>
+mytown.cmd.err.ranks.add.already=The rank %s already exists
+mytown.cmd.err.ranks.add.notexist=The template rank %s does not exist! 
+mytown.cmd.err.ranks.rem.notexist=The rank %s does not exist in town %s
+mytown.cmd.err.ranks.rem.notallowed=The rank %s is not allowed to be deleted!
+mytown.cmd.err.ranks.perm.notexist=The permission %s does not exist!
+mytown.cmd.err.ranks.perm.add.already=The rank %s already has permission %s!
 
 # /ta delete
 mytown.adm.cmd.delete.usage=Usage: /ta delete [townname] <townname2 townname3...>
@@ -40,7 +53,11 @@ mytown.notification.enter.wild=You just entered the wild!
 mytown.notification.enter.town=Welcome to %s
 mytown.notification.enter.ownTown=Welcome back!
 mytown.notification.town.list=Towns: %s
-mytown.notification.town.info=%sResidents: %s
+mytown.notification.town.info=%sResidents: %sRanks: %s
 mytown.notification.town.select=The town %s has been selected as your primary town!
 mytown.notification.town.resident.remove=Resident %s has been removed from town %s!
 mytown.notification.town.resident.add=Resident %s has been added to town %s!
+mytown.notification.town.ranks=Ranks: %s
+mytown.notification.townblock.added=Town block from (%s, %s) to (%s, %s) has been added to town %s!
+mytown.notification.townblock.list=TownBlock in town %s: %s
+mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s: %s

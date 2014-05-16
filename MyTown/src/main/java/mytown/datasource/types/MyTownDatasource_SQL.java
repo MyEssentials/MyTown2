@@ -6,8 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import mytown.Constants;
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Nation;
@@ -140,6 +142,25 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			}
 		}
 	}
+	
+	@Override
+	public void loadRanks() throws Exception
+	{
+		synchronized(lock) {
+			ResultSet set = null;
+			PreparedStatement statement = prepare("SELECT * FROM " + prefix + "Ranks");
+			set = statement.executeQuery();
+			
+			while(set.next())
+			{
+				ArrayList<String> list = new ArrayList<String>(); list.addAll(Arrays.asList(set.getString("Nodes").split(" "))); // Worst workaround, need to be changed
+				Rank rank = new Rank(set.getString("Name"), list , towns.get(set.getString("TownName")));
+				rank.getTown().addRank(rank); // 
+				addRank(rank);
+				log.info("Adding rank " + rank.getName() + ", " + rank.getTown().getName());
+			}
+		}
+	}
 
 	@Override
 	public void updateTown(Town town) throws Exception { // TODO Allow changing
@@ -186,6 +207,22 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.executeUpdate();
 		}
 	}
+	
+	@Override
+	public void updateRank(Rank rank) throws Exception
+	{
+		synchronized(lock)
+		{
+			PreparedStatement statement = prepare("UPDATE " + prefix + "Ranks SET Name=?,Nodes=?,TownName=? WHERE Key=?");
+			statement.setString(1, rank.getName());
+			statement.setString(2, rank.getPermissionsWithFormat());
+			statement.setString(3, rank.getTown().getName());
+			statement.setString(4, rank.getKey());
+			statement.executeUpdate();
+			rank.updateKey();
+		}
+	}
+			
 
 	@Override
 	public void insertTown(Town town) throws Exception {
@@ -195,6 +232,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setString(1, town.getName());
 			statement.setInt(2, town.getExtraBlocks());
 			statement.executeUpdate();
+			for(String s : Constants.DEFAULT_RANK_VALUES.keySet())
+				insertRank(new Rank(s, Constants.DEFAULT_RANK_VALUES.get(s), town));
 		}
 	}
 
@@ -240,6 +279,23 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			townBlock.setId(rs.getInt(1));
 		}
 	}
+	
+	@Override
+	public void insertRank(Rank rank) throws Exception
+	{
+		synchronized(lock) {
+			addRank(rank);
+			rank.getTown().addRank(rank);
+			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Ranks (Key, Name, Nodes, TownName) VALUES (?, ?, ?, ?)", true);
+			statement.setString(1, rank.getKey());
+			statement.setString(2, rank.getName());
+			statement.setString(3, rank.getPermissionsWithFormat());
+			statement.setString(4, rank.getTown().getName());
+			statement.executeUpdate();
+			System.out.println(rank.getPermissionsWithFormat());
+		}
+	}
+			
 
 	@Override
 	public boolean deleteTown(Town town) throws Exception
@@ -248,16 +304,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			removeTown(town);
 			PreparedStatement statement;
 			
-			statement = prepare("DELETE FROM " + prefix + " ResidentsToTowns WHERE TownName=?", false);
+			statement = prepare("DELETE FROM " + prefix + "ResidentsToTowns WHERE TownName=?", false);
 			statement.setString(1, town.getName());
 			statement.executeUpdate();
-			statement = prepare("DELETE FROM " + prefix + " TownBlocks WHERE TownName=?", false);
+			statement = prepare("DELETE FROM " + prefix + "TownBlocks WHERE TownName=?", false);
 			statement.setString(1, town.getName());
 			statement.executeUpdate();
-			statement = prepare("DELETE FROM " + prefix + " TownsToNations WHERE TownName=?", false);
+			statement = prepare("DELETE FROM " + prefix + "TownsToNations WHERE TownName=?", false);
 			statement.setString(1, town.getName());
 			statement.executeUpdate();
-			statement = prepare("DELETE FROM "+ prefix +" Towns WHERE Name=?", false);
+			statement = prepare("DELETE FROM " + prefix + "Ranks WHERE TownName=?", false);
+			statement.setString(1, town.getName());
+			statement.executeUpdate();
+			statement = prepare("DELETE FROM "+ prefix +"Towns WHERE Name=?", false);
 			statement.setString(1, town.getName());
 			
 			return statement.executeUpdate() != 0;
@@ -302,9 +361,30 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			PreparedStatement statement;
 
 			statement = prepare("DELETE FROM " + prefix + " ResidentsToTowns WHERE Owner=?", false);
-			statement.setString(1, resident.getUUID());			
+			statement.setString(1, resident.getUUID());		
+			statement.executeUpdate();
 			statement = prepare("DELETE FROM "+ prefix +" Residents WHERE UUID=?", false);
 			statement.setString(1, resident.getUUID());
+			
+			return statement.executeUpdate() != 0;
+		}
+	}
+	
+	@Override
+	public boolean deleteRank(Rank rank) throws Exception
+	{
+		if(rank.getName().equals("Resident"))
+			return false;
+		synchronized(lock) {
+			removeRank(rank);
+			rank.getTown().removeRank(rank);
+			for(Resident res : rank.getTown().getResidents())
+				if(res.getTownRank(rank.getTown()) == null)
+					res.setTownRank(rank.getTown(), rank.getTown().getRank("Resident"));
+			PreparedStatement statement;
+			
+			statement = prepare("DELETE FROM " + prefix + "Ranks WHERE Key=?", false);
+			statement.setString(1, rank.getKey());
 			
 			return statement.executeUpdate() != 0;
 		}
@@ -321,10 +401,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				Resident res = getResident(set.getString("Owner"));
 				Town town = getTown(set.getString("TownName"));
 				Rank rank = getRank(set.getString("Rank"), town);
-
+					
+				
 				// Do actual link
 				res.addTown(town);
 				town.addResident(res, rank);
+				town.addRank(rank);
 			}
 		}
 	}
@@ -352,11 +434,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		synchronized (lock) {
 			resident.addTown(town);
 			town.addResident(resident, rank);
-
+			town.addRank(rank);
+			
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + " ResidentsToTowns (TownName, Owner, Rank) VALUES (?, ?, ?)", true);
 			statement.setString(1, town.getName());
 			statement.setString(2, resident.getUUID());
-			statement.setString(3, rank.toString());
+			statement.setString(3, rank.getName());
 			statement.executeUpdate();
 		}
 	}
@@ -417,7 +500,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		if (!conn.getAutoCommit()) conn.commit();
 		conn.close();
 	}
-
+	
+	
 	// //////////////////////////////////////
 	// Update System
 	// //////////////////////////////////////
@@ -457,8 +541,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				+ "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (Owner) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE);"));
 		updates.add(new DBUpdate("03.22.2014.2", "Add TownsToNations", "CREATE TABLE IF NOT EXISTS " + prefix + "TownsToNations (Id int " + autoIncrement + ", TownName varchar(50) NOT NULL, NationName varchar(50) NOT NULL, Rank varchar(1) DEFAULT 'T', PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix
 				+ "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (NationName) REFERENCES " + prefix + "Nations(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		
-		//updates.add(new DBUpdate("05.03.2014.1", "Add Ranks Table", "CREATE TABLE IS NOT EXISTS " + prefix + "Ranks (ID int "+ autoIncrement +", Name varchar(50) NOT NULL, Nodes text(10000), TownName varchar(50), PRIMARY KEY(ID), FOREIGN KEY (TownName) REFERENCES "+ prefix +" Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("05.03.2014.1", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Ranks (Key varchar(100) NOT NULL, Name varchar(50) NOT NULL, Nodes text(10000), TownName varchar(50), PRIMARY KEY(Key), FOREIGN KEY (TownName) REFERENCES "+ prefix +" Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
 	}
 
 	/**

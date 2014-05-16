@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -17,7 +18,9 @@ import mytown.core.utils.config.ConfigProcessor;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.impl.MyTownDatasource_mysql;
 import mytown.datasource.impl.MyTownDatasource_sqlite;
+import net.minecraft.command.ICommand;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -127,9 +130,10 @@ public class MyTown {
 
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent ev) {
-		startDatasource();
 		registerCommands();
-		registerPermissions();
+		ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
+		addDefaultPermissions();
+		startDatasource();
 	}
 
 	@Mod.EventHandler
@@ -165,6 +169,7 @@ public class MyTown {
 			datasource.loadResidents();
 			datasource.loadTowns();
 			datasource.loadNations();
+			datasource.loadRanks();
 
 			// Load links
 			datasource.loadResidentToTownLinks();
@@ -174,23 +179,42 @@ public class MyTown {
 		}
 	}
 
+	/*
+	 * Adds all the default permissions
+	 */
+	private void addDefaultPermissions()
+	{
+		ArrayList<String> pOutsider = new ArrayList<String>();
+		ArrayList<String> pResident = new ArrayList<String>();
+		ArrayList<String> pAssistant = new ArrayList<String>();
+		ArrayList<String> pMayor = new ArrayList<String>();
+		
+		for(String s : CommandUtils.permissionList.values())
+		{
+			if(s.startsWith("mytown.cmd"))
+			{
+				pMayor.add(s);
+				if(s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider"))
+					pAssistant.add(s);
+				if(s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider"))
+					pResident.add(s);
+				if(s.startsWith("mytown.cmd.outsider"))
+					pOutsider.add(s);
+			}
+		}
+		Constants.DEFAULT_RANK_VALUES.put("Outsider", pOutsider);
+		Constants.DEFAULT_RANK_VALUES.put("Resident", pResident);
+		Constants.DEFAULT_RANK_VALUES.put("Assistant", pAssistant);
+		Constants.DEFAULT_RANK_VALUES.put("Mayor", pMayor);
+	}
+	
 	/**
 	 * Registers all commands
 	 */
 	private void registerCommands() {
 
-		CommandUtils.registerCommand(new CmdTown("town"));
-		CommandUtils.registerCommand(new CmdTownAdmin("townadmin"));
-	}
-
-	/**
-	 * Registers permission manager
-	 */
-	private void registerPermissions() {
-		permManager = new PermissionManager("MyTownPermManager");
-		ForgePermsAPI.permManager = permManager;
-		permManager.load();
-		
+		CommandUtils.registerCommand((ICommand)(new CmdTown("town")));
+		CommandUtils.registerCommand((ICommand)(new CmdTownAdmin("townadmin")));
 	}
 
 	/**
@@ -199,5 +223,6 @@ public class MyTown {
 	private void registerHandlers() {
 		PlayerTracker handler = new PlayerTracker();
 		GameRegistry.registerPlayerTracker(handler);
+		MinecraftForge.EVENT_BUS.register(new PlayerEventHandlers());
 	}
 }

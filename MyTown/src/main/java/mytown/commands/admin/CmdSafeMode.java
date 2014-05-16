@@ -5,9 +5,9 @@ import java.util.List;
 import mytown.Config;
 import mytown.MyTown;
 import mytown.core.utils.Assert;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -19,19 +19,14 @@ import forgeperms.api.ForgePermsAPI;
  * @author Joe Goett
  */
 @Permission(node = "mytown.adm.cmd.safemode")
-public class CmdSafeMode extends SubCommandBase {
+public class CmdSafeMode extends CommandBase {
 
-	public CmdSafeMode(String name) {
-		super(name);
+	public CmdSafeMode(String name, CommandBase parent) {
+		super(name, parent);
 	}
 
 	@Override
-	public String getPermNode() {
-		return "mytown.adm.cmd.safemode";
-	}
-
-	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
+	public void processCommand(ICommandSender sender, String[] args) {
 		boolean safemode = false;
 		if (args.length < 1) { // Toggle safemode
 			safemode = !MyTown.instance.safemode;
@@ -44,7 +39,7 @@ public class CmdSafeMode extends SubCommandBase {
 	}
 
 	@Override
-	public List<String> tabComplete(ICommandSender sender, String[] args) {
+	public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
 		return CommandUtils.getListOfStringsMatchingLastWord(args, "on", "true", "enable", "off", "false", "disable");
 	}
 

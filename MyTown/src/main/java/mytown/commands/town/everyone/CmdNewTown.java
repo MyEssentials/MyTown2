@@ -1,9 +1,9 @@
-package mytown.commands.town.nonresident;
+package mytown.commands.town.everyone;
 
 import mytown.MyTown;
 import mytown.core.utils.Assert;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -16,25 +16,11 @@ import net.minecraft.command.WrongUsageException;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd.new")
-public class CmdNewTown extends SubCommandBase {
+@Permission(node = "mytown.cmd.outsider.new")
+public class CmdNewTown extends CommandBase {
 
-	public CmdNewTown(String name) {
-		super(name);
-	}
-
-	@Override
-	public void canUse(ICommandSender sender) throws CommandException {
-		super.canUse(sender);
-		try {
-			//Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
-			Assert.Perm(sender, this.permNode);
-		} catch (CommandException ce) {
-			throw (ce);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public CmdNewTown(String name, CommandBase parent) {
+		super(name, parent);
 	}
 
 	@Override
@@ -50,7 +36,7 @@ public class CmdNewTown extends SubCommandBase {
 		Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 		getDatasource().insertTown(town);
 		getDatasource().linkResidentToTown(res, town);
-		res.sendLocalizedMessage("mytown.notification.town.created", MyTown.instance.local, town.getName());
+		res.sendLocalizedMessage(MyTown.instance.local, "mytown.notification.town.created", town.getName());
 	}
 
 
