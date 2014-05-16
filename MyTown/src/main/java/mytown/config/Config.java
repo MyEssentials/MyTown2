@@ -1,4 +1,4 @@
-package mytown;
+package mytown.config;
 
 import mytown.core.utils.config.ConfigProperty;
 
