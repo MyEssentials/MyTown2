@@ -14,6 +14,7 @@ import cpw.mods.fml.common.network.Player;
 
 /**
  * Defines a location in the world that can be teleported to
+ * 
  * @author Joe Goett
  */
 public class TeleportLocation {
@@ -23,7 +24,7 @@ public class TeleportLocation {
 	protected int dim;
 	protected double x, y, z;
 	protected float pitch, yaw;
-	
+
 	public void set(EntityPlayerMP player, long timeToTeleport, int dim, double x, double y, double z, float pitch, float yaw) {
 		this.player = player;
 		playerX = player.posX;
@@ -37,11 +38,11 @@ public class TeleportLocation {
 		this.pitch = pitch;
 		this.yaw = yaw;
 	}
-	
+
 	public void set(EntityPlayerMP player, long timeToTeleport, int dim, double x, double y, double z) {
 		set(player, timeToTeleport, dim, x, y, z, 0, 0);
 	}
-	
+
 	public void reset() {
 		player = null;
 		teleportStamp = 0;
@@ -49,9 +50,10 @@ public class TeleportLocation {
 		x = y = z = 0;
 		pitch = yaw = 0;
 	}
-	
+
 	/**
 	 * Teleport the player to this location if the time has run out
+	 * 
 	 * @param player
 	 */
 	public boolean teleportPlayer() {
@@ -61,19 +63,19 @@ public class TeleportLocation {
 			return true;
 		}
 		if (teleportStamp > System.currentTimeMillis()) return false;
-		
+
 		WorldServer world = MinecraftServer.getServer().worldServerForDimension(dim);
-		
+
 		if (player.dimension != dim) {
 			if (MyTownCore.IS_MCPC) {
 				Packet250CustomPayload[] dimensionRegisterPackets = ForgePacket.makePacketSet(new DimensionRegisterPacket(dim, DimensionManager.getProviderType(dim)));
-	        	for (int i = 0; i < dimensionRegisterPackets.length; i++) {
-	        		PacketDispatcher.sendPacketToPlayer(dimensionRegisterPackets[i], (Player)player);
-	        	}
+				for (int i = 0; i < dimensionRegisterPackets.length; i++) {
+					PacketDispatcher.sendPacketToPlayer(dimensionRegisterPackets[i], (Player) player);
+				}
 			}
 			MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(player, dim);
 		}
-		
+
 		player.setLocationAndAngles(x + 0.5f, y + 0.1f, z + 0.5f, yaw, pitch);
 
 		world.theChunkProviderServer.loadChunk((int) player.posX >> 4, (int) player.posZ >> 4);
@@ -83,7 +85,7 @@ public class TeleportLocation {
 		}
 
 		player.playerNetServerHandler.setPlayerLocation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
-		
+
 		return true;
 	}
 }

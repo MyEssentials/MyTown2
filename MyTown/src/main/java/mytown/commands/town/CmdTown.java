@@ -5,22 +5,23 @@ import java.util.List;
 
 import mytown.commands.town.assistant.CmdClaim;
 import mytown.commands.town.assistant.CmdInvite;
+import mytown.commands.town.everyone.CmdBlocks;
 import mytown.commands.town.everyone.CmdInfo;
 import mytown.commands.town.everyone.CmdListTown;
 import mytown.commands.town.everyone.CmdMap;
 import mytown.commands.town.everyone.CmdNewTown;
 import mytown.commands.town.everyone.CmdRanks;
 import mytown.commands.town.everyone.CmdSelect;
-import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
+import net.minecraft.command.ICommandSender;
 
 /**
  * MyTown command
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd")
+@Permission("mytown.cmd")
 public class CmdTown extends CommandHandler {
 	List<String> aliases = new ArrayList<String>();
 
@@ -36,7 +37,8 @@ public class CmdTown extends CommandHandler {
 		addSubCommand(new CmdInfo("info", this));
 		addSubCommand(new CmdSelect("select", this));
 		addSubCommand(new CmdRanks("ranks", this));
-		
+		addSubCommand(new CmdBlocks("blocks", this));
+
 		// Add Aliases
 		aliases.add("t");
 	}
@@ -49,5 +51,10 @@ public class CmdTown extends CommandHandler {
 	@Override
 	public List<?> getCommandAliases() {
 		return aliases; // TODO Add aliases!
+	}
+
+	@Override
+	public void sendHelp(ICommandSender sender) {
+		// TODO Send help to sender
 	}
 }

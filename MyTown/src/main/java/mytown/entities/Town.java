@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 // TODO Add Comments
 
@@ -40,7 +39,6 @@ public class Town implements Comparable<Town> {
 		ranks = new ArrayList<Rank>();
 	}
 
-
 	/**
 	 * Returns the name of the town
 	 * 
@@ -70,7 +68,7 @@ public class Town implements Comparable<Town> {
 	public boolean hasNation(Nation nation) {
 		return nations.contains(nation);
 	}
-	
+
 	public List<Nation> getNations() {
 		return nations;
 	}
@@ -196,14 +194,13 @@ public class Town implements Comparable<Town> {
 	 * @param resident
 	 * @return
 	 */
-	
+
 	public boolean hasResident(String UUID) {
-		for(Resident r : residents.keySet())
-			if(r.getUUID().equals(UUID))
-				return true;
+		for (Resident r : residents.keySet())
+			if (r.getUUID().equals(UUID)) return true;
 		return false;
 	}
-	
+
 	/**
 	 * Promotes the Resident to the Rank
 	 * 
@@ -222,68 +219,63 @@ public class Town implements Comparable<Town> {
 			return getRank("Outsider");
 		}
 	}
-	
+
 	// //////////////////////////////////////
 	// Ranks
 	// //////////////////////////////////////
 
 	/**
 	 * Gets all ranks
+	 * 
 	 * @return
 	 */
 	public List<Rank> getRanks() {
 		return this.ranks;
 	}
-	
+
 	/**
 	 * Gets a rank
 	 * 
 	 * @param name
 	 * @return
 	 */
-	public Rank getRank(String name)
-	{
-		for(Rank r : ranks)
-			if(r.getName().equals(name))
-				return r;
+	public Rank getRank(String name) {
+		for (Rank r : ranks)
+			if (r.getName().equals(name)) return r;
 		return null;
 	}
-	
-	public void removeRank(Rank rank)
-	{
+
+	public void removeRank(Rank rank) {
 		ranks.remove(rank);
 	}
-	
+
 	/**
 	 * Adds a rank
+	 * 
 	 * @param rank
 	 */
-	public void addRank(Rank rank)
-	{
-		for(Rank r : ranks)
-			if(r.getName() == rank.getName())
-				return;
+	public void addRank(Rank rank) {
+		for (Rank r : ranks)
+			if (r.getName() == rank.getName()) return;
 		ranks.add(rank);
 	}
-	
+
 	/**
 	 * Checks if the Rank exists in this town
+	 * 
 	 * @param rank
 	 * @return
 	 */
-	public boolean hasRank(Rank rank)
-	{
+	public boolean hasRank(Rank rank) {
 		return this.ranks.contains(rank);
 	}
 
-	public boolean hasRankName(String name)
-	{
-		for(Rank r : ranks)
-			if(r.getName().equals(name))
-				return true;
+	public boolean hasRankName(String name) {
+		for (Rank r : ranks)
+			if (r.getName().equals(name)) return true;
 		return false;
 	}
-	
+
 	// //////////////////////////////////////
 	// Helper?
 	// //////////////////////////////////////

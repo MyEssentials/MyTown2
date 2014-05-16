@@ -2,8 +2,8 @@ package mytown.commands.admin;
 
 import java.util.List;
 
-import mytown.Config;
 import mytown.MyTown;
+import mytown.config.Config;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandUtils;
@@ -18,7 +18,7 @@ import forgeperms.api.ForgePermsAPI;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.adm.cmd.safemode")
+@Permission("mytown.adm.cmd.safemode")
 public class CmdSafeMode extends CommandBase {
 
 	public CmdSafeMode(String name, CommandBase parent) {

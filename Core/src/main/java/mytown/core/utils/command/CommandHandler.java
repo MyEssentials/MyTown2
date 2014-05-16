@@ -11,25 +11,23 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommandSender;
 
-public class CommandHandler extends CommandBase{
-
+public abstract class CommandHandler extends CommandBase {
+	protected static Log log = new Log("CommandHandler");
 	protected Map<String, CommandBase> subCommands;
-	protected Log log;
 
 	/**
 	 * Creates a CommandHandler with the given name. Checks if it has Permission Annotation and uses that to get the permission node
-	 *
+	 * 
 	 * @param name
 	 */
 	public CommandHandler(String name, CommandBase parent) {
 		super(name, parent);
 		subCommands = new Hashtable<String, CommandBase>();
-		log = new Log(name);
 	}
 
 	/**
 	 * Adds the CommandBase to this handler
-	 *
+	 * 
 	 * @param subCmd
 	 */
 	public void addSubCommand(CommandBase subCmd) {
@@ -38,7 +36,7 @@ public class CommandHandler extends CommandBase{
 
 	/**
 	 * Removes the SubCommand from this handler
-	 *
+	 * 
 	 * @param subCmd
 	 */
 	public void removeSubCommand(CommandBase subCmd) {
@@ -67,23 +65,23 @@ public class CommandHandler extends CommandBase{
 		} catch (CommandException ex) {
 			throw ex;
 		} catch (Throwable ex) {
-			System.out.println("Cought exception!");
+			System.out.println("caught exception!");
 			ex.printStackTrace();
 		}
 	}
-	
+
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception{
+	public void process(ICommandSender sender, String[] args) throws Exception {
 		canCommandSenderUseCommand(sender);
 		if (args.length < 1 || args[0].equalsIgnoreCase("help")) {
+			sendHelp(sender);
 			return;
 		}
 		try {
 			CommandBase cmd = subCommands.get(args[0]);
 			if (cmd == null) throw new CommandNotFoundException();
 			cmd.canCommandSenderUseCommand(sender);
-			cmd.process(sender, Arrays.copyOfRange(args, 1, args.length));
-			
+			cmd.processCommand(sender, Arrays.copyOfRange(args, 1, args.length));
 		} catch (NumberFormatException ex) {
 			ChatUtils.sendChat(sender, "Number Format Error");
 		} catch (CommandException ex) {
@@ -91,13 +89,13 @@ public class CommandHandler extends CommandBase{
 		} catch (Throwable ex) {
 			ChatUtils.sendChat(sender, ex.toString());
 			ex.printStackTrace();
-			log.severe("Command execution error by %s", ex, sender);
+			log.severe("[%s]Command execution error by %s", ex, getCommandName(), sender);
 		}
 	}
 
 	public Map<String, CommandBase> getSubCommands() {
 		return this.subCommands;
 	}
-
-
+	
+	public abstract void sendHelp(ICommandSender sender);
 }

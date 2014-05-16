@@ -24,7 +24,7 @@ public class CommandUtils {
 
 	public static void init() throws Exception {
 		log = new Log("CommandUtils");
-		log.getLogger().setLevel(Level.ALL);
+		log.getLogger().setLevel(Level.ALL); // TODO Change later or allow configuring
 		commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
 		access = MethodAccess.get(CommandHandler.class);
 		try {
@@ -55,7 +55,7 @@ public class CommandUtils {
 		if (command == null) return;
 		String permNode = command.getClass().getName();
 		if (command.getClass().isAnnotationPresent(Permission.class)) {
-			permNode = command.getClass().getAnnotation(Permission.class).node();
+			permNode = command.getClass().getAnnotation(Permission.class).value();
 		}
 		registerCommand(command, permNode, enabled);
 	}

@@ -13,7 +13,7 @@ import net.minecraft.command.ICommandSender;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.adm.cmd.reload")
+@Permission("mytown.adm.cmd.reload")
 public class CmdReload extends CommandBase {
 
 	public CmdReload(String name, CommandBase parent) {
@@ -23,6 +23,6 @@ public class CmdReload extends CommandBase {
 
 	@Override
 	public void process(ICommandSender sender, String[] args) {
-		throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.unimplemented", getCommandName()));
+		throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.unimplemented", getCommandName()));
 	}
 }
