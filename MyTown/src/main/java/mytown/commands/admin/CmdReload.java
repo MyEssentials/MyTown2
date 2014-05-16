@@ -1,8 +1,8 @@
 package mytown.commands.admin;
 
 import mytown.MyTown;
+import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
@@ -13,16 +13,16 @@ import net.minecraft.command.ICommandSender;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.adm.cmd.reload")
-public class CmdReload extends SubCommandBase {
+@Permission("mytown.adm.cmd.reload")
+public class CmdReload extends CommandBase {
 
-	public CmdReload(String name) {
-		super(name);
+	public CmdReload(String name, CommandBase parent) {
+		super(name, parent);
 
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.unimplemented", getName()));
+	public void process(ICommandSender sender, String[] args) {
+		throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.unimplemented", getCommandName()));
 	}
 }

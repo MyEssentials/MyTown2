@@ -6,6 +6,7 @@ import java.util.List;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.Localization;
+import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -18,7 +19,10 @@ public class Resident {
 	private boolean isOnline = false;
 	private boolean isNPC = false;
 	private boolean mapOn = false;
+	private List<Town> invitationForms = null;
 	private EntityPlayer player = null;
+	private int lastChunkZ, lastChunkX;
+	private int lastDim;
 
 	/**
 	 * Creates a Player with the given name
@@ -27,6 +31,7 @@ public class Resident {
 	 */
 	public Resident(String name) {
 		playerUUID = name;
+		invitationForms = new ArrayList<Town>();
 	}
 
 	/**
@@ -88,6 +93,12 @@ public class Resident {
 	 */
 	public void setPlayer(EntityPlayer player) {
 		this.player = player;
+
+		if (player != null) {
+			lastChunkZ = player.chunkCoordX;
+			lastChunkZ = player.chunkCoordZ;
+			lastDim = player.dimension;
+		}
 	}
 
 	/**
@@ -108,11 +119,11 @@ public class Resident {
 	 * @param local
 	 * @param args
 	 */
-	public void sendLocalizedMessage(String msg, Localization local, Object... args) {
+	public void sendLocalizedMessage(Localization local, String msg, Object... args) {
 		if (!isOnline() || getPlayer() == null) return;
 		ChatUtils.sendLocalizedChat(getPlayer(), local, msg, args);
 	}
-	
+
 	public void setMapOn(boolean on) {
 		mapOn = on;
 	}
@@ -147,7 +158,7 @@ public class Resident {
 		for (int z = cz - heightRad; z <= cz + heightRad; z++) {
 			sb.setLength(0);
 			for (int x = cx - widthRad; x <= cx + widthRad; x++) {
-				TownBlock b = MyTown.instance.datasource.getTownBlock(dim, x, z);
+				TownBlock b = DatasourceProxy.getDatasource().getTownBlock(dim, x, z);
 
 				boolean mid = z == cz && x == cx;
 				boolean isTown = b != null && b.getTown() != null;
@@ -166,15 +177,29 @@ public class Resident {
 		}
 		sendMessage(sb.toString());
 	}
-	
+
 	public void checkLocation() {
-		TownBlock block = MyTown.instance.datasource.getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ);
-		if (block == null) {
-			sendLocalizedMessage("mytown.notification.enter.wild", MyTown.instance.local);
-		} else if (isPartOfTown(block.getTown())) {
-			sendLocalizedMessage("mytown.notification.enter.ownTown", MyTown.instance.local);
-		} else {
-			sendLocalizedMessage("mytown.notification.enter.town", MyTown.instance.local, block.getTown().getName());
+		if (player.dimension != lastDim || (player.chunkCoordX != lastChunkX || player.chunkCoordZ != lastChunkZ)) {
+			TownBlock oldTownBlock, newTownBlock;
+			if (player.dimension != lastDim) {
+				oldTownBlock = MyTown.getDatasource().getTownBlock(lastDim, lastChunkX, lastChunkZ);
+			} else {
+				oldTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, lastChunkX, lastChunkZ);
+			}
+
+			newTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ);
+
+			if (oldTownBlock == null && newTownBlock != null) {
+				sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.town", newTownBlock.getTown().getName());
+			} else if (oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
+				sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.ownTown");
+			} else if (oldTownBlock != null && newTownBlock == null) {
+				sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.wild");
+			}
+
+			lastDim = player.dimension;
+			lastChunkX = player.chunkCoordX;
+			lastChunkZ = player.chunkCoordZ;
 		}
 	}
 
@@ -266,29 +291,67 @@ public class Resident {
 	public void setTownRank(Rank rank) {
 		setTownRank(getSelectedTown(), rank);
 	}
+
 	/**
 	 * Removes resident from town. Called when resident is removed from a town.
 	 * 
 	 * @param town
 	 * @return
 	 */
-	public boolean removeResidentFromTown(Town town)
-	{
-		if(towns.contains(town))
-			return towns.remove(town);
+	public boolean removeResidentFromTown(Town town) {
+		if (towns.contains(town)) return towns.remove(town);
 		return false;
 	}
+
 	/**
 	 * Sets the primary town of this resident.
 	 * 
 	 * @param town
 	 * @return False if the resident isn't part of the town given. True if process succeeded.
 	 */
-	public boolean setSelectedTown(Town town)
-	{
-		if(!towns.contains(town))
-			return false;
+	public boolean setSelectedTown(Town town) {
+		if (!towns.contains(town)) return false;
 		this.selectedTown = town;
 		return true;
+	}
+
+	/**
+	 * Confirms a form that has been sent to the player
+	 * 
+	 * @param accepted
+	 * @param townName
+	 */
+	public void confirmForm(boolean accepted, String townName) {
+		if (invitationForms.size() != 0) {
+			if (accepted) {
+				try {
+					DatasourceProxy.getDatasource().linkResidentToTown(this, getTownFromInvitations(townName));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			this.invitationForms.remove(getTownFromInvitations(townName));
+		}
+	}
+
+	/**
+	 * Returns town from a string. Returns null if no town was found with the specified name.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	protected Town getTownFromInvitations(String name) {
+		for (Town t : invitationForms)
+			if (t.getName().equals(name)) return t;
+		return null;
+	}
+
+	/**
+	 * Gets the towns that this player has been invited in.
+	 * 
+	 * @return
+	 */
+	public List<Town> getInvitations() {
+		return this.invitationForms;
 	}
 }

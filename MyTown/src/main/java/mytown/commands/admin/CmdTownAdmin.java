@@ -3,24 +3,25 @@ package mytown.commands.admin;
 import java.util.ArrayList;
 import java.util.List;
 
+import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
-import mytown.core.utils.command.sub.SubCommandHandler;
+import net.minecraft.command.ICommandSender;
 
-@Permission(node = "mytown.adm.cmd")
-public class CmdTownAdmin extends SubCommandHandler {
+@Permission("mytown.adm.cmd")
+public class CmdTownAdmin extends CommandHandler {
 
 	List<String> aliases = new ArrayList<String>();
 
 	public CmdTownAdmin(String name) {
-		super(name);
+		super(name, null);
 
 		// Subcommands
-		addSubCommand(new CmdReload("reload"));
-		addSubCommand(new CmdSafeMode("safemode"));
-		addSubCommand(new CmdDelete("delete"));
-		addSubCommand(new CmdRem("rem"));
-		addSubCommand(new CmdAdd("add"));
-		
+		addSubCommand(new CmdReload("reload", this));
+		addSubCommand(new CmdSafeMode("safemode", this));
+		addSubCommand(new CmdDelete("delete", this));
+		addSubCommand(new CmdRem("rem", this));
+		addSubCommand(new CmdAdd("add", this));
+
 		// Add aliases
 		aliases.add("ta");
 	}
@@ -28,5 +29,10 @@ public class CmdTownAdmin extends SubCommandHandler {
 	@Override
 	public List<?> getCommandAliases() {
 		return aliases;
+	}
+
+	@Override
+	public void sendHelp(ICommandSender sender) {
+		// TODO Send help to sender
 	}
 }

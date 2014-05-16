@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import mytown.Constants;
 
 // TODO Add Comments
 
@@ -18,7 +15,7 @@ import mytown.Constants;
 public class Town implements Comparable<Town> {
 	private String name;
 	private int extraBlocks = 0;
-	private List<Rank> otherRanks;
+	private List<Rank> ranks;
 
 	// TODO Add flags/permissions
 
@@ -39,11 +36,7 @@ public class Town implements Comparable<Town> {
 	}
 
 	public void setInitialPermission() {
-		otherRanks = new ArrayList<Rank>();
-	}
-
-	public List<Rank> getAdditionalRanks() {
-		return this.otherRanks;
+		ranks = new ArrayList<Rank>();
 	}
 
 	/**
@@ -159,8 +152,10 @@ public class Town implements Comparable<Town> {
 	 * 
 	 * @return
 	 */
-	public Set<Resident> getResidents() {
-		return residents.keySet();
+	public List<Resident> getResidents() {
+		List<Resident> res = new ArrayList<Resident>();
+		res.addAll(residents.keySet());
+		return res;
 	}
 
 	/**
@@ -194,6 +189,19 @@ public class Town implements Comparable<Town> {
 	}
 
 	/**
+	 * Checks if the Resident is part of this Town
+	 * 
+	 * @param resident
+	 * @return
+	 */
+
+	public boolean hasResident(String UUID) {
+		for (Resident r : residents.keySet())
+			if (r.getUUID().equals(UUID)) return true;
+		return false;
+	}
+
+	/**
 	 * Promotes the Resident to the Rank
 	 * 
 	 * @param resident
@@ -208,8 +216,64 @@ public class Town implements Comparable<Town> {
 		if (hasResident(resident)) {
 			return residents.get(resident);
 		} else {
-			return Constants.DEFAULT_RANKS[0];
+			return getRank("Outsider");
 		}
+	}
+
+	// //////////////////////////////////////
+	// Ranks
+	// //////////////////////////////////////
+
+	/**
+	 * Gets all ranks
+	 * 
+	 * @return
+	 */
+	public List<Rank> getRanks() {
+		return this.ranks;
+	}
+
+	/**
+	 * Gets a rank
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Rank getRank(String name) {
+		for (Rank r : ranks)
+			if (r.getName().equals(name)) return r;
+		return null;
+	}
+
+	public void removeRank(Rank rank) {
+		ranks.remove(rank);
+	}
+
+	/**
+	 * Adds a rank
+	 * 
+	 * @param rank
+	 */
+	public void addRank(Rank rank) {
+		for (Rank r : ranks)
+			if (r.getName() == rank.getName()) return;
+		ranks.add(rank);
+	}
+
+	/**
+	 * Checks if the Rank exists in this town
+	 * 
+	 * @param rank
+	 * @return
+	 */
+	public boolean hasRank(Rank rank) {
+		return this.ranks.contains(rank);
+	}
+
+	public boolean hasRankName(String name) {
+		for (Rank r : ranks)
+			if (r.getName().equals(name)) return true;
+		return false;
 	}
 
 	// //////////////////////////////////////
