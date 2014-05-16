@@ -574,6 +574,10 @@ public abstract class MyTownDatasource {
 		for(Resident r : town.getResidents())
 			r.removeResidentFromTown(town);
 		
+		for(TownBlock tb : blocks.values())
+			if(tb.getTown() == town)
+				blocks.remove(tb.getKey());
+			
 		return towns.remove(town.getName()) != null;
 	}
 

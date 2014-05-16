@@ -3,8 +3,6 @@ package mytown;
 import mytown.entities.Resident;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.EntityEvent;
 import cpw.mods.fml.common.IPlayerTracker;
 import forgeperms.api.ForgePermsAPI;
 
@@ -48,16 +46,5 @@ public class PlayerTracker implements IPlayerTracker {
 		// TODO Auto-generated method stub
 	}
 
-	@ForgeSubscribe
-	public void onEnterChunk(EntityEvent.EnteringChunk ev) {
-		if (!(ev.entity instanceof EntityPlayer)) return;
-		EntityPlayer pl = (EntityPlayer) ev.entity;
-		try {
-			Resident res = MyTown.instance.datasource.getOrMakeResident(pl);
-			res.checkLocation();
-			if (res.isMapOn()) res.sendMap();
-		} catch (Exception e) {
-			e.printStackTrace(); // TODO Change?
-		}
-	}
+
 }

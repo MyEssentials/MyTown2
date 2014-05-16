@@ -20,6 +20,7 @@ import mytown.datasource.impl.MyTownDatasource_mysql;
 import mytown.datasource.impl.MyTownDatasource_sqlite;
 import net.minecraft.command.ICommand;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -222,5 +223,6 @@ public class MyTown {
 	private void registerHandlers() {
 		PlayerTracker handler = new PlayerTracker();
 		GameRegistry.registerPlayerTracker(handler);
+		MinecraftForge.EVENT_BUS.register(new PlayerEventHandlers());
 	}
 }

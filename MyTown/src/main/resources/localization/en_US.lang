@@ -12,7 +12,7 @@ mytown.cmd.err.invite.already=Resident %s already exists in town %s!
 
 # /t claim
 mytown.cmd.err.claim.failed=Failed to claim block!
-mytown.cmd.err.claim.already=That block has already been claimed!
+mytown.cmd.err.claim.already=This block has already been claimed!
 
 # /t info
 mytown.cmd.usage.info=Usage: /t info <townname>
@@ -58,3 +58,6 @@ mytown.notification.town.select=The town %s has been selected as your primary to
 mytown.notification.town.resident.remove=Resident %s has been removed from town %s!
 mytown.notification.town.resident.add=Resident %s has been added to town %s!
 mytown.notification.town.ranks=Ranks: %s
+mytown.notification.townblock.added=Town block from (%s, %s) to (%s, %s) has been added to town %s!
+mytown.notification.townblock.list=TownBlock in town %s: %s
+mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s: %s

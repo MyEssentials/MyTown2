@@ -5,6 +5,7 @@ import java.util.List;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.TownBlock;
 import net.minecraft.util.EnumChatFormatting;
 
 public class Formatter {
@@ -40,4 +41,21 @@ public class Formatter {
 		return res;
 	}
 	
+	public static String formatTownBlocksToString(List<TownBlock> blocks, boolean chunkCoords)
+	{
+		String res = null;
+		for(TownBlock block : blocks)
+		{
+			String toBeAdded;
+			if(chunkCoords)
+				toBeAdded = "(" + block.getX() + ", " + block.getZ() + ")";
+			else
+				toBeAdded = "(" + (block.getX() * 16) + ", " + (block.getZ() * 16) + ")";
+			if(res == null)
+				res = toBeAdded;
+			else
+				res += " | " + toBeAdded;
+		}
+		return res;
+	}
 }

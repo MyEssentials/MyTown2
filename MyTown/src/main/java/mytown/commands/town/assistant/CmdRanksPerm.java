@@ -18,6 +18,7 @@ public class CmdRanksPerm extends CommandHandler{
 		super(name, parent);
 		
 		addSubCommand(new CmdRanksPermAdd("add", this));
+		addSubCommand(new CmdRanksPermRemove("remove", this));
 	}
 	
 	@Override

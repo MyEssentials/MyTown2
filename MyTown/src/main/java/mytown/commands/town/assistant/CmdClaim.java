@@ -1,6 +1,7 @@
 package mytown.commands.town.assistant;
 
 import mytown.MyTown;
+import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
@@ -45,10 +46,11 @@ public class CmdClaim extends CommandBase {
 		EntityPlayer player = (EntityPlayer) sender;
 		Resident res = getDatasource().getOrMakeResident(player);
 		Town town = res.getSelectedTown();
-		if (getDatasource().getTownBlock(String.format(TownBlock.keyFormat, player.chunkCoordX, player.chunkCoordZ, player.dimension)) != null) throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.claim.already"));
+		if (getDatasource().getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ) != null) throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.claim.already"));
 		TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
-		town.addTownBlock(block);
 		getDatasource().insertTownBlock(block);
+		
+		ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
 	}
 
 	/**

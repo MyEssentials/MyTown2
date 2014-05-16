@@ -8,6 +8,8 @@ import mytown.core.ChatUtils;
 import mytown.core.Localization;
 import net.minecraft.entity.player.EntityPlayer;
 
+import org.lwjgl.util.Point;
+
 /**
  * Defines a player
  * 
@@ -18,6 +20,10 @@ public class Resident {
 	private boolean isOnline = false;
 	private boolean isNPC = false;
 	private boolean mapOn = false;
+	
+	private Point lastChunkVisited;
+	private int lastDimensionVisited;
+	
 	private List<Town> invitationForms = null; 
 	private EntityPlayer player = null;
 
@@ -90,6 +96,12 @@ public class Resident {
 	 */
 	public void setPlayer(EntityPlayer player) {
 		this.player = player;
+		
+		if(player != null)
+		{
+			lastChunkVisited = new Point(player.chunkCoordX, player.chunkCoordZ);
+			lastDimensionVisited = player.dimension;
+		}
 	}
 
 	/**
@@ -110,7 +122,7 @@ public class Resident {
 	 * @param local
 	 * @param args
 	 */
-	public void sendLocalizedMessage(String msg, Localization local, Object... args) {
+	public void sendLocalizedMessage(Localization local, String msg, Object... args) {
 		if (!isOnline() || getPlayer() == null) return;
 		ChatUtils.sendLocalizedChat(getPlayer(), local, msg, args);
 	}
@@ -169,14 +181,21 @@ public class Resident {
 		sendMessage(sb.toString());
 	}
 	
-	public void checkLocation() {
-		TownBlock block = MyTown.instance.datasource.getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ);
-		if (block == null) {
-			sendLocalizedMessage("mytown.notification.enter.wild", MyTown.instance.local);
-		} else if (isPartOfTown(block.getTown())) {
-			sendLocalizedMessage("mytown.notification.enter.ownTown", MyTown.instance.local);
-		} else {
-			sendLocalizedMessage("mytown.notification.enter.town", MyTown.instance.local, block.getTown().getName());
+	public void checkLocation(int oldChunkX, int oldChunkZ, int newChunkX, int newChunkZ)
+	{
+		if(oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null)
+		{
+			int dim = player.dimension;
+			
+			TownBlock tb1 = MyTown.instance.datasource.getTownBlock(dim, oldChunkX, oldChunkZ);
+			TownBlock tb2 = MyTown.instance.datasource.getTownBlock(dim, newChunkX, newChunkZ);
+			
+			if(tb1 == null && tb2 != null || tb1 != null && tb2 != null && !tb1.getTown().getName().equals(tb2.getTown().getName()))
+				sendLocalizedMessage(MyTown.instance.local, "mytown.notification.enter.town", tb2.getTown().getName());
+			else if(tb1 != null && tb2 == null)
+				sendLocalizedMessage(MyTown.instance.local, "mytown.notification.enter.wild");
+			
+			System.out.println("From position: " + oldChunkX + ", " + oldChunkZ + " to position " + newChunkX + ", " + newChunkZ);
 		}
 	}
 
@@ -339,4 +358,21 @@ public class Resident {
 	{
 		return this.invitationForms;
 	}
+	
+	/**
+	 * Gets last chunk visited by resident.
+	 * 
+	 * @return
+	 */
+	public Point getLastChunkVisited()
+	{
+		return this.lastChunkVisited;
+	}
+	
+	public void updateLocation()
+	{
+
+	}
+	
+	
 }
