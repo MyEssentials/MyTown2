@@ -14,7 +14,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = "MyTownCore", name = "MyTownCore", version = "2.0", dependencies = "required-after:Forge")
 public class MyTownCore {
-	@Mod.Instance
+	@Mod.Instance("MyTownCore")
 	public static MyTownCore Instance;
 	public static boolean IS_MCPC = false;
 

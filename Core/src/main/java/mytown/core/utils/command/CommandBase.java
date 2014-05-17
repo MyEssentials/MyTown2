@@ -10,27 +10,25 @@ public class CommandBase implements Command {
 	protected String permNode;
 	protected String name;
 	protected String parentName;
-	
-	public CommandBase(String name, CommandBase parent)
-	{
+
+	public CommandBase(String name, CommandBase parent) {
 		this.name = name;
 
 		Permission permAnnot = getClass().getAnnotation(Permission.class);
 		if (permAnnot != null) {
-			permNode = permAnnot.node();
+			permNode = permAnnot.value();
 		} else {
 			permNode = "";
 		}
 		String temp;
-		if(parent != null)
-		{
+		if (parent != null) {
 			this.parentName = parent.getCommandName();
 			temp = parentName + '.' + name;
 		} else {
 			this.parentName = "";
 			temp = name;
 		}
-		if(permNode.startsWith("mytown.adm"))
+		if (permNode.startsWith("mytown.adm"))
 			CommandUtils.permissionListAdmin.put(temp, permNode);
 		else
 			CommandUtils.permissionList.put(temp, permNode);
@@ -76,36 +74,29 @@ public class CommandBase implements Command {
 	}
 
 	@Override
-	public String getCommandName()
-	{
+	public String getCommandName() {
 		return this.name;
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
-		// TODO Auto-generated method stub
 	}
 
 	public void process(ICommandSender icommandsender, String[] astring) throws Exception {
-		
 	}
-	
+
 	@Override
 	public List<String> dumpCommands() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String getParentName()
-	{
+	public String getParentName() {
 		return this.parentName;
 	}
-			
-
 }
