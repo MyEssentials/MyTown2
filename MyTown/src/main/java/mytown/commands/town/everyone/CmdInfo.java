@@ -66,7 +66,7 @@ public class CmdInfo extends CommandBase{
 		int i = 0;
 		for(Town t : towns)
 		{
-			msg[i*3] = EnumChatFormatting.RED + t.getName() + '\n';
+			msg[i*3] = EnumChatFormatting.RED + t.getName() + "\n Blocks: " + EnumChatFormatting.GREEN + t.getTownBlocks().size() + '\n';
 			msg[i*3+1] = Formatter.formatResidentsToString(t.getResidents(), t) + "\n";
 			msg[i*3+2] = Formatter.formatRanksToString(t.getRanks());
 		}

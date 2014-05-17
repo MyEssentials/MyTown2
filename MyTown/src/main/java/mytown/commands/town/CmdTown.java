@@ -5,6 +5,7 @@ import java.util.List;
 
 import mytown.commands.town.assistant.CmdClaim;
 import mytown.commands.town.assistant.CmdInvite;
+import mytown.commands.town.assistant.CmdUnclaim;
 import mytown.commands.town.everyone.CmdBlocks;
 import mytown.commands.town.everyone.CmdInfo;
 import mytown.commands.town.everyone.CmdListTown;
@@ -37,6 +38,7 @@ public class CmdTown extends CommandHandler {
 		addSubCommand(new CmdSelect("select", this));
 		addSubCommand(new CmdRanks("ranks", this));
 		addSubCommand(new CmdBlocks("blocks", this));
+		addSubCommand(new CmdUnclaim("unclaim", this));
 		
 		// Add Aliases
 		aliases.add("t");

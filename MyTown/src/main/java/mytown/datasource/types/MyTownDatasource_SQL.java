@@ -264,6 +264,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	public void insertTownBlock(TownBlock townBlock) throws Exception {
 		synchronized (lock) {
 			addTownBlock(townBlock);
+			townBlock.getTown().addTownBlock(townBlock);
+			
+			System.out.println("Added townblock for town " + townBlock.getTown());
+			
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + "TownBlocks (X, Z, Dim, TownName) VALUES (?, ?, ?, ?)", true);
 			statement.setInt(1, townBlock.getX());
 			statement.setInt(2, townBlock.getZ());
@@ -292,7 +296,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setString(3, rank.getPermissionsWithFormat());
 			statement.setString(4, rank.getTown().getName());
 			statement.executeUpdate();
-			System.out.println(rank.getPermissionsWithFormat());
 		}
 	}
 			

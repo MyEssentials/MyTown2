@@ -1,15 +1,16 @@
 package mytown.commands.town.everyone;
 
 import mytown.MyTown;
-import mytown.core.utils.Assert;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.TownBlock;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Sub command to create a new town
@@ -34,8 +35,10 @@ public class CmdNewTown extends CommandBase {
 
 		Town town = new Town(args[0]);
 		Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
+		EntityPlayer player = (EntityPlayer)sender;
 		getDatasource().insertTown(town);
 		getDatasource().linkResidentToTown(res, town);
+		getDatasource().insertTownBlock(new TownBlock(town, player.dimension, player.chunkCoordX, player.chunkCoordZ));
 		res.sendLocalizedMessage(MyTown.instance.local, "mytown.notification.town.created", town.getName());
 	}
 
