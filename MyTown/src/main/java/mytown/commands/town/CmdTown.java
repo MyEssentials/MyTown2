@@ -15,13 +15,14 @@ import mytown.commands.town.everyone.CmdRanks;
 import mytown.commands.town.everyone.CmdSelect;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
+import net.minecraft.command.ICommandSender;
 
 /**
  * MyTown command
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd")
+@Permission("mytown.cmd")
 public class CmdTown extends CommandHandler {
 	List<String> aliases = new ArrayList<String>();
 
@@ -52,5 +53,10 @@ public class CmdTown extends CommandHandler {
 	@Override
 	public List<?> getCommandAliases() {
 		return aliases; // TODO Add aliases!
+	}
+
+	@Override
+	public void sendHelp(ICommandSender sender) {
+		// TODO Send help to sender
 	}
 }

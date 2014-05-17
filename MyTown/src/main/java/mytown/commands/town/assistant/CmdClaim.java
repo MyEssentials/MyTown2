@@ -8,6 +8,7 @@ import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * 
  * @author Joe Goett
  */
-@Permission(node = "mytown.cmd.assistant.claim")
+@Permission("mytown.cmd.assistant.claim")
 public class CmdClaim extends CommandBase {
 
 	public CmdClaim(String name, CommandBase parent) {
@@ -27,17 +28,17 @@ public class CmdClaim extends CommandBase {
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
 		super.canCommandSenderUseCommand(sender);
-		
+
 		Resident res = null;
 		try {
 			res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change later
 		}
-		
-		if (res.getTowns().size() == 0) throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.partOfTown"));
+
+		if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
 		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
-		
+
 		return true;
 	}
 
@@ -46,11 +47,11 @@ public class CmdClaim extends CommandBase {
 		EntityPlayer player = (EntityPlayer) sender;
 		Resident res = getDatasource().getOrMakeResident(player);
 		Town town = res.getSelectedTown();
-		if (getDatasource().getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ) != null) throw new CommandException(MyTown.instance.local.getLocalization("mytown.cmd.err.claim.already"));
+		if (getDatasource().getTownBlock(player.chunkCoordX, player.chunkCoordZ, player.dimension) != null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
 		TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
 		getDatasource().insertTownBlock(block);
-		
-		ChatUtils.sendLocalizedChat(sender, MyTown.instance.local, "mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
+
+		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
 	}
 
 	/**
@@ -59,6 +60,6 @@ public class CmdClaim extends CommandBase {
 	 * @return
 	 */
 	private MyTownDatasource getDatasource() {
-		return MyTown.instance.datasource;
+		return DatasourceProxy.getDatasource();
 	}
 }

@@ -2,8 +2,8 @@ package mytown;
 
 import forgeperms.api.IPermissionManager;
 
-public class PermissionManager implements IPermissionManager{
-	
+public class PermissionManager implements IPermissionManager {
+
 	@Override
 	public String getName() {
 		return null;
