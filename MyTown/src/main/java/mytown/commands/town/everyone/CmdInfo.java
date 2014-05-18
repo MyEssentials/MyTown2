@@ -28,7 +28,7 @@ public class CmdInfo extends CommandBase {
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		String[] msg = new String[3];
+		String[] msg = new String[4];
 
 		if (args.length < 1) {
 			if (res.getSelectedTown() != null)
@@ -40,7 +40,7 @@ public class CmdInfo extends CommandBase {
 		if (args.length >= 1) {
 			// Printing out info for all towns.
 			if (args[0].equals("@a")) {
-				msg = new String[getDatasource().getTowns().size() * 3];
+				msg = new String[getDatasource().getTowns().size() * 4];
 				List<Town> temp = new ArrayList<Town>(getDatasource().getTowns());
 
 				// Using Comparator object to compare names and such
@@ -52,16 +52,17 @@ public class CmdInfo extends CommandBase {
 			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		}
-		for (int i = 0; i < msg.length / 3; i++)
-			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.info", msg[i * 3], msg[i * 3 + 1], msg[i * 3 + 2]);
+		for (int i = 0; i < msg.length / 4; i++)
+			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.info", msg[i * 4], msg[i * 4 + 1], msg[i * 4 + 2], msg[i * 4 + 3]);
 	}
 
 	public String[] prepare(String[] msg, Town... towns) {
 		int i = 0;
 		for(Town t : towns) {
-			msg[i*3] = EnumChatFormatting.RED + t.getName() + "\n Blocks: " + EnumChatFormatting.GREEN + t.getTownBlocks().size() + '\n';
-			msg[i*3+1] = Formatter.formatResidentsToString(t.getResidents(), t) + "\n";
-			msg[i*3+2] = Formatter.formatRanksToString(t.getRanks());
+			msg[i*4] = EnumChatFormatting.BLUE + " ---------- " + t.getName() + " ----------" + '\n' + EnumChatFormatting.GRAY;
+			msg[i*4+1] = EnumChatFormatting.GREEN + "" + t.getTownBlocks().size() + '\n' + EnumChatFormatting.GRAY;
+			msg[i*4+2] = Formatter.formatResidentsToString(t.getResidents(), t) + '\n' + EnumChatFormatting.GRAY;
+			msg[i++*4+3] = Formatter.formatRanksToString(t.getRanks());
 		}
 		return msg;
 	}

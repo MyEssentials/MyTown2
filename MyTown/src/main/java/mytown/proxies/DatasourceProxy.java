@@ -25,7 +25,7 @@ public class DatasourceProxy {
 	/**
 	 * Adds the default datasource types
 	 */
-	{
+	private static void loadTypes() {
 		types.put("mysql", MyTownDatasource_mysql.class);
 		types.put("sqlite", MyTownDatasource_sqlite.class);
 	}
@@ -38,6 +38,7 @@ public class DatasourceProxy {
 	 * @throws Exception
 	 */
 	public static boolean start(Configuration config) {
+		loadTypes(); // Assuming this is the right way
 		if (!types.containsKey(Config.dbType.toLowerCase())) {
 			log.severe("Failed to find datasource type: %s", Config.dbType.toLowerCase());
 			return false;

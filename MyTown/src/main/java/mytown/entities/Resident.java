@@ -179,16 +179,14 @@ public class Resident {
 		}
 		sendMessage(sb.toString());
 	}
-	public void checkLocation() {
-		if (player.dimension != lastDim || (player.chunkCoordX != lastChunkX || player.chunkCoordZ != lastChunkZ)) {
+	
+	
+	public void checkLocation(int oldChunkX, int oldChunkZ, int newChunkX, int newChunkZ, int dimension) {
+		if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null) {
 			TownBlock oldTownBlock, newTownBlock;
-			if (player.dimension != lastDim) {
-				oldTownBlock = MyTown.getDatasource().getTownBlock(lastDim, lastChunkX, lastChunkZ);
-			} else {
-				oldTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, lastChunkX, lastChunkZ);
-			}
-
-			newTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ);
+			
+			oldTownBlock = MyTown.getDatasource().getTownBlock(lastDim, oldChunkX, oldChunkZ);
+			newTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, newChunkX, newChunkZ);
 
 			if (oldTownBlock == null && newTownBlock != null) {
 				sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.town", newTownBlock.getTown().getName());
@@ -199,11 +197,15 @@ public class Resident {
 			}
 
 			lastDim = player.dimension;
-			lastChunkX = player.chunkCoordX;
-			lastChunkZ = player.chunkCoordZ;
+			this.lastChunkX = newChunkX;
+			this.lastChunkZ = newChunkZ;
 		}
 	}
 
+	public void checkLocation(int newChunkX, int newChunkZ, int dimension) {
+		checkLocation(this.lastChunkX, this.lastChunkZ, newChunkX, newChunkZ, dimension);
+	}
+	
 	// //////////////////////////////////////
 	// Towns
 	// //////////////////////////////////////

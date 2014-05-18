@@ -301,8 +301,8 @@ public abstract class MyTownDatasource {
 	 * @param rankName
 	 * @return
 	 */
-	public boolean hasRank(String rankName) {
-		return ranks.containsKey(rankName);
+	public boolean hasRank(String key) {
+		return ranks.containsKey(key);
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -814,7 +814,7 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 */
 	public void linkResidentToTown(Resident resident, Town town) throws Exception {
-		Rank rank = new Rank("Mayor", Constants.DEFAULT_RANK_VALUES.get("Mayor"), town);
+		Rank rank = new Rank("Resident", Constants.DEFAULT_RANK_VALUES.get("Resident"), town);
 		linkResidentToTown(resident, town, rank);
 	}
 

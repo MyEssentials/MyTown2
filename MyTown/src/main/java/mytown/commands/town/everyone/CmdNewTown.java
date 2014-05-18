@@ -38,8 +38,8 @@ public class CmdNewTown extends CommandBase {
 		Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 		EntityPlayer player = (EntityPlayer)sender;
 		getDatasource().insertTown(town);
-		getDatasource().linkResidentToTown(res, town);
-		getDatasource().insertTownBlock(new TownBlock(town, player.dimension, player.chunkCoordX, player.chunkCoordZ));
+		getDatasource().linkResidentToTown(res, town, town.getRank("Mayor"));
+		getDatasource().insertTownBlock(new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension));
 		res.sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.town.created", town.getName());
 	}
 

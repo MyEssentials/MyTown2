@@ -81,7 +81,7 @@ public abstract class CommandHandler extends CommandBase {
 			CommandBase cmd = subCommands.get(args[0]);
 			if (cmd == null) throw new CommandNotFoundException();
 			cmd.canCommandSenderUseCommand(sender);
-			cmd.processCommand(sender, Arrays.copyOfRange(args, 1, args.length));
+			cmd.process(sender, Arrays.copyOfRange(args, 1, args.length));
 		} catch (NumberFormatException ex) {
 			ChatUtils.sendChat(sender, "Number Format Error");
 		} catch (CommandException ex) {

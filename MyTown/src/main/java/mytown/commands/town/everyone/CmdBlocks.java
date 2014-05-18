@@ -35,7 +35,7 @@ public class CmdBlocks extends CommandHandler {
 			else
 				town = res.getSelectedTown();
 
-			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.list", town.getName(), Formatter.formatTownBlocksToString(town.getTownBlocks(), false));
+			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.list", town.getName(), Formatter.formatTownBlocksToString(town.getTownBlocks(), true));
 		}
 
 	}

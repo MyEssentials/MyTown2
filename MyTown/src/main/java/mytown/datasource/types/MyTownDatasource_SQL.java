@@ -389,7 +389,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			while (set.next()) {
 				Resident res = getResident(set.getString("Owner"));
 				Town town = getTown(set.getString("TownName"));
-				Rank rank = getRank(set.getString("Rank"), town);
+				Rank rank = getRank(set.getString("Rank"));
 
 				// Do actual link
 				res.addTown(town);
@@ -422,12 +422,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		synchronized (lock) {
 			resident.addTown(town);
 			town.addResident(resident, rank);
-			town.addRank(rank);
 
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + " ResidentsToTowns (TownName, Owner, Rank) VALUES (?, ?, ?)", true);
 			statement.setString(1, town.getName());
 			statement.setString(2, resident.getUUID());
-			statement.setString(3, rank.getName());
+			statement.setString(3, rank.getKey());
 			statement.executeUpdate();
 		}
 	}
@@ -522,11 +521,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		updates.add(new DBUpdate("03.08.2014.3", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Residents (UUID varchar(255) NOT NULL, IsNPC boolean DEFAULT false, Joined int NOT NULL, LastLogin int NOT NULL, PRIMARY KEY (UUID));")); // MC Version < 1.7 UUID is Player name. 1.7 >= UUID is Player's UUID
 		updates.add(new DBUpdate("03.08.2014.4", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Nations (Name varchar(50) NOT NULL, ExtraBlocks int NOT NULL DEFAULT 0, PRIMARY KEY(Name));"));
 		updates.add(new DBUpdate("03.08.2014.5", "Add TownBlocks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownBlocks (Id int " + autoIncrement + ", X int NOT NULL, Z int NOT NULL, Dim int NOT NULL, TownName varchar(50) NOT NULL, PRIMARY KEY(Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("05.03.2014.1", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Ranks (Key varchar(100) NOT NULL, Name varchar(50) NOT NULL, Nodes text(10000), TownName varchar(50), PRIMARY KEY(Key), FOREIGN KEY (TownName) REFERENCES " + prefix + " Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
 		updates.add(new DBUpdate("03.22.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "ResidentsToTowns (Id int " + autoIncrement + ", TownName varchar(50) NOT NULL, Owner varchar(255) NOT NULL, Rank varchar(50), PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (Owner) REFERENCES "
-				+ prefix + "Residents(UUID) ON DELETE CASCADE, FOREIGN KEY (Rank) REFERENCES " + prefix + "Ranks ON UPDATE CASCADE);"));
+				+ prefix + "Residents(UUID) ON DELETE CASCADE, FOREIGN KEY (Rank) REFERENCES " + prefix + "Ranks(Key) ON DELETE CASCADE ON UPDATE CASCADE);"));
 		updates.add(new DBUpdate("03.22.2014.2", "Add TownsToNations", "CREATE TABLE IF NOT EXISTS " + prefix + "TownsToNations (Id int " + autoIncrement + ", TownName varchar(50) NOT NULL, NationName varchar(50) NOT NULL, Rank varchar(1) DEFAULT 'T', PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix
 				+ "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (NationName) REFERENCES " + prefix + "Nations(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		updates.add(new DBUpdate("05.03.2014.1", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Ranks (Key varchar(100) NOT NULL, Name varchar(50) NOT NULL, Nodes text(10000), TownName varchar(50), PRIMARY KEY(Key), FOREIGN KEY (TownName) REFERENCES " + prefix + " Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		
 	}
 
 	/**

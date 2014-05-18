@@ -47,7 +47,7 @@ public class CmdClaim extends CommandBase {
 		EntityPlayer player = (EntityPlayer) sender;
 		Resident res = getDatasource().getOrMakeResident(player);
 		Town town = res.getSelectedTown();
-		if (getDatasource().getTownBlock(player.chunkCoordX, player.chunkCoordZ, player.dimension) != null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
+		if (getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, player.dimension, player.chunkCoordX, player.chunkCoordZ))) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
 		TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
 		getDatasource().insertTownBlock(block);
 
