@@ -16,6 +16,8 @@ import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.entities.TownPlot;
+import mytown.interfaces.ITownPlot;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
@@ -162,6 +164,35 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	}
 
 	@Override
+	public void loadPlots() throws Exception {
+		synchronized(lock) {
+			ResultSet set = null;
+			PreparedStatement statement = prepare("SELECT * FROM " + prefix + "Plots");
+			set = statement.executeQuery();
+			
+			while(set.next()) {
+				// TODO: Verify for the other types of plots
+				if(set.getString("Type").equals("T")) {
+					int x1 = set.getInt("X1");
+					int y1 = set.getInt("Y1");
+					int z1 = set.getInt("Z1");
+					int x2 = set.getInt("X2");
+					int y2 = set.getInt("Y2");
+					int z2 = set.getInt("Z2");
+					int dim = set.getInt("Dim");
+					
+					Town town = getTown(set.getString("TownName"));
+					Resident owner = getResident(set.getString("Owner"));
+					
+					TownPlot plot = new TownPlot(dim, x1, y1, z1, x2, y2, z2, town, owner);
+					addPlot(plot);
+					log.info("Adding plot in town " + town.getName());
+				}
+			}
+		}
+	}
+	
+	@Override
 	public void updateTown(Town town) throws Exception { // TODO Allow changing Town name?
 		synchronized (lock) {
 			PreparedStatement statement = prepare("UPDATE " + prefix + "Towns SET Name=?,ExtraBlocks=? WHERE Name=?", true);
@@ -217,6 +248,25 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		}
 	}
 
+	@Override
+	public void updatePlot(ITownPlot plot) throws Exception {
+		synchronized(lock) {
+			PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET Dim=?,X1=?,Y1=?,Z1=?,X2=?,Y2=?,Z2=?,TownName=?,Owner=?,Type=? WHERE Key=?");
+			statement.setInt(1, plot.getDim());
+			statement.setInt(2, plot.getStartX());
+			statement.setInt(3, plot.getStartY());
+			statement.setInt(4, plot.getStartZ());
+			statement.setInt(5, plot.getEndX());
+			statement.setInt(6, plot.getEndY());
+			statement.setInt(7, plot.getEndZ());
+			statement.setString(8, plot.getTown().getName());
+			statement.setString(9, plot.getOwner().getUUID());
+			statement.setString(10, plot.getKey());
+			statement.executeUpdate();
+			plot.updateKey();
+		}
+	}
+	
 	@Override
 	public void insertTown(Town town) throws Exception {
 		synchronized (lock) {
@@ -282,11 +332,33 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		synchronized (lock) {
 			addRank(rank);
 			rank.getTown().addRank(rank);
+			
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Ranks (Key, Name, Nodes, TownName) VALUES (?, ?, ?, ?)", true);
 			statement.setString(1, rank.getKey());
 			statement.setString(2, rank.getName());
 			statement.setString(3, rank.getPermissionsWithFormat());
 			statement.setString(4, rank.getTown().getName());
+			statement.executeUpdate();
+		}
+	}
+	
+	@Override
+	public void insertPlot(ITownPlot plot) throws Exception {
+		synchronized(lock) {
+			addPlot(plot);
+			plot.getTown().addTownPlot(plot);
+			
+			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Plots (Key, Dim, X1, Y1, Z1, X2, Y2, Z2, TownName, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			statement.setInt(1, plot.getDim());
+			statement.setInt(2, plot.getStartX());
+			statement.setInt(3, plot.getStartY());
+			statement.setInt(4, plot.getStartZ());
+			statement.setInt(5, plot.getEndX());
+			statement.setInt(6, plot.getEndY());
+			statement.setInt(7, plot.getEndZ());
+			statement.setString(8, plot.getTown().getName());
+			statement.setString(9, plot.getOwner().getUUID());
+			statement.setString(10, plot.getKey());
 			statement.executeUpdate();
 		}
 	}
@@ -296,20 +368,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		synchronized (lock) {
 			removeTown(town);
 			PreparedStatement statement;
-
-			// None of the commented out stuff should be needed. The constraints on the tables *should* handle removing everything else for us. Keeping for now, just in case
-			// statement = prepare("DELETE FROM " + prefix + "ResidentsToTowns WHERE TownName=?", false);
-			// statement.setString(1, town.getName());
-			// statement.executeUpdate();
-			// statement = prepare("DELETE FROM " + prefix + "TownBlocks WHERE TownName=?", false);
-			// statement.setString(1, town.getName());
-			// statement.executeUpdate();
-			// statement = prepare("DELETE FROM " + prefix + "TownsToNations WHERE TownName=?", false);
-			// statement.setString(1, town.getName());
-			// statement.executeUpdate();
-			// statement = prepare("DELETE FROM " + prefix + "Ranks WHERE TownName=?", false);
-			// statement.setString(1, town.getName());
-			// statement.executeUpdate();
+			
 			statement = prepare("DELETE FROM " + prefix + "Towns WHERE Name=?", false);
 			statement.setString(1, town.getName());
 
@@ -323,10 +382,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			removeNation(nation);
 			PreparedStatement statement;
 
-			// None of the commented out stuff should be needed. The constraints on the tables *should* handle removing everything else for us. Keeping for now, just in case
-			// statement = prepare("DELETE FROM " + prefix + " TownsToNations WHERE NationName=?", false);
-			// statement.setString(1, nation.getName());
-			// statement.executeUpdate();
 			statement = prepare("DELETE FROM " + prefix + " Nations WHERE Name=?", false);
 			statement.setString(1, nation.getName());
 
@@ -352,10 +407,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			removeResident(resident);
 			PreparedStatement statement;
 
-			// None of the commented out stuff should be needed. The constraints on the tables *should* handle removing everything else for us. Keeping for now, just in case
-			// statement = prepare("DELETE FROM " + prefix + " ResidentsToTowns WHERE Owner=?", false);
-			// statement.setString(1, resident.getUUID());
-			// statement.executeUpdate();
 			statement = prepare("DELETE FROM " + prefix + " Residents WHERE UUID=?", false);
 			statement.setString(1, resident.getUUID());
 
@@ -369,8 +420,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		synchronized (lock) {
 			removeRank(rank);
 			rank.getTown().removeRank(rank);
-			for (Resident res : rank.getTown().getResidents())
-				if (res.getTownRank(rank.getTown()) == null) res.setTownRank(rank.getTown(), rank.getTown().getRank("Resident"));
+
 			PreparedStatement statement;
 
 			statement = prepare("DELETE FROM " + prefix + "Ranks WHERE Key=?", false);
@@ -380,6 +430,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		}
 	}
 
+	@Override
+	public boolean deletePlot(ITownPlot plot) throws Exception {
+		synchronized(lock) {
+			removePlot(plot);
+			plot.getTown().removeTownPlot(plot);
+			
+			PreparedStatement statement = prepare("DELETE FROM " + prefix + "Plots WHERE Key=?", false);
+			statement.setString(1, plot.getKey());
+			
+			return statement.executeUpdate() != 0;
+		}
+	}
+	
 	@Override
 	public void loadResidentToTownLinks() throws Exception {
 		synchronized (lock) {
@@ -526,7 +589,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				+ prefix + "Residents(UUID) ON DELETE CASCADE, FOREIGN KEY (Rank) REFERENCES " + prefix + "Ranks(Key) ON DELETE CASCADE ON UPDATE CASCADE);"));
 		updates.add(new DBUpdate("03.22.2014.2", "Add TownsToNations", "CREATE TABLE IF NOT EXISTS " + prefix + "TownsToNations (Id int " + autoIncrement + ", TownName varchar(50) NOT NULL, NationName varchar(50) NOT NULL, Rank varchar(1) DEFAULT 'T', PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix
 				+ "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (NationName) REFERENCES " + prefix + "Nations(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		
+		updates.add(new DBUpdate("05.23.2014.1", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Plots (Key varchar(100), Dim int NOT NULL, X1 int NOT NULL, Y1 int NOT NULL, Z1 int NOT NULL, X2 int NOT NULL, Y2 int NOT NULL, Z2 int NOT NULL, TownName varchar(50), Owner varchar(255), Type varchar(1) DEFAULT 'T', PRIMARY KEY(Key), FOREIGN KEY(TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, "
+				+ "FOREIGN KEY(Owner) REFERENCES " + prefix + "Residents(UUID) ON UPDATE CASCADE ON DELETE CASCADE)"));
+		updates.add(new DBUpdate("05.23.2014.2", "Add TownFlags", "CREATE TABLE IF NOT EXISTS " + prefix + "TownFlags(Id int " + autoIncrement + ", Name varchar(50) NOT NULL, Description varchar(200), TownName varchar(50) NOT NULL, PRIMARY KEY(Id), FOREIGN KEY(TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE)"));
+		updates.add(new DBUpdate("05.23.2014.3", "Add PlotFlags", "CREATE TABLE IF NOT EXISTS " + prefix + "PlotFlags(Id int " + autoIncrement + ", Name varchar(50) NOT NULL, Description varchar(200), TownPlotID int NOT NULL, PRIMARY KEY(Id), FOREIGN KEY(TownPlotID) REFERENCES " + prefix + "Plots(Id) ON DELETE CASCADE ON UPDATE CASCADE)"));
 	}
 
 	/**

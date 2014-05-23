@@ -77,13 +77,13 @@ public class Rank {
 		return this.key;
 	}
 
-	public boolean updateKey() {
-		if (key != null && key == this.getTown().getName() + ":" + this.getName()) return false;
-		if (town == null)
-			this.key = this.getName();
-		else
-			this.key = this.getTown().getName() + ":" + this.getName();
-		return true;
+	/**
+	 * Updates the key. Only called in the constructor and when updating in the database. DO NOT CALL ELSEWHERE!
+	 * 
+	 * @return
+	 */
+	public void updateKey() {
+		key = String.format("%s;%s", town.getName(), this.name);
 	}
 
 	/**

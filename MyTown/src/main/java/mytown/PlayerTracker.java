@@ -2,6 +2,7 @@ package mytown;
 
 import mytown.config.Config;
 import mytown.entities.Resident;
+import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.EnumFlagValue;
 import mytown.proxies.DatasourceProxy;
@@ -76,11 +77,11 @@ public class PlayerTracker implements IPlayerTracker {
 		// TODO: Implement wilderness perms too
 		if(!DatasourceProxy.getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4))) return;
 		else {
-			TownBlock block = DatasourceProxy.getDatasource().getTownBlock(String.format(TownBlock.keyFormat, ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4));
-			EnumFlagValue value = block.getValueForFlagOnBlock(ev.x, ev.y, ev.z, "access");
+			Town town = DatasourceProxy.getDatasource().getTownBlock(String.format(TownBlock.keyFormat, ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4)).getTown();
+			EnumFlagValue value = town.getFlagValueAtCoords(ev.x, ev.y, ev.z, "accessLevel");
 			if(value != null && value == EnumFlagValue.Build)
 				return;
-			if(DatasourceProxy.getDatasource().getResident(ev.getPlayer().username).isPartOfTown(block.getTown()))
+			if(DatasourceProxy.getDatasource().getResident(ev.getPlayer().username).isPartOfTown(town))
 				return;
 			ev.setCanceled(true);
 		}

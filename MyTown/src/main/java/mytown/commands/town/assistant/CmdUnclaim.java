@@ -44,7 +44,7 @@ public class CmdUnclaim extends CommandBase {
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		EntityPlayer player = (EntityPlayer) sender;
 		Resident res = getDatasource().getOrMakeResident(player);
-		TownBlock block = getDatasource().getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ);
+		TownBlock block = getDatasource().getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, true);
 
 		if (block == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.notexist"));
 

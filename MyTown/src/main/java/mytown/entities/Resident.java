@@ -160,7 +160,7 @@ public class Resident {
 		for (int z = cz - heightRad; z <= cz + heightRad; z++) {
 			sb.setLength(0);
 			for (int x = cx - widthRad; x <= cx + widthRad; x++) {
-				TownBlock b = DatasourceProxy.getDatasource().getTownBlock(dim, x, z);
+				TownBlock b = DatasourceProxy.getDatasource().getTownBlock(dim, x, z, true);
 
 				boolean mid = z == cz && x == cx;
 				boolean isTown = b != null && b.getTown() != null;
@@ -185,8 +185,8 @@ public class Resident {
 		if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null) {
 			TownBlock oldTownBlock, newTownBlock;
 			
-			oldTownBlock = MyTown.getDatasource().getTownBlock(lastDim, oldChunkX, oldChunkZ);
-			newTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, newChunkX, newChunkZ);
+			oldTownBlock = MyTown.getDatasource().getTownBlock(lastDim, oldChunkX, oldChunkZ, true);
+			newTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, newChunkX, newChunkZ, true);
 
 			if (oldTownBlock == null && newTownBlock != null) {
 				sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.town", newTownBlock.getTown().getName());
