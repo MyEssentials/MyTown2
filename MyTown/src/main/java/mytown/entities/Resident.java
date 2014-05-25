@@ -25,6 +25,10 @@ public class Resident {
 	private EntityPlayer player = null;
 	private int lastChunkZ, lastChunkX;
 	private int lastDim;
+	
+	private int selectionX, selectionY, selectionZ, selectionDim;
+	private Town selectionTown;
+	private boolean firstSelectionActive;
 
 	/**
 	 * Creates a Player with the given name
@@ -358,11 +362,36 @@ public class Resident {
 		return this.invitationForms;
 	}
 	
-	
-	public void updateLocation()
-	{
-
+	public boolean setFirstPlotSelectionAndCheck (int dim, int x, int y, int z) {
+		TownBlock tb = DatasourceProxy.getDatasource().getTownBlock(dim, x, z, false);
+		if(tb == null) return false;
+		if(tb.getTown() != getSelectedTown()) return false;
+		this.selectionDim = dim;
+		this.selectionX = x;
+		this.selectionY = y;
+		this.selectionZ = z;
+		this.selectionTown = tb.getTown();
+		this.firstSelectionActive = true;
+		return true;
 	}
 	
+	public boolean isFirstPlotSelectionActive() {
+		return this.firstSelectionActive;
+	}
+	
+	public boolean setSecondPlotSelectionAndCheck (int dim, int x, int y, int z) {
+		if(this.selectionDim != dim) return false;
+		TownBlock tb = DatasourceProxy.getDatasource().getTownBlock(dim, x, z, false);
+		if(tb == null) return false;
+		if(tb.getTown() != this.selectionTown) return false;
+		TownPlot plot = new TownPlot(dim, selectionX, selectionY, selectionZ, x, y, z, selectionTown, this);
+		try {
+		DatasourceProxy.getDatasource().insertPlot(plot);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		this.firstSelectionActive = false;
+		return true;
+	}
 	
 }

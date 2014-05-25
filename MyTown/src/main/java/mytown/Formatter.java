@@ -6,10 +6,18 @@ import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.interfaces.ITownFlag;
+import mytown.interfaces.ITownPlot;
 import net.minecraft.util.EnumChatFormatting;
 
 public class Formatter {
 
+	/**
+	 * Formats a list of ranks to a String that is then sent to the player.
+	 * 
+	 * @param ranks
+	 * @return
+	 */
 	public static String formatRanksToString(List<Rank> ranks) {
 		EnumChatFormatting color;
 		String res = null;
@@ -29,6 +37,13 @@ public class Formatter {
 		return res;
 	}
 
+	/**
+	 * Formats a list of resident in a town to a String that is then sent to the player.
+	 * 
+	 * @param residents
+	 * @param t
+	 * @return
+	 */
 	public static String formatResidentsToString(List<Resident> residents, Town t) {
 		String res = null;
 		for (Resident r : residents)
@@ -38,6 +53,14 @@ public class Formatter {
 				res += ", " + r.getUUID();
 		return res;
 	}
+	
+	/**
+	 * Formats a list of town blocks to a String that is then sent to the player.
+	 * 
+	 * @param blocks
+	 * @param chunkCoords
+	 * @return
+	 */
 	public static String formatTownBlocksToString(List<TownBlock> blocks, boolean chunkCoords) {
 		String res = null;
 		for (TownBlock block : blocks) {
@@ -52,6 +75,54 @@ public class Formatter {
 			else
 				res += " | " + toBeAdded;
 		}
+		return res;
+	}
+	
+	/**
+	 * Formats a list of plots to a String that is then sent to the player.
+	 * 
+	 * @param plots
+	 * @return
+	 */
+	public static String formatTownPlotsToString(List<ITownPlot> plots) {
+		String res = " ";
+		for(ITownPlot plot : plots) {
+			String toBeAdded = "";
+			if(!res.equals(" "))
+				toBeAdded = "\n";
+
+			toBeAdded += "Dim:" + plot.getDim();
+			toBeAdded += ", From [" + plot.getStartX();
+			toBeAdded += ", " + plot.getStartY();
+			toBeAdded += ", " + plot.getStartZ();
+			toBeAdded += "] to [" + plot.getEndX();
+			toBeAdded += ", " + plot.getEndY();
+			toBeAdded += ", " + plot.getEndZ();
+			toBeAdded += "], Owner: " + plot.getOwner().getUUID();
+			res += toBeAdded;
+		}
+		return res;
+	}
+	
+	/**
+	 * Formats a list of flags to a String that is then sent to the player.
+	 * 
+	 * @param flags
+	 * @return
+	 */
+	public static String formatFlagsToString(List<ITownFlag> flags) {
+		String res = " ";
+		for(ITownFlag flag : flags) {
+			String toBeAdded = "";
+			if(!res.equals(" "))
+				toBeAdded = "\n";
+			
+			toBeAdded += EnumChatFormatting.YELLOW + flag.getName();
+			toBeAdded += EnumChatFormatting.GREEN + " (" + EnumChatFormatting.RED + flag.getValue().toString().toLowerCase() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.WHITE;
+			toBeAdded += ": " + flag.getLocalizedDescription();
+			res += toBeAdded;
+		}
+		
 		return res;
 	}
 }

@@ -1,15 +1,24 @@
 package mytown;
 
 import mytown.config.Config;
+import mytown.core.ChatUtils;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.EnumFlagValue;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import cpw.mods.fml.common.IPlayerTracker;
 import forgeperms.api.ForgePermsAPI;
@@ -84,6 +93,46 @@ public class PlayerTracker implements IPlayerTracker {
 			if(DatasourceProxy.getDatasource().getResident(ev.getPlayer().username).isPartOfTown(town))
 				return;
 			ev.setCanceled(true);
+		}
+	}
+	
+	@ForgeSubscribe
+	public void onItemToolTip(ItemTooltipEvent ev) {
+		if(ev.itemStack.getDisplayName().equals(EnumChatFormatting.BLUE + "Selector") && ev.itemStack.getItem() == Item.hoeWood) {
+			ev.toolTip.add(EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.");
+			ev.toolTip.add(EnumChatFormatting.DARK_AQUA + "Uses: 1");
+		}
+	}
+	
+	// Because I can
+	@ForgeSubscribe
+	public void onUseHoe(UseHoeEvent ev) {
+		if(ev.current.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+			ev.setCanceled(true);
+		}
+	}
+	
+	@ForgeSubscribe
+	public void onItemUse(PlayerInteractEvent ev) {
+		if(ev.entityPlayer.worldObj.isRemote) return;
+		ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
+		if(ev.action == Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Item.hoeWood) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+			Resident res = DatasourceProxy.getDatasource().getResident(ev.entityPlayer.username);
+			if(res == null) return;
+			if(!res.isFirstPlotSelectionActive()) {
+				boolean result = res.setFirstPlotSelectionAndCheck(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
+				if(result)
+					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selected");
+				else
+					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.notintown");
+			} else {
+				boolean result = res.setSecondPlotSelectionAndCheck(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
+				if(result)
+					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.created");
+				else
+					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.notintown");
+			}
+			System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
 		}
 	}
 }

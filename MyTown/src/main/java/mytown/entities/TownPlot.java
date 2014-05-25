@@ -24,7 +24,7 @@ public class TownPlot implements ITownPlot {
 	protected List<ITownFlag> plotFlags; 
 	
 	
-	public TownPlot(int x1, int y1, int z1, int x2, int y2, int z2, int dim, Town town, Resident resident)
+	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town, Resident owner)
 	{
 		if(x1 > x2) {
 			int aux = x2;
@@ -51,6 +51,9 @@ public class TownPlot implements ITownPlot {
 		this.y2 = y2;
 		this.z2 = z2;
 		this.dim = dim;
+		
+		this.town = town;
+		this.owner = owner;
 		
 		this.initializeFlags();
 		this.updateKey();

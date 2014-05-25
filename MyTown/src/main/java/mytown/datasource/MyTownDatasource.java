@@ -41,8 +41,8 @@ public abstract class MyTownDatasource {
 	protected ConcurrentMap<String, TownBlock> blocks;
 	protected ConcurrentMap<String, Rank> ranks;
 	protected ConcurrentMap<String, ITownPlot> plots;
-	protected ConcurrentMap<String, ITownFlag> townFlags;
-	protected ConcurrentMap<String, ITownFlag> plotFlags;
+	protected ConcurrentMap<String, ITownFlag> townFlags; //TODO: Saving twice in the datasource?
+	protected ConcurrentMap<String, ITownFlag> plotFlags; //TODO: Saving twice in the datasource?
 	
 	/**
 	 * Used for connecting to Databases. Returns if connection was successful

@@ -5,7 +5,7 @@ mytown.cmd.err.resident.notexist=The player %s does not exist!
 
 # /t new [townname]
 mytown.cmd.err.newtown.nameinuse=Town name %s already in use!
-mytown.cmd.usage.newtown=Usage: /t new [townname]
+mytown.cmd.usage.newtown=/t new [townname]
 
 # /t invite
 mytown.cmd.err.invite.already=Resident %s already exists in town %s!
@@ -16,16 +16,16 @@ mytown.cmd.err.claim.already=This block has already been claimed!
 mytown.cmd.err.claim.notexist=This block is not claimed by town %s!
 
 # /t info
-mytown.cmd.usage.info=Usage: /t info <townname>
+mytown.cmd.usage.info=/t info <townname>
 mytown.cmd.err.info.notpart=You are not part of a town. Alternative usage: /t info <townname>
 
 # /t select
-mytown.cmd.usage.select=Usage: /t select <townname>
+mytown.cmd.usage.select=/t select <townname>
 mytown.cmd.err.select.notpart=You are not part of town %s. Please choose a town that you're a member of.
 
 # /t ranks
-mytown.cmd.usage.ranks=Usage: /t ranks <add|remove|perm>
-mytown.cmd.usage.ranks.perm=Usage: /t ranks perm add <rank> <permission>
+mytown.cmd.usage.ranks=/t ranks <add|remove|perm>
+mytown.cmd.usage.ranks.perm=/t ranks perm add <rank> <permission>
 mytown.cmd.err.ranks.add.already=The rank %s already exists
 mytown.cmd.err.ranks.add.notexist=The template rank %s does not exist! 
 mytown.cmd.err.ranks.rem.notexist=The rank %s does not exist in town %s
@@ -33,16 +33,22 @@ mytown.cmd.err.ranks.rem.notallowed=The rank %s is not allowed to be deleted!
 mytown.cmd.err.ranks.perm.notexist=The permission %s does not exist!
 mytown.cmd.err.ranks.perm.add.already=The rank %s already has permission %s!
 
+# /t plot
+
+mytown.cmd.err.plot.start.failed=Your inventory is full!
+mytown.cmd.err.plot.notintown=You are trying to make a plot outside the town!
+
+
 # /ta delete
-mytown.adm.cmd.delete.usage=Usage: /ta delete [townname] <townname2 townname3...>
+mytown.adm.cmd.delete.usage=/ta delete [townname] <townname2 townname3...>
 mytown.adm.cmd.delete.success=Deleted town with name %s!
 
 # /ta rem
-mytown.adm.cmd.usage.rem=Usage: /ta rem [resident] [fromTown]
+mytown.adm.cmd.usage.rem=/ta rem [resident] [fromTown]
 mytown.adm.cmd.err.rem.resident=Player %s is not part of the town %s
 
 # /ta add
-mytown.adm.cmd.usage.add=Usage: /ta add [resident] [toTown]
+mytown.adm.cmd.usage.add=/ta add [resident] [toTown]
 mytown.adm.cmd.err.add.already=Player %s is already a resident of the town %s
 
 # Notifications
@@ -63,3 +69,6 @@ mytown.notification.townblock.added=Town block from (%s, %s) to (%s, %s) has bee
 mytown.notification.townblock.removed=The town block from (%s, %s) to (%s, %s) has been removed from town %s!
 mytown.notification.townblock.list=TownBlock in town %s: %s
 mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s: %s
+mytown.notification.town.plot.start=Pick 2 corners with the Selector to create a plot!
+mytown.notification.town.plot.created=New plot created!
+mytown.notification.town.plot.selected=Corner 1 selected!

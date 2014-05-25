@@ -20,6 +20,7 @@ public class TownFlag implements ITownFlag {
 		return this.flagName;
 	}
 	
+	@Override
 	public String getLocalizedDescription() {
 		return this.localizedDescription;
 	}

@@ -5,12 +5,15 @@ import java.util.List;
 
 import mytown.commands.town.assistant.CmdClaim;
 import mytown.commands.town.assistant.CmdInvite;
+import mytown.commands.town.assistant.CmdPerm;
+import mytown.commands.town.assistant.CmdPlot;
 import mytown.commands.town.assistant.CmdUnclaim;
 import mytown.commands.town.everyone.CmdBlocks;
 import mytown.commands.town.everyone.CmdInfo;
 import mytown.commands.town.everyone.CmdListTown;
 import mytown.commands.town.everyone.CmdMap;
 import mytown.commands.town.everyone.CmdNewTown;
+import mytown.commands.town.everyone.CmdPlots;
 import mytown.commands.town.everyone.CmdRanks;
 import mytown.commands.town.everyone.CmdSelect;
 import mytown.core.utils.command.CommandHandler;
@@ -40,6 +43,9 @@ public class CmdTown extends CommandHandler {
 		addSubCommand(new CmdRanks("ranks", this));
 		addSubCommand(new CmdBlocks("blocks", this));
 		addSubCommand(new CmdUnclaim("unclaim", this));
+		addSubCommand(new CmdPlot("plot", this));
+		addSubCommand(new CmdPlots("plots", this));
+		addSubCommand(new CmdPerm("perm", this));
 		
 		// Add Aliases
 		aliases.add("t");

@@ -185,6 +185,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 					Resident owner = getResident(set.getString("Owner"));
 					
 					TownPlot plot = new TownPlot(dim, x1, y1, z1, x2, y2, z2, town, owner);
+					town.addTownPlot(plot);
 					addPlot(plot);
 					log.info("Adding plot in town " + town.getName());
 				}
@@ -309,8 +310,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			addTownBlock(townBlock);
 			townBlock.getTown().addTownBlock(townBlock);
 			
-			System.out.println("Added townblock for town " + townBlock.getTown());
-			
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + "TownBlocks (X, Z, Dim, TownName) VALUES (?, ?, ?, ?)", true);
 			statement.setInt(1, townBlock.getX());
 			statement.setInt(2, townBlock.getZ());
@@ -349,17 +348,20 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			plot.getTown().addTownPlot(plot);
 			
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Plots (Key, Dim, X1, Y1, Z1, X2, Y2, Z2, TownName, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			statement.setInt(1, plot.getDim());
-			statement.setInt(2, plot.getStartX());
-			statement.setInt(3, plot.getStartY());
-			statement.setInt(4, plot.getStartZ());
-			statement.setInt(5, plot.getEndX());
-			statement.setInt(6, plot.getEndY());
-			statement.setInt(7, plot.getEndZ());
-			statement.setString(8, plot.getTown().getName());
-			statement.setString(9, plot.getOwner().getUUID());
-			statement.setString(10, plot.getKey());
+			statement.setString(1, plot.getKey());
+			statement.setInt(2, plot.getDim());
+			statement.setInt(3, plot.getStartX());
+			statement.setInt(4, plot.getStartY());
+			statement.setInt(5, plot.getStartZ());
+			statement.setInt(6, plot.getEndX());
+			statement.setInt(7, plot.getEndY());
+			statement.setInt(8, plot.getEndZ());
+			statement.setString(9, plot.getTown().getName());
+			statement.setString(10, plot.getOwner().getUUID());
+			
 			statement.executeUpdate();
+			
+			log.info("Added new plot in town");
 		}
 	}
 

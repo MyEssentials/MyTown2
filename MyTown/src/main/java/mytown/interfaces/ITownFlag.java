@@ -4,8 +4,8 @@ import mytown.entities.flag.EnumFlagValue;
 
 public interface ITownFlag {
 	
-	public String getName();
+	String getName();
+	String getLocalizedDescription();
 	
-	public EnumFlagValue getValue();
-	
+	EnumFlagValue getValue();
 }
