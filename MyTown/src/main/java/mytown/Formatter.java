@@ -4,8 +4,8 @@ import java.util.List;
 
 import mytown.entities.Rank;
 import mytown.entities.Resident;
-import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
 import net.minecraft.util.EnumChatFormatting;
@@ -70,7 +70,6 @@ public class Formatter {
 			else
 				toBeAdded = "(" + (block.getX() * 16) + ", " + (block.getZ() * 16) + ")";
 			if (res == null)
-
 				res = toBeAdded;
 			else
 				res += " | " + toBeAdded;
@@ -85,7 +84,7 @@ public class Formatter {
 	 * @return
 	 */
 	public static String formatTownPlotsToString(List<ITownPlot> plots) {
-		String res = " ";
+		String res = " "; // Adding a space since minecraft likes to mess with formatting -_-
 		for(ITownPlot plot : plots) {
 			String toBeAdded = "";
 			if(!res.equals(" "))
@@ -111,14 +110,14 @@ public class Formatter {
 	 * @return
 	 */
 	public static String formatFlagsToString(List<ITownFlag> flags) {
-		String res = " ";
+		String res = " "; // Adding a space since minecraft likes to mess with formatting -_-
 		for(ITownFlag flag : flags) {
 			String toBeAdded = "";
 			if(!res.equals(" "))
 				toBeAdded = "\n";
 			
 			toBeAdded += EnumChatFormatting.YELLOW + flag.getName();
-			toBeAdded += EnumChatFormatting.GREEN + " (" + EnumChatFormatting.RED + flag.getValue().toString().toLowerCase() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.WHITE;
+			toBeAdded += EnumChatFormatting.GREEN + " (" + EnumChatFormatting.RED + flag.getValue() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.WHITE;
 			toBeAdded += ": " + flag.getLocalizedDescription();
 			res += toBeAdded;
 		}

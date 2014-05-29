@@ -53,6 +53,7 @@ mytown.adm.cmd.err.add.already=Player %s is already a resident of the town %s
 
 # Notifications
 mytown.notification.town.created=Town %s created!
+mytown.notification.admtown.created=Admin town %s created!
 mytown.notification.town.deleted=Town %s deleted!
 mytown.notification.nation.created=Nation %s created!
 mytown.notification.nation.deleted=Nation %s deleted!

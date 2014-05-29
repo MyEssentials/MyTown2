@@ -11,7 +11,7 @@ import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
-import mytown.entities.Town;
+import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

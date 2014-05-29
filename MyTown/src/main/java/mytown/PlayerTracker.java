@@ -3,9 +3,9 @@ package mytown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.entities.Resident;
-import mytown.entities.Town;
 import mytown.entities.TownBlock;
-import mytown.entities.flag.EnumFlagValue;
+import mytown.entities.town.Town;
+import mytown.interfaces.ITownFlag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
@@ -87,8 +87,10 @@ public class PlayerTracker implements IPlayerTracker {
 		if(!DatasourceProxy.getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4))) return;
 		else {
 			Town town = DatasourceProxy.getDatasource().getTownBlock(String.format(TownBlock.keyFormat, ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4)).getTown();
-			EnumFlagValue value = town.getFlagValueAtCoords(ev.x, ev.y, ev.z, "accessLevel");
-			if(value != null && value == EnumFlagValue.Build)
+			ITownFlag flag = town.getFlagAtCoords(ev.x, ev.y, ev.z, "breakBlocks");
+			if(flag == null)
+				return;
+			if(flag.getValue() == true)
 				return;
 			if(DatasourceProxy.getDatasource().getResident(ev.getPlayer().username).isPartOfTown(town))
 				return;
@@ -135,4 +137,6 @@ public class PlayerTracker implements IPlayerTracker {
 			System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
 		}
 	}
+	
+
 }

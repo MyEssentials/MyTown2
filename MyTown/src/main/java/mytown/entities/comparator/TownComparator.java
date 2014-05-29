@@ -2,7 +2,7 @@ package mytown.entities.comparator;
 
 import java.util.Comparator;
 
-import mytown.entities.Town;
+import mytown.entities.town.Town;
 
 public class TownComparator implements Comparator<Town> {
 

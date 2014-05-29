@@ -2,6 +2,8 @@ package mytown.entities;
 
 import java.util.ArrayList;
 
+import mytown.entities.town.Town;
+
 public class Rank {
 
 	private String key;

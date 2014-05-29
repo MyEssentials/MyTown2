@@ -3,6 +3,7 @@ package mytown.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
 

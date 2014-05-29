@@ -1,5 +1,6 @@
 package mytown.datasource;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,8 +11,9 @@ import mytown.core.Log;
 import mytown.entities.Nation;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
-import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.entities.town.AdminTown;
+import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
 import net.minecraft.entity.player.EntityPlayer;
@@ -173,8 +175,14 @@ public abstract class MyTownDatasource {
 	 * 
 	 * @return
 	 */
-	public Collection<Town> getTowns() {
-		return towns.values();
+	public Collection<Town> getTowns(boolean adminTownsIncluded) {
+		if(adminTownsIncluded) return towns.values();
+		Collection<Town> temp = new ArrayList<Town>();
+		for(Town t : towns.values()) {
+			if(!(t instanceof AdminTown))
+				temp.add(t);
+		}
+		return temp;
 	}
 
 	/**

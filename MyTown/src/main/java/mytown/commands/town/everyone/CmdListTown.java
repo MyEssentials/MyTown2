@@ -9,8 +9,8 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
-import mytown.entities.Town;
 import mytown.entities.comparator.TownComparator;
+import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.ICommandSender;
 
@@ -29,7 +29,7 @@ public class CmdListTown extends CommandBase {
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		List<Town> sortedTowns = new ArrayList<Town>(getDatasource().getTowns());
+		List<Town> sortedTowns = new ArrayList<Town>(getDatasource().getTowns(true));
 		TownComparator comp = new TownComparator(TownComparator.Order.Name);
 		Collections.sort(sortedTowns, comp); // TODO Cache the sort?
 		String townList = "\n" + Joiner.on("\n").join(sortedTowns);

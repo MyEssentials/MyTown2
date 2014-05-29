@@ -1,11 +1,14 @@
-package mytown.entities;
+package mytown.entities.town;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import mytown.entities.flag.EnumFlagValue;
+import mytown.entities.Nation;
+import mytown.entities.Rank;
+import mytown.entities.Resident;
+import mytown.entities.TownBlock;
 import mytown.entities.flag.TownFlag;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
@@ -19,11 +22,14 @@ import mytown.interfaces.ITownPlot;
  */
 public class Town implements Comparable<Town> {
 	
-	private String name;
-	private int extraBlocks = 0;
-	private List<Rank> ranks;
-	private List<ITownFlag> flags;
-	private List<ITownPlot> townPlots;
+	protected String name;
+	protected int extraBlocks = 0;
+	protected List<Rank> ranks;
+	protected List<ITownFlag> flags;
+	protected List<ITownPlot> townPlots;
+	protected List<Nation> nations = new ArrayList<Nation>();
+	protected List<TownBlock> townBlocks = new ArrayList<TownBlock>();
+	protected Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
 	
 	/**
 	 * Creates a town with the given name
@@ -44,12 +50,15 @@ public class Town implements Comparable<Town> {
 		this.initTownFlags();
 	}
 
-	public void initTownFlags() {
+	protected void initTownFlags() {
 		flags = new ArrayList<ITownFlag>();
 		
-		flags.add(new TownFlag("mobs", "Controls mobs spawning", EnumFlagValue.True));
-		flags.add(new TownFlag("accessLevel", "Access level for non-residents", EnumFlagValue.Enter));
-		flags.add(new TownFlag("explosions", "Controls if explosions can occur", EnumFlagValue.True));
+		flags.add(new TownFlag("mobs", "Controls mobs spawning", true));
+		flags.add(new TownFlag("breakBlocks", "Controls whether or not non-residents can break blocks", false));
+		flags.add(new TownFlag("explosions", "Controls if explosions can occur", true));
+		flags.add(new TownFlag("accessBlocks", "Controls whether or not non-residents can access(right click) blocks", false));
+		flags.add(new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
+		flags.add(new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
 	}
 	
 	/**
@@ -64,18 +73,18 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Nations
 	// //////////////////////////////////////
-	private List<Nation> nations = new ArrayList<Nation>();
+	
 
-	public void addNations(List<Nation> nations) {
-		this.nations.addAll(nations);
+	public boolean addNations(List<Nation> nations) {
+		return this.nations.addAll(nations);
 	}
 
-	public void addNation(Nation nation) {
-		nations.add(nation);
+	public boolean addNation(Nation nation) {
+		return nations.add(nation);
 	}
 
-	public void removeNation(Nation nation) {
-		nations.remove(nation);
+	public boolean removeNation(Nation nation) {
+		return nations.remove(nation);
 	}
 
 	public boolean hasNation(Nation nation) {
@@ -98,7 +107,7 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Blocks
 	// //////////////////////////////////////
-	private List<TownBlock> townBlocks = new ArrayList<TownBlock>();
+	
 
 	/**
 	 * Adds the given TownBlocks to this Town
@@ -106,7 +115,10 @@ public class Town implements Comparable<Town> {
 	 * @param townBlocks
 	 */
 	public void addTownBlocks(List<TownBlock> townBlocks) {
-		this.townBlocks.addAll(townBlocks);
+		// Just to make the singular version easily overridable 
+		for(TownBlock block : townBlocks) {
+			addTownBlock(block);
+		}
 	}
 
 	/**
@@ -114,8 +126,8 @@ public class Town implements Comparable<Town> {
 	 * 
 	 * @param block
 	 */
-	public void addTownBlock(TownBlock block) {
-		townBlocks.add(block);
+	public boolean addTownBlock(TownBlock block) {
+		return townBlocks.add(block);
 	}
 
 	/**
@@ -123,8 +135,8 @@ public class Town implements Comparable<Town> {
 	 * 
 	 * @param block
 	 */
-	public void removeTownBlock(TownBlock block) {
-		townBlocks.remove(block);
+	public boolean removeTownBlock(TownBlock block) {
+		return townBlocks.remove(block);
 	}
 
 	/**
@@ -158,7 +170,7 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Residents
 	// //////////////////////////////////////
-	private Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
+
 
 	/**
 	 * Returns the Residents
@@ -225,6 +237,12 @@ public class Town implements Comparable<Town> {
 		addResident(resident, rank);
 	}
 
+	/**
+	 * Gets the rank of the specified resident
+	 * 
+	 * @param resident
+	 * @return
+	 */
 	public Rank getResidentRank(Resident resident) {
 		if (hasResident(resident)) {
 			return residents.get(resident);
@@ -258,6 +276,11 @@ public class Town implements Comparable<Town> {
 		return null;
 	}
 
+	/**
+	 * Removes a rank
+	 * 
+	 * @param rank
+	 */
 	public void removeRank(Rank rank) {
 		ranks.remove(rank);
 	}
@@ -283,6 +306,12 @@ public class Town implements Comparable<Town> {
 		return this.ranks.contains(rank);
 	}
 
+	/**
+	 * Checks if a rank has the name specified
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public boolean hasRankName(String name) {
 		for (Rank r : ranks)
 			if (r.getName().equals(name)) return true;
@@ -325,6 +354,85 @@ public class Town implements Comparable<Town> {
 		return this.flags;
 	}
 	
+	/**
+	 * Gets all the flags for the specified block. Returns town's flags if no plot is found.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	public List<ITownFlag> getFlagsForBlockCoords(int x, int y, int z) {
+		ITownPlot plot = getPlotAtCoords(x, y, z);
+		if(plot == null) return this.getFlags();
+		return plot.getFlags();
+	}
+	
+	/**
+	 * Gets the flag on the specified coordinates. Returns town's flag if no plot is found.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param flagName
+	 * @return
+	 */
+	public ITownFlag getFlagAtCoords(int x, int y, int z, String flagName) {
+		ITownPlot plot = getPlotAtCoords(x, y, z);
+		if(plot == null) return this.getFlag(flagName);
+		return plot.getFlag(flagName);
+	}
+	
+	// //////////////////////////////////////
+	// Plots
+	// //////////////////////////////////////
+	/**
+	 * Adds an ITownPlot to this block
+	 * 
+	 * @param plot
+	 */
+	public boolean addTownPlot(ITownPlot plot) {
+		return this.townPlots.add(plot);
+	}
+	
+	/**
+	 * Removes an ITownPlot from this block
+	 * 
+	 * @param plot
+	 * @return
+	 */
+	public boolean removeTownPlot(ITownPlot plot) {
+		return this.townPlots.remove(plot);
+	}
+	
+	/**
+	 * Gets a list of all plots in the town
+	 * 
+	 * @return
+	 */
+	public List<ITownPlot> getTownPlots() {
+		return this.townPlots;
+	}
+
+	/**
+	 * Gets the plot at the specified location
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	public ITownPlot getPlotAtCoords(int x, int y, int z) {
+		for(ITownPlot p : townPlots) {
+			if(p.isBlockInsidePlot(x, y, z)) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
+
+	
 	// //////////////////////////////////////
 	// Helper?
 	// //////////////////////////////////////
@@ -347,74 +455,18 @@ public class Town implements Comparable<Town> {
 
 		return -1;
 	}
+	
+	/**
+	 * Gets the character that represents the type of this town. Only used in datasource
+	 * 
+	 * @return
+	 */
+	public String getType() {
+		if(this instanceof AdminTown)
+			return "A";
+		return "T";
+	}
 
 	
-	/**
-	 * Adds a TownPlot to this block
-	 * 
-	 * @param plot
-	 */
-	public void addTownPlot(ITownPlot plot) {
-		this.townPlots.add(plot);
-	}
-	
-	/**
-	 * Removes a TownPlot from this block
-	 * 
-	 * @param plot
-	 * @return
-	 */
-	public boolean removeTownPlot(ITownPlot plot) {
-		return this.townPlots.remove(plot);
-	}
-	
-	public List<ITownPlot> getTownPlots() {
-		return this.townPlots;
-	}
-	/**
-	 * Gets all the flags for the specified block
-	 * 
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 */
-	public List<ITownFlag> getFlagsForBlockCoords(int x, int y, int z) {
-		ITownPlot plot = getPlotAtCoords(x, y, z);
-		if(plot == null) return null;
-		return plot.getFlags();
-	}
-	/**
-	 * Gets the plot at the specified location
-	 * 
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 */
-	public ITownPlot getPlotAtCoords(int x, int y, int z) {
-		for(ITownPlot p : townPlots) {
-			if(p.isBlockInsidePlot(x, y, z)) {
-				return p;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Gets the value of a flag on the specified coordinates. Returns null if no plot or no flag is found.
-	 * 
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param flagName
-	 * @return
-	 */
-	public EnumFlagValue getFlagValueAtCoords(int x, int y, int z, String flagName) {
-		ITownPlot plot = getPlotAtCoords(x, y, z);
-		if(plot == null) return null;
-		ITownFlag flag = plot.getFlag(flagName);
-		if(flag == null) return null;
-		return flag.getValue();
-	}
+
 }

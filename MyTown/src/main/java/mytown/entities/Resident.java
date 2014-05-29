@@ -6,6 +6,7 @@ import java.util.List;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.Localization;
+import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -192,10 +193,11 @@ public class Resident {
 			oldTownBlock = MyTown.getDatasource().getTownBlock(lastDim, oldChunkX, oldChunkZ, true);
 			newTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, newChunkX, newChunkZ, true);
 
-			if (oldTownBlock == null && newTownBlock != null) {
-				sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.town", newTownBlock.getTown().getName());
-			} else if (oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
-				sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.ownTown");
+			if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
+				if(this.isPartOfTown(newTownBlock.getTown()))
+					sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.ownTown", newTownBlock.getTown().getName());
+				else
+					sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.town", newTownBlock.getTown().getName());
 			} else if (oldTownBlock != null && newTownBlock == null) {
 				sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.wild");
 			}

@@ -7,9 +7,9 @@ public class TownFlag implements ITownFlag {
 	protected String flagName;
 	protected String localizedDescription;
 	
-	protected EnumFlagValue value;
+	protected boolean value;
 	
-	public TownFlag(String flagName, String localizedDescription, EnumFlagValue defaultValue) {
+	public TownFlag(String flagName, String localizedDescription, boolean defaultValue) {
 		this.flagName = flagName;
 		this.localizedDescription = localizedDescription;
 		this.value = defaultValue;
@@ -26,9 +26,14 @@ public class TownFlag implements ITownFlag {
 	}
 	
 	@Override
-	public EnumFlagValue getValue() {
+	public boolean getValue() {
 		return this.value;
 	}
 	
-	
+	@Override
+	public boolean setValue(boolean value) {
+		this.value = value;
+		// might want to check if value is valid
+		return true;
+	}
 }

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import mytown.entities.Resident;
-import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.entities.town.Town;
 
 public interface ITownPlot {
 	
