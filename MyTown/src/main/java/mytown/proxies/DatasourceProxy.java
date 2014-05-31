@@ -55,9 +55,12 @@ public class DatasourceProxy {
 			// Load everything
 			datasource.loadResidents();
 			datasource.loadTowns();
+			datasource.loadTownFlags();
 			datasource.loadNations();
 			datasource.loadRanks();
 			datasource.loadPlots();
+			datasource.loadPlotFlags();
+			
 			
 			// Load links
 			datasource.loadResidentToTownLinks();

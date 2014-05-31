@@ -204,4 +204,14 @@ public class TownPlot implements ITownPlot {
 	public int getDim() {
 		return this.dim;
 	}
+	
+	@Override
+	public boolean addFlag(ITownFlag flag) {
+		return plotFlags.add(flag);
+	}
+	
+	@Override
+	public boolean removeFlag(String flagName) {
+		return plotFlags.remove(getFlag(flagName));
+	}
 }

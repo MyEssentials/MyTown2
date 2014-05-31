@@ -10,6 +10,7 @@ import mytown.commands.town.assistant.CmdPlot;
 import mytown.commands.town.assistant.CmdUnclaim;
 import mytown.commands.town.everyone.CmdBlocks;
 import mytown.commands.town.everyone.CmdInfo;
+import mytown.commands.town.everyone.CmdLeave;
 import mytown.commands.town.everyone.CmdListTown;
 import mytown.commands.town.everyone.CmdMap;
 import mytown.commands.town.everyone.CmdNewTown;
@@ -46,6 +47,7 @@ public class CmdTown extends CommandHandler {
 		addSubCommand(new CmdPlot("plot", this));
 		addSubCommand(new CmdPlots("plots", this));
 		addSubCommand(new CmdPerm("perm", this));
+		addSubCommand(new CmdLeave("leave", this));
 		
 		// Add Aliases
 		aliases.add("t");

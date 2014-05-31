@@ -5,13 +5,14 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import mytown.datasource.MyTownDatasource;
 import mytown.entities.Nation;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
-import mytown.entities.flag.TownFlag;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
+import mytown.proxies.DatasourceProxy;
 
 // TODO Add Comments
 
@@ -46,21 +47,9 @@ public class Town implements Comparable<Town> {
 		
 		ranks = new ArrayList<Rank>();
 		townPlots = new ArrayList<ITownPlot>();
-		
-		this.initTownFlags();
+		flags = new ArrayList<ITownFlag>();
 	}
 
-	protected void initTownFlags() {
-		flags = new ArrayList<ITownFlag>();
-		
-		flags.add(new TownFlag("mobs", "Controls mobs spawning", true));
-		flags.add(new TownFlag("breakBlocks", "Controls whether or not non-residents can break blocks", false));
-		flags.add(new TownFlag("explosions", "Controls if explosions can occur", true));
-		flags.add(new TownFlag("accessBlocks", "Controls whether or not non-residents can access(right click) blocks", false));
-		flags.add(new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
-		flags.add(new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
-	}
-	
 	/**
 	 * Returns the name of the town
 	 * 
@@ -465,6 +454,10 @@ public class Town implements Comparable<Town> {
 		if(this instanceof AdminTown)
 			return "A";
 		return "T";
+	}
+	
+	protected MyTownDatasource getDatasource() {
+		return DatasourceProxy.getDatasource();
 	}
 
 	

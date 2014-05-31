@@ -43,8 +43,6 @@ public abstract class MyTownDatasource {
 	protected ConcurrentMap<String, TownBlock> blocks;
 	protected ConcurrentMap<String, Rank> ranks;
 	protected ConcurrentMap<String, ITownPlot> plots;
-	protected ConcurrentMap<String, ITownFlag> townFlags; //TODO: Saving twice in the datasource?
-	protected ConcurrentMap<String, ITownFlag> plotFlags; //TODO: Saving twice in the datasource?
 	
 	/**
 	 * Used for connecting to Databases. Returns if connection was successful
@@ -62,8 +60,6 @@ public abstract class MyTownDatasource {
 		blocks = new ConcurrentHashMap<String, TownBlock>();
 		ranks = new ConcurrentHashMap<String, Rank>();
 		plots = new ConcurrentHashMap<String, ITownPlot>();
-		townFlags = new ConcurrentHashMap<String, ITownFlag>();
-		plotFlags = new ConcurrentHashMap<String, ITownFlag>();
 	}
 
 	/**
@@ -144,27 +140,6 @@ public abstract class MyTownDatasource {
 	public Map<String, ITownPlot> getPlotsMap() {
 		return plots;
 	}
-	
-	/**
-	 * Returns a Map of flags in towns
-	 * 
-	 * @return
-	 */
-	public Map<String, ITownFlag> getTownFlagsMap() {
-		return townFlags;
-	}
-	
-	/**
-	 * Returns a Map of flags in plots
-	 * 
-	 * @return
-	 */
-	public Map<String, ITownFlag> getPlotFlagsMap() {
-		return plotFlags;
-	}
-	
-
-	
 
 	// /////////////////////////////////////////////////////////////
 	// Collection Getters
@@ -228,25 +203,6 @@ public abstract class MyTownDatasource {
 	 */
 	public Collection<ITownPlot> getPlots() {
 		return plots.values();
-	}
-
-	
-	/**
-	 * Returns a Collection of the flags in towns
-	 * 
-	 * @return
-	 */
-	public Collection<ITownFlag> getTownFlags() {
-		return townFlags.values();
-	}
-	
-	/**
-	 * Returns a Collection of the flags in plots
-	 * 
-	 * @return
-	 */
-	public Collection<ITownFlag> getPlotFlags() {
-		return plotFlags.values();
 	}
 	
 	// /////////////////////////////////////////////////////////////
@@ -359,61 +315,6 @@ public abstract class MyTownDatasource {
 		return plots.get(key);
 	}
 	
-	/**
-	 * Gets a flag in a town
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public ITownFlag getTownFlag(String key) {
-		return townFlags.get(key);
-	}
-	
-	/**
-	 * Gets a flag in the specified town
-	 * 
-	 * @param flagName
-	 * @param town
-	 * @return
-	 */
-	public ITownFlag getTownFlag(String flagName, Town town) {
-		return townFlags.get(flagName + ";" + town.getName());
-	}
-	
-	/**
-	 * Gets a flag in the town with the specified name
-	 * 
-	 * @param flagName
-	 * @param townName
-	 * @return
-	 */
-	public ITownFlag getTownFlag(String flagName, String townName) {
-		return townFlags.get(flagName + ";" + townName);
-	}
-	
-	/**
-	 * Gets a flag in a plot
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public ITownFlag getPlotFlag(String key) {
-		return plotFlags.get(key);
-	}
-	
-	/**
-	 * Gets a flag at the specified plot
-	 * 
-	 * @param x1
-	 * @param y1
-	 * @param x2
-	 * @param y2
-	 * @return
-	 */
-	public ITownFlag getPlotFlag(String flagName, ITownPlot plot) {
-		return plotFlags.get(flagName + ";" + plot.getKey());
-	}
-	
 	// /////////////////////////////////////////////////////////////
 	// Checkers?
 	// /////////////////////////////////////////////////////////////
@@ -479,26 +380,6 @@ public abstract class MyTownDatasource {
 		return plots.containsKey(key);
 	}
 	
-	/**
-	 * Checks if the town flag exists
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public boolean hasTownFlag(String key) {
-		return townFlags.containsKey(key);
-	}
-
-	/**
-	 * Checks if the plot flag exists
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public boolean hasPlotFlag(String key) {
-		return plotFlags.containsKey(key);
-	}
-	
 	// /////////////////////////////////////////////////////////////
 	// Loaders
 	// /////////////////////////////////////////////////////////////
@@ -532,6 +413,16 @@ public abstract class MyTownDatasource {
 	 * Loads all Plots into the Datasource
 	 */
 	public abstract void loadPlots() throws Exception;
+	
+	/**
+	 * Loads all flags for plots
+	 */
+	public abstract void loadPlotFlags() throws Exception;
+	
+	/**
+	 * Loads all flags for towns
+	 */
+	public abstract void loadTownFlags() throws Exception;
 	
 	// /////////////////////////////////////////////////////////////
 	// Insert Single Entity
@@ -585,6 +476,24 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void insertPlot(ITownPlot plot) throws Exception;
+	
+	/**
+	 * Adds a flag to the plot and executes a query
+	 * 
+	 * @param plot
+	 * @param flag
+	 * @throws Exception
+	 */
+	public abstract void insertPlotFlag(ITownPlot plot, ITownFlag flag) throws Exception;
+	
+	/**
+	 * Adds a flag to the town and executes a query
+	 * 
+	 * @param town
+	 * @param flag
+	 * @throws Exception
+	 */
+	public abstract void insertTownFlag(Town town, ITownFlag flag) throws Exception;
 	
 	// /////////////////////////////////////////////////////////////
 	// Insert Multiple Entities
@@ -659,6 +568,32 @@ public abstract class MyTownDatasource {
 	public void insertPlots(ITownPlot... plots) throws Exception {
 		for(ITownPlot plot : plots){
 			insertPlot(plot);
+		}
+	}
+	
+	/**
+	 * Adds multiple flags to the plot and executes a query
+	 * 
+	 * @param plot
+	 * @param flags
+	 * @throws Exception
+	 */
+	public void insertPlotFlags(ITownPlot plot, ITownFlag... flags) throws Exception {
+		for(ITownFlag flag : flags) {
+			insertPlotFlag(plot, flag);
+		}
+	}
+	
+	/**
+	 * Adds multiple flags to the town and executes a query
+	 * 
+	 * @param town
+	 * @param flags
+	 * @throws Exception
+	 */
+	public void insertTownFlags(Town town, ITownFlag... flags) throws Exception {
+		for(ITownFlag flag : flags) {
+			insertTownFlag(town, flag);
 		}
 	}
 	
@@ -861,6 +796,24 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract void updatePlot(ITownPlot plot) throws Exception;
 	
+	/**
+	 * Updates a flag
+	 * 
+	 * @param plot
+	 * @param flag
+	 * @throws Exception
+	 */
+	public abstract void updatePlotFlag(ITownFlag flag) throws Exception;
+	
+	/**
+	 * Updates a flag
+	 * 
+	 * @param town
+	 * @param flag
+	 * @throws Exception
+	 */
+	public abstract void updateTownFlag(ITownFlag flag) throws Exception;
+	
 	// /////////////////////////////////////////////////////////////
 	// Update Multiple Entities
 	// /////////////////////////////////////////////////////////////
@@ -937,6 +890,32 @@ public abstract class MyTownDatasource {
 		}
 	}
 	
+	/**
+	 * Updates all the given flags
+	 * 
+	 * @param plot
+	 * @param flags
+	 * @throws Exception
+	 */
+	public void updatePlotFlags(ITownFlag... flags) throws Exception {
+		for(ITownFlag flag : flags) {
+			updatePlotFlag(flag);
+		}
+	}
+	
+	/**
+	 * Updates all the given flags
+	 * 
+	 * @param town
+	 * @param flags
+	 * @throws Exception
+	 */
+	public void updateTownFlags(ITownFlag... flags) throws Exception {
+		for(ITownFlag flag : flags) {
+			updateTownFlag(flag);
+		}
+	}
+	
 	// /////////////////////////////////////////////////////////////
 	// Delete Single Entities
 	// /////////////////////////////////////////////////////////////
@@ -990,6 +969,24 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract boolean deletePlot(ITownPlot plot) throws Exception;
+	
+	/**
+	 *  Deletes all of the specified flag and executes a query
+	 * 
+	 * @param flag
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract boolean deletePlotFlag(ITownFlag flag) throws Exception;
+	
+	/**
+	 *  Deletes all of the specified flag and executes a query
+	 * 
+	 * @param flag
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract boolean deleteTownFlag(ITownFlag flag) throws Exception;
 	
 	// /////////////////////////////////////////////////////////////
 	// Delete Multiple Entities
@@ -1062,7 +1059,32 @@ public abstract class MyTownDatasource {
 			deletePlot(plot);
 		}
 	}
+	
+	/**
+	 * Deletes the flags from the specified plot and executes a query
+	 * 
+	 * @param plot
+	 * @param flags
+	 * @throws Exception
+	 */
+	public void deletePlotFlags(ITownFlag... flags) throws Exception {
+		for(ITownFlag flag : flags) {
+			deletePlotFlag(flag);
+		}
+	}
 
+	/**
+	 * Deletes the flags from the specified town and executes a query
+	 * 
+	 * @param town
+	 * @param flags
+	 * @throws Exception
+	 */
+	public void deleteTownFlags(ITownFlag... flags) throws Exception {
+		for(ITownFlag flag : flags) {
+			deleteTownFlag(flag);
+		}
+	}
 	// /////////////////////////////////////////////////////////////
 	// Linkages
 	// /////////////////////////////////////////////////////////////

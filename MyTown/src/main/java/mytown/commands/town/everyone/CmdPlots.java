@@ -1,7 +1,6 @@
 package mytown.commands.town.everyone;
 
 import mytown.Formatter;
-import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;

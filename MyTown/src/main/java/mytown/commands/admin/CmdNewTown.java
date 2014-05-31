@@ -6,6 +6,7 @@ import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
+import mytown.entities.flag.TownFlag;
 import mytown.entities.town.AdminTown;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.CommandException;
@@ -35,6 +36,13 @@ public class CmdNewTown extends CommandBase{
 		EntityPlayer player = (EntityPlayer)sender;
 		getDatasource().insertTown(town);
 		getDatasource().insertTownBlock(new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension));
+		getDatasource().insertTownFlag(town, new TownFlag("mobs", "Controls mobs spawning", true));
+		getDatasource().insertTownFlag(town, new TownFlag("breakBlocks", "Controls whether or not non-residents can break blocks", false));
+		getDatasource().insertTownFlag(town, new TownFlag("explosions", "Controls if explosions can occur", true));
+		getDatasource().insertTownFlag(town, new TownFlag("accessBlocks", "Controls whether or not non-residents can access(right click) blocks", false));
+		getDatasource().insertTownFlag(town, new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
+		getDatasource().insertTownFlag(town, new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
+		
 		res.sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.admtown.created", town.getName());
 	}
 

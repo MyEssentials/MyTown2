@@ -9,6 +9,8 @@ mytown.cmd.usage.newtown=/t new [townname]
 
 # /t invite
 mytown.cmd.err.invite.already=Resident %s already exists in town %s!
+mytown.cmd.err.invite.noinvitations=You have no invitations!
+mytown.cmd.usage.invite=/t invite <player-name|accept|refuse>
 
 # /t claim
 mytown.cmd.err.claim.failed=Failed to claim block!
@@ -38,6 +40,12 @@ mytown.cmd.err.ranks.perm.add.already=The rank %s already has permission %s!
 mytown.cmd.err.plot.start.failed=Your inventory is full!
 mytown.cmd.err.plot.notintown=You are trying to make a plot outside the town!
 
+# /t perm
+
+mytown.cmd.err.perm.set.usage=/t perm set <flag-name> <true|false>
+mytown.cmd.err.flagNotExists=That flag does not exist!
+mytown.cmd.err.perm.valueNotValid=Invalid value!
+
 
 # /ta delete
 mytown.adm.cmd.delete.usage=/ta delete [townname] <townname2 townname3...>
@@ -61,7 +69,7 @@ mytown.notification.enter.wild=You just entered the wild!
 mytown.notification.enter.town=Welcome to %s
 mytown.notification.enter.ownTown=Welcome back!
 mytown.notification.town.list=Towns: %s
-mytown.notification.town.info=%sBlocks: %sResidents: %sRanks: %s
+mytown.notification.town.info=%sResidents: %sRanks: %s
 mytown.notification.town.select=The town %s has been selected as your primary town!
 mytown.notification.town.resident.remove=Resident %s has been removed from town %s!
 mytown.notification.town.resident.add=Resident %s has been added to town %s!
@@ -73,3 +81,5 @@ mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s: %s
 mytown.notification.town.plot.start=Pick 2 corners with the Selector to create a plot!
 mytown.notification.town.plot.created=New plot created!
 mytown.notification.town.plot.selected=Corner 1 selected!
+mytown.notification.town.left=Someone has left from town %s
+mytown.notification.town.perm.set.success=Flag successfully changed!

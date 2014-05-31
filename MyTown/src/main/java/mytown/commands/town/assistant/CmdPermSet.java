@@ -1,30 +1,24 @@
 package mytown.commands.town.assistant;
 
-import mytown.Formatter;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
-import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.town.Town;
+import mytown.interfaces.ITownFlag;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 
-@Permission("mytown.cmd.assistant.perm")
-public class CmdPerm extends CommandHandler {
-	
-	public CmdPerm(String name, CommandBase parent) {
+@Permission("mytown.cmd.assistant.perm.set")
+public class CmdPermSet extends CommandBase{
+
+	public CmdPermSet(String name, CommandBase parent) {
 		super(name, parent);
-		
-		addSubCommand(new CmdPermSet("set", this));
-	}
-
-	@Override
-	public void sendHelp(ICommandSender sender) {
-		
 	}
 	
 	@Override
@@ -41,13 +35,21 @@ public class CmdPerm extends CommandHandler {
 	
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if(args.length > 0 && subCommands.containsKey(args[0]))
-			super.process(sender, args);
-		else {
-			Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-			ChatUtils.sendChat(sender, Formatter.formatFlagsToString(town.getFlags()));
+		if(args.length < 2) throw new WrongUsageException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.set.usage"));
+		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
+		ITownFlag flag = town.getFlag(args[0]);
+		
+		if(flag == null) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.flagNotExists", args[0]));
+		if(args[1].equals("true")) {
+			flag.setValue(true);
+		} else if(args[1].equals("false")) {
+			flag.setValue(false);
+		} else {
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.valueNotValid", args[1]));
 		}
-			
+		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.perm.set.success", args[0], args[1]);
+		
+		getDatasource().updateTownFlag(flag);
 	}
 	
 	/**
@@ -58,5 +60,4 @@ public class CmdPerm extends CommandHandler {
 	private MyTownDatasource getDatasource() {
 		return DatasourceProxy.getDatasource();
 	}
-
 }

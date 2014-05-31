@@ -10,8 +10,6 @@ import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.player.EntityPlayer;
 
-import org.lwjgl.util.Point;
-
 /**
  * Defines a player
  * 
@@ -374,6 +372,9 @@ public class Resident {
 		this.selectionZ = z;
 		this.selectionTown = tb.getTown();
 		this.firstSelectionActive = true;
+		
+
+		
 		return true;
 	}
 	
@@ -386,12 +387,17 @@ public class Resident {
 		TownBlock tb = DatasourceProxy.getDatasource().getTownBlock(dim, x, z, false);
 		if(tb == null) return false;
 		if(tb.getTown() != this.selectionTown) return false;
+		
+		// TODO: Add check for how small can plots be
+		
 		TownPlot plot = new TownPlot(dim, selectionX, selectionY, selectionZ, x, y, z, selectionTown, this);
 		try {
 		DatasourceProxy.getDatasource().insertPlot(plot);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
 		this.firstSelectionActive = false;
 		return true;
 	}

@@ -1,7 +1,6 @@
 package mytown.interfaces;
 
 import java.util.List;
-import java.util.Map;
 
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
@@ -33,6 +32,8 @@ public interface ITownPlot {
 	
 	boolean isBlockInsidePlot(int x, int y, int z);
 	
+	boolean addFlag(ITownFlag flag);
+	boolean removeFlag(String flagName);
 	ITownFlag getFlag(String flagName);
 	
 	List<ITownFlag> getFlags();

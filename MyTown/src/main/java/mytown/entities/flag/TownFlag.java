@@ -4,6 +4,8 @@ import mytown.interfaces.ITownFlag;
 
 public class TownFlag implements ITownFlag {
 
+	protected int ID = -1;
+	protected String key;
 	protected String flagName;
 	protected String localizedDescription;
 	
@@ -36,4 +38,15 @@ public class TownFlag implements ITownFlag {
 		// might want to check if value is valid
 		return true;
 	}
+
+	@Override
+	public int getDB_ID() {
+		return this.ID;
+	}
+
+	@Override
+	public void setDB_ID(int id) {
+		this.ID = id;
+	}
+
 }

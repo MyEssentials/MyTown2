@@ -33,6 +33,8 @@ public class Formatter {
 			else
 				res += EnumChatFormatting.WHITE + ", " + color + r.getName();
 		}
+		if(ranks.size() == 0)
+			res = EnumChatFormatting.RED + "NONE";
 
 		return res;
 	}
@@ -51,6 +53,8 @@ public class Formatter {
 				res = EnumChatFormatting.WHITE + r.getUUID() + EnumChatFormatting.GOLD + " (" + EnumChatFormatting.GREEN + r.getTownRank(t).getName() + EnumChatFormatting.GOLD + ")";
 			else
 				res += ", " + r.getUUID();
+		if(residents.size() == 0)
+			res = EnumChatFormatting.RED + "NONE";
 		return res;
 	}
 	
