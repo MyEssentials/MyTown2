@@ -8,3 +8,10 @@
 eclipse
 bin
 build
+
+MyTown/ForgeModLoader-client-0.log.1.lck
+*.lck
+*.1
+*.3
+*.2
+*.png

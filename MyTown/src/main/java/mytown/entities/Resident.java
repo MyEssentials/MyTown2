@@ -6,8 +6,10 @@ import java.util.List;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.Localization;
+import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -25,9 +27,9 @@ public class Resident {
 	private int lastChunkZ, lastChunkX;
 	private int lastDim;
 	
-	private int selectionX, selectionY, selectionZ, selectionDim;
+	private int selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim;
 	private Town selectionTown;
-	private boolean firstSelectionActive;
+	private boolean firstSelectionActive = false, secondSelectionActive = false;
 
 	/**
 	 * Creates a Player with the given name
@@ -330,12 +332,20 @@ public class Resident {
 	 */
 	public void confirmForm(boolean accepted, String townName) {
 		if (invitationForms.size() != 0) {
+			Town town = getTownFromInvitations(townName);
+			if(town == null) return;
 			if (accepted) {
 				try {
-					DatasourceProxy.getDatasource().linkResidentToTown(this, getTownFromInvitations(townName));
+					
+					sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.invited.accept", town.getName());
+					for(Resident res : town.getResidents())
+						res.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.joined", this.getUUID(), town.getName());
+					DatasourceProxy.getDatasource().linkResidentToTown(this, town, town.getRank("Resident"));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			} else {
+				sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.invited.refuse", town.getName());
 			}
 			this.invitationForms.remove(getTownFromInvitations(townName));
 		}
@@ -362,19 +372,40 @@ public class Resident {
 		return this.invitationForms;
 	}
 	
-	public boolean setFirstPlotSelectionAndCheck (int dim, int x, int y, int z) {
+	/**
+	 * Adds an invitation to the resident
+	 * 
+	 * @param town
+	 * @return
+	 */
+	public boolean addInvitation(Town town) {
+		return this.invitationForms.add(town);
+	}
+	
+	// Mostly a workaround, might be changed
+	
+	////////////////////////////////////////
+	// PLOT SELECTION
+	////////////////////////////////////////
+	
+	public boolean selectBlockForPlot (int dim, int x, int y, int z) {
 		TownBlock tb = DatasourceProxy.getDatasource().getTownBlock(dim, x, z, false);
-		if(tb == null) return false;
-		if(tb.getTown() != getSelectedTown()) return false;
-		this.selectionDim = dim;
-		this.selectionX = x;
-		this.selectionY = y;
-		this.selectionZ = z;
-		this.selectionTown = tb.getTown();
-		this.firstSelectionActive = true;
-		
-
-		
+		if(firstSelectionActive && this.selectionDim != dim) return false;
+		if(tb == null || tb.getTown() != getSelectedTown() && !firstSelectionActive || tb.getTown() != selectionTown && firstSelectionActive) return false;
+		if(!firstSelectionActive) {
+			this.secondSelectionActive = false;
+			this.selectionDim = dim;
+			this.selectionX1 = x;
+			this.selectionY1 = y;
+			this.selectionZ1 = z;
+			this.selectionTown = tb.getTown();
+			this.firstSelectionActive = true;
+		} else {
+			this.selectionX2 = x;
+			this.selectionY2 = y;
+			this.selectionZ2 = z;
+			this.secondSelectionActive = true;
+		}
 		return true;
 	}
 	
@@ -382,24 +413,64 @@ public class Resident {
 		return this.firstSelectionActive;
 	}
 	
-	public boolean setSecondPlotSelectionAndCheck (int dim, int x, int y, int z) {
-		if(this.selectionDim != dim) return false;
-		TownBlock tb = DatasourceProxy.getDatasource().getTownBlock(dim, x, z, false);
-		if(tb == null) return false;
-		if(tb.getTown() != this.selectionTown) return false;
+	public boolean isSecondPlotSelectionActive() {
+		return this.secondSelectionActive;
+	}
+	
+	
+	public boolean makePlotFromSelection() {
 		
-		// TODO: Add check for how small can plots be
+		// TODO: Check everything separately or throw exceptions?
 		
-		TownPlot plot = new TownPlot(dim, selectionX, selectionY, selectionZ, x, y, z, selectionTown, this);
-		try {
-		DatasourceProxy.getDatasource().insertPlot(plot);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(!secondSelectionActive || !firstSelectionActive || (Math.abs(selectionX1 - selectionX2) < TownPlot.minX || Math.abs(selectionY1 - selectionY2) < TownPlot.minY || Math.abs(selectionZ1 - selectionZ2) < TownPlot.minZ) && !(selectedTown instanceof AdminTown)) {
+			resetSelection();
+			return false;
 		}
 		
 		
-		this.firstSelectionActive = false;
+		
+		int lastX = 1000000, lastZ = 1000000;
+		for(int i = selectionX1; i <= selectionX2; i++) {
+			for(int j = selectionZ1; j <= selectionZ2; j++) {
+				if(i >> 4 != lastX || j >> 4 != lastZ) {
+					lastX = i >> 4;
+					lastZ = j >> 4;
+					if(!DatasourceProxy.getDatasource().hasTownBlock(selectionDim, lastX, lastZ, false, selectionTown)) {
+						resetSelection();
+						return false;
+					}
+				}
+				
+				for(int k = selectionY1; k <= selectionY2; k++) {
+					if(selectionTown.getPlotAtCoords(i, k, j) != null) {
+						resetSelection();
+						return false;
+					}
+				}
+			}
+		}
+		
+		TownPlot plot = new TownPlot(selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionTown, this);
+		try {
+			DatasourceProxy.getDatasource().insertPlot(plot);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		resetSelection();
 		return true;
 	}
+	
+	public void expandSelectionVert() {
+		this.selectionY1 = 0;
+		this.selectionY2 = player.worldObj.getActualHeight();
+	}
+	
+	public void resetSelection() {
+		this.firstSelectionActive = false;
+		this.secondSelectionActive = false;
+	}
+	
 	
 }

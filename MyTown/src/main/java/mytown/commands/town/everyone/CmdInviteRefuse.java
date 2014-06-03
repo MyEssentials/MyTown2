@@ -21,7 +21,7 @@ public class CmdInviteRefuse extends CommandBase {
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		if (res.getInvitations().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.noinvitations"));
-		if (res.getInvitations().size() != 1 && args.length == 0) throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite.accept"));
+		if (res.getInvitations().size() != 1 && args.length == 0) throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite"));
 		if (res.getInvitations().size() != 1 && getDatasource().getTown(args[0]) != null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		String townName;
 		if (args.length == 0)

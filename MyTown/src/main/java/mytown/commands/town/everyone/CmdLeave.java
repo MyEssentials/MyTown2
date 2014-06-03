@@ -32,7 +32,9 @@ public class CmdLeave extends CommandBase {
 		Town town = res.getSelectedTown();
 		if(town == null) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
 		getDatasource().unlinkResidentFromTown(res, town);
-		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.left", town.getName());
+		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.left.self", town.getName());
+		for(Resident r : town.getResidents())
+			r.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.left", res.getUUID(), town.getName());
 	}
 	/**
 	 * Helper method to return the current MyTownDatasource instance

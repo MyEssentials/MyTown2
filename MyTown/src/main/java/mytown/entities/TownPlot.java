@@ -10,6 +10,11 @@ import mytown.interfaces.ITownPlot;
 
 public class TownPlot implements ITownPlot {
 	
+	// TODO: Read from config
+	public static int minX = 5;
+	public static int minY = 4;
+	public static int minZ = 5;
+	
 	protected int x1, z1, y1, x2, z2, y2;
 	protected int dim;
 	

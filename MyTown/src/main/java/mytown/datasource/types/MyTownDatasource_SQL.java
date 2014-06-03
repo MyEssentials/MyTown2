@@ -97,7 +97,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			set = statement.executeQuery();
 
 			while (set.next()) {
-				addResident(new Resident(set.getString("UUID")));
+				Resident res = new Resident(set.getString("UUID"));
+				addResident(res);
 			}
 		}
 	}
@@ -262,8 +263,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	@Override
 	public void updateResident(Resident resident) throws Exception {
 		synchronized (lock) {
-			PreparedStatement statement = prepare("UPDATE " + prefix + "Residents SET UUID=? WHERE UUID=?", true);
-			statement.setString(1, resident.getUUID());
+			PreparedStatement statement = prepare("UPDATE " + prefix + "Residents SET SelectedTownName=? WHERE UUID=?", true);
+			statement.setString(1, resident.getSelectedTown().getName());
+			statement.setString(2, resident.getUUID());
 			statement.executeUpdate();
 		}
 	}
@@ -599,9 +601,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				Resident res = getResident(set.getString("Owner"));
 				Town town = getTown(set.getString("TownName"));
 				Rank rank = getRank(set.getString("Rank"));
-
+				boolean isSelectedTown = set.getBoolean("IsSelectedTown");
+				
 				// Do actual link
 				res.addTown(town);
+				if(isSelectedTown) res.setSelectedTown(town);
 				town.addResident(res, rank);
 				town.addRank(rank);
 			}
@@ -632,10 +636,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			resident.addTown(town);
 			town.addResident(resident, rank);
 
-			PreparedStatement statement = prepare("INSERT INTO " + prefix + " ResidentsToTowns (TownName, Owner, Rank) VALUES (?, ?, ?)", true);
+			PreparedStatement statement = prepare("INSERT INTO " + prefix + " ResidentsToTowns (TownName, Owner, Rank, IsSelectedTown) VALUES (?, ?, ?, ?)", true);
 			statement.setString(1, town.getName());
 			statement.setString(2, resident.getUUID());
 			statement.setString(3, rank.getKey());
+			statement.setBoolean(4, false);
 			statement.executeUpdate();
 		}
 	}
@@ -678,6 +683,32 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setString(2, nation.getName());
 			statement.executeUpdate();
 		}
+	}
+	
+	@Override
+	public void updateLinkResidentToTown(Resident resident, Town town) throws Exception {
+		synchronized(lock) {
+			PreparedStatement statement;
+			
+			if(resident.getSelectedTown() == town) {
+				statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=? WHERE Owner=?");
+				statement.setBoolean(1, false);
+				statement.setString(2, resident.getUUID());
+				statement.executeUpdate();
+			}
+			statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=? WHERE TownName=? AND Owner=?");
+			statement.setBoolean(1, resident.getSelectedTown() == town);
+			statement.setString(2, town.getName());
+			statement.setString(3, resident.getUUID());
+			statement.executeUpdate();
+		}
+	}
+	
+	@Override
+	public void updateLinkTownToNation(Town town, Nation nation) throws Exception {
+		// TODO: Later
+		
+		
 	}
 
 	@Override
@@ -742,7 +773,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				+ "IsNPC boolean DEFAULT false, "
 				+ "Joined int NOT NULL, "
 				+ "LastLogin int NOT NULL, "
-				+ "PRIMARY KEY (UUID));")); // MC Version < 1.7 UUID is Player name. 1.7 >= UUID is Player's UUID
+				+ "SelectedTownName varchar(50), "
+				+ "PRIMARY KEY (UUID))")); // MC Version < 1.7 UUID is Player name. 1.7 >= UUID is Player's UUID
 		updates.add(new DBUpdate("03.08.2014.4", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + 
 				"Nations ("
 				+ "Name varchar(50) NOT NULL, "
@@ -771,6 +803,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				+ "TownName varchar(50) NOT NULL, "
 				+ "Owner varchar(255) NOT NULL, "
 				+ "Rank varchar(50), "
+				+ "IsSelectedTown boolean DEFAULT false, "
 				+ "PRIMARY KEY (Id), "
 				+ "FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, "
 				+ "FOREIGN KEY (Owner) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, "

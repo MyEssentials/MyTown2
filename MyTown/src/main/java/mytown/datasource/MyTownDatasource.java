@@ -254,32 +254,19 @@ public abstract class MyTownDatasource {
 	 * 
 	 * @param x
 	 * @param z
-	 * @param inChunkCoords
+	 * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
 	 * @return
 	 */
 	public TownBlock getTownBlock(int dim, int x, int z, boolean inChunkCoords) {
-		return getTownBlock(dim, x, z, inChunkCoords, null);
-	}
-	
-	/**
-	 * Gets a townblock from a town at coordinates
-	 * 
-	 * @param dim
-	 * @param x
-	 * @param z
-	 * @param inChunkCoords
-	 * @param town
-	 * @return
-	 */
-	public TownBlock getTownBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
 		String key;
 		if(inChunkCoords)
-			key = dim + ";" + x + ";" + z;
+			key = String.format(TownBlock.keyFormat, dim, x, z);
 		else
-			key = dim + ";" + (x >> 4) + ";" + (z >> 4);
+			key = String.format(TownBlock.keyFormat, dim, x >> 4, z >> 4);
+		
 		return getTownBlock(key);
 	}
-
+	
 	/**
 	 * Gets a Rank from the Town specified
 	 * 
@@ -359,6 +346,43 @@ public abstract class MyTownDatasource {
 	public boolean hasTownBlock(String key) {
 		return blocks.containsKey(key);
 	}
+	
+	/**
+	 * Checks if the TownBlock with the given coords and dim exists
+	 * 
+	 * @param dim
+	 * @param x
+	 * @param z
+	 * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
+	 * @return
+	 */
+	public boolean hasTownBlock(int dim, int x, int z, boolean inChunkCoords) {
+		return hasTownBlock(dim, x, z, inChunkCoords, null);
+	}
+	
+	/**
+	 * Checks if the TownBlock with the given coords and dim at the town specified exists
+	 * 
+	 * @param dim
+	 * @param x
+	 * @param z
+	 * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
+	 * @return
+	 */
+	public boolean hasTownBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
+		String key;
+		if(inChunkCoords)
+			key = String.format(TownBlock.keyFormat, dim, x, z);
+		else
+			key = String.format(TownBlock.keyFormat, dim, x >> 4, z >> 4);
+		
+		TownBlock tb = getTownBlock(key);
+		if(town != null && tb != null && tb.getTown() == town)
+			return true;
+		
+		return hasTownBlock(key);
+	}
+	
 
 	/**
 	 * Checks if the Rank with the given key exists in the Datasource
@@ -1160,6 +1184,25 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract void unlinkTownFromNation(Town town, Nation nation) throws Exception;
 
+	/**
+	 * Updates the link of a resident to the town
+	 * 
+	 * @param resident
+	 * @param town
+	 * @throws Exception
+	 */
+	public abstract void updateLinkResidentToTown(Resident resident, Town town) throws Exception;
+	
+	
+	/**
+	 * Updates the link of a town to the nation
+	 * 
+	 * @param town
+	 * @param nation
+	 * @throws Exception
+	 */
+	public abstract void updateLinkTownToNation(Town town, Nation nation) throws Exception;
+	
 	// /////////////////////////////////////////////////////////////
 	// Extras
 	// /////////////////////////////////////////////////////////////

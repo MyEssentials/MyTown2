@@ -53,8 +53,8 @@ public class DatasourceProxy {
 			}
 
 			// Load everything
-			datasource.loadResidents();
 			datasource.loadTowns();
+			datasource.loadResidents();
 			datasource.loadTownFlags();
 			datasource.loadNations();
 			datasource.loadRanks();

@@ -8,7 +8,6 @@ import mytown.entities.Resident;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 
 @Permission("mytown.cmd.outsider.invite.accept")
 public class CmdInviteAccept extends CommandBase {
@@ -21,14 +20,14 @@ public class CmdInviteAccept extends CommandBase {
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		if (res.getInvitations().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.noinvitations"));
-		if (res.getInvitations().size() != 1 && args.length == 0) throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite"));
-		if (res.getInvitations().size() != 1 && getDatasource().getTown(args[0]) != null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
+		if (res.getInvitations().size() > 1 && args.length == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.accept"));
+		if (res.getInvitations().size() > 1 && getDatasource().getTown(args[0]) == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		String townName;
 		if (args.length == 0)
 			townName = res.getInvitations().get(0).getName();
 		else
 			townName = args[0];
-		if (!res.getInvitations().contains(getDatasource().getTown(townName))) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.accept"));
+		if (!res.getInvitations().contains(getDatasource().getTown(townName))) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite"));
 		res.confirmForm(true, townName);
 	}
 

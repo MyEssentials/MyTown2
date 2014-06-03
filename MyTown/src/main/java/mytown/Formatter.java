@@ -52,7 +52,7 @@ public class Formatter {
 			if (res == null)
 				res = EnumChatFormatting.WHITE + r.getUUID() + EnumChatFormatting.GOLD + " (" + EnumChatFormatting.GREEN + r.getTownRank(t).getName() + EnumChatFormatting.GOLD + ")";
 			else
-				res += ", " + r.getUUID();
+				res += ", " + EnumChatFormatting.WHITE + r.getUUID() + EnumChatFormatting.GOLD + " (" + EnumChatFormatting.GREEN + r.getTownRank(t).getName() + EnumChatFormatting.GOLD + ")";
 		if(residents.size() == 0)
 			res = EnumChatFormatting.RED + "NONE";
 		return res;

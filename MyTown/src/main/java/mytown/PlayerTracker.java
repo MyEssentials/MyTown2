@@ -8,6 +8,7 @@ import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -123,18 +124,20 @@ public class PlayerTracker implements IPlayerTracker {
 		if(ev.action == Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Item.hoeWood) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
 			Resident res = DatasourceProxy.getDatasource().getResident(ev.entityPlayer.username);
 			if(res == null) return;
-			if(!res.isFirstPlotSelectionActive()) {
-				boolean result = res.setFirstPlotSelectionAndCheck(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
-				if(result)
-					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selected");
-				else
-					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.notintown");
-			} else {
-				boolean result = res.setSecondPlotSelectionAndCheck(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
-				if(result)
-					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.created");
-				else
-					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.notintown");
+			
+			if(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive())
+				ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
+			else {
+				boolean result = res.selectBlockForPlot(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
+				if(result) {
+					if(!res.isSecondPlotSelectionActive())
+						ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionStart");
+					else
+						ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionEnd");
+				} else {
+					throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selectionFailed"));
+				}
+				
 			}
 			System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
 		}
