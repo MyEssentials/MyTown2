@@ -89,6 +89,7 @@ mytown.notification.town.plot.selectionStart=First corner selected!
 mytown.notification.town.plot.selectionEnd=Second corner selected!
 mytown.notification.town.plot.expanded=The plot has been successfully expanded vertically!
 mytown.notification.town.plot.selectionReset=Selection has successfully reset!
+mytown.notification.town.plot.created=New plot created!
 mytown.notification.town.left=%s has left the town %s!
 mytown.notification.town.left.self=You have left the town %s!
 mytown.notification.town.perm.set.success=Flag successfully changed!

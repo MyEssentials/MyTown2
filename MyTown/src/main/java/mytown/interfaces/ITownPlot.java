@@ -6,6 +6,12 @@ import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.entities.town.Town;
 
+/**
+ * Interface for plots.
+ * 
+ * @author AfterWind
+ *
+ */
 public interface ITownPlot {
 	
 	Town getTown();

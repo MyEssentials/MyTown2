@@ -1,6 +1,11 @@
 package mytown.interfaces;
 
-
+/**
+ * Interface for generic flag
+ * 
+ * @author AfterWind
+ *
+ */
 public interface ITownFlag {
 	
 	String getName();

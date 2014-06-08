@@ -8,16 +8,20 @@ import mytown.core.ChatUtils;
 import mytown.core.Localization;
 import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
+import mytown.interfaces.IPlotSelector;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.packet.Packet53BlockChange;
 
 /**
  * Defines a player
  * 
  * @author Joe Goett
  */
-public class Resident {
+public class Resident implements IPlotSelector {
 	private String playerUUID;
 	private boolean isOnline = false;
 	private boolean isNPC = false;
@@ -382,12 +386,15 @@ public class Resident {
 		return this.invitationForms.add(town);
 	}
 	
-	// Mostly a workaround, might be changed
+	
 	
 	////////////////////////////////////////
 	// PLOT SELECTION
 	////////////////////////////////////////
 	
+	// Mostly a workaround, might be changed
+	
+	@Override
 	public boolean selectBlockForPlot (int dim, int x, int y, int z) {
 		TownBlock tb = DatasourceProxy.getDatasource().getTownBlock(dim, x, z, false);
 		if(firstSelectionActive && this.selectionDim != dim) return false;
@@ -400,6 +407,13 @@ public class Resident {
 			this.selectionZ1 = z;
 			this.selectionTown = tb.getTown();
 			this.firstSelectionActive = true;
+			
+			Packet53BlockChange packet = new Packet53BlockChange(x, y, z, player.worldObj);
+			
+			packet.type = Block.blockRedstone.blockID;
+			
+			((EntityPlayerMP)player).playerNetServerHandler.sendPacketToPlayer(packet);
+			
 		} else {
 			this.selectionX2 = x;
 			this.selectionY2 = y;
@@ -409,39 +423,58 @@ public class Resident {
 		return true;
 	}
 	
+	@Override
 	public boolean isFirstPlotSelectionActive() {
 		return this.firstSelectionActive;
 	}
 	
+	@Override
 	public boolean isSecondPlotSelectionActive() {
 		return this.secondSelectionActive;
 	}
 	
-	
+	@Override
 	public boolean makePlotFromSelection() {
 		
 		// TODO: Check everything separately or throw exceptions?
 		
 		if(!secondSelectionActive || !firstSelectionActive || (Math.abs(selectionX1 - selectionX2) < TownPlot.minX || Math.abs(selectionY1 - selectionY2) < TownPlot.minY || Math.abs(selectionZ1 - selectionZ2) < TownPlot.minZ) && !(selectedTown instanceof AdminTown)) {
+			System.out.println("In calculations");
 			resetSelection();
 			return false;
 		}
 		
+		int x1 = selectionX1, x2 = selectionX2, y1 = selectionY1, y2 = selectionY2, z1 = selectionZ1, z2 = selectionZ2;
 		
+		if(x2 < x1) {
+			int aux = x1;
+			x1 = x2;
+			x2 = aux;
+		}
+		if(y2 < y1) {
+			int aux = y1;
+			y1 = y2;
+			y2 = aux;
+		}
+		if(z2 < z1) {
+			int aux = z1;
+			z1 = z2;
+			z2 = aux;
+		}
 		
 		int lastX = 1000000, lastZ = 1000000;
-		for(int i = selectionX1; i <= selectionX2; i++) {
-			for(int j = selectionZ1; j <= selectionZ2; j++) {
+		for(int i = x1; i <= x2; i++) {
+			for(int j = z1; j <= z2; j++) {
 				if(i >> 4 != lastX || j >> 4 != lastZ) {
 					lastX = i >> 4;
 					lastZ = j >> 4;
-					if(!DatasourceProxy.getDatasource().hasTownBlock(selectionDim, lastX, lastZ, false, selectionTown)) {
+					if(!DatasourceProxy.getDatasource().hasTownBlock(selectionDim, lastX, lastZ, true, selectionTown)) {
 						resetSelection();
 						return false;
 					}
 				}
 				
-				for(int k = selectionY1; k <= selectionY2; k++) {
+				for(int k = y1; k <= y2; k++) {
 					if(selectionTown.getPlotAtCoords(i, k, j) != null) {
 						resetSelection();
 						return false;
@@ -462,11 +495,13 @@ public class Resident {
 		return true;
 	}
 	
+	@Override
 	public void expandSelectionVert() {
 		this.selectionY1 = 0;
 		this.selectionY2 = player.worldObj.getActualHeight();
 	}
 	
+	@Override
 	public void resetSelection() {
 		this.firstSelectionActive = false;
 		this.secondSelectionActive = false;
