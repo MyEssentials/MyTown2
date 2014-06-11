@@ -20,15 +20,20 @@ public class CmdInviteAccept extends CommandBase {
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		if (res.getInvitations().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.noinvitations"));
-		if (res.getInvitations().size() != 1 && args.length == 0) throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite.accept"));
-		if (res.getInvitations().size() != 1 && getDatasource().getTown(args[0]) != null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
+		if (res.getInvitations().size() == 0)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.noinvitations"));
+		if (res.getInvitations().size() != 1 && args.length == 0)
+			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite.accept"));
+		if (res.getInvitations().size() != 1 && getDatasource().getTown(args[0]) != null)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		String townName;
-		if (args.length == 0)
+		if (args.length == 0) {
 			townName = res.getInvitations().get(0).getName();
-		else
+		} else {
 			townName = args[0];
-		if (!res.getInvitations().contains(getDatasource().getTown(townName))) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.accept"));
+		}
+		if (!res.getInvitations().contains(getDatasource().getTown(townName)))
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.accept"));
 		res.confirmForm(true, townName);
 	}
 

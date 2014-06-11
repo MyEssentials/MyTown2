@@ -7,17 +7,19 @@ import mytown.commands.admin.CmdTownAdmin;
 import mytown.commands.town.CmdTown;
 import mytown.config.Config;
 import mytown.core.Localization;
-import mytown.core.Log;
+import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.datasource.MyTownDatasource;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import mytown.proxies.mod.ModProxies;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
@@ -35,8 +37,7 @@ public class MyTown {
 	public PermissionManager permManager;
 
 	// Loggers
-	public Log coreLog;
-	public Log bypassLog;
+	public Log log;
 
 	// Configs
 	public Configuration config;
@@ -47,8 +48,7 @@ public class MyTown {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent ev) {
 		// Setup Loggers
-		coreLog = new Log("MyTown2", FMLLog.getLogger());
-		bypassLog = new Log("Bypass", coreLog.getLogger());
+		log = new Log(ev.getModLog());
 
 		Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyTown/";
 
@@ -57,6 +57,20 @@ public class MyTown {
 		ConfigProcessor.processConfig(config, Config.class);
 		LocalizationProxy.load();
 		registerHandlers();
+
+		// ModProxy PreInit
+		ModProxies.addProxies();
+		ModProxies.postInit();
+	}
+
+	@Mod.EventHandler
+	public void init(FMLInitializationEvent ev) {
+		ModProxies.init();
+	}
+
+	@Mod.EventHandler
+	public void postInit(FMLPostInitializationEvent ev) {
+		ModProxies.postInit();
 	}
 
 	@Mod.EventHandler
@@ -92,9 +106,15 @@ public class MyTown {
 		for (String s : CommandUtils.permissionList.values()) {
 			if (s.startsWith("mytown.cmd")) {
 				pMayor.add(s);
-				if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) pAssistant.add(s);
-				if (s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) pResident.add(s);
-				if (s.startsWith("mytown.cmd.outsider")) pOutsider.add(s);
+				if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) {
+					pAssistant.add(s);
+				}
+				if (s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) {
+					pResident.add(s);
+				}
+				if (s.startsWith("mytown.cmd.outsider")) {
+					pOutsider.add(s);
+				}
 			}
 		}
 		Constants.DEFAULT_RANK_VALUES.put("Outsider", pOutsider);

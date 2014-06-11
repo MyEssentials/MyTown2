@@ -1,7 +1,8 @@
-package mytown.chat.channels;
+package mytown.chat.api;
 
 import java.util.List;
 
+import mytown.chat.channels.Channel;
 import net.minecraft.command.ICommandSender;
 
 /**

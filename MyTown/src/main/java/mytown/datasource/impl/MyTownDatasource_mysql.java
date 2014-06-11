@@ -36,7 +36,8 @@ public class MyTownDatasource_mysql extends MyTownDatasource_SQL {
 
 	@Override
 	public boolean connect() throws Exception {
-		if (conn != null) return true;
+		if (conn != null)
+			return true;
 
 		Class.forName("com.mysql.jdbc.Driver");
 
@@ -46,9 +47,8 @@ public class MyTownDatasource_mysql extends MyTownDatasource_SQL {
 		properties.put("password", password);
 
 		conn = DriverManager.getConnection("jdbc:mysql:" + getDatabasePath(), properties);
-		if (conn == null) {
+		if (conn == null)
 			return false; // TODO Log error?
-		}
 
 		// Update DB
 		setUpdates();

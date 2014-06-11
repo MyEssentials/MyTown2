@@ -20,17 +20,17 @@ public class MyTownDatasource_sqlite extends MyTownDatasource_SQL {
 
 	@Override
 	public boolean connect() throws Exception {
-		if (conn != null) return true;
+		if (conn != null)
+			return true;
 
 		Class.forName("org.sqlite.JDBC");
 
 		conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-		if (conn == null) {
+		if (conn == null)
 			return false; // TODO Log error?
-		}
 
-		autoIncrement = ""; // SQLite auto increment is a little different than
-							// MySQL
+		MyTownDatasource_SQL.autoIncrement = ""; // SQLite auto increment is a little different than
+		// MySQL
 
 		// Update DB
 		setUpdates();

@@ -31,9 +31,9 @@ public class CmdInfo extends CommandBase {
 		String[] msg = new String[3];
 
 		if (args.length < 1) {
-			if (res.getSelectedTown() != null)
+			if (res.getSelectedTown() != null) {
 				msg = prepare(msg, res.getSelectedTown());
-			else
+			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.info.notpart"));
 		}
 
@@ -52,8 +52,9 @@ public class CmdInfo extends CommandBase {
 			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		}
-		for (int i = 0; i < msg.length / 3; i++)
+		for (int i = 0; i < msg.length / 3; i++) {
 			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.info", msg[i * 3], msg[i * 3 + 1], msg[i * 3 + 2]);
+		}
 	}
 
 	public String[] prepare(String[] msg, Town... towns) {

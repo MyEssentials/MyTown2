@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import mytown.Constants;
-import mytown.core.Log;
+import mytown.core.utils.Log;
 import mytown.entities.Nation;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
@@ -233,8 +233,10 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public Rank getRank(String rank, Town town) {
-		if (town == null) return null;
-		if (ranks.get(town.getName() + ":" + rank) == null) return null;
+		if (town == null)
+			return null;
+		if (ranks.get(town.getName() + ":" + rank) == null)
+			return null;
 		return ranks.get(town.getName() + ":" + rank);
 	}
 
@@ -442,8 +444,9 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void insertRanks(Rank... ranks) throws Exception {
-		for (Rank r : ranks)
+		for (Rank r : ranks) {
 			insertRank(r);
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -551,8 +554,9 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void updateRanks(Rank... ranks) throws Exception {
-		for (Rank r : ranks)
+		for (Rank r : ranks) {
 			updateRank(r);
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -611,8 +615,9 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public void deleteTowns(Town... towns) throws Exception {
-		for (Town t : towns)
+		for (Town t : towns) {
 			deleteTown(t);
+		}
 	}
 
 	/**
@@ -622,8 +627,9 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public void deleteNations(Nation... nations) throws Exception {
-		for (Nation n : nations)
+		for (Nation n : nations) {
 			deleteNation(n);
+		}
 	}
 
 	/**
@@ -633,8 +639,9 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public void deleteTownBlocks(TownBlock... townBlocks) throws Exception {
-		for (TownBlock b : townBlocks)
+		for (TownBlock b : townBlocks) {
 			deleteTownBlock(b);
+		}
 	}
 
 	/**
@@ -644,8 +651,9 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public void deleteResidents(Resident... residents) throws Exception {
-		for (Resident r : residents)
+		for (Resident r : residents) {
 			deleteResident(r);
+		}
 	}
 
 	/**
@@ -656,8 +664,9 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void deleteRanks(Rank... ranks) throws Exception {
-		for (Rank r : ranks)
+		for (Rank r : ranks) {
 			deleteRank(r);
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -885,8 +894,9 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	protected void addRanks(Rank... ranks) throws Exception {
-		for (Rank r : ranks)
+		for (Rank r : ranks) {
 			addRank(r);
+		}
 	}
 
 	// /////////////////////////////////////////////////////////////
@@ -899,12 +909,15 @@ public abstract class MyTownDatasource {
 	 * @param town
 	 */
 	protected boolean removeTown(Town town) {
-		for (Nation n : town.getNations())
+		for (Nation n : town.getNations()) {
 			n.removeTown(town);
-		for (Resident r : town.getResidents())
+		}
+		for (Resident r : town.getResidents()) {
 			r.removeResidentFromTown(town);
-		for (TownBlock block : town.getTownBlocks())
+		}
+		for (TownBlock block : town.getTownBlocks()) {
 			removeTownBlock(block);
+		}
 		return towns.remove(town.getName()) != null;
 	}
 
@@ -914,8 +927,9 @@ public abstract class MyTownDatasource {
 	 * @param resident
 	 */
 	protected boolean removeResident(Resident resident) {
-		for (Town t : resident.getTowns())
+		for (Town t : resident.getTowns()) {
 			t.removeResident(resident);
+		}
 		return residents.remove(resident.getUUID()) != null;
 	}
 
@@ -925,8 +939,9 @@ public abstract class MyTownDatasource {
 	 * @param nation
 	 */
 	protected boolean removeNation(Nation nation) {
-		for (Town t : nation.getTowns())
+		for (Town t : nation.getTowns()) {
 			t.removeNation(nation);
+		}
 		return nations.remove(nation.getName()) != null;
 	}
 
@@ -948,7 +963,9 @@ public abstract class MyTownDatasource {
 	 */
 	protected boolean removeRank(Rank rank) {
 		for (Town t : towns.values())
-			if (t.getRanks().contains(rank)) t.removeRank(rank);
+			if (t.getRanks().contains(rank)) {
+				t.removeRank(rank);
+			}
 		return ranks.remove(rank.getTown().getName() + ":" + rank.getName()) != null;
 	}
 
@@ -1016,8 +1033,9 @@ public abstract class MyTownDatasource {
 	 * @param ranks
 	 */
 	protected void removeRanks(Rank... ranks) {
-		for (Rank r : ranks)
+		for (Rank r : ranks) {
 			removeRank(r);
+		}
 	}
 
 }

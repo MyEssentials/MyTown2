@@ -1,201 +1,229 @@
 package mytown.chat.channels;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import mytown.chat.channels.types.Global;
-import mytown.chat.channels.types.Local;
-import mytown.chat.channels.types.Permission;
+import mytown.chat.Config;
+import mytown.chat.MyTownChat;
+import mytown.chat.api.IChannelType;
+import mytown.core.ChatUtils;
+import mytown.core.utils.Log;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTBase;
 
-/**
- * Handles all channels
- * 
- * @author Joe Goett
- */
+// TODO Maybe allow different ways of storing (DB, file, etc)?
+
 public class ChannelHandler {
-	private Map<String, Channel> channels;
-	private Map<String, ChannelUser> users;
-	private Map<String, IChannelType> types;
-
-	/**
-	 * Initializes the ChannelHandler's internal Map
-	 */
-	public ChannelHandler() {
-		channels = new HashMap<String, Channel>();
-		users = new HashMap<String, ChannelUser>();
-		types = new HashMap<String, IChannelType>();
-
-		registerDefaultTypes();
+	private static Log log;
+	private static Map<String, IChannelType> channelTypes;
+	private static List<String> channelIMCWaitList;
+	private static Map<String, Channel> channels;
+	
+	public static void init() {
+		channelTypes = new Hashtable<String, IChannelType>();
+		channels = new Hashtable<String, Channel>();
+		channelIMCWaitList = new ArrayList<String>();
+		log = MyTownChat.Instance.chatLog.createChild("ChannelHandler");
 	}
-
-	/**
-	 * Registers all the built-in IChannelTypes
-	 */
-	private void registerDefaultTypes() {
-		registerType(new Global());
-		registerType(new Local());
-		registerType(new Permission());
+	
+	// /////////////////////////////////
+	// Channel Types
+	// /////////////////////////////////
+	
+	public static void addChannelType(IChannelType type) {
+		channelTypes.put(type.name(), type);
 	}
-
-	// ////////////////////////////////////////////////////////////
-	// Channel Methods
-	// ////////////////////////////////////////////////////////////
-
-	/**
-	 * Registers a channel with the handler
-	 * 
-	 * @param channel
-	 */
-	public void registerChannel(Channel channel) {
-		if (channel == null) return; // TODO Throw exception/log?
-		if (channels.containsKey(channel.name)) return; // TODO Throw exception/log?
-		channels.put(channel.name, channel);
+	
+	public static void removeChannelType(String typeName) {
+		channelTypes.remove(typeName);
 	}
-
-	/**
-	 * Removes the channel of the given name
-	 * 
-	 * @param name
-	 */
-	public void removeChannel(String name) {
-		channels.remove(name);
+	
+	public static void removeChannelType(IChannelType type) {
+		removeChannelType(type.name());
 	}
-
-	/**
-	 * Removes the channel from the handler
-	 */
-	public void removeChannel(Channel channel) {
-		removeChannel(channel.name);
+	
+	public static IChannelType getChannelType(String typeName) {
+		return channelTypes.get(typeName);
 	}
-
+	
+	public static List<Channel> getChannels() {
+		return (List<Channel>) channels.values();
+	}
+	
 	/**
-	 * Gets the channel with the given name
-	 * 
-	 * @param name
+	 * Returns all channel names starting with str
+	 * @param str
 	 * @return
 	 */
-	public Channel getChannel(String name) {
-		return channels.get(name);
+	public static List<String> getChannelNames(String str) {
+		List<String> chs = new ArrayList<String>();
+		for (String ch : channels.keySet()) {
+			if (ch.startsWith(str)) {
+				chs.add(ch);
+			}
+		}
+		return chs;
 	}
-
+	
+	public static List<String> getChannelNames() {
+		List<String> channelNamesList = new ArrayList<String>();
+		channelNamesList.addAll(channels.keySet());
+		return channelNamesList;
+	}
+	
+	// /////////////////////////////////
+	// Channels
+	// /////////////////////////////////
+	
+	public static void addChannel(Channel ch) {
+		if (channels.containsKey(ch.name)) {
+			log.warning("Channel %s already exists", ch.name);
+			return;
+		}
+		channels.put(ch.name, ch);
+	}
+	
+	public static void removeChannel(String channelName) {
+		channels.remove(channelName);
+	}
+	
+	public static void removeChannel(Channel ch) {
+		removeChannel(ch.name);
+	}
+	
+	public static void addChannelIMC(String channel) {
+		if (channel == null) throw new NullPointerException();
+		channelIMCWaitList.add(channel);
+	}
+	
+	private static void loadChannel(String str) {
+		String[] args = str.split(",");
+		if (args.length < 5) return;
+		int radius = Integer.parseInt(args[3]);
+		IChannelType type = getChannelType(args[4]);
+		if (type == null) {
+			log.warning("Unknown channel type %s for channel %s", type, args[0]);
+			return;
+		}
+		addChannel(new Channel(args[0], args[1], args[2], radius, type));
+	}
+	
+	// TODO Finish channel loading
+	public static void loadChannels() {
+		// Load all Channel's from the config
+		for (String chString : Config.channels) {
+			loadChannel(chString);
+		}
+		// Load all Channel's from IMC Events
+		for (String chString : channelIMCWaitList) {
+			loadChannel(chString);
+		}
+	}
+	
+	// /////////////////////////////////
+	// User
+	// /////////////////////////////////
+	
+	public static void joinChannel(ICommandSender sender, String ch) {
+		if (!(sender instanceof EntityPlayer)) {
+			ChatUtils.sendChat(sender, "You must be a player to join a channel");
+			return;
+		}
+		if (!channels.containsKey(ch)) {
+			ChatUtils.sendChat(sender, "That channel doesn't exist!");
+			return;
+		}
+		EntityPlayer pl = (EntityPlayer) sender;
+		pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").getCompoundTag("channels").setBoolean(ch, true);
+	}
+	
+	public static void leaveChannel(ICommandSender sender, String ch) {
+		if (!(sender instanceof EntityPlayer)) {
+			ChatUtils.sendChat(sender, "You must be a player to leave a channel");
+			return;
+		}
+		if (!channels.containsKey(ch)) {
+			ChatUtils.sendChat(sender, "That channel doesn't exist!");
+			return;
+		}
+		EntityPlayer pl = (EntityPlayer) sender;
+		pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").getCompoundTag("channels").removeTag(ch);
+	}
+	
 	/**
-	 * Returns a Collection of all channels
-	 * 
+	 * Sets the senders active channel, joining the channel if needed
+	 * @param sender
+	 * @param ch
+	 */
+	public static void setActiveChannel(ICommandSender sender, String ch) {
+		if (!(sender instanceof EntityPlayer)) {
+			ChatUtils.sendChat(sender, "You must be a player to focus a channel");
+			return;
+		}
+		if (!channels.containsKey(ch)) {
+			ChatUtils.sendChat(sender, "That channel doesn't exist!");
+			return;
+		}
+		EntityPlayer pl = (EntityPlayer) sender;
+		pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").setString("activeChannel", ch);
+		joinChannel(sender, ch);
+	}
+	
+	public static Channel getActiveChannel(ICommandSender sender) {
+		if (!(sender instanceof EntityPlayer)) {
+			ChatUtils.sendChat(sender, "You must be a player to be part of a channel");
+			return null;
+		}
+		EntityPlayer pl = (EntityPlayer) sender;
+		String activeChannelName = pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").getString("activeChannel");
+		activeChannelName = activeChannelName.isEmpty() ? Config.defaultChannel : activeChannelName;
+		return channels.get(activeChannelName);
+	}
+	
+	/**
+	 * Returns all of the senders joined channels
+	 * @param sender
 	 * @return
 	 */
-	public Collection<Channel> getChannels() {
-		return channels.values();
+	public static List<String> getChannels(ICommandSender sender) {
+		if (!(sender instanceof EntityPlayer)) {
+			ChatUtils.sendChat(sender, "You must be a player to get a list of channels");
+			return null;
+		}
+		List<String> playersChannels = new ArrayList<String>();
+		EntityPlayer pl = (EntityPlayer) sender;
+		Collection<?> tags = pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").getCompoundTag("channels").getTags();
+		for (Object obj : tags) {
+			if (!(obj instanceof NBTBase)) continue;
+			playersChannels.add(((NBTBase)obj).getName());
+		}
+		return playersChannels;
 	}
-
+	
 	/**
-	 * Returns a Map of all channels
-	 * 
+	 * Gets all commands sender is part of that start with str
+	 * @param sender
+	 * @param str
 	 * @return
 	 */
-	public Map<String, Channel> getChannelMap() {
-		return channels;
-	}
-
-	// ////////////////////////////////////////////////////////////
-	// User Methods
-	// ////////////////////////////////////////////////////////////
-
-	/**
-	 * Returns the ChannelUser with the given name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public ChannelUser getUser(String name) {
-		return users.get(name);
-	}
-
-	/**
-	 * Returns a list of all the users channels
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public List<String> getUsersChannels(String name) {
-		return getUser(name).getChannels();
-	}
-
-	public String getActiveChannel(String name) {
-		return getUser(name).getActiveChannel();
-	}
-
-	public Channel getActiveChannelObject(String name) {
-		return channels.get(getActiveChannel(name));
-	}
-
-	/**
-	 * Returns the underlying Map<String, String>
-	 * 
-	 * @return
-	 */
-	public Map<String, ChannelUser> getUsers() {
-		return users;
-	}
-
-	// ////////////////////////////////////////////////////////////
-	// Type Methods
-	// ////////////////////////////////////////////////////////////
-
-	/**
-	 * Registers an IChannelType
-	 * 
-	 * @param type
-	 */
-	public void registerType(IChannelType type) {
-		if (type == null) return; // TODO Thow exception/log?
-		types.put(type.name(), type);
-	}
-
-	/**
-	 * Remove an IChannelType of the given name
-	 * 
-	 * @param name
-	 */
-	public void removeType(String name) {
-		types.remove(name);
-	}
-
-	/**
-	 * Removes the given IChannelType
-	 * 
-	 * @param type
-	 */
-	public void removeType(IChannelType type) {
-		removeType(type.name());
-	}
-
-	/**
-	 * Returns the type of the given name, or null if undefined
-	 * 
-	 * @param type
-	 * @return
-	 */
-	public IChannelType getType(String name) {
-		return types.get(name);
-	}
-
-	/**
-	 * Returns a collection of IChannelTypes
-	 * 
-	 * @return
-	 */
-	public Collection<IChannelType> getChannelTypes() {
-		return types.values();
-	}
-
-	/**
-	 * Returns a Map of IChannelTypes
-	 * 
-	 * @return
-	 */
-	public Map<String, IChannelType> getChannelTypesMap() {
-		return types;
+	public static List<String> getChannels(ICommandSender sender, String str) {
+		if (!(sender instanceof EntityPlayer)) {
+			ChatUtils.sendChat(sender, "You must be a player to get a list of channels");
+			return null;
+		}
+		List<String> playersChannels = new ArrayList<String>();
+		EntityPlayer pl = (EntityPlayer) sender;
+		Collection<?> tags = pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").getCompoundTag("channels").getTags();
+		for (Object obj : tags) {
+			if (!(obj instanceof NBTBase)) continue;
+			NBTBase tag = (NBTBase)obj;
+			if (!tag.getName().startsWith(str)) continue;
+			playersChannels.add(tag.getName());
+		}
+		return playersChannels;
 	}
 }

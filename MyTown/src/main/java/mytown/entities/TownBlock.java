@@ -41,7 +41,7 @@ public class TownBlock {
 		this.z = z;
 		this.dim = dim;
 		this.town = town;
-		key = String.format(keyFormat, dim, x, z);
+		key = String.format(TownBlock.keyFormat, dim, x, z);
 	}
 
 	/**

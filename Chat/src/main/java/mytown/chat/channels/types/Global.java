@@ -2,8 +2,8 @@ package mytown.chat.channels.types;
 
 import java.util.List;
 
+import mytown.chat.api.IChannelType;
 import mytown.chat.channels.Channel;
-import mytown.chat.channels.IChannelType;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
@@ -13,16 +13,10 @@ import net.minecraft.server.MinecraftServer;
  * @author Joe Goett
  */
 public class Global implements IChannelType {
-	/**
-	 * {@inheritDoc}
-	 */
 	public String name() {
 		return "Global";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ICommandSender> getRecipients(ICommandSender sender, Channel channel) {

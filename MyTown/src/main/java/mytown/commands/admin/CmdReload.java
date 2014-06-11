@@ -15,7 +15,6 @@ import net.minecraft.command.ICommandSender;
  */
 @Permission("mytown.adm.cmd.reload")
 public class CmdReload extends CommandBase {
-
 	public CmdReload(String name, CommandBase parent) {
 		super(name, parent);
 

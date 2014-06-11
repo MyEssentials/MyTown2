@@ -59,7 +59,7 @@ public class TeleportLocation {
 	public boolean teleportPlayer() {
 		if (player == null) return false;
 		if (player.posX != playerX || player.posY != playerY || player.posZ != playerZ) {
-			ChatUtils.sendChat(player, "Teleport canceled because you moved!"); // TODO Localize?
+			ChatUtils.sendChat(player, "Teleport canceled because you moved!"); // TODO Localize? (Somehow)
 			return true;
 		}
 		if (teleportStamp > System.currentTimeMillis()) return false;

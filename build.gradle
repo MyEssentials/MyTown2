@@ -22,18 +22,22 @@ ext.configFile.withReader {
 subprojects {
     apply plugin: "forge"
 
-    version = config.minecraft_version + "-" + config.mod_version + "." + config.build_number
+    version = "${config.minecraft_version}-${config.mod_version}.${config.build_number}"
     group = config.group
     archivesBaseName = config.archivesBaseName
 
+    libsDirName = "../../Jars/" // This is the location the built jars should end up
+
     minecraft {
-        version = config.minecraft_version + "-" + config.forge_version
+        version = "${config.minecraft_version}-${config.forge_version}"
+
+        replace "@VERSION@", "${project.version}"
     }
 
     processResources {
         from(sourceSets.main.resources.srcDirs) {
             include 'mcmod.info'
-            expand 'version':project.version, 'mcversion':project.minecraft.version
+            expand 'mod_version':project.version, 'minecraft_version':project.minecraft.version
         }
         from(sourceSets.main.resources.srcDirs) {
             exclude 'mcmod.info'

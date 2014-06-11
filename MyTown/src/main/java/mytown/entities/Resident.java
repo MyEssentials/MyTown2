@@ -108,7 +108,8 @@ public class Resident {
 	 * @param args
 	 */
 	public void sendMessage(String msg, Object... args) {
-		if (!isOnline() || getPlayer() == null) return;
+		if (!isOnline() || getPlayer() == null)
+			return;
 		ChatUtils.sendChat(getPlayer(), msg, args);
 	}
 
@@ -120,7 +121,8 @@ public class Resident {
 	 * @param args
 	 */
 	public void sendLocalizedMessage(Localization local, String msg, Object... args) {
-		if (!isOnline() || getPlayer() == null) return;
+		if (!isOnline() || getPlayer() == null)
+			return;
 		ChatUtils.sendLocalizedChat(getPlayer(), local, msg, args);
 	}
 
@@ -136,7 +138,8 @@ public class Resident {
 	 * Send a "map" of the Blocks directly around the player
 	 */
 	public void sendMap() {
-		if (!isOnline() || getPlayer() == null) return;
+		if (!isOnline() || getPlayer() == null)
+			return;
 		sendMap(getPlayer().dimension, getPlayer().chunkCoordX, getPlayer().chunkCoordZ);
 	}
 
@@ -254,7 +257,8 @@ public class Resident {
 	 * @param rank
 	 */
 	public void setTownRank(Town town, Rank rank) {
-		if (!isPartOfTown(town)) return; // TODO Log/Throw Exception?
+		if (!isPartOfTown(town))
+			return; // TODO Log/Throw Exception?
 		town.promoteResident(this, rank);
 	}
 
@@ -265,11 +269,10 @@ public class Resident {
 	 */
 	public Town getSelectedTown() {
 		if (selectedTown == null) {
-			if (towns.isEmpty()) {
+			if (towns.isEmpty())
 				return null;
-			} else {
+			else
 				return towns.get(0);
-			}
 		}
 		return selectedTown;
 	}
@@ -299,7 +302,8 @@ public class Resident {
 	 * @return
 	 */
 	public boolean removeResidentFromTown(Town town) {
-		if (towns.contains(town)) return towns.remove(town);
+		if (towns.contains(town))
+			return towns.remove(town);
 		return false;
 	}
 
@@ -310,8 +314,9 @@ public class Resident {
 	 * @return False if the resident isn't part of the town given. True if process succeeded.
 	 */
 	public boolean setSelectedTown(Town town) {
-		if (!towns.contains(town)) return false;
-		this.selectedTown = town;
+		if (!towns.contains(town))
+			return false;
+		selectedTown = town;
 		return true;
 	}
 
@@ -330,7 +335,7 @@ public class Resident {
 					e.printStackTrace();
 				}
 			}
-			this.invitationForms.remove(getTownFromInvitations(townName));
+			invitationForms.remove(getTownFromInvitations(townName));
 		}
 	}
 
@@ -342,7 +347,8 @@ public class Resident {
 	 */
 	protected Town getTownFromInvitations(String name) {
 		for (Town t : invitationForms)
-			if (t.getName().equals(name)) return t;
+			if (t.getName().equals(name))
+				return t;
 		return null;
 	}
 
@@ -352,6 +358,6 @@ public class Resident {
 	 * @return
 	 */
 	public List<Town> getInvitations() {
-		return this.invitationForms;
+		return invitationForms;
 	}
 }

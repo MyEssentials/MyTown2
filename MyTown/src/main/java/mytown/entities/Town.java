@@ -74,7 +74,8 @@ public class Town implements Comparable<Town> {
 	}
 
 	public void promoteTown(Nation nation, Nation.Rank rank) {
-		if (!hasNation(nation)) return; // TODO Log/Throw Exception
+		if (!hasNation(nation))
+			return; // TODO Log/Throw Exception
 		nation.setTownRank(this, rank);
 	}
 
@@ -197,7 +198,8 @@ public class Town implements Comparable<Town> {
 
 	public boolean hasResident(String UUID) {
 		for (Resident r : residents.keySet())
-			if (r.getUUID().equals(UUID)) return true;
+			if (r.getUUID().equals(UUID))
+				return true;
 		return false;
 	}
 
@@ -208,16 +210,16 @@ public class Town implements Comparable<Town> {
 	 * @param rank
 	 */
 	public void promoteResident(Resident resident, Rank rank) {
-		if (!hasResident(resident)) return; // TODO Log/Throw Exception
+		if (!hasResident(resident))
+			return; // TODO Log/Throw Exception
 		addResident(resident, rank);
 	}
 
 	public Rank getResidentRank(Resident resident) {
-		if (hasResident(resident)) {
+		if (hasResident(resident))
 			return residents.get(resident);
-		} else {
+		else
 			return getRank("Outsider");
-		}
 	}
 
 	// //////////////////////////////////////
@@ -230,7 +232,7 @@ public class Town implements Comparable<Town> {
 	 * @return
 	 */
 	public List<Rank> getRanks() {
-		return this.ranks;
+		return ranks;
 	}
 
 	/**
@@ -241,7 +243,8 @@ public class Town implements Comparable<Town> {
 	 */
 	public Rank getRank(String name) {
 		for (Rank r : ranks)
-			if (r.getName().equals(name)) return r;
+			if (r.getName().equals(name))
+				return r;
 		return null;
 	}
 
@@ -256,7 +259,8 @@ public class Town implements Comparable<Town> {
 	 */
 	public void addRank(Rank rank) {
 		for (Rank r : ranks)
-			if (r.getName() == rank.getName()) return;
+			if (r.getName() == rank.getName())
+				return;
 		ranks.add(rank);
 	}
 
@@ -267,12 +271,13 @@ public class Town implements Comparable<Town> {
 	 * @return
 	 */
 	public boolean hasRank(Rank rank) {
-		return this.ranks.contains(rank);
+		return ranks.contains(rank);
 	}
 
 	public boolean hasRankName(String name) {
 		for (Rank r : ranks)
-			if (r.getName().equals(name)) return true;
+			if (r.getName().equals(name))
+				return true;
 		return false;
 	}
 
@@ -288,13 +293,12 @@ public class Town implements Comparable<Town> {
 	public int compareTo(Town t) { // TODO Flesh this out more for ranking
 									// towns?
 		int thisNumberOfResidents = residents.size(), thatNumberOfResidents = t.getResidents().size();
-		if (thisNumberOfResidents > thatNumberOfResidents) {
+		if (thisNumberOfResidents > thatNumberOfResidents)
 			return -1;
-		} else if (thisNumberOfResidents == thatNumberOfResidents) {
+		else if (thisNumberOfResidents == thatNumberOfResidents)
 			return 0;
-		} else if (thisNumberOfResidents < thatNumberOfResidents) {
+		else if (thisNumberOfResidents < thatNumberOfResidents)
 			return 1;
-		}
 
 		return -1;
 	}

@@ -1,19 +1,25 @@
 package mytown.core.utils.command;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import mytown.core.ChatUtils;
-import mytown.core.Log;
+import mytown.core.MyTownCore;
+import mytown.core.utils.Log;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommandSender;
 
 public abstract class CommandHandler extends CommandBase {
-	protected static Log log = new Log("CommandHandler");
+	protected static Log log = MyTownCore.Instance.log.createChild("CommandHandler"); // TODO Remove?
 	protected Map<String, CommandBase> subCommands;
+	
+	public CommandHandler(String name) {
+		this(name, null);
+	}
 
 	/**
 	 * Creates a CommandHandler with the given name. Checks if it has Permission Annotation and uses that to get the permission node
@@ -44,11 +50,6 @@ public abstract class CommandHandler extends CommandBase {
 	}
 
 	@Override
-	public List<String> dumpCommands() {
-		return null;
-	}
-
-	@Override
 	public String getCommandName() {
 		return name;
 	}
@@ -65,7 +66,7 @@ public abstract class CommandHandler extends CommandBase {
 		} catch (CommandException ex) {
 			throw ex;
 		} catch (Throwable ex) {
-			System.out.println("caught exception!");
+			log.warning("[%][%] An exception occured!", ex, getCommandName(), sender.getCommandSenderName());
 			ex.printStackTrace();
 		}
 	}
@@ -84,17 +85,41 @@ public abstract class CommandHandler extends CommandBase {
 			cmd.processCommand(sender, Arrays.copyOfRange(args, 1, args.length));
 		} catch (NumberFormatException ex) {
 			ChatUtils.sendChat(sender, "Number Format Error");
+			log.severe("[%s][%s] Number Format Error", getCommandName(), sender.getCommandSenderName());
+			ex.printStackTrace();
 		} catch (CommandException ex) {
 			throw ex;
 		} catch (Throwable ex) {
 			ChatUtils.sendChat(sender, ex.toString());
+			log.severe("[%s][%s] Command Execution Error", ex, getCommandName(), sender.getCommandSenderName());
 			ex.printStackTrace();
-			log.severe("[%s]Command execution error by %s", ex, getCommandName(), sender);
 		}
 	}
 
 	public Map<String, CommandBase> getSubCommands() {
 		return this.subCommands;
+	}
+
+	@Override
+	public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
+		if (args.length == 0) {
+			return (List<?>) subCommands.keySet();
+		} else if (args.length == 1) {
+			List<Object> tabCompletion = new ArrayList<Object>();
+			for (String str : subCommands.keySet()) {
+				if (str.startsWith(args[0])) {
+					tabCompletion.add(str);
+				}
+			}
+			return tabCompletion;
+		} else if (args.length > 1) {
+			CommandBase subCmd = subCommands.get(args[0]);
+			if (subCmd != null) {
+				return subCmd.addTabCompletionOptions(sender, args);
+			}
+		}
+		
+		return null; // If all else fails...
 	}
 	
 	public abstract void sendHelp(ICommandSender sender);

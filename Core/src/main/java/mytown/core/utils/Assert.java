@@ -8,6 +8,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import forgeperms.api.ForgePermsAPI;
 
+// TODO Move to ForgePerms API after the rewrite
+
 public class Assert {
 	/**
 	 * Checks if command server has the given permission node. Does NOT allow console to access.

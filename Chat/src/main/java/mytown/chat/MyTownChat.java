@@ -1,22 +1,20 @@
 package mytown.chat;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import mytown.chat.channels.IChannelType;
-import mytown.chat.config.ChannelLoader;
-import mytown.chat.config.Config;
-import mytown.chat.config.UserLoader;
-import mytown.chat.format.IChatFormatter;
-import mytown.core.Log;
+import mytown.chat.api.IChannelType;
+import mytown.chat.api.IChatFormatter;
+import mytown.chat.channels.ChannelHandler;
+import mytown.chat.cmd.CmdChannel;
+import mytown.chat.format.FormatHandler;
+import mytown.core.utils.Log;
+import mytown.core.utils.command.CommandUtils;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+
+// TODO Localization!
 
 /**
  * Entry point for MyTownChat module
@@ -26,14 +24,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 @Mod(modid = "MyTownChat", name = "MyTownChat", version = "2.0", dependencies = "required-after:Forge;required-after:MyTownCore")
 public class MyTownChat {
 	@Mod.Instance
-	public static MyTownChat INSTANCE;
-	private List<String> channelWaitList;
+	public static MyTownChat Instance;
 	public ChatHandler chatHandler;
-
-	// Configs
-	public Config config;
-	public ChannelLoader channelConfig;
-	public UserLoader userConfig;
 
 	// Loggers
 	public Log chatLog;
@@ -46,15 +38,11 @@ public class MyTownChat {
 	 */
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent ev) {
-		channelWaitList = new ArrayList<String>();
-
-		// Setup configs
-		config = new Config(new File(ev.getModConfigurationDirectory(), "/MyTown/Chat/Chat.cfg"));
-		channelConfig = new ChannelLoader(new File(ev.getModConfigurationDirectory(), "/MyTown/Chat/Channels.cfg"));
-		userConfig = new UserLoader(new File(ev.getModConfigurationDirectory(), "/MyTown/Chat/Users.cfg"));
-
 		// Setup loggers
-		chatLog = new Log("MyTownChat", FMLLog.getLogger());
+		chatLog = new Log(ev.getModLog());
+		
+		ChannelHandler.init();
+		FormatHandler.init();
 
 		// Setup chat handler
 		MinecraftForge.EVENT_BUS.register(chatHandler = new ChatHandler());
@@ -70,16 +58,16 @@ public class MyTownChat {
 	public void imc(FMLInterModComms.IMCEvent ev) {
 		for (IMCMessage msg : ev.getMessages()) {
 			try {
-				if (msg.key.equals("register_type")) { // Register IChannelType
+				if (msg.key.equals("registerType")) { // Register IChannelType
 					Class<?> possibleChType = Class.forName(msg.getStringValue());
 					if (!possibleChType.isInstance(IChannelType.class)) throw new Exception("Unknown ChannelType");
-					chatHandler.getChannelHandler().registerType((IChannelType) possibleChType.newInstance());
-				} else if (msg.key.equals("register_channel")) { // Add channel to wait list
-					channelWaitList.add(msg.getStringValue());
-				} else if (msg.key.equals("register_formatter")) { // Register IChatFormatter
+					ChannelHandler.addChannelType((IChannelType) possibleChType.newInstance());
+				} else if (msg.key.equals("registerChannel")) { // Add channel to wait list
+					ChannelHandler.addChannelIMC(msg.getStringValue());
+				} else if (msg.key.equals("registerFormatter")) { // Register IChatFormatter
 					Class<?> possibleFormatter = Class.forName(msg.getStringValue());
 					if (!possibleFormatter.isInstance(IChatFormatter.class)) throw new Exception("Unknown IChatFormatter");
-					chatHandler.getFormatHandler().addFormatter((IChatFormatter) possibleFormatter.newInstance());
+					FormatHandler.addFormatter((IChatFormatter) possibleFormatter.newInstance());
 				}
 			} catch (Exception e) {
 				chatLog.warning("Failed to %s from %s because %s", msg.key, msg.getSender(), e.getMessage());
@@ -87,15 +75,8 @@ public class MyTownChat {
 		}
 	}
 
-	/**
-	 * Loads channels and users from the config
-	 * 
-	 * @param ev
-	 *            FMLPostInitializationEvent
-	 */
 	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent ev) {
-		channelConfig.loadChannels(channelWaitList);
-		userConfig.loadUsers();
+	public void serverStarting(FMLServerStartingEvent ev) {
+		CommandUtils.registerCommand(new CmdChannel());
 	}
 }

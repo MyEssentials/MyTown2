@@ -3,6 +3,7 @@ package mytown.chat.format;
 import java.util.ArrayList;
 import java.util.List;
 
+import mytown.chat.api.IChatFormatter;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -11,43 +12,29 @@ import net.minecraft.entity.player.EntityPlayer;
  * @author Joe Goett
  */
 public class FormatHandler {
-	private List<IChatFormatter> formatters;
-
-	public FormatHandler() {
+	private static List<IChatFormatter> formatters;
+	
+	private FormatHandler() {}
+	
+	public static void init() {
 		formatters = new ArrayList<IChatFormatter>();
 		addFormatter(new ChatFormatter()); // Default formatter
 	}
-
-	/**
-	 * Adds an IChatFormatter
-	 * 
-	 * @param formatter
-	 */
-	public void addFormatter(IChatFormatter formatter) {
+	
+	public static void addFormatter(IChatFormatter formatter) {
+		if (formatter == null) throw new NullPointerException();
 		formatters.add(formatter);
 	}
-
-	/**
-	 * Removes an IChatFormatter
-	 * 
-	 * @param formatter
-	 */
-	public void removeFormatter(IChatFormatter formatter) {
-		formatters.remove(formatter);
+	
+	public static void removeFormatter(IChatFormatter formatter) {
+		if (formatter == null) throw new NullPointerException();
+		formatters.add(formatter);
 	}
-
-	/**
-	 * Formats the message from the given player
-	 * 
-	 * @param player
-	 * @param format
-	 * @param message
-	 * @return
-	 */
-	public String format(EntityPlayer player, String format, String message) {
+	
+	public static String format(EntityPlayer pl, String format, String msg) {
 		for (IChatFormatter formatter : formatters) {
-			message = formatter.format(player, format, message);
+			msg = formatter.format(pl, format, msg);
 		}
-		return message;
+		return msg;
 	}
 }

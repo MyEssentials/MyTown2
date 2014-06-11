@@ -63,9 +63,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	 * @throws Exception
 	 */
 	protected PreparedStatement prepare(String sql, boolean returnGenerationKeys) throws Exception {
-		if (conn == null) {
+		if (conn == null)
 			throw new SQLException("No SQL Connection");
-		}
 		PreparedStatement statement = conn.prepareStatement(sql, returnGenerationKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
 
 		return statement;
@@ -128,7 +127,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	@Override
 	public void loadTownBlocks(Town town) throws Exception {
 		synchronized (lock) {
-			if (town == null) return;
+			if (town == null)
+				return;
 
 			ResultSet set = null;
 			PreparedStatement statement = prepare("SELECT * FROM " + prefix + "TownBlocks WHERE TownName=?");
@@ -225,8 +225,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setString(1, town.getName());
 			statement.setInt(2, town.getExtraBlocks());
 			statement.executeUpdate();
-			for (String s : Constants.DEFAULT_RANK_VALUES.keySet())
+			for (String s : Constants.DEFAULT_RANK_VALUES.keySet()) {
 				insertRank(new Rank(s, Constants.DEFAULT_RANK_VALUES.get(s), town));
+			}
 		}
 	}
 
@@ -265,9 +266,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.executeUpdate();
 
 			ResultSet rs = statement.getGeneratedKeys();
-			if (!rs.next()) {
+			if (!rs.next())
 				throw new RuntimeException("Id wasn't returned for new TownBlock " + townBlock.getKey());
-			}
 
 			townBlock.setId(rs.getInt(1));
 		}
@@ -362,12 +362,15 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
 	@Override
 	public boolean deleteRank(Rank rank) throws Exception {
-		if (rank.getName().equals("Resident")) return false;
+		if (rank.getName().equals("Resident"))
+			return false;
 		synchronized (lock) {
 			removeRank(rank);
 			rank.getTown().removeRank(rank);
 			for (Resident res : rank.getTown().getResidents())
-				if (res.getTownRank(rank.getTown()) == null) res.setTownRank(rank.getTown(), rank.getTown().getRank("Resident"));
+				if (res.getTownRank(rank.getTown()) == null) {
+					res.setTownRank(rank.getTown(), rank.getTown().getRank("Resident"));
+				}
 			PreparedStatement statement;
 
 			statement = prepare("DELETE FROM " + prefix + "Ranks WHERE Key=?", false);
@@ -475,12 +478,16 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	}
 
 	@Override
-	public void save() throws Exception {}
+	public void save() throws Exception {
+	}
 
 	@Override
 	public void disconnect() throws Exception {
-		if (conn == null) return;
-		if (!conn.getAutoCommit()) conn.commit();
+		if (conn == null)
+			return;
+		if (!conn.getAutoCommit()) {
+			conn.commit();
+		}
 		conn.close();
 	}
 
@@ -518,11 +525,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		updates.add(new DBUpdate("03.08.2014.2", "Add Towns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Towns (Name varchar(50) NOT NULL, ExtraBlocks int NOT NULL DEFAULT 0, PRIMARY KEY (Name));"));
 		updates.add(new DBUpdate("03.08.2014.3", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Residents (UUID varchar(255) NOT NULL, IsNPC boolean DEFAULT false, Joined int NOT NULL, LastLogin int NOT NULL, PRIMARY KEY (UUID));")); // MC Version < 1.7 UUID is Player name. 1.7 >= UUID is Player's UUID
 		updates.add(new DBUpdate("03.08.2014.4", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Nations (Name varchar(50) NOT NULL, ExtraBlocks int NOT NULL DEFAULT 0, PRIMARY KEY(Name));"));
-		updates.add(new DBUpdate("03.08.2014.5", "Add TownBlocks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownBlocks (Id int " + autoIncrement + ", X int NOT NULL, Z int NOT NULL, Dim int NOT NULL, TownName varchar(50) NOT NULL, PRIMARY KEY(Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		updates.add(new DBUpdate("03.22.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "ResidentsToTowns (Id int " + autoIncrement + ", TownName varchar(50) NOT NULL, Owner varchar(255) NOT NULL, Rank varchar(50), PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (Owner) REFERENCES "
-				+ prefix + "Residents(UUID) ON DELETE CASCADE, FOREIGN KEY (Rank) REFERENCES " + prefix + "Ranks ON UPDATE CASCADE);"));
-		updates.add(new DBUpdate("03.22.2014.2", "Add TownsToNations", "CREATE TABLE IF NOT EXISTS " + prefix + "TownsToNations (Id int " + autoIncrement + ", TownName varchar(50) NOT NULL, NationName varchar(50) NOT NULL, Rank varchar(1) DEFAULT 'T', PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix
-				+ "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (NationName) REFERENCES " + prefix + "Nations(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("03.08.2014.5", "Add TownBlocks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownBlocks (Id int " + MyTownDatasource_SQL.autoIncrement + ", X int NOT NULL, Z int NOT NULL, Dim int NOT NULL, TownName varchar(50) NOT NULL, PRIMARY KEY(Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("03.22.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "ResidentsToTowns (Id int " + MyTownDatasource_SQL.autoIncrement + ", TownName varchar(50) NOT NULL, Owner varchar(255) NOT NULL, Rank varchar(50), PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (Owner) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, FOREIGN KEY (Rank) REFERENCES " + prefix + "Ranks ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("03.22.2014.2", "Add TownsToNations", "CREATE TABLE IF NOT EXISTS " + prefix + "TownsToNations (Id int " + MyTownDatasource_SQL.autoIncrement + ", TownName varchar(50) NOT NULL, NationName varchar(50) NOT NULL, Rank varchar(1) DEFAULT 'T', PRIMARY KEY (Id), FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (NationName) REFERENCES " + prefix + "Nations(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
 		updates.add(new DBUpdate("05.03.2014.1", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Ranks (Key varchar(100) NOT NULL, Name varchar(50) NOT NULL, Nodes text(10000), TownName varchar(50), PRIMARY KEY(Key), FOREIGN KEY (TownName) REFERENCES " + prefix + " Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
 	}
 
@@ -541,10 +546,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			while (rs.next()) {
 				ids.add(rs.getString("Id"));
 			}
-		} catch (Exception e) {} // Ignore. Just missing the updates table for now
+		} catch (Exception e) {
+		} // Ignore. Just missing the updates table for now
 
 		for (DBUpdate update : updates) {
-			if (ids.contains(update.id)) continue; // Skip updates already done
+			if (ids.contains(update.id)) {
+				continue; // Skip updates already done
+			}
 
 			// Update!
 			log.info("Running update %s - %s", update.id, update.code);

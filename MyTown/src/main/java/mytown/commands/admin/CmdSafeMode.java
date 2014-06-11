@@ -35,7 +35,7 @@ public class CmdSafeMode extends CommandBase {
 		}
 		Assert.Perm(sender, "mytown.adm.cmd.safemode." + (safemode ? "on" : "off"));
 		MyTown.instance.safemode = safemode;
-		kickPlayers();
+		CmdSafeMode.kickPlayers();
 	}
 
 	@Override
@@ -47,10 +47,11 @@ public class CmdSafeMode extends CommandBase {
 	 * Kicks all players that can't bypass safemode (mytown.adm.safemode)
 	 */
 	public static void kickPlayers() {
-		if (!MyTown.instance.safemode) return;
+		if (!MyTown.instance.safemode)
+			return;
 		for (Object obj : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
 			if (!(obj instanceof EntityPlayerMP)) {
-				kickPlayer((EntityPlayerMP) obj);
+				CmdSafeMode.kickPlayer((EntityPlayerMP) obj);
 			}
 		}
 	}

@@ -25,7 +25,8 @@ public class Rank {
 	}
 
 	public boolean addPermission(String perm) {
-		if (hasPermission(perm)) return false;
+		if (hasPermission(perm))
+			return false;
 		return permissions.add(perm);
 	}
 
@@ -39,7 +40,7 @@ public class Rank {
 	 * @return
 	 */
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	/**
@@ -48,7 +49,7 @@ public class Rank {
 	 * @return
 	 */
 	public ArrayList<String> getPermissions() {
-		return this.permissions;
+		return permissions;
 	}
 
 	/**
@@ -60,10 +61,11 @@ public class Rank {
 	public String getPermissionsWithFormat() {
 		String temp = null;
 		for (String s : permissions)
-			if (temp == null)
+			if (temp == null) {
 				temp = s;
-			else
+			} else {
 				temp += " " + s;
+			}
 		return temp;
 	}
 
@@ -74,15 +76,17 @@ public class Rank {
 	 * @return
 	 */
 	public String getKey() {
-		return this.key;
+		return key;
 	}
 
 	public boolean updateKey() {
-		if (key != null && key == this.getTown().getName() + ":" + this.getName()) return false;
-		if (town == null)
-			this.key = this.getName();
-		else
-			this.key = this.getTown().getName() + ":" + this.getName();
+		if (key != null && key == getTown().getName() + ":" + getName())
+			return false;
+		if (town == null) {
+			key = getName();
+		} else {
+			key = getTown().getName() + ":" + getName();
+		}
 		return true;
 	}
 
@@ -92,7 +96,7 @@ public class Rank {
 	 * @return
 	 */
 	public Town getTown() {
-		return this.town;
+		return town;
 	}
 
 	/**
@@ -102,9 +106,11 @@ public class Rank {
 	 * @return
 	 */
 	public boolean hasPermission(String perm) {
-		if (permissions == null) return false;
+		if (permissions == null)
+			return false;
 		for (String p : permissions) {
-			if (p.equals(perm)) return true;
+			if (p.equals(perm))
+				return true;
 		}
 		return false;
 	}

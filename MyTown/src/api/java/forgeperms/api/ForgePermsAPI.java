@@ -26,7 +26,7 @@ public class ForgePermsAPI {
 	 * @throws CommandException
 	 */
 	public static void Perm(ICommandSender cs, String node) throws CommandException {
-		Perm(cs, node, false);
+		ForgePermsAPI.Perm(cs, node, false);
 	}
 
 	/**
@@ -40,17 +40,16 @@ public class ForgePermsAPI {
 	 */
 	public static void Perm(ICommandSender cs, String node, boolean allowConsole) throws CommandException {
 		if (cs instanceof MinecraftServer || cs instanceof RConConsoleSource || cs instanceof TileEntityCommandBlock) {
-			if (allowConsole) {
+			if (allowConsole)
 				return;
-			} else {
+			else
 				throw new CommandException("commands.generic.permission");
-			}
 		}
-		if (node == null) return;
-		EntityPlayer p = (EntityPlayer) cs;
-		if (permManager.canAccess(p.username, p.worldObj.provider.getDimensionName(), node)) {
+		if (node == null)
 			return;
-		}
+		EntityPlayer p = (EntityPlayer) cs;
+		if (ForgePermsAPI.permManager.canAccess(p.username, p.worldObj.provider.getDimensionName(), node))
+			return;
 		throw new CommandException("commands.generic.permission");
 	}
 }

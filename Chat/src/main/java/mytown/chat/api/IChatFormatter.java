@@ -1,4 +1,4 @@
-package mytown.chat.format;
+package mytown.chat.api;
 
 import net.minecraft.command.ICommandSender;
 

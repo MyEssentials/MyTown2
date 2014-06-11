@@ -6,10 +6,14 @@ import mytown.core.utils.Assert;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 
-public class CommandBase implements Command {
+public class CommandBase implements ICommand {
 	protected String permNode;
 	protected String name;
 	protected String parentName;
+	
+	public CommandBase(String name) {
+		this(name, null);
+	}
 
 	public CommandBase(String name, CommandBase parent) {
 		this.name = name;
@@ -18,7 +22,7 @@ public class CommandBase implements Command {
 		if (permAnnot != null) {
 			permNode = permAnnot.value();
 		} else {
-			permNode = "";
+			permNode = ""; // TODO Maybe change to use classpath by default instead?
 		}
 		String temp;
 		if (parent != null) {
@@ -54,7 +58,6 @@ public class CommandBase implements Command {
 		return null;
 	}
 
-	@Override
 	public boolean canConsoleUse() {
 		return false;
 	}
@@ -88,12 +91,6 @@ public class CommandBase implements Command {
 	}
 
 	public void process(ICommandSender icommandsender, String[] astring) throws Exception {
-	}
-
-	@Override
-	public List<String> dumpCommands() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public String getParentName() {

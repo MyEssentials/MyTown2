@@ -1,5 +1,6 @@
 dependencies {
 	compile project(":Core")
+	compile project(":Chat")
 }
 
 eclipse.project {

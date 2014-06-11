@@ -3,7 +3,8 @@ package mytown.core.utils.config;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import mytown.core.Log;
+import mytown.core.MyTownCore;
+import mytown.core.utils.Log;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
@@ -13,8 +14,22 @@ public class ConfigProcessor {
 	/**
 	 * Maps classes to the appropriate Property.Type
 	 */
-	protected static Map<Class<?>, Property.Type> CONFIG_TYPES = ImmutableMap.<Class<?>, Property.Type> builder().put(Integer.class, Property.Type.INTEGER).put(int.class, Property.Type.INTEGER).put(Boolean.class, Property.Type.BOOLEAN).put(boolean.class, Property.Type.BOOLEAN).put(Byte.class, Property.Type.INTEGER).put(byte.class, Property.Type.INTEGER).put(Double.class, Property.Type.DOUBLE)
-			.put(double.class, Property.Type.DOUBLE).put(Float.class, Property.Type.DOUBLE).put(float.class, Property.Type.DOUBLE).put(Long.class, Property.Type.INTEGER).put(long.class, Property.Type.INTEGER).put(Short.class, Property.Type.INTEGER).put(short.class, Property.Type.INTEGER).put(String.class, Property.Type.STRING).build();
+	protected static Map<Class<?>, Property.Type> CONFIG_TYPES = ImmutableMap.<Class<?>, Property.Type> builder()
+			.put(Integer.class, Property.Type.INTEGER)
+			.put(int.class, Property.Type.INTEGER)
+			.put(Integer[].class, Property.Type.INTEGER)
+			.put(int[].class, Property.Type.INTEGER)
+			.put(Double.class, Property.Type.DOUBLE)
+			.put(double.class, Property.Type.DOUBLE)
+			.put(Double[].class, Property.Type.DOUBLE)
+			.put(double[].class, Property.Type.DOUBLE)
+			.put(Boolean.class, Property.Type.BOOLEAN)
+			.put(boolean.class, Property.Type.BOOLEAN)
+			.put(Boolean[].class, Property.Type.BOOLEAN)
+			.put(boolean[].class, Property.Type.BOOLEAN)
+			.put(String.class, Property.Type.STRING)
+			.put(String[].class, Property.Type.STRING)
+			.build();
 
 	protected static Log log;
 
@@ -29,53 +44,62 @@ public class ConfigProcessor {
 			ConfigProperty propAnnot = f.getAnnotation(ConfigProperty.class);
 			if (propAnnot == null) return;
 			String category = propAnnot.category();
-			String key = propAnnot.name().isEmpty() ? f.getName() : propAnnot.name();
+			String key = (propAnnot.name().isEmpty() || propAnnot.name() == null) ? f.getName() : propAnnot.name();
 			String comment = propAnnot.comment();
-			String defaultValue = getFieldValue(f).toString();
-			Property prop = config.get(category, key, defaultValue, comment, CONFIG_TYPES.get(f.getType()));
-			setField(f, prop);
+			setField(f, config, category, key, comment);
 		}
 	}
-
-	protected static void setField(Field f, Property prop) {
-		Object val = null;
-		Object defaultValue = getFieldValue(f);
-		if (CONFIG_TYPES.get(f.getType()).equals(Property.Type.BOOLEAN)) {
-			val = prop.getBoolean(defaultValue == null ? false : (Boolean) defaultValue);
-		} else if (CONFIG_TYPES.get(f.getType()).equals(Property.Type.INTEGER)) {
-			val = prop.getInt();
-		} else if (CONFIG_TYPES.get(f.getType()).equals(Property.Type.DOUBLE)) {
-			val = prop.getDouble(defaultValue == null ? 0 : (Integer) defaultValue);
-		} else {
-			val = prop.getString();
+	
+	protected static void setField(Field f, Configuration config, String category, String key, String comment) {
+		if (f == null || config == null) {
+			log.config("Field or Config was null");
+			return;
 		}
-		getLog().info("Property: Name: %s, Type: %s, Value: %s", prop.getName(), prop.getType(), prop.getString());
-		setField(f, val);
-	}
-
-	protected static void setField(Field f, Object value) {
+		Property.Type type = CONFIG_TYPES.get(f.getType());
+		if (type == null) {
+			log.config("Unknown config type for field type: %s", f.getType().getName());
+			return;
+		}
 		try {
-			getLog().info("Setting field %s to %s", f.getName(), value);
-			f.set(null, value);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Object defaultValue = f.get(null);
+			switch(type) {
+				case INTEGER:
+					if (f.getType().isArray()) {
+						f.set(null, config.get(category, key, (int[])defaultValue, comment).getIntList());
+					} else {
+						f.set(null, config.get(category, key, (Integer)defaultValue, comment).getInt());
+					}
+					break;
+				case DOUBLE:
+					if (f.getType().isArray()) {
+						f.set(null, config.get(category, key, (double[])defaultValue, comment).getDoubleList());
+					} else {
+						f.set(null, config.get(category, key, (Double)defaultValue, comment).getDouble((Double)defaultValue));
+					}
+					break;
+				case BOOLEAN:
+					if (f.getType().isArray()) {
+						f.set(null, config.get(category, key, (boolean[])defaultValue, comment).getBooleanList());
+					} else {
+						f.set(null, config.get(category, key, (Boolean)defaultValue, comment).getBoolean((Boolean)defaultValue));
+					}
+					break;
+				case STRING:
+					if (f.getType().isArray()) {
+						f.set(null, config.get(category, key, (String[])defaultValue, comment).getStringList());
+					} else {
+						f.set(null, config.get(category, key, (String)defaultValue, comment).getString());
+					}
+					break;
+			}
+		} catch(Exception ex) {
+			log.config("An exception has occurred while processing field: %s", ex, f.getName());
 		}
-	}
-
-	protected static Object getFieldValue(Field f) {
-		try {
-			return f.get(null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	public static Log getLog() {
 		if (log == null) {
-			log = new Log("ConfigProcessor");
+			log = MyTownCore.Instance.log.createChild("ConfigProcessor");
 		}
 		return log;
 	}

@@ -1,5 +1,6 @@
 package mytown.chat.format;
 
+import mytown.chat.api.IChatFormatter;
 import net.minecraft.command.ICommandSender;
 
 /**
@@ -8,12 +9,8 @@ import net.minecraft.command.ICommandSender;
  * @author Joe Goett
  */
 public class ChatFormatter implements IChatFormatter {
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String format(ICommandSender sender, String format, String message) {
-		format = format.replace("$username$", sender.getCommandSenderName()).replace("$msg$", message);
-		return format;
+		return format.replace("$username$", sender.getCommandSenderName()).replace("$worldName$", sender.getEntityWorld().getProviderName()).replace("$msg$", message); // TODO Change the way $worldName$ is set 
 	}
 }

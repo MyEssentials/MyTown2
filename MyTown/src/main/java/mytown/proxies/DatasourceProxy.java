@@ -5,7 +5,7 @@ import java.util.Map;
 
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.core.Log;
+import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.impl.MyTownDatasource_mysql;
 import mytown.datasource.impl.MyTownDatasource_sqlite;
@@ -20,14 +20,14 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 public class DatasourceProxy {
 	private static MyTownDatasource datasource;
 	private static Map<String, Class<?>> types = new Hashtable<String, Class<?>>();
-	private static Log log = new Log("Datasource", MyTown.instance.coreLog.getLogger());
+	private static Log log = MyTown.instance.log.createChild("Datasource");
 
 	/**
 	 * Adds the default datasource types
 	 */
-	{
-		types.put("mysql", MyTownDatasource_mysql.class);
-		types.put("sqlite", MyTownDatasource_sqlite.class);
+	static {
+		DatasourceProxy.types.put("mysql", MyTownDatasource_mysql.class);
+		DatasourceProxy.types.put("sqlite", MyTownDatasource_sqlite.class);
 	}
 
 	/**
@@ -38,30 +38,30 @@ public class DatasourceProxy {
 	 * @throws Exception
 	 */
 	public static boolean start(Configuration config) {
-		if (!types.containsKey(Config.dbType.toLowerCase())) {
-			log.severe("Failed to find datasource type: %s", Config.dbType.toLowerCase());
+		if (!DatasourceProxy.types.containsKey(Config.dbType.toLowerCase())) {
+			DatasourceProxy.log.severe("Failed to find datasource type: %s", Config.dbType.toLowerCase());
 			return false;
 		}
 		try {
-			datasource = (MyTownDatasource) types.get(Config.dbType.toLowerCase()).newInstance();
-			datasource.configure(config, log);
+			DatasourceProxy.datasource = (MyTownDatasource) DatasourceProxy.types.get(Config.dbType.toLowerCase()).newInstance();
+			DatasourceProxy.datasource.configure(config, DatasourceProxy.log);
 			config.save();
-			if (!datasource.connect()) {
-				log.severe("Failed to connect to datasource!");
+			if (!DatasourceProxy.datasource.connect()) {
+				DatasourceProxy.log.severe("Failed to connect to datasource!");
 				return false;
 			}
 
 			// Load everything
-			datasource.loadResidents();
-			datasource.loadTowns();
-			datasource.loadNations();
-			datasource.loadRanks();
+			DatasourceProxy.datasource.loadResidents();
+			DatasourceProxy.datasource.loadTowns();
+			DatasourceProxy.datasource.loadNations();
+			DatasourceProxy.datasource.loadRanks();
 
 			// Load links
-			datasource.loadResidentToTownLinks();
-			datasource.loadTownToNationLinks();
+			DatasourceProxy.datasource.loadResidentToTownLinks();
+			DatasourceProxy.datasource.loadTownToNationLinks();
 		} catch (Exception ex) {
-			log.severe("Failed to start the datasource.", ex);
+			DatasourceProxy.log.severe("Failed to start the datasource.", ex);
 			return false;
 		}
 		return true;
@@ -74,10 +74,10 @@ public class DatasourceProxy {
 	 */
 	public static void stop() {
 		try {
-			datasource.save();
-			datasource.disconnect();
+			DatasourceProxy.datasource.save();
+			DatasourceProxy.datasource.disconnect();
 		} catch (Exception ex) {
-			log.severe("Failed to stop the datasource.", ex);
+			DatasourceProxy.log.severe("Failed to stop the datasource.", ex);
 		}
 	}
 
@@ -93,9 +93,9 @@ public class DatasourceProxy {
 			String datasourceClassName = msgSplit[1];
 
 			try {
-				registerType(datasourceName, Class.forName(datasourceClassName));
+				DatasourceProxy.registerType(datasourceName, Class.forName(datasourceClassName));
 			} catch (ClassNotFoundException e) {
-				log.warning("Failed to register datasource type %s from mod %s. %s", datasourceName, msg.getSender(), e.getLocalizedMessage());
+				DatasourceProxy.log.warning("Failed to register datasource type %s from mod %s. %s", datasourceName, msg.getSender(), e.getLocalizedMessage());
 			}
 		}
 	}
@@ -107,10 +107,10 @@ public class DatasourceProxy {
 	 * @param clazz
 	 */
 	public static void registerType(String name, Class<?> clazz) {
-		types.put(name, clazz);
+		DatasourceProxy.types.put(name, clazz);
 	}
 
 	public static MyTownDatasource getDatasource() {
-		return datasource;
+		return DatasourceProxy.datasource;
 	}
 }

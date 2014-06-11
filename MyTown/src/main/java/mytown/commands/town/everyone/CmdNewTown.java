@@ -25,12 +25,10 @@ public class CmdNewTown extends CommandBase {
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length < 1) {
+		if (args.length < 1)
 			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.newtown"));
-		}
-		if (getDatasource().hasTown(args[0])) {
+		if (getDatasource().hasTown(args[0]))
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.newtown.nameinuse", (Object[]) args));
-		}
 
 		Town town = new Town(args[0]);
 		Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());

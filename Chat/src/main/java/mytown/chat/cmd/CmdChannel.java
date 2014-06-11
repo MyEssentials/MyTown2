@@ -1,25 +1,22 @@
 package mytown.chat.cmd;
 
-import net.minecraft.command.CommandBase;
+import mytown.core.utils.command.CommandHandler;
+import mytown.core.utils.command.Permission;
 import net.minecraft.command.ICommandSender;
 
-// TODO Finish /ch channel command
-public class CmdChannel extends CommandBase {
-	@Override
-	public String getCommandName() {
-		return "ch";
+@Permission("mytown.chat.cmd.channel")
+public class CmdChannel extends CommandHandler {
+	public CmdChannel() {
+		super("ch", null);
+
+		// Add sub commands
+		addSubCommand(new CmdJoin(this));
+		addSubCommand(new CmdLeave(this));
+		addSubCommand(new CmdFocus(this));
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender icommandsender) {
-		return null;
-	}
-
-	@Override
-	public void processCommand(ICommandSender sender, String[] args) {}
-
-	@Override
-	public int compareTo(Object o) {
-		return 0;
+	public void sendHelp(ICommandSender sender) {
+		// TODO Auto-generated method stub
 	}
 }

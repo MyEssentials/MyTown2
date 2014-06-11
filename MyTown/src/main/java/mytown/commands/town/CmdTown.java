@@ -26,7 +26,7 @@ public class CmdTown extends CommandHandler {
 	List<String> aliases = new ArrayList<String>();
 
 	public CmdTown(String name) {
-		super(name, null);
+		super(name);
 
 		// Add commands
 		addSubCommand(new CmdNewTown("new", this));

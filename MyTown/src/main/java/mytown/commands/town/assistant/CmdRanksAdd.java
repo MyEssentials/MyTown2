@@ -26,8 +26,10 @@ public class CmdRanksAdd extends CommandBase {
 
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
-		if (res.getSelectedTown() == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getSelectedTown() == null)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
@@ -35,12 +37,15 @@ public class CmdRanksAdd extends CommandBase {
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 
-		if (args.length < 1) throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.ranks"));
+		if (args.length < 1)
+			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.ranks"));
 
 		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
 
-		if (town.hasRankName(args[0])) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.add.already", args[0]));
-		if (!town.hasRankName(args[1])) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.add.notexist", args[1]));
+		if (town.hasRankName(args[0]))
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.add.already", args[0]));
+		if (!town.hasRankName(args[1]))
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.add.notexist", args[1]));
 
 		Rank rank = new Rank(args[0], town.getRank(args[1]).getPermissions(), town);
 		getDatasource().insertRank(rank);

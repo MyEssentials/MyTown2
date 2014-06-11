@@ -10,11 +10,11 @@ import mytown.Constants;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.Localization;
-import mytown.core.Log;
+import mytown.core.utils.Log;
 
 public class LocalizationProxy {
 	private static Localization localization;
-	private static Log log;
+	private static Log log = MyTown.instance.log.createChild("Localization");
 
 	public static void load() {
 		File localFile = new File(Constants.CONFIG_FOLDER, "localization/" + Config.localization + ".lang");
@@ -38,19 +38,20 @@ public class LocalizationProxy {
 					try {
 						is.close();
 						resStreamOut.close();
-					} catch (Exception ignored) {}
+					} catch (Exception ignored) {
+					}
 				}
 			}
 		}
 		try {
-			localization = new Localization(new File(Constants.CONFIG_FOLDER, "localization/" + Config.localization + ".lang"));
-			localization.load();
+			LocalizationProxy.localization = new Localization(new File(Constants.CONFIG_FOLDER, "localization/" + Config.localization + ".lang"));
+			LocalizationProxy.localization.load();
 		} catch (Exception e) {
-			log.warning("Localization file %s missing!", Config.localization);
+			LocalizationProxy.log.warning("Localization file %s missing!", Config.localization);
 		}
 	}
 
 	public static Localization getLocalization() {
-		return localization;
+		return LocalizationProxy.localization;
 	}
 }

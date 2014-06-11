@@ -11,9 +11,8 @@ public class TownComparator implements Comparator<Town> {
 
 		public static Order parse(String order) {
 			for (Order o : Order.values()) {
-				if (o.toString().equalsIgnoreCase(order)) {
+				if (o.toString().equalsIgnoreCase(order))
 					return o;
-				}
 			}
 
 			return Order.Name;
@@ -23,7 +22,7 @@ public class TownComparator implements Comparator<Town> {
 	private Order sortingBy = Order.Name;
 
 	public TownComparator(Order order) {
-		this.sortingBy = order;
+		sortingBy = order;
 	}
 
 	@Override
@@ -32,9 +31,9 @@ public class TownComparator implements Comparator<Town> {
 			case Name:
 				return arg0.getName().compareTo(arg1.getName());
 			case Residents:
-				return ((Integer) arg0.getResidents().size()).compareTo((Integer) arg1.getResidents().size());
+				return ((Integer) arg0.getResidents().size()).compareTo(arg1.getResidents().size());
 			case Blocks:
-				return ((Integer) arg0.getExtraBlocks()).compareTo((Integer) arg1.getExtraBlocks());
+				return ((Integer) arg0.getExtraBlocks()).compareTo(arg1.getExtraBlocks());
 		}
 		throw new RuntimeException("Something really weird happened with comparing towns.");
 	}

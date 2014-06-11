@@ -25,28 +25,32 @@ public class CmdRanksPermAdd extends CommandBase {
 		super.canCommandSenderUseCommand(sender);
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
-		if (res.getSelectedTown() == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getSelectedTown() == null)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length < 2) throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
+		if (args.length < 2)
+			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
 
 		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
 
-		if (getDatasource().getRank(args[0], town) == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.rem.notexist", args[0], town.getName()));
-		if (!CommandUtils.permissionList.containsValue(args[1])) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args[1]));
+		if (getDatasource().getRank(args[0], town) == null)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.rem.notexist", args[0], town.getName()));
+		if (!CommandUtils.permissionList.containsValue(args[1]))
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args[1]));
 
 		// Adding permission if everything is alright
 		if (town.getRank(args[0]).addPermission(args[1])) {
 			getDatasource().updateRank(town.getRank(args[0]));
 			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.ranks.perm.add", args[1], args[0]);
-		} else {
+		} else
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.perm.add.failed", args[1]));
-		}
 	}
 
 	/**

@@ -2,7 +2,11 @@ package mytown.chat.channels;
 
 import java.util.List;
 
+import mytown.chat.MyTownChat;
+import mytown.chat.api.IChannelType;
 import mytown.core.ChatUtils;
+import mytown.core.utils.Assert;
+import mytown.core.utils.Log;
 import net.minecraft.command.ICommandSender;
 
 /**
@@ -11,11 +15,11 @@ import net.minecraft.command.ICommandSender;
  * @author Joe Goett
  */
 public class Channel {
-	public String configKey; // Used for flat-file based configs
+	private static Log log = MyTownChat.Instance.chatLog.createChild("Channel");
+	
 	public String name;
 	public String abbreviation;
 	public String format;
-	public String permission;
 	public int radius;
 	public IChannelType type;
 
@@ -42,7 +46,7 @@ public class Channel {
 	 * @return
 	 */
 	public String getFormat() {
-		return format.replace("$name$", name).replace("$abbreviation$", abbreviation);
+		return format.replace("$chName$", name).replace("$chAbbreviation$", abbreviation);
 	}
 
 	/**
@@ -52,14 +56,25 @@ public class Channel {
 	 * @param message
 	 */
 	public void sendMessage(ICommandSender sender, String message) {
-		List<ICommandSender> recipients = type.getRecipients(sender, this);
-		for (ICommandSender recipient : recipients) {
-			ChatUtils.sendChat(recipient, message);
+		try {
+			Assert.Perm(sender, "mytown.chat.channel." + name + ".send");
+			List<ICommandSender> recipients = type.getRecipients(sender, this);
+			for (ICommandSender recipient : recipients) {
+				try {
+					Assert.Perm(recipient, "mytown.chat.channel." + name + ".receive");
+					ChatUtils.sendChat(recipient, message);
+				} catch(Exception ex) {
+					// TODO Log permission exception to receive message?
+				}
+			}
+		} catch(Exception ex) {
+			log.fine("[%s] %s doesn't have the permission to send to this channel", name, sender.getCommandSenderName());
+			// TODO Tell player they can't send to this channel
 		}
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s,%s,%s,%s,%s", name, abbreviation, format, radius, type);
+		return String.format("%s;%s;%s;%s;%s", name, abbreviation, format, radius, type);
 	}
 }

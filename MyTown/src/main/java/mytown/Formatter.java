@@ -14,16 +14,18 @@ public class Formatter {
 		EnumChatFormatting color;
 		String res = null;
 		for (Rank r : ranks) {
-			if (r.getName().equals("Resident"))
+			if (r.getName().equals("Resident")) {
 				color = EnumChatFormatting.RED;
-			else if (Constants.DEFAULT_RANK_VALUES.containsKey(r.getName()))
+			} else if (Constants.DEFAULT_RANK_VALUES.containsKey(r.getName())) {
 				color = EnumChatFormatting.GREEN;
-			else
+			} else {
 				color = EnumChatFormatting.YELLOW;
-			if (res == null)
+			}
+			if (res == null) {
 				res = color + r.getName();
-			else
+			} else {
 				res += EnumChatFormatting.WHITE + ", " + color + r.getName();
+			}
 		}
 
 		return res;
@@ -32,10 +34,11 @@ public class Formatter {
 	public static String formatResidentsToString(List<Resident> residents, Town t) {
 		String res = null;
 		for (Resident r : residents)
-			if (res == null)
+			if (res == null) {
 				res = EnumChatFormatting.WHITE + r.getUUID() + EnumChatFormatting.GOLD + " (" + EnumChatFormatting.GREEN + r.getTownRank(t).getName() + EnumChatFormatting.GOLD + ")";
-			else
+			} else {
 				res += ", " + r.getUUID();
+			}
 		return res;
 	}
 
@@ -43,14 +46,16 @@ public class Formatter {
 		String res = null;
 		for (TownBlock block : blocks) {
 			String toBeAdded;
-			if (chunkCoords)
+			if (chunkCoords) {
 				toBeAdded = "(" + block.getX() + ", " + block.getZ() + ")";
-			else
+			} else {
 				toBeAdded = "(" + (block.getX() * 16) + ", " + (block.getZ() * 16) + ")";
-			if (res == null)
+			}
+			if (res == null) {
 				res = toBeAdded;
-			else
+			} else {
 				res += " | " + toBeAdded;
+			}
 		}
 		return res;
 	}

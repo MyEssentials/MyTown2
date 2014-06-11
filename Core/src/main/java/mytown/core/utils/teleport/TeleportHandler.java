@@ -10,6 +10,15 @@ import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
+// TODO Actually test this! xD
+
+/**
+ * Attempts to define an API for teleportation handling
+ * 
+ * Very WIP! Use with care!
+ * 
+ * @author Joe Goett
+ */
 public class TeleportHandler implements IScheduledTickHandler {
 	public static TeleportHandler teleportHandler = new TeleportHandler();
 
@@ -59,7 +68,7 @@ public class TeleportHandler implements IScheduledTickHandler {
 
 	@Override
 	public int nextTickSpacing() {
-		return 5;
+		return 5; // TODO Test with lower/higher values (Maybe even make configurable?)
 	}
 
 	// /////////////////////

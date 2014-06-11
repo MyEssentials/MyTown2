@@ -27,28 +27,33 @@ public class CmdRanksPerm extends CommandHandler {
 		super.canCommandSenderUseCommand(sender);
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
-		if (res.getSelectedTown() == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getSelectedTown() == null)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length >= 1 && subCommands.keySet().contains(args[0]))
+		if (args.length >= 1 && subCommands.keySet().contains(args[0])) {
 			super.process(sender, args);
-		else {
+		} else {
 			Rank rank;
-			if (args.length == 0)
+			if (args.length == 0) {
 				rank = getDatasource().getResident(sender.getCommandSenderName()).getTownRank();
-			else
+			} else {
 				rank = getDatasource().getRank(args[0], getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown());
+			}
 
-			if (rank == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.notexist", args[0], getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown().getName()));
+			if (rank == null)
+				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.notexist", args[0], getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown().getName()));
 
 			String msg = "";
-			for (String s : rank.getPermissions())
+			for (String s : rank.getPermissions()) {
 				msg += '\n' + s;
+			}
 			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.ranks.perm.list", rank.getName(), rank.getTown().getName(), msg);
 		}
 	}

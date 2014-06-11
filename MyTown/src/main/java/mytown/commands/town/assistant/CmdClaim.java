@@ -36,8 +36,10 @@ public class CmdClaim extends CommandBase {
 			e.printStackTrace(); // TODO Change later
 		}
 
-		if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getTowns().size() == 0)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
@@ -47,7 +49,8 @@ public class CmdClaim extends CommandBase {
 		EntityPlayer player = (EntityPlayer) sender;
 		Resident res = getDatasource().getOrMakeResident(player);
 		Town town = res.getSelectedTown();
-		if (getDatasource().getTownBlock(player.chunkCoordX, player.chunkCoordZ, player.dimension) != null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
+		if (getDatasource().getTownBlock(player.chunkCoordX, player.chunkCoordZ, player.dimension) != null)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
 		TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
 		town.addTownBlock(block);
 		getDatasource().insertTownBlock(block);

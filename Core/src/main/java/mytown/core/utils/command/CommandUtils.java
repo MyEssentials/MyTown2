@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
-import mytown.core.Log;
+import mytown.core.MyTownCore;
+import mytown.core.utils.Log;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
@@ -14,6 +14,8 @@ import net.minecraft.server.MinecraftServer;
 import com.esotericsoftware.reflectasm.MethodAccess;
 
 public class CommandUtils {
+	private static boolean isInit = false;
+	
 	private static Log log;
 	private static CommandHandler commandHandler;
 	private static MethodAccess access;
@@ -22,9 +24,9 @@ public class CommandUtils {
 	public static Map<String, String> permissionList = new Hashtable<String, String>();
 	public static Map<String, String> permissionListAdmin = new Hashtable<String, String>();
 
-	public static void init() throws Exception {
-		log = new Log("CommandUtils");
-		log.getLogger().setLevel(Level.ALL); // TODO Change later or allow configuring
+	private static void init(){
+		if (isInit) return;
+		log = MyTownCore.Instance.log.createChild("CommandUtils");
 		commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
 		access = MethodAccess.get(CommandHandler.class);
 		try {
@@ -37,6 +39,8 @@ public class CommandUtils {
 	}
 
 	public static void registerCommand(ICommand command, String permNode, boolean enabled) {
+		init();
+		
 		if (!enabled || command == null) return;
 		if (permNode.trim().isEmpty()) permNode = command.getClass().getName();
 		log.finest("Registering command (%s) %s with perm node %s", command.getClass().getName(), command.getCommandName(), permNode);

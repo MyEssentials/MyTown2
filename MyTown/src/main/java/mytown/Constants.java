@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Constants {
-	public static final String VERSION = "${version}";
-	public static final String MODID = "MyTown";
-	public static final String MODNAME = "MyTown";
+	public static final String VERSION = "@VERSION@";
+	public static final String MODID = "MyTown2";
+	public static final String MODNAME = "MyTown 2";
 	public static final String DEPENDENCIES = "after:*;required-after:Forge;required-after:MyTownCore";
 	public static String CONFIG_FOLDER = "";
 

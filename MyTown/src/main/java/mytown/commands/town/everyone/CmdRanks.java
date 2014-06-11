@@ -27,17 +27,19 @@ public class CmdRanks extends CommandHandler {
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length >= 1 && subCommands.containsKey(args[0]))
+		if (args.length >= 1 && subCommands.containsKey(args[0])) {
 			super.process(sender, args);
-		else {
+		} else {
 			Town temp = null;
 			if (args.length < 1) {
 				temp = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-				if (temp == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+				if (temp == null)
+					throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
 			}
 			if (args.length >= 1) {
 				temp = getDatasource().getTown(args[0]);
-				if (temp == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
+				if (temp == null)
+					throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 			}
 
 			String jupiter = Formatter.formatRanksToString(temp.getRanks());

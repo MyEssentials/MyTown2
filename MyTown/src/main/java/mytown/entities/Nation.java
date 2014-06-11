@@ -17,10 +17,9 @@ public class Nation {
 		 * Gets the rank based on [N, T, C]
 		 */
 		public static Rank parse(String rank) {
-			for (Rank type : values()) {
-				if (type.toString().toLowerCase().startsWith(rank.toLowerCase())) {
+			for (Rank type : Rank.values()) {
+				if (type.toString().toLowerCase().startsWith(rank.toLowerCase()))
 					return type;
-				}
 			}
 			return Rank.None;
 		}
@@ -111,11 +110,10 @@ public class Nation {
 	 * @return
 	 */
 	public Nation.Rank getTownRank(Town town) {
-		if (hasTown(town)) {
+		if (hasTown(town))
 			return towns.get(town);
-		} else {
+		else
 			return Rank.None;
-		}
 	}
 
 	/**
@@ -145,7 +143,8 @@ public class Nation {
 	 * @param rank
 	 */
 	public void setTownRank(Town town, Rank rank) {
-		if (!hasTown(town)) return; // TODO Log/Throw Exception
+		if (!hasTown(town))
+			return; // TODO Log/Throw Exception
 		addTown(town, rank);
 	}
 

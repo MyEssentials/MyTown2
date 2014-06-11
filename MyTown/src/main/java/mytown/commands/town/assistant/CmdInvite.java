@@ -34,24 +34,28 @@ public class CmdInvite extends CommandHandler {
 
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
-		if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getTowns().size() == 0)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length != 0 && subCommands.containsKey(args[0]))
+		if (args.length != 0 && subCommands.containsKey(args[0])) {
 			super.process(sender, args);
-		else {
-			if (args.length < 1) {
+		} else {
+			if (args.length < 1)
 				throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite"));
-			}
-			if (!getDatasource().hasResident(args[0])) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.resident.notexist", args[0]));
+			if (!getDatasource().hasResident(args[0]))
+				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.resident.notexist", args[0]));
 			Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-			if (town == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-			if (town.hasResident(args[0])) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invtite.already", args[0], town.getName()));
+			if (town == null)
+				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+			if (town.hasResident(args[0]))
+				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invtite.already", args[0], town.getName()));
 		}
 		// TODO: send request to player
 	}

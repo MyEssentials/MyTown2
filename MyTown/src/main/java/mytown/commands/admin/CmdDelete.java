@@ -19,16 +19,23 @@ public class CmdDelete extends CommandBase {
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length < 1) throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.adm.cmd.delete.usage"));
-		if (!getDatasource().hasTown(args[0])) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist"), args[0]);
+		if (args.length < 1)
+			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.adm.cmd.delete.usage"));
+		if (!getDatasource().hasTown(args[0]))
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist"), args[0]);
 
 		if (args.length == 1) {
-			if (getDatasource().deleteTown(getDatasource().getTown(args[0]))) ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.deleted", args[0]);
+			if (getDatasource().deleteTown(getDatasource().getTown(args[0]))) {
+				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.deleted", args[0]);
+			}
 		} else {
 			for (String s : args)
-				if (getDatasource().getTown(s) == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist"), s);
+				if (getDatasource().getTown(s) == null)
+					throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist"), s);
 			for (String s : args) {
-				if (getDatasource().deleteTown(getDatasource().getTown(s))) ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.deleted", s);
+				if (getDatasource().deleteTown(getDatasource().getTown(s))) {
+					ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.deleted", s);
+				}
 			}
 		}
 	}

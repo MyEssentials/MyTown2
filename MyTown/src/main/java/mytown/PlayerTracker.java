@@ -13,7 +13,8 @@ import forgeperms.api.ForgePermsAPI;
 public class PlayerTracker implements IPlayerTracker {
 	@Override
 	public void onPlayerLogin(EntityPlayer player) {
-		if (player == null) return; // Never know ;)
+		if (player == null)
+			return; // Never know ;)
 		if (MyTown.instance.safemode && player instanceof EntityPlayerMP && !ForgePermsAPI.permManager.canAccess(player.username, player.worldObj.provider.getDimensionName(), "mytown.adm.safemode")) {
 			((EntityPlayerMP) player).playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
 			return;
@@ -30,7 +31,8 @@ public class PlayerTracker implements IPlayerTracker {
 
 	@Override
 	public void onPlayerLogout(EntityPlayer player) {
-		if (player == null) return; // Never know ;)
+		if (player == null)
+			return; // Never know ;)
 		try {
 			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
 			res.setOnline(false);
@@ -45,7 +47,9 @@ public class PlayerTracker implements IPlayerTracker {
 		try {
 			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(pl);
 			res.checkLocation();
-			if (res.isMapOn()) res.sendMap();
+			if (res.isMapOn()) {
+				res.sendMap();
+			}
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change?
 		}
@@ -58,12 +62,15 @@ public class PlayerTracker implements IPlayerTracker {
 
 	@ForgeSubscribe
 	public void onEnterChunk(EntityEvent.EnteringChunk ev) {
-		if (!(ev.entity instanceof EntityPlayer)) return;
+		if (!(ev.entity instanceof EntityPlayer))
+			return;
 		EntityPlayer pl = (EntityPlayer) ev.entity;
 		try {
 			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(pl);
 			res.checkLocation();
-			if (res.isMapOn()) res.sendMap();
+			if (res.isMapOn()) {
+				res.sendMap();
+			}
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change?
 		}
