@@ -38,8 +38,8 @@ public class DatasourceProxy {
 	 * @throws Exception
 	 */
 	public static boolean start(Configuration config) {
-		if (!DatasourceProxy.types.containsKey(Config.dbType.toLowerCase())) {
-			DatasourceProxy.log.severe("Failed to find datasource type: %s", Config.dbType.toLowerCase());
+		if (!types.containsKey(Config.dbType.toLowerCase())) {
+			log.severe("Failed to find datasource type: %s", Config.dbType.toLowerCase());
 			return false;
 		}
 		try {
@@ -52,11 +52,14 @@ public class DatasourceProxy {
 			}
 
 			// Load everything
-			DatasourceProxy.datasource.loadResidents();
-			DatasourceProxy.datasource.loadTowns();
-			DatasourceProxy.datasource.loadNations();
-			DatasourceProxy.datasource.loadRanks();
-
+			datasource.loadTowns();
+			datasource.loadResidents();
+			datasource.loadTownFlags();
+			datasource.loadNations();
+			datasource.loadRanks();
+			datasource.loadPlots();
+			datasource.loadPlotFlags();
+			
 			// Load links
 			DatasourceProxy.datasource.loadResidentToTownLinks();
 			DatasourceProxy.datasource.loadTownToNationLinks();

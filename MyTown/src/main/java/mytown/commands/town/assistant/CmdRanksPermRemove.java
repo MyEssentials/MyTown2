@@ -6,7 +6,7 @@ import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
 import mytown.entities.Resident;
-import mytown.entities.Town;
+import mytown.entities.town.Town;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;

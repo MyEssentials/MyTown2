@@ -1,5 +1,8 @@
 package mytown.entities;
 
+import mytown.entities.town.Town;
+
+
 /**
  * Defines what a Town block is. A single chunk that belongs to a single town.
  * 
@@ -14,8 +17,8 @@ public class TownBlock {
 	private Town town;
 	private String key;
 
-	// TODO Add flags/permissions
 
+	
 	/**
 	 * Used internally only!
 	 * 
@@ -106,4 +109,5 @@ public class TownBlock {
 	public String getKey() {
 		return key;
 	}
+
 }

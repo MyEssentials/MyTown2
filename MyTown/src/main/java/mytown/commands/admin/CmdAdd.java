@@ -5,7 +5,9 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Rank;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -19,15 +21,19 @@ public class CmdAdd extends CommandBase {
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length < 2)
-			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.adm.cmd.usage.add"));
-		if (!getDatasource().hasTown(args[1]))
-			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[1]));
-		if (!getDatasource().hasResident(args[0]))
-			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.resident.notexist", args[0]));
-		if (getDatasource().getTown(args[1]).hasResident(getDatasource().getResident(args[0])))
-			throw new CommandException(MyTown.getLocal().getLocalization("mytown.adm.cmd.err.add.already", (Object[]) args));
-		getDatasource().linkResidentToTown(getDatasource().getResident(args[0]), getDatasource().getTown(args[1]));
+		if (args.length < 2) throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.adm.cmd.usage.add"));
+		if (!getDatasource().hasTown(args[1])) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.town.notexist", args[1]));
+		if (!getDatasource().hasResident(args[0])) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.resident.notexist", args[0]));
+		if (getDatasource().getTown(args[1]).hasResident(getDatasource().getResident(args[0]))) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.err.add.already", (Object[]) args));
+		Rank rank;
+		if(args.length > 2) {
+			if(!getDatasource().getTown(args[1]).hasRankName(args[2])) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.rank.notexist", args[1], args[2]));
+			rank = getDatasource().getRank(args[2], getDatasource().getTown(args[1]));
+		} else {
+			rank = getDatasource().getRank("Resident", getDatasource().getTown(args[1]));
+		}
+		
+		getDatasource().linkResidentToTown(getDatasource().getResident(args[0]), getDatasource().getTown(args[1]), rank);
 
 		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.resident.add", (Object[]) args);
 	}

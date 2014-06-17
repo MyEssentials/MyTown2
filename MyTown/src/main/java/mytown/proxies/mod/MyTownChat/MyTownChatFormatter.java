@@ -2,7 +2,7 @@ package mytown.proxies.mod.MyTownChat;
 
 import mytown.chat.api.IChatFormatter;
 import mytown.entities.Resident;
-import mytown.entities.Town;
+import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
