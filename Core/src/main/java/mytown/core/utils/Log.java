@@ -69,7 +69,7 @@ public class Log {
 		Throwable t = null;
 		if (args.length > 0 && args[0] instanceof Throwable) {
 			t = (Throwable)args[0];
-			args = Arrays.copyOfRange(args, 1, args.length-1);
+			args = Arrays.copyOfRange(args, 0, args.length-1);
 		}
 		
 		msg = String.format(msg, args);
