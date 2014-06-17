@@ -10,14 +10,13 @@ public class CommandBase implements ICommand {
 	protected String permNode;
 	protected String name;
 	protected String parentName;
+	protected ICommand parent;
 	
 	public CommandBase(String name) {
 		this(name, null);
 	}
 
-	protected CommandBase parent;
-
-	public CommandBase(String name, CommandBase parent) {
+	public CommandBase(String name, ICommand parent) {
 		this.name = name;
 		this.parent = parent;
 
@@ -100,7 +99,7 @@ public class CommandBase implements ICommand {
 		return this.parentName;
 	}
 	
-	public CommandBase getParent() {
+	public ICommand getParent() {
 		return this.parent;
 	}
 }

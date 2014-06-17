@@ -6,16 +6,16 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import mytown.core.ChatUtils;
 import mytown.core.MyTownCore;
 import mytown.core.utils.Log;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandNotFoundException;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 
 public abstract class CommandHandler extends CommandBase {
 	protected static Log log = MyTownCore.Instance.log.createChild("CommandHandler"); // TODO Remove?
-	protected Map<String, CommandBase> subCommands;
+	protected Map<String, ICommand> subCommands;
 	
 	public CommandHandler(String name) {
 		this(name, null);
@@ -26,9 +26,9 @@ public abstract class CommandHandler extends CommandBase {
 	 * 
 	 * @param name
 	 */
-	public CommandHandler(String name, CommandBase parent) {
+	public CommandHandler(String name, ICommand parent) {
 		super(name, parent);
-		subCommands = new Hashtable<String, CommandBase>();
+		subCommands = new Hashtable<String, ICommand>();
 	}
 
 	/**
@@ -63,40 +63,26 @@ public abstract class CommandHandler extends CommandBase {
 	public void processCommand(ICommandSender sender, String[] args) {
 		try {
 			process(sender, args);
-		} catch (CommandException ex) {
+		} catch(CommandException ex) {
 			throw ex;
-		} catch (Throwable ex) {
-			log.warning("[%][%] An exception occured!", ex, getCommandName(), sender.getCommandSenderName());
-			ex.printStackTrace();
+		} catch(Throwable t) {
+			log.warning("A error has occurred!", t);
 		}
 	}
 
-	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		canCommandSenderUseCommand(sender);
 		if (args.length < 1 || args[0].equalsIgnoreCase("help")) {
 			sendHelp(sender);
 			return;
 		}
-		try {
-			CommandBase cmd = subCommands.get(args[0]);
-			if (cmd == null) throw new CommandNotFoundException();
-			cmd.canCommandSenderUseCommand(sender);
-			cmd.process(sender, Arrays.copyOfRange(args, 1, args.length));
-		} catch (NumberFormatException ex) {
-			ChatUtils.sendChat(sender, "Number Format Error");
-			log.severe("[%s][%s] Number Format Error", getCommandName(), sender.getCommandSenderName());
-			ex.printStackTrace();
-		} catch (CommandException ex) {
-			throw ex;
-		} catch (Throwable ex) {
-			ChatUtils.sendChat(sender, ex.toString());
-			log.severe("[%s][%s] Command Execution Error", ex, getCommandName(), sender.getCommandSenderName());
-			ex.printStackTrace();
-		}
+		ICommand cmd = subCommands.get(args[0]);
+		if (cmd == null) throw new CommandNotFoundException();
+		cmd.canCommandSenderUseCommand(sender);
+		cmd.processCommand(sender, Arrays.copyOfRange(args, 1, args.length));
 	}
-
-	public Map<String, CommandBase> getSubCommands() {
+	
+	public Map<String, ICommand> getSubCommands() {
 		return this.subCommands;
 	}
 
@@ -113,7 +99,7 @@ public abstract class CommandHandler extends CommandBase {
 			}
 			return tabCompletion;
 		} else if (args.length > 1) {
-			CommandBase subCmd = subCommands.get(args[0]);
+			ICommand subCmd = subCommands.get(args[0]);
 			if (subCmd != null) {
 				return subCmd.addTabCompletionOptions(sender, args);
 			}
