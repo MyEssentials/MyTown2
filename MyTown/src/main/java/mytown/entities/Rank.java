@@ -2,6 +2,8 @@ package mytown.entities;
 
 import java.util.ArrayList;
 
+import mytown.entities.town.Town;
+
 public class Rank {
 
 	private String key;
@@ -79,15 +81,14 @@ public class Rank {
 		return key;
 	}
 
-	public boolean updateKey() {
-		if (key != null && key == getTown().getName() + ":" + getName())
-			return false;
-		if (town == null) {
-			key = getName();
-		} else {
-			key = getTown().getName() + ":" + getName();
-		}
-		return true;
+
+	/**
+	 * Updates the key. Only called in the constructor and when updating in the database. DO NOT CALL ELSEWHERE!
+	 * 
+	 * @return
+	 */
+	public void updateKey() {
+		key = String.format("%s;%s", town.getName(), this.name);
 	}
 
 	/**

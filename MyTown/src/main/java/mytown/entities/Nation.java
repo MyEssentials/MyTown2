@@ -4,6 +4,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
+import mytown.entities.town.Town;
+
 /**
  * Defines a Nation
  * 

@@ -98,6 +98,7 @@ public class MyTown {
 	 * Adds all the default permissions
 	 */
 	private void addDefaultPermissions() {
+		// TODO: Config files for all default ranks?
 		ArrayList<String> pOutsider = new ArrayList<String>();
 		ArrayList<String> pResident = new ArrayList<String>();
 		ArrayList<String> pAssistant = new ArrayList<String>();

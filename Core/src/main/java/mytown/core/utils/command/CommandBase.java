@@ -15,8 +15,11 @@ public class CommandBase implements ICommand {
 		this(name, null);
 	}
 
+	protected CommandBase parent;
+
 	public CommandBase(String name, CommandBase parent) {
 		this.name = name;
+		this.parent = parent;
 
 		Permission permAnnot = getClass().getAnnotation(Permission.class);
 		if (permAnnot != null) {
@@ -90,10 +93,14 @@ public class CommandBase implements ICommand {
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
 	}
 
-	public void process(ICommandSender icommandsender, String[] astring) throws Exception {
+	public void process(ICommandSender sender, String[] args) throws Exception {
 	}
 
 	public String getParentName() {
 		return this.parentName;
+	}
+	
+	public CommandBase getParent() {
+		return this.parent;
 	}
 }

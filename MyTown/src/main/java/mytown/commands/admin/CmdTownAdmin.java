@@ -21,6 +21,7 @@ public class CmdTownAdmin extends CommandHandler {
 		addSubCommand(new CmdDelete("delete", this));
 		addSubCommand(new CmdRem("rem", this));
 		addSubCommand(new CmdAdd("add", this));
+		addSubCommand(new CmdNewTown("new", this));
 
 		// Add aliases
 		aliases.add("ta");

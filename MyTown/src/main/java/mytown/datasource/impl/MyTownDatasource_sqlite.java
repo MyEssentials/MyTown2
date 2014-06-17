@@ -1,6 +1,7 @@
 package mytown.datasource.impl;
 
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 
 import mytown.Constants;
 import mytown.datasource.types.MyTownDatasource_SQL;
@@ -36,6 +37,9 @@ public class MyTownDatasource_sqlite extends MyTownDatasource_SQL {
 		setUpdates();
 		doUpdates();
 
+		PreparedStatement statement = prepare("PRAGMA foreign_keys = ON");
+		statement.executeUpdate();
+		
 		return true;
 	}
 
@@ -43,6 +47,7 @@ public class MyTownDatasource_sqlite extends MyTownDatasource_SQL {
 	protected void doConfig(Configuration config) {
 		super.doConfig(config);
 		dbPath = config.get(configCat, "Path", Constants.CONFIG_FOLDER + "data.db", "The database file path. Used by SQLite").getString();
+
 		// TODO Finish Config
 	}
 }
