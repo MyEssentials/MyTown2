@@ -1,7 +1,9 @@
 MyTown2
 =======
-
 Version 2 of MyTown - A Minecraft Server Protection Mod
+
+[![Build Status](http://img.shields.io/travis/MyEssentials/MyTown2.svg)](https://travis-ci.org/MyEssentials/MyTown2)
+[![Support via Gittip](http://img.shields.io/gittip/legobear154.svg)](https://www.gittip.com/legobear154/)
 
 Features
 ========
@@ -14,10 +16,12 @@ Features
 * Protects against multiple Minecraft mods including Tinkers Construct, IC2, Buildcraft 3, ComputerCraft, Minefactory Reloaded, and many more!
 * And much more!
 
+Submitting Pull Requests
+========================
+Only work against the Master branch, any other branches should be considered unstable and potentially dangerous.
 
 Requesting Features
 ===================
-
 When requesting a new feature, be clear with what your requesting, and mark it as enhancement.
 
 Contacting
