@@ -6,6 +6,7 @@ import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -18,25 +19,30 @@ public class CmdDelete extends CommandBase {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
+	public void processCommand(ICommandSender sender, String[] args) {
 		if (args.length < 1)
 			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.adm.cmd.delete.usage"));
 		if (!getDatasource().hasTown(args[0]))
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist"), args[0]);
 
-		if (args.length == 1) {
-			if (getDatasource().deleteTown(getDatasource().getTown(args[0]))) {
-				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.deleted", args[0]);
-			}
-		} else {
-			for (String s : args)
-				if (getDatasource().getTown(s) == null)
-					throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist"), s);
-			for (String s : args) {
-				if (getDatasource().deleteTown(getDatasource().getTown(s))) {
-					ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.deleted", s);
+		try {
+			if (args.length == 1) {
+				if (getDatasource().deleteTown(getDatasource().getTown(args[0]))) {
+					ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.deleted", args[0]);
+				}
+			} else {
+				for (String s : args)
+					if (getDatasource().getTown(s) == null)
+						throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist"), s);
+				for (String s : args) {
+					if (getDatasource().deleteTown(getDatasource().getTown(s))) {
+						ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.deleted", s);
+					}
 				}
 			}
+		} catch (Exception e) {
+			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			e.printStackTrace();
 		}
 	}
 

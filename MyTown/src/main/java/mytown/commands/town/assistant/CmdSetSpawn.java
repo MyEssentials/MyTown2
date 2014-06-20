@@ -3,26 +3,20 @@ package mytown.commands.town.assistant;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
-import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.town.Town;
-import mytown.interfaces.ITownPlot;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 
-@Permission("mytown.cmd.assistant.plot")
-public class CmdPlot extends CommandHandler {
-	
-	
-	public CmdPlot(String name, CommandBase parent) {
+@Permission("mytown.cmd.assistant.setspawn")
+public class CmdSetSpawn extends CommandBase {
+	public CmdSetSpawn(String name, CommandBase parent) {
 		super(name, parent);
-		
-		addSubCommand(new CmdPlotMake("make", this));
-		addSubCommand(new CmdPlotSelect("select", this));
 	}
 	
 	@Override
@@ -38,22 +32,21 @@ public class CmdPlot extends CommandHandler {
 	}
 	
 	@Override
-	public void processCommand (ICommandSender sender, String[] args) {
-		if(args.length > 0)
-			super.processCommand(sender, args);
-		else {
-			Resident resident = getDatasource().getResident(sender.getCommandSenderName());
-			Town town = resident.getSelectedTown();
-			if(town == null) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
-			
-			String formattedPlotsList = "";
-			for(ITownPlot plot : town.getTownPlots()) {			
-				formattedPlotsList += "\n";
-				formattedPlotsList += plot;
-			}
-			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plots", town, formattedPlotsList);
+	public void processCommand(ICommandSender sender, String[] args) {
+		EntityPlayer player = (EntityPlayer)sender;
+		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
+		
+		if(!town.isBlockInTown((int)player.posX, (int)player.posZ, player.dimension))
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()));
+		
+		town.setSpawn(player.posX, player.posY, player.posZ, player.dimension);
+		try {
+			getDatasource().updateTown(town);
+			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.setspawn");
+		} catch (Exception e) {
+			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			e.printStackTrace();
 		}
-	
 	}
 	
 	/**
@@ -65,9 +58,4 @@ public class CmdPlot extends CommandHandler {
 		return DatasourceProxy.getDatasource();
 	}
 
-	@Override
-	public void sendHelp(ICommandSender sender) {
-		// TODO Auto-generated method stub
-		
-	}
 }

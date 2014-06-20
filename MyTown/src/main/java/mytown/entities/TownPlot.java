@@ -3,6 +3,7 @@ package mytown.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.util.EnumChatFormatting;
 import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
@@ -17,8 +18,10 @@ public class TownPlot implements ITownPlot {
 	
 	protected int x1, z1, y1, x2, z2, y2;
 	protected int dim;
+	protected String name;
 	
 	protected String key;
+	
 	
 	protected Town town;
 	protected Resident owner;
@@ -29,9 +32,11 @@ public class TownPlot implements ITownPlot {
 	
 	protected List<ITownFlag> plotFlags; 
 	
+	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town, Resident owner) {
+		this(dim, x1, y1, z1, x2, y2, z2, town, owner, "NoName");
+	}
 	
-	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town, Resident owner)
-	{
+	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town, Resident owner, String name) {
 		if(x1 > x2) {
 			int aux = x2;
 			x2 = x1;
@@ -50,6 +55,8 @@ public class TownPlot implements ITownPlot {
 			y2 = aux;
 		}
 		
+		// Second parameter is always highest
+		
 		this.x1 = x1;
 		this.y1 = y1;
 		this.z1 = z1;
@@ -58,6 +65,7 @@ public class TownPlot implements ITownPlot {
 		this.z2 = z2;
 		this.dim = dim;
 		
+		this.name = name;
 		this.town = town;
 		this.owner = owner;
 		
@@ -192,7 +200,7 @@ public class TownPlot implements ITownPlot {
 	
 	@Override
 	public boolean isBlockInsidePlot(int x, int y, int z) {
-		return x2 >= x && x <= x1 && y2 >= y && y <= y1 && z2 >= z && z <= z1;
+		return x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
 	}
 	
 	@Override
@@ -218,5 +226,31 @@ public class TownPlot implements ITownPlot {
 	@Override
 	public boolean removeFlag(String flagName) {
 		return plotFlags.remove(getFlag(flagName));
+	}
+	
+	@Override
+	public String getName() {
+		return this.name;
+	}
+	
+	@Override
+	public boolean setName(String name) {
+		this.name = name;
+		return true;
+	}
+	
+	@Override
+	public boolean setOwner(Resident owner) {
+		// Checking if the new owner is part of the town which this plot resides in
+		if(!owner.getTowns().contains(this.town))
+			return false;
+		
+		this.owner = owner;
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format(EnumChatFormatting.GREEN + " %s\n" + EnumChatFormatting.GRAY + "From: "+ EnumChatFormatting.WHITE +"["+ EnumChatFormatting.GREEN +"%s"+ EnumChatFormatting.WHITE +","+ EnumChatFormatting.GREEN +" %s"+ EnumChatFormatting.WHITE +","+ EnumChatFormatting.GREEN +" %s"+ EnumChatFormatting.WHITE +"]"+ EnumChatFormatting.GRAY +" to "+ EnumChatFormatting.WHITE +"["+ EnumChatFormatting.GREEN +"%s"+ EnumChatFormatting.WHITE +","+ EnumChatFormatting.GREEN +" %s"+ EnumChatFormatting.WHITE +","+ EnumChatFormatting.GREEN +" %s"+ EnumChatFormatting.WHITE +"] "+ EnumChatFormatting.GRAY +"\nOwner: "+ EnumChatFormatting.WHITE +"%s ", name, x1, y1, z1, x2, y2, z2, owner.getUUID()); 
 	}
 }

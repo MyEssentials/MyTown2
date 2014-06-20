@@ -17,49 +17,50 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 @Permission("mytown.cmd.assistant.plot.select")
-public class CmdPlotSelect extends CommandHandler{
+public class CmdPlotSelect extends CommandHandler {
 
 	public CmdPlotSelect(String name, CommandBase parent) {
 		super(name, parent);
-		
+
 		addSubCommand(new CmdPlotSelectExpand("expandVert", this));
 		addSubCommand(new CmdPlotSelectReset("reset", this));
 	}
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		if(res.getSelectedTown() == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if(!res.getTownRank().hasPermission(this.permNode))  throw new CommandException("commands.generic.permission");
+		
+		if (res.getSelectedTown() == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
+		
 		return true;
 	}
-	
+
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		if(args.length > 0 && subCommands.containsKey(args[0]))
-			super.process(sender, args);
+	public void processCommand(ICommandSender sender, String[] args) {
+		if (args.length > 0)
+			super.processCommand(sender, args);
 		else {
 			EntityPlayer player = (EntityPlayer) sender;
 
 			ItemStack stack = new ItemStack(Item.hoeWood);
 			stack.setItemName(Constants.EDIT_TOOL_NAME);
 			boolean ok = true;
-			for(ItemStack st : player.inventory.mainInventory)
-				if(st != null && st.getDisplayName().equals(Constants.EDIT_TOOL_NAME) && st.itemID == Item.hoeWood.itemID)
+			for (ItemStack st : player.inventory.mainInventory)
+				if (st != null && st.getDisplayName().equals(Constants.EDIT_TOOL_NAME) && st.itemID == Item.hoeWood.itemID)
 					ok = false;
 			boolean result = false;
-			if(ok) {
+			if (ok) {
 				result = player.inventory.addItemStackToInventory(stack);
 			}
-			if(result)
+			if (result)
 				ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.start");
-			else
-				if(ok)
-					ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.start.failed");
+			else if (ok)
+				ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.start.failed");
 		}
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 
@@ -72,6 +73,6 @@ public class CmdPlotSelect extends CommandHandler{
 	@Override
 	public void sendHelp(ICommandSender sender) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

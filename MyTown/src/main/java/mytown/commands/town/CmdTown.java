@@ -7,6 +7,8 @@ import mytown.commands.town.assistant.CmdClaim;
 import mytown.commands.town.assistant.CmdInvite;
 import mytown.commands.town.assistant.CmdPerm;
 import mytown.commands.town.assistant.CmdPlot;
+import mytown.commands.town.assistant.CmdPromote;
+import mytown.commands.town.assistant.CmdSetSpawn;
 import mytown.commands.town.assistant.CmdUnclaim;
 import mytown.commands.town.everyone.CmdBlocks;
 import mytown.commands.town.everyone.CmdInfo;
@@ -17,6 +19,7 @@ import mytown.commands.town.everyone.CmdNewTown;
 import mytown.commands.town.everyone.CmdPlots;
 import mytown.commands.town.everyone.CmdRanks;
 import mytown.commands.town.everyone.CmdSelect;
+import mytown.commands.town.everyone.CmdSpawn;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
 import net.minecraft.command.ICommandSender;
@@ -48,6 +51,9 @@ public class CmdTown extends CommandHandler {
 		addSubCommand(new CmdPlots("plots", this));
 		addSubCommand(new CmdPerm("perm", this));
 		addSubCommand(new CmdLeave("leave", this));
+		addSubCommand(new CmdPromote("promote", this));
+		addSubCommand(new CmdSetSpawn("setspawn", this));
+		addSubCommand(new CmdSpawn("spawn", this));
 		
 		// Add Aliases
 		aliases.add("t");

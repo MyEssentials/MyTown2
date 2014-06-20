@@ -126,6 +126,7 @@ public class PlayerTracker implements IPlayerTracker {
 		if(ev.action == Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Item.hoeWood) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
 			Resident res = DatasourceProxy.getDatasource().getResident(ev.entityPlayer.username);
 			if(res == null) return;
+			if(res.getSelectedTown() == null) return;
 			
 			if(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive())
 				ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");

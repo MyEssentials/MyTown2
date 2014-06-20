@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet53BlockChange;
+import net.minecraft.util.EnumChatFormatting;
 
 /**
  * Defines a player
@@ -392,7 +393,10 @@ public class Resident implements IPlotSelector {
 		return this.invitationForms.add(town);
 	}
 	
-	
+	@Override
+	public String toString() {
+		return EnumChatFormatting.WHITE + this.playerUUID;
+	}
 	
 	////////////////////////////////////////
 	// PLOT SELECTION
@@ -440,7 +444,7 @@ public class Resident implements IPlotSelector {
 	}
 	
 	@Override
-	public boolean makePlotFromSelection() {
+	public boolean makePlotFromSelection(String plotName) {
 		
 		// TODO: Check everything separately or throw exceptions?
 		
@@ -475,6 +479,7 @@ public class Resident implements IPlotSelector {
 					lastX = i >> 4;
 					lastZ = j >> 4;
 					if(!DatasourceProxy.getDatasource().hasTownBlock(selectionDim, lastX, lastZ, true, selectionTown)) {
+						System.out.println("Outside town boundaries");
 						resetSelection();
 						return false;
 					}
@@ -482,6 +487,8 @@ public class Resident implements IPlotSelector {
 				
 				for(int k = y1; k <= y2; k++) {
 					if(selectionTown.getPlotAtCoords(i, k, j) != null) {
+						System.out.println("Inside another plot" + selectionTown.getPlotAtCoords(i, k, j) + "/n" + i + " " + k + " " + j);
+						System.out.println("For selection: " + x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2);
 						resetSelection();
 						return false;
 					}
@@ -489,7 +496,7 @@ public class Resident implements IPlotSelector {
 			}
 		}
 		
-		TownPlot plot = new TownPlot(selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionTown, this);
+		TownPlot plot = new TownPlot(selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionTown, this, plotName);
 		try {
 			DatasourceProxy.getDatasource().insertPlot(plot);
 		} catch (Exception e) {

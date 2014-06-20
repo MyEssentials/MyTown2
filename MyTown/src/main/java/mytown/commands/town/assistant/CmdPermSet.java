@@ -15,43 +15,50 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 
 @Permission("mytown.cmd.assistant.perm.set")
-public class CmdPermSet extends CommandBase{
+public class CmdPermSet extends CommandBase {
 
 	public CmdPermSet(String name, CommandBase parent) {
 		super(name, parent);
 	}
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
 
-		Resident res = getDatasource().getResident(sender.getCommandSenderName());
+		Resident res = getDatasource().getResident(
+				sender.getCommandSenderName());
 
 		if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
 		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
-	
+
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		if(args.length < 2) throw new WrongUsageException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.set.usage"));
+	public void processCommand(ICommandSender sender, String[] args) {
+		if (args.length < 2)
+			throw new WrongUsageException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.set.usage"));
 		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
 		ITownFlag flag = town.getFlag(args[0]);
-		
-		if(flag == null) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.flagNotExists", args[0]));
-		if(args[1].equals("true")) {
-			flag.setValue(true);
-		} else if(args[1].equals("false")) {
-			flag.setValue(false);
-		} else {
-			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.valueNotValid", args[1]));
+		if (flag == null)
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.flagNotExists", args[0]));
+		try {
+			if (args[1].equals("true")) {
+				flag.setValue(true);
+			} else if (args[1].equals("false")) {
+				flag.setValue(false);
+			} else {
+				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.valueNotValid",args[1]));
+			}
+			ChatUtils.sendLocalizedChat(sender,LocalizationProxy.getLocalization(),"mytown.notification.town.perm.set.success", args[0],args[1]);
+
+			getDatasource().updateTownFlag(flag);
+		} catch (Exception e) {
+			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			e.printStackTrace();
 		}
-		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.perm.set.success", args[0], args[1]);
-		
-		getDatasource().updateTownFlag(flag);
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

@@ -20,7 +20,7 @@ public class CmdAdd extends CommandBase {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
+	public void processCommand (ICommandSender sender, String[] args) {
 		if (args.length < 2) throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.adm.cmd.usage.add"));
 		if (!getDatasource().hasTown(args[1])) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.town.notexist", args[1]));
 		if (!getDatasource().hasResident(args[0])) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.resident.notexist", args[0]));
@@ -33,8 +33,12 @@ public class CmdAdd extends CommandBase {
 			rank = getDatasource().getRank("Resident", getDatasource().getTown(args[1]));
 		}
 		
-		getDatasource().linkResidentToTown(getDatasource().getResident(args[0]), getDatasource().getTown(args[1]), rank);
-
+		try {
+			getDatasource().linkResidentToTown(getDatasource().getResident(args[0]), getDatasource().getTown(args[1]), rank);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.resident.add", (Object[]) args);
 	}
 

@@ -1,6 +1,5 @@
 package mytown.commands.town.assistant;
 
-import mytown.Formatter;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
@@ -9,24 +8,25 @@ import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.town.Town;
+import mytown.interfaces.ITownFlag;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
 @Permission("mytown.cmd.assistant.perm")
 public class CmdPerm extends CommandHandler {
-	
+
 	public CmdPerm(String name, CommandBase parent) {
 		super(name, parent);
-		
+
 		addSubCommand(new CmdPermSet("set", this));
 	}
 
 	@Override
 	public void sendHelp(ICommandSender sender) {
-		
+
 	}
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
@@ -38,18 +38,25 @@ public class CmdPerm extends CommandHandler {
 
 		return true;
 	}
-	
+
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		if(args.length > 0 && subCommands.containsKey(args[0]))
-			super.process(sender, args);
+	public void processCommand(ICommandSender sender, String[] args) {
+		if (args.length > 0)
+			super.processCommand(sender, args);
 		else {
 			Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-			ChatUtils.sendChat(sender, Formatter.formatFlagsToString(town.getFlags()));
+			String formattedFlagList = null;
+			for (ITownFlag flag : town.getFlags()) {
+				if (formattedFlagList == null)
+					formattedFlagList = "";
+				else
+					formattedFlagList += '\n';
+				formattedFlagList += flag;
+			}
+			ChatUtils.sendChat(sender, formattedFlagList);
 		}
-			
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

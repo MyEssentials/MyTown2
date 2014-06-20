@@ -125,10 +125,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			while (set.next()) {
 				if(set.getString("Type").equals("A")) {
 					AdminTown town = new AdminTown(set.getString("Name"));
+					town.setSpawn(set.getDouble("SpawnX"), set.getDouble("SpawnY"), set.getDouble("SpawnZ"), set.getInt("SpawnDim"));
 					addTown(town);
 					loadTownBlocks(town);
 				} else {
 					Town town = new Town(set.getString("Name"), set.getInt("ExtraBlocks"));
+					town.setSpawn(set.getDouble("SpawnX"), set.getDouble("SpawnY"), set.getDouble("SpawnZ"), set.getInt("SpawnDim"));
 					addTown(town);
 					loadTownBlocks(town);
 				}
@@ -192,10 +194,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 					int z2 = set.getInt("Z2");
 					int dim = set.getInt("Dim");
 					
+					String name = set.getString("Name");
+					
 					Town town = getTown(set.getString("TownName"));
 					Resident owner = getResident(set.getString("Owner"));
 					
-					TownPlot plot = new TownPlot(dim, x1, y1, z1, x2, y2, z2, town, owner);
+					TownPlot plot = new TownPlot(dim, x1, y1, z1, x2, y2, z2, town, owner, name);
 					town.addTownPlot(plot);
 					addPlot(plot);
 					log.info("Adding plot in town " + town.getName());
@@ -251,11 +255,15 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	@Override
 	public void updateTown(Town town) throws Exception { // TODO Allow changing Town name?
 		synchronized (lock) {
-			PreparedStatement statement = prepare("UPDATE " + prefix + "Towns SET Name=?,ExtraBlocks=?,Type=? WHERE Name=?", true);
+			PreparedStatement statement = prepare("UPDATE " + prefix + "Towns SET Name=?,ExtraBlocks=?,Type=?,SpawnX=?,SpawnY=?,SpawnZ=?,SpawnDim=? WHERE Name=?", true);
 			statement.setString(1, town.getName());
 			statement.setInt(2, town.getExtraBlocks());
 			statement.setString(3, town.getName());
-			statement.setString(4, town.getType());
+			statement.setDouble(4, town.getSpawnX());
+			statement.setDouble(5, town.getSpawnY());
+			statement.setDouble(6, town.getSpawnZ());
+			statement.setInt(7, town.getSpawnDim());
+			statement.setString(8, town.getType());
 			statement.executeUpdate();
 		}
 	}
@@ -309,7 +317,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	@Override
 	public void updatePlot(ITownPlot plot) throws Exception {
 		synchronized(lock) {
-			PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET Dim=?,X1=?,Y1=?,Z1=?,X2=?,Y2=?,Z2=?,TownName=?,Owner=?,Type=? WHERE Key=?");
+			PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET Dim=?,X1=?,Y1=?,Z1=?,X2=?,Y2=?,Z2=?,TownName=?,Owner=?,Type=?,Name=? WHERE Key=?");
 			statement.setInt(1, plot.getDim());
 			statement.setInt(2, plot.getStartX());
 			statement.setInt(3, plot.getStartY());
@@ -319,7 +327,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setInt(7, plot.getEndZ());
 			statement.setString(8, plot.getTown().getName());
 			statement.setString(9, plot.getOwner().getUUID());
-			statement.setString(10, plot.getKey());
+			statement.setString(10, plot.getName());
+			statement.setString(11, plot.getKey());
 			statement.executeUpdate();
 			plot.updateKey();
 		}
@@ -352,10 +361,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	public void insertTown(Town town) throws Exception {
 		synchronized (lock) {
 			addTown(town);
-			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Towns (Name,ExtraBlocks,Type) VALUES (?,?,?)", true);
+			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Towns (Name,ExtraBlocks,Type,SpawnX,SpawnY,SpawnZ,SpawnDim) VALUES (?,?,?,?,?,?,?)", true);
 			statement.setString(1, town.getName());
 			statement.setInt(2, town.getExtraBlocks());
 			statement.setString(3, town.getType());
+			statement.setDouble(4, town.getSpawnX());
+			statement.setDouble(5, town.getSpawnY());
+			statement.setDouble(6, town.getSpawnZ());
+			statement.setInt(7, town.getSpawnDim());
 			statement.executeUpdate();
 			if(!(town instanceof AdminTown))
 				for (String s : Constants.DEFAULT_RANK_VALUES.keySet())
@@ -428,7 +441,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			addPlot(plot);
 			plot.getTown().addTownPlot(plot);
 			
-			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Plots (Key, Dim, X1, Y1, Z1, X2, Y2, Z2, TownName, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Plots (Key, Dim, X1, Y1, Z1, X2, Y2, Z2, TownName, Owner, Name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			statement.setString(1, plot.getKey());
 			statement.setInt(2, plot.getDim());
 			statement.setInt(3, plot.getStartX());
@@ -439,6 +452,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setInt(8, plot.getEndZ());
 			statement.setString(9, plot.getTown().getName());
 			statement.setString(10, plot.getOwner().getUUID());
+			statement.setString(11, plot.getName());
 			
 			statement.executeUpdate();
 			
@@ -688,16 +702,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		synchronized(lock) {
 			PreparedStatement statement;
 			
+			// If it's the selected town then change all others not to be selected
 			if(resident.getSelectedTown() == town) {
-				statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=? WHERE Owner=?");
+				statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=? WHERE Owner=? AND IsSelectedTown=?");
 				statement.setBoolean(1, false);
 				statement.setString(2, resident.getUUID());
+				statement.setBoolean(3, true);
 				statement.executeUpdate();
 			}
-			statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=? WHERE TownName=? AND Owner=?");
+			statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=?, Rank=? WHERE TownName=? AND Owner=?");
 			statement.setBoolean(1, resident.getSelectedTown() == town);
-			statement.setString(2, town.getName());
-			statement.setString(3, resident.getUUID());
+			statement.setString(2, resident.getTownRank(town).getKey());
+			statement.setString(3, town.getName());
+			statement.setString(4, resident.getUUID());
 			statement.executeUpdate();
 		}
 	}
@@ -767,6 +784,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				"Towns ("
 				+ "Name varchar(50) NOT NULL, "
 				+ "ExtraBlocks int NOT NULL DEFAULT 0, "
+				+ "SpawnX DOUBLE, "
+				+ "SpawnY DOUBLE, "
+				+ "SpawnZ DOUBLE, "
+				+ "SpawnDim int, "
 				+ "Type varchar(1) DEFAULT 'T', "
 				+ "PRIMARY KEY (Name));"));
 		updates.add(new DBUpdate("03.08.2014.3", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix +
@@ -832,6 +853,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 				+ "TownName varchar(50), "
 				+ "Owner varchar(255), "
 				+ "Type varchar(1) DEFAULT 'T', "
+				+ "Name varchar(50), "
 				+ "PRIMARY KEY(Key), "
 				+ "FOREIGN KEY(TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, "
 				+ "FOREIGN KEY(Owner) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE)"));

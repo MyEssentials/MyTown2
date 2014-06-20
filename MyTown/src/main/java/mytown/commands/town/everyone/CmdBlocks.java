@@ -19,9 +19,9 @@ public class CmdBlocks extends CommandHandler {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length == 1 && subCommands.containsKey(args[0])) {
-			super.process(sender, args);
+	public void processCommand (ICommandSender sender, String[] args) {
+		if (args.length == 1) {
+			super.processCommand(sender, args);
 		} else {
 			Resident res = MyTown.getDatasource().getResident(sender.getCommandSenderName());
 			Town town;

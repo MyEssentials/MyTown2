@@ -2,6 +2,8 @@ mytown.cmd.unimplemented=%s is currently unimplemented!
 mytown.cmd.err.partOfTown=You need to be part of a town!
 mytown.cmd.err.town.notexist=The town %s does not exist!
 mytown.cmd.err.resident.notexist=The player %s does not exist!
+mytown.cmd.err.resident.notsametown=The player %s is not in the town you've selected(%s)!
+mytown.cmd.err.rank.notexist=The rank %s does not exist in %s!
 
 # /t new [townname]
 mytown.cmd.err.newtown.nameinuse=Town name %s already in use!
@@ -52,6 +54,14 @@ mytown.cmd.err.perm.set.usage=/t perm set <flag-name> <true|false>
 mytown.cmd.err.flagNotExists=That flag does not exist!
 mytown.cmd.err.perm.valueNotValid=Invalid value!
 
+# /t promote
+mytown.cmd.err.promote.notMayor=You cannot promote anyone to mayor. Try /t ...
+
+# /t setspawn
+mytown.cmd.err.setspawn.notintown=The position that you're in is not inside %s!
+
+# /t spawn
+mytown.cmd.err.spawn.notexist=The TownBlock that the spawn of %s was on got deleted. Please use /t setspawn to set another one.
 
 # /ta delete
 mytown.adm.cmd.delete.usage=/ta delete [townname] <townname2 townname3...>
@@ -90,6 +100,7 @@ mytown.notification.town.plot.selectionEnd=Second corner selected!
 mytown.notification.town.plot.expanded=The plot has been successfully expanded vertically!
 mytown.notification.town.plot.selectionReset=Selection has successfully reset!
 mytown.notification.town.plot.created=New plot created!
+mytown.notification.town.plots=Plots in town %s:%s
 mytown.notification.town.left=%s has left the town %s!
 mytown.notification.town.left.self=You have left the town %s!
 mytown.notification.town.perm.set.success=Flag successfully changed!
@@ -98,3 +109,4 @@ mytown.notification.town.invited.accept=You've accepted the invitation from town
 mytown.notification.town.joined=%s has joined the town %s!
 mytown.notification.town.invited=You have been invited to town %s!
 mytown.notification.town.invite.sent=The invitation was successfully sent!
+mytown.notification.town.setspawn=Spawn has been set!

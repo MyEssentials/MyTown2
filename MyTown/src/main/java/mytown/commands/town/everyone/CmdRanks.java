@@ -26,9 +26,9 @@ public class CmdRanks extends CommandHandler {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length >= 1 && subCommands.containsKey(args[0])) {
-			super.process(sender, args);
+	public void processCommand (ICommandSender sender, String[] args) {
+		if (args.length >= 1) {
+			super.processCommand(sender, args);
 		} else {
 			Town temp = null;
 			if (args.length < 1) {

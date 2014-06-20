@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import mytown.Formatter;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
+import mytown.core.Localization;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
@@ -14,60 +14,45 @@ import mytown.entities.Resident;
 import mytown.entities.comparator.TownComparator;
 import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.EnumChatFormatting;
 
 @Permission("mytown.cmd.outsider.info")
 public class CmdInfo extends CommandBase {
 
-	public static int messageLength = 3;// Number of lines of info for each town
-	
 	public CmdInfo(String name, CommandBase parent) {
 		super(name, parent);
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
+	public void processCommand (ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		String[] msg = null; // The whole message. Can have multiple town infos
-
+		List<Town> towns = new ArrayList<Town>();
+		
 		if (args.length < 1) {
 			if (res.getSelectedTown() != null) {
-				msg = prepare(res.getSelectedTown());
+				towns.add(res.getSelectedTown());
 			}
 			else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.info.notpart"));
-		}
-
-		if (args.length >= 1) {
+		} else {
+			
 			// Printing out info for all towns.
 			if (args[0].equals("@a")) {
 				
-				List<Town> temp = new ArrayList<Town>(getDatasource().getTowns(false));
+				towns = new ArrayList<Town>(getDatasource().getTowns(false));
 
 				// Using Comparator object to compare names and such
 				TownComparator comp = new TownComparator(TownComparator.Order.Name);
-				Collections.sort(temp, comp);
-				msg = prepare(temp.toArray(new Town[temp.size()]));
+				Collections.sort(towns, comp);
 			} else if (getDatasource().hasTown(args[0])) {
-				msg = prepare(getDatasource().getTown(args[0]));
+				towns.add(getDatasource().getTown(args[0]));
 			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		}
-		for (int i = 0; i < msg.length / messageLength; i++)
-			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.info", msg[i*messageLength], msg[i*messageLength + 1], msg[i*messageLength + 2]);
-	}
-
-	public String[] prepare(Town... towns) {
-		String[] msg = new String[towns.length * messageLength];
-		int i = 0;
-		for(Town t : towns) {
-			msg[i*3] =     EnumChatFormatting.BLUE + " ---------- " + t.getName() + EnumChatFormatting.GREEN + " (" + EnumChatFormatting.WHITE + "R:" + t.getResidents().size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "B:" + t.getTownBlocks().size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "P:" + t.getTownPlots().size() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.BLUE + " ----------" + '\n' + EnumChatFormatting.GRAY;
-			msg[i*3+1] =   Formatter.formatResidentsToString(t.getResidents(), t) + '\n' + EnumChatFormatting.GRAY;
-			msg[i++*3+2] = Formatter.formatRanksToString(t.getRanks());
-		}
-		return msg;
+		for (Town town : towns)
+			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.info", (Object[]) town.getInfo());
 	}
 
 	/**

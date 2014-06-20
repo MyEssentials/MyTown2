@@ -13,7 +13,7 @@ public interface IPlotSelector {
 	boolean isFirstPlotSelectionActive();
 	boolean isSecondPlotSelectionActive();
 	
-	boolean makePlotFromSelection();
+	boolean makePlotFromSelection(String plotName);
 	
 	void expandSelectionVert();
 
