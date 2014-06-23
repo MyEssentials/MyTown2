@@ -11,11 +11,11 @@ import net.minecraft.command.ICommandSender;
 
 @Permission("mytown.cmd.assistant.plot.select.reset")
 public class CmdPlotSelectReset extends CommandBase {
-	
+
 	public CmdPlotSelectReset(String name, CommandBase parent) {
 		super(name, parent);
 	}
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		return parent.canCommandSenderUseCommand(sender);
@@ -28,7 +28,7 @@ public class CmdPlotSelectReset extends CommandBase {
 
 		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionReset");
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

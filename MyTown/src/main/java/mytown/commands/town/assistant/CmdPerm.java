@@ -15,41 +15,43 @@ import net.minecraft.command.ICommandSender;
 
 @Permission("mytown.cmd.assistant.perm")
 public class CmdPerm extends CommandHandler {
-	
+
 	public CmdPerm(String name, CommandBase parent) {
 		super(name, parent);
-		
+
 		addSubCommand(new CmdPermSet("set", this));
 	}
 
 	@Override
 	public void sendHelp(ICommandSender sender) {
-		
+
 	}
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
 
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
-		if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getTowns().size() == 0)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
-	
+
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if(args.length > 0 && subCommands.containsKey(args[0]))
+		if (args.length > 0 && subCommands.containsKey(args[0])) {
 			super.process(sender, args);
-		else {
+		} else {
 			Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
 			ChatUtils.sendChat(sender, Formatter.formatFlagsToString(town.getFlags()));
 		}
-			
+
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

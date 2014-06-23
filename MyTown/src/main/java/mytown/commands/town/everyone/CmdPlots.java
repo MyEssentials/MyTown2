@@ -17,25 +17,28 @@ public class CmdPlots extends CommandBase {
 	public CmdPlots(String name, CommandBase parent) {
 		super(name, parent);
 	}
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		if(!res.getTownRank().hasPermission(this.permNode))  throw new CommandException("commands.generic.permission");
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 		return true;
 	}
-	
+
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		Resident res =  getDatasource().getResident(sender.getCommandSenderName());
-		if(args.length == 0) {
-			if(res.getSelectedTown() == null) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
-			else ChatUtils.sendChat(sender, Formatter.formatTownPlotsToString(res.getSelectedTown().getTownPlots()));
+		Resident res = getDatasource().getResident(sender.getCommandSenderName());
+		if (args.length == 0) {
+			if (res.getSelectedTown() == null)
+				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
+			else {
+				ChatUtils.sendChat(sender, Formatter.formatTownPlotsToString(res.getSelectedTown().getTownPlots()));
+			}
 		}
 	}
-	
-	
+
 	private MyTownDatasource getDatasource() {
 		return DatasourceProxy.getDatasource();
 	}

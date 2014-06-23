@@ -22,7 +22,7 @@ import net.minecraft.util.EnumChatFormatting;
 public class CmdInfo extends CommandBase {
 
 	public static int messageLength = 3;// Number of lines of info for each town
-	
+
 	public CmdInfo(String name, CommandBase parent) {
 		super(name, parent);
 	}
@@ -35,15 +35,14 @@ public class CmdInfo extends CommandBase {
 		if (args.length < 1) {
 			if (res.getSelectedTown() != null) {
 				msg = prepare(res.getSelectedTown());
-			}
-			else
+			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.info.notpart"));
 		}
 
 		if (args.length >= 1) {
 			// Printing out info for all towns.
 			if (args[0].equals("@a")) {
-				
+
 				List<Town> temp = new ArrayList<Town>(getDatasource().getTowns(false));
 
 				// Using Comparator object to compare names and such
@@ -55,17 +54,18 @@ public class CmdInfo extends CommandBase {
 			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		}
-		for (int i = 0; i < msg.length / messageLength; i++)
-			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.info", msg[i*messageLength], msg[i*messageLength + 1], msg[i*messageLength + 2]);
+		for (int i = 0; i < msg.length / CmdInfo.messageLength; i++) {
+			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.info", msg[i * CmdInfo.messageLength], msg[i * CmdInfo.messageLength + 1], msg[i * CmdInfo.messageLength + 2]);
+		}
 	}
 
 	public String[] prepare(Town... towns) {
-		String[] msg = new String[towns.length * messageLength];
+		String[] msg = new String[towns.length * CmdInfo.messageLength];
 		int i = 0;
-		for(Town t : towns) {
-			msg[i*3] =     EnumChatFormatting.BLUE + " ---------- " + t.getName() + EnumChatFormatting.GREEN + " (" + EnumChatFormatting.WHITE + "R:" + t.getResidents().size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "B:" + t.getTownBlocks().size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "P:" + t.getTownPlots().size() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.BLUE + " ----------" + '\n' + EnumChatFormatting.GRAY;
-			msg[i*3+1] =   Formatter.formatResidentsToString(t.getResidents(), t) + '\n' + EnumChatFormatting.GRAY;
-			msg[i++*3+2] = Formatter.formatRanksToString(t.getRanks());
+		for (Town t : towns) {
+			msg[i * 3] = EnumChatFormatting.BLUE + " ---------- " + t.getName() + EnumChatFormatting.GREEN + " (" + EnumChatFormatting.WHITE + "R:" + t.getResidents().size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "B:" + t.getTownBlocks().size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "P:" + t.getTownPlots().size() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.BLUE + " ----------" + '\n' + EnumChatFormatting.GRAY;
+			msg[i * 3 + 1] = Formatter.formatResidentsToString(t.getResidents(), t) + '\n' + EnumChatFormatting.GRAY;
+			msg[i++ * 3 + 2] = Formatter.formatRanksToString(t.getRanks());
 		}
 		return msg;
 	}

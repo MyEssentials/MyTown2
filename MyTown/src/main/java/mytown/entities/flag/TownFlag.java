@@ -8,30 +8,30 @@ public class TownFlag implements ITownFlag {
 	protected String key;
 	protected String flagName;
 	protected String localizedDescription;
-	
+
 	protected boolean value;
-	
+
 	public TownFlag(String flagName, String localizedDescription, boolean defaultValue) {
 		this.flagName = flagName;
 		this.localizedDescription = localizedDescription;
-		this.value = defaultValue;
+		value = defaultValue;
 	}
-	
+
 	@Override
 	public String getName() {
-		return this.flagName;
+		return flagName;
 	}
-	
+
 	@Override
 	public String getLocalizedDescription() {
-		return this.localizedDescription;
+		return localizedDescription;
 	}
-	
+
 	@Override
 	public boolean getValue() {
-		return this.value;
+		return value;
 	}
-	
+
 	@Override
 	public boolean setValue(boolean value) {
 		this.value = value;
@@ -41,12 +41,12 @@ public class TownFlag implements ITownFlag {
 
 	@Override
 	public int getDB_ID() {
-		return this.ID;
+		return ID;
 	}
 
 	@Override
 	public void setDB_ID(int id) {
-		this.ID = id;
+		ID = id;
 	}
 
 }

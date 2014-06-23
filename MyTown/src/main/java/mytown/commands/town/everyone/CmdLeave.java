@@ -20,9 +20,10 @@ public class CmdLeave extends CommandBase {
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
-	
-		if(getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown() == null) throw new CommandException("commands.generic.permission");
-		
+
+		if (getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown() == null)
+			throw new CommandException("commands.generic.permission");
+
 		return true;
 	}
 
@@ -30,12 +31,15 @@ public class CmdLeave extends CommandBase {
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		Town town = res.getSelectedTown();
-		if(town == null) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
+		if (town == null)
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
 		getDatasource().unlinkResidentFromTown(res, town);
 		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.left.self", town.getName());
-		for(Resident r : town.getResidents())
+		for (Resident r : town.getResidents()) {
 			r.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.left", res.getUUID(), town.getName());
+		}
 	}
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

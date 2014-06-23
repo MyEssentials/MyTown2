@@ -22,7 +22,7 @@ import mytown.proxies.DatasourceProxy;
  * @author Joe Goett
  */
 public class Town implements Comparable<Town> {
-	
+
 	protected String name;
 	protected int extraBlocks = 0;
 	protected List<Rank> ranks;
@@ -31,7 +31,7 @@ public class Town implements Comparable<Town> {
 	protected List<Nation> nations = new ArrayList<Nation>();
 	protected List<TownBlock> townBlocks = new ArrayList<TownBlock>();
 	protected Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
-	
+
 	/**
 	 * Creates a town with the given name
 	 * 
@@ -44,7 +44,7 @@ public class Town implements Comparable<Town> {
 	public Town(String name, int extraBlocks) {
 		this.name = name;
 		this.extraBlocks = extraBlocks;
-		
+
 		ranks = new ArrayList<Rank>();
 		townPlots = new ArrayList<ITownPlot>();
 		flags = new ArrayList<ITownFlag>();
@@ -62,7 +62,6 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Nations
 	// //////////////////////////////////////
-	
 
 	public boolean addNations(List<Nation> nations) {
 		return this.nations.addAll(nations);
@@ -97,7 +96,6 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Blocks
 	// //////////////////////////////////////
-	
 
 	/**
 	 * Adds the given TownBlocks to this Town
@@ -105,8 +103,8 @@ public class Town implements Comparable<Town> {
 	 * @param townBlocks
 	 */
 	public void addTownBlocks(List<TownBlock> townBlocks) {
-		// Just to make the singular version easily overridable 
-		for(TownBlock block : townBlocks) {
+		// Just to make the singular version easily overridable
+		for (TownBlock block : townBlocks) {
 			addTownBlock(block);
 		}
 	}
@@ -160,7 +158,6 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Residents
 	// //////////////////////////////////////
-
 
 	/**
 	 * Returns the Residents
@@ -315,7 +312,7 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Flags
 	// //////////////////////////////////////
-	
+
 	/**
 	 * Adds a TownFlag to the towns default flags
 	 * 
@@ -324,7 +321,7 @@ public class Town implements Comparable<Town> {
 	public void addFlag(ITownFlag flag) {
 		flags.add(flag);
 	}
-	
+
 	/**
 	 * Gets a TownFlag from the towns default flags
 	 * 
@@ -332,22 +329,22 @@ public class Town implements Comparable<Town> {
 	 * @return
 	 */
 	public ITownFlag getFlag(String name) {
-		for(ITownFlag flag : flags) {
-			if(flag.getName().equals(name))
+		for (ITownFlag flag : flags) {
+			if (flag.getName().equals(name))
 				return flag;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a list of all the default flags
 	 * 
 	 * @return
 	 */
 	public List<ITownFlag> getFlags() {
-		return this.flags;
+		return flags;
 	}
-	
+
 	/**
 	 * Gets all the flags for the specified block. Returns town's flags if no plot is found.
 	 * 
@@ -358,10 +355,11 @@ public class Town implements Comparable<Town> {
 	 */
 	public List<ITownFlag> getFlagsForBlockCoords(int x, int y, int z) {
 		ITownPlot plot = getPlotAtCoords(x, y, z);
-		if(plot == null) return this.getFlags();
+		if (plot == null)
+			return getFlags();
 		return plot.getFlags();
 	}
-	
+
 	/**
 	 * Gets the flag on the specified coordinates. Returns town's flag if no plot is found.
 	 * 
@@ -373,10 +371,11 @@ public class Town implements Comparable<Town> {
 	 */
 	public ITownFlag getFlagAtCoords(int x, int y, int z, String flagName) {
 		ITownPlot plot = getPlotAtCoords(x, y, z);
-		if(plot == null) return this.getFlag(flagName);
+		if (plot == null)
+			return getFlag(flagName);
 		return plot.getFlag(flagName);
 	}
-	
+
 	// //////////////////////////////////////
 	// Plots
 	// //////////////////////////////////////
@@ -386,9 +385,9 @@ public class Town implements Comparable<Town> {
 	 * @param plot
 	 */
 	public boolean addTownPlot(ITownPlot plot) {
-		return this.townPlots.add(plot);
+		return townPlots.add(plot);
 	}
-	
+
 	/**
 	 * Removes an ITownPlot from this block
 	 * 
@@ -396,16 +395,16 @@ public class Town implements Comparable<Town> {
 	 * @return
 	 */
 	public boolean removeTownPlot(ITownPlot plot) {
-		return this.townPlots.remove(plot);
+		return townPlots.remove(plot);
 	}
-	
+
 	/**
 	 * Gets a list of all plots in the town
 	 * 
 	 * @return
 	 */
 	public List<ITownPlot> getTownPlots() {
-		return this.townPlots;
+		return townPlots;
 	}
 
 	/**
@@ -417,16 +416,13 @@ public class Town implements Comparable<Town> {
 	 * @return
 	 */
 	public ITownPlot getPlotAtCoords(int x, int y, int z) {
-		for(ITownPlot p : townPlots) {
-			if(p.isBlockInsidePlot(x, y, z)) {
+		for (ITownPlot p : townPlots) {
+			if (p.isBlockInsidePlot(x, y, z))
 				return p;
-			}
 		}
 		return null;
 	}
-	
 
-	
 	// //////////////////////////////////////
 	// Helper?
 	// //////////////////////////////////////
@@ -448,22 +444,20 @@ public class Town implements Comparable<Town> {
 
 		return -1;
 	}
-	
+
 	/**
 	 * Gets the character that represents the type of this town. Only used in datasource
 	 * 
 	 * @return
 	 */
 	public String getType() {
-		if(this instanceof AdminTown)
+		if (this instanceof AdminTown)
 			return "A";
 		return "T";
 	}
-	
+
 	protected MyTownDatasource getDatasource() {
 		return DatasourceProxy.getDatasource();
 	}
-
-	
 
 }

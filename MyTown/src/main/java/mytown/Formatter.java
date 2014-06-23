@@ -35,8 +35,9 @@ public class Formatter {
 				res += EnumChatFormatting.WHITE + ", " + color + r.getName();
 			}
 		}
-		if(ranks.size() == 0)
+		if (ranks.size() == 0) {
 			res = EnumChatFormatting.RED + "NONE";
+		}
 
 		return res;
 	}
@@ -51,15 +52,17 @@ public class Formatter {
 	public static String formatResidentsToString(List<Resident> residents, Town t) {
 		String res = null;
 		for (Resident r : residents)
-			if (res == null)
+			if (res == null) {
 				res = EnumChatFormatting.WHITE + r.getUUID() + EnumChatFormatting.GOLD + " (" + EnumChatFormatting.GREEN + r.getTownRank(t).getName() + EnumChatFormatting.GOLD + ")";
-			else
+			} else {
 				res += ", " + EnumChatFormatting.WHITE + r.getUUID() + EnumChatFormatting.GOLD + " (" + EnumChatFormatting.GREEN + r.getTownRank(t).getName() + EnumChatFormatting.GOLD + ")";
-		if(residents.size() == 0)
+			}
+		if (residents.size() == 0) {
 			res = EnumChatFormatting.RED + "NONE";
+		}
 		return res;
 	}
-	
+
 	/**
 	 * Formats a list of town blocks to a String that is then sent to the player.
 	 * 
@@ -76,7 +79,7 @@ public class Formatter {
 			} else {
 				toBeAdded = "(" + (block.getX() * 16) + ", " + (block.getZ() * 16) + ")";
 			}
-			
+
 			if (res == null) {
 				res = toBeAdded;
 			} else {
@@ -85,7 +88,7 @@ public class Formatter {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Formats a list of plots to a String that is then sent to the player.
 	 * 
@@ -94,10 +97,11 @@ public class Formatter {
 	 */
 	public static String formatTownPlotsToString(List<ITownPlot> plots) {
 		String res = " "; // Adding a space since minecraft likes to mess with formatting -_-
-		for(ITownPlot plot : plots) {
+		for (ITownPlot plot : plots) {
 			String toBeAdded = "";
-			if(!res.equals(" "))
+			if (!res.equals(" ")) {
 				toBeAdded = "\n";
+			}
 
 			toBeAdded += "Dim:" + plot.getDim();
 			toBeAdded += ", From [" + plot.getStartX();
@@ -111,7 +115,7 @@ public class Formatter {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Formats a list of flags to a String that is then sent to the player.
 	 * 
@@ -120,17 +124,18 @@ public class Formatter {
 	 */
 	public static String formatFlagsToString(List<ITownFlag> flags) {
 		String res = " "; // Adding a space since minecraft likes to mess with formatting -_-
-		for(ITownFlag flag : flags) {
+		for (ITownFlag flag : flags) {
 			String toBeAdded = "";
-			if(!res.equals(" "))
+			if (!res.equals(" ")) {
 				toBeAdded = "\n";
-			
+			}
+
 			toBeAdded += EnumChatFormatting.YELLOW + flag.getName();
 			toBeAdded += EnumChatFormatting.GREEN + " (" + EnumChatFormatting.RED + flag.getValue() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.WHITE;
 			toBeAdded += ": " + flag.getLocalizedDescription();
 			res += toBeAdded;
 		}
-		
+
 		return res;
 	}
 }

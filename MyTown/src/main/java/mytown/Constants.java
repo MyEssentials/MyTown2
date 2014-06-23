@@ -14,7 +14,7 @@ public class Constants {
 	public static String CONFIG_FOLDER = "";
 
 	public static final String EDIT_TOOL_NAME = EnumChatFormatting.BLUE + "Selector"; // TODO: Get localozation for it, maybe?
-	
+
 	// TODO Allow configuring them
 	public static Map<String, ArrayList<String>> DEFAULT_RANK_VALUES = new HashMap<String, ArrayList<String>>();
 

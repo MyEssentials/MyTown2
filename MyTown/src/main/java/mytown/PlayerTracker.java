@@ -61,7 +61,9 @@ public class PlayerTracker implements IPlayerTracker {
 		try {
 			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(pl);
 			res.checkLocation(pl.chunkCoordX, pl.chunkCoordZ, pl.dimension);
-			if (res.isMapOn()) res.sendMap();
+			if (res.isMapOn()) {
+				res.sendMap();
+			}
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change?
 		}
@@ -71,79 +73,88 @@ public class PlayerTracker implements IPlayerTracker {
 	public void onPlayerRespawn(EntityPlayer player) {
 		// TODO Auto-generated method stub
 	}
+
 	@ForgeSubscribe
 	public void onEnterChunk(EntityEvent.EnteringChunk ev) {
-		if (!(ev.entity instanceof EntityPlayer)) return;
-		if(ev.entity.worldObj.isRemote) return; // So that it's not called twice :P
+		if (!(ev.entity instanceof EntityPlayer))
+			return;
+		if (ev.entity.worldObj.isRemote)
+			return; // So that it's not called twice :P
 		EntityPlayer pl = (EntityPlayer) ev.entity;
 		try {
 			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(pl);
 			res.checkLocation(ev.oldChunkX, ev.oldChunkZ, ev.newChunkX, ev.newChunkZ, pl.dimension);
-			if (res.isMapOn()) res.sendMap();
+			if (res.isMapOn()) {
+				res.sendMap();
+			}
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change?
 		}
 	}
+
 	@ForgeSubscribe
 	public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
 		// TODO: Implement wilderness perms too
-		if(!DatasourceProxy.getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4))) return;
+		if (!DatasourceProxy.getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4)))
+			return;
 		else {
 			Town town = DatasourceProxy.getDatasource().getTownBlock(String.format(TownBlock.keyFormat, ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4)).getTown();
 			ITownFlag flag = town.getFlagAtCoords(ev.x, ev.y, ev.z, "breakBlocks");
-			if(flag == null)
+			if (flag == null)
 				return;
-			if(flag.getValue() == true)
+			if (flag.getValue() == true)
 				return;
-			if(DatasourceProxy.getDatasource().getResident(ev.getPlayer().username).isPartOfTown(town))
+			if (DatasourceProxy.getDatasource().getResident(ev.getPlayer().username).isPartOfTown(town))
 				return;
 			ev.setCanceled(true);
 		}
 	}
-	
+
 	@ForgeSubscribe
 	public void onItemToolTip(ItemTooltipEvent ev) {
-		if(ev.itemStack.getDisplayName().equals(EnumChatFormatting.BLUE + "Selector") && ev.itemStack.getItem() == Item.hoeWood) {
+		if (ev.itemStack.getDisplayName().equals(EnumChatFormatting.BLUE + "Selector") && ev.itemStack.getItem() == Item.hoeWood) {
 			ev.toolTip.add(EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.");
 			ev.toolTip.add(EnumChatFormatting.DARK_AQUA + "Uses: 1");
 		}
 	}
-	
+
 	// Because I can
 	@ForgeSubscribe
 	public void onUseHoe(UseHoeEvent ev) {
-		if(ev.current.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+		if (ev.current.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
 			ev.setCanceled(true);
 		}
 	}
-	
+
 	@ForgeSubscribe
 	public void onItemUse(PlayerInteractEvent ev) {
-		if(ev.entityPlayer.worldObj.isRemote) return;
-		
+		if (ev.entityPlayer.worldObj.isRemote)
+			return;
+
 		ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
-		if(currentStack == null) return;
-		if(ev.action == Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Item.hoeWood) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+		if (currentStack == null)
+			return;
+		if (ev.action == Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Item.hoeWood) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
 			Resident res = DatasourceProxy.getDatasource().getResident(ev.entityPlayer.username);
-			if(res == null) return;
-			
-			if(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive())
+			if (res == null)
+				return;
+
+			if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
 				ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
-			else {
+			} else {
 				boolean result = res.selectBlockForPlot(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
-				if(result) {
-					if(!res.isSecondPlotSelectionActive())
+				if (result) {
+					if (!res.isSecondPlotSelectionActive()) {
 						ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionStart");
-					else
+					} else {
 						ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionEnd");
-				} else {
+					}
+				} else
 					throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selectionFailed"));
-				}
-				
+
 			}
 			System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
 		}
 	}
-	
 
 }

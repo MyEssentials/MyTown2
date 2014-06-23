@@ -15,25 +15,22 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 
 @Permission("mytown.cmd.adm.new")
-public class CmdNewTown extends CommandBase{
+public class CmdNewTown extends CommandBase {
 
 	public CmdNewTown(String name, CommandBase parent) {
 		super(name, parent);
 	}
-	
-	
+
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length < 1) {
+		if (args.length < 1)
 			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.newtown"));
-		}
-		if (getDatasource().hasTown(args[0])) {
+		if (getDatasource().hasTown(args[0]))
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.newtown.nameinuse", (Object[]) args));
-		}
 
 		AdminTown town = new AdminTown(args[0]);
 		Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
-		EntityPlayer player = (EntityPlayer)sender;
+		EntityPlayer player = (EntityPlayer) sender;
 		getDatasource().insertTown(town);
 		getDatasource().insertTownBlock(new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension));
 		getDatasource().insertTownFlag(town, new TownFlag("mobs", "Controls mobs spawning", true));
@@ -42,7 +39,7 @@ public class CmdNewTown extends CommandBase{
 		getDatasource().insertTownFlag(town, new TownFlag("accessBlocks", "Controls whether or not non-residents can access(right click) blocks", false));
 		getDatasource().insertTownFlag(town, new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
 		getDatasource().insertTownFlag(town, new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
-		
+
 		res.sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.admtown.created", town.getName());
 	}
 

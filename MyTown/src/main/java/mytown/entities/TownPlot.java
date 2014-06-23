@@ -7,49 +7,46 @@ import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
 
-
 public class TownPlot implements ITownPlot {
-	
+
 	// TODO: Read from config
 	public static int minX = 5;
 	public static int minY = 4;
 	public static int minZ = 5;
-	
+
 	protected int x1, z1, y1, x2, z2, y2;
 	protected int dim;
-	
+
 	protected String key;
-	
+
 	protected Town town;
 	protected Resident owner;
-	
+
 	protected int chunkX1, chunkZ1, chunkX2, chunkZ2;
-	
+
 	protected List<TownBlock> townBlocks;
-	
-	protected List<ITownFlag> plotFlags; 
-	
-	
-	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town, Resident owner)
-	{
-		if(x1 > x2) {
+
+	protected List<ITownFlag> plotFlags;
+
+	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town, Resident owner) {
+		if (x1 > x2) {
 			int aux = x2;
 			x2 = x1;
 			x1 = aux;
 		}
-		
-		if(z1 > z2) {
+
+		if (z1 > z2) {
 			int aux = z2;
 			z2 = z1;
 			z1 = aux;
 		}
-		
-		if(y1 > y2) {
+
+		if (y1 > y2) {
 			int aux = y2;
 			y2 = y1;
 			y2 = aux;
 		}
-		
+
 		this.x1 = x1;
 		this.y1 = y1;
 		this.z1 = z1;
@@ -57,14 +54,14 @@ public class TownPlot implements ITownPlot {
 		this.y2 = y2;
 		this.z2 = z2;
 		this.dim = dim;
-		
+
 		this.town = town;
 		this.owner = owner;
-		
-		this.initializeFlags();
-		this.updateKey();
+
+		initializeFlags();
+		updateKey();
 	}
-	
+
 	/**
 	 * Gets the unique key for the plot
 	 * 
@@ -72,9 +69,9 @@ public class TownPlot implements ITownPlot {
 	 */
 	@Override
 	public String getKey() {
-		return this.key;
+		return key;
 	}
-	
+
 	/**
 	 * Updates the key. Only called in the constructor and when updating in database. DO NOT CALL ELSEWHERE!
 	 */
@@ -82,52 +79,48 @@ public class TownPlot implements ITownPlot {
 	public void updateKey() {
 		key = String.format("%s;%s;%s;%s;%s;%s;%s", dim, x1, y1, z1, x2, y2, z2);
 	}
-	
+
 	private void initializeFlags() {
-		if(town.getFlags() != null) // just in case ;)
-			this.plotFlags = town.getFlags();
-		else
-			this.plotFlags = new ArrayList<ITownFlag>();
-		
+		if (town.getFlags() != null) {
+			plotFlags = town.getFlags();
+		} else {
+			plotFlags = new ArrayList<ITownFlag>();
+		}
+
 	}
-	
-	//temp
-	public void verify()
-	{
-		if(x1 > x2)
-		{
+
+	// temp
+	public void verify() {
+		if (x1 > x2) {
 			int aux = x2;
 			x2 = x1;
 			x1 = aux;
 		}
-		if(z1 > z2)
-		{
+		if (z1 > z2) {
 			int aux = z2;
 			z2 = z1;
 			z1 = aux;
 		}
-		
-		
+
 		int chunkX = x1 / 16;
 		int chunkZ = z1 / 16;
-		
-		for(int X = chunkX; X <= x2/16; X++)
-			for(int Z = chunkZ; Z <= z2/16; Z++)
-			{
-				//if(!DatasourceProxy.getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, chunkX, chunkZ, dim)))
-					
-				
+
+		for (int X = chunkX; X <= x2 / 16; X++) {
+			for (int Z = chunkZ; Z <= z2 / 16; Z++) {
+				// if(!DatasourceProxy.getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, chunkX, chunkZ, dim)))
+
 			}
+		}
 	}
 
 	@Override
 	public Town getTown() {
-		return this.town;
+		return town;
 	}
 
 	@Override
 	public Resident getOwner() {
-		return this.owner;
+		return owner;
 	}
 
 	@Override
@@ -182,39 +175,38 @@ public class TownPlot implements ITownPlot {
 
 	@Override
 	public List<ITownFlag> getFlags() {
-		return this.plotFlags;
+		return plotFlags;
 	}
 
 	@Override
 	public List<TownBlock> getEncompasingBlocks() {
-		return this.townBlocks;
+		return townBlocks;
 	}
-	
+
 	@Override
 	public boolean isBlockInsidePlot(int x, int y, int z) {
 		return x2 >= x && x <= x1 && y2 >= y && y <= y1 && z2 >= z && z <= z1;
 	}
-	
+
 	@Override
 	public ITownFlag getFlag(String flagName) {
-		for(ITownFlag flag : plotFlags) {
-			if(flag.getName().equals(flagName)) {
+		for (ITownFlag flag : plotFlags) {
+			if (flag.getName().equals(flagName))
 				return flag;
-			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public int getDim() {
-		return this.dim;
+		return dim;
 	}
-	
+
 	@Override
 	public boolean addFlag(ITownFlag flag) {
 		return plotFlags.add(flag);
 	}
-	
+
 	@Override
 	public boolean removeFlag(String flagName) {
 		return plotFlags.remove(getFlag(flagName));

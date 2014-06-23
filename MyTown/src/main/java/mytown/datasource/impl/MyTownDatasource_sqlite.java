@@ -39,7 +39,7 @@ public class MyTownDatasource_sqlite extends MyTownDatasource_SQL {
 
 		PreparedStatement statement = prepare("PRAGMA foreign_keys = ON");
 		statement.executeUpdate();
-		
+
 		return true;
 	}
 

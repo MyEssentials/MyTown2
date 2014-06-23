@@ -26,11 +26,11 @@ public class Resident implements IPlotSelector {
 	private boolean isOnline = false;
 	private boolean isNPC = false;
 	private boolean mapOn = false;
-	private List<Town> invitationForms = null; 
+	private List<Town> invitationForms = null;
 	private EntityPlayer player = null;
 	private int lastChunkZ, lastChunkX;
 	private int lastDim;
-	
+
 	private int selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim;
 	private Town selectionTown;
 	private boolean firstSelectionActive = false, secondSelectionActive = false;
@@ -191,34 +191,34 @@ public class Resident implements IPlotSelector {
 		}
 		sendMessage(sb.toString());
 	}
-	
-	
+
 	public void checkLocation(int oldChunkX, int oldChunkZ, int newChunkX, int newChunkZ, int dimension) {
 		if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null) {
 			TownBlock oldTownBlock, newTownBlock;
-			
+
 			oldTownBlock = MyTown.getDatasource().getTownBlock(lastDim, oldChunkX, oldChunkZ, true);
 			newTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, newChunkX, newChunkZ, true);
 
 			if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
-				if(this.isPartOfTown(newTownBlock.getTown()))
+				if (isPartOfTown(newTownBlock.getTown())) {
 					sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.ownTown", newTownBlock.getTown().getName());
-				else
+				} else {
 					sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.town", newTownBlock.getTown().getName());
+				}
 			} else if (oldTownBlock != null && newTownBlock == null) {
 				sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.enter.wild");
 			}
 
 			lastDim = player.dimension;
-			this.lastChunkX = newChunkX;
-			this.lastChunkZ = newChunkZ;
+			lastChunkX = newChunkX;
+			lastChunkZ = newChunkZ;
 		}
 	}
 
 	public void checkLocation(int newChunkX, int newChunkZ, int dimension) {
-		checkLocation(this.lastChunkX, this.lastChunkZ, newChunkX, newChunkZ, dimension);
+		checkLocation(lastChunkX, lastChunkZ, newChunkX, newChunkZ, dimension);
 	}
-	
+
 	// //////////////////////////////////////
 	// Towns
 	// //////////////////////////////////////
@@ -342,13 +342,15 @@ public class Resident implements IPlotSelector {
 	public void confirmForm(boolean accepted, String townName) {
 		if (invitationForms.size() != 0) {
 			Town town = getTownFromInvitations(townName);
-			if(town == null) return;
+			if (town == null)
+				return;
 			if (accepted) {
 				try {
-					
+
 					sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.invited.accept", town.getName());
-					for(Resident res : town.getResidents())
-						res.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.joined", this.getUUID(), town.getName());
+					for (Resident res : town.getResidents()) {
+						res.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.joined", getUUID(), town.getName());
+					}
 					DatasourceProxy.getDatasource().linkResidentToTown(this, town, town.getRank("Resident"));
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -381,7 +383,7 @@ public class Resident implements IPlotSelector {
 	public List<Town> getInvitations() {
 		return invitationForms;
 	}
-	
+
 	/**
 	 * Adds an invitation to the resident
 	 * 
@@ -389,106 +391,106 @@ public class Resident implements IPlotSelector {
 	 * @return
 	 */
 	public boolean addInvitation(Town town) {
-		return this.invitationForms.add(town);
+		return invitationForms.add(town);
 	}
-	
-	
-	
-	////////////////////////////////////////
+
+	// //////////////////////////////////////
 	// PLOT SELECTION
-	////////////////////////////////////////
-	
+	// //////////////////////////////////////
+
 	// Mostly a workaround, might be changed
-	
+
 	@Override
-	public boolean selectBlockForPlot (int dim, int x, int y, int z) {
+	public boolean selectBlockForPlot(int dim, int x, int y, int z) {
 		TownBlock tb = DatasourceProxy.getDatasource().getTownBlock(dim, x, z, false);
-		if(firstSelectionActive && this.selectionDim != dim) return false;
-		if(tb == null || tb.getTown() != getSelectedTown() && !firstSelectionActive || tb.getTown() != selectionTown && firstSelectionActive) return false;
-		if(!firstSelectionActive) {
-			this.secondSelectionActive = false;
-			this.selectionDim = dim;
-			this.selectionX1 = x;
-			this.selectionY1 = y;
-			this.selectionZ1 = z;
-			this.selectionTown = tb.getTown();
-			this.firstSelectionActive = true;
-			
+		if (firstSelectionActive && selectionDim != dim)
+			return false;
+		if (tb == null || tb.getTown() != getSelectedTown() && !firstSelectionActive || tb.getTown() != selectionTown && firstSelectionActive)
+			return false;
+		if (!firstSelectionActive) {
+			secondSelectionActive = false;
+			selectionDim = dim;
+			selectionX1 = x;
+			selectionY1 = y;
+			selectionZ1 = z;
+			selectionTown = tb.getTown();
+			firstSelectionActive = true;
+
 			Packet53BlockChange packet = new Packet53BlockChange(x, y, z, player.worldObj);
-			
+
 			packet.type = Block.blockRedstone.blockID;
-			
-			((EntityPlayerMP)player).playerNetServerHandler.sendPacketToPlayer(packet);
-			
+
+			((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(packet);
+
 		} else {
-			this.selectionX2 = x;
-			this.selectionY2 = y;
-			this.selectionZ2 = z;
-			this.secondSelectionActive = true;
+			selectionX2 = x;
+			selectionY2 = y;
+			selectionZ2 = z;
+			secondSelectionActive = true;
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean isFirstPlotSelectionActive() {
-		return this.firstSelectionActive;
+		return firstSelectionActive;
 	}
-	
+
 	@Override
 	public boolean isSecondPlotSelectionActive() {
-		return this.secondSelectionActive;
+		return secondSelectionActive;
 	}
-	
+
 	@Override
 	public boolean makePlotFromSelection() {
-		
+
 		// TODO: Check everything separately or throw exceptions?
-		
-		if(!secondSelectionActive || !firstSelectionActive || (Math.abs(selectionX1 - selectionX2) < TownPlot.minX || Math.abs(selectionY1 - selectionY2) < TownPlot.minY || Math.abs(selectionZ1 - selectionZ2) < TownPlot.minZ) && !(selectedTown instanceof AdminTown)) {
+
+		if (!secondSelectionActive || !firstSelectionActive || (Math.abs(selectionX1 - selectionX2) < TownPlot.minX || Math.abs(selectionY1 - selectionY2) < TownPlot.minY || Math.abs(selectionZ1 - selectionZ2) < TownPlot.minZ) && !(selectedTown instanceof AdminTown)) {
 			System.out.println("In calculations");
 			resetSelection();
 			return false;
 		}
-		
+
 		int x1 = selectionX1, x2 = selectionX2, y1 = selectionY1, y2 = selectionY2, z1 = selectionZ1, z2 = selectionZ2;
-		
-		if(x2 < x1) {
+
+		if (x2 < x1) {
 			int aux = x1;
 			x1 = x2;
 			x2 = aux;
 		}
-		if(y2 < y1) {
+		if (y2 < y1) {
 			int aux = y1;
 			y1 = y2;
 			y2 = aux;
 		}
-		if(z2 < z1) {
+		if (z2 < z1) {
 			int aux = z1;
 			z1 = z2;
 			z2 = aux;
 		}
-		
+
 		int lastX = 1000000, lastZ = 1000000;
-		for(int i = x1; i <= x2; i++) {
-			for(int j = z1; j <= z2; j++) {
-				if(i >> 4 != lastX || j >> 4 != lastZ) {
+		for (int i = x1; i <= x2; i++) {
+			for (int j = z1; j <= z2; j++) {
+				if (i >> 4 != lastX || j >> 4 != lastZ) {
 					lastX = i >> 4;
 					lastZ = j >> 4;
-					if(!DatasourceProxy.getDatasource().hasTownBlock(selectionDim, lastX, lastZ, true, selectionTown)) {
+					if (!DatasourceProxy.getDatasource().hasTownBlock(selectionDim, lastX, lastZ, true, selectionTown)) {
 						resetSelection();
 						return false;
 					}
 				}
-				
-				for(int k = y1; k <= y2; k++) {
-					if(selectionTown.getPlotAtCoords(i, k, j) != null) {
+
+				for (int k = y1; k <= y2; k++) {
+					if (selectionTown.getPlotAtCoords(i, k, j) != null) {
 						resetSelection();
 						return false;
 					}
 				}
 			}
 		}
-		
+
 		TownPlot plot = new TownPlot(selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionTown, this);
 		try {
 			DatasourceProxy.getDatasource().insertPlot(plot);
@@ -496,22 +498,21 @@ public class Resident implements IPlotSelector {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		resetSelection();
 		return true;
 	}
-	
+
 	@Override
 	public void expandSelectionVert() {
-		this.selectionY1 = 0;
-		this.selectionY2 = player.worldObj.getActualHeight();
+		selectionY1 = 0;
+		selectionY2 = player.worldObj.getActualHeight();
 	}
-	
+
 	@Override
 	public void resetSelection() {
-		this.firstSelectionActive = false;
-		this.secondSelectionActive = false;
+		firstSelectionActive = false;
+		secondSelectionActive = false;
 	}
-	
-	
+
 }

@@ -25,7 +25,7 @@ public class CmdClaim extends CommandHandler {
 
 	public CmdClaim(String name, CommandBase parent) {
 		super(name, parent);
-		
+
 		addSubCommand(new CmdClaimFar("far", this));
 	}
 
@@ -50,14 +50,16 @@ public class CmdClaim extends CommandHandler {
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		if(args.length >= 1 && subCommands.containsKey(args[0]))
+		if (args.length >= 1 && subCommands.containsKey(args[0])) {
 			super.process(sender, args);
-		else {
+		} else {
 			EntityPlayer player = (EntityPlayer) sender;
 			Resident res = getDatasource().getOrMakeResident(player);
 			Town town = res.getSelectedTown();
-			if (getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, player.dimension, player.chunkCoordX, player.chunkCoordZ))) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
-			if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.claim.farClaim"));
+			if (getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, player.dimension, player.chunkCoordX, player.chunkCoordZ)))
+				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
+			if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town))
+				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.claim.farClaim"));
 
 			TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
 			getDatasource().insertTownBlock(block);
@@ -65,16 +67,17 @@ public class CmdClaim extends CommandHandler {
 			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
 		}
 	}
+
 	private boolean checkNearby(int dim, int x, int z, Town town) {
-		int[] dx = {1, 0, -1, 0};
-		int[] dz = {0, 1, 0, -1};
-		
-		for(int i = 0; i < 4; i++)
-			if(getDatasource().hasTownBlock(dim, x + dx[i], z + dz[i], true, town))
+		int[] dx = { 1, 0, -1, 0 };
+		int[] dz = { 0, 1, 0, -1 };
+
+		for (int i = 0; i < 4; i++)
+			if (getDatasource().hasTownBlock(dim, x + dx[i], z + dz[i], true, town))
 				return true;
 		return false;
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 
@@ -87,8 +90,7 @@ public class CmdClaim extends CommandHandler {
 	@Override
 	public void sendHelp(ICommandSender sender) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	
+
 }

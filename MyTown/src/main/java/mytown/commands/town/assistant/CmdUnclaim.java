@@ -26,17 +26,19 @@ public class CmdUnclaim extends CommandBase {
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
 		super.canCommandSenderUseCommand(sender);
-		
+
 		Resident res = null;
 		try {
 			res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change later
 		}
-		
-		if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
-		
+
+		if (res.getTowns().size() == 0)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
+
 		return true;
 	}
 
@@ -46,7 +48,8 @@ public class CmdUnclaim extends CommandBase {
 		Resident res = getDatasource().getOrMakeResident(player);
 		TownBlock block = getDatasource().getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, true);
 
-		if (block == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.notexist"));
+		if (block == null)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.notexist"));
 
 		getDatasource().deleteTownBlock(block);
 		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.removed", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, res.getSelectedTown().getName());

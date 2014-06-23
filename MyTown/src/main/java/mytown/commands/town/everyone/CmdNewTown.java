@@ -28,8 +28,8 @@ public class CmdNewTown extends CommandBase {
 
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
-		EntityPlayer player = (EntityPlayer)sender;
-		
+		EntityPlayer player = (EntityPlayer) sender;
+
 		if (args.length < 1)
 			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.newtown"));
 		if (getDatasource().hasTown(args[0]))
@@ -49,7 +49,7 @@ public class CmdNewTown extends CommandBase {
 		getDatasource().insertTownFlag(town, new TownFlag("accessBlocks", "Controls whether or not non-residents can access(right click) blocks", false));
 		getDatasource().insertTownFlag(town, new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
 		getDatasource().insertTownFlag(town, new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
-		
+
 		res.sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.town.created", town.getName());
 	}
 

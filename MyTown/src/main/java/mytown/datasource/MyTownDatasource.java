@@ -43,7 +43,7 @@ public abstract class MyTownDatasource {
 	protected ConcurrentMap<String, TownBlock> blocks;
 	protected ConcurrentMap<String, Rank> ranks;
 	protected ConcurrentMap<String, ITownPlot> plots;
-	
+
 	/**
 	 * Used for connecting to Databases. Returns if connection was successful
 	 * 
@@ -131,7 +131,7 @@ public abstract class MyTownDatasource {
 	public Map<String, Rank> getRanksMap() {
 		return ranks;
 	}
-	
+
 	/**
 	 * Returns a Map of plots
 	 * 
@@ -151,11 +151,13 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public Collection<Town> getTowns(boolean adminTownsIncluded) {
-		if(adminTownsIncluded) return towns.values();
+		if (adminTownsIncluded)
+			return towns.values();
 		Collection<Town> temp = new ArrayList<Town>();
-		for(Town t : towns.values()) {
-			if(!(t instanceof AdminTown))
+		for (Town t : towns.values()) {
+			if (!(t instanceof AdminTown)) {
 				temp.add(t);
+			}
 		}
 		return temp;
 	}
@@ -204,7 +206,7 @@ public abstract class MyTownDatasource {
 	public Collection<ITownPlot> getPlots() {
 		return plots.values();
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Single Instance Getters
 	// /////////////////////////////////////////////////////////////
@@ -254,19 +256,21 @@ public abstract class MyTownDatasource {
 	 * 
 	 * @param x
 	 * @param z
-	 * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
+	 * @param inChunkCoords
+	 *            true if x and z are in chunk coordinates, false otherwise
 	 * @return
 	 */
 	public TownBlock getTownBlock(int dim, int x, int z, boolean inChunkCoords) {
 		String key;
-		if(inChunkCoords)
+		if (inChunkCoords) {
 			key = String.format(TownBlock.keyFormat, dim, x, z);
-		else
+		} else {
 			key = String.format(TownBlock.keyFormat, dim, x >> 4, z >> 4);
-		
+		}
+
 		return getTownBlock(key);
 	}
-	
+
 	/**
 	 * Gets a Rank from the Town specified
 	 * 
@@ -274,8 +278,10 @@ public abstract class MyTownDatasource {
 	 * @return
 	 */
 	public Rank getRank(String rank, Town town) {
-		if (town == null) return null;
-		if (ranks.get(town.getName() + ";" + rank) == null) return null;
+		if (town == null)
+			return null;
+		if (ranks.get(town.getName() + ";" + rank) == null)
+			return null;
 		return ranks.get(town.getName() + ";" + rank);
 	}
 
@@ -295,13 +301,13 @@ public abstract class MyTownDatasource {
 	 * Gets a Plot
 	 * 
 	 * @param key
-	 * 			  
+	 * 
 	 * @return
 	 */
 	public ITownPlot getPlot(String key) {
 		return plots.get(key);
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Checkers?
 	// /////////////////////////////////////////////////////////////
@@ -346,43 +352,45 @@ public abstract class MyTownDatasource {
 	public boolean hasTownBlock(String key) {
 		return blocks.containsKey(key);
 	}
-	
+
 	/**
 	 * Checks if the TownBlock with the given coords and dim exists
 	 * 
 	 * @param dim
 	 * @param x
 	 * @param z
-	 * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
+	 * @param inChunkCoords
+	 *            true if x and z are in chunk coordinates, false otherwise
 	 * @return
 	 */
 	public boolean hasTownBlock(int dim, int x, int z, boolean inChunkCoords) {
 		return hasTownBlock(dim, x, z, inChunkCoords, null);
 	}
-	
+
 	/**
 	 * Checks if the TownBlock with the given coords and dim at the town specified exists
 	 * 
 	 * @param dim
 	 * @param x
 	 * @param z
-	 * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
+	 * @param inChunkCoords
+	 *            true if x and z are in chunk coordinates, false otherwise
 	 * @return
 	 */
 	public boolean hasTownBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
 		String key;
-		if(inChunkCoords)
+		if (inChunkCoords) {
 			key = String.format(TownBlock.keyFormat, dim, x, z);
-		else
+		} else {
 			key = String.format(TownBlock.keyFormat, dim, x >> 4, z >> 4);
-		
+		}
+
 		TownBlock tb = getTownBlock(key);
-		if(town != null && tb != null && tb.getTown() == town)
+		if (town != null && tb != null && tb.getTown() == town)
 			return true;
-		
+
 		return hasTownBlock(key);
 	}
-	
 
 	/**
 	 * Checks if the Rank with the given key exists in the Datasource
@@ -393,7 +401,7 @@ public abstract class MyTownDatasource {
 	public boolean hasRank(String key) {
 		return ranks.containsKey(key);
 	}
-	
+
 	/**
 	 * Checks if the Plot with the given key exists in the Datasource
 	 * 
@@ -403,7 +411,7 @@ public abstract class MyTownDatasource {
 	public boolean hasPlot(String key) {
 		return plots.containsKey(key);
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Loaders
 	// /////////////////////////////////////////////////////////////
@@ -437,17 +445,17 @@ public abstract class MyTownDatasource {
 	 * Loads all Plots into the Datasource
 	 */
 	public abstract void loadPlots() throws Exception;
-	
+
 	/**
 	 * Loads all flags for plots
 	 */
 	public abstract void loadPlotFlags() throws Exception;
-	
+
 	/**
 	 * Loads all flags for towns
 	 */
 	public abstract void loadTownFlags() throws Exception;
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Insert Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -500,7 +508,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void insertPlot(ITownPlot plot) throws Exception;
-	
+
 	/**
 	 * Adds a flag to the plot and executes a query
 	 * 
@@ -509,7 +517,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void insertPlotFlag(ITownPlot plot, ITownFlag flag) throws Exception;
-	
+
 	/**
 	 * Adds a flag to the town and executes a query
 	 * 
@@ -518,7 +526,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void insertTownFlag(Town town, ITownFlag flag) throws Exception;
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Insert Multiple Entities
 	// /////////////////////////////////////////////////////////////
@@ -591,11 +599,11 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void insertPlots(ITownPlot... plots) throws Exception {
-		for(ITownPlot plot : plots){
+		for (ITownPlot plot : plots) {
 			insertPlot(plot);
 		}
 	}
-	
+
 	/**
 	 * Adds multiple flags to the plot and executes a query
 	 * 
@@ -604,11 +612,11 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void insertPlotFlags(ITownPlot plot, ITownFlag... flags) throws Exception {
-		for(ITownFlag flag : flags) {
+		for (ITownFlag flag : flags) {
 			insertPlotFlag(plot, flag);
 		}
 	}
-	
+
 	/**
 	 * Adds multiple flags to the town and executes a query
 	 * 
@@ -617,11 +625,11 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void insertTownFlags(Town town, ITownFlag... flags) throws Exception {
-		for(ITownFlag flag : flags) {
+		for (ITownFlag flag : flags) {
 			insertTownFlag(town, flag);
 		}
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Update Single Entity
 	// /////////////////////////////////////////////////////////////
@@ -674,7 +682,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void updatePlot(ITownPlot plot) throws Exception;
-	
+
 	/**
 	 * Updates a flag
 	 * 
@@ -683,7 +691,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void updatePlotFlag(ITownFlag flag) throws Exception;
-	
+
 	/**
 	 * Updates a flag
 	 * 
@@ -692,7 +700,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void updateTownFlag(ITownFlag flag) throws Exception;
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Update Multiple Entities
 	// /////////////////////////////////////////////////////////////
@@ -765,11 +773,11 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void updatePlots(ITownPlot... plots) throws Exception {
-		for(ITownPlot plot : plots) {
+		for (ITownPlot plot : plots) {
 			updatePlot(plot);
 		}
 	}
-	
+
 	/**
 	 * Updates all the given flags
 	 * 
@@ -778,11 +786,11 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void updatePlotFlags(ITownFlag... flags) throws Exception {
-		for(ITownFlag flag : flags) {
+		for (ITownFlag flag : flags) {
 			updatePlotFlag(flag);
 		}
 	}
-	
+
 	/**
 	 * Updates all the given flags
 	 * 
@@ -791,11 +799,11 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void updateTownFlags(ITownFlag... flags) throws Exception {
-		for(ITownFlag flag : flags) {
+		for (ITownFlag flag : flags) {
 			updateTownFlag(flag);
 		}
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Delete Single Entities
 	// /////////////////////////////////////////////////////////////
@@ -849,25 +857,25 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract boolean deletePlot(ITownPlot plot) throws Exception;
-	
+
 	/**
-	 *  Deletes all of the specified flag and executes a query
+	 * Deletes all of the specified flag and executes a query
 	 * 
 	 * @param flag
 	 * @return
 	 * @throws Exception
 	 */
 	public abstract boolean deletePlotFlag(ITownFlag flag) throws Exception;
-	
+
 	/**
-	 *  Deletes all of the specified flag and executes a query
+	 * Deletes all of the specified flag and executes a query
 	 * 
 	 * @param flag
 	 * @return
 	 * @throws Exception
 	 */
 	public abstract boolean deleteTownFlag(ITownFlag flag) throws Exception;
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Delete Multiple Entities
 	// /////////////////////////////////////////////////////////////
@@ -932,7 +940,7 @@ public abstract class MyTownDatasource {
 			deleteRank(r);
 		}
 	}
-	
+
 	/**
 	 * Deletes the plots from Datasource and executes a query
 	 * 
@@ -940,11 +948,11 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void deletePlots(ITownPlot... plots) throws Exception {
-		for(ITownPlot plot : plots) {
+		for (ITownPlot plot : plots) {
 			deletePlot(plot);
 		}
 	}
-	
+
 	/**
 	 * Deletes the flags from the specified plot and executes a query
 	 * 
@@ -953,7 +961,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void deletePlotFlags(ITownFlag... flags) throws Exception {
-		for(ITownFlag flag : flags) {
+		for (ITownFlag flag : flags) {
 			deletePlotFlag(flag);
 		}
 	}
@@ -966,11 +974,11 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public void deleteTownFlags(ITownFlag... flags) throws Exception {
-		for(ITownFlag flag : flags) {
+		for (ITownFlag flag : flags) {
 			deleteTownFlag(flag);
 		}
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Linkages
 	// /////////////////////////////////////////////////////////////
@@ -1054,8 +1062,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void updateLinkResidentToTown(Resident resident, Town town) throws Exception;
-	
-	
+
 	/**
 	 * Updates the link of a town to the nation
 	 * 
@@ -1064,7 +1071,7 @@ public abstract class MyTownDatasource {
 	 * @throws Exception
 	 */
 	public abstract void updateLinkTownToNation(Town town, Nation nation) throws Exception;
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Extras
 	// /////////////////////////////////////////////////////////////
@@ -1165,7 +1172,7 @@ public abstract class MyTownDatasource {
 	protected void addPlot(ITownPlot plot) throws Exception {
 		plots.put(plot.getKey(), plot);
 	}
-	
+
 	// /////////////////////////////////////////////////////////////
 	// Add Multiple Entities - Internal Only
 	// /////////////////////////////////////////////////////////////
@@ -1229,7 +1236,7 @@ public abstract class MyTownDatasource {
 			addRank(r);
 		}
 	}
-	
+
 	/**
 	 * Add multiple Plots to the plots Map
 	 * 
@@ -1384,14 +1391,14 @@ public abstract class MyTownDatasource {
 			removeTownBlock(block);
 		}
 	}
-	
+
 	/**
 	 * Removes the TownPlots from the Datasource
 	 * 
 	 * @param plots
 	 */
 	protected void removePlots(ITownPlot... plots) {
-		for(ITownPlot plot : plots) {
+		for (ITownPlot plot : plots) {
 			removePlot(plot);
 		}
 	}

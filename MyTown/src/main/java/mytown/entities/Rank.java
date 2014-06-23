@@ -81,14 +81,13 @@ public class Rank {
 		return key;
 	}
 
-
 	/**
 	 * Updates the key. Only called in the constructor and when updating in the database. DO NOT CALL ELSEWHERE!
 	 * 
 	 * @return
 	 */
 	public void updateKey() {
-		key = String.format("%s;%s", town.getName(), this.name);
+		key = String.format("%s;%s", town.getName(), name);
 	}
 
 	/**

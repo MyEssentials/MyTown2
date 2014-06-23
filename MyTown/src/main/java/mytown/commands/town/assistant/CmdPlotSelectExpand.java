@@ -12,29 +12,28 @@ import net.minecraft.command.ICommandSender;
 
 @Permission("mytown.cmd.assistant.plot.select.expand")
 public class CmdPlotSelectExpand extends CommandBase {
-	
+
 	public CmdPlotSelectExpand(String name, CommandBase parent) {
 		super(name, parent);
 	}
-	
-	
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		return parent.canCommandSenderUseCommand(sender);
 	}
-	
+
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		
-		if(!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive())) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notSelected"));
-		
+
+		if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notSelected"));
+
 		res.expandSelectionVert();
-		
+
 		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.expanded");
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

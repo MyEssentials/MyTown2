@@ -48,7 +48,7 @@ public class CmdTown extends CommandHandler {
 		addSubCommand(new CmdPlots("plots", this));
 		addSubCommand(new CmdPerm("perm", this));
 		addSubCommand(new CmdLeave("leave", this));
-		
+
 		// Add Aliases
 		aliases.add("t");
 	}
