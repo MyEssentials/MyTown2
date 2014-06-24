@@ -200,6 +200,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 					Resident owner = getResident(set.getString("Owner"));
 					
 					TownPlot plot = new TownPlot(dim, x1, y1, z1, x2, y2, z2, town, owner, name);
+					System.out.println(name);
 					town.addTownPlot(plot);
 					addPlot(plot);
 					log.info("Adding plot in town " + town.getName());
@@ -327,8 +328,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setInt(7, plot.getEndZ());
 			statement.setString(8, plot.getTown().getName());
 			statement.setString(9, plot.getOwner().getUUID());
-			statement.setString(10, plot.getName());
-			statement.setString(11, plot.getKey());
+			statement.setString(10, "T");
+			statement.setString(11, plot.getName());
+			statement.setString(12, plot.getKey());
 			statement.executeUpdate();
 			plot.updateKey();
 		}

@@ -1,7 +1,6 @@
 package mytown.commands.town.everyone;
 
 import mytown.MyTown;
-import mytown.chat.channels.types.Local;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;

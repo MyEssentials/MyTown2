@@ -3,7 +3,9 @@ package mytown.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.common.network.PacketDispatcher;
 import mytown.MyTown;
+import mytown.VisualsTickHandler;
 import mytown.core.ChatUtils;
 import mytown.core.Localization;
 import mytown.entities.town.AdminTown;
@@ -13,7 +15,6 @@ import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet53BlockChange;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -35,6 +36,7 @@ public class Resident implements IPlotSelector {
 	private int selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim;
 	private Town selectionTown;
 	private boolean firstSelectionActive = false, secondSelectionActive = false;
+	private boolean selectionExpandedVert = false;
 
 	/**
 	 * Creates a Player with the given name
@@ -418,18 +420,40 @@ public class Resident implements IPlotSelector {
 			this.selectionTown = tb.getTown();
 			this.firstSelectionActive = true;
 			
-			Packet53BlockChange packet = new Packet53BlockChange(x, y, z, player.worldObj);
-			
-			packet.type = Block.blockRedstone.blockID;
-			
-			((EntityPlayerMP)player).playerNetServerHandler.sendPacketToPlayer(packet);
+			// This is marked twice :P
+			VisualsTickHandler.instance.markBlock(x, y, z, dim);
 			
 		} else {
+			
 			this.selectionX2 = x;
 			this.selectionY2 = y;
 			this.selectionZ2 = z;
 			this.secondSelectionActive = true;
+			/*
+			// On the X
+			MyTownTickHandler.instance.markBlock(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1, dim, player.worldObj.getBlockId(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1), player.worldObj.getBlockMetadata(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1));
+			MyTownTickHandler.instance.markBlock(selectionX2 + (selectionX1 > selectionX2 ? 1 : -1), selectionY2, selectionZ2, dim, player.worldObj.getBlockId(selectionX2 + (selectionX1 > selectionX2 ? 1 : -1), selectionY2, selectionZ2));
+			MyTownTickHandler.instance.markBlock(selectionX1 + (selectionX1 > selectionX2 ? -2 : 2), selectionY1, selectionZ1, dim, player.worldObj.getBlockId(selectionX1 + (selectionX1 > selectionX2 ? -2 : 2), selectionY1, selectionZ1));
+			MyTownTickHandler.instance.markBlock(selectionX2 + (selectionX1 > selectionX2 ? 2 : -2), selectionY2, selectionZ2, dim, player.worldObj.getBlockId(selectionX2 + (selectionX1 > selectionX2 ? 2 : -2), selectionY2, selectionZ2));
+			
+			// On the Z
+			MyTownTickHandler.instance.markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 1 : -1), dim, player.worldObj.getBlockId(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 1 : -1)));
+			MyTownTickHandler.instance.markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -1 : 1), dim, player.worldObj.getBlockId(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -1 : 1)));
+			MyTownTickHandler.instance.markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 2 : -2), dim, player.worldObj.getBlockId(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 2 : -2)));
+			MyTownTickHandler.instance.markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -2 : 2), dim, player.worldObj.getBlockId(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -2 : 2)));
+			
+			if(selectionY1 != selectionY2) {
+				// On the Y
+				MyTownTickHandler.instance.markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -1 : 1), selectionZ1, dim, player.worldObj.getBlockId(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -1 : 1), selectionZ1));
+				MyTownTickHandler.instance.markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 1 : -1), selectionZ2, dim, player.worldObj.getBlockId(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 1 : -1), selectionZ2));
+				MyTownTickHandler.instance.markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -2 : 2), selectionZ1, dim, player.worldObj.getBlockId(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -2 : 2), selectionZ1));
+				MyTownTickHandler.instance.markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2, dim, player.worldObj.getBlockId(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2));
+			}
+			*/
+			VisualsTickHandler.instance.markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
 		}
+
+		
 		return true;
 	}
 	
@@ -487,7 +511,7 @@ public class Resident implements IPlotSelector {
 				
 				for(int k = y1; k <= y2; k++) {
 					if(selectionTown.getPlotAtCoords(i, k, j) != null) {
-						System.out.println("Inside another plot" + selectionTown.getPlotAtCoords(i, k, j) + "/n" + i + " " + k + " " + j);
+						System.out.println("Inside another plot" + selectionTown.getPlotAtCoords(i, k, j) + "\n" + i + " " + k + " " + j);
 						System.out.println("For selection: " + x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2);
 						resetSelection();
 						return false;
@@ -510,14 +534,28 @@ public class Resident implements IPlotSelector {
 	
 	@Override
 	public void expandSelectionVert() {
-		this.selectionY1 = 0;
-		this.selectionY2 = player.worldObj.getActualHeight();
+		
+		// When selection is expanded vertically we'll show it's borders... (Temporary solution)
+		
+		VisualsTickHandler.instance.unmarkPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
+		
+		this.selectionY1 = 1;
+		this.selectionY2 = player.worldObj.getActualHeight() - 1;
+		this.selectionExpandedVert = true;
+		
+		VisualsTickHandler.instance.markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
+		
 	}
 	
 	@Override
 	public void resetSelection() {
 		this.firstSelectionActive = false;
 		this.secondSelectionActive = false;
+		
+		if(selectionExpandedVert)
+			VisualsTickHandler.instance.unmarkPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
+		else
+			VisualsTickHandler.instance.unmarkPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
 	}
 	
 	

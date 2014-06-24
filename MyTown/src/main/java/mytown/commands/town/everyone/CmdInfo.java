@@ -6,7 +6,6 @@ import java.util.List;
 
 import mytown.MyTown;
 import mytown.core.ChatUtils;
-import mytown.core.Localization;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;

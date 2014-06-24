@@ -1,6 +1,7 @@
 package mytown.commands.town.assistant;
 
 import mytown.MyTown;
+import mytown.VisualsTickHandler;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
@@ -23,6 +24,10 @@ public class CmdPlot extends CommandHandler {
 		
 		addSubCommand(new CmdPlotMake("make", this));
 		addSubCommand(new CmdPlotSelect("select", this));
+		addSubCommand(new CmdPlotRename("rename", this));
+		
+		addSubCommand(new CmdPlotShow("show", this));
+		addSubCommand(new CmdPlotVanish("vanish", this));
 	}
 	
 	@Override

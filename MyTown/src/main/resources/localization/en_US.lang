@@ -7,6 +7,7 @@ mytown.cmd.err.rank.notexist=The rank %s does not exist in %s!
 
 # /t new [townname]
 mytown.cmd.err.newtown.nameinuse=Town name %s already in use!
+mytown.cmd.err.newtown.positionError=You cannot make a new town on a claimed chunk.
 mytown.cmd.usage.newtown=/t new [townname]
 
 # /t invite
@@ -42,11 +43,13 @@ mytown.cmd.err.ranks.perm.add.already=The rank %s already has permission %s!
 
 # /t plot
 
+mytown.cmd.usage.plot.rename=/t plot rename <name>
 mytown.cmd.err.plot.start.failed=Your inventory is full!
 mytown.cmd.err.plot.failed=Creating plot failed!
 mytown.cmd.err.plot.alreadySelected=You already selected!
 mytown.cmd.err.plot.selectionFailed=You cannot make a plot outside the town!
 mytown.cmd.err.plot.notSelected=You need to select 2 corners first!
+mytown.cmd.err.plot.rename.notexist=You are not standing in a plot!
 
 # /t perm
 
@@ -110,3 +113,6 @@ mytown.notification.town.joined=%s has joined the town %s!
 mytown.notification.town.invited=You have been invited to town %s!
 mytown.notification.town.invite.sent=The invitation was successfully sent!
 mytown.notification.town.setspawn=Spawn has been set!
+mytown.notification.plot.renamed=The plot has been successfully renamed!
+mytown.notification.plot.showing=Plots are now showing borders. Use "/t plot vanish" in order to hide them.
+mytown.notification.plot.vanished=Plots have been successfully hidden!

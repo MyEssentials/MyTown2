@@ -52,7 +52,7 @@ public class TownPlot implements ITownPlot {
 		if(y1 > y2) {
 			int aux = y2;
 			y2 = y1;
-			y2 = aux;
+			y1 = aux;
 		}
 		
 		// Second parameter is always highest
