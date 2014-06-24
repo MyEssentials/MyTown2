@@ -4,30 +4,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Generic Flag class that should be able to serialize/deserialize any 
+ * Generic Flag class that should be able to serialize/deserialize any value.
+ * 
+ * Children should automatically inherit from their parents if the parent's value actually changed
+ * 
  * @author Joe Goett
  *
  * @param <T>
  */
 public class Flag<T> {
+	private String name;
 	private T value;
 	private Flag<T> parent;
 	private List<Flag<T>> children;
 	
-	public Flag(T value, Flag<T> parent, List<Flag<T>> children) {
+	public Flag(String name, T value, Flag<T> parent, List<Flag<T>> children) {
+		this.name = name;
 		this.value = value;
 		this.parent = parent;
 		this.children = children;
 	}
 	
-	public Flag(T value, Flag<T> parent) {
-		this(value, parent, new ArrayList<Flag<T>>());
+	public Flag(String name, T value, Flag<T> parent) {
+		this(name, value, parent, new ArrayList<Flag<T>>());
 	}
 	
-	public Flag(T value) {
-		this(value, null);
+	public Flag(String name, T value) {
+		this(name, value, null);
 	}
 	
+	/**
+	 * Will return the value this flag is set to, or the value it inherits from its parent
+	 * @return
+	 */
 	public T getValue() {
 		return value;
 	}
@@ -46,6 +55,7 @@ public class Flag<T> {
 	
 	public void addChild(Flag<T> child) {
 		children.add(child);
+		child.setParent(this);
 	}
 	
 	public List<Flag<T>> getChildren() {
@@ -54,6 +64,10 @@ public class Flag<T> {
 	
 	public Class<?> getType() {
 		return value.getClass();
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public boolean isArray() {
