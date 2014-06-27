@@ -29,6 +29,7 @@ import cpw.mods.fml.relauncher.Side;
 import forgeperms.api.ForgePermsAPI;
 
 // TODO Add a way to safely reload
+// TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packages with this. Maybe even make MyTown just DL them at runtime and inject them
 
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class MyTown {
