@@ -13,6 +13,7 @@ import mytown.entities.TownBlock;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
 import mytown.proxies.DatasourceProxy;
+import net.minecraft.util.EnumChatFormatting;
 
 // TODO Add Comments
 
@@ -25,6 +26,14 @@ public class Town implements Comparable<Town> {
 
 	protected String name;
 	protected int extraBlocks = 0;
+	
+	protected double spawnX, spawnY, spawnZ;
+	protected int spawnDim;
+	
+	// TODO: Always have town spawn?...
+	protected boolean hasSpawn;
+	
+	
 	protected List<Rank> ranks;
 	protected List<ITownFlag> flags;
 	protected List<ITownPlot> townPlots;
@@ -57,6 +66,47 @@ public class Town implements Comparable<Town> {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/////////////////////////////////////////
+	// Spawn coords
+	/////////////////////////////////////////
+	
+	public double getSpawnX() {
+		return spawnX;
+	}
+
+	public double getSpawnY() {
+		return spawnY;
+	}
+
+	public double getSpawnZ() {
+		return spawnZ;
+	}
+	
+	public int getSpawnDim() {
+		return spawnDim;
+	}
+
+	public void setSpawn(double x, double y, double z, int dim) {
+		this.spawnDim = dim;
+		this.spawnX = x;
+		this.spawnY = y;
+		this.spawnZ = z;
+		this.hasSpawn = true;
+	}
+	
+	/**
+	 * Sets whether or not the town has a spawn or not
+	 * 
+	 * @param state
+	 */
+	public void setSpawnState(boolean state) {
+		this.hasSpawn = state;
+	}
+	
+	public boolean hasSpawn() {
+		return this.hasSpawn;
 	}
 
 	// //////////////////////////////////////
@@ -426,9 +476,55 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Helper?
 	// //////////////////////////////////////
+	
 	@Override
 	public String toString() {
-		return getName() + "[# of residents: " + getResidents().size() + ", # of extra blocks: " + extraBlocks + "]";
+		return this.name;
+	}
+	
+	/**
+	 * Returns whether or not the block specified by X and Z coords (Block Coords NOT Chunk Coords) is int this Town
+	 * Note: Param Y is not needed since TownBlocks are Y independent
+	 * @param x
+	 * @param z
+	 * @param dim
+	 * @return
+	 */
+	public boolean isBlockInTown(int x, int z, int dim) {
+		for(TownBlock block : townBlocks)
+			if(block.isBlockInChunk(x, z, dim))
+				return true;
+		return false;
+	}
+	
+	/**
+	 * Gets the info for the town
+	 * @return
+	 */
+	public String[] getInfo() {
+		String temp[] = new String[3];
+		temp[0] = EnumChatFormatting.BLUE + " ---------- " + name + EnumChatFormatting.GREEN + " (" + EnumChatFormatting.WHITE + "R:" + residents.size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "B:" + townBlocks.size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "P:" + townPlots.size() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.BLUE + " ----------" + '\n' + EnumChatFormatting.GRAY;
+		
+		for(Resident res : residents.keySet()) {
+			if(temp[1] == null)
+				temp[1] = "";
+			else
+				temp[1] += EnumChatFormatting.GRAY + ", ";
+			temp[1] += String.format("%s" + EnumChatFormatting.GRAY +"(%s" + EnumChatFormatting.GRAY + ")", res, residents.get(res));
+		}
+			
+		temp[1] += "\n" + EnumChatFormatting.GRAY;
+		
+		for(Rank rank : ranks) {
+			if(temp[2] == null)
+				temp[2] = "";
+			else
+				temp[2] += ", ";
+			temp[2] += rank;
+		}
+		
+		temp[2] += "\n" + EnumChatFormatting.GRAY;
+		return temp;
 	}
 
 	@Override

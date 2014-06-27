@@ -6,15 +6,12 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import mytown.core.MyTownCore;
-import mytown.core.utils.Log;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 
 public abstract class CommandHandler extends CommandBase {
-	protected static Log log = MyTownCore.Instance.log.createChild("CommandHandler"); // TODO Remove?
+	
 	protected Map<String, ICommand> subCommands;
 	
 	public CommandHandler(String name) {
@@ -38,6 +35,7 @@ public abstract class CommandHandler extends CommandBase {
 	 */
 	public void addSubCommand(CommandBase subCmd) {
 		subCommands.put(subCmd.getCommandName(), subCmd);
+		//System.out.println("Loaded command " + subCmd.getParentName() + "." + subCmd.getCommandName());
 	}
 
 	/**
@@ -61,17 +59,6 @@ public abstract class CommandHandler extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
-		try {
-			process(sender, args);
-		} catch(CommandException ex) {
-			throw ex;
-		} catch(Throwable t) {
-			log.warning("A error has occurred!", t);
-		}
-	}
-
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		canCommandSenderUseCommand(sender);
 		if (args.length < 1 || args[0].equalsIgnoreCase("help")) {
 			sendHelp(sender);
 			return;

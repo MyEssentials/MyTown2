@@ -1,5 +1,6 @@
 package mytown.commands.town.everyone;
 
+import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
@@ -28,15 +29,21 @@ public class CmdLeave extends CommandBase {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
+	public void processCommand (ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		Town town = res.getSelectedTown();
-		if (town == null)
-			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
+		if(town == null) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
+		try {
 		getDatasource().unlinkResidentFromTown(res, town);
+		// Send message to player that has left the town
 		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.left.self", town.getName());
-		for (Resident r : town.getResidents()) {
+		
+		// Send message to all that player has left the town
+		for(Resident r : town.getResidents())
 			r.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.left", res.getUUID(), town.getName());
+		} catch (Exception e) {
+			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			e.printStackTrace();
 		}
 	}
 

@@ -22,11 +22,11 @@ public class CmdPlotSelectReset extends CommandBase {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
+	public void processCommand(ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		res.resetSelection();
 
-		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionReset");
+		ChatUtils.sendLocalizedChat(sender,LocalizationProxy.getLocalization(),"mytown.notification.town.plot.selectionReset");
 	}
 
 	/**

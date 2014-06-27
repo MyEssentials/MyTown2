@@ -1,6 +1,5 @@
 package mytown.commands.town.assistant;
 
-import mytown.Formatter;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
@@ -9,6 +8,7 @@ import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.town.Town;
+import mytown.interfaces.ITownFlag;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -42,14 +42,21 @@ public class CmdPerm extends CommandHandler {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length > 0 && subCommands.containsKey(args[0])) {
-			super.process(sender, args);
-		} else {
+	public void processCommand(ICommandSender sender, String[] args) {
+		if (args.length > 0)
+			super.processCommand(sender, args);
+		else {
 			Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-			ChatUtils.sendChat(sender, Formatter.formatFlagsToString(town.getFlags()));
+			String formattedFlagList = null;
+			for (ITownFlag flag : town.getFlags()) {
+				if (formattedFlagList == null)
+					formattedFlagList = "";
+				else
+					formattedFlagList += '\n';
+				formattedFlagList += flag;
+			}
+			ChatUtils.sendChat(sender, formattedFlagList);
 		}
-
 	}
 
 	/**

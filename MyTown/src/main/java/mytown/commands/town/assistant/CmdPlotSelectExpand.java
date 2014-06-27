@@ -23,7 +23,7 @@ public class CmdPlotSelectExpand extends CommandBase {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
+	public void processCommand(ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
 		if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))

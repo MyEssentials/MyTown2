@@ -30,7 +30,7 @@ public class CmdClaim extends CommandHandler {
 	}
 
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
+	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
 
 		Resident res = null;
@@ -40,32 +40,37 @@ public class CmdClaim extends CommandHandler {
 			e.printStackTrace(); // TODO Change later
 		}
 
-		if (res.getTowns().size() == 0)
-			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(permNode))
-			throw new CommandException("commands.generic.permission");
+		if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode)) throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length >= 1 && subCommands.containsKey(args[0])) {
-			super.process(sender, args);
-		} else {
-			EntityPlayer player = (EntityPlayer) sender;
-			Resident res = getDatasource().getOrMakeResident(player);
-			Town town = res.getSelectedTown();
-			if (getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, player.dimension, player.chunkCoordX, player.chunkCoordZ)))
-				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
-			if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town))
-				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.claim.farClaim"));
+	public void processCommand(ICommandSender sender, String[] args) {
+		if (args.length >= 1)
+			super.processCommand(sender, args);
+		else {
+			try {
+				EntityPlayer player = (EntityPlayer) sender;
+				Resident res = getDatasource().getOrMakeResident(player);
+				Town town = res.getSelectedTown();
+				
+				if (getDatasource().hasTownBlock( String.format(TownBlock.keyFormat, player.dimension,player.chunkCoordX, player.chunkCoordZ))) 
+					throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
+				if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) 
+					throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.claim.farClaim"));
 
-			TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
-			getDatasource().insertTownBlock(block);
+				TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
+				getDatasource().insertTownBlock(block);
 
-			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
+				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(),"mytown.notification.townblock.added",block.getX() * 16, block.getZ() * 16,block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
+			} catch (Exception e) {
+				MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+				e.printStackTrace();
+			}
 		}
+
 	}
 
 	private boolean checkNearby(int dim, int x, int z, Town town) {

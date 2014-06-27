@@ -29,7 +29,7 @@ public class CmdLeave extends CommandBase {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) {
+	public void processCommand (ICommandSender sender, String[] args) {
 		if (args.length < 1) {
 			throw new WrongUsageException(getCommandUsage(sender));
 		}

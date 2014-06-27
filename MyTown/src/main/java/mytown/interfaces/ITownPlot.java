@@ -17,9 +17,12 @@ public interface ITownPlot {
 	Town getTown();
 
 	Resident getOwner();
-
+	boolean setOwner(Resident owner);
+	
 	int getDim();
-
+	String getName();
+	boolean setName(String name);
+	
 	int getStartX();
 
 	int getStartZ();

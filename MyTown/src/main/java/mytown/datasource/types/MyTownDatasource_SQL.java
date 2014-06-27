@@ -125,10 +125,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			while (set.next()) {
 				if (set.getString("Type").equals("A")) {
 					AdminTown town = new AdminTown(set.getString("Name"));
+					town.setSpawn(set.getDouble("SpawnX"), set.getDouble("SpawnY"), set.getDouble("SpawnZ"), set.getInt("SpawnDim"));
 					addTown(town);
 					loadTownBlocks(town);
 				} else {
 					Town town = new Town(set.getString("Name"), set.getInt("ExtraBlocks"));
+					town.setSpawn(set.getDouble("SpawnX"), set.getDouble("SpawnY"), set.getDouble("SpawnZ"), set.getInt("SpawnDim"));
 					addTown(town);
 					loadTownBlocks(town);
 				}
@@ -191,11 +193,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 					int y2 = set.getInt("Y2");
 					int z2 = set.getInt("Z2");
 					int dim = set.getInt("Dim");
-
+					
+					String name = set.getString("Name");
+					
 					Town town = getTown(set.getString("TownName"));
 					Resident owner = getResident(set.getString("Owner"));
-
-					TownPlot plot = new TownPlot(dim, x1, y1, z1, x2, y2, z2, town, owner);
+					
+					TownPlot plot = new TownPlot(dim, x1, y1, z1, x2, y2, z2, town, owner, name);
+					System.out.println(name);
 					town.addTownPlot(plot);
 					addPlot(plot);
 					log.info("Adding plot in town " + town.getName());
@@ -251,11 +256,15 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	@Override
 	public void updateTown(Town town) throws Exception { // TODO Allow changing Town name?
 		synchronized (lock) {
-			PreparedStatement statement = prepare("UPDATE " + prefix + "Towns SET Name=?,ExtraBlocks=?,Type=? WHERE Name=?", true);
+			PreparedStatement statement = prepare("UPDATE " + prefix + "Towns SET Name=?,ExtraBlocks=?,Type=?,SpawnX=?,SpawnY=?,SpawnZ=?,SpawnDim=? WHERE Name=?", true);
 			statement.setString(1, town.getName());
 			statement.setInt(2, town.getExtraBlocks());
 			statement.setString(3, town.getName());
-			statement.setString(4, town.getType());
+			statement.setDouble(4, town.getSpawnX());
+			statement.setDouble(5, town.getSpawnY());
+			statement.setDouble(6, town.getSpawnZ());
+			statement.setInt(7, town.getSpawnDim());
+			statement.setString(8, town.getType());
 			statement.executeUpdate();
 		}
 	}
@@ -308,8 +317,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
 	@Override
 	public void updatePlot(ITownPlot plot) throws Exception {
-		synchronized (lock) {
-			PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET Dim=?,X1=?,Y1=?,Z1=?,X2=?,Y2=?,Z2=?,TownName=?,Owner=?,Type=? WHERE Key=?");
+		synchronized(lock) {
+			PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET Dim=?,X1=?,Y1=?,Z1=?,X2=?,Y2=?,Z2=?,TownName=?,Owner=?,Type=?,Name=? WHERE Key=?");
 			statement.setInt(1, plot.getDim());
 			statement.setInt(2, plot.getStartX());
 			statement.setInt(3, plot.getStartY());
@@ -319,7 +328,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setInt(7, plot.getEndZ());
 			statement.setString(8, plot.getTown().getName());
 			statement.setString(9, plot.getOwner().getUUID());
-			statement.setString(10, plot.getKey());
+			statement.setString(10, "T");
+			statement.setString(11, plot.getName());
+			statement.setString(12, plot.getKey());
 			statement.executeUpdate();
 			plot.updateKey();
 		}
@@ -353,10 +364,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	public void insertTown(Town town) throws Exception {
 		synchronized (lock) {
 			addTown(town);
-			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Towns (Name,ExtraBlocks,Type) VALUES (?,?,?)", true);
+			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Towns (Name,ExtraBlocks,Type,SpawnX,SpawnY,SpawnZ,SpawnDim) VALUES (?,?,?,?,?,?,?)", true);
 			statement.setString(1, town.getName());
 			statement.setInt(2, town.getExtraBlocks());
 			statement.setString(3, town.getType());
+			statement.setDouble(4, town.getSpawnX());
+			statement.setDouble(5, town.getSpawnY());
+			statement.setDouble(6, town.getSpawnZ());
+			statement.setInt(7, town.getSpawnDim());
 			statement.executeUpdate();
 			if (!(town instanceof AdminTown)) {
 				for (String s : Constants.DEFAULT_RANK_VALUES.keySet()) {
@@ -430,8 +445,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		synchronized (lock) {
 			addPlot(plot);
 			plot.getTown().addTownPlot(plot);
-
-			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Plots (Key, Dim, X1, Y1, Z1, X2, Y2, Z2, TownName, Owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Plots (Key, Dim, X1, Y1, Z1, X2, Y2, Z2, TownName, Owner, Name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			statement.setString(1, plot.getKey());
 			statement.setInt(2, plot.getDim());
 			statement.setInt(3, plot.getStartX());
@@ -442,7 +456,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 			statement.setInt(8, plot.getEndZ());
 			statement.setString(9, plot.getTown().getName());
 			statement.setString(10, plot.getOwner().getUUID());
-
+			statement.setString(11, plot.getName());
 			statement.executeUpdate();
 
 			log.info("Added new plot in town");
@@ -690,17 +704,20 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	public void updateLinkResidentToTown(Resident resident, Town town) throws Exception {
 		synchronized (lock) {
 			PreparedStatement statement;
-
-			if (resident.getSelectedTown() == town) {
-				statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=? WHERE Owner=?");
+			
+			// If it's the selected town then change all others not to be selected
+			if(resident.getSelectedTown() == town) {
+				statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=? WHERE Owner=? AND IsSelectedTown=?");
 				statement.setBoolean(1, false);
 				statement.setString(2, resident.getUUID());
+				statement.setBoolean(3, true);
 				statement.executeUpdate();
 			}
-			statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=? WHERE TownName=? AND Owner=?");
+			statement = prepare("UPDATE " + prefix + "ResidentsToTowns SET IsSelectedTown=?, Rank=? WHERE TownName=? AND Owner=?");
 			statement.setBoolean(1, resident.getSelectedTown() == town);
-			statement.setString(2, town.getName());
-			statement.setString(3, resident.getUUID());
+			statement.setString(2, resident.getTownRank(town).getKey());
+			statement.setString(3, town.getName());
+			statement.setString(4, resident.getUUID());
 			statement.executeUpdate();
 		}
 	}
@@ -760,17 +777,106 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	 * Create all the new updates
 	 */
 	protected void setUpdates() {
-		updates.add(new DBUpdate("03.08.2014.1", "Add Updates Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Updates (" + "Id varchar(50) NOT NULL, " + "Code varchar(50) NOT NULL, " + "PRIMARY KEY(Id));"));
-		updates.add(new DBUpdate("03.08.2014.2", "Add Towns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Towns (" + "Name varchar(50) NOT NULL, " + "ExtraBlocks int NOT NULL DEFAULT 0, " + "Type varchar(1) DEFAULT 'T', " + "PRIMARY KEY (Name));"));
-		updates.add(new DBUpdate("03.08.2014.3", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Residents (" + "UUID varchar(255) NOT NULL, " + "IsNPC boolean DEFAULT false, " + "Joined int NOT NULL, " + "LastLogin int NOT NULL, " + "SelectedTownName varchar(50), " + "PRIMARY KEY (UUID))")); // MC Version < 1.7 UUID is Player name. 1.7 >= UUID is Player's UUID
-		updates.add(new DBUpdate("03.08.2014.4", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Nations (" + "Name varchar(50) NOT NULL, " + "ExtraBlocks int NOT NULL DEFAULT 0, " + "PRIMARY KEY(Name));"));
-		updates.add(new DBUpdate("03.08.2014.5", "Add TownBlocks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownBlocks (" + "Id int " + MyTownDatasource_SQL.autoIncrement + ", " + "X int NOT NULL, " + "Z int NOT NULL, " + "Dim int NOT NULL, " + "TownName varchar(50) NOT NULL, " + "PRIMARY KEY(Id), " + "FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		updates.add(new DBUpdate("05.03.2014.1", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Ranks (" + "Key varchar(100) NOT NULL, " + "Name varchar(50) NOT NULL, " + "Nodes text(10000), " + "TownName varchar(50), " + "PRIMARY KEY(Key), " + "FOREIGN KEY (TownName) REFERENCES " + prefix + " Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		updates.add(new DBUpdate("03.22.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "ResidentsToTowns (" + "Id int " + MyTownDatasource_SQL.autoIncrement + ", " + "TownName varchar(50) NOT NULL, " + "Owner varchar(255) NOT NULL, " + "Rank varchar(50), " + "IsSelectedTown boolean DEFAULT false, " + "PRIMARY KEY (Id), " + "FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, " + "FOREIGN KEY (Owner) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, " + "FOREIGN KEY (Rank) REFERENCES " + prefix + "Ranks(Key) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		updates.add(new DBUpdate("03.22.2014.2", "Add TownsToNations", "CREATE TABLE IF NOT EXISTS " + prefix + "TownsToNations (" + "Id int " + MyTownDatasource_SQL.autoIncrement + ", " + "TownName varchar(50) NOT NULL, " + "NationName varchar(50) NOT NULL, " + "Rank varchar(1) DEFAULT 'T', " + "PRIMARY KEY (Id), " + "FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, " + "FOREIGN KEY (NationName) REFERENCES " + prefix + "Nations(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
-		updates.add(new DBUpdate("05.23.2014.1", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Plots (" + "Key varchar(100), " + "Dim int NOT NULL, " + "X1 int NOT NULL, " + "Y1 int NOT NULL, " + "Z1 int NOT NULL, " + "X2 int NOT NULL, " + "Y2 int NOT NULL, " + "Z2 int NOT NULL, " + "TownName varchar(50), " + "Owner varchar(255), " + "Type varchar(1) DEFAULT 'T', " + "PRIMARY KEY(Key), " + "FOREIGN KEY(TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, " + "FOREIGN KEY(Owner) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE)"));
-		updates.add(new DBUpdate("05.23.2014.2", "Add TownFlags", "CREATE TABLE IF NOT EXISTS " + prefix + "TownFlags(" + "Id integer, " + "Name varchar(50) NOT NULL, " + "Description varchar(200), " + "TownName varchar(50) NOT NULL, " + "Value boolean NOT NULL, " + "PRIMARY KEY(Id), " + "FOREIGN KEY(TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE)"));
-		updates.add(new DBUpdate("05.23.2014.3", "Add PlotFlags", "CREATE TABLE IF NOT EXISTS " + prefix + "PlotFlags(" + "Id integer, " + "Name varchar(50) NOT NULL, " + "Description varchar(200), " + "TownPlotKey varchar(100) NOT NULL, " + "Value boolean NOT NULL, " + "PRIMARY KEY(Id), " + "FOREIGN KEY(TownPlotKey) REFERENCES " + prefix + "Plots(Key) ON DELETE CASCADE ON UPDATE CASCADE)"));
+		updates.add(new DBUpdate("03.08.2014.1", "Add Updates Table", "CREATE TABLE IF NOT EXISTS " + prefix + 
+				"Updates ("
+				+ "Id varchar(50) NOT NULL, "
+				+ "Code varchar(50) NOT NULL, "
+				+ "PRIMARY KEY(Id));"));
+		updates.add(new DBUpdate("03.08.2014.2", "Add Towns Table", "CREATE TABLE IF NOT EXISTS " + prefix + 
+				"Towns ("
+				+ "Name varchar(50) NOT NULL, "
+				+ "ExtraBlocks int NOT NULL DEFAULT 0, "
+				+ "SpawnX DOUBLE, "
+				+ "SpawnY DOUBLE, "
+				+ "SpawnZ DOUBLE, "
+				+ "SpawnDim int, "
+				+ "Type varchar(1) DEFAULT 'T', "
+				+ "PRIMARY KEY (Name));"));
+		updates.add(new DBUpdate("03.08.2014.3", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix +
+				"Residents ("
+				+ "UUID varchar(255) NOT NULL, "
+				+ "IsNPC boolean DEFAULT false, "
+				+ "Joined int NOT NULL, "
+				+ "LastLogin int NOT NULL, "
+				+ "SelectedTownName varchar(50), "
+				+ "PRIMARY KEY (UUID))")); // MC Version < 1.7 UUID is Player name. 1.7 >= UUID is Player's UUID
+		updates.add(new DBUpdate("03.08.2014.4", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + 
+				"Nations ("
+				+ "Name varchar(50) NOT NULL, "
+				+ "ExtraBlocks int NOT NULL DEFAULT 0, "
+				+ "PRIMARY KEY(Name));"));
+		updates.add(new DBUpdate("03.08.2014.5", "Add TownBlocks Table", "CREATE TABLE IF NOT EXISTS " + prefix + 
+				"TownBlocks ("
+				+ "Id int " + autoIncrement + ", "
+				+ "X int NOT NULL, "
+				+ "Z int NOT NULL, "
+				+ "Dim int NOT NULL, "
+				+ "TownName varchar(50) NOT NULL, "
+				+ "PRIMARY KEY(Id), "
+				+ "FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("05.03.2014.1", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix +
+				"Ranks ("
+				+ "Key varchar(100) NOT NULL, "
+				+ "Name varchar(50) NOT NULL, "
+				+ "Nodes text(10000), "
+				+ "TownName varchar(50), "
+				+ "PRIMARY KEY(Key), "
+				+ "FOREIGN KEY (TownName) REFERENCES " + prefix + " Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("03.22.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + prefix + 
+				"ResidentsToTowns ("
+				+ "Id int " + autoIncrement + ", "
+				+ "TownName varchar(50) NOT NULL, "
+				+ "Owner varchar(255) NOT NULL, "
+				+ "Rank varchar(50), "
+				+ "IsSelectedTown boolean DEFAULT false, "
+				+ "PRIMARY KEY (Id), "
+				+ "FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, "
+				+ "FOREIGN KEY (Owner) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, "
+				+ "FOREIGN KEY (Rank) REFERENCES " + prefix + "Ranks(Key) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("03.22.2014.2", "Add TownsToNations", "CREATE TABLE IF NOT EXISTS " + prefix + 
+				"TownsToNations ("
+				+ "Id int " + autoIncrement + ", "
+				+ "TownName varchar(50) NOT NULL, "
+				+ "NationName varchar(50) NOT NULL, "
+				+ "Rank varchar(1) DEFAULT 'T', "
+				+ "PRIMARY KEY (Id), "
+				+ "FOREIGN KEY (TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, "
+				+ "FOREIGN KEY (NationName) REFERENCES " + prefix + "Nations(Name) ON DELETE CASCADE ON UPDATE CASCADE);"));
+		updates.add(new DBUpdate("05.23.2014.1", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + 
+				"Plots ("
+				+ "Key varchar(100), "
+				+ "Dim int NOT NULL, "
+				+ "X1 int NOT NULL, "
+				+ "Y1 int NOT NULL, "
+				+ "Z1 int NOT NULL, "
+				+ "X2 int NOT NULL, "
+				+ "Y2 int NOT NULL, "
+				+ "Z2 int NOT NULL, "
+				+ "TownName varchar(50), "
+				+ "Owner varchar(255), "
+				+ "Type varchar(1) DEFAULT 'T', "
+				+ "Name varchar(50), "
+				+ "PRIMARY KEY(Key), "
+				+ "FOREIGN KEY(TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE, "
+				+ "FOREIGN KEY(Owner) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE)"));
+		updates.add(new DBUpdate("05.23.2014.2", "Add TownFlags", "CREATE TABLE IF NOT EXISTS " + prefix + 
+				"TownFlags("
+				+ "Id integer, "
+				+ "Name varchar(50) NOT NULL, "
+				+ "Description varchar(200), "
+				+ "TownName varchar(50) NOT NULL, "
+				+ "Value boolean NOT NULL, "
+				+ "PRIMARY KEY(Id), "
+				+ "FOREIGN KEY(TownName) REFERENCES " + prefix + "Towns(Name) ON DELETE CASCADE ON UPDATE CASCADE)"));
+		updates.add(new DBUpdate("05.23.2014.3", "Add PlotFlags", "CREATE TABLE IF NOT EXISTS " + prefix + 
+				"PlotFlags("
+				+ "Id integer, "
+				+ "Name varchar(50) NOT NULL, "
+				+ "Description varchar(200), "
+				+ "TownPlotKey varchar(100) NOT NULL, "
+				+ "Value boolean NOT NULL, "
+				+ "PRIMARY KEY(Id), "
+				+ "FOREIGN KEY(TownPlotKey) REFERENCES " + prefix + "Plots(Key) ON DELETE CASCADE ON UPDATE CASCADE)"));
 	}
 
 	/**

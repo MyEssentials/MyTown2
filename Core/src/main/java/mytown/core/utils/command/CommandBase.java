@@ -2,12 +2,15 @@ package mytown.core.utils.command;
 
 import java.util.List;
 
+import mytown.core.MyTownCore;
 import mytown.core.utils.Assert;
-import net.minecraft.command.CommandException;
+import mytown.core.utils.Log;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 
 public class CommandBase implements ICommand {
+	protected static Log log = MyTownCore.Instance.log.createChild("Commands");
+	
 	protected String permNode;
 	protected String name;
 	protected String parentName;
@@ -91,17 +94,8 @@ public class CommandBase implements ICommand {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
-		try {
-			process(sender, args);
-		} catch(CommandException ex) {
-			throw ex;
-		} catch(Exception ex) {
-		}
 	}
-
-	public void process(ICommandSender sender, String[] args) throws Exception {
-	}
-
+	
 	public String getParentName() {
 		return this.parentName;
 	}

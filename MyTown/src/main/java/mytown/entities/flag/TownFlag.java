@@ -1,5 +1,6 @@
 package mytown.entities.flag;
 
+import net.minecraft.util.EnumChatFormatting;
 import mytown.interfaces.ITownFlag;
 
 public class TownFlag implements ITownFlag {
@@ -49,4 +50,8 @@ public class TownFlag implements ITownFlag {
 		ID = id;
 	}
 
+	@Override
+	public String toString() {
+		return String.format(EnumChatFormatting.GRAY + "%s" + EnumChatFormatting.WHITE +"[" + EnumChatFormatting.GREEN + "%s" + EnumChatFormatting.WHITE + "]:" + EnumChatFormatting.GRAY + " %s", flagName, value, localizedDescription);
+	}
 }

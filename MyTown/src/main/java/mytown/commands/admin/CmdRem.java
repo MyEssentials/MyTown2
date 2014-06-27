@@ -6,6 +6,7 @@ import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -18,7 +19,7 @@ public class CmdRem extends CommandBase {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
+	public void processCommand (ICommandSender sender, String[] args) {
 		if (args.length < 2)
 			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.adm.cmd.usage.rem"));
 		if (!getDatasource().hasResident(args[0]))
@@ -27,9 +28,14 @@ public class CmdRem extends CommandBase {
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[1]));
 		if (!getDatasource().getTown(args[1]).hasResident(getDatasource().getResident(args[0])))
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.adm.cmd.err.rem.resident", (Object[]) args));
-
-		getDatasource().unlinkResidentFromTown(getDatasource().getResident(args[0]), getDatasource().getTown(args[1]));
-		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.resident.remove", (Object[]) args);
+		try {
+			getDatasource().unlinkResidentFromTown(getDatasource().getResident(args[0]), getDatasource().getTown(args[1]));
+			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.resident.remove", (Object[]) args);
+		} catch(Exception e) {
+			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**

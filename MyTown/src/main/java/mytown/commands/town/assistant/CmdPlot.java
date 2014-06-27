@@ -1,12 +1,16 @@
 package mytown.commands.town.assistant;
 
 import mytown.MyTown;
+import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
+import mytown.entities.town.Town;
+import mytown.interfaces.ITownPlot;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
@@ -18,6 +22,10 @@ public class CmdPlot extends CommandHandler {
 
 		addSubCommand(new CmdPlotMake("make", this));
 		addSubCommand(new CmdPlotSelect("select", this));
+		addSubCommand(new CmdPlotRename("rename", this));
+		
+		addSubCommand(new CmdPlotShow("show", this));
+		addSubCommand(new CmdPlotVanish("vanish", this));
 	}
 
 	@Override
@@ -35,11 +43,20 @@ public class CmdPlot extends CommandHandler {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length > 0 && subCommands.containsKey(args[0])) {
-			super.process(sender, args);
-		} else {
-			// Do something here
+	public void processCommand (ICommandSender sender, String[] args) {
+		if(args.length > 0)
+			super.processCommand(sender, args);
+		else {
+			Resident resident = getDatasource().getResident(sender.getCommandSenderName());
+			Town town = resident.getSelectedTown();
+			if(town == null) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
+			
+			String formattedPlotsList = "";
+			for(ITownPlot plot : town.getTownPlots()) {			
+				formattedPlotsList += "\n";
+				formattedPlotsList += plot;
+			}
+			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plots", town, formattedPlotsList);
 		}
 
 	}

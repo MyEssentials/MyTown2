@@ -27,20 +27,24 @@ public class CmdClaimFar extends CommandBase {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		EntityPlayer player = (EntityPlayer) sender;
-		Resident res = getDatasource().getOrMakeResident(player);
-		Town town = res.getSelectedTown();
-		if (getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, player.dimension, player.chunkCoordX, player.chunkCoordZ)))
-			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
-		if (checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town))
-			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.claim.notFarClaim"));
+	public void processCommand(ICommandSender sender, String[] args) {
+		try {
+			EntityPlayer player = (EntityPlayer) sender;
+			Resident res = getDatasource().getOrMakeResident(player);
+			Town town = res.getSelectedTown();
+			if (getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, player.dimension, player.chunkCoordX, player.chunkCoordZ)))
+				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
+			if (checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town))
+				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.claim.notFarClaim"));
 
-		TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
-		getDatasource().insertTownBlock(block);
+			TownBlock block = new TownBlock(town, player.chunkCoordX,player.chunkCoordZ, player.dimension);
+			getDatasource().insertTownBlock(block);
 
-		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
-
+			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(),"mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
+		} catch (Exception e) {
+			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			e.printStackTrace();
+		}
 	}
 
 	private boolean checkNearby(int dim, int x, int z, Town town) {
@@ -48,7 +52,7 @@ public class CmdClaimFar extends CommandBase {
 		int[] dz = { 0, 1, 0, -1 };
 
 		for (int i = 0; i < 4; i++)
-			if (getDatasource().hasTownBlock(dim, x + dx[i], z + dz[i], true, town))
+			if (getDatasource().hasTownBlock(dim, x + dx[i], z + dz[i], true,town))
 				return true;
 		return false;
 	}

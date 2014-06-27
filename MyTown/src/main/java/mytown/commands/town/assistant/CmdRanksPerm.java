@@ -23,7 +23,7 @@ public class CmdRanksPerm extends CommandHandler {
 	}
 
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
+	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
@@ -36,9 +36,9 @@ public class CmdRanksPerm extends CommandHandler {
 	}
 
 	@Override
-	public void process(ICommandSender sender, String[] args) throws Exception {
-		if (args.length >= 1 && subCommands.keySet().contains(args[0])) {
-			super.process(sender, args);
+	public void processCommand(ICommandSender sender, String[] args) {
+		if (args.length >= 1) {
+			super.processCommand(sender, args);
 		} else {
 			Rank rank;
 			if (args.length == 0) {
@@ -48,7 +48,7 @@ public class CmdRanksPerm extends CommandHandler {
 			}
 
 			if (rank == null)
-				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.notexist", args[0], getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown().getName()));
+				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.notexist", args[0],getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown().getName()));
 
 			String msg = "";
 			for (String s : rank.getPermissions()) {
