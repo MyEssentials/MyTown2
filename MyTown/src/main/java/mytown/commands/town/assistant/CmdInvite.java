@@ -3,13 +3,13 @@ package mytown.commands.town.assistant;
 import java.util.List;
 
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.commands.town.everyone.CmdInviteAccept;
 import mytown.commands.town.everyone.CmdInviteRefuse;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;

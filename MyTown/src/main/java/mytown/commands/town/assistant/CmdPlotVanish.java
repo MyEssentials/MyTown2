@@ -1,10 +1,10 @@
 package mytown.commands.town.assistant;
 
 import mytown.VisualsTickHandler;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.town.Town;
 import mytown.interfaces.ITownPlot;
 import mytown.proxies.DatasourceProxy;

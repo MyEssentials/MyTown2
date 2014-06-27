@@ -2,6 +2,7 @@ package mytown.commands.town.everyone;
 
 import mytown.Formatter;
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.commands.town.assistant.CmdRanksAdd;
 import mytown.commands.town.assistant.CmdRanksPerm;
 import mytown.commands.town.assistant.CmdRanksRemove;
@@ -9,7 +10,6 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.CommandException;

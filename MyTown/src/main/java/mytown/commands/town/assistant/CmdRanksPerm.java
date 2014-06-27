@@ -1,11 +1,11 @@
 package mytown.commands.town.assistant;
 
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.proxies.DatasourceProxy;

@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.comparator.TownComparator;
 import mytown.entities.town.Town;
@@ -35,7 +35,6 @@ public class CmdInfo extends CommandBase {
 			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.info.notpart"));
 		} else {
-
 			// Printing out info for all towns.
 			if (args[0].equals("@a")) {
 
@@ -53,7 +52,23 @@ public class CmdInfo extends CommandBase {
 			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.info", (Object[]) town.getInfo());
 		}
 	}
-
+	
+	@Override
+	public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
+		List<String> tabComplete = new ArrayList<String>();
+		if (args.length == 0 || args[0].isEmpty()) {
+			tabComplete.add("@a"); // Add the "all" selector
+			tabComplete.addAll(getDatasource().getTownsMap().keySet());
+		} else {
+			for (Town t : getDatasource().getTowns(false)) {
+				if (t.getName().startsWith(args[0])) {
+					tabComplete.add(t.getName());
+				}
+			}
+		}
+		return tabComplete;
+	}
+	
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

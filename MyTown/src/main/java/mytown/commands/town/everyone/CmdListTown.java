@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.comparator.TownComparator;
 import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;

@@ -1,9 +1,9 @@
 package mytown.commands.town.everyone;
 
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
@@ -13,7 +13,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 
 @Permission("mytown.cmd.resident.spawn")
-public class CmdSpawn extends CommandBase {
+public class CmdSpawn extends CommandBase { // TODO Allow teleporting to other town's spawns
 
 	public CmdSpawn(String name, CommandBase parent) {
 		super(name, parent);

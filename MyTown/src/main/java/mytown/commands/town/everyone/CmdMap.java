@@ -1,8 +1,9 @@
 package mytown.commands.town.everyone;
 
+import mytown.api.datasource.MyTownDatasource;
+import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.ICommandSender;
@@ -19,7 +20,7 @@ public class CmdMap extends CommandBase {
 		if (args.length == 0) {
 			res.sendMap();
 		} else {
-			res.setMapOn(args[1] == "on" || args[1] == "enable" || args[1] == "true");
+			res.setMapOn(ChatUtils.equalsOn(args[1]));
 		}
 	}
 

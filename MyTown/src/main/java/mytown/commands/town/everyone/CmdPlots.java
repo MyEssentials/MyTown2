@@ -1,10 +1,10 @@
 package mytown.commands.town.everyone;
 
 import mytown.Formatter;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
