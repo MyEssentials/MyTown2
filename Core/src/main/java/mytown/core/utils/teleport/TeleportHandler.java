@@ -26,7 +26,8 @@ public class TeleportHandler implements IScheduledTickHandler {
 		TickRegistry.registerScheduledTickHandler(TeleportHandler.teleportHandler, Side.SERVER);
 	}
 
-	private TeleportHandler() {}
+	private TeleportHandler() {
+	}
 
 	private List<TeleportLocation> teleportations = new ArrayList<TeleportLocation>();
 
@@ -59,7 +60,8 @@ public class TeleportHandler implements IScheduledTickHandler {
 	}
 
 	@Override
-	public void tickEnd(EnumSet<TickType> arg0, Object... tickData) {}
+	public void tickEnd(EnumSet<TickType> arg0, Object... tickData) {
+	}
 
 	@Override
 	public EnumSet<TickType> ticks() {

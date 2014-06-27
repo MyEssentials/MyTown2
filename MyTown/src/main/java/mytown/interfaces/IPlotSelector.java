@@ -13,9 +13,9 @@ public interface IPlotSelector {
 	boolean isFirstPlotSelectionActive();
 
 	boolean isSecondPlotSelectionActive();
-	
+
 	boolean makePlotFromSelection(String plotName);
-	
+
 	void expandSelectionVert();
 
 	void resetSelection();

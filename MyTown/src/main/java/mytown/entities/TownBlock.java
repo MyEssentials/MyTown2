@@ -106,10 +106,9 @@ public class TownBlock {
 	public String getKey() {
 		return key;
 	}
-	
+
 	/**
-	 * Returns whether or not the block specified by X and Z coords is in this TownBlock
-	 * Note: Y param is not needed since chunks are only X and Z dependant
+	 * Returns whether or not the block specified by X and Z coords is in this TownBlock Note: Y param is not needed since chunks are only X and Z dependant
 	 * 
 	 * @param x
 	 * @param z
@@ -119,10 +118,10 @@ public class TownBlock {
 	public boolean isBlockInChunk(int x, int z, int dim) {
 		return (x >> 4 == this.x && z >> 4 == this.z && dim == this.dim);
 	}
-	
+
 	@Override
 	public String toString() {
-		return String.format("[Dim:%s;X:%s;Z:%s]", this.dim, this.x << 4, this.z << 4);
+		return String.format("[Dim:%s;X:%s;Z:%s]", dim, x << 4, z << 4);
 	}
 
 }

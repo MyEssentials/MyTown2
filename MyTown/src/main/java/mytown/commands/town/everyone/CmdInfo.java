@@ -25,21 +25,20 @@ public class CmdInfo extends CommandBase {
 	}
 
 	@Override
-	public void processCommand (ICommandSender sender, String[] args) {
+	public void processCommand(ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		List<Town> towns = new ArrayList<Town>();
-		
+
 		if (args.length < 1) {
 			if (res.getSelectedTown() != null) {
 				towns.add(res.getSelectedTown());
-			}
-			else
+			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.info.notpart"));
 		} else {
-			
+
 			// Printing out info for all towns.
 			if (args[0].equals("@a")) {
-				
+
 				towns = new ArrayList<Town>(getDatasource().getTowns(false));
 
 				// Using Comparator object to compare names and such
@@ -50,8 +49,9 @@ public class CmdInfo extends CommandBase {
 			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		}
-		for (Town town : towns)
+		for (Town town : towns) {
 			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.info", (Object[]) town.getInfo());
+		}
 	}
 
 	/**

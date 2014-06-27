@@ -28,9 +28,9 @@ public class CmdNewTown extends CommandBase {
 	}
 
 	@Override
-	public void processCommand (ICommandSender sender, String[] args) {
-		EntityPlayer player = (EntityPlayer)sender;
-		
+	public void processCommand(ICommandSender sender, String[] args) {
+		EntityPlayer player = (EntityPlayer) sender;
+
 		if (args.length < 1)
 			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.newtown"));
 		if (getDatasource().hasTown(args[0]))

@@ -39,9 +39,9 @@ public class CmdPlotSelect extends CommandHandler {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
-		if (args.length > 0)
+		if (args.length > 0) {
 			super.processCommand(sender, args);
-		else {
+		} else {
 			EntityPlayer player = (EntityPlayer) sender;
 
 			ItemStack stack = new ItemStack(Item.hoeWood);
@@ -55,10 +55,11 @@ public class CmdPlotSelect extends CommandHandler {
 			if (ok) {
 				result = player.inventory.addItemStackToInventory(stack);
 			}
-			if (result)
+			if (result) {
 				ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.start");
-			else if (ok)
+			} else if (ok) {
 				ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.start.failed");
+			}
 		}
 	}
 

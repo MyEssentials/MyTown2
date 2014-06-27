@@ -28,7 +28,7 @@ public class CmdListTown extends CommandBase {
 	};
 
 	@Override
-	public void processCommand (ICommandSender sender, String[] args) {
+	public void processCommand(ICommandSender sender, String[] args) {
 		List<Town> sortedTowns = new ArrayList<Town>(getDatasource().getTowns(true));
 		TownComparator comp = new TownComparator(TownComparator.Order.Name);
 		Collections.sort(sortedTowns, comp); // TODO Cache the sort?

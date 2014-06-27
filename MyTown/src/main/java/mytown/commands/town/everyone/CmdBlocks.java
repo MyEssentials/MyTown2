@@ -19,7 +19,7 @@ public class CmdBlocks extends CommandHandler {
 	}
 
 	@Override
-	public void processCommand (ICommandSender sender, String[] args) {
+	public void processCommand(ICommandSender sender, String[] args) {
 		if (args.length == 1) {
 			super.processCommand(sender, args);
 		} else {

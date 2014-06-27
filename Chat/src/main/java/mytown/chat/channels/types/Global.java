@@ -13,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
  * @author Joe Goett
  */
 public class Global implements IChannelType {
+	@Override
 	public String name() {
 		return "Global";
 	}

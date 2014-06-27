@@ -22,7 +22,7 @@ public class LocalizationProxy {
 			InputStream is = MyTown.class.getResourceAsStream("/localization/" + Config.localization + ".lang");
 			LocalizationProxy.localization = new Localization(new InputStreamReader(is));
 			LocalizationProxy.localization.load();
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			LocalizationProxy.log.warning("Failed to load localization file (%s)!", ex, Config.localization);
 		}
 	}

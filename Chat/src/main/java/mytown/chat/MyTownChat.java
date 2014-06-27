@@ -40,7 +40,7 @@ public class MyTownChat {
 	public void preInit(FMLPreInitializationEvent ev) {
 		// Setup loggers
 		chatLog = new Log(ev.getModLog());
-		
+
 		ChannelHandler.init();
 		FormatHandler.init();
 
@@ -60,13 +60,15 @@ public class MyTownChat {
 			try {
 				if (msg.key.equals("registerType")) { // Register IChannelType
 					Class<?> possibleChType = Class.forName(msg.getStringValue());
-					if (!possibleChType.isInstance(IChannelType.class)) throw new Exception("Unknown ChannelType");
+					if (!possibleChType.isInstance(IChannelType.class))
+						throw new Exception("Unknown ChannelType");
 					ChannelHandler.addChannelType((IChannelType) possibleChType.newInstance());
 				} else if (msg.key.equals("registerChannel")) { // Add channel to wait list
 					ChannelHandler.addChannelIMC(msg.getStringValue());
 				} else if (msg.key.equals("registerFormatter")) { // Register IChatFormatter
 					Class<?> possibleFormatter = Class.forName(msg.getStringValue());
-					if (!possibleFormatter.isInstance(IChatFormatter.class)) throw new Exception("Unknown IChatFormatter");
+					if (!possibleFormatter.isInstance(IChatFormatter.class))
+						throw new Exception("Unknown IChatFormatter");
 					FormatHandler.addFormatter((IChatFormatter) possibleFormatter.newInstance());
 				}
 			} catch (Exception e) {

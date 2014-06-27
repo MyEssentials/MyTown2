@@ -11,6 +11,6 @@ import net.minecraft.command.ICommandSender;
 public class ChatFormatter implements IChatFormatter {
 	@Override
 	public String format(ICommandSender sender, String format, String message) {
-		return format.replace("$username$", sender.getCommandSenderName()).replace("$worldName$", sender.getEntityWorld().getProviderName()).replace("$msg$", message); // TODO Change the way $worldName$ is set 
+		return format.replace("$username$", sender.getCommandSenderName()).replace("$worldName$", sender.getEntityWorld().getProviderName()).replace("$msg$", message); // TODO Change the way $worldName$ is set
 	}
 }

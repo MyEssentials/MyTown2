@@ -13,26 +13,29 @@ import net.minecraft.entity.player.EntityPlayer;
  */
 public class FormatHandler {
 	private static List<IChatFormatter> formatters;
-	
-	private FormatHandler() {}
-	
+
+	private FormatHandler() {
+	}
+
 	public static void init() {
-		formatters = new ArrayList<IChatFormatter>();
-		addFormatter(new ChatFormatter()); // Default formatter
+		FormatHandler.formatters = new ArrayList<IChatFormatter>();
+		FormatHandler.addFormatter(new ChatFormatter()); // Default formatter
 	}
-	
+
 	public static void addFormatter(IChatFormatter formatter) {
-		if (formatter == null) throw new NullPointerException();
-		formatters.add(formatter);
+		if (formatter == null)
+			throw new NullPointerException();
+		FormatHandler.formatters.add(formatter);
 	}
-	
+
 	public static void removeFormatter(IChatFormatter formatter) {
-		if (formatter == null) throw new NullPointerException();
-		formatters.add(formatter);
+		if (formatter == null)
+			throw new NullPointerException();
+		FormatHandler.formatters.add(formatter);
 	}
-	
+
 	public static String format(EntityPlayer pl, String format, String msg) {
-		for (IChatFormatter formatter : formatters) {
+		for (IChatFormatter formatter : FormatHandler.formatters) {
 			msg = formatter.format(pl, format, msg);
 		}
 		return msg;

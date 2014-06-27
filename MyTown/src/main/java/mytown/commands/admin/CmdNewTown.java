@@ -31,7 +31,7 @@ public class CmdNewTown extends CommandBase {
 		try {
 			AdminTown town = new AdminTown(args[0]);
 			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
-			EntityPlayer player = (EntityPlayer)sender;
+			EntityPlayer player = (EntityPlayer) sender;
 			getDatasource().insertTown(town);
 			getDatasource().insertTownBlock(new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension));
 			getDatasource().insertTownFlag(town, new TownFlag("mobs", "Controls mobs spawning", true));
@@ -42,9 +42,9 @@ public class CmdNewTown extends CommandBase {
 			getDatasource().insertTownFlag(town, new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
 
 			res.sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.admtown.created", town.getName());
-		} catch(Exception e) {
+		} catch (Exception e) {
 			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError")); // Notify players
-			
+
 			e.printStackTrace();
 		}
 	}

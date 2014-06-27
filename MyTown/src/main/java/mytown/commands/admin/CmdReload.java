@@ -21,7 +21,7 @@ public class CmdReload extends CommandBase {
 	}
 
 	@Override
-	public void processCommand (ICommandSender sender, String[] args) {
+	public void processCommand(ICommandSender sender, String[] args) {
 		throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.unimplemented", getCommandName()));
 	}
 }

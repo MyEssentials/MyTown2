@@ -40,31 +40,33 @@ public class CmdClaim extends CommandHandler {
 			e.printStackTrace(); // TODO Change later
 		}
 
-		if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getTowns().size() == 0)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
-		if (args.length >= 1)
+		if (args.length >= 1) {
 			super.processCommand(sender, args);
-		else {
+		} else {
 			try {
 				EntityPlayer player = (EntityPlayer) sender;
 				Resident res = getDatasource().getOrMakeResident(player);
 				Town town = res.getSelectedTown();
-				
-				if (getDatasource().hasTownBlock( String.format(TownBlock.keyFormat, player.dimension,player.chunkCoordX, player.chunkCoordZ))) 
+
+				if (getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, player.dimension, player.chunkCoordX, player.chunkCoordZ)))
 					throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
-				if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) 
+				if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town))
 					throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.claim.farClaim"));
 
 				TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
 				getDatasource().insertTownBlock(block);
 
-				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(),"mytown.notification.townblock.added",block.getX() * 16, block.getZ() * 16,block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
+				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
 			} catch (Exception e) {
 				MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 				e.printStackTrace();

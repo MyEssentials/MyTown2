@@ -26,14 +26,15 @@ public class CmdPlotMake extends CommandBase {
 	public void processCommand(ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		String plotName = "NoName";
-		
-		if(args.length > 0)
+
+		if (args.length > 0) {
 			plotName = args[0];
-		
+		}
+
 		boolean result = res.makePlotFromSelection(plotName);
-		if (result)
-			ChatUtils.sendLocalizedChat(sender,LocalizationProxy.getLocalization(),"mytown.notification.town.plot.created");
-		else
+		if (result) {
+			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.created");
+		} else
 			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.failed"));
 	}
 

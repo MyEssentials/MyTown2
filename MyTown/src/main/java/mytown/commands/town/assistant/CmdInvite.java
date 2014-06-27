@@ -30,18 +30,11 @@ public class CmdInvite extends CommandHandler {
 	}
 
 	/*
-	 * @Override public boolean canCommandSenderUseCommand(ICommandSender
-	 * sender) throws CommandException {
-	 * super.canCommandSenderUseCommand(sender);
+	 * @Override public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException { super.canCommandSenderUseCommand(sender);
 	 * 
-	 * Resident res =
-	 * getDatasource().getResident(sender.getCommandSenderName());
+	 * Resident res = getDatasource().getResident(sender.getCommandSenderName());
 	 * 
-	 * if (res.getTowns().size() == 0) throw new
-	 * CommandException(MyTown.getLocal
-	 * ().getLocalization("mytown.cmd.err.partOfTown")); if
-	 * (!res.getTownRank().hasPermission(permNode)) throw new
-	 * CommandException("commands.generic.permission");
+	 * if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal ().getLocalization("mytown.cmd.err.partOfTown")); if (!res.getTownRank().hasPermission(permNode)) throw new CommandException("commands.generic.permission");
 	 * 
 	 * return true; }
 	 */
@@ -51,34 +44,33 @@ public class CmdInvite extends CommandHandler {
 		if (args.length != 0) {
 			super.processCommand(sender, args);
 		} else {
-			Resident res = getDatasource().getResident(
-					sender.getCommandSenderName());
+			Resident res = getDatasource().getResident(sender.getCommandSenderName());
 			if (res.getTowns().size() == 0)
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-			if (!res.getTownRank().hasPermission(this.permNode))
+			if (!res.getTownRank().hasPermission(permNode))
 				throw new CommandException("commands.generic.permission");
 			if (args.length < 1)
 				throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite"));
 			if (!getDatasource().hasResident(args[0]))
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.resident.notexist", args[0]));
-			
+
 			Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-			
+
 			if (town == null)
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
 			if (town.hasResident(args[0]))
-				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.already", args[0],town.getName()));
+				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.already", args[0], town.getName()));
 
 			Resident target = getDatasource().getResident(args[0]);
 			target.addInvitation(town);
-			target.sendLocalizedMessage(LocalizationProxy.getLocalization(),"mytown.notification.town.invited", town.getName());
-			res.sendLocalizedMessage(LocalizationProxy.getLocalization(),"mytown.notification.town.invite.sent", args[0]);
+			target.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.invited", town.getName());
+			res.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.invite.sent", args[0]);
 		}
 	}
 
 	@Override
-	public List<String> addTabCompletionOptions(ICommandSender sender,String[] args) {
-		return CommandUtils.getListOfStringsMatchingLastWord(args,MinecraftServer.getServer().getAllUsernames());
+	public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
+		return CommandUtils.getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
 	}
 
 	@Override

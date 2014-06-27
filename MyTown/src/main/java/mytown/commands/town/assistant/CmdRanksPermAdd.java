@@ -22,13 +22,14 @@ public class CmdRanksPermAdd extends CommandBase {
 	}
 
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender)
-			throws CommandException {
+	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
 		super.canCommandSenderUseCommand(sender);
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
-		if (res.getSelectedTown() == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getSelectedTown() == null)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}

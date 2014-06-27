@@ -26,7 +26,7 @@ public class CmdPlotSelectReset extends CommandBase {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		res.resetSelection();
 
-		ChatUtils.sendLocalizedChat(sender,LocalizationProxy.getLocalization(),"mytown.notification.town.plot.selectionReset");
+		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionReset");
 	}
 
 	/**

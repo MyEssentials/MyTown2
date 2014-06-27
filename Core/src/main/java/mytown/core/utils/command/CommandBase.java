@@ -10,12 +10,12 @@ import net.minecraft.command.ICommandSender;
 
 public class CommandBase implements ICommand {
 	protected static Log log = MyTownCore.Instance.log.createChild("Commands");
-	
+
 	protected String permNode;
 	protected String name;
 	protected String parentName;
 	protected ICommand parent;
-	
+
 	public CommandBase(String name) {
 		this(name, null);
 	}
@@ -32,16 +32,17 @@ public class CommandBase implements ICommand {
 		}
 		String temp;
 		if (parent != null) {
-			this.parentName = parent.getCommandName();
+			parentName = parent.getCommandName();
 			temp = parentName + '.' + name;
 		} else {
-			this.parentName = "";
+			parentName = "";
 			temp = name;
 		}
-		if (permNode.startsWith("mytown.adm"))
+		if (permNode.startsWith("mytown.adm")) {
 			CommandUtils.permissionListAdmin.put(temp, permNode);
-		else
+		} else {
 			CommandUtils.permissionList.put(temp, permNode);
+		}
 	}
 
 	@Override
@@ -84,7 +85,7 @@ public class CommandBase implements ICommand {
 
 	@Override
 	public String getCommandName() {
-		return this.name;
+		return name;
 	}
 
 	@Override
@@ -95,12 +96,12 @@ public class CommandBase implements ICommand {
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 	}
-	
+
 	public String getParentName() {
-		return this.parentName;
+		return parentName;
 	}
-	
+
 	public ICommand getParent() {
-		return this.parent;
+		return parent;
 	}
 }

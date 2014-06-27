@@ -16,7 +16,7 @@ import net.minecraft.command.ICommandSender;
  */
 public class Channel {
 	private static Log log = MyTownChat.Instance.chatLog.createChild("Channel");
-	
+
 	public String name;
 	public String abbreviation;
 	public String format;
@@ -63,12 +63,12 @@ public class Channel {
 				try {
 					Assert.Perm(recipient, "mytown.chat.channel." + name + ".receive");
 					ChatUtils.sendChat(recipient, message);
-				} catch(Exception ex) {
+				} catch (Exception ex) {
 					// Ignore since this is just to stop the msg from being sent
 				}
 			}
-		} catch(Exception ex) {
-			log.fine("[%s] %s doesn't have the permission to send to this channel", name, sender.getCommandSenderName());
+		} catch (Exception ex) {
+			Channel.log.fine("[%s] %s doesn't have the permission to send to this channel", name, sender.getCommandSenderName());
 			// TODO Tell player they can't send to this channel
 		}
 	}

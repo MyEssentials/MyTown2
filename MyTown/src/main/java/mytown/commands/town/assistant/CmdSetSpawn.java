@@ -18,27 +18,29 @@ public class CmdSetSpawn extends CommandBase {
 	public CmdSetSpawn(String name, CommandBase parent) {
 		super(name, parent);
 	}
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
 
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
-		if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(this.permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getTowns().size() == 0)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
-	
+
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
-		EntityPlayer player = (EntityPlayer)sender;
+		EntityPlayer player = (EntityPlayer) sender;
 		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-		
-		if(!town.isBlockInTown((int)player.posX, (int)player.posZ, player.dimension))
+
+		if (!town.isBlockInTown((int) player.posX, (int) player.posZ, player.dimension))
 			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()));
-		
+
 		town.setSpawn(player.posX, player.posY, player.posZ, player.dimension);
 		try {
 			getDatasource().updateTown(town);
@@ -48,7 +50,7 @@ public class CmdSetSpawn extends CommandBase {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

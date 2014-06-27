@@ -14,22 +14,7 @@ public class ConfigProcessor {
 	/**
 	 * Maps classes to the appropriate Property.Type
 	 */
-	protected static Map<Class<?>, Property.Type> CONFIG_TYPES = ImmutableMap.<Class<?>, Property.Type> builder()
-			.put(Integer.class, Property.Type.INTEGER)
-			.put(int.class, Property.Type.INTEGER)
-			.put(Integer[].class, Property.Type.INTEGER)
-			.put(int[].class, Property.Type.INTEGER)
-			.put(Double.class, Property.Type.DOUBLE)
-			.put(double.class, Property.Type.DOUBLE)
-			.put(Double[].class, Property.Type.DOUBLE)
-			.put(double[].class, Property.Type.DOUBLE)
-			.put(Boolean.class, Property.Type.BOOLEAN)
-			.put(boolean.class, Property.Type.BOOLEAN)
-			.put(Boolean[].class, Property.Type.BOOLEAN)
-			.put(boolean[].class, Property.Type.BOOLEAN)
-			.put(String.class, Property.Type.STRING)
-			.put(String[].class, Property.Type.STRING)
-			.build();
+	protected static Map<Class<?>, Property.Type> CONFIG_TYPES = ImmutableMap.<Class<?>, Property.Type> builder().put(Integer.class, Property.Type.INTEGER).put(int.class, Property.Type.INTEGER).put(Integer[].class, Property.Type.INTEGER).put(int[].class, Property.Type.INTEGER).put(Double.class, Property.Type.DOUBLE).put(double.class, Property.Type.DOUBLE).put(Double[].class, Property.Type.DOUBLE).put(double[].class, Property.Type.DOUBLE).put(Boolean.class, Property.Type.BOOLEAN).put(boolean.class, Property.Type.BOOLEAN).put(Boolean[].class, Property.Type.BOOLEAN).put(boolean[].class, Property.Type.BOOLEAN).put(String.class, Property.Type.STRING).put(String[].class, Property.Type.STRING).build();
 
 	protected static Log log;
 
@@ -42,65 +27,66 @@ public class ConfigProcessor {
 	public static void processConfig(Configuration config, Class<?> c) {
 		for (Field f : c.getFields()) {
 			ConfigProperty propAnnot = f.getAnnotation(ConfigProperty.class);
-			if (propAnnot == null) return;
+			if (propAnnot == null)
+				return;
 			String category = propAnnot.category();
 			String key = (propAnnot.name().isEmpty() || propAnnot.name() == null) ? f.getName() : propAnnot.name();
 			String comment = propAnnot.comment();
-			setField(f, config, category, key, comment);
+			ConfigProcessor.setField(f, config, category, key, comment);
 		}
 	}
-	
+
 	protected static void setField(Field f, Configuration config, String category, String key, String comment) {
 		if (f == null || config == null) {
-			log.config("Field or Config was null");
+			ConfigProcessor.log.config("Field or Config was null");
 			return;
 		}
-		Property.Type type = CONFIG_TYPES.get(f.getType());
+		Property.Type type = ConfigProcessor.CONFIG_TYPES.get(f.getType());
 		if (type == null) {
-			log.config("Unknown config type for field type: %s", f.getType().getName());
+			ConfigProcessor.log.config("Unknown config type for field type: %s", f.getType().getName());
 			return;
 		}
 		try {
 			Object defaultValue = f.get(null);
-			switch(type) {
+			switch (type) {
 				case INTEGER:
 					if (f.getType().isArray()) {
-						f.set(null, config.get(category, key, (int[])defaultValue, comment).getIntList());
+						f.set(null, config.get(category, key, (int[]) defaultValue, comment).getIntList());
 					} else {
-						f.set(null, config.get(category, key, (Integer)defaultValue, comment).getInt());
+						f.set(null, config.get(category, key, (Integer) defaultValue, comment).getInt());
 					}
 					break;
 				case DOUBLE:
 					if (f.getType().isArray()) {
-						f.set(null, config.get(category, key, (double[])defaultValue, comment).getDoubleList());
+						f.set(null, config.get(category, key, (double[]) defaultValue, comment).getDoubleList());
 					} else {
-						f.set(null, config.get(category, key, (Double)defaultValue, comment).getDouble((Double)defaultValue));
+						f.set(null, config.get(category, key, (Double) defaultValue, comment).getDouble((Double) defaultValue));
 					}
 					break;
 				case BOOLEAN:
 					if (f.getType().isArray()) {
-						f.set(null, config.get(category, key, (boolean[])defaultValue, comment).getBooleanList());
+						f.set(null, config.get(category, key, (boolean[]) defaultValue, comment).getBooleanList());
 					} else {
-						f.set(null, config.get(category, key, (Boolean)defaultValue, comment).getBoolean((Boolean)defaultValue));
+						f.set(null, config.get(category, key, (Boolean) defaultValue, comment).getBoolean((Boolean) defaultValue));
 					}
 					break;
 				case STRING:
 					if (f.getType().isArray()) {
-						f.set(null, config.get(category, key, (String[])defaultValue, comment).getStringList());
+						f.set(null, config.get(category, key, (String[]) defaultValue, comment).getStringList());
 					} else {
-						f.set(null, config.get(category, key, (String)defaultValue, comment).getString());
+						f.set(null, config.get(category, key, (String) defaultValue, comment).getString());
 					}
 					break;
 			}
-		} catch(Exception ex) {
-			log.config("An exception has occurred while processing field: %s", ex, f.getName());
+		} catch (Exception ex) {
+			ConfigProcessor.log.config("An exception has occurred while processing field: %s", ex, f.getName());
 		}
 	}
 
 	public static Log getLog() {
-		if (log == null) {
-			log = MyTownCore.Instance.log.createChild("ConfigProcessor");
+		if (ConfigProcessor.log == null) {
+			ConfigProcessor.log = MyTownCore.Instance.log.createChild("ConfigProcessor");
 		}
-		return log;
+		return ConfigProcessor.log;
 	}
 }

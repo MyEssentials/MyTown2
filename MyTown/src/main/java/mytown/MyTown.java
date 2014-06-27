@@ -43,11 +43,10 @@ public class MyTown {
 
 	// Configs
 	public Configuration config;
-	
+
 	// Set to true to kick all non-admin users out with a custom kick message
 	public boolean safemode = false;
 
-	
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent ev) {
 		// Setup Loggers
@@ -142,7 +141,7 @@ public class MyTown {
 		PlayerTracker playerTracker = new PlayerTracker();
 		GameRegistry.registerPlayerTracker(playerTracker);
 		MinecraftForge.EVENT_BUS.register(playerTracker);
-		
+
 		TickRegistry.registerTickHandler(VisualsTickHandler.instance, Side.SERVER);
 	}
 

@@ -11,9 +11,9 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 
 public abstract class CommandHandler extends CommandBase {
-	
+
 	protected Map<String, ICommand> subCommands;
-	
+
 	public CommandHandler(String name) {
 		this(name, null);
 	}
@@ -35,7 +35,7 @@ public abstract class CommandHandler extends CommandBase {
 	 */
 	public void addSubCommand(CommandBase subCmd) {
 		subCommands.put(subCmd.getCommandName(), subCmd);
-		//System.out.println("Loaded command " + subCmd.getParentName() + "." + subCmd.getCommandName());
+		// System.out.println("Loaded command " + subCmd.getParentName() + "." + subCmd.getCommandName());
 	}
 
 	/**
@@ -64,20 +64,21 @@ public abstract class CommandHandler extends CommandBase {
 			return;
 		}
 		ICommand cmd = subCommands.get(args[0]);
-		if (cmd == null) throw new CommandNotFoundException();
+		if (cmd == null)
+			throw new CommandNotFoundException();
 		cmd.canCommandSenderUseCommand(sender);
 		cmd.processCommand(sender, Arrays.copyOfRange(args, 1, args.length));
 	}
-	
+
 	public Map<String, ICommand> getSubCommands() {
-		return this.subCommands;
+		return subCommands;
 	}
 
 	@Override
 	public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
-		if (args.length == 0) {
+		if (args.length == 0)
 			return (List<?>) subCommands.keySet();
-		} else if (args.length == 1) {
+		else if (args.length == 1) {
 			List<Object> tabCompletion = new ArrayList<Object>();
 			for (String str : subCommands.keySet()) {
 				if (str.startsWith(args[0])) {
@@ -87,13 +88,12 @@ public abstract class CommandHandler extends CommandBase {
 			return tabCompletion;
 		} else if (args.length > 1) {
 			ICommand subCmd = subCommands.get(args[0]);
-			if (subCmd != null) {
+			if (subCmd != null)
 				return subCmd.addTabCompletionOptions(sender, args);
-			}
 		}
-		
+
 		return null; // If all else fails...
 	}
-	
+
 	public abstract void sendHelp(ICommandSender sender);
 }

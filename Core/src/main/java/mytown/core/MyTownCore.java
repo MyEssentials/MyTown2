@@ -36,6 +36,6 @@ public class MyTownCore {
 
 	@Mod.EventHandler
 	public void serverAboutToStart(FMLServerAboutToStartEvent ev) {
-		IS_MCPC = ev.getServer().getServerModName().contains("mcpc");
+		MyTownCore.IS_MCPC = ev.getServer().getServerModName().contains("mcpc");
 	}
 }

@@ -23,8 +23,10 @@ public class CmdRanksPermRemove extends CommandBase {
 		super.canCommandSenderUseCommand(sender);
 		Resident res = MyTown.getDatasource().getResident(sender.getCommandSenderName());
 
-		if (res.getSelectedTown() == null) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-		if (!res.getTownRank().hasPermission(permNode)) throw new CommandException("commands.generic.permission");
+		if (res.getSelectedTown() == null)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+		if (!res.getTownRank().hasPermission(permNode))
+			throw new CommandException("commands.generic.permission");
 
 		return true;
 	}
@@ -45,7 +47,7 @@ public class CmdRanksPermRemove extends CommandBase {
 			// Removing permission if everything is alright
 			if (town.getRank(args[0]).removePermission(args[1])) {
 				MyTown.getDatasource().updateRank(town.getRank(args[0]));
-				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(),"mytown.notification.town.ranks.perm.remove", args[1],args[0]);
+				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.ranks.perm.remove", args[1], args[0]);
 			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.perm.remove.failed", args[1]));
 		} catch (Exception e) {

@@ -12,7 +12,7 @@ import mytown.chat.api.Rule;
  */
 public class ActionRule extends Rule {
 	public List<Action> actions;
-	
+
 	public ActionRule(String name, String match) {
 		super(name, match);
 		actions = new ArrayList<Action>();

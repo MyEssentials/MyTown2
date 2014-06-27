@@ -23,7 +23,7 @@ public class CmdPlot extends CommandHandler {
 		addSubCommand(new CmdPlotMake("make", this));
 		addSubCommand(new CmdPlotSelect("select", this));
 		addSubCommand(new CmdPlotRename("rename", this));
-		
+
 		addSubCommand(new CmdPlotShow("show", this));
 		addSubCommand(new CmdPlotVanish("vanish", this));
 	}
@@ -43,16 +43,17 @@ public class CmdPlot extends CommandHandler {
 	}
 
 	@Override
-	public void processCommand (ICommandSender sender, String[] args) {
-		if(args.length > 0)
+	public void processCommand(ICommandSender sender, String[] args) {
+		if (args.length > 0) {
 			super.processCommand(sender, args);
-		else {
+		} else {
 			Resident resident = getDatasource().getResident(sender.getCommandSenderName());
 			Town town = resident.getSelectedTown();
-			if(town == null) throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
-			
+			if (town == null)
+				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
+
 			String formattedPlotsList = "";
-			for(ITownPlot plot : town.getTownPlots()) {			
+			for (ITownPlot plot : town.getTownPlots()) {
 				formattedPlotsList += "\n";
 				formattedPlotsList += plot;
 			}

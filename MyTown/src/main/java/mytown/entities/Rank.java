@@ -2,8 +2,8 @@ package mytown.entities;
 
 import java.util.ArrayList;
 
-import net.minecraft.util.EnumChatFormatting;
 import mytown.entities.town.Town;
+import net.minecraft.util.EnumChatFormatting;
 
 public class Rank {
 
@@ -115,9 +115,9 @@ public class Rank {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
-		return EnumChatFormatting.GREEN + this.name;
+		return EnumChatFormatting.GREEN + name;
 	}
 }

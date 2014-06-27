@@ -25,8 +25,7 @@ public class CmdPermSet extends CommandBase {
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
 
-		Resident res = getDatasource().getResident(
-				sender.getCommandSenderName());
+		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 
 		if (res.getTowns().size() == 0)
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
@@ -49,10 +48,9 @@ public class CmdPermSet extends CommandBase {
 				flag.setValue(true);
 			} else if (args[1].equals("false")) {
 				flag.setValue(false);
-			} else {
-				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.valueNotValid",args[1]));
-			}
-			ChatUtils.sendLocalizedChat(sender,LocalizationProxy.getLocalization(),"mytown.notification.town.perm.set.success", args[0],args[1]);
+			} else
+				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.valueNotValid", args[1]));
+			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.perm.set.success", args[0], args[1]);
 
 			getDatasource().updateTownFlag(flag);
 		} catch (Exception e) {

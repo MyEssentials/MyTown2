@@ -4,8 +4,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.util.EnumChatFormatting;
 import mytown.entities.town.Town;
+import net.minecraft.util.EnumChatFormatting;
 
 /**
  * Defines a Nation
@@ -159,10 +159,10 @@ public class Nation {
 	public void removeTown(Town town) {
 		towns.remove(town);
 	}
-	
+
 	@Override
 	public String toString() {
-		String temp = EnumChatFormatting.RED + this.name;
+		String temp = EnumChatFormatting.RED + name;
 		return temp;
 	}
 }

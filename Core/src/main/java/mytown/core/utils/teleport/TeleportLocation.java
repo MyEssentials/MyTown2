@@ -57,20 +57,22 @@ public class TeleportLocation {
 	 * @param player
 	 */
 	public boolean teleportPlayer() {
-		if (player == null) return false;
+		if (player == null)
+			return false;
 		if (player.posX != playerX || player.posY != playerY || player.posZ != playerZ) {
 			ChatUtils.sendChat(player, "Teleport canceled because you moved!"); // TODO Localize? (Somehow)
 			return true;
 		}
-		if (teleportStamp > System.currentTimeMillis()) return false;
+		if (teleportStamp > System.currentTimeMillis())
+			return false;
 
 		WorldServer world = MinecraftServer.getServer().worldServerForDimension(dim);
 
 		if (player.dimension != dim) {
 			if (MyTownCore.IS_MCPC) {
 				Packet250CustomPayload[] dimensionRegisterPackets = ForgePacket.makePacketSet(new DimensionRegisterPacket(dim, DimensionManager.getProviderType(dim)));
-				for (int i = 0; i < dimensionRegisterPackets.length; i++) {
-					PacketDispatcher.sendPacketToPlayer(dimensionRegisterPackets[i], (Player) player);
+				for (Packet250CustomPayload dimensionRegisterPacket : dimensionRegisterPackets) {
+					PacketDispatcher.sendPacketToPlayer(dimensionRegisterPacket, (Player) player);
 				}
 			}
 			MinecraftServer.getServer().getConfigurationManager().transferPlayerToDimension(player, dim);

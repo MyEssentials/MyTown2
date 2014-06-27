@@ -9,7 +9,7 @@ import java.util.List;
  * Children should automatically inherit from their parents if the parent's value actually changed
  * 
  * @author Joe Goett
- *
+ * 
  * @param <T>
  */
 public class Flag<T> {
@@ -17,38 +17,39 @@ public class Flag<T> {
 	private T value, inheritedValue;
 	private Flag<T> parent;
 	private List<Flag<T>> children;
-	
+
 	public Flag(String name, T value, Flag<T> parent, List<Flag<T>> children) {
 		this.name = name;
 		this.value = value;
 		this.parent = parent;
 		this.children = children;
 	}
-	
+
 	public Flag(String name, T value, Flag<T> parent) {
 		this(name, value, parent, new ArrayList<Flag<T>>());
 	}
-	
+
 	public Flag(String name, T value) {
 		this(name, value, null);
 	}
-	
+
 	/**
 	 * Will return the value this flag is set to, or the value it inherits from its parent
+	 * 
 	 * @return
 	 */
 	public T getValue() {
 		return value != null ? value : inheritedValue;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setValue(T value) {
 		this.value = value;
 	}
-	
+
 	public void inherit(T value, boolean forced) {
 		if ((this.value == null || forced) && inheritedValue != value) {
 			this.value = null;
@@ -58,33 +59,33 @@ public class Flag<T> {
 			}
 		}
 	}
-	
+
 	public Flag<T> getParent() {
 		return parent;
 	}
-	
+
 	public void setParent(Flag<T> parent) {
 		this.parent = parent;
 	}
-	
+
 	public void addChild(Flag<T> child) {
 		children.add(child);
 		child.setParent(this);
 	}
-	
+
 	public void removeChild(Flag<T> child) {
 		children.remove(child);
 		child.setParent(null);
 	}
-	
+
 	public List<Flag<T>> getChildren() {
 		return children;
 	}
-	
+
 	public Class<?> getType() {
 		return value.getClass();
 	}
-	
+
 	public boolean isArray() {
 		return value.getClass().isArray();
 	}

@@ -15,7 +15,7 @@ import com.esotericsoftware.reflectasm.MethodAccess;
 
 public class CommandUtils {
 	private static boolean isInit = false;
-	
+
 	private static Log log;
 	private static CommandHandler commandHandler;
 	private static MethodAccess access;
@@ -24,48 +24,53 @@ public class CommandUtils {
 	public static Map<String, String> permissionList = new Hashtable<String, String>();
 	public static Map<String, String> permissionListAdmin = new Hashtable<String, String>();
 
-	private static void init(){
-		if (isInit) return;
-		log = MyTownCore.Instance.log.createChild("CommandUtils");
-		commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
-		access = MethodAccess.get(CommandHandler.class);
+	private static void init() {
+		if (CommandUtils.isInit)
+			return;
+		CommandUtils.log = MyTownCore.Instance.log.createChild("CommandUtils");
+		CommandUtils.commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
+		CommandUtils.access = MethodAccess.get(CommandHandler.class);
 		try {
-			log.finest("Attempting to retrieve registerCommand(ICommand, String)");
-			method = access.getIndex("registerCommand", ICommand.class, String.class);
+			CommandUtils.log.finest("Attempting to retrieve registerCommand(ICommand, String)");
+			CommandUtils.method = CommandUtils.access.getIndex("registerCommand", ICommand.class, String.class);
 		} catch (Exception e) {
-			log.finest("Defaulting to standard registerCommand(ICommand)");
-			method = -1;
+			CommandUtils.log.finest("Defaulting to standard registerCommand(ICommand)");
+			CommandUtils.method = -1;
 		}
 	}
 
 	public static void registerCommand(ICommand command, String permNode, boolean enabled) {
-		init();
-		
-		if (!enabled || command == null) return;
-		if (permNode.trim().isEmpty()) permNode = command.getClass().getName();
-		log.finest("Registering command (%s) %s with perm node %s", command.getClass().getName(), command.getCommandName(), permNode);
-		if (method == -1) {
-			commandHandler.registerCommand(command);
+		CommandUtils.init();
+
+		if (!enabled || command == null)
+			return;
+		if (permNode.trim().isEmpty()) {
+			permNode = command.getClass().getName();
+		}
+		CommandUtils.log.finest("Registering command (%s) %s with perm node %s", command.getClass().getName(), command.getCommandName(), permNode);
+		if (CommandUtils.method == -1) {
+			CommandUtils.commandHandler.registerCommand(command);
 		} else {
-			access.invoke(commandHandler, method, command, permNode);
+			CommandUtils.access.invoke(CommandUtils.commandHandler, CommandUtils.method, command, permNode);
 		}
 	}
 
 	public static void registerCommand(ICommand command, String permNode) {
-		registerCommand(command, permNode, true);
+		CommandUtils.registerCommand(command, permNode, true);
 	}
 
 	public static void registerCommand(ICommand command, boolean enabled) {
-		if (command == null) return;
+		if (command == null)
+			return;
 		String permNode = command.getClass().getName();
 		if (command.getClass().isAnnotationPresent(Permission.class)) {
 			permNode = command.getClass().getAnnotation(Permission.class).value();
 		}
-		registerCommand(command, permNode, enabled);
+		CommandUtils.registerCommand(command, permNode, enabled);
 	}
 
 	public static void registerCommand(ICommand command) {
-		registerCommand(command, true);
+		CommandUtils.registerCommand(command, true);
 	}
 
 	public static boolean doesStringStartWith(String str1, String str2) {
@@ -77,7 +82,7 @@ public class CommandUtils {
 		ArrayList<String> arraylist = new ArrayList<String>();
 		for (String str : strings2) {
 			String s2 = str;
-			if (doesStringStartWith(s1, s2)) {
+			if (CommandUtils.doesStringStartWith(s1, s2)) {
 				arraylist.add(s2);
 			}
 		}

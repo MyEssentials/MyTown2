@@ -29,6 +29,6 @@ public class ChatUtils {
 	 * @param args
 	 */
 	public static void sendLocalizedChat(ICommandSender sender, Localization local, String key, Object... args) {
-		sendChat(sender, local.getLocalization(key), args);
+		ChatUtils.sendChat(sender, local.getLocalization(key), args);
 	}
 }

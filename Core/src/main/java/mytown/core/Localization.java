@@ -20,13 +20,14 @@ public class Localization {
 	 */
 	Map<String, String> localizations;
 	Reader reader = null;
-	
+
 	/**
 	 * Specifies the {@link Reader} to use when reading the localization
+	 * 
 	 * @param r
 	 */
 	public Localization(Reader r) {
-		this.reader = r;
+		reader = r;
 		localizations = new HashMap<String, String>();
 	}
 
@@ -34,7 +35,7 @@ public class Localization {
 	 * Specifies the file to load via a {@link File}
 	 * 
 	 * @param file
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
 	public Localization(File file) throws FileNotFoundException {
 		this(new FileReader(file));
@@ -44,7 +45,7 @@ public class Localization {
 	 * Specifies the file to load via a filename
 	 * 
 	 * @param filename
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
 	public Localization(String filename) throws FileNotFoundException {
 		this(new File(filename));
@@ -60,9 +61,13 @@ public class Localization {
 
 		String line;
 		while ((line = br.readLine()) != null) {
-			if (line.startsWith("#") || line.trim().isEmpty()) continue; // Ignore comments and empty lines
+			if (line.startsWith("#") || line.trim().isEmpty()) {
+				continue; // Ignore comments and empty lines
+			}
 			String[] entry = line.split("=");
-			if (entry.length < 2) continue; // Ignore entries that are not formatted correctly (maybe log later)
+			if (entry.length < 2) {
+				continue; // Ignore entries that are not formatted correctly (maybe log later)
+			}
 			localizations.put(entry[0], entry[1]);
 		}
 
@@ -82,11 +87,10 @@ public class Localization {
 	 * @return
 	 */
 	public String getLocalization(String key, Object... args) {
-		if (args.length > 0) {
+		if (args.length > 0)
 			return String.format(getLocalizationFromKey(key), args);
-		} else {
+		else
 			return getLocalizationFromKey(key);
-		}
 
 	}
 }

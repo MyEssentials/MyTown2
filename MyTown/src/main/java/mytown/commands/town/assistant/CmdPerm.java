@@ -43,16 +43,17 @@ public class CmdPerm extends CommandHandler {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
-		if (args.length > 0)
+		if (args.length > 0) {
 			super.processCommand(sender, args);
-		else {
+		} else {
 			Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
 			String formattedFlagList = null;
 			for (ITownFlag flag : town.getFlags()) {
-				if (formattedFlagList == null)
+				if (formattedFlagList == null) {
 					formattedFlagList = "";
-				else
+				} else {
 					formattedFlagList += '\n';
+				}
 				formattedFlagList += flag;
 			}
 			ChatUtils.sendChat(sender, formattedFlagList);

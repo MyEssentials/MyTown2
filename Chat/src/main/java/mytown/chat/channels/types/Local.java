@@ -15,6 +15,7 @@ import net.minecraft.server.MinecraftServer;
  * @author Joe Goett
  */
 public class Local implements IChannelType {
+	@Override
 	public String name() {
 		return "Local";
 	}

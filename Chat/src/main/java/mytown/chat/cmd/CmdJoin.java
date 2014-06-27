@@ -26,9 +26,8 @@ public class CmdJoin extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
-		if (args.length < 1) {
+		if (args.length < 1)
 			throw new WrongUsageException(getCommandUsage(sender));
-		}
 		ChannelHandler.joinChannel(sender, args[0]);
-	}	
+	}
 }

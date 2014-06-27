@@ -14,7 +14,7 @@ public class CmdMap extends CommandBase {
 	}
 
 	@Override
-	public void processCommand (ICommandSender sender, String[] args) {
+	public void processCommand(ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		if (args.length == 0) {
 			res.sendMap();

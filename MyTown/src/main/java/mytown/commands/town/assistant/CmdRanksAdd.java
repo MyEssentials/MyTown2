@@ -22,8 +22,7 @@ public class CmdRanksAdd extends CommandBase {
 	}
 
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender)
-			throws CommandException {
+	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
 		super.canCommandSenderUseCommand(sender);
 
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
@@ -44,13 +43,15 @@ public class CmdRanksAdd extends CommandBase {
 
 		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
 
-		if (town.hasRankName(args[0])) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.add.already", args[0]));
-		if (!town.hasRankName(args[1])) throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.add.notexist", args[1]));
+		if (town.hasRankName(args[0]))
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.add.already", args[0]));
+		if (!town.hasRankName(args[1]))
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.add.notexist", args[1]));
 
 		try {
 			Rank rank = new Rank(args[0], town.getRank(args[1]).getPermissions(), town);
 			getDatasource().insertRank(rank);
-			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(),"mytown.notification.town.ranks.add", args[0],town.getName());
+			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.ranks.add", args[0], town.getName());
 		} catch (Exception e) {
 			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();

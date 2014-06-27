@@ -48,7 +48,7 @@ public class CmdRanksPerm extends CommandHandler {
 			}
 
 			if (rank == null)
-				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.notexist", args[0],getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown().getName()));
+				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.notexist", args[0], getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown().getName()));
 
 			String msg = "";
 			for (String s : rank.getPermissions()) {

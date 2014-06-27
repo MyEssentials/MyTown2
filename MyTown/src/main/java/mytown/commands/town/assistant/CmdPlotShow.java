@@ -16,21 +16,21 @@ public class CmdPlotShow extends CommandBase {
 	public CmdPlotShow(String name, CommandBase parent) {
 		super(name, parent);
 	}
-	
+
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		return parent.canCommandSenderUseCommand(sender);
 	}
-	
+
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-		for(ITownPlot plot : town.getTownPlots()) {
+		for (ITownPlot plot : town.getTownPlots()) {
 			VisualsTickHandler.instance.markPlotBorders(plot);
 		}
 		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.plot.showing");
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

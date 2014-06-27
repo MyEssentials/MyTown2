@@ -19,7 +19,7 @@ public class CmdRem extends CommandBase {
 	}
 
 	@Override
-	public void processCommand (ICommandSender sender, String[] args) {
+	public void processCommand(ICommandSender sender, String[] args) {
 		if (args.length < 2)
 			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.adm.cmd.usage.rem"));
 		if (!getDatasource().hasResident(args[0]))
@@ -31,11 +31,11 @@ public class CmdRem extends CommandBase {
 		try {
 			getDatasource().unlinkResidentFromTown(getDatasource().getResident(args[0]), getDatasource().getTown(args[1]));
 			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.resident.remove", (Object[]) args);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/**
