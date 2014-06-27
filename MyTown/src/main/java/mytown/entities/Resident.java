@@ -197,7 +197,7 @@ public class Resident implements IPlotSelector {
 			TownBlock oldTownBlock, newTownBlock;
 
 			oldTownBlock = MyTown.getDatasource().getTownBlock(lastDim, oldChunkX, oldChunkZ, true);
-			newTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, newChunkX, newChunkZ, true);
+			newTownBlock = MyTown.getDatasource().getTownBlock(player.dimension, newChunkX, newChunkZ, true); // TODO This throws an NPE. Need to fix
 
 			if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
 				if (isPartOfTown(newTownBlock.getTown())) {
