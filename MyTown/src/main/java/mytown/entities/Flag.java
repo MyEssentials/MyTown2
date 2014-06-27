@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Flag<T> {
 	private String name;
-	private T value;
+	private T value, inheritedValue;
 	private Flag<T> parent;
 	private List<Flag<T>> children;
 	
@@ -38,11 +38,25 @@ public class Flag<T> {
 	 * @return
 	 */
 	public T getValue() {
-		return value;
+		return value != null ? value : inheritedValue;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public void setValue(T value) {
 		this.value = value;
+	}
+	
+	public void inherit(T value, boolean forced) {
+		if ((this.value == null || forced) && inheritedValue != value) {
+			this.value = null;
+			inheritedValue = value;
+			for (Flag<T> child : children) {
+				child.inherit(value, forced);
+			}
+		}
 	}
 	
 	public Flag<T> getParent() {
@@ -58,16 +72,17 @@ public class Flag<T> {
 		child.setParent(this);
 	}
 	
+	public void removeChild(Flag<T> child) {
+		children.remove(child);
+		child.setParent(null);
+	}
+	
 	public List<Flag<T>> getChildren() {
 		return children;
 	}
 	
 	public Class<?> getType() {
 		return value.getClass();
-	}
-	
-	public String getName() {
-		return name;
 	}
 	
 	public boolean isArray() {
