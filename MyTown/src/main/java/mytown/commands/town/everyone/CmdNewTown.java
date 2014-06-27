@@ -29,7 +29,7 @@ public class CmdNewTown extends CommandBase {
 	@Override
 	public void process(ICommandSender sender, String[] args) throws Exception {
 		EntityPlayer player = (EntityPlayer) sender;
-
+		
 		if (args.length < 1)
 			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.newtown"));
 		if (getDatasource().hasTown(args[0]))

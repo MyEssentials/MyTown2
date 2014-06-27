@@ -17,6 +17,7 @@ import mytown.commands.town.everyone.CmdNewTown;
 import mytown.commands.town.everyone.CmdPlots;
 import mytown.commands.town.everyone.CmdRanks;
 import mytown.commands.town.everyone.CmdSelect;
+import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
 import net.minecraft.command.ICommandSender;
@@ -65,6 +66,7 @@ public class CmdTown extends CommandHandler {
 
 	@Override
 	public void sendHelp(ICommandSender sender) {
+		ChatUtils.sendChat(sender, "Help has not been added yet for this command.");
 		// TODO Send help to sender
 	}
 }

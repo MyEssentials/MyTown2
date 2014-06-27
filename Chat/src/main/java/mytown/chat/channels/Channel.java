@@ -64,7 +64,7 @@ public class Channel {
 					Assert.Perm(recipient, "mytown.chat.channel." + name + ".receive");
 					ChatUtils.sendChat(recipient, message);
 				} catch(Exception ex) {
-					// TODO Log permission exception to receive message?
+					// Ignore since this is just to stop the msg from being sent
 				}
 			}
 		} catch(Exception ex) {

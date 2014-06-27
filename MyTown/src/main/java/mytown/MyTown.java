@@ -30,7 +30,7 @@ import forgeperms.api.ForgePermsAPI;
 
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class MyTown {
-	@Mod.Instance("MyTown")
+	@Mod.Instance(Constants.MODID)
 	public static MyTown instance;
 
 	// Permission Manager
@@ -60,7 +60,7 @@ public class MyTown {
 
 		// ModProxy PreInit
 		ModProxies.addProxies();
-		ModProxies.postInit();
+		ModProxies.preInit();
 	}
 
 	@Mod.EventHandler
