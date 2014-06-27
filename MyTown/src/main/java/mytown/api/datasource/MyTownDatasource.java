@@ -1,4 +1,4 @@
-package mytown.datasource;
+package mytown.api.datasource;
 
 import java.util.ArrayList;
 import java.util.Collection;

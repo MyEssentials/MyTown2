@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import mytown.Constants;
-import mytown.datasource.MyTownDatasource;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.entities.Nation;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
