@@ -4,9 +4,9 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.config.Config;
 import mytown.core.utils.Log;
-import mytown.datasource.MyTownDatasource;
 import mytown.datasource.impl.MyTownDatasource_mysql;
 import mytown.datasource.impl.MyTownDatasource_sqlite;
 import net.minecraftforge.common.Configuration;

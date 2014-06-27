@@ -9,7 +9,6 @@ import mytown.interfaces.ITownPlot;
 import net.minecraft.util.EnumChatFormatting;
 
 public class TownPlot implements ITownPlot {
-
 	// TODO: Read from config
 	public static int minX = 5;
 	public static int minY = 4;

@@ -42,7 +42,6 @@ mytown.cmd.err.ranks.perm.notexist=The permission %s does not exist!
 mytown.cmd.err.ranks.perm.add.already=The rank %s already has permission %s!
 
 # /t plot
-
 mytown.cmd.usage.plot.rename=/t plot rename <name>
 mytown.cmd.err.plot.start.failed=Your inventory is full!
 mytown.cmd.err.plot.failed=Creating plot failed!

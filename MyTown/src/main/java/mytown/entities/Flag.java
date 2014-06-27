@@ -42,14 +42,27 @@ public class Flag<T> {
 		return value != null ? value : inheritedValue;
 	}
 
+	/**
+	 * Returns the name of this Flag
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Sets the value of this flag
+	 * @param value
+	 */
 	public void setValue(T value) {
 		this.value = value;
 	}
 
+	/**
+	 * Tells this Flag to inherit the given value. Will only inherit if value is null, or if forced
+	 * @param value
+	 * @param forced
+	 */
 	public void inherit(T value, boolean forced) {
 		if ((this.value == null || forced) && inheritedValue != value) {
 			this.value = null;

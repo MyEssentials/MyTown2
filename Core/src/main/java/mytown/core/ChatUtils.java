@@ -31,4 +31,14 @@ public class ChatUtils {
 	public static void sendLocalizedChat(ICommandSender sender, Localization local, String key, Object... args) {
 		ChatUtils.sendChat(sender, local.getLocalization(key), args);
 	}
+	
+	/**
+	 * Returns true of arg equals on, enable, or true
+	 * TODO Change name/change location?
+	 * 
+	 * @return
+	 */
+	public static boolean equalsOn(String arg) {
+		return arg == "on" || arg == "enable" || arg == "true";
+	}
 }

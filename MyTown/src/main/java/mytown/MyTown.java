@@ -3,6 +3,7 @@ package mytown;
 import java.io.File;
 import java.util.ArrayList;
 
+import mytown.api.datasource.MyTownDatasource;
 import mytown.commands.admin.CmdTownAdmin;
 import mytown.commands.town.CmdTown;
 import mytown.config.Config;
@@ -10,7 +11,6 @@ import mytown.core.Localization;
 import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.datasource.MyTownDatasource;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
@@ -34,9 +34,6 @@ import forgeperms.api.ForgePermsAPI;
 public class MyTown {
 	@Mod.Instance(Constants.MODID)
 	public static MyTown instance;
-
-	// Permission Manager
-	public PermissionManager permManager;
 
 	// Loggers
 	public Log log;
