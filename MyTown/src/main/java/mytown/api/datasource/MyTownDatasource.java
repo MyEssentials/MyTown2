@@ -20,13 +20,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.Configuration;
 
 // TODO Datasource pool?
-// TODO Add logging
-// TODO More error reporting
-// TODO Link Residents to their Towns
-// TODO Link Towns to their Nations
-// TODO Load Plots
-// TODO Link Residents to their Plots
-// TODO Map of TownIds to their Towns?
+// TODO More/better error reporting and logging
+// TODO Events?
 
 /**
  * Abstract Datasource class. Extend to add more support
@@ -63,7 +58,7 @@ public abstract class MyTownDatasource {
 	}
 
 	/**
-	 * Does implementation specific configuration
+	 * Does implementation specific configuration. Happens BEFORE the {@link ConcurrentHashMap}'s are created
 	 * 
 	 * @param config
 	 */
