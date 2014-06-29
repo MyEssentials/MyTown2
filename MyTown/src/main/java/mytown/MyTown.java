@@ -31,17 +31,13 @@ import cpw.mods.fml.relauncher.Side;
 import forgeperms.api.ForgePermsAPI;
 
 // TODO Add a way to safely reload
-// TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packages with this. Maybe even make MyTown just DL them at runtime and inject them
+// TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packaged with this. Maybe even make MyTown just DL them at runtime and inject them
 
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class MyTown {
 	@Mod.Instance(Constants.MODID)
 	public static MyTown instance;
-
-	// Loggers
 	public Log log;
-
-	// Configs
 	public Configuration config;
 
 	// Set to true to kick all non-admin users out with a custom kick message
