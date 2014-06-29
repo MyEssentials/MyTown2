@@ -11,11 +11,13 @@ import mytown.core.Localization;
 import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
+import mytown.crash.DatasourceCrashCallable;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -61,6 +63,9 @@ public class MyTown {
 		// ModProxy PreInit
 		ModProxies.addProxies();
 		ModProxies.preInit();
+		
+		// Register ICrashCallable's
+		FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());
 	}
 
 	@Mod.EventHandler
