@@ -5,6 +5,12 @@ mytown.cmd.err.resident.notexist=The player %s does not exist!
 mytown.cmd.err.resident.notsametown=The player %s is not in the town you've selected(%s)!
 mytown.cmd.err.rank.notexist=The rank %s does not exist in %s!
 
+# /ta config [load|save]
+mytown.cmd.config.load.start=Loading config...
+mytown.cmd.config.load.stop=Config loaded
+mytown.cmd.config.save.start=Saving config...
+mytown.cmd.config.save.stop=Config saved
+
 # /t new [townname]
 mytown.cmd.err.newtown.nameinuse=Town name %s already in use!
 mytown.cmd.err.newtown.positionError=You cannot make a new town on a claimed chunk.
@@ -51,7 +57,6 @@ mytown.cmd.err.plot.notSelected=You need to select 2 corners first!
 mytown.cmd.err.plot.rename.notexist=You are not standing in a plot!
 
 # /t perm
-
 mytown.cmd.err.perm.set.usage=/t perm set <flag-name> <true|false>
 mytown.cmd.err.flagNotExists=That flag does not exist!
 mytown.cmd.err.perm.valueNotValid=Invalid value!
