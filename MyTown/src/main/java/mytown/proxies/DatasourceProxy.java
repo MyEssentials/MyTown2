@@ -24,6 +24,7 @@ public class DatasourceProxy {
 
 	/**
 	 * Adds the default datasource types
+	 * Should be added when this class is first accessed
 	 */
 	static {
 		DatasourceProxy.types.put("mysql", MyTownDatasource_mysql.class);
