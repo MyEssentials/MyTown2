@@ -10,8 +10,16 @@ import mytown.proxies.mod.MyTownChat.MyTownChatModProxy;
 
 public class ModProxies {
 	private static List<ModProxy> proxies = new ArrayList<ModProxy>();
+	private static boolean loaded = false;
 
 	private ModProxies() {
+	}
+	
+	private static void load() {
+		if (loaded == false) {
+			loaded = true;
+			MyTown.instance.config.getCategory("modproxies").setComment("Holds the enable state of the different ModProxies.\nModProxies handle interaction with other mods.\nIf a mod interaction causes issues, just set it to false.");
+		}
 	}
 
 	/**
@@ -40,6 +48,7 @@ public class ModProxies {
 	}
 
 	public static void preInit() {
+		load();
 		for (ModProxy p : ModProxies.proxies) {
 			if (!MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
 				continue;

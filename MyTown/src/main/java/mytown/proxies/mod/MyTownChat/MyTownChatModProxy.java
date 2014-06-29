@@ -14,7 +14,7 @@ public class MyTownChatModProxy extends ModProxy {
 	}
 
 	@Override
-	public void init() {
+	public void init() { // TODO See why the formatter and channel type is not being registered correctly
 		// Register Formatters
 		FMLInterModComms.sendMessage("MyTownChat", "registerFormatter", "mytown.proxies.mod.MyTownChat.MyTownChatFormatter");
 
