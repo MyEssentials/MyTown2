@@ -75,6 +75,17 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		return statement;
 	}
 
+	/**
+	 * Returns the current {@link Connection} object
+	 * 
+	 * Useful for getting info on the connection for logging, or for getting the current warnings
+	 * 
+	 * @return
+	 */
+	public Connection getConnection() {
+		return conn;
+	}
+	
 	// //////////////////////////////////////
 	// Implementation
 	// //////////////////////////////////////
