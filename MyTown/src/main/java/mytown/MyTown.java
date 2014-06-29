@@ -72,6 +72,7 @@ public class MyTown {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent ev) {
 		ModProxies.postInit();
+		config.save();
 	}
 
 	@Mod.EventHandler
