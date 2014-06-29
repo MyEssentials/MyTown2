@@ -52,7 +52,7 @@ public class MyTown {
 
 		// Read Configs
 		config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
-		ConfigProcessor.processConfig(config, Config.class);
+		ConfigProcessor.load(config, Config.class);
 		LocalizationProxy.load();
 		registerHandlers();
 

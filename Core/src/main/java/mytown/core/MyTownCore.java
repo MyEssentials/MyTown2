@@ -26,7 +26,7 @@ public class MyTownCore {
 
 		// Load Configs
 		config = new Configuration(new File(ev.getModConfigurationDirectory(), "/MyTown/Core.cfg"));
-		ConfigProcessor.processConfig(config, Config.class);
+		ConfigProcessor.load(config, Config.class);
 		config.save();
 
 		// Register handlers/trackers
