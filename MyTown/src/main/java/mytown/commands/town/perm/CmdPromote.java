@@ -1,23 +1,21 @@
-package mytown.commands.town.assistant;
+package mytown.commands.town.perm;
 
 import mytown.MyTown;
 import mytown.api.datasource.MyTownDatasource;
-import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
+import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.town.Town;
-import mytown.interfaces.ITownFlag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 
-@Permission("mytown.cmd.assistant.perm.set")
-public class CmdPermSet extends CommandBase {
-
-	public CmdPermSet(String name, CommandBase parent) {
+@Permission("mytown.cmd.assistant.promote")
+public class CmdPromote extends CommandBase {
+	public CmdPromote(String name, CommandBase parent) {
 		super(name, parent);
 	}
 
@@ -37,22 +35,25 @@ public class CmdPermSet extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
+		// /t promote <user> <rank>
 		if (args.length < 2)
-			throw new WrongUsageException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.set.usage"));
-		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-		ITownFlag flag = town.getFlag(args[0]);
-		if (flag == null)
-			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.flagNotExists", args[0]));
-		try {
-			if (args[1].equals("true")) {
-				flag.setValue(true);
-			} else if (args[1].equals("false")) {
-				flag.setValue(false);
-			} else
-				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.valueNotValid", args[1]));
-			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.perm.set.success", args[0], args[1]);
+			throw new WrongUsageException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.usage.promote"));
+		Resident resSender = getDatasource().getResident(sender.getCommandSenderName());
+		Resident resTarget = getDatasource().getResident(args[0]);
+		Town town = resSender.getSelectedTown();
 
-			getDatasource().updateTownFlag(flag);
+		if (resTarget == null)
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.resident.notexist", args[0]));
+		if (!resTarget.getTowns().contains(town))
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.resident.notsametown", args[0], town.getName()));
+		if (!resSender.getSelectedTown().hasRankName(args[1]))
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.rank.notexist", args[1], town.getName()));
+		if (args[1].equalsIgnoreCase("mayor"))
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.promote.notMayor"));
+		try {
+			Rank rank = town.getRank(args[1]);
+			town.promoteResident(resTarget, rank);
+			getDatasource().updateLinkResidentToTown(resTarget, town);
 		} catch (Exception e) {
 			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();

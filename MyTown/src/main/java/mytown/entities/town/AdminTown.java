@@ -5,7 +5,6 @@ import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 
 public class AdminTown extends Town {
-
 	public AdminTown(String name) {
 		super(name, 0);
 	}

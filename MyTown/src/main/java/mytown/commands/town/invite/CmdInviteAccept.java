@@ -1,4 +1,4 @@
-package mytown.commands.town.everyone;
+package mytown.commands.town.invite;
 
 import mytown.MyTown;
 import mytown.api.datasource.MyTownDatasource;
@@ -8,12 +8,11 @@ import mytown.entities.Resident;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 
-@Permission("mytown.cmd.outsider.invite.refuse")
-public class CmdInviteRefuse extends CommandBase {
+@Permission("mytown.cmd.outsider.invite.accept")
+public class CmdInviteAccept extends CommandBase {
 
-	public CmdInviteRefuse(String name, CommandBase parent) {
+	public CmdInviteAccept(String name, CommandBase parent) {
 		super(name, parent);
 	}
 
@@ -22,9 +21,9 @@ public class CmdInviteRefuse extends CommandBase {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
 		if (res.getInvitations().size() == 0)
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.noinvitations"));
-		if (res.getInvitations().size() != 1 && args.length == 0)
-			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite.accept"));
-		if (res.getInvitations().size() != 1 && getDatasource().getTown(args[0]) != null)
+		if (res.getInvitations().size() > 1 && args.length == 0)
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.accept"));
+		if (res.getInvitations().size() > 1 && getDatasource().getTown(args[0]) == null)
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		String townName;
 		if (args.length == 0) {
@@ -33,8 +32,8 @@ public class CmdInviteRefuse extends CommandBase {
 			townName = args[0];
 		}
 		if (!res.getInvitations().contains(getDatasource().getTown(townName)))
-			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.accept"));
-		res.confirmForm(false, townName);
+			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite"));
+		res.confirmForm(true, townName);
 	}
 
 	/**

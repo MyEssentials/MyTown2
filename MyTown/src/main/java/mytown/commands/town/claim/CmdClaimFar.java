@@ -1,4 +1,4 @@
-package mytown.commands.town.assistant;
+package mytown.commands.town.claim;
 
 import mytown.MyTown;
 import mytown.api.datasource.MyTownDatasource;

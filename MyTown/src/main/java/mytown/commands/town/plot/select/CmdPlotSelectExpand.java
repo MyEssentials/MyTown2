@@ -1,4 +1,4 @@
-package mytown.commands.town.assistant;
+package mytown.commands.town.plot.select;
 
 import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
@@ -7,12 +7,13 @@ import mytown.core.utils.command.Permission;
 import mytown.entities.Resident;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
-@Permission("mytown.cmd.assistant.plot.select.reset")
-public class CmdPlotSelectReset extends CommandBase {
+@Permission("mytown.cmd.assistant.plot.select.expand")
+public class CmdPlotSelectExpand extends CommandBase {
 
-	public CmdPlotSelectReset(String name, CommandBase parent) {
+	public CmdPlotSelectExpand(String name, CommandBase parent) {
 		super(name, parent);
 	}
 
@@ -24,9 +25,13 @@ public class CmdPlotSelectReset extends CommandBase {
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		res.resetSelection();
 
-		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionReset");
+		if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notSelected"));
+
+		res.expandSelectionVert();
+
+		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.expanded");
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package mytown.commands.town.everyone;
+package mytown.commands.town.plot;
 
 import mytown.Formatter;
 import mytown.api.datasource.MyTownDatasource;

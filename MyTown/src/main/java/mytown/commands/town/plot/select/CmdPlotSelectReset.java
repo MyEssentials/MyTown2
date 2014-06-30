@@ -1,4 +1,4 @@
-package mytown.commands.town.everyone;
+package mytown.commands.town.plot.select;
 
 import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
@@ -6,22 +6,27 @@ import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.entities.Resident;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.ICommandSender;
 
-@Permission("mytown.cmd.outsider.map")
-public class CmdMap extends CommandBase {
-	public CmdMap(String name, CommandBase parent) {
+@Permission("mytown.cmd.assistant.plot.select.reset")
+public class CmdPlotSelectReset extends CommandBase {
+
+	public CmdPlotSelectReset(String name, CommandBase parent) {
 		super(name, parent);
+	}
+
+	@Override
+	public boolean canCommandSenderUseCommand(ICommandSender sender) {
+		return parent.canCommandSenderUseCommand(sender);
 	}
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		if (args.length == 0) {
-			res.sendMap();
-		} else {
-			res.setMapOn(ChatUtils.equalsOn(args[1]));
-		}
+		res.resetSelection();
+
+		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionReset");
 	}
 
 	/**

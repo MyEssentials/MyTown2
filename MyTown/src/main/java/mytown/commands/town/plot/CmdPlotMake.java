@@ -1,4 +1,4 @@
-package mytown.commands.town.assistant;
+package mytown.commands.town.plot;
 
 import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
@@ -10,10 +10,10 @@ import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
-@Permission("mytown.cmd.assistant.plot.select.expand")
-public class CmdPlotSelectExpand extends CommandBase {
+@Permission("mytown.cmd.assistant.plot.make")
+public class CmdPlotMake extends CommandBase {
 
-	public CmdPlotSelectExpand(String name, CommandBase parent) {
+	public CmdPlotMake(String name, CommandBase parent) {
 		super(name, parent);
 	}
 
@@ -25,13 +25,17 @@ public class CmdPlotSelectExpand extends CommandBase {
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		Resident res = getDatasource().getResident(sender.getCommandSenderName());
+		String plotName = "NoName";
 
-		if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))
-			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notSelected"));
+		if (args.length > 0) {
+			plotName = args[0];
+		}
 
-		res.expandSelectionVert();
-
-		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.expanded");
+		boolean result = res.makePlotFromSelection(plotName);
+		if (result) {
+			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.created");
+		} else
+			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.failed"));
 	}
 
 	/**

@@ -1,11 +1,8 @@
-package mytown.commands.town.everyone;
+package mytown.commands.town.rank;
 
 import mytown.Formatter;
 import mytown.MyTown;
 import mytown.api.datasource.MyTownDatasource;
-import mytown.commands.town.assistant.CmdRanksAdd;
-import mytown.commands.town.assistant.CmdRanksPerm;
-import mytown.commands.town.assistant.CmdRanksRemove;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;

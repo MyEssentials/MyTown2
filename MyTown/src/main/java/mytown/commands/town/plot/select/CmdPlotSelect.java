@@ -1,4 +1,4 @@
-package mytown.commands.town.assistant;
+package mytown.commands.town.plot.select;
 
 import mytown.Constants;
 import mytown.MyTown;

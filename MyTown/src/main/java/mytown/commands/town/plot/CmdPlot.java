@@ -1,7 +1,8 @@
-package mytown.commands.town.assistant;
+package mytown.commands.town.plot;
 
 import mytown.MyTown;
 import mytown.api.datasource.MyTownDatasource;
+import mytown.commands.town.plot.select.CmdPlotSelect;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;

@@ -503,6 +503,8 @@ public class Town implements Comparable<Town> {
 	/**
 	 * Gets the info for the town
 	 * 
+	 * TODO Make everything use localization?
+	 * 
 	 * @return
 	 */
 	public String[] getInfo() {

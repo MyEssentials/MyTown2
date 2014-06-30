@@ -1,11 +1,9 @@
-package mytown.commands.town.assistant;
+package mytown.commands.town.invite;
 
 import java.util.List;
 
 import mytown.MyTown;
 import mytown.api.datasource.MyTownDatasource;
-import mytown.commands.town.everyone.CmdInviteAccept;
-import mytown.commands.town.everyone.CmdInviteRefuse;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.CommandUtils;

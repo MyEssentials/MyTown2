@@ -10,11 +10,10 @@ import net.minecraft.command.ICommandSender;
 
 @Permission("mytown.adm.cmd")
 public class CmdTownAdmin extends CommandHandler {
-
 	List<String> aliases = new ArrayList<String>();
 
-	public CmdTownAdmin(String name) {
-		super(name, null);
+	public CmdTownAdmin() {
+		super("townadmin", null);
 
 		// Subcommands
 		addSubCommand(new CmdSafeMode("safemode", this));

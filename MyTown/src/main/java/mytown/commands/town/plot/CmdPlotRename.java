@@ -1,4 +1,4 @@
-package mytown.commands.town.assistant;
+package mytown.commands.town.plot;
 
 import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;

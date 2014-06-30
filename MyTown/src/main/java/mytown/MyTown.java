@@ -130,8 +130,8 @@ public class MyTown {
 	 * Registers all commands
 	 */
 	private void registerCommands() {
-		CommandUtils.registerCommand(new CmdTown("town"));
-		CommandUtils.registerCommand(new CmdTownAdmin("townadmin"));
+		CommandUtils.registerCommand(new CmdTown());
+		CommandUtils.registerCommand(new CmdTownAdmin());
 	}
 
 	/**

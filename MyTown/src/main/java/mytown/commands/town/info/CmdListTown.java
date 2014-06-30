@@ -1,4 +1,4 @@
-package mytown.commands.town.everyone;
+package mytown.commands.town.info;
 
 import java.util.ArrayList;
 import java.util.Collections;
