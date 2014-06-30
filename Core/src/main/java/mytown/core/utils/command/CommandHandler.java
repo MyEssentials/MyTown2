@@ -29,22 +29,29 @@ public abstract class CommandHandler extends CommandBase {
 	}
 
 	/**
-	 * Adds the CommandBase to this handler
+	 * Adds the CommandBase to this handler (Allows for aliases!)
 	 * 
 	 * @param subCmd
 	 */
 	public void addSubCommand(CommandBase subCmd) {
 		subCommands.put(subCmd.getCommandName(), subCmd);
-		// System.out.println("Loaded command " + subCmd.getParentName() + "." + subCmd.getCommandName());
+		for (Object alias : subCmd.getCommandAliases()) {
+			String aliasStr = (String) alias;
+			subCommands.put(aliasStr, subCmd);
+		}
 	}
 
 	/**
-	 * Removes the SubCommand from this handler
+	 * Removes the SubCommand from this handler (Allows for aliases!)
 	 * 
 	 * @param subCmd
 	 */
 	public void removeSubCommand(CommandBase subCmd) {
 		subCommands.remove(subCmd.getCommandName());
+		for (Object alias : subCmd.getCommandAliases()) {
+			String aliasStr = (String) alias;
+			subCommands.remove(aliasStr);
+		}
 	}
 
 	@Override
