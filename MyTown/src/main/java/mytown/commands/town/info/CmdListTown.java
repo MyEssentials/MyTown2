@@ -18,6 +18,8 @@ import com.google.common.base.Joiner;
 
 @Permission("mytown.cmd.outsider.list")
 public class CmdListTown extends CommandBase {
+	private static TownComparator townNameComparator = new TownComparator(TownComparator.Order.Name);;
+	
 	public CmdListTown(String name, CommandBase parent) {
 		super(name, parent);
 	}
@@ -30,8 +32,7 @@ public class CmdListTown extends CommandBase {
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		List<Town> sortedTowns = new ArrayList<Town>(getDatasource().getTowns(true));
-		TownComparator comp = new TownComparator(TownComparator.Order.Name);
-		Collections.sort(sortedTowns, comp); // TODO Cache the sort?
+		Collections.sort(sortedTowns, townNameComparator); // TODO Cache the sort?
 		String townList = "\n" + Joiner.on("\n").join(sortedTowns);
 		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.list", townList);
 	}

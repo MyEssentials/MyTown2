@@ -27,16 +27,6 @@ public class CmdInvite extends CommandHandler {
 		addSubCommand(new CmdInviteRefuse("refuse", this));
 	}
 
-	/*
-	 * @Override public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException { super.canCommandSenderUseCommand(sender);
-	 * 
-	 * Resident res = getDatasource().getResident(sender.getCommandSenderName());
-	 * 
-	 * if (res.getTowns().size() == 0) throw new CommandException(MyTown.getLocal ().getLocalization("mytown.cmd.err.partOfTown")); if (!res.getTownRank().hasPermission(permNode)) throw new CommandException("commands.generic.permission");
-	 * 
-	 * return true; }
-	 */
-
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		if (args.length != 0) {
@@ -67,7 +57,7 @@ public class CmdInvite extends CommandHandler {
 	}
 
 	@Override
-	public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
+	public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
 		return CommandUtils.getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
 	}
 
