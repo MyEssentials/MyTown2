@@ -431,7 +431,7 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Plots
 	// //////////////////////////////////////
-	
+
 	/**
 	 * Adds an ITownPlot to this block
 	 * 

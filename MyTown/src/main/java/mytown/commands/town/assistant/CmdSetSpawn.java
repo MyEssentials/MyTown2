@@ -59,5 +59,4 @@ public class CmdSetSpawn extends CommandBase {
 	private MyTownDatasource getDatasource() {
 		return DatasourceProxy.getDatasource();
 	}
-
 }

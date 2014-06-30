@@ -44,6 +44,7 @@ public class Flag<T> {
 
 	/**
 	 * Returns the name of this Flag
+	 * 
 	 * @return
 	 */
 	public String getName() {
@@ -52,6 +53,7 @@ public class Flag<T> {
 
 	/**
 	 * Sets the value of this flag
+	 * 
 	 * @param value
 	 */
 	public void setValue(T value) {
@@ -60,6 +62,7 @@ public class Flag<T> {
 
 	/**
 	 * Tells this Flag to inherit the given value. Will only inherit if value is null, or if forced
+	 * 
 	 * @param value
 	 * @param forced
 	 */

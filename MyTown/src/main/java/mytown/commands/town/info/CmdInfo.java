@@ -52,7 +52,7 @@ public class CmdInfo extends CommandBase {
 			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.info", (Object[]) town.getInfo());
 		}
 	}
-	
+
 	@Override
 	public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
 		List<String> tabComplete = new ArrayList<String>();
@@ -68,7 +68,7 @@ public class CmdInfo extends CommandBase {
 		}
 		return tabComplete;
 	}
-	
+
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

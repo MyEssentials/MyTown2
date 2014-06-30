@@ -1,13 +1,13 @@
 package mytown.commands.admin.config;
 
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.core.utils.config.ConfigProcessor;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
 
 /**
  * Saves the config file

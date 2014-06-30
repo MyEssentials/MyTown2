@@ -54,9 +54,9 @@ public class CmdAdd extends CommandBase {
 
 	@Override
 	public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
-		if (args.length == 1) {
+		if (args.length == 1)
 			return CommandUtils.getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
-		} else if (args.length == 2) {
+		else if (args.length == 2) {
 			List<String> tabComplete = new ArrayList<String>();
 			for (String town : getDatasource().getTownsMap().keySet()) {
 				if (town.startsWith(args[1])) {

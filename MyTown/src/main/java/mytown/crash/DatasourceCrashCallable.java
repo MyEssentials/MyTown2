@@ -20,17 +20,17 @@ public class DatasourceCrashCallable implements ICrashCallable {
 	public String call() throws Exception {
 		MyTownDatasource datasource = DatasourceProxy.getDatasource();
 		String str = "";
-		
+
 		str += String.format("Class: %s\n", datasource.getClass().getName());
 		str += String.format("Stats (Towns: %s, Residents: %s, Nations: %s, Blocks: %s, Ranks: %s, Plots: %s)\n", datasource.getTownsMap().size(), datasource.getResidents().size(), datasource.getNations().size(), datasource.getTownBlocks().size(), datasource.getRanks().size(), datasource.getPlots().size());
-		
+
 		// SQL Specific Info
 		if (datasource instanceof MyTownDatasource_SQL) {
 			MyTownDatasource_SQL sqlDatasource = (MyTownDatasource_SQL) datasource;
 			Connection conn = sqlDatasource.getConnection();
-			
+
 			str += String.format("AutoCommit: %s\n", conn.getAutoCommit());
-			
+
 			str += String.format("----- SQL Warnings -----\n");
 			str += String.format("%s8 | %s9 | %s\n", "SQLState", "ErrorCode", "Message");
 			SQLWarning sqlWarning = conn.getWarnings();
@@ -38,7 +38,7 @@ public class DatasourceCrashCallable implements ICrashCallable {
 				str += String.format("%s8 | %s9 | %s\n", sqlWarning.getSQLState(), sqlWarning.getErrorCode(), sqlWarning.getMessage());
 			} while (sqlWarning.getNextWarning() != null);
 		}
-		
+
 		return str;
 	}
 

@@ -59,7 +59,7 @@ public class MyTown {
 		// ModProxy PreInit
 		ModProxies.addProxies();
 		ModProxies.preInit();
-		
+
 		// Register ICrashCallable's
 		FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());
 	}

@@ -23,8 +23,7 @@ public class DatasourceProxy {
 	private static Log log = MyTown.instance.log.createChild("Datasource");
 
 	/**
-	 * Adds the default datasource types
-	 * Should be added when this class is first accessed
+	 * Adds the default datasource types Should be added when this class is first accessed
 	 */
 	static {
 		DatasourceProxy.types.put("mysql", MyTownDatasource_mysql.class);

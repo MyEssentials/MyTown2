@@ -85,7 +85,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	public Connection getConnection() {
 		return conn;
 	}
-	
+
 	// //////////////////////////////////////
 	// Implementation
 	// //////////////////////////////////////

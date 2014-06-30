@@ -1,9 +1,9 @@
 package mytown.commands.admin.config;
 
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
 
 /**
  * (Re)loads/saves config
@@ -14,8 +14,8 @@ import mytown.core.utils.command.Permission;
 public class CmdConfig extends CommandHandler {
 	public CmdConfig(ICommand parent) {
 		super("config", parent);
-		this.addSubCommand(new CmdConfigLoad(this));
-		this.addSubCommand(new CmdConfigSave(this));
+		addSubCommand(new CmdConfigLoad(this));
+		addSubCommand(new CmdConfigSave(this));
 	}
 
 	@Override
