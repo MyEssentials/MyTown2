@@ -33,12 +33,24 @@ public class ChatUtils {
 	}
 	
 	/**
-	 * Returns true of arg equals on, enable, or true
-	 * TODO Change name/change location?
+	 * Returns true if arg equals on, enable, true, or t. False otherwise.
 	 * 
+	 * @param arg
+	 * @param caseSensitive
+	 * @return
+	 */
+	// TODO Change name/change location?
+	public static boolean equalsOn(String arg, boolean caseSensitive) {
+		if (!caseSensitive) arg = arg.toLowerCase();
+		return arg == "on" || arg == "enable" || arg == "true" || arg == "t";
+	}
+	
+	/**
+	 * Same as {@link ChatUtils#equalsOn(String, boolean)}, but is not case sensitive
+	 * @param arg
 	 * @return
 	 */
 	public static boolean equalsOn(String arg) {
-		return arg == "on" || arg == "enable" || arg == "true";
+		return equalsOn(arg, false);
 	}
 }

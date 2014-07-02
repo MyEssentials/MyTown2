@@ -34,7 +34,7 @@ public class CmdMap extends CommandBase {
 		if (args.length == 0) {
 			res.sendMap();
 		} else {
-			res.setMapOn(ChatUtils.equalsOn(args[1]));
+			res.setMapOn(ChatUtils.equalsOn(args[0]));
 		}
 	}
 
