@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import mytown.MyTown;
-import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
@@ -18,7 +17,8 @@ import com.google.common.base.Joiner;
 
 @Permission("mytown.cmd.outsider.list")
 public class CmdListTown extends CommandBase {
-	private static TownComparator townNameComparator = new TownComparator(TownComparator.Order.Name);;
+	private static TownComparator townNameComparator = new TownComparator(TownComparator.Order.Name);
+	private static List<Town> sortedTownCache = new ArrayList<Town>();
 	
 	public CmdListTown(String name, CommandBase parent) {
 		super(name, parent);
@@ -31,18 +31,13 @@ public class CmdListTown extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
-		List<Town> sortedTowns = new ArrayList<Town>(getDatasource().getTowns(true));
-		Collections.sort(sortedTowns, townNameComparator); // TODO Cache the sort?
-		String townList = "\n" + Joiner.on("\n").join(sortedTowns);
+		String townList = "\n" + Joiner.on("\n").join(sortedTownCache);
 		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.list", townList);
 	}
-
-	/**
-	 * Helper method to return the current MyTownDatasource instance
-	 * 
-	 * @return
-	 */
-	private MyTownDatasource getDatasource() {
-		return DatasourceProxy.getDatasource();
+	
+	public static void updateTownSortCache() {
+		sortedTownCache.clear();
+		sortedTownCache.addAll(DatasourceProxy.getDatasource().getTowns(true));
+		Collections.sort(sortedTownCache, townNameComparator);
 	}
 }

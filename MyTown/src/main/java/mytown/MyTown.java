@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import mytown.api.datasource.MyTownDatasource;
 import mytown.commands.admin.CmdTownAdmin;
 import mytown.commands.town.CmdTown;
+import mytown.commands.town.info.CmdListTown;
 import mytown.config.Config;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
@@ -88,6 +89,8 @@ public class MyTown {
 		ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
 		addDefaultPermissions();
 		safemode = DatasourceProxy.start(config);
+		
+		CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
 	}
 
 	@Mod.EventHandler
@@ -96,7 +99,7 @@ public class MyTown {
 		DatasourceProxy.stop();
 	}
 
-	/*
+	/**
 	 * Adds all the default permissions
 	 */
 	private void addDefaultPermissions() {
@@ -143,6 +146,8 @@ public class MyTown {
 		MinecraftForge.EVENT_BUS.register(playerTracker);
 
 		TickRegistry.registerTickHandler(VisualsTickHandler.instance, Side.SERVER);
+		
+		MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
 	}
 
 	// ////////////////////////////
