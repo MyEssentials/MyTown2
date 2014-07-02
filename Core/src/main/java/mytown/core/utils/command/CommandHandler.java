@@ -35,9 +35,11 @@ public abstract class CommandHandler extends CommandBase {
 	 */
 	public void addSubCommand(CommandBase subCmd) {
 		subCommands.put(subCmd.getCommandName(), subCmd);
-		for (Object alias : subCmd.getCommandAliases()) {
-			String aliasStr = (String) alias;
-			subCommands.put(aliasStr, subCmd);
+		if (subCmd.getCommandAliases() != null) {
+			for (Object alias : subCmd.getCommandAliases()) {
+				String aliasStr = (String) alias;
+				subCommands.put(aliasStr, subCmd);
+			}
 		}
 	}
 
@@ -48,9 +50,11 @@ public abstract class CommandHandler extends CommandBase {
 	 */
 	public void removeSubCommand(CommandBase subCmd) {
 		subCommands.remove(subCmd.getCommandName());
-		for (Object alias : subCmd.getCommandAliases()) {
-			String aliasStr = (String) alias;
-			subCommands.remove(aliasStr);
+		if (subCmd.getCommandAliases() != null) {
+			for (Object alias : subCmd.getCommandAliases()) {
+				String aliasStr = (String) alias;
+				subCommands.remove(aliasStr);
+			}
 		}
 	}
 
