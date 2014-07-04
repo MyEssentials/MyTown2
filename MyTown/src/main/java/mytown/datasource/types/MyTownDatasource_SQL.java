@@ -569,7 +569,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
 	@Override
 	public boolean deleteRank(Rank rank) throws Exception {
-		if (rank.getName().equals("Resident"))
+		if (rank.getName().equals(Constants.DEFAULT_RANK))
 			return false;
 		synchronized (lock) {
 			removeRank(rank);

@@ -14,7 +14,7 @@ import net.minecraft.command.ICommandSender;
  * 
  * @author Joe Goett
  */
-@Permission("mytown.cmd.adm.config.load")
+@Permission("mytown.adm.cmd.config.load")
 public class CmdConfigLoad extends CommandBase {
 	public CmdConfigLoad(ICommand parent) {
 		super("load", parent);

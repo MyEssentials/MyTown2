@@ -8,6 +8,7 @@ import mytown.commands.admin.CmdTownAdmin;
 import mytown.commands.town.CmdTown;
 import mytown.commands.town.info.CmdListTown;
 import mytown.config.Config;
+import mytown.config.RanksConfig;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
@@ -40,8 +41,8 @@ public class MyTown {
 	public static MyTown instance;
 	public Log log;
 	public Configuration config;
-
-	// Set to true to kick all non-admin users out with a custom kick message
+    public RanksConfig rankConfig; // atm very useless TODO: add reload functions to it
+    // Set to true to kick all non-admin users out with a custom kick message
 	public boolean safemode = false;
 
 	@Mod.EventHandler
@@ -87,7 +88,8 @@ public class MyTown {
 	public void serverStarting(FMLServerStartingEvent ev) {
 		registerCommands();
 		ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
-		addDefaultPermissions();
+
+        rankConfig = new RanksConfig(Constants.CONFIG_FOLDER + "/ranks.json");
 		safemode = DatasourceProxy.start(config);
 		
 		CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
@@ -97,36 +99,6 @@ public class MyTown {
 	public void serverStopping(FMLServerStoppingEvent ev) {
 		config.save();
 		DatasourceProxy.stop();
-	}
-
-	/**
-	 * Adds all the default permissions
-	 */
-	private void addDefaultPermissions() {
-		// TODO: Config files for all default ranks?
-		ArrayList<String> pOutsider = new ArrayList<String>();
-		ArrayList<String> pResident = new ArrayList<String>();
-		ArrayList<String> pAssistant = new ArrayList<String>();
-		ArrayList<String> pMayor = new ArrayList<String>();
-
-		for (String s : CommandUtils.permissionList.values()) {
-			if (s.startsWith("mytown.cmd")) {
-				pMayor.add(s);
-				if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) {
-					pAssistant.add(s);
-				}
-				if (s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) {
-					pResident.add(s);
-				}
-				if (s.startsWith("mytown.cmd.outsider")) {
-					pOutsider.add(s);
-				}
-			}
-		}
-		Constants.DEFAULT_RANK_VALUES.put("Outsider", pOutsider);
-		Constants.DEFAULT_RANK_VALUES.put("Resident", pResident);
-		Constants.DEFAULT_RANK_VALUES.put("Assistant", pAssistant);
-		Constants.DEFAULT_RANK_VALUES.put("Mayor", pMayor);
 	}
 
 	/**

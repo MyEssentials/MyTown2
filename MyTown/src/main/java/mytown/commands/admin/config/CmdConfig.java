@@ -10,7 +10,7 @@ import net.minecraft.command.ICommandSender;
  * 
  * @author Joe Goett
  */
-@Permission("mytown.cmd.adm.config")
+@Permission("mytown.adm.cmd.config")
 public class CmdConfig extends CommandHandler {
 	public CmdConfig(ICommand parent) {
 		super("config", parent);

@@ -67,7 +67,7 @@ public class CmdTown extends CommandHandler {
 
 	@Override
 	public List<?> getCommandAliases() {
-		return aliases; // TODO Add aliases!
+		return aliases;
 	}
 
 	@Override

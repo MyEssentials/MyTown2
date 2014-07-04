@@ -14,7 +14,7 @@ import net.minecraft.command.ICommandSender;
  * 
  * @author Joe Goett
  */
-@Permission("mytown.cmd.adm.config.save")
+@Permission("mytown.adm.cmd.config.save")
 public class CmdConfigSave extends CommandBase {
 	public CmdConfigSave(ICommand parent) {
 		super("save", parent);
