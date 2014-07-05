@@ -16,24 +16,24 @@ public class TownPlot implements ITownPlot {
 
 	protected int x1, z1, y1, x2, z2, y2;
 	protected int dim;
-	protected String name;
 
+	protected String name;
 	protected String key;
 
 	protected Town town;
-	protected Resident owner;
+	protected List<Resident> owners;
+    protected List<Resident> whitelist;
 
 	protected int chunkX1, chunkZ1, chunkX2, chunkZ2;
 
 	protected List<TownBlock> townBlocks;
-
 	protected List<ITownFlag> plotFlags;
 
-	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town, Resident owner) {
-		this(dim, x1, y1, z1, x2, y2, z2, town, owner, "NoName");
+	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town) {
+		this(dim, x1, y1, z1, x2, y2, z2, town, "NoName");
 	}
 
-	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town, Resident owner, String name) {
+	public TownPlot(int dim, int x1, int y1, int z1, int x2, int y2, int z2, Town town, String name) {
 		if (x1 > x2) {
 			int aux = x2;
 			x2 = x1;
@@ -64,7 +64,9 @@ public class TownPlot implements ITownPlot {
 
 		this.name = name;
 		this.town = town;
-		this.owner = owner;
+
+        owners = new ArrayList<Resident>();
+        whitelist = new ArrayList<Resident>();
 
 		initializeFlags();
 		updateKey();
@@ -89,37 +91,13 @@ public class TownPlot implements ITownPlot {
 	}
 
 	private void initializeFlags() {
-		if (town.getFlags() != null) {
-			plotFlags = town.getFlags();
-		} else {
-			plotFlags = new ArrayList<ITownFlag>();
-		}
+        if (town.getFlags() != null) {
+            plotFlags = town.getFlags();
+        } else {
+            plotFlags = new ArrayList<ITownFlag>();
+        }
 
-	}
-
-	// temp
-	public void verify() {
-		if (x1 > x2) {
-			int aux = x2;
-			x2 = x1;
-			x1 = aux;
-		}
-		if (z1 > z2) {
-			int aux = z2;
-			z2 = z1;
-			z1 = aux;
-		}
-
-		int chunkX = x1 / 16;
-		int chunkZ = z1 / 16;
-
-		for (int X = chunkX; X <= x2 / 16; X++) {
-			for (int Z = chunkZ; Z <= z2 / 16; Z++) {
-				// if(!DatasourceProxy.getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, chunkX, chunkZ, dim)))
-
-			}
-		}
-	}
+    }
 
 	@Override
 	public Town getTown() {
@@ -127,11 +105,41 @@ public class TownPlot implements ITownPlot {
 	}
 
 	@Override
-	public Resident getOwner() {
-		return owner;
-	}
+	public List<Resident> getOwners() { return owners; }
 
-	@Override
+    @Override
+    public boolean addOwner(Resident owner) {
+        // Checking if the new owner is part of the town which this plot resides in
+        if (!owner.getTowns().contains(town))
+            return false;
+
+        return owners.add(owner);
+    }
+
+
+    @Override
+    public boolean removeOwner(Resident owner) {
+        return owners.remove(owner);
+    }
+
+    @Override
+    public List<Resident> getWhitelistedResidents() {
+        return whitelist;
+    }
+
+    @Override
+    public boolean addToWhitelist(Resident resident) {
+        if(!resident.getTowns().contains(town))
+            return false;
+        return whitelist.add(resident);
+    }
+
+    @Override
+    public boolean removeFromWhitelist(Resident resident) {
+        return whitelist.remove(resident);
+    }
+
+    @Override
 	public int getStartX() {
 		return x1;
 	}
@@ -231,18 +239,16 @@ public class TownPlot implements ITownPlot {
 		return true;
 	}
 
-	@Override
-	public boolean setOwner(Resident owner) {
-		// Checking if the new owner is part of the town which this plot resides in
-		if (!owner.getTowns().contains(town))
-			return false;
-
-		this.owner = owner;
-		return true;
-	}
 
 	@Override
 	public String toString() {
-		return String.format(EnumChatFormatting.GREEN + " %s\n" + EnumChatFormatting.GRAY + "From: " + EnumChatFormatting.WHITE + "[" + EnumChatFormatting.GREEN + "%s" + EnumChatFormatting.WHITE + "," + EnumChatFormatting.GREEN + " %s" + EnumChatFormatting.WHITE + "," + EnumChatFormatting.GREEN + " %s" + EnumChatFormatting.WHITE + "]" + EnumChatFormatting.GRAY + " to " + EnumChatFormatting.WHITE + "[" + EnumChatFormatting.GREEN + "%s" + EnumChatFormatting.WHITE + "," + EnumChatFormatting.GREEN + " %s" + EnumChatFormatting.WHITE + "," + EnumChatFormatting.GREEN + " %s" + EnumChatFormatting.WHITE + "] " + EnumChatFormatting.GRAY + "\nOwner: " + EnumChatFormatting.WHITE + "%s ", name, x1, y1, z1, x2, y2, z2, owner.getUUID());
+		String stringOwners = "";
+        for(Resident res : owners) {
+            if(stringOwners.equals(""))
+                stringOwners += res.getUUID();
+            else
+                stringOwners += ", " + res.getUUID();
+        }
+        return String.format(EnumChatFormatting.GREEN + " %s\n" + EnumChatFormatting.GRAY + "From: " + EnumChatFormatting.WHITE + "[" + EnumChatFormatting.GREEN + "%s" + EnumChatFormatting.WHITE + "," + EnumChatFormatting.GREEN + " %s" + EnumChatFormatting.WHITE + "," + EnumChatFormatting.GREEN + " %s" + EnumChatFormatting.WHITE + "]" + EnumChatFormatting.GRAY + " to " + EnumChatFormatting.WHITE + "[" + EnumChatFormatting.GREEN + "%s" + EnumChatFormatting.WHITE + "," + EnumChatFormatting.GREEN + " %s" + EnumChatFormatting.WHITE + "," + EnumChatFormatting.GREEN + " %s" + EnumChatFormatting.WHITE + "] " + EnumChatFormatting.GRAY + "\nOwner: " + EnumChatFormatting.WHITE + "%s ", name, x1, y1, z1, x2, y2, z2, stringOwners);
 	}
 }

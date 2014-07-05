@@ -150,7 +150,7 @@ public class PlayerTracker implements IPlayerTracker {
 						ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionEnd");
 					}
 				} else
-					throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selectionFailed"));
+					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.selectionFailed");
 
 			}
 			System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));

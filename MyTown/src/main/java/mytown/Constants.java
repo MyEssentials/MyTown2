@@ -20,5 +20,6 @@ public class Constants {
 	// TODO Allow configuring them
 	public static Map<String, List<String>> DEFAULT_RANK_VALUES = new HashMap<String, List<String>>();
     public static String DEFAULT_RANK;
+    public static String DEFAULT_SUPER_RANK; // basically the mayor
 
 }

@@ -91,7 +91,7 @@ public class Formatter {
 
 	/**
 	 * Formats a list of plots to a String that is then sent to the player.
-	 * 
+	 *
 	 * @param plots
 	 * @return
 	 */
@@ -110,7 +110,7 @@ public class Formatter {
 			toBeAdded += "] to [" + plot.getEndX();
 			toBeAdded += ", " + plot.getEndY();
 			toBeAdded += ", " + plot.getEndZ();
-			toBeAdded += "], Owner: " + plot.getOwner().getUUID();
+			toBeAdded += "], Owner: "; //plot.getOwner().getUUID();
 			res += toBeAdded;
 		}
 		return res;

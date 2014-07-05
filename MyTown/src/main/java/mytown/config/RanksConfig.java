@@ -13,6 +13,8 @@ import java.util.List;
 /**
  * Created by AfterWind on 7/4/2014
  * JSON Default ranks config
+ *
+ * TODO: STOP USING THE DAMN BOOLEANS FOR EVERYTHING AND USE PROPER JSON
  */
 public class RanksConfig {
     private Gson gson;
@@ -68,12 +70,15 @@ public class RanksConfig {
             Constants.DEFAULT_RANK_VALUES.put(assistantRank, pAssistant);
             Constants.DEFAULT_RANK_VALUES.put(residentRank, pResident);
 
+            Constants.DEFAULT_RANK = residentRank;
+            Constants.DEFAULT_SUPER_RANK = mayorRank;
+
             // Preparing to add them to JSON file
 
             Wrapper[] wrappedObjects = new Wrapper[3];
-            wrappedObjects[0] = new Wrapper(mayorRank, pMayor, false);
-            wrappedObjects[1] = new Wrapper(assistantRank, pAssistant, false);
-            wrappedObjects[2] = new Wrapper(residentRank, pResident, true);
+            wrappedObjects[0] = new Wrapper(mayorRank, pMayor, false, true);
+            wrappedObjects[1] = new Wrapper(assistantRank, pAssistant, false, false);
+            wrappedObjects[2] = new Wrapper(residentRank, pResident, true, false);
 
             // Adding to JSON file
 
@@ -101,6 +106,8 @@ public class RanksConfig {
                 Constants.DEFAULT_RANK_VALUES.put(w.name, w.permissions);
                 if(w.isDefault)
                     Constants.DEFAULT_RANK = w.name;
+                if(w.isSuperRank)
+                    Constants.DEFAULT_SUPER_RANK = w.name;
             }
 
         } catch (Exception e) {
@@ -113,12 +120,14 @@ public class RanksConfig {
     private class Wrapper {
         public String name;
         public boolean isDefault;
+        public boolean isSuperRank;
         public List<String> permissions;
 
-        public Wrapper(String name, List<String> permissions, boolean isDefault) {
+        public Wrapper(String name, List<String> permissions, boolean isDefault, boolean isSuperRank) {
             this.name = name;
             this.permissions = permissions;
             this.isDefault = isDefault;
+            this.isSuperRank = isSuperRank;
         }
     }
 

@@ -1,5 +1,6 @@
 package mytown.commands.town.everyone;
 
+import mytown.Constants;
 import mytown.MyTown;
 import mytown.api.datasource.MyTownDatasource;
 import mytown.api.events.TownEvent.TownCreatedEvent;
@@ -46,7 +47,7 @@ public class CmdNewTown extends CommandBase {
 			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 
 			getDatasource().insertTown(town);
-			getDatasource().linkResidentToTown(res, town, town.getRank("Mayor"));
+			getDatasource().linkResidentToTown(res, town, town.getRank(Constants.DEFAULT_SUPER_RANK));
 			getDatasource().insertTownBlock(new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension));
 			getDatasource().insertTownFlag(town, new TownFlag("mobs", "Controls mobs spawning", true));
 			getDatasource().insertTownFlag(town, new TownFlag("breakBlocks", "Controls whether or not non-residents can break blocks", false));

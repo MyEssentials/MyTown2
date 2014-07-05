@@ -10,7 +10,7 @@ import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
-@Permission("mytown.cmd.assistant.plot.make")
+@Permission("mytown.cmd.resident.plot.make")
 public class CmdPlotMake extends CommandBase {
 
 	public CmdPlotMake(String name, CommandBase parent) {

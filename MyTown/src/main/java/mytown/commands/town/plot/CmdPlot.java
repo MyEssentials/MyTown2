@@ -15,7 +15,7 @@ import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
-@Permission("mytown.cmd.assistant.plot")
+@Permission("mytown.cmd.resident.plot")
 public class CmdPlot extends CommandHandler {
 
 	public CmdPlot(String name, CommandBase parent) {
