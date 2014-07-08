@@ -27,7 +27,7 @@ public class VisualsTickHandler implements ITickHandler {
 			this.dim = dim;
 		}
 	}
-
+    public static final String TICK_HANDLER_LABEL = "MyTownTickHandler";
 	public static VisualsTickHandler instance = new VisualsTickHandler();
 	private List<BlockCoords> markedBlocks;
 
@@ -208,6 +208,6 @@ public class VisualsTickHandler implements ITickHandler {
 
 	@Override
 	public String getLabel() {
-		return Constants.TICK_HANDLER_LABEL;
+		return VisualsTickHandler.TICK_HANDLER_LABEL;
 	}
 }

@@ -10,6 +10,7 @@ import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.TownFlag;
 import mytown.entities.town.Town;
+import mytown.modules.IC2Module;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
@@ -56,7 +57,8 @@ public class CmdNewTown extends CommandBase {
             getDatasource().insertTownFlag(town, new TownFlag("useItems", "Controls whether or not non-residents can use items", false));
 			getDatasource().insertTownFlag(town, new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
 			getDatasource().insertTownFlag(town, new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
-
+            if(MyTown.instance.isModuleEnabled(IC2Module.IC2ModID))
+                getDatasource().insertTownFlag(town, new TownFlag("ic2", "Controls IndustrialCraft2 item/blocks protection", true));
 			
 			MinecraftForge.EVENT_BUS.post(new TownCreatedEvent(town));
 

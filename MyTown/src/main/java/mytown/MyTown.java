@@ -1,8 +1,11 @@
 package mytown;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.common.Loader;
+import ic2.api.info.Info;
 import mytown.api.datasource.MyTownDatasource;
 import mytown.commands.admin.CmdTownAdmin;
 import mytown.commands.town.CmdTown;
@@ -17,6 +20,8 @@ import mytown.crash.DatasourceCrashCallable;
 import mytown.handler.IC2EventHandler;
 import mytown.handler.MyTownEventHandler;
 import mytown.handler.VanillaEventHandler;
+import mytown.interfaces.IModule;
+import mytown.modules.IC2Module;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
@@ -45,7 +50,7 @@ public class MyTown {
 	public Log log;
 	public Configuration config;
     public RanksConfig rankConfig; // atm very useless TODO: add reload functions to it
-
+    public List<IModule> enabledModules;
 
     // Set to true to kick all non-admin users out with a custom kick message
 	public boolean safemode = false;
@@ -62,7 +67,9 @@ public class MyTown {
 		config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
 		ConfigProcessor.load(config, Config.class);
 		LocalizationProxy.load();
+
 		registerHandlers();
+
 
 		// ModProxy PreInit
 		ModProxies.addProxies();
@@ -74,12 +81,14 @@ public class MyTown {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent ev) {
-		ModProxies.init();
+
+        ModProxies.init();
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent ev) {
-		ModProxies.postInit();
+        enableModules();
+        ModProxies.postInit();
         config.save();
 	}
 
@@ -127,8 +136,33 @@ public class MyTown {
 		
 		MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
         MinecraftForge.EVENT_BUS.register(new VanillaEventHandler());
-        MinecraftForge.EVENT_BUS.register(new IC2EventHandler());
 	}
+
+    /**
+     * Checks and registers the mods that are enabled
+     */
+    private void enableModules() {
+        enabledModules = new ArrayList<IModule>();
+
+        if(Info.isIc2Available()) {
+            enabledModules.add(new IC2Module());
+            log.info("Loaded IC2 module");
+        }
+        // Rest of implementations go here
+
+        for(IModule module : enabledModules)
+            module.load();
+    }
+
+    public boolean isModuleEnabled(String modid) {
+        for(IModule module : enabledModules) {
+            if (module.getModID().equals(modid))
+                return true;
+        }
+
+
+        return false;
+    }
 
 	// ////////////////////////////
 	// Helpers

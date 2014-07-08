@@ -4,8 +4,11 @@ import ic2.api.event.LaserEvent;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.proxies.DatasourceProxy;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 /**
  * Created by AfterWind on 7/8/2014.
@@ -29,13 +32,14 @@ public class IC2EventHandler {
                 return;
             }
         }
+
     }
     @ForgeSubscribe
     public void onLaserExplodes(LaserEvent.LaserExplodesEvent ev) {
         TownBlock tblock = DatasourceProxy.getDatasource().getTownBlock(ev.owner.dimension, ev.lasershot.chunkCoordX, ev.lasershot.chunkCoordZ, true);
         if(tblock == null)
             return;
-        if(!tblock.getTown().getFlagAtCoords((int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)Math.floor(ev.lasershot.posZ), "breakBlocks").getValue()) {
+        if(!tblock.getTown().getFlagAtCoords((int) ev.lasershot.posX, (int) ev.lasershot.posY, (int) Math.floor(ev.lasershot.posZ), "breakBlocks").getValue()) {
             if(ev.owner instanceof EntityPlayer) {
                 Resident res = DatasourceProxy.getDatasource().getResident(((EntityPlayer) ev.owner).username);
                 if(res == null || !res.getTowns().contains(tblock.getTown())) {
@@ -48,5 +52,4 @@ public class IC2EventHandler {
             }
         }
     }
-
 }
