@@ -1,7 +1,7 @@
 package mytown;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 import mytown.api.datasource.MyTownDatasource;
 import mytown.commands.admin.CmdTownAdmin;
@@ -14,6 +14,9 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
+import mytown.handler.IC2EventHandler;
+import mytown.handler.MyTownEventHandler;
+import mytown.handler.VanillaEventHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
@@ -42,8 +45,11 @@ public class MyTown {
 	public Log log;
 	public Configuration config;
     public RanksConfig rankConfig; // atm very useless TODO: add reload functions to it
+
+
     // Set to true to kick all non-admin users out with a custom kick message
 	public boolean safemode = false;
+
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent ev) {
@@ -74,7 +80,7 @@ public class MyTown {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent ev) {
 		ModProxies.postInit();
-		config.save();
+        config.save();
 	}
 
 	@Mod.EventHandler
@@ -120,6 +126,8 @@ public class MyTown {
 		TickRegistry.registerTickHandler(VisualsTickHandler.instance, Side.SERVER);
 		
 		MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
+        MinecraftForge.EVENT_BUS.register(new VanillaEventHandler());
+        MinecraftForge.EVENT_BUS.register(new IC2EventHandler());
 	}
 
 	// ////////////////////////////

@@ -50,7 +50,7 @@ public class CmdRanksPermAdd extends CommandBase {
 			// Adding permission if everything is alright
 			if (town.getRank(args[0]).addPermission(args[1])) {
 				getDatasource().updateRank(town.getRank(args[0]));
-				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.ranks.perm.add", args[1], args[0]);
+				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.ranks.perm.add", args[0]);
 			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.perm.add.failed", args[1]));
 		} catch (Exception e) {

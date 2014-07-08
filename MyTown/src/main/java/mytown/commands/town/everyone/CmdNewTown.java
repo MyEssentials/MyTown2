@@ -53,8 +53,10 @@ public class CmdNewTown extends CommandBase {
 			getDatasource().insertTownFlag(town, new TownFlag("breakBlocks", "Controls whether or not non-residents can break blocks", false));
 			getDatasource().insertTownFlag(town, new TownFlag("explosions", "Controls if explosions can occur", true));
 			getDatasource().insertTownFlag(town, new TownFlag("accessBlocks", "Controls whether or not non-residents can access(right click) blocks", false));
+            getDatasource().insertTownFlag(town, new TownFlag("useItems", "Controls whether or not non-residents can use items", false));
 			getDatasource().insertTownFlag(town, new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
 			getDatasource().insertTownFlag(town, new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
+
 			
 			MinecraftForge.EVENT_BUS.post(new TownCreatedEvent(town));
 

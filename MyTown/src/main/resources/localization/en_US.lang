@@ -120,3 +120,7 @@ mytown.notification.town.setspawn=Spawn has been set!
 mytown.notification.plot.renamed=The plot has been successfully renamed!
 mytown.notification.plot.showing=Plots are now showing borders. Use "/t plot vanish" in order to hide them.
 mytown.notification.plot.vanished=Plots have been successfully hidden!
+mytown.notification.town.ranks.add=%s rank has been added to town %s!
+mytown.notification.town.ranks.rem=%s rank has been deleted from town %s!
+mytown.notification.town.ranks.perm.add=The new permission has been added to the rank %s!
+mytown.notification.town.ranks.perm.remove=The permission has been removed from rank %s!
