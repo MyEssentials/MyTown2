@@ -1,9 +1,6 @@
 package mytown.proxies.mod;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 /**
  * 
@@ -24,21 +21,9 @@ public abstract class ModProxy {
 	public String getModID() {
 		return null;
 	}
-
+	
 	/**
-	 * Runs during {@link FMLPreInitializationEvent}
+	 * Loads this {@link ModProxy}, its run during {@link FMLPostInitializationEvent}.
 	 */
-	public abstract void preInit();
-
-	/**
-	 * Runs during {@link FMLInitializationEvent}
-	 * 
-	 * Usually used to send {@link IMCMessage}'s to other mods
-	 */
-	public abstract void init();
-
-	/**
-	 * Runs during {@link FMLPostInitializationEvent}
-	 */
-	public abstract void postInit();
+	public abstract void load();
 }

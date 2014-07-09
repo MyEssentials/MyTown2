@@ -20,7 +20,6 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -59,20 +58,14 @@ public class MyTown {
 
 		// ModProxy PreInit
 		ModProxies.addProxies();
-		ModProxies.preInit();
 
 		// Register ICrashCallable's
 		FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());
 	}
 
 	@Mod.EventHandler
-	public void init(FMLInitializationEvent ev) {
-		ModProxies.init();
-	}
-
-	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent ev) {
-		ModProxies.postInit();
+		ModProxies.load();
 		config.save();
 	}
 
