@@ -10,6 +10,11 @@ public class MyTownChatModProxy extends ModProxy {
 	}
 
 	@Override
+	public String getModID() {
+		return "MyTownChat";
+	}
+
+	@Override
 	public void preInit() {
 	}
 

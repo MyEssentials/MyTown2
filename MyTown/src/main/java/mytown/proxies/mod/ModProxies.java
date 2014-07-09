@@ -3,6 +3,7 @@ package mytown.proxies.mod;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.common.Loader;
 import mytown.MyTown;
 import mytown.proxies.mod.MyTownChat.MyTownChatModProxy;
 
@@ -50,7 +51,7 @@ public class ModProxies {
 	public static void preInit() {
 		ModProxies.load();
 		for (ModProxy p : ModProxies.proxies) {
-			if (!MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
+			if ((p.getModID() != null && !Loader.isModLoaded(p.getName())) || !MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
 				continue;
 			}
 			p.preInit();
@@ -59,7 +60,7 @@ public class ModProxies {
 
 	public static void init() {
 		for (ModProxy p : ModProxies.proxies) {
-			if (!MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
+			if ((p.getModID() != null && !Loader.isModLoaded(p.getName())) || !MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
 				continue;
 			}
 			p.init();
@@ -68,7 +69,7 @@ public class ModProxies {
 
 	public static void postInit() {
 		for (ModProxy p : ModProxies.proxies) {
-			if (!MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
+			if ((p.getModID() != null && !Loader.isModLoaded(p.getName())) || !MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
 				continue;
 			}
 			p.postInit();

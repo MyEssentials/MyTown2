@@ -5,6 +5,10 @@ import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
+/**
+ * 
+ * @author Joe Goett
+ */
 public abstract class ModProxy {
 	/**
 	 * Returns the name of the ModProxy
@@ -12,6 +16,14 @@ public abstract class ModProxy {
 	 * @return
 	 */
 	public abstract String getName();
+	
+	/**
+	 * Returns the Mod ID of the mod this {@link ModProxy} interacts with, or null if it doesn't interact with a mod
+	 * @return
+	 */
+	public String getModID() {
+		return null;
+	}
 
 	/**
 	 * Runs during {@link FMLPreInitializationEvent}
