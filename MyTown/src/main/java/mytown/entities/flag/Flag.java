@@ -1,4 +1,4 @@
-package mytown.entities;
+package mytown.entities.flag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Generic Flag class that should be able to serialize/deserialize any value.
  * 
- * Children should automatically inherit from their parents if the parent's value actually changed
+ * Children should automatically inherit from their parents if and only if the parent's value actually changed.
  * 
  * @author Joe Goett
  * 
@@ -56,8 +56,9 @@ public class Flag<T> {
 	 * 
 	 * @param value
 	 */
-	public void setValue(T value) {
-		this.value = value;
+	@SuppressWarnings("unchecked")
+	public void setValue(Object value) {
+		this.value = (T)value;
 	}
 
 	/**

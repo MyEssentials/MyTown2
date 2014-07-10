@@ -21,6 +21,8 @@ public class DatasourceProxy {
 	private static MyTownDatasource datasource;
 	private static Map<String, Class<?>> types = new Hashtable<String, Class<?>>();
 	private static Log log = MyTown.instance.log.createChild("Datasource");
+	
+	private DatasourceProxy() {}
 
 	/**
 	 * Adds the default datasource types Should be added when this class is first accessed
@@ -90,15 +92,18 @@ public class DatasourceProxy {
 	 * @param msg
 	 */
 	public static void imc(FMLInterModComms.IMCMessage msg) {
-		if (msg.key == "registerDatasourceType") {
+		String[] keyParts = msg.key.split("|");
+		if (keyParts.length < 2) return;
+		
+		if (keyParts[1] == "registerType") {
 			String[] msgSplit = msg.getStringValue().split(",");
 			String datasourceName = msgSplit[0].toLowerCase();
 			String datasourceClassName = msgSplit[1];
-
+			
 			try {
 				DatasourceProxy.registerType(datasourceName, Class.forName(datasourceClassName));
 			} catch (ClassNotFoundException e) {
-				DatasourceProxy.log.warning("Failed to register datasource type %s from mod %s. %s", datasourceName, msg.getSender(), e.getLocalizedMessage());
+				DatasourceProxy.log.warning("Failed to register datasource type %s from mod %s.", e, datasourceName, msg.getSender());
 			}
 		}
 	}

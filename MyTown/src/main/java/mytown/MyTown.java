@@ -13,6 +13,7 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
+import mytown.entities.flag.FlagHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
@@ -72,7 +73,13 @@ public class MyTown {
 	@Mod.EventHandler
 	public void imcEvent(FMLInterModComms.IMCEvent ev) {
 		for (FMLInterModComms.IMCMessage msg : ev.getMessages()) {
-			DatasourceProxy.imc(msg);
+			String[] keyParts = msg.key.split("|");
+			
+			if (keyParts[0] == "datasource") {
+				DatasourceProxy.imc(msg);
+			} else if (keyParts[0] == "flags") {
+				FlagHandler.imc(msg);
+			}
 		}
 	}
 
