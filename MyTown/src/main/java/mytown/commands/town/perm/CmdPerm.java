@@ -23,11 +23,6 @@ public class CmdPerm extends CommandHandler {
 	}
 
 	@Override
-	public void sendHelp(ICommandSender sender) {
-
-	}
-
-	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
 

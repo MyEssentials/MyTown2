@@ -66,9 +66,4 @@ public class CmdRanksPerm extends CommandHandler {
 	private MyTownDatasource getDatasource() {
 		return DatasourceProxy.getDatasource();
 	}
-
-	@Override
-	public void sendHelp(ICommandSender sender) {
-		// TODO Send help to sender
-	}
 }

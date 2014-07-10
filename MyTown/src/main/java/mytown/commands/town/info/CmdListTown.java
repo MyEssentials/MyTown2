@@ -15,6 +15,8 @@ import net.minecraft.command.ICommandSender;
 
 import com.google.common.base.Joiner;
 
+// TODO Move cache to another class?
+
 @Permission("mytown.cmd.outsider.list")
 public class CmdListTown extends CommandBase {
 	private static TownComparator townNameComparator = new TownComparator(TownComparator.Order.Name);

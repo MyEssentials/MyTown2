@@ -61,11 +61,6 @@ public class CmdInvite extends CommandHandler {
 		return CommandUtils.getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
 	}
 
-	@Override
-	public void sendHelp(ICommandSender sender) {
-		// TODO Send help to sender
-	}
-
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

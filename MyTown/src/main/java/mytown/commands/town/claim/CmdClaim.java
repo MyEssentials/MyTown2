@@ -93,11 +93,4 @@ public class CmdClaim extends CommandHandler {
 	private MyTownDatasource getDatasource() {
 		return DatasourceProxy.getDatasource();
 	}
-
-	@Override
-	public void sendHelp(ICommandSender sender) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

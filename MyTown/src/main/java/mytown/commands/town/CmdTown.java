@@ -20,10 +20,8 @@ import mytown.commands.town.perm.CmdPromote;
 import mytown.commands.town.plot.CmdPlot;
 import mytown.commands.town.plot.CmdPlots;
 import mytown.commands.town.rank.CmdRanks;
-import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
-import net.minecraft.command.ICommandSender;
 
 /**
  * MyTown command
@@ -68,11 +66,5 @@ public class CmdTown extends CommandHandler {
 	@Override
 	public List<?> getCommandAliases() {
 		return aliases; // TODO Add aliases!
-	}
-
-	@Override
-	public void sendHelp(ICommandSender sender) {
-		ChatUtils.sendChat(sender, "Help has not been added yet for this command.");
-		// TODO Send help to sender
 	}
 }

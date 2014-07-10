@@ -46,11 +46,6 @@ public class CmdRanks extends CommandHandler {
 
 	}
 
-	@Override
-	public void sendHelp(ICommandSender sender) {
-		// TODO Send help to sender
-	}
-
 	/**
 	 * Helper method to return the current MyTownDatasource instance
 	 * 

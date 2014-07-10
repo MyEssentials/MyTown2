@@ -41,8 +41,4 @@ public class CmdBlocks extends CommandHandler {
 		}
 
 	}
-
-	@Override
-	public void sendHelp(ICommandSender sender) {
-	}
 }

@@ -51,9 +51,7 @@ public class CmdSelect extends CommandBase {
 			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 			List<String> tabComplete = new ArrayList<String>();
 			for (Town t : res.getTowns()) {
-				if (args.length == 0) {
-					tabComplete.add(t.getName());
-				} else if (t.getName().startsWith(args[0])) {
+				if (args.length == 0 || t.getName().startsWith(args[0])) {
 					tabComplete.add(t.getName());
 				}
 			}

@@ -6,7 +6,7 @@ import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
-import mytown.entities.flag.TownFlag;
+import mytown.entities.flag2.TownFlag;
 import mytown.entities.town.AdminTown;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;

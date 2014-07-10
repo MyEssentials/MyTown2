@@ -6,7 +6,6 @@ import java.util.List;
 import mytown.commands.admin.config.CmdConfig;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
-import net.minecraft.command.ICommandSender;
 
 @Permission("mytown.adm.cmd")
 public class CmdTownAdmin extends CommandHandler {
@@ -30,10 +29,5 @@ public class CmdTownAdmin extends CommandHandler {
 	@Override
 	public List<?> getCommandAliases() {
 		return aliases;
-	}
-
-	@Override
-	public void sendHelp(ICommandSender sender) {
-		// TODO Send help to sender
 	}
 }
