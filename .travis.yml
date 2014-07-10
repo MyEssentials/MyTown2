@@ -4,7 +4,7 @@ notifications:
   email: false
   irc:
     channels:
-  	  - "irc.esper.net#MyTown"
+      - "irc.esper.net#MyTown"
     template:
       - "%{repository_name} (%{branch}): %{commit_message} - %{author}"
       - "Result: %{result}"
@@ -18,8 +18,8 @@ deploy:
   file: Libs/MyTown*
   skip_cleanup: true
   on:
-  	tags: true
-  	all_branches: true
+    tags: true
+    all_branches: true
     repo: legobear154/MyTown2
 
 # Need to add a way to generate blog post, commands page, and changelogs after deployment and upload to gh_pages branch of project
