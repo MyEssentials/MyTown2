@@ -16,7 +16,7 @@ import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.entities.TownPlot;
-import mytown.entities.flag.TownFlag;
+import mytown.entities.flag2.TownFlag;
 import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
