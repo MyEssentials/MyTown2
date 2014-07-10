@@ -1,4 +1,4 @@
-package mytown;
+package mytown.handler;
 
 import net.minecraftforge.event.ForgeSubscribe;
 import mytown.api.events.TownEvent.TownCreatedEvent;

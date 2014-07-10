@@ -1,5 +1,6 @@
 package mytown.commands.town.everyone;
 
+import mytown.Constants;
 import mytown.MyTown;
 import mytown.api.datasource.MyTownDatasource;
 import mytown.api.events.TownEvent.TownCreatedEvent;
@@ -9,6 +10,7 @@ import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.TownFlag;
 import mytown.entities.town.Town;
+import mytown.modules.IC2Module;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
@@ -46,14 +48,20 @@ public class CmdNewTown extends CommandBase {
 			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 
 			getDatasource().insertTown(town);
-			getDatasource().linkResidentToTown(res, town, town.getRank("Mayor"));
+			getDatasource().linkResidentToTown(res, town, town.getRank(Constants.DEFAULT_SUPER_RANK));
 			getDatasource().insertTownBlock(new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension));
 			getDatasource().insertTownFlag(town, new TownFlag("mobs", "Controls mobs spawning", true));
 			getDatasource().insertTownFlag(town, new TownFlag("breakBlocks", "Controls whether or not non-residents can break blocks", false));
 			getDatasource().insertTownFlag(town, new TownFlag("explosions", "Controls if explosions can occur", true));
 			getDatasource().insertTownFlag(town, new TownFlag("accessBlocks", "Controls whether or not non-residents can access(right click) blocks", false));
+            getDatasource().insertTownFlag(town, new TownFlag("useItems", "Controls whether or not non-residents can use items", false));
 			getDatasource().insertTownFlag(town, new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
 			getDatasource().insertTownFlag(town, new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
+            getDatasource().insertTownFlag(town, new TownFlag("build", "Controls whether or not a non-resident can build.", false));
+            //if(vanilla.installed) *trollface*
+            getDatasource().insertTownFlag(town, new TownFlag("vanilla", "Controls whether or not non-resident can interact with the town from outside with vanilla tile entities.", false));
+            if(MyTown.instance.isModuleEnabled(IC2Module.ModID))
+                getDatasource().insertTownFlag(town, new TownFlag("ic2", "Controls IndustrialCraft2 item/blocks protection", true));
 			
 			MinecraftForge.EVENT_BUS.post(new TownCreatedEvent(town));
 

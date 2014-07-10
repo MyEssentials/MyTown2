@@ -15,7 +15,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 
-@Permission("mytown.cmd.adm.new")
+@Permission("mytown.adm.cmd.new")
 public class CmdNewTown extends CommandBase {
 
 	public CmdNewTown(String name, CommandBase parent) {

@@ -992,6 +992,12 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract void loadTownToNationLinks() throws Exception;
 
+    /**
+     * Loads all stored links between Residents and Plots
+     *
+     * @throws Exception
+     */
+    public abstract void loadResidentsToPlotLinks() throws Exception;
 	/**
 	 * Links the Resident with the given Rank to the Town
 	 * 
@@ -1031,7 +1037,37 @@ public abstract class MyTownDatasource {
 		linkTownToNation(town, nation, Nation.Rank.Town);
 	}
 
-	/**
+    /**
+     * Links the Resident to the Plot without the owner rights
+     *
+     * @param resident
+     * @param plot
+     * @throws Exception
+     */
+    public void linkResidentToPlot(Resident resident, ITownPlot plot) throws Exception {
+        linkResidentToPlot(resident, plot, false);
+    }
+
+    /**
+     * Links the Resident to the Plot
+     *
+     * @param resident
+     * @param plot
+     * @param isOwner
+     * @throws Exception
+     */
+    public abstract void linkResidentToPlot(Resident resident, ITownPlot plot, boolean isOwner) throws Exception;
+
+    /**
+     * Removes link of a Resident to the specified Plot
+     *
+     * @param resident
+     * @param plot
+     * @throws Exception
+     */
+    public abstract void unlinkResidentFromPlot(Resident resident, ITownPlot plot) throws Exception;
+
+    /**
 	 * Removes link of a Resident to the specified Town
 	 * 
 	 * @param resident
@@ -1260,9 +1296,7 @@ public abstract class MyTownDatasource {
 		for (Resident r : town.getResidents()) {
 			r.removeResidentFromTown(town);
 		}
-		for (TownBlock block : town.getTownBlocks()) {
-			removeTownBlock(block);
-		}
+        removeTownBlocks( town.getTownBlocks().toArray( new TownBlock[town.getTownBlocks().size()] ));
 		return towns.remove(town.getName()) != null;
 	}
 

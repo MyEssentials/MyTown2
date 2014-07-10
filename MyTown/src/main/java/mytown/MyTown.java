@@ -1,35 +1,38 @@
 package mytown;
 
-import java.io.File;
-import java.util.ArrayList;
-
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
+import forgeperms.api.ForgePermsAPI;
+import ic2.api.info.Info;
 import mytown.api.datasource.MyTownDatasource;
 import mytown.commands.admin.CmdTownAdmin;
 import mytown.commands.town.CmdTown;
 import mytown.commands.town.info.CmdListTown;
 import mytown.config.Config;
+import mytown.config.RanksConfig;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
+import mytown.handler.MyTownEventHandler;
+import mytown.modules.UniversalChecker;
+import mytown.modules.VanillaModule;
+import mytown.modules.IC2Module;
+import mytown.modules.ModuleBase;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
-import forgeperms.api.ForgePermsAPI;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO Add a way to safely reload
 // TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packaged with this. Maybe even make MyTown just DL them at runtime and inject them
@@ -40,9 +43,12 @@ public class MyTown {
 	public static MyTown instance;
 	public Log log;
 	public Configuration config;
+    public RanksConfig rankConfig; // atm very useless TODO: add reload functions to it
+    public List<ModuleBase> enabledModules;
 
-	// Set to true to kick all non-admin users out with a custom kick message
+    // Set to true to kick all non-admin users out with a custom kick message
 	public boolean safemode = false;
+
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent ev) {
@@ -55,7 +61,9 @@ public class MyTown {
 		config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
 		ConfigProcessor.load(config, Config.class);
 		LocalizationProxy.load();
+
 		registerHandlers();
+
 
 		// ModProxy PreInit
 		ModProxies.addProxies();
@@ -67,13 +75,15 @@ public class MyTown {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent ev) {
-		ModProxies.init();
+
+        ModProxies.init();
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent ev) {
-		ModProxies.postInit();
-		config.save();
+        enableModules();
+        ModProxies.postInit();
+        config.save();
 	}
 
 	@Mod.EventHandler
@@ -87,7 +97,8 @@ public class MyTown {
 	public void serverStarting(FMLServerStartingEvent ev) {
 		registerCommands();
 		ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
-		addDefaultPermissions();
+
+        rankConfig = new RanksConfig(Constants.CONFIG_FOLDER + "/ranks.json");
 		safemode = DatasourceProxy.start(config);
 		
 		CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
@@ -97,36 +108,6 @@ public class MyTown {
 	public void serverStopping(FMLServerStoppingEvent ev) {
 		config.save();
 		DatasourceProxy.stop();
-	}
-
-	/**
-	 * Adds all the default permissions
-	 */
-	private void addDefaultPermissions() {
-		// TODO: Config files for all default ranks?
-		ArrayList<String> pOutsider = new ArrayList<String>();
-		ArrayList<String> pResident = new ArrayList<String>();
-		ArrayList<String> pAssistant = new ArrayList<String>();
-		ArrayList<String> pMayor = new ArrayList<String>();
-
-		for (String s : CommandUtils.permissionList.values()) {
-			if (s.startsWith("mytown.cmd")) {
-				pMayor.add(s);
-				if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) {
-					pAssistant.add(s);
-				}
-				if (s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) {
-					pResident.add(s);
-				}
-				if (s.startsWith("mytown.cmd.outsider")) {
-					pOutsider.add(s);
-				}
-			}
-		}
-		Constants.DEFAULT_RANK_VALUES.put("Outsider", pOutsider);
-		Constants.DEFAULT_RANK_VALUES.put("Resident", pResident);
-		Constants.DEFAULT_RANK_VALUES.put("Assistant", pAssistant);
-		Constants.DEFAULT_RANK_VALUES.put("Mayor", pMayor);
 	}
 
 	/**
@@ -146,9 +127,37 @@ public class MyTown {
 		MinecraftForge.EVENT_BUS.register(playerTracker);
 
 		TickRegistry.registerTickHandler(VisualsTickHandler.instance, Side.SERVER);
-		
+        TickRegistry.registerTickHandler(UniversalChecker.instance, Side.SERVER);
+
 		MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
+        MinecraftForge.EVENT_BUS.register(new VanillaModule());
 	}
+
+    /**
+     * Checks and registers the mods that are enabled
+     */
+    private void enableModules() {
+        enabledModules = new ArrayList<ModuleBase>();
+
+        if(Info.isIc2Available()) {
+            enabledModules.add(new IC2Module());
+            log.info("Loaded IC2 module");
+        }
+        // Rest of implementations go here
+
+        for(ModuleBase module : enabledModules)
+            module.load();
+    }
+
+    public boolean isModuleEnabled(String modid) {
+        for(ModuleBase module : enabledModules) {
+            if (module.getModID().equals(modid))
+                return true;
+        }
+
+
+        return false;
+    }
 
 	// ////////////////////////////
 	// Helpers

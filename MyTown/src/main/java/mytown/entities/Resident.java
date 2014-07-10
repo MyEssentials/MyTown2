@@ -430,13 +430,6 @@ public class Resident implements IPlotSelector {
 			selectionY2 = y;
 			selectionZ2 = z;
 			secondSelectionActive = true;
-			/*
-			 * // On the X MyTownTickHandler.instance.markBlock(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1, dim, player.worldObj.getBlockId(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1), player.worldObj.getBlockMetadata(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1)); MyTownTickHandler.instance.markBlock(selectionX2 + (selectionX1 > selectionX2 ? 1 : -1), selectionY2, selectionZ2, dim, player.worldObj.getBlockId(selectionX2 + (selectionX1 > selectionX2 ? 1 : -1), selectionY2, selectionZ2)); MyTownTickHandler.instance.markBlock(selectionX1 + (selectionX1 > selectionX2 ? -2 : 2), selectionY1, selectionZ1, dim, player.worldObj.getBlockId(selectionX1 + (selectionX1 > selectionX2 ? -2 : 2), selectionY1, selectionZ1)); MyTownTickHandler.instance.markBlock(selectionX2 + (selectionX1 > selectionX2 ? 2 : -2), selectionY2, selectionZ2, dim, player.worldObj.getBlockId(selectionX2 + (selectionX1 > selectionX2 ? 2 : -2), selectionY2, selectionZ2));
-			 * 
-			 * // On the Z MyTownTickHandler.instance.markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 1 : -1), dim, player.worldObj.getBlockId(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 1 : -1))); MyTownTickHandler.instance.markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -1 : 1), dim, player.worldObj.getBlockId(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -1 : 1))); MyTownTickHandler.instance.markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 2 : -2), dim, player.worldObj.getBlockId(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 2 : -2))); MyTownTickHandler.instance.markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -2 : 2), dim, player.worldObj.getBlockId(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -2 : 2)));
-			 * 
-			 * if(selectionY1 != selectionY2) { // On the Y MyTownTickHandler.instance.markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -1 : 1), selectionZ1, dim, player.worldObj.getBlockId(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -1 : 1), selectionZ1)); MyTownTickHandler.instance.markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 1 : -1), selectionZ2, dim, player.worldObj.getBlockId(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 1 : -1), selectionZ2)); MyTownTickHandler.instance.markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -2 : 2), selectionZ1, dim, player.worldObj.getBlockId(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -2 : 2), selectionZ1)); MyTownTickHandler.instance.markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2, dim, player.worldObj.getBlockId(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2)); }
-			 */
 			VisualsTickHandler.instance.markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
 		}
 
@@ -504,10 +497,12 @@ public class Resident implements IPlotSelector {
 			}
 		}
 
-		TownPlot plot = new TownPlot(selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionTown, this, plotName);
+		TownPlot plot = new TownPlot(selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionTown, plotName);
+
 		try {
 			DatasourceProxy.getDatasource().insertPlot(plot);
-		} catch (Exception e) {
+		    DatasourceProxy.getDatasource().linkResidentToPlot(this, plot, true);
+        } catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
