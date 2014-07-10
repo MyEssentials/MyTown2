@@ -6,9 +6,12 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import mytown.core.utils.chat.HelpMenu;
 import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+
+import com.google.common.base.Joiner;
 
 public abstract class CommandHandler extends CommandBase {
 
@@ -64,14 +67,9 @@ public abstract class CommandHandler extends CommandBase {
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender sender) {
-		return "/" + getCommandName();
-	}
-
-	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		if (args.length < 1 || args[0].equalsIgnoreCase("help")) {
-			sendHelp(sender);
+			sendHelp(sender, (args.length < 2 ? 1 : Integer.parseInt(args[1])));
 			return;
 		}
 		ICommand cmd = subCommands.get(args[0]);
@@ -105,6 +103,20 @@ public abstract class CommandHandler extends CommandBase {
 
 		return null; // If all else fails...
 	}
-
-	public abstract void sendHelp(ICommandSender sender);
+	
+	public void sendHelp(ICommandSender sender, int page) {
+		HelpMenu helpMenu = new HelpMenu(getCommandName());
+		List<String> lines = new ArrayList<String>();
+		
+		for (ICommand cmd : subCommands.values()) {
+			String line = cmd.getCommandUsage(sender); // TODO Send description of command if available? (annotation?)
+			if (cmd instanceof CommandHandler && ((CommandHandler) cmd).subCommands.size() > 0) {
+				line += " [" + Joiner.on("|").join(((CommandHandler) cmd).subCommands.keySet()) + "]";
+			}
+			lines.add(line);
+		}
+		
+		helpMenu.setLines(lines);
+		helpMenu.send(sender, page);
+	}
 }

@@ -89,8 +89,8 @@ public class CommandBase implements ICommand {
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender icommandsender) {
-		return null;
+	public String getCommandUsage(ICommandSender sender) {
+		return (parent == null ? "/" : parent.getCommandUsage(sender) + " ") + getCommandName();
 	}
 
 	@Override
