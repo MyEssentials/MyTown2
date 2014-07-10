@@ -10,19 +10,16 @@ public class MyTownChatModProxy extends ModProxy {
 	}
 
 	@Override
-	public void preInit() {
+	public String getModID() {
+		return "MyTownChat";
 	}
 
 	@Override
-	public void init() {
+	public void load() { // TODO See why the formatter and channel type is not being registered correctly
 		// Register Formatters
 		FMLInterModComms.sendMessage("MyTownChat", "registerFormatter", "mytown.proxies.mod.MyTownChat.MyTownChatFormatter");
 
 		// Register Channel Types
 		FMLInterModComms.sendMessage("MyTownChat", "registerType", "mytown.proxies.mod.MyTownChat.TownChatChannelType");
-	}
-
-	@Override
-	public void postInit() {
 	}
 }

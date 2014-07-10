@@ -10,13 +10,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import mytown.Constants;
-import mytown.datasource.MyTownDatasource;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.entities.Nation;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.entities.TownPlot;
-import mytown.entities.flag.TownFlag;
+import mytown.entities.flag2.TownFlag;
 import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
@@ -73,6 +73,17 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 		PreparedStatement statement = conn.prepareStatement(sql, returnGenerationKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
 
 		return statement;
+	}
+
+	/**
+	 * Returns the current {@link Connection} object
+	 * 
+	 * Useful for getting info on the connection for logging, or for getting the current warnings
+	 * 
+	 * @return
+	 */
+	public Connection getConnection() {
+		return conn;
 	}
 
 	// //////////////////////////////////////

@@ -1,12 +1,13 @@
 package mytown.commands.town.everyone;
 
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
+import mytown.api.events.TownEvent.TownCreatedEvent;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
-import mytown.entities.flag.TownFlag;
+import mytown.entities.flag2.TownFlag;
 import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -14,6 +15,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.MinecraftForge;
 
 /**
  * Sub command to create a new town
@@ -52,8 +54,8 @@ public class CmdNewTown extends CommandBase {
 			getDatasource().insertTownFlag(town, new TownFlag("accessBlocks", "Controls whether or not non-residents can access(right click) blocks", false));
 			getDatasource().insertTownFlag(town, new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
 			getDatasource().insertTownFlag(town, new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
-
-			System.out.println("Created new town!");
+			
+			MinecraftForge.EVENT_BUS.post(new TownCreatedEvent(town));
 
 			res.sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.town.created", town.getName());
 		} catch (Exception e) {

@@ -8,7 +8,7 @@ public class Config {
 	// General Config
 	// ////////////////////////////
 
-	@ConfigProperty(category = "general", name = "Localization", comment = "Localization file without file extension. Loaded from config/MyTown/localization/")
+	@ConfigProperty(category = "general", name = "Localization", comment = "Localization file without file extension.\nLoaded from config/MyTown/localization/ first, then from the jar, then finally will fallback to en_US if needed")
 	public static String localization = "en_US";
 
 	@ConfigProperty(category = "general", name = "SafeModeMessage", comment = "Message to display to users when MyTown is in safemode")

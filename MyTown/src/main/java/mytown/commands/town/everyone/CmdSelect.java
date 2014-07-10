@@ -1,10 +1,13 @@
 package mytown.commands.town.everyone;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.town.Town;
 import mytown.proxies.DatasourceProxy;
@@ -31,7 +34,7 @@ public class CmdSelect extends CommandBase {
 
 		try {
 			Town town = getDatasource().getTown(args[0]);
-			Resident res = getDatasource().getResident(sender.getCommandSenderName());
+			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
 
 			res.setSelectedTown(getDatasource().getTown(args[0]));
 			getDatasource().updateLinkResidentToTown(res, town);
@@ -40,6 +43,24 @@ public class CmdSelect extends CommandBase {
 			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
+		try {
+			Resident res = getDatasource().getOrMakeResident(sender.getCommandSenderName());
+			List<String> tabComplete = new ArrayList<String>();
+			for (Town t : res.getTowns()) {
+				if (args.length == 0 || t.getName().startsWith(args[0])) {
+					tabComplete.add(t.getName());
+				}
+			}
+			return tabComplete;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null; // If all else fails...
 	}
 
 	/**

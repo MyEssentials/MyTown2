@@ -1,16 +1,21 @@
 package mytown.commands.admin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mytown.MyTown;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
+import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
-import mytown.datasource.MyTownDatasource;
 import mytown.entities.Rank;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.server.MinecraftServer;
 
 @Permission("mytown.adm.cmd.add")
 public class CmdAdd extends CommandBase {
@@ -45,6 +50,22 @@ public class CmdAdd extends CommandBase {
 		}
 
 		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.resident.add", (Object[]) args);
+	}
+
+	@Override
+	public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
+		if (args.length == 1)
+			return CommandUtils.getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
+		else if (args.length == 2) {
+			List<String> tabComplete = new ArrayList<String>();
+			for (String town : getDatasource().getTownsMap().keySet()) {
+				if (town.startsWith(args[1])) {
+					tabComplete.add(town);
+				}
+			}
+			return tabComplete;
+		}
+		return null;
 	}
 
 	/**

@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import mytown.datasource.MyTownDatasource;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.entities.Nation;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
@@ -36,9 +36,9 @@ public class Town implements Comparable<Town> {
 	protected List<Rank> ranks;
 	protected List<ITownFlag> flags;
 	protected List<ITownPlot> townPlots;
-	protected List<Nation> nations = new ArrayList<Nation>();
-	protected List<TownBlock> townBlocks = new ArrayList<TownBlock>();
-	protected Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
+	protected List<Nation> nations;
+	protected List<TownBlock> townBlocks;
+	protected Map<Resident, Rank> residents;
 
 	/**
 	 * Creates a town with the given name
@@ -54,8 +54,11 @@ public class Town implements Comparable<Town> {
 		this.extraBlocks = extraBlocks;
 
 		ranks = new ArrayList<Rank>();
-		townPlots = new ArrayList<ITownPlot>();
 		flags = new ArrayList<ITownFlag>();
+		townPlots = new ArrayList<ITownPlot>();
+		nations = new ArrayList<Nation>();
+		townBlocks = new ArrayList<TownBlock>();
+		residents = new Hashtable<Resident, Rank>();
 	}
 
 	/**
@@ -428,6 +431,7 @@ public class Town implements Comparable<Town> {
 	// //////////////////////////////////////
 	// Plots
 	// //////////////////////////////////////
+
 	/**
 	 * Adds an ITownPlot to this block
 	 * 
@@ -498,6 +502,8 @@ public class Town implements Comparable<Town> {
 
 	/**
 	 * Gets the info for the town
+	 * 
+	 * TODO Make everything use localization?
 	 * 
 	 * @return
 	 */

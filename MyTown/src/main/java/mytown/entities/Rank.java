@@ -2,6 +2,8 @@ package mytown.entities;
 
 import java.util.ArrayList;
 
+import com.google.common.base.Joiner;
+
 import mytown.entities.town.Town;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -60,16 +62,8 @@ public class Rank {
 	 * 
 	 * @return
 	 */
-
 	public String getPermissionsWithFormat() {
-		String temp = null;
-		for (String s : permissions)
-			if (temp == null) {
-				temp = s;
-			} else {
-				temp += " " + s;
-			}
-		return temp;
+		return Joiner.on(" ").join(permissions);
 	}
 
 	/**
@@ -109,11 +103,7 @@ public class Rank {
 	public boolean hasPermission(String perm) {
 		if (permissions == null)
 			return false;
-		for (String p : permissions) {
-			if (p.equals(perm))
-				return true;
-		}
-		return false;
+		return permissions.contains(perm);
 	}
 
 	@Override

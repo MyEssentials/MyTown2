@@ -3,21 +3,24 @@ package mytown;
 import java.io.File;
 import java.util.ArrayList;
 
+import mytown.api.datasource.MyTownDatasource;
 import mytown.commands.admin.CmdTownAdmin;
 import mytown.commands.town.CmdTown;
+import mytown.commands.town.info.CmdListTown;
 import mytown.config.Config;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.datasource.MyTownDatasource;
+import mytown.crash.DatasourceCrashCallable;
+import mytown.entities.flag.FlagHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -29,19 +32,13 @@ import cpw.mods.fml.relauncher.Side;
 import forgeperms.api.ForgePermsAPI;
 
 // TODO Add a way to safely reload
+// TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packaged with this. Maybe even make MyTown just DL them at runtime and inject them
 
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class MyTown {
 	@Mod.Instance(Constants.MODID)
 	public static MyTown instance;
-
-	// Permission Manager
-	public PermissionManager permManager;
-
-	// Loggers
 	public Log log;
-
-	// Configs
 	public Configuration config;
 
 	// Set to true to kick all non-admin users out with a custom kick message
@@ -56,29 +53,33 @@ public class MyTown {
 
 		// Read Configs
 		config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
-		ConfigProcessor.processConfig(config, Config.class);
+		ConfigProcessor.load(config, Config.class);
 		LocalizationProxy.load();
 		registerHandlers();
 
 		// ModProxy PreInit
 		ModProxies.addProxies();
-		ModProxies.preInit();
-	}
 
-	@Mod.EventHandler
-	public void init(FMLInitializationEvent ev) {
-		ModProxies.init();
+		// Register ICrashCallable's
+		FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent ev) {
-		ModProxies.postInit();
+		ModProxies.load();
+		config.save();
 	}
 
 	@Mod.EventHandler
 	public void imcEvent(FMLInterModComms.IMCEvent ev) {
 		for (FMLInterModComms.IMCMessage msg : ev.getMessages()) {
-			DatasourceProxy.imc(msg);
+			String[] keyParts = msg.key.split("|");
+			
+			if (keyParts[0] == "datasource") {
+				DatasourceProxy.imc(msg);
+			} else if (keyParts[0] == "flags") {
+				FlagHandler.imc(msg);
+			}
 		}
 	}
 
@@ -88,6 +89,8 @@ public class MyTown {
 		ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
 		addDefaultPermissions();
 		safemode = DatasourceProxy.start(config);
+		
+		CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
 	}
 
 	@Mod.EventHandler
@@ -96,7 +99,7 @@ public class MyTown {
 		DatasourceProxy.stop();
 	}
 
-	/*
+	/**
 	 * Adds all the default permissions
 	 */
 	private void addDefaultPermissions() {
@@ -130,8 +133,8 @@ public class MyTown {
 	 * Registers all commands
 	 */
 	private void registerCommands() {
-		CommandUtils.registerCommand(new CmdTown("town"));
-		CommandUtils.registerCommand(new CmdTownAdmin("townadmin"));
+		CommandUtils.registerCommand(new CmdTown());
+		CommandUtils.registerCommand(new CmdTownAdmin());
 	}
 
 	/**
@@ -143,6 +146,8 @@ public class MyTown {
 		MinecraftForge.EVENT_BUS.register(playerTracker);
 
 		TickRegistry.registerTickHandler(VisualsTickHandler.instance, Side.SERVER);
+		
+		MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
 	}
 
 	// ////////////////////////////
