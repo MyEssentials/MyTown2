@@ -57,7 +57,10 @@ public class CmdNewTown extends CommandBase {
             getDatasource().insertTownFlag(town, new TownFlag("useItems", "Controls whether or not non-residents can use items", false));
 			getDatasource().insertTownFlag(town, new TownFlag("enter", "Controls whether or not a non-resident can enter the town", true));
 			getDatasource().insertTownFlag(town, new TownFlag("pickup", "Controls whether or not a non-resident can pick up items", true));
-            if(MyTown.instance.isModuleEnabled(IC2Module.IC2ModID))
+            getDatasource().insertTownFlag(town, new TownFlag("build", "Controls whether or not a non-resident can build.", false));
+            //if(vanilla.installed) *trollface*
+            getDatasource().insertTownFlag(town, new TownFlag("vanilla", "Controls whether or not non-resident can interact with the town from outside with vanilla tile entities.", false));
+            if(MyTown.instance.isModuleEnabled(IC2Module.ModID))
                 getDatasource().insertTownFlag(town, new TownFlag("ic2", "Controls IndustrialCraft2 item/blocks protection", true));
 			
 			MinecraftForge.EVENT_BUS.post(new TownCreatedEvent(town));

@@ -1,4 +1,4 @@
-package mytown.handler;
+package mytown.modules;
 
 import mytown.Constants;
 import mytown.MyTown;
@@ -11,10 +11,20 @@ import mytown.modules.IC2Module;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockPistonBase;
+import net.minecraft.block.BlockPistonExtension;
+import net.minecraft.block.BlockPistonMoving;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityBrewingStand;
+import net.minecraft.tileentity.TileEntityPiston;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -26,7 +36,77 @@ import net.minecraftforge.event.world.BlockEvent;
  * Vanilla event handlers
  * Although this includes only vanilla EVENTS it may have some implementation for other mods
  */
-public class VanillaEventHandler {
+public class VanillaModule extends ModuleBase {
+
+    public static final String ModID = "Vanilla";
+
+    @Override
+    public void load() {
+
+    }
+
+    @Override
+    public String getModID() {
+        return ModID;
+    }
+
+
+    // TODO: Make proper functions for all this mess...
+    @Override
+    public boolean check(ResidentBlockCoordsPair blockPair) {
+        Resident resident = blockPair.owner;
+        TownBlock tblock = getDatasource().getTownBlock(blockPair.dim, blockPair.x, blockPair.z, false);
+        World world = MinecraftServer.getServer().worldServerForDimension(blockPair.dim);
+        Block block = Block.blocksList[world.getBlockId(blockPair.x, blockPair.y, blockPair.z)];
+
+        if(block == null)
+            return true;
+
+        if(block instanceof BlockPistonBase || block instanceof BlockPistonExtension) {
+            int[] dx = {0, 1, 0, -1};
+            int[] dz = {1, 0, -1, 0};
+
+            for(int i = 0; i < 4; i++) {
+                TownBlock tblockPiston = getDatasource().getTownBlock(blockPair.dim, blockPair.x + dx[i], blockPair.z + dz[i], false);
+                if(tblockPiston == null)
+                    continue;
+                if(!resident.getTowns().contains(tblockPiston.getTown()) && !tblockPiston.getTown().getFlagAtCoords(blockPair.x, blockPair.y, blockPair.z, "build").getValue()) {
+                    world.destroyBlock(blockPair.x, blockPair.y, blockPair.z, false);
+                    resident.getPlayer().inventory.addItemStackToInventory(new ItemStack(block.getPickBlock(null, world, blockPair.x, blockPair.y, blockPair.z).itemID, 1, world.getBlockMetadata(blockPair.x, blockPair.y, blockPair.z)));
+                    resident.sendLocalizedMessage(getLocal(), "mytown.protection.vanilla.placeBlocks");
+                    return false;
+                }
+            }
+        }
+
+        if(tblock == null)
+            return true;
+
+
+
+        if(!resident.getTowns().contains(tblock.getTown()) && !tblock.getTown().getFlagAtCoords(blockPair.x, blockPair.y, blockPair.z, "build").getValue()) {
+            world.destroyBlock(blockPair.x, blockPair.y, blockPair.z, false);
+            resident.getPlayer().inventory.addItemStackToInventory(new ItemStack(block.getPickBlock(null, world, blockPair.x, blockPair.y, blockPair.z).itemID, 1, world.getBlockMetadata(blockPair.x, blockPair.y, blockPair.z)));
+            resident.sendLocalizedMessage(getLocal(), "mytown.protection.vanilla.placeBlocks");
+            return false;
+        }
+
+
+
+        return true;
+    }
+
+    @Override
+    public boolean check(TileEntity te, Resident resident) {
+        return true;
+    }
+
+    @Override
+    public boolean isEntityInstance(TileEntity te) {
+        return false;
+    }
+
+    // EVENTS
 
     @ForgeSubscribe
     public void onEnterChunk(EntityEvent.EnteringChunk ev) {
@@ -121,37 +201,15 @@ public class VanillaEventHandler {
                     break;
             }
 
-            // IC2 Power grid protection
-            if (currentStack != null && (currentStack.getItem().getUnlocalizedName().equals("ic2.itemCable") || currentStack.getItem().getUnlocalizedName().equals("Machine")
-                    || currentStack.getItem().getUnlocalizedName().equals("Machine2") || currentStack.getItem().getUnlocalizedName().equals("Electric")
-                    || currentStack.getItem().getUnlocalizedName().equals("Generator"))
-                    && MyTown.instance.isModuleEnabled(IC2Module.IC2ModID)) {
-                int[] dx = {1, -1, 0, 0};
-                int[] dz = {0, 0, 1, -1};
 
-                for (int i = 0; i < 4; i++) {
-                    TownBlock tblock = DatasourceProxy.getDatasource().getTownBlock(ev.entityPlayer.dimension, x + dx[i], z + dz[i], false);
-                    if (tblock == null || res.getTowns().contains(tblock.getTown()) || !tblock.getTown().getFlagAtCoords(x + dx[i], y, z + dz[i], "ic2").getValue())
-                        continue;
-                    Block block = Block.blocksList[ev.entityPlayer.worldObj.getBlockId(x + dx[i], y, z + dz[i])];
-                    if(block == null) {
-                        continue;
-                    }
-                    if (block.getUnlocalizedName().equals("blockCable") || block.getUnlocalizedName().equals("blockGenerator") || block.getUnlocalizedName().equals("blockElectric") ) {
-                        ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.protection.ic2.grid");
-                        ev.setCanceled(true);
-                        return;
-                    }
-                }
-            }
+
+
 
             // In-Town specific interactions from here
             TownBlock tblock = DatasourceProxy.getDatasource().getTownBlock(ev.entity.dimension, ev.x, ev.z, false);
-            if(tblock == null) {
-                return;
-            }
+
             // Checking for the selector item
-            if (currentStack != null && currentStack.getItem().equals(Item.hoeWood) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+            if (currentStack != null && tblock != null && currentStack.getItem().equals(Item.hoeWood) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
 
                 if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
                     ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
@@ -169,20 +227,9 @@ public class VanillaEventHandler {
                 }
                 System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
             }
+            TileEntity te = ev.entityPlayer.worldObj.getBlockTileEntity(ev.x, ev.y, ev.z);
 
-            if(currentStack != null && currentStack.getItem() instanceof ItemBlock) {
-                // Checking if player wants to use an item here
-                TownBlock tblockPlace = DatasourceProxy.getDatasource().getTownBlock(ev.entityPlayer.dimension, x, z, false);
-                if(tblockPlace == null)
-                    return;
-                if(res.getTowns().contains(tblockPlace.getTown()))
-                    return;
-                if(!tblockPlace.getTown().getFlagAtCoords(x, y, z, "useItems").getValue()) {
-                    ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.protection.vanilla.itemuse");
-                    ev.setCanceled(true);
-                    return;
-                }
-            } else {
+            if(currentStack != null && te != null && tblock != null) {
                 // Checking if a player wants to access a block here
                 if(!tblock.getTown().getFlagAtCoords(ev.x, ev.y, ev.z, "accessBlocks").getValue() && !res.getTowns().contains(tblock.getTown())) {
                     ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.protection.vanilla.access");
@@ -190,26 +237,11 @@ public class VanillaEventHandler {
                     return;
                 }
             }
-
-
-
-
-        } else if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
-            String itemName = currentStack.getUnlocalizedName();
-            TownBlock tblock = DatasourceProxy.getDatasource().getTownBlock(ev.entity.dimension, ((int) ev.entity.posX), (int) Math.floor(ev.entity.posZ), false);
-
-            // Math.floor() is needed for some reason... TODO: Find a better way maybe?
-
-            if (tblock == null) {
-                return;
-            }
-
-            if (!tblock.getTown().getFlagAtCoords(((int) ev.entity.posX), ((int) ev.entity.posY), ((int) Math.floor(ev.entity.posZ)), "useItems").getValue() && !res.getTowns().contains(tblock.getTown())) {
-                if (itemName.equals("ic2.itemToolMiningLaser")) {// I don't think there's a better way of doing this :P
-                    ev.setCanceled(true);
-                    return;
-                }
-            }
+            if(te == null && currentStack != null && currentStack.getItem() instanceof ItemBlock)
+                UniversalChecker.instance.addToChecklist(new ResidentBlockCoordsPair(x, y, z, ev.entityPlayer.dimension, getDatasource().getResident(ev.entityPlayer.username)));
         }
+
     }
+
+
 }

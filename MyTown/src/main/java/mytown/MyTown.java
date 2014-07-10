@@ -1,10 +1,12 @@
 package mytown;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
+import forgeperms.api.ForgePermsAPI;
 import ic2.api.info.Info;
 import mytown.api.datasource.MyTownDatasource;
 import mytown.commands.admin.CmdTownAdmin;
@@ -17,28 +19,20 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
-import mytown.handler.IC2EventHandler;
 import mytown.handler.MyTownEventHandler;
-import mytown.handler.VanillaEventHandler;
-import mytown.interfaces.IModule;
+import mytown.modules.UniversalChecker;
+import mytown.modules.VanillaModule;
 import mytown.modules.IC2Module;
+import mytown.modules.ModuleBase;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
-import forgeperms.api.ForgePermsAPI;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO Add a way to safely reload
 // TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packaged with this. Maybe even make MyTown just DL them at runtime and inject them
@@ -50,7 +44,7 @@ public class MyTown {
 	public Log log;
 	public Configuration config;
     public RanksConfig rankConfig; // atm very useless TODO: add reload functions to it
-    public List<IModule> enabledModules;
+    public List<ModuleBase> enabledModules;
 
     // Set to true to kick all non-admin users out with a custom kick message
 	public boolean safemode = false;
@@ -133,16 +127,17 @@ public class MyTown {
 		MinecraftForge.EVENT_BUS.register(playerTracker);
 
 		TickRegistry.registerTickHandler(VisualsTickHandler.instance, Side.SERVER);
-		
+        TickRegistry.registerTickHandler(UniversalChecker.instance, Side.SERVER);
+
 		MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
-        MinecraftForge.EVENT_BUS.register(new VanillaEventHandler());
+        MinecraftForge.EVENT_BUS.register(new VanillaModule());
 	}
 
     /**
      * Checks and registers the mods that are enabled
      */
     private void enableModules() {
-        enabledModules = new ArrayList<IModule>();
+        enabledModules = new ArrayList<ModuleBase>();
 
         if(Info.isIc2Available()) {
             enabledModules.add(new IC2Module());
@@ -150,12 +145,12 @@ public class MyTown {
         }
         // Rest of implementations go here
 
-        for(IModule module : enabledModules)
+        for(ModuleBase module : enabledModules)
             module.load();
     }
 
     public boolean isModuleEnabled(String modid) {
-        for(IModule module : enabledModules) {
+        for(ModuleBase module : enabledModules) {
             if (module.getModID().equals(modid))
                 return true;
         }
