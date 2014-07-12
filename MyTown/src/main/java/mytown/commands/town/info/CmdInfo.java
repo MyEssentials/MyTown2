@@ -48,7 +48,6 @@ public class CmdInfo extends CommandBase {
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 		}
 		for (Town town : towns) {
-//			sender.addChatMessage(IChatComponent.Serializer.func_150699_a(String.format("{'text':'','extra':[{'text':'%s','hoverEvent':{'action':'show_text','value':'%s'}}]}", town.getName(), Joiner.on("").join(town.getInfo()))));
 			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.info", (Object[]) town.getInfo());
 		}
 	}
