@@ -13,6 +13,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 
+// TODO Only send block change to the player modifying the plot
+
 public class VisualsTickHandler {
 	private class BlockCoords {
 		public int x, y, z, dim;
