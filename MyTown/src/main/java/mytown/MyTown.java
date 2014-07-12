@@ -13,11 +13,9 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
-import mytown.entities.flag.FlagHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
-import net.minecraft.init.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -55,7 +53,7 @@ public class MyTown {
 		LocalizationProxy.load();
 		registerHandlers();
 
-		// ModProxy PreInit
+		// Add all the ModProxys
 		ModProxies.addProxies();
 
 		// Register ICrashCallable's
@@ -66,8 +64,6 @@ public class MyTown {
 	public void postInit(FMLPostInitializationEvent ev) {
 		ModProxies.load();
 		config.save();
-		
-		log.info(Items.wooden_hoe.getUnlocalizedName());
 	}
 
 	@Mod.EventHandler
@@ -77,8 +73,6 @@ public class MyTown {
 			
 			if (keyParts[0] == "datasource") {
 				DatasourceProxy.imc(msg);
-			} else if (keyParts[0] == "flags") {
-				FlagHandler.imc(msg);
 			}
 		}
 	}
@@ -138,7 +132,7 @@ public class MyTown {
 	}
 
 	/**
-	 * Registers al handlers (Event, etc)
+	 * Registers all handlers (Event, etc)
 	 */
 	private void registerHandlers() {
 		PlayerTracker playerTracker = new PlayerTracker();
