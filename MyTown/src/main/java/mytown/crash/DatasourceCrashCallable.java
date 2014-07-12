@@ -25,7 +25,7 @@ public class DatasourceCrashCallable implements ICrashCallable {
 		String str = "";
 
 		str += String.format("Class: %s\n", datasource.getClass().getName());
-		str += String.format("Stats (Towns: %s, Residents: %s, Nations: %s, Blocks: %s, Ranks: %s, Plots: %s)\n", datasource.getTownsMap().size(), datasource.getResidents().size(), datasource.getNations().size(), datasource.getTownBlocks().size(), datasource.getRanks().size(), datasource.getPlots().size());
+		str += String.format("Stats (Towns: %s, Residents: %s, Nations: %s, Blocks: %s, Ranks: %s, Plots: %s)\n", datasource.getTownsMap().size(), datasource.getRanksMap().size(), datasource.getNationsMap().size(), datasource.getTownBlocksMap().size(), datasource.getRanksMap().size(), datasource.getPlotsMap().size());
 
 		// SQL Specific Info
 		if (datasource instanceof MyTownDatasource_SQL) {
