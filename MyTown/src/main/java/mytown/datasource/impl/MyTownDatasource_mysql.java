@@ -3,8 +3,8 @@ package mytown.datasource.impl;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+import mytown.core.utils.config.ConfigProperty;
 import mytown.datasource.types.MyTownDatasource_SQL;
-import net.minecraftforge.common.config.Configuration;
 
 //TODO Test
 //TODO Add comments
@@ -17,10 +17,17 @@ import net.minecraftforge.common.config.Configuration;
  */
 public class MyTownDatasource_mysql extends MyTownDatasource_SQL {
 	// Config
-	private String username;
-	private String password;
-	private String host;
-	private String database;
+	@ConfigProperty(category="datasource", comment="Username to use when connecting")
+	private String username = "";
+
+	@ConfigProperty(category="datasource", comment="Password to use when connecting")
+	private String password = "";
+
+	@ConfigProperty(category="datasource", comment="Hostname:Port of the db server")
+	private String host = "localhost";
+
+	@ConfigProperty(category="datasource", comment="The database name")
+	private String database = "mytown";
 
 	// //////////////////////////////////////
 	// Helpers
@@ -55,14 +62,5 @@ public class MyTownDatasource_mysql extends MyTownDatasource_SQL {
 		doUpdates();
 
 		return true;
-	}
-
-	@Override
-	protected void doConfig(Configuration config) {
-		super.doConfig(config);
-		username = config.get(configCat, "Username", "", "Username to use when connecting").getString();
-		password = config.get(configCat, "Password", "", "Password to use when connecting").getString();
-		host = config.get(configCat, "Host", "localhost", "Hostname:Port of the db server").getString();
-		database = config.get(configCat, "Database", "mytown", "The database name").getString();
 	}
 }

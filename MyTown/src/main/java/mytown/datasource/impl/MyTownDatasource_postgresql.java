@@ -3,9 +3,8 @@ package mytown.datasource.impl;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+import mytown.core.utils.config.ConfigProperty;
 import mytown.datasource.types.MyTownDatasource_SQL;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 
 /**
  * Experimental PostgreSQL Datasource. Use with care!
@@ -14,10 +13,17 @@ import net.minecraftforge.common.config.Property;
  */
 public class MyTownDatasource_postgresql extends MyTownDatasource_SQL {
 	// Config
-	private String username;
-	private String password;
-	private String host;
-	private String database;
+	@ConfigProperty(category="datasource", comment="Username to use when connecting")
+	private String username = "";
+
+	@ConfigProperty(category="datasource", comment="Password to use when connecting")
+	private String password = "";
+
+	@ConfigProperty(category="datasource", comment="Hostname:Port of the db server")
+	private String host = "localhost";
+
+	@ConfigProperty(category="datasource", comment="The database name")
+	private String database = "mytown";
 
 	// //////////////////////////////////////
 	// Helpers
@@ -49,29 +55,6 @@ public class MyTownDatasource_postgresql extends MyTownDatasource_SQL {
 			return false; // TODO Log error?
 
 		return true;
-	}
-
-	@Override
-	protected void doConfig(Configuration config) {
-		super.doConfig(config);
-
-		Property prop;
-
-		prop = config.get("database", "Username", "");
-		prop.comment = "Username to use when connecting";
-		username = prop.getString();
-
-		prop = config.get("database", "Password", "");
-		prop.comment = "Password to use when connecting";
-		password = prop.getString();
-
-		prop = config.get("database", "Host", "localhost");
-		prop.comment = "Hostname:Port of the db server";
-		host = prop.getString();
-
-		prop = config.get("database", "Database", "mytown");
-		prop.comment = "The database name";
-		database = prop.getString();
 	}
 
 	@Override

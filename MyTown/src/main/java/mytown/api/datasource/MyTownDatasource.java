@@ -48,7 +48,6 @@ public abstract class MyTownDatasource {
 
 	public void configure(Configuration config, Log log) {
 		this.log = log;
-		doConfig(config);
 		towns = new ConcurrentHashMap<String, Town>();
 		residents = new ConcurrentHashMap<String, Resident>();
 		nations = new ConcurrentHashMap<String, Nation>();
@@ -56,13 +55,6 @@ public abstract class MyTownDatasource {
 		ranks = new ConcurrentHashMap<String, Rank>();
 		plots = new ConcurrentHashMap<String, ITownPlot>();
 	}
-
-	/**
-	 * Does implementation specific configuration. Happens BEFORE the {@link ConcurrentHashMap}'s are created
-	 * 
-	 * @param config
-	 */
-	protected abstract void doConfig(Configuration config);
 
 	/**
 	 * Saves everything to the Datasource

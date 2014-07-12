@@ -4,8 +4,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
 import mytown.Constants;
+import mytown.core.utils.config.ConfigProperty;
 import mytown.datasource.types.MyTownDatasource_SQL;
-import net.minecraftforge.common.config.Configuration;
 
 // TODO Test
 // TODO Add comments
@@ -17,7 +17,8 @@ import net.minecraftforge.common.config.Configuration;
  * @author Joe Goett
  */
 public class MyTownDatasource_sqlite extends MyTownDatasource_SQL {
-	private String dbPath;
+	@ConfigProperty(category="datasource", comment="The database file path. Used by SQLite")
+	private String dbPath = Constants.CONFIG_FOLDER + "data.db";
 
 	@Override
 	public boolean connect() throws Exception {
@@ -40,13 +41,5 @@ public class MyTownDatasource_sqlite extends MyTownDatasource_SQL {
 		statement.executeUpdate();
 
 		return true;
-	}
-
-	@Override
-	protected void doConfig(Configuration config) {
-		super.doConfig(config);
-		dbPath = config.get(configCat, "Path", Constants.CONFIG_FOLDER + "data.db", "The database file path. Used by SQLite").getString();
-
-		// TODO Finish Config
 	}
 }

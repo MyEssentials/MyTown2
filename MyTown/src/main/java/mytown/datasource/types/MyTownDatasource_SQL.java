@@ -11,6 +11,7 @@ import java.util.List;
 
 import mytown.Constants;
 import mytown.api.datasource.MyTownDatasource;
+import mytown.core.utils.config.ConfigProperty;
 import mytown.entities.Nation;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
@@ -21,8 +22,6 @@ import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 
 import com.google.common.collect.Lists;
 
@@ -42,6 +41,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
 	protected Connection conn;
 	protected Object lock = new Object();
+	@ConfigProperty(category="datasource", comment="The prefix of each of the tables. <prefix>tablename")
 	protected String prefix = "";
 
 	// //////////////////////////////////////
@@ -89,15 +89,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	// //////////////////////////////////////
 	// Implementation
 	// //////////////////////////////////////
-
-	@Override
-	protected void doConfig(Configuration config) {
-		Property prop;
-
-		prop = config.get(configCat, "Prefix", "");
-		prop.comment = "The prefix of each of the tables. <prefix>tablename";
-		prefix = prop.getString();
-	}
 
 	@Override
 	public void loadResidents() throws Exception {
