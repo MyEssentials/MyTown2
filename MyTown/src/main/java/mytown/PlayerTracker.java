@@ -30,7 +30,7 @@ public class PlayerTracker {
     
     static { // TODO localize the book!
     	myTownGuideBook.setTagInfo("author", new NBTTagString("legobear154"));
-    	myTownGuideBook.setTagInfo("title", new NBTTagString("MyTown Guide Book"));
+    	myTownGuideBook.setTagInfo("title", new NBTTagString("MyTown Guide"));
     	NBTTagList pages = new NBTTagList();
     	pages.appendTag(new NBTTagString("Hello!\nThis server is using MyTown 2 for protecting YOUR stuff.\nThis book is a fairly lengthy book that is ment to help you use MyTown!"));
     	pages.appendTag(new NBTTagString(" Table of Contents\n"));
@@ -50,7 +50,10 @@ public class PlayerTracker {
 			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
 			res.setOnline(true);
 			res.setPlayer(ev.player);
-//			ev.player.inventory.addItemStackToInventory(myTownGuideBook); // TODO Only give the book to new players
+			if (!ev.player.getEntityData().getCompoundTag("MyTown").getBoolean("givenMyTownGuide")) {
+				ev.player.inventory.addItemStackToInventory(myTownGuideBook);
+				ev.player.getEntityData().getCompoundTag("MyTown").setBoolean("givenMyTownGuide", true);
+			}
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change later?
 		}
