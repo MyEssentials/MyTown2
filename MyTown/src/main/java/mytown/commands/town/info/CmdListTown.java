@@ -39,6 +39,7 @@ public class CmdListTown extends CommandBase {
 	}
 	
 	public static void updateTownSortCache() {
+		if (DatasourceProxy.getDatasource().getTowns(true).size() <= 0) return;
 		sortedTownCache.clear();
 		sortedTownCache.addAll(DatasourceProxy.getDatasource().getTowns(true));
 		Collections.sort(sortedTownCache, townNameComparator);
