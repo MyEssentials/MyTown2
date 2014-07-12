@@ -1,7 +1,6 @@
 package mytown.chat.channels;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTBase;
 
 // TODO Maybe allow different ways of storing (DB, file, etc)?
 
