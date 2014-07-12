@@ -17,6 +17,15 @@ public class ConfigProcessor {
 	private static Map<Class<?>, Property.Type> CONFIG_TYPES = ImmutableMap.<Class<?>, Property.Type> builder().put(Integer.class, Property.Type.INTEGER).put(int.class, Property.Type.INTEGER).put(Integer[].class, Property.Type.INTEGER).put(int[].class, Property.Type.INTEGER).put(Double.class, Property.Type.DOUBLE).put(double.class, Property.Type.DOUBLE).put(Double[].class, Property.Type.DOUBLE).put(double[].class, Property.Type.DOUBLE).put(Boolean.class, Property.Type.BOOLEAN).put(boolean.class, Property.Type.BOOLEAN).put(Boolean[].class, Property.Type.BOOLEAN).put(boolean[].class, Property.Type.BOOLEAN).put(String.class, Property.Type.STRING).put(String[].class, Property.Type.STRING).build();
 
 	private static Log log;
+	
+	/**
+	 * @see ConfigProcessor#load(Configuration, Class, Object)
+	 * @param config
+	 * @param c
+	 */
+	public static void load(Configuration config, Class<?> c) {
+		load(config, c, null);
+	}
 
 	/**
 	 * load all static fields in c with {@link ConfigProperty} annotation and loads their value from the given config
@@ -24,17 +33,28 @@ public class ConfigProcessor {
 	 * @param config
 	 * @param c
 	 */
-	public static void load(Configuration config, Class<?> c) {
-		for (Field f : c.getFields()) {
+	public static void load(Configuration config, Class<?> c, Object obj) {
+		getLog().info("Class: %s", c.getName());
+		for (Field f : c.getDeclaredFields()) {
+			getLog().info("- Field: %s", f.getName());
 			ConfigProperty propAnnot = f.getAnnotation(ConfigProperty.class);
 			if (propAnnot == null)
 				return;
 			String category = propAnnot.category();
 			String key = (propAnnot.name().isEmpty() || propAnnot.name() == null) ? f.getName() : propAnnot.name();
 			String comment = propAnnot.comment();
-			ConfigProcessor.setField(f, config, category, key, comment);
+			ConfigProcessor.setField(f, obj, config, category, key, comment);
 			config.save();
 		}
+	}
+	
+	/**
+	 * @see ConfigProcessor#save(Configuration, Class, Object)
+	 * @param config
+	 * @param c
+	 */
+	public static void save(Configuration config, Class<?> c) {
+		save(config, c, null);
 	}
 	
 	/**
@@ -43,7 +63,7 @@ public class ConfigProcessor {
 	 * @param config
 	 * @param c
 	 */
-	public static void save(Configuration config, Class<?> c) {
+	public static void save(Configuration config, Class<?> c, Object obj) {
 		for (Field f : c.getFields()) {
 			ConfigProperty propAnnot = f.getAnnotation(ConfigProperty.class);
 			if (propAnnot == null)
@@ -51,12 +71,12 @@ public class ConfigProcessor {
 			String category = propAnnot.category();
 			String key = (propAnnot.name().isEmpty() || propAnnot.name() == null) ? f.getName() : propAnnot.name();
 			String comment = propAnnot.comment();
-			ConfigProcessor.setConfig(f, config, category, key, comment);
+			ConfigProcessor.setConfig(f, obj, config, category, key, comment);
 			config.save();
 		}
 	}
 
-	private static void setField(Field f, Configuration config, String category, String key, String comment) {
+	private static void setField(Field f, Object obj, Configuration config, String category, String key, String comment) {
 		if (f == null || config == null) {
 			ConfigProcessor.getLog().warn("Field or Config was null");
 			return;
@@ -67,34 +87,35 @@ public class ConfigProcessor {
 			return;
 		}
 		try {
-			Object defaultValue = f.get(null);
+			f.setAccessible(true);
+			Object defaultValue = f.get(obj);
 			switch (type) {
 				case INTEGER:
 					if (f.getType().isArray()) {
-						f.set(null, config.get(category, key, (int[]) defaultValue, comment).getIntList());
+						f.set(obj, config.get(category, key, (int[]) defaultValue, comment).getIntList());
 					} else {
-						f.set(null, config.get(category, key, (Integer) defaultValue, comment).getInt());
+						f.set(obj, config.get(category, key, (Integer) defaultValue, comment).getInt());
 					}
 					break;
 				case DOUBLE:
 					if (f.getType().isArray()) {
-						f.set(null, config.get(category, key, (double[]) defaultValue, comment).getDoubleList());
+						f.set(obj, config.get(category, key, (double[]) defaultValue, comment).getDoubleList());
 					} else {
-						f.set(null, config.get(category, key, (Double) defaultValue, comment).getDouble((Double) defaultValue));
+						f.set(obj, config.get(category, key, (Double) defaultValue, comment).getDouble((Double) defaultValue));
 					}
 					break;
 				case BOOLEAN:
 					if (f.getType().isArray()) {
-						f.set(null, config.get(category, key, (boolean[]) defaultValue, comment).getBooleanList());
+						f.set(obj, config.get(category, key, (boolean[]) defaultValue, comment).getBooleanList());
 					} else {
-						f.set(null, config.get(category, key, (Boolean) defaultValue, comment).getBoolean((Boolean) defaultValue));
+						f.set(obj, config.get(category, key, (Boolean) defaultValue, comment).getBoolean((Boolean) defaultValue));
 					}
 					break;
 				case STRING:
 					if (f.getType().isArray()) {
-						f.set(null, config.get(category, key, (String[]) defaultValue, comment).getStringList());
+						f.set(obj, config.get(category, key, (String[]) defaultValue, comment).getStringList());
 					} else {
-						f.set(null, config.get(category, key, (String) defaultValue, comment).getString());
+						f.set(obj, config.get(category, key, (String) defaultValue, comment).getString());
 					}
 					break;
 				default:
@@ -105,7 +126,7 @@ public class ConfigProcessor {
 		}
 	}
 	
-	private static void setConfig(Field f, Configuration config, String category, String key, String comment) {
+	private static void setConfig(Field f, Object obj, Configuration config, String category, String key, String comment) {
 		if (f == null || config == null) {
 			ConfigProcessor.getLog().warn("Field or Config was null");
 			return;
@@ -116,7 +137,8 @@ public class ConfigProcessor {
 			return;
 		}
 		try {
-			Object val = f.get(null);
+			f.setAccessible(true);
+			Object val = f.get(obj);
 			switch (type) {
 				case INTEGER:
 					if (f.getType().isArray()) {
