@@ -3,139 +3,137 @@ package mytown.api.flag;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+
 /**
- * Each {@link Flag} is given a name, type, and value.
- * Type is just an arbitrary way of determining what the value is.
- * Value is a JSON string. Its up to who retrieves the {@link Flag} to handle deserialization
+ * Generic Flag class that should be able to serialize/deserialize any value.
+ * 
+ * Children should automatically inherit from their parents if and only if the parent's value actually changed.
  * 
  * @author Joe Goett
+ * 
+ * @param <T>
  */
-public class Flag {
-	private String name = "", type = "", value = "";
-	private boolean inherited = false;
-	private Flag parent = null;
-	private List<Flag> children;
+public class Flag<T> {
+	private static Gson gson = new Gson();
 	
-	public Flag(String name, String type, String value, Flag parent, List<Flag> children) {
+	private String name;
+	private T value, inheritedValue;
+	private Flag<T> parent;
+	private List<Flag<T>> children;
+
+	public Flag(String name, T value, Flag<T> parent, List<Flag<T>> children) {
 		this.name = name;
-		this.type = type;
 		this.value = value;
 		this.parent = parent;
 		this.children = children;
 	}
-	
-	public Flag(String name, String type, String value, Flag parent) {
-		this(name, type, value, parent, new ArrayList<Flag>());
+
+	public Flag(String name, T value, Flag<T> parent) {
+		this(name, value, parent, new ArrayList<Flag<T>>());
 	}
-	
-	public Flag(String name, String type, String value) {
-		this(name, type, value, null);
+
+	public Flag(String name, T value) {
+		this(name, value, null);
 	}
-	
+
 	/**
-	 * Returns the name of this {@link Flag}
+	 * Will return the value this flag is set to, or the value it inherits from its parent
+	 * 
+	 * @return
+	 */
+	public T getValue() {
+		return value != null ? value : inheritedValue;
+	}
+
+	/**
+	 * Returns the name of this Flag
+	 * 
 	 * @return
 	 */
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
-	 * Returns the "type" of this {@link Flag}
-	 * @return
-	 */
-	public String getType() {
-		return type;
-	}
-	
-	/**
-	 * Returns the JSON string representing the value
-	 * @return
-	 */
-	public String getValue() {
-		return inherited ? parent.getValue() : value; // TODO Make each flag store the inherited value for performance? (WeakRef them?)
-	}
-	
-	/**
-	 * Sets the value of this {@link Flag}
+	 * Sets the value of this flag
+	 * 
 	 * @param value
 	 */
-	public void setValue(String value) {
-		this.inherited = false;
-		this.value = value;
+	@SuppressWarnings("unchecked")
+	public void setValue(Object value) {
+		this.value = (T)value;
 	}
 
 	/**
-	 * Sets whether this {@link Flag} inherits from the parent or not
-	 * @param inherited
+	 * Tells this Flag to inherit the given value. Will only inherit if value is null, or if forced
+	 * 
+	 * @param value
+	 * @param forced
 	 */
-	public void setInherit(boolean inherited) {
-		this.inherited = inherited;
-		if (inherited) this.value = null;
-		else this.value = "";
+	public void inherit(T value, boolean forced) {
+		if ((this.value == null || forced) && inheritedValue != value) {
+			this.value = null;
+			inheritedValue = value;
+			for (Flag<T> child : children) {
+				child.inherit(value, forced);
+			}
+		}
 	}
-	
-	/**
-	 * Returns whether this {@link Flag} is inheriting from its parent
-	 * @return
-	 */
-	public boolean isInherited() {
-		return inherited;
-	}
-	
-	/**
-	 * Returns this {@link Flag}'s parent
-	 * @return
-	 */
-	public Flag getParent() {
+
+	public Flag<T> getParent() {
 		return parent;
 	}
-	
-	/**
-	 * Sets this {@link Flag}'s parent
-	 * @param parent
-	 */
-	public void setParent(Flag parent) {
+
+	public void setParent(Flag<T> parent) {
 		this.parent = parent;
-		parent.addChild(this);
-	}
-	
-	/**
-	 * Returns the list of children
-	 * @return
-	 */
-	public List<Flag> getChildren() {
-		return children;
-	}
-	
-	/**
-	 * Adds the {@link Flag} as a child
-	 * @param child
-	 */
-	public void addChild(Flag child) {
-		children.add(child);
-	}
-	
-	/**
-	 * Removes the {@link Flag} as a child
-	 * @param child
-	 */
-	public void removeChild(Flag child) {
-		children.remove(child);
-	}
-	
-	/**
-	 * Creates a child {@link Flag} with the given name, and this {@link Flag}'s type and value
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public Flag createChild(String name) {
-		return new Flag(name, this.type, this.value, this);
 	}
 
-	@Override
-	public String toString() {
-		return String.format("Flag(Name: %s, Type: %s, Value: %s, Inherited: %s)", getName(), getType(), getValue(), isInherited());
+	public void addChild(Flag<T> child) {
+		children.add(child);
+		child.setParent(this);
+	}
+
+	public void removeChild(Flag<T> child) {
+		children.remove(child);
+		child.setParent(null);
+	}
+
+	public List<Flag<T>> getChildren() {
+		return children;
+	}
+
+	public Class<?> getType() {
+		return value.getClass();
+	}
+
+	public boolean isArray() {
+		return value.getClass().isArray();
+	}
+
+	/**
+	 * Serializes this flag
+	 * @return
+	 */
+	public String serialize() {
+		return gson.toJson(getValue());
+	}
+	
+	/**
+	 * Deserializes this flag
+	 * @param name
+	 * @param type
+	 * @param value
+	 * @return
+	 */
+	public static Flag<?> deserialize(String name, String type, String value) {
+		Object flagValue = null;
+		try {
+			flagValue = gson.fromJson(value, Class.forName(type));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new Flag<Object>(name, flagValue);
 	}
 }
