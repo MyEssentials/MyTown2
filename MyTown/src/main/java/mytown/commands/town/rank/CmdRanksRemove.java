@@ -47,7 +47,7 @@ public class CmdRanksRemove extends CommandBase {
 				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.cmd.err.ranks.rem.notallowed", args[0]);
 			}
 		} catch (Exception e) {
-			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
 	}

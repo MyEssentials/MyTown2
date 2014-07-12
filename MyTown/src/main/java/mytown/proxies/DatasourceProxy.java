@@ -9,7 +9,7 @@ import mytown.config.Config;
 import mytown.core.utils.Log;
 import mytown.datasource.impl.MyTownDatasource_mysql;
 import mytown.datasource.impl.MyTownDatasource_sqlite;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.event.FMLInterModComms;
 
 /**
@@ -41,7 +41,7 @@ public class DatasourceProxy {
 	 */
 	public static boolean start(Configuration config) {
 		if (!DatasourceProxy.types.containsKey(Config.dbType.toLowerCase())) {
-			DatasourceProxy.log.severe("Failed to find datasource type: %s", Config.dbType.toLowerCase());
+			DatasourceProxy.log.fatal("Failed to find datasource type: %s", Config.dbType.toLowerCase());
 			return false;
 		}
 		try {
@@ -49,7 +49,7 @@ public class DatasourceProxy {
 			DatasourceProxy.datasource.configure(config, DatasourceProxy.log);
 			config.save();
 			if (!DatasourceProxy.datasource.connect()) {
-				DatasourceProxy.log.severe("Failed to connect to datasource!");
+				DatasourceProxy.log.fatal("Failed to connect to datasource!");
 				return false;
 			}
 
@@ -66,7 +66,7 @@ public class DatasourceProxy {
 			DatasourceProxy.datasource.loadResidentToTownLinks();
 			DatasourceProxy.datasource.loadTownToNationLinks();
 		} catch (Exception ex) {
-			DatasourceProxy.log.severe("Failed to start the datasource.", ex);
+			DatasourceProxy.log.fatal("Failed to start the datasource.", ex);
 			return false;
 		}
 		return true;
@@ -82,7 +82,7 @@ public class DatasourceProxy {
 			DatasourceProxy.datasource.save();
 			DatasourceProxy.datasource.disconnect();
 		} catch (Exception ex) {
-			DatasourceProxy.log.severe("Failed to stop the datasource.", ex);
+			DatasourceProxy.log.fatal("Failed to stop the datasource.", ex);
 		}
 	}
 
@@ -103,7 +103,7 @@ public class DatasourceProxy {
 			try {
 				DatasourceProxy.registerType(datasourceName, Class.forName(datasourceClassName));
 			} catch (ClassNotFoundException e) {
-				DatasourceProxy.log.warning("Failed to register datasource type %s from mod %s.", e, datasourceName, msg.getSender());
+				DatasourceProxy.log.warn("Failed to register datasource type %s from mod %s.", e, datasourceName, msg.getSender());
 			}
 		}
 	}

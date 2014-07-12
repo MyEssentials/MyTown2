@@ -17,7 +17,7 @@ import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 
 // TODO Datasource pool?
 // TODO More/better error reporting and logging

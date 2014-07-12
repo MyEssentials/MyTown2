@@ -1,13 +1,13 @@
 package mytown.chat;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mytown.chat.channels.Channel;
 import mytown.chat.channels.ChannelHandler;
 import mytown.chat.format.FormatHandler;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.ServerChatEvent;
 
 public class ChatHandler {
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void serverChat(ServerChatEvent ev) {
 		if (ev.isCanceled())
 			return;

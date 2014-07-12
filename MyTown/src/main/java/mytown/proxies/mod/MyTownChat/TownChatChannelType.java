@@ -30,7 +30,7 @@ public class TownChatChannelType implements IChannelType {
 				recipients.add(res.getPlayer());
 			}
 		} catch (Exception e) {
-			MyTown.instance.log.warning("[TownChatChannelType] Failed to get Resident object of %s", e, sender.getCommandSenderName());
+			MyTown.instance.log.warn("[TownChatChannelType] Failed to get Resident object of %s", e, sender.getCommandSenderName());
 		}
 		return recipients;
 	}

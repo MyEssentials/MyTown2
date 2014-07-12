@@ -46,7 +46,7 @@ public class CmdSetSpawn extends CommandBase {
 			getDatasource().updateTown(town);
 			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.setspawn");
 		} catch (Exception e) {
-			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
 	}

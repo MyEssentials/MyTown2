@@ -53,7 +53,7 @@ public class CmdRanksAdd extends CommandBase {
 			getDatasource().insertRank(rank);
 			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.ranks.add", args[0], town.getName());
 		} catch (Exception e) {
-			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
 	}

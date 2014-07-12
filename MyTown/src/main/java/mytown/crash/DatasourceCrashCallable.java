@@ -19,6 +19,9 @@ public class DatasourceCrashCallable implements ICrashCallable {
 	@Override
 	public String call() throws Exception {
 		MyTownDatasource datasource = DatasourceProxy.getDatasource();
+		if (datasource == null) {
+			return "Datasource is null...";
+		}
 		String str = "";
 
 		str += String.format("Class: %s\n", datasource.getClass().getName());

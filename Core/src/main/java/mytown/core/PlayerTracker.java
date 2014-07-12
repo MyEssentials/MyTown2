@@ -1,29 +1,15 @@
 package mytown.core;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import cpw.mods.fml.common.IPlayerTracker;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-public class PlayerTracker implements IPlayerTracker {
-	@Override
-	public void onPlayerLogin(EntityPlayer player) {
-		if (player == null)
-			return; // Never know ;)
-		if (Config.maintenanceMode && player instanceof EntityPlayerMP) {
-			((EntityPlayerMP) player).playerNetServerHandler.kickPlayerFromServer(Config.maintenanceModeMessage);
+public class PlayerTracker {
+	@SubscribeEvent
+	public void onPlayerLogin(PlayerLoggedInEvent ev) {
+		if (Config.maintenanceMode && ev.player instanceof EntityPlayerMP) {
+			((EntityPlayerMP) ev.player).playerNetServerHandler.kickPlayerFromServer(Config.maintenanceModeMessage);
 			return;
 		}
-	}
-
-	@Override
-	public void onPlayerLogout(EntityPlayer player) {
-	}
-
-	@Override
-	public void onPlayerChangedDimension(EntityPlayer player) {
-	}
-
-	@Override
-	public void onPlayerRespawn(EntityPlayer player) {
 	}
 }

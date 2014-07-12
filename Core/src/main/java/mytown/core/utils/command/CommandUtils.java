@@ -31,10 +31,10 @@ public class CommandUtils {
 		CommandUtils.commandHandler = (CommandHandler) MinecraftServer.getServer().getCommandManager();
 		CommandUtils.access = MethodAccess.get(CommandHandler.class);
 		try {
-			CommandUtils.log.finest("Attempting to retrieve registerCommand(ICommand, String)");
+			CommandUtils.log.debug("Attempting to retrieve registerCommand(ICommand, String)");
 			CommandUtils.method = CommandUtils.access.getIndex("registerCommand", ICommand.class, String.class);
 		} catch (Exception e) {
-			CommandUtils.log.finest("Defaulting to standard registerCommand(ICommand)");
+			CommandUtils.log.debug("Defaulting to standard registerCommand(ICommand)");
 			CommandUtils.method = -1;
 		}
 	}
@@ -47,7 +47,7 @@ public class CommandUtils {
 		if (permNode.trim().isEmpty()) {
 			permNode = command.getClass().getName();
 		}
-		CommandUtils.log.finest("Registering command (%s) %s with perm node %s", command.getClass().getName(), command.getCommandName(), permNode);
+		CommandUtils.log.debug("Registering command (%s) %s with perm node %s", command.getClass().getName(), command.getCommandName(), permNode);
 		if (CommandUtils.method == -1) {
 			CommandUtils.commandHandler.registerCommand(command);
 		} else {

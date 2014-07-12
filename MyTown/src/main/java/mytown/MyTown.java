@@ -17,8 +17,9 @@ import mytown.entities.flag.FlagHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
-import net.minecraftforge.common.Configuration;
+import net.minecraft.init.Items;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -26,9 +27,6 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
 import forgeperms.api.ForgePermsAPI;
 
 // TODO Add a way to safely reload
@@ -68,6 +66,8 @@ public class MyTown {
 	public void postInit(FMLPostInitializationEvent ev) {
 		ModProxies.load();
 		config.save();
+		
+		log.info(Items.wooden_hoe.getUnlocalizedName());
 	}
 
 	@Mod.EventHandler
@@ -138,15 +138,13 @@ public class MyTown {
 	}
 
 	/**
-	 * Registers IPlayerTrackers and EventHandlers
+	 * Registers al handlers (Event, etc)
 	 */
 	private void registerHandlers() {
 		PlayerTracker playerTracker = new PlayerTracker();
-		GameRegistry.registerPlayerTracker(playerTracker);
+		FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
+		FMLCommonHandler.instance().bus().register(playerTracker);
 		MinecraftForge.EVENT_BUS.register(playerTracker);
-
-		TickRegistry.registerTickHandler(VisualsTickHandler.instance, Side.SERVER);
-		
 		MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
 	}
 

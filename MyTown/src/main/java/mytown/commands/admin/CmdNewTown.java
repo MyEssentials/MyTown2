@@ -43,7 +43,7 @@ public class CmdNewTown extends CommandBase {
 
 			res.sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.admtown.created", town.getName());
 		} catch (Exception e) {
-			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError")); // Notify players
+			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError")); // Notify players
 
 			e.printStackTrace();
 		}

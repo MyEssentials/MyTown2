@@ -72,7 +72,7 @@ public class MyTownChat {
 					FormatHandler.addFormatter((IChatFormatter) possibleFormatter.newInstance());
 				}
 			} catch (Exception e) {
-				chatLog.warning("Failed to %s from %s because %s", msg.key, msg.getSender(), e.getMessage());
+				chatLog.warn("Failed to %s from %s because %s", msg.key, msg.getSender(), e.getMessage());
 			}
 		}
 	}

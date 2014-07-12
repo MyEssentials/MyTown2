@@ -68,7 +68,7 @@ public class Channel {
 				}
 			}
 		} catch (Exception ex) {
-			Channel.log.fine("[%s] %s doesn't have the permission to send to this channel", name, sender.getCommandSenderName());
+			Channel.log.trace("[%s] %s doesn't have the permission to send to this channel", name, sender.getCommandSenderName());
 			// TODO Tell player they can't send to this channel
 		}
 	}

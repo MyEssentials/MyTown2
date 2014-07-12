@@ -4,8 +4,8 @@ import java.sql.DriverManager;
 import java.util.Properties;
 
 import mytown.datasource.types.MyTownDatasource_SQL;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 /**
  * Experimental PostgreSQL Datasource. Use with care!
@@ -33,7 +33,7 @@ public class MyTownDatasource_postgresql extends MyTownDatasource_SQL {
 
 	@Override
 	public boolean connect() throws Exception {
-		log.warning("PostgreSQL support is experimental! Please backup your database regularly!");
+		log.warn("PostgreSQL support is experimental! Please backup your database regularly!");
 
 		if (conn != null)
 			return true;

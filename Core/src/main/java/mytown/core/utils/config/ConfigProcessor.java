@@ -5,8 +5,8 @@ import java.util.Map;
 
 import mytown.core.MyTownCore;
 import mytown.core.utils.Log;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -58,12 +58,12 @@ public class ConfigProcessor {
 
 	private static void setField(Field f, Configuration config, String category, String key, String comment) {
 		if (f == null || config == null) {
-			ConfigProcessor.getLog().config("Field or Config was null");
+			ConfigProcessor.getLog().warn("Field or Config was null");
 			return;
 		}
 		Property.Type type = ConfigProcessor.CONFIG_TYPES.get(f.getType());
 		if (type == null) {
-			ConfigProcessor.getLog().config("Unknown config type for field type: %s", f.getType().getName());
+			ConfigProcessor.getLog().warn("Unknown config type for field type: %s", f.getType().getName());
 			return;
 		}
 		try {
@@ -97,20 +97,22 @@ public class ConfigProcessor {
 						f.set(null, config.get(category, key, (String) defaultValue, comment).getString());
 					}
 					break;
+				default:
+					log.warn("Unknown type %s", type);
 			}
 		} catch (Exception ex) {
-			ConfigProcessor.getLog().config("An exception has occurred while loading field: %s", ex, f.getName());
+			ConfigProcessor.getLog().warn("An exception has occurred while loading field: %s", ex, f.getName());
 		}
 	}
 	
 	private static void setConfig(Field f, Configuration config, String category, String key, String comment) {
 		if (f == null || config == null) {
-			ConfigProcessor.getLog().config("Field or Config was null");
+			ConfigProcessor.getLog().warn("Field or Config was null");
 			return;
 		}
 		Property.Type type = ConfigProcessor.CONFIG_TYPES.get(f.getType());
 		if (type == null) {
-			ConfigProcessor.getLog().config("Unknown config type for field type: %s", f.getType().getName());
+			ConfigProcessor.getLog().warn("Unknown config type for field type: %s", f.getType().getName());
 			return;
 		}
 		try {
@@ -144,9 +146,11 @@ public class ConfigProcessor {
 						config.get(category, key, (String) val, comment);
 					}
 					break;
+				default:
+					log.warn("Unknown type %s", type);
 			}
 		} catch (Exception ex) {
-			ConfigProcessor.getLog().config("An exception has occurred while processing field: %s", ex, f.getName());
+			ConfigProcessor.getLog().warn("An exception has occurred while processing field: %s", ex, f.getName());
 		}
 	}
 

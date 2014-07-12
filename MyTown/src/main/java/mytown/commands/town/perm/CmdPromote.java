@@ -55,7 +55,7 @@ public class CmdPromote extends CommandBase {
 			town.promoteResident(resTarget, rank);
 			getDatasource().updateLinkResidentToTown(resTarget, town);
 		} catch (Exception e) {
-			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
 	}

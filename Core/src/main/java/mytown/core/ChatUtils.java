@@ -1,7 +1,7 @@
 package mytown.core;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentText;
 
 /**
  * Useful methods for Chat
@@ -17,7 +17,7 @@ public class ChatUtils {
 	 * @param args
 	 */
 	public static void sendChat(ICommandSender sender, String msg, Object... args) {
-		sender.sendChatToPlayer(ChatMessageComponent.createFromText(String.format(msg, args)));
+		sender.addChatMessage(new ChatComponentText(String.format(msg, args)));
 	}
 
 	/**

@@ -23,7 +23,7 @@ public class LocalizationProxy {
 			LocalizationProxy.localization = new Localization(new InputStreamReader(is));
 			LocalizationProxy.localization.load();
 		} catch (Exception ex) {
-			LocalizationProxy.log.warning("Failed to load localization file (%s)!", ex, Config.localization);
+			LocalizationProxy.log.warn("Failed to load localization file (%s)!", ex, Config.localization);
 		}
 	}
 

@@ -4,12 +4,11 @@ import java.io.File;
 
 import mytown.core.utils.Log;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.core.utils.teleport.TeleportHandler;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = "MyTownCore", name = "MyTownCore", version = "2.0", dependencies = "required-after:Forge")
 public class MyTownCore {
@@ -30,8 +29,7 @@ public class MyTownCore {
 		config.save();
 
 		// Register handlers/trackers
-		GameRegistry.registerPlayerTracker(new PlayerTracker());
-		TeleportHandler.init();
+		FMLCommonHandler.instance().bus().register(new PlayerTracker());
 	}
 
 	@Mod.EventHandler

@@ -40,7 +40,7 @@ public class CmdSelect extends CommandBase {
 			getDatasource().updateLinkResidentToTown(res, town);
 			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.select", args[0]);
 		} catch (Exception e) {
-			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
 	}

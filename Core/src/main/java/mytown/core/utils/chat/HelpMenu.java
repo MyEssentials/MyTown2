@@ -2,10 +2,10 @@ package mytown.core.utils.chat;
 
 import java.util.List;
 
-import org.apache.commons.lang3.text.WordUtils;
-
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentText;
+
+import org.apache.commons.lang3.text.WordUtils;
 
 public class HelpMenu {
 	private int maxLines = 9;  // maxLines is 9 because 1 is taken up by the "top bar"
@@ -50,13 +50,9 @@ public class HelpMenu {
 		if (page > numberOfPages) page = numberOfPages;
 		int start = maxLines*(page-1);
 		
-		ChatMessageComponent helpMessage = new ChatMessageComponent();
-		helpMessage.addText(String.format("---------- %s Help (%s/%s) ----------\n", WordUtils.capitalizeFully(name), page, numberOfPages));
-		
+		sender.addChatMessage(new ChatComponentText(String.format("---------- %s Help (%s/%s) ----------", WordUtils.capitalizeFully(name), page, numberOfPages)));
 		for (int i=0; start+i<lines.length && i<maxLines; i++) {
-			helpMessage.addText(lines[start+i] + "\n");
+			sender.addChatMessage(new ChatComponentText(lines[start+i]));
 		}
-		
-		sender.sendChatToPlayer(helpMessage);
 	}
 }

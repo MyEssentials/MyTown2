@@ -1,17 +1,17 @@
 package mytown;
 
-import net.minecraftforge.event.ForgeSubscribe;
 import mytown.api.events.TownEvent.TownCreatedEvent;
 import mytown.api.events.TownEvent.TownDestroyednEvent;
 import mytown.commands.town.info.CmdListTown;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class MyTownEventHandler {
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void townCreated(TownCreatedEvent townEvent) {
 		CmdListTown.updateTownSortCache();
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void townDestroyed(TownDestroyednEvent townEvent) {
 		CmdListTown.updateTownSortCache();
 	}

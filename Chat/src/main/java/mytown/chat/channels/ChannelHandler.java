@@ -82,7 +82,7 @@ public class ChannelHandler {
 
 	public static void addChannel(Channel ch) {
 		if (ChannelHandler.channels.containsKey(ch.name)) {
-			ChannelHandler.log.warning("Channel %s already exists", ch.name);
+			ChannelHandler.log.warn("Channel %s already exists", ch.name);
 			return;
 		}
 		ChannelHandler.channels.put(ch.name, ch);
@@ -109,7 +109,7 @@ public class ChannelHandler {
 		int radius = Integer.parseInt(args[3]);
 		IChannelType type = ChannelHandler.getChannelType(args[4]);
 		if (type == null) {
-			ChannelHandler.log.warning("Unknown channel type %s for channel %s", type, args[0]);
+			ChannelHandler.log.warn("Unknown channel type %s for channel %s", type, args[0]);
 			return;
 		}
 		ChannelHandler.addChannel(new Channel(args[0], args[1], args[2], radius, type));
@@ -201,13 +201,14 @@ public class ChannelHandler {
 		}
 		List<String> playersChannels = new ArrayList<String>();
 		EntityPlayer pl = (EntityPlayer) sender;
-		Collection<?> tags = pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").getCompoundTag("channels").getTags();
-		for (Object obj : tags) {
-			if (!(obj instanceof NBTBase)) {
-				continue;
-			}
-			playersChannels.add(((NBTBase) obj).getName());
-		}
+		// TODO Change NBT :/
+//		Collection<?> tags = pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").getCompoundTag("channels").getTags();
+//		for (Object obj : tags) {
+//			if (!(obj instanceof NBTBase)) {
+//				continue;
+//			}
+//			playersChannels.add(((NBTBase) obj).getName());
+//		}
 		return playersChannels;
 	}
 
@@ -225,17 +226,18 @@ public class ChannelHandler {
 		}
 		List<String> playersChannels = new ArrayList<String>();
 		EntityPlayer pl = (EntityPlayer) sender;
-		Collection<?> tags = pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").getCompoundTag("channels").getTags();
-		for (Object obj : tags) {
-			if (!(obj instanceof NBTBase)) {
-				continue;
-			}
-			NBTBase tag = (NBTBase) obj;
-			if (!tag.getName().startsWith(str)) {
-				continue;
-			}
-			playersChannels.add(tag.getName());
-		}
+		// TODO Change NBT :/
+//		Collection<?> tags = pl.getEntityData().getCompoundTag("mytown").getCompoundTag("chat").getCompoundTag("channels").getTags();
+//		for (Object obj : tags) {
+//			if (!(obj instanceof NBTBase)) {
+//				continue;
+//			}
+//			NBTBase tag = (NBTBase) obj;
+//			if (!tag.getName().startsWith(str)) {
+//				continue;
+//			}
+//			playersChannels.add(tag.getName());
+//		}
 		return playersChannels;
 	}
 }

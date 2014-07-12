@@ -8,47 +8,58 @@ import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import cpw.mods.fml.common.IPlayerTracker;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import forgeperms.api.ForgePermsAPI;
 
-public class PlayerTracker implements IPlayerTracker {
-	@Override
-	public void onPlayerLogin(EntityPlayer player) {
-		if (player == null)
-			return; // Never know ;)
-		if (MyTown.instance.safemode && player instanceof EntityPlayerMP && !ForgePermsAPI.permManager.canAccess(player.username, player.worldObj.provider.getDimensionName(), "mytown.adm.safemode")) {
-			((EntityPlayerMP) player).playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
+public class PlayerTracker {
+    private static ItemStack myTownGuideBook = new ItemStack(Items.written_book);
+    
+    static { // TODO localize the book!
+    	myTownGuideBook.setTagInfo("author", new NBTTagString("legobear154"));
+    	myTownGuideBook.setTagInfo("title", new NBTTagString("MyTown Guide Book"));
+    	NBTTagList pages = new NBTTagList();
+    	pages.appendTag(new NBTTagString("Hello!\nThis server is using MyTown 2 for protecting YOUR stuff.\nThis book is a fairly lengthy book that is ment to help you use MyTown!"));
+    	pages.appendTag(new NBTTagString(" Table of Contents\n"));
+    	pages.appendTag(new NBTTagString(""));
+    	// TODO Finish book :p
+    	myTownGuideBook.setTagInfo("pages", pages);
+    }
+    
+	@SubscribeEvent
+	public void onPlayerLogin(PlayerLoggedInEvent ev) {
+		if (MyTown.instance.safemode && ev.player instanceof EntityPlayerMP && !ForgePermsAPI.permManager.canAccess(ev.player.getDisplayName(), ev.player.worldObj.provider.getDimensionName(), "mytown.adm.safemode")) {
+			((EntityPlayerMP) ev.player).playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
 			return;
 		}
 
 		try {
-			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
 			res.setOnline(true);
-			res.setPlayer(player);
+			res.setPlayer(ev.player);
+//			ev.player.inventory.addItemStackToInventory(myTownGuideBook); // TODO Only give the book to new players
 		} catch (Exception e) {
 			e.printStackTrace(); // TODO Change later?
 		}
 	}
 
-	@Override
-	public void onPlayerLogout(EntityPlayer player) {
-		if (player == null)
-			return; // Never know ;)
+	@SubscribeEvent
+	public void onPlayerLogout(PlayerLoggedOutEvent ev) {
 		try {
-			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
 			res.setOnline(false);
 			res.setPlayer(null);
 		} catch (Exception e) {
@@ -56,11 +67,11 @@ public class PlayerTracker implements IPlayerTracker {
 		}
 	}
 
-	@Override
-	public void onPlayerChangedDimension(EntityPlayer pl) {
+	@SubscribeEvent
+	public void onPlayerChangedDimension(PlayerChangedDimensionEvent ev) {
 		try {
-			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(pl);
-			res.checkLocation(pl.chunkCoordX, pl.chunkCoordZ, pl.dimension);
+			Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
+			res.checkLocation(ev.player.chunkCoordX, ev.player.chunkCoordZ, ev.player.dimension);
 			if (res.isMapOn()) {
 				res.sendMap();
 			}
@@ -69,12 +80,7 @@ public class PlayerTracker implements IPlayerTracker {
 		}
 	}
 
-	@Override
-	public void onPlayerRespawn(EntityPlayer player) {
-		// TODO Auto-generated method stub
-	}
-
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEnterChunk(EntityEvent.EnteringChunk ev) {
 		if (!(ev.entity instanceof EntityPlayer))
 			return;
@@ -92,7 +98,7 @@ public class PlayerTracker implements IPlayerTracker {
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
 		// TODO: Implement wilderness perms too
 		if (!DatasourceProxy.getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4)))
@@ -104,29 +110,21 @@ public class PlayerTracker implements IPlayerTracker {
 				return;
 			if (flag.getValue() == true)
 				return;
-			if (DatasourceProxy.getDatasource().getResident(ev.getPlayer().username).isPartOfTown(town))
+			if (DatasourceProxy.getDatasource().getResident(ev.getPlayer().getDisplayName()).isPartOfTown(town))
 				return;
 			ev.setCanceled(true);
 		}
 	}
 
-	@ForgeSubscribe
-	public void onItemToolTip(ItemTooltipEvent ev) {
-		if (ev.itemStack.getDisplayName().equals(EnumChatFormatting.BLUE + "Selector") && ev.itemStack.getItem() == Item.hoeWood) {
-			ev.toolTip.add(EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.");
-			ev.toolTip.add(EnumChatFormatting.DARK_AQUA + "Uses: 1");
-		}
-	}
-
 	// Because I can
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onUseHoe(UseHoeEvent ev) {
 		if (ev.current.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
 			ev.setCanceled(true);
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onItemUse(PlayerInteractEvent ev) {
 		if (ev.entityPlayer.worldObj.isRemote)
 			return;
@@ -134,8 +132,8 @@ public class PlayerTracker implements IPlayerTracker {
 		ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
 		if (currentStack == null)
 			return;
-		if (ev.action == Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Item.hoeWood) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
-			Resident res = DatasourceProxy.getDatasource().getResident(ev.entityPlayer.username);
+		if (ev.action == Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+			Resident res = DatasourceProxy.getDatasource().getResident(ev.entityPlayer.getDisplayName());
 			if (res == null)
 				return;
 
@@ -150,7 +148,7 @@ public class PlayerTracker implements IPlayerTracker {
 						ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionEnd");
 					}
 				} else
-					throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selectionFailed"));
+					ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.selectionFailed");
 
 			}
 			System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));

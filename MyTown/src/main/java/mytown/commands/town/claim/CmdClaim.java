@@ -68,7 +68,7 @@ public class CmdClaim extends CommandHandler {
 
 				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
 			} catch (Exception e) {
-				MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+				MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 				e.printStackTrace();
 			}
 		}

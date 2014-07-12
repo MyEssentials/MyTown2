@@ -59,7 +59,7 @@ public class CmdNewTown extends CommandBase {
 
 			res.sendLocalizedMessage(MyTown.getLocal(), "mytown.notification.town.created", town.getName());
 		} catch (Exception e) {
-			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
 	}

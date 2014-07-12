@@ -42,7 +42,7 @@ public class Assert {
 		if (node == null)
 			return;
 		EntityPlayer p = (EntityPlayer) cs;
-		if (ForgePermsAPI.permManager.canAccess(p.username, p.worldObj.provider.getDimensionName(), node))
+		if (ForgePermsAPI.permManager.canAccess(p.getCommandSenderName(), p.worldObj.provider.getDimensionName(), node)) // TODO Make ForgePerms use UUIDs (Will need to re-write everything)
 			return;
 		throw new CommandException("commands.generic.permission");
 	}

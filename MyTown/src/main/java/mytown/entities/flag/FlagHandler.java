@@ -52,7 +52,7 @@ public class FlagHandler {
 			try {
 				addSerializer((ISerializer)Class.forName(msg.getStringValue()).newInstance());
 			} catch (Exception e) {
-				log.warning("Failed to register the flag serializer %s from mod %s", e, msg.getStringValue(), msg.getSender());
+				log.warn("Failed to register the flag serializer %s from mod %s", e, msg.getStringValue(), msg.getSender());
 			}
 		}
 	}

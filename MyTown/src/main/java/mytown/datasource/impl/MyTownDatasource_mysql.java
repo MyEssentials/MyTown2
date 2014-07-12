@@ -4,7 +4,7 @@ import java.sql.DriverManager;
 import java.util.Properties;
 
 import mytown.datasource.types.MyTownDatasource_SQL;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 
 //TODO Test
 //TODO Add comments

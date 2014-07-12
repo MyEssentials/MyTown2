@@ -44,7 +44,7 @@ public class CmdLeave extends CommandBase {
 				r.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.left", res.getUUID(), town.getName());
 			}
 		} catch (Exception e) {
-			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
 	}

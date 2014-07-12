@@ -1,20 +1,19 @@
 package mytown;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
 import mytown.interfaces.ITownPlot;
-import net.minecraft.block.Block;
-import net.minecraft.network.packet.Packet53BlockChange;
+import net.minecraft.init.Blocks;
+import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.relauncher.Side;
 
-public class VisualsTickHandler implements ITickHandler {
-
+public class VisualsTickHandler {
 	private class BlockCoords {
 		public int x, y, z, dim;
 		public boolean deleted = false;
@@ -35,53 +34,31 @@ public class VisualsTickHandler implements ITickHandler {
 		markedBlocks = new ArrayList<BlockCoords>();
 	}
 
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-		// TODO Auto-generated method stub
+	@SubscribeEvent
+	public void tick(TickEvent.ServerTickEvent ev) {
+		if (ev.side != Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+		if (markedBlocks.size() != 0) {
+			Iterator<BlockCoords> iterator = markedBlocks.iterator();
 
-	}
+			while (iterator.hasNext()) {
+				BlockCoords coord = iterator.next();
+				if (!coord.packetSent) {
+                    S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
+					packet.field_148883_d = Blocks.redstone_block;
+					FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
 
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		if (tickData.length > 0) {
+					coord.packetSent = true;
+				}
+				if (coord.deleted) {
+                    S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
+					packet.field_148883_d = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlock(coord.x, coord.y, coord.z);
+					packet.field_148884_e = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockMetadata(coord.x, coord.y, coord.z);
+					FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
 
-			if (markedBlocks.size() != 0) {
-				Iterator<BlockCoords> iterator = markedBlocks.iterator();
-
-				while (iterator.hasNext()) {
-					BlockCoords coord = iterator.next();
-					if (!coord.packetSent) {
-						Packet53BlockChange packet = new Packet53BlockChange();
-						packet.type = Block.blockRedstone.blockID;
-						packet.xPosition = coord.x;
-						packet.yPosition = coord.y;
-						packet.zPosition = coord.z;
-
-						PacketDispatcher.sendPacketToAllInDimension(packet, coord.dim); // Maybe only send to the player selecting the plot
-
-						coord.packetSent = true;
-					}
-					if (coord.deleted) {
-						Packet53BlockChange packet = new Packet53BlockChange();
-						packet.type = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockId(coord.x, coord.y, coord.z);
-						packet.metadata = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockMetadata(coord.x, coord.y, coord.z);
-						packet.xPosition = coord.x;
-						packet.yPosition = coord.y;
-						packet.zPosition = coord.z;
-
-						PacketDispatcher.sendPacketToAllInDimension(packet, coord.dim);
-
-						iterator.remove();
-					}
+					iterator.remove();
 				}
 			}
 		}
-
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.WORLD, TickType.SERVER);
 	}
 
 	public void markBlock(int x, int y, int z, int dim) {
@@ -204,10 +181,5 @@ public class VisualsTickHandler implements ITickHandler {
 			unmarkBlock(x1, y2, i, dim);
 			unmarkBlock(x2, y2, i, dim);
 		}
-	}
-
-	@Override
-	public String getLabel() {
-		return Constants.TICK_HANDLER_LABEL;
 	}
 }

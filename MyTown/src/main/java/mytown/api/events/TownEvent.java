@@ -1,7 +1,7 @@
 package mytown.api.events;
 
 import mytown.entities.town.Town;
-import net.minecraftforge.event.Event;
+import cpw.mods.fml.common.eventhandler.Event;
 
 /**
  * Base for all events that deal with {@link Town}'s

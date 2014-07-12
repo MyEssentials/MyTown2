@@ -32,7 +32,7 @@ public class CmdRem extends CommandBase {
 			getDatasource().unlinkResidentFromTown(getDatasource().getResident(args[0]), getDatasource().getTown(args[1]));
 			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.resident.remove", (Object[]) args);
 		} catch (Exception e) {
-			MyTown.instance.log.severe(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
+			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
 			e.printStackTrace();
 		}
 

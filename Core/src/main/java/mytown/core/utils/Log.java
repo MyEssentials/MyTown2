@@ -1,8 +1,9 @@
 package mytown.core.utils;
 
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 public class Log {
 	private Logger logger = null;
@@ -85,33 +86,57 @@ public class Log {
 		}
 	}
 
-	public void finest(String msg, Object... args) {
-		log(Level.FINEST, msg, args);
+	public void fatal(String msg, Object... args) {
+		log(Level.FATAL, msg, args);
 	}
-
-	public void finer(String msg, Object... args) {
-		log(Level.FINER, msg, args);
+	
+	public void error(String msg, Object... args) {
+		log(Level.ERROR, msg, args);
 	}
-
-	public void fine(String msg, Object... args) {
-		log(Level.FINE, msg, args);
+	
+	public void warn(String msg, Object... args) {
+		log(Level.WARN, msg, args);
 	}
-
-	public void config(String msg, Object... args) {
-		log(Level.CONFIG, msg, args);
-	}
-
+	
 	public void info(String msg, Object... args) {
 		log(Level.INFO, msg, args);
 	}
-
-	public void warning(String msg, Object... args) {
-		log(Level.WARNING, msg, args);
+	
+	public void debug(String msg, Object... args) {
+		log(Level.DEBUG, msg, args);
 	}
-
-	public void severe(String msg, Object... args) {
-		log(Level.SEVERE, msg, args);
+	
+	public void trace(String msg, Object... args) {
+		log(Level.TRACE, msg, args);
 	}
+	
+//	public void finest(String msg, Object... args) {
+//		log(Level.FINEST, msg, args);
+//	}
+//
+//	public void finer(String msg, Object... args) {
+//		log(Level.FINER, msg, args);
+//	}
+//
+//	public void fine(String msg, Object... args) {
+//		log(Level.FINE, msg, args);
+//	}
+//
+//	public void config(String msg, Object... args) {
+//		log(Level.CONFIG, msg, args);
+//	}
+//
+//	public void info(String msg, Object... args) {
+//		log(Level.INFO, msg, args);
+//	}
+//
+//	public void warning(String msg, Object... args) {
+//		log(Level.WARNING, msg, args);
+//	}
+//
+//	public void severe(String msg, Object... args) {
+//		log(Level.SEVERE, msg, args);
+//	}
 
 	/**
 	 * Helper method to create a child of this logger

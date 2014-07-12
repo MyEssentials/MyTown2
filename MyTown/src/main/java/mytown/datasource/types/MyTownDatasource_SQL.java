@@ -21,8 +21,8 @@ import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 import com.google.common.collect.Lists;
 

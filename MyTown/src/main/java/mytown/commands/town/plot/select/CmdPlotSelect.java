@@ -13,17 +13,29 @@ import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumChatFormatting;
 
 @Permission("mytown.cmd.assistant.plot.select")
 public class CmdPlotSelect extends CommandHandler {
+	public static ItemStack selectionTool;
 
 	public CmdPlotSelect(String name, CommandBase parent) {
 		super(name, parent);
 
 		addSubCommand(new CmdPlotSelectExpand("expandVert", this));
 		addSubCommand(new CmdPlotSelectReset("reset", this));
+		
+		// Create selection tool TODO Localize the tool
+		selectionTool = new ItemStack(Items.wooden_hoe);
+		selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
+		NBTTagList lore = new NBTTagList();
+		lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot."));
+		lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
+		selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
 	}
 
 	@Override
@@ -44,16 +56,10 @@ public class CmdPlotSelect extends CommandHandler {
 		} else {
 			EntityPlayer player = (EntityPlayer) sender;
 
-			ItemStack stack = new ItemStack(Item.hoeWood);
-			stack.setItemName(Constants.EDIT_TOOL_NAME);
-			boolean ok = true;
-			for (ItemStack st : player.inventory.mainInventory)
-				if (st != null && st.getDisplayName().equals(Constants.EDIT_TOOL_NAME) && st.itemID == Item.hoeWood.itemID) {
-					ok = false;
-				}
+			boolean ok = !player.inventory.hasItemStack(selectionTool);
 			boolean result = false;
 			if (ok) {
-				result = player.inventory.addItemStackToInventory(stack);
+				result = player.inventory.addItemStackToInventory(selectionTool);
 			}
 			if (result) {
 				ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.start");
