@@ -1,6 +1,5 @@
 package mytown.commands.town.plot;
 
-import mytown.Formatter;
 import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
@@ -8,6 +7,7 @@ import mytown.core.utils.command.Permission;
 import mytown.entities.Resident;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import mytown.util.Formatter;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 

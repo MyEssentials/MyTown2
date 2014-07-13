@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mytown.MyTown;
-import mytown.VisualsTickHandler;
 import mytown.core.ChatUtils;
 import mytown.core.Localization;
 import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
+import mytown.handlers.VisualsTickHandler;
 import mytown.interfaces.IPlotSelector;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;

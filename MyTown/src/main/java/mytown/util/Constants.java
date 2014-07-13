@@ -1,4 +1,4 @@
-package mytown;
+package mytown.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,6 +1,5 @@
 package mytown.commands.town.info;
 
-import mytown.Formatter;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
@@ -8,6 +7,7 @@ import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
 import mytown.entities.Resident;
 import mytown.entities.town.Town;
+import mytown.util.Formatter;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 

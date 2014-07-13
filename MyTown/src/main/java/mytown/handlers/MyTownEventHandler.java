@@ -1,4 +1,4 @@
-package mytown;
+package mytown.handlers;
 
 import mytown.api.events.TownEvent.TownCreatedEvent;
 import mytown.api.events.TownEvent.TownDestroyednEvent;

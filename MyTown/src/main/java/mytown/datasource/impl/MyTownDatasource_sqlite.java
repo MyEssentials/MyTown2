@@ -3,9 +3,9 @@ package mytown.datasource.impl;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
-import mytown.Constants;
 import mytown.core.utils.config.ConfigProperty;
 import mytown.datasource.types.MyTownDatasource_SQL;
+import mytown.util.Constants;
 
 // TODO Test
 // TODO Add comments

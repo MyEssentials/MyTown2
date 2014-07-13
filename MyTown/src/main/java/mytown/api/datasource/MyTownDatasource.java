@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import mytown.Constants;
 import mytown.core.utils.Log;
 import mytown.entities.Nation;
 import mytown.entities.Rank;
@@ -16,6 +15,7 @@ import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
+import mytown.util.Constants;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.config.Configuration;
 

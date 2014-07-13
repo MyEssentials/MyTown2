@@ -1,4 +1,4 @@
-package mytown;
+package mytown.handlers;
 
 import java.util.ArrayList;
 import java.util.Iterator;

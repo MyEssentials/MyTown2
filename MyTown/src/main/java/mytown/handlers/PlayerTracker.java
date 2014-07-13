@@ -1,5 +1,6 @@
-package mytown;
+package mytown.handlers;
 
+import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.entities.Resident;
@@ -8,6 +9,7 @@ import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import mytown.util.Constants;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;

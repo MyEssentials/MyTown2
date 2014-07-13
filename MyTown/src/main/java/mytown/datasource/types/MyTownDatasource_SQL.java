@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import mytown.Constants;
 import mytown.api.datasource.MyTownDatasource;
 import mytown.core.utils.config.ConfigProperty;
 import mytown.entities.Nation;
@@ -22,6 +21,7 @@ import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
+import mytown.util.Constants;
 
 import com.google.common.collect.Lists;
 
