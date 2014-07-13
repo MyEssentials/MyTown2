@@ -54,7 +54,7 @@ public class CmdPlot extends CommandHandler {
 				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
 
 			String formattedPlotsList = "";
-			for (ITownPlot plot : town.getTownPlots()) {
+			for (ITownPlot plot : town.getPlots()) {
 				formattedPlotsList += "\n";
 				formattedPlotsList += plot;
 			}

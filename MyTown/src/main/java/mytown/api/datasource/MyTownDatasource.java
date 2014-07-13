@@ -1250,7 +1250,7 @@ public abstract class MyTownDatasource {
 			n.removeTown(town);
 		}
 		for (Resident r : town.getResidents()) {
-			r.removeResidentFromTown(town);
+			r.removeTown(town);
 		}
 		for (TownBlock block : town.getTownBlocks()) {
 			removeTownBlock(block);

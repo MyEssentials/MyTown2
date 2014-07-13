@@ -25,7 +25,7 @@ public class CmdPlotShow extends CommandBase {
 	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-		for (ITownPlot plot : town.getTownPlots()) {
+		for (ITownPlot plot : town.getPlots()) {
 			VisualsTickHandler.instance.markPlotBorders(plot);
 		}
 		ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.plot.showing");

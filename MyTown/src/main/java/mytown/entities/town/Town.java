@@ -12,6 +12,7 @@ import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
+import mytown.interfaces.has.HasPlots;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -22,7 +23,7 @@ import net.minecraft.util.EnumChatFormatting;
  * 
  * @author Joe Goett
  */
-public class Town implements Comparable<Town> {
+public class Town extends HasPlots implements Comparable<Town> {
 
 	protected String name;
 	protected int extraBlocks = 0;
@@ -35,7 +36,6 @@ public class Town implements Comparable<Town> {
 
 	protected List<Rank> ranks;
 	protected List<ITownFlag> flags;
-	protected List<ITownPlot> townPlots;
 	protected List<Nation> nations;
 	protected List<TownBlock> townBlocks;
 	protected Map<Resident, Rank> residents;
@@ -55,7 +55,6 @@ public class Town implements Comparable<Town> {
 
 		ranks = new ArrayList<Rank>();
 		flags = new ArrayList<ITownFlag>();
-		townPlots = new ArrayList<ITownPlot>();
 		nations = new ArrayList<Nation>();
 		townBlocks = new ArrayList<TownBlock>();
 		residents = new Hashtable<Resident, Rank>();
@@ -239,7 +238,7 @@ public class Town implements Comparable<Town> {
 	 */
 	public void removeResident(Resident resident) {
 		residents.remove(resident);
-		resident.removeResidentFromTown(this);
+		resident.removeTown(this);
 	}
 
 	/**
@@ -429,54 +428,6 @@ public class Town implements Comparable<Town> {
 	}
 
 	// //////////////////////////////////////
-	// Plots
-	// //////////////////////////////////////
-
-	/**
-	 * Adds an ITownPlot to this block
-	 * 
-	 * @param plot
-	 */
-	public boolean addTownPlot(ITownPlot plot) {
-		return townPlots.add(plot);
-	}
-
-	/**
-	 * Removes an ITownPlot from this block
-	 * 
-	 * @param plot
-	 * @return
-	 */
-	public boolean removeTownPlot(ITownPlot plot) {
-		return townPlots.remove(plot);
-	}
-
-	/**
-	 * Gets a list of all plots in the town
-	 * 
-	 * @return
-	 */
-	public List<ITownPlot> getTownPlots() {
-		return townPlots;
-	}
-
-	/**
-	 * Gets the plot at the specified location
-	 * 
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 */
-	public ITownPlot getPlotAtCoords(int x, int y, int z) {
-		for (ITownPlot p : townPlots) {
-			if (p.isBlockInsidePlot(x, y, z))
-				return p;
-		}
-		return null;
-	}
-
-	// //////////////////////////////////////
 	// Helper?
 	// //////////////////////////////////////
 
@@ -509,7 +460,7 @@ public class Town implements Comparable<Town> {
 	 */
 	public String[] getInfo() {
 		String temp[] = new String[3];
-		temp[0] = EnumChatFormatting.BLUE + " ---------- " + name + EnumChatFormatting.GREEN + " (" + EnumChatFormatting.WHITE + "R:" + residents.size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "B:" + townBlocks.size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "P:" + townPlots.size() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.BLUE + " ----------" + '\n' + EnumChatFormatting.GRAY;
+		temp[0] = EnumChatFormatting.BLUE + " ---------- " + name + EnumChatFormatting.GREEN + " (" + EnumChatFormatting.WHITE + "R:" + residents.size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "B:" + townBlocks.size() + EnumChatFormatting.GREEN + " | " + EnumChatFormatting.WHITE + "P:" + plots.size() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.BLUE + " ----------" + '\n' + EnumChatFormatting.GRAY;
 
 		for (Resident res : residents.keySet()) {
 			if (temp[1] == null) {

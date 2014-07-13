@@ -10,6 +10,7 @@ import mytown.entities.town.AdminTown;
 import mytown.entities.town.Town;
 import mytown.handlers.VisualsTickHandler;
 import mytown.interfaces.IPlotSelector;
+import mytown.interfaces.has.HasTowns;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +21,7 @@ import net.minecraft.util.EnumChatFormatting;
  * 
  * @author Joe Goett
  */
-public class Resident implements IPlotSelector {
+public class Resident extends HasTowns implements IPlotSelector {
 	private String playerUUID;
 	private boolean isOnline = false;
 	private boolean isNPC = false;
@@ -222,36 +223,7 @@ public class Resident implements IPlotSelector {
 	// //////////////////////////////////////
 	// Towns
 	// //////////////////////////////////////
-	private List<Town> towns = new ArrayList<Town>();
 	private Town selectedTown = null;
-
-	/**
-	 * Adds a Town
-	 * 
-	 * @param town
-	 */
-	public void addTown(Town town) {
-		towns.add(town);
-	}
-
-	/**
-	 * Checks if this Resident is part of the Town
-	 * 
-	 * @param town
-	 * @return
-	 */
-	public boolean isPartOfTown(Town town) {
-		return towns.contains(town);
-	}
-
-	/**
-	 * Returns a Collection of Towns this Resident is part of
-	 * 
-	 * @return
-	 */
-	public List<Town> getTowns() {
-		return towns;
-	}
 
 	/**
 	 * Returns the Rank of the Resident at the given town
@@ -306,18 +278,6 @@ public class Resident implements IPlotSelector {
 	 */
 	public void setTownRank(Rank rank) {
 		setTownRank(getSelectedTown(), rank);
-	}
-
-	/**
-	 * Removes resident from town. Called when resident is removed from a town.
-	 * 
-	 * @param town
-	 * @return
-	 */
-	public boolean removeResidentFromTown(Town town) {
-		if (towns.contains(town))
-			return towns.remove(town);
-		return false;
 	}
 
 	/**

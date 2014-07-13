@@ -203,7 +203,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
 					TownPlot plot = new TownPlot(dim, x1, y1, z1, x2, y2, z2, town, owner, name);
 					System.out.println(name);
-					town.addTownPlot(plot);
+					town.addPlot(plot);
 					addPlot(plot);
 					log.info("Adding plot in town " + town.getName());
 				}
@@ -446,7 +446,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	public void insertPlot(ITownPlot plot) throws Exception {
 		synchronized (lock) {
 			addPlot(plot);
-			plot.getTown().addTownPlot(plot);
+			plot.getTown().addPlot(plot);
 			PreparedStatement statement = prepare("INSERT INTO " + prefix + "Plots (Key, Dim, X1, Y1, Z1, X2, Y2, Z2, TownName, Owner, Name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			statement.setString(1, plot.getKey());
 			statement.setInt(2, plot.getDim());
@@ -577,7 +577,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	public boolean deletePlot(ITownPlot plot) throws Exception {
 		synchronized (lock) {
 			removePlot(plot);
-			plot.getTown().removeTownPlot(plot);
+			plot.getTown().removePlot(plot);
 
 			PreparedStatement statement = prepare("DELETE FROM " + prefix + "Plots WHERE Key=?", false);
 			statement.setString(1, plot.getKey());
@@ -679,7 +679,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 	@Override
 	public void unlinkResidentFromTown(Resident resident, Town town) throws Exception {
 		synchronized (lock) {
-			resident.removeResidentFromTown(town);
+			resident.removeTown(town);
 			town.removeResident(resident);
 
 			PreparedStatement statement = prepare("DELETE FROM " + prefix + " ResidentsToTowns WHERE TownName=? AND Owner=?", false);

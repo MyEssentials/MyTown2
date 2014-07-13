@@ -34,7 +34,7 @@ public class CmdPlots extends CommandBase {
 			if (res.getSelectedTown() == null)
 				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
 			else {
-				ChatUtils.sendChat(sender, Formatter.formatTownPlotsToString(res.getSelectedTown().getTownPlots()));
+				ChatUtils.sendChat(sender, Formatter.formatTownPlotsToString(res.getSelectedTown().getPlots()));
 			}
 		}
 	}
