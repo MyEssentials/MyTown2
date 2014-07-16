@@ -1,6 +1,6 @@
 package mytown.entities;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.base.Joiner;
 
@@ -11,7 +11,7 @@ public class Rank {
 
 	private String key;
 	private String name;
-	private ArrayList<String> permissions; // Lists > Arrays
+	private List<String> permissions; // Lists > Arrays
 	private Town town;
 
 	/**
@@ -22,7 +22,7 @@ public class Rank {
 	 * @param town
 	 *            null only if it's a default rank
 	 */
-	public Rank(String name, ArrayList<String> permissions, Town town) {
+	public Rank(String name, List<String> permissions, Town town) {
 		this.name = name;
 		this.permissions = permissions;
 		this.town = town;
@@ -53,7 +53,7 @@ public class Rank {
 	 * 
 	 * @return
 	 */
-	public ArrayList<String> getPermissions() {
+	public List<String> getPermissions() {
 		return permissions;
 	}
 
