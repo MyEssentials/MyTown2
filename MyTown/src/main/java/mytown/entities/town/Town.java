@@ -1,9 +1,6 @@
 package mytown.entities.town;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import mytown.api.datasource.MyTownDatasource;
 import mytown.entities.Nation;
@@ -57,7 +54,7 @@ public class Town extends HasPlots implements Comparable<Town> {
 		flags = new ArrayList<ITownFlag>();
 		nations = new ArrayList<Nation>();
 		townBlocks = new ArrayList<TownBlock>();
-		residents = new Hashtable<Resident, Rank>();
+		residents = new WeakHashMap<Resident, Rank>();
 	}
 
 	/**
@@ -228,6 +225,8 @@ public class Town extends HasPlots implements Comparable<Town> {
 	 * @param rank
 	 */
 	public void addResident(Resident resident, Rank rank) {
+        if (resident == null) throw new NullPointerException("Resident can not be null");
+        if (rank == null) throw new NullPointerException("Rank can not be null");
 		residents.put(resident, rank);
 	}
 
@@ -253,11 +252,10 @@ public class Town extends HasPlots implements Comparable<Town> {
 
 	/**
 	 * Checks if the Resident is part of this Town
-	 * 
-	 * @param resident
+	 *
+	 * @param UUID
 	 * @return
 	 */
-
 	public boolean hasResident(String UUID) {
 		for (Resident r : residents.keySet())
 			if (r.getUUID().equals(UUID))

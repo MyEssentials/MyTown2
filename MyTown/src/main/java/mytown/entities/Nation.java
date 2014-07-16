@@ -1,8 +1,8 @@
 package mytown.entities;
 
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import mytown.entities.town.Town;
 import net.minecraft.util.EnumChatFormatting;
@@ -95,7 +95,7 @@ public class Nation {
 	// //////////////////////////////////////
 	// Towns
 	// //////////////////////////////////////
-	private Map<Town, Rank> towns = new Hashtable<Town, Rank>();
+	private Map<Town, Rank> towns = new WeakHashMap<Town, Rank>();
 
 	/**
 	 * Returns the towns associated with this Nation
@@ -126,6 +126,8 @@ public class Nation {
 	 * @param rank
 	 */
 	public void addTown(Town town, Rank rank) {
+        if (town == null) throw new NullPointerException("Town can not be null");
+        if (rank == null) throw new NullPointerException("Rank can not be null");
 		towns.put(town, rank);
 	}
 
