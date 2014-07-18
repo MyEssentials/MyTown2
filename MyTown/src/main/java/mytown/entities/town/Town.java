@@ -20,7 +20,7 @@ import net.minecraft.util.EnumChatFormatting;
  * 
  * @author Joe Goett
  */
-public class Town extends HasPlots implements Comparable<Town> {
+public class Town implements Comparable<Town> {
 
 	protected String name;
 	protected int extraBlocks = 0;
@@ -424,6 +424,51 @@ public class Town extends HasPlots implements Comparable<Town> {
 			return getFlag(flagName);
 		return plot.getFlag(flagName);
 	}
+
+    // //////////////////////////////////////
+    // Plots
+    // //////////////////////////////////////
+    protected List<ITownPlot> plots = new ArrayList<ITownPlot>();
+
+    /**
+     * Adds the {@link ITownPlot}
+     * @param plot
+     */
+    public void addPlot(ITownPlot plot) {
+        plots.add(plot);
+    }
+
+    /**
+     * Removes the {@link ITownPlot}
+     * @param plot
+     */
+    public void removePlot(ITownPlot plot) {
+        plots.remove(plot);
+    }
+
+    /**
+     * Returns the list of {@link ITownPlot}
+     * @return
+     */
+    public List<ITownPlot> getPlots() {
+        return plots;
+    }
+
+    /**
+     * Gets the plot at the specified location
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public ITownPlot getPlotAtCoords(int x, int y, int z) {
+        for (ITownPlot p : plots) {
+            if (p.isBlockInsidePlot(x, y, z))
+                return p;
+        }
+        return null;
+    }
 
 	// //////////////////////////////////////
 	// Helper?

@@ -21,7 +21,7 @@ import net.minecraft.util.EnumChatFormatting;
  * 
  * @author Joe Goett
  */
-public class Resident extends HasTowns implements IPlotSelector {
+public class Resident implements IPlotSelector {
 	private String playerUUID;
 	private boolean isOnline = false;
 	private boolean isNPC = false;
@@ -224,6 +224,38 @@ public class Resident extends HasTowns implements IPlotSelector {
 	// Towns
 	// //////////////////////////////////////
 	private Town selectedTown = null;
+    protected List<Town> towns = new ArrayList<Town>();
+
+    /**
+     * Adds the {@link Town}
+     * @param town
+     */
+    public void addTown(Town town) {
+        towns.add(town);
+    }
+
+    /**
+     * Removes the {@link Town}
+     * @param town
+     */
+    public boolean removeTown(Town town) {
+        return towns.remove(town);
+    }
+
+    /**
+     * Returns the list of {@link Town}s
+     * @return
+     */
+    public List<Town> getTowns() {
+        return towns;
+    }
+
+    /**
+     * Returns whether this entity is part of the given {@link Town}
+     */
+    public boolean isPartOfTown(Town town) {
+        return towns.contains(town);
+    }
 
 	/**
 	 * Returns the Rank of the Resident at the given town
