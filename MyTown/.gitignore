@@ -22,3 +22,4 @@
 /server.log
 /server.properties
 /white-list.txt
+*.iml
