@@ -5,9 +5,9 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
-import mytown.entities.Resident;
-import mytown.entities.town.Town;
-import mytown.util.Formatter;
+import mytown.util.x_Formatter;
+import mytown.x_entities.Resident;
+import mytown.x_entities.town.Town;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
@@ -37,7 +37,7 @@ public class CmdBlocks extends CommandHandler {
 				town = res.getSelectedTown();
 			}
 
-			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.list", town.getName(), Formatter.formatTownBlocksToString(town.getTownBlocks(), true));
+			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.list", town.getName(), x_Formatter.formatTownBlocksToString(town.getTownBlocks(), true));
 		}
 
 	}

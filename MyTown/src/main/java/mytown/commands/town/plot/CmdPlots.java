@@ -4,10 +4,10 @@ import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.entities.Resident;
+import mytown.util.x_Formatter;
+import mytown.x_entities.Resident;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.Formatter;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
@@ -34,7 +34,7 @@ public class CmdPlots extends CommandBase {
 			if (res.getSelectedTown() == null)
 				throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
 			else {
-				ChatUtils.sendChat(sender, Formatter.formatTownPlotsToString(res.getSelectedTown().getPlots()));
+				ChatUtils.sendChat(sender, x_Formatter.formatTownPlotsToString(res.getSelectedTown().getPlots()));
 			}
 		}
 	}

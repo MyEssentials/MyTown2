@@ -1,141 +1,89 @@
 package mytown.util;
 
+import com.google.common.base.Joiner;
+import mytown.config.Config;
+import mytown.entities.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import mytown.entities.Rank;
-import mytown.entities.Resident;
-import mytown.entities.TownBlock;
-import mytown.entities.town.Town;
-import mytown.interfaces.ITownFlag;
-import mytown.interfaces.ITownPlot;
-import net.minecraft.util.EnumChatFormatting;
-
+/**
+ * @author Joe Goett
+ */
 public class Formatter {
+    private Formatter() {}
 
-	/**
-	 * Formats a list of ranks to a String that is then sent to the player.
-	 * 
-	 * @param ranks
-	 * @return
-	 */
-	public static String formatRanksToString(List<Rank> ranks) {
-		EnumChatFormatting color;
-		String res = null;
-		for (Rank r : ranks) {
-			if (r.getName().equals("Resident")) {
-				color = EnumChatFormatting.RED;
-			} else if (Constants.DEFAULT_RANK_VALUES.containsKey(r.getName())) {
-				color = EnumChatFormatting.GREEN;
-			} else {
-				color = EnumChatFormatting.YELLOW;
-			}
-			if (res == null) {
-				res = color + r.getName();
-			} else {
-				res += EnumChatFormatting.WHITE + ", " + color + r.getName();
-			}
-		}
-		if (ranks.size() == 0) {
-			res = EnumChatFormatting.RED + "NONE";
-		}
+    public static String formatBlockInfo(Block block) {
+        return String.format(Config.blockInfoFormat, block.getTown().getName(), block.getDim(), block.getCoordString());
+    }
 
-		return res;
-	}
+    public static String formatNationInfo(Nation nation) {
+        return String.format(Config.nationInfoFormat, nation.getName());
+    }
 
-	/**
-	 * Formats a list of resident in a town to a String that is then sent to the player.
-	 * 
-	 * @param residents
-	 * @param t
-	 * @return
-	 */
-	public static String formatResidentsToString(List<Resident> residents, Town t) {
-		String res = null;
-		for (Resident r : residents)
-			if (res == null) {
-				res = EnumChatFormatting.WHITE + r.getUUID() + EnumChatFormatting.GOLD + " (" + EnumChatFormatting.GREEN + r.getTownRank(t).getName() + EnumChatFormatting.GOLD + ")";
-			} else {
-				res += ", " + EnumChatFormatting.WHITE + r.getUUID() + EnumChatFormatting.GOLD + " (" + EnumChatFormatting.GREEN + r.getTownRank(t).getName() + EnumChatFormatting.GOLD + ")";
-			}
-		if (residents.size() == 0) {
-			res = EnumChatFormatting.RED + "NONE";
-		}
-		return res;
-	}
+    public static String formatPlotInfo(Plot plot) {
+        return String.format(Config.plotInfoFormat, plot.getName(), plot.getTown().getName(), plot.getDim(), plot.getStartCoordString(), plot.getEndCoordString());
+    }
 
-	/**
-	 * Formats a list of town blocks to a String that is then sent to the player.
-	 * 
-	 * @param blocks
-	 * @param chunkCoords
-	 * @return
-	 */
-	public static String formatTownBlocksToString(List<TownBlock> blocks, boolean chunkCoords) {
-		String res = null;
-		for (TownBlock block : blocks) {
-			String toBeAdded;
-			if (chunkCoords) {
-				toBeAdded = "(" + block.getX() + ", " + block.getZ() + ")";
-			} else {
-				toBeAdded = "(" + (block.getX() * 16) + ", " + (block.getZ() * 16) + ")";
-			}
+    public static String formatRankInfo(Rank rank) {
+        return String.format(Config.rankInfoFormat, rank.getName(), rank.getPermissionsString());
+    }
 
-			if (res == null) {
-				res = toBeAdded;
-			} else {
-				res += " | " + toBeAdded;
-			}
-		}
-		return res;
-	}
+    public static String formatResidentInfo(Resident resident) {
+        return String.format(Config.residentInfoFormat, resident.getPlayerName());
+    }
 
-	/**
-	 * Formats a list of plots to a String that is then sent to the player.
-	 * 
-	 * @param plots
-	 * @return
-	 */
-	public static String formatTownPlotsToString(List<ITownPlot> plots) {
-		String res = " "; // Adding a space since minecraft likes to mess with formatting -_-
-		for (ITownPlot plot : plots) {
-			String toBeAdded = "";
-			if (!res.equals(" ")) {
-				toBeAdded = "\n";
-			}
+    public static String formatTownInfo(Town town) { // TODO Show spawn/home-block location?
+        List<String> residentNames = getResidentNameList(town.getResidents());
+        List<String> rankNames = getRankNameList(town.getRanks());
+        return String.format(Config.townInfoFormat, town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getPlots().size(), Joiner.on(", ").join(residentNames), Joiner.on(", ").join(rankNames));
+    }
 
-			toBeAdded += "Dim:" + plot.getDim();
-			toBeAdded += ", From [" + plot.getStartX();
-			toBeAdded += ", " + plot.getStartY();
-			toBeAdded += ", " + plot.getStartZ();
-			toBeAdded += "] to [" + plot.getEndX();
-			toBeAdded += ", " + plot.getEndY();
-			toBeAdded += ", " + plot.getEndZ();
-			toBeAdded += "], Owner: " + plot.getOwner().getUUID();
-			res += toBeAdded;
-		}
-		return res;
-	}
+    public static String formatMap(Resident res, int cx, int cz) {
+        int heightRad = 4;
+        int widthRad = 9;
+        StringBuilder sb = new StringBuilder();
+        String c;
 
-	/**
-	 * Formats a list of flags to a String that is then sent to the player.
-	 * 
-	 * @param flags
-	 * @return
-	 */
-	public static String formatFlagsToString(List<ITownFlag> flags) {
-		String res = " "; // Adding a space since minecraft likes to mess with formatting -_-
-		for (ITownFlag flag : flags) {
-			String toBeAdded = "";
-			if (!res.equals(" ")) {
-				toBeAdded = "\n";
-			}
+        sb.append("---------- Town Map ----------");
+        sb.setLength(0);
+        for (int z = cz - heightRad; z <= cz + heightRad; z++) {
+            sb.setLength(0);
+            for (int x = cx - widthRad; x <= cx + widthRad; x++) {
+                Block b = null; // TODO Get the block from the DB
 
-			toBeAdded += EnumChatFormatting.YELLOW + flag.getName();
-			toBeAdded += EnumChatFormatting.GREEN + " (" + EnumChatFormatting.RED + flag.getValue() + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.WHITE;
-			toBeAdded += ": " + flag.getLocalizedDescription();
-			res += toBeAdded;
-		}
+                boolean mid = z == cz && x == cx;
+                boolean isTown = b != null && b.getTown() != null;
+                boolean ownTown = isTown && res.hasTown(b.getTown());
 
-		return res;
-	}
+                if (mid) {
+                    c = ownTown ? "§a" : isTown ? "§c" : "§f";
+                } else {
+                    c = ownTown ? "§2" : isTown ? "§4" : "§7";
+                }
+
+                c += isTown ? "O" : "_";
+                sb.append(c);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private static List<String> getResidentNameList(Collection<Resident> residents) {
+        List<String> residentNames = new ArrayList<String>(residents.size());
+        for (Resident res : residents) {
+            residentNames.add(res.getPlayerName());
+        }
+        return residentNames;
+    }
+
+    private static List<String> getRankNameList(Collection<Rank> ranks) {
+        List<String> rankNames = new ArrayList<String>(ranks.size());
+        for (Rank rank : ranks) {
+            rankNames.add(rank.getName());
+        }
+        return rankNames;
+    }
 }

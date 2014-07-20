@@ -1,170 +1,55 @@
 package mytown.entities;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import mytown.entities.interfaces.IHasTowns;
 
-import mytown.entities.town.Town;
-import net.minecraft.util.EnumChatFormatting;
+import java.util.Collection;
 
 /**
- * Defines a Nation
- * 
  * @author Joe Goett
  */
-public class Nation {
-	public enum Rank {
-		None, Town, Capital;
+public class Nation implements IHasTowns, Comparable<Nation> {
+    private String name;
 
-		/**
-		 * Gets the rank based on [N, T, C]
-		 */
-		public static Rank parse(String rank) {
-			for (Rank type : Rank.values()) {
-				if (type.toString().toLowerCase().startsWith(rank.toLowerCase()))
-					return type;
-			}
-			return Rank.None;
-		}
+    public String getName() {
+        return name;
+    }
 
-		@Override
-		public String toString() {
-			return super.toString().substring(0, 1);
-		}
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	private String name;
-	private int extraBlocksPerTown;
+    @Override
+    public String toString() {
+        return String.format("Nation: {Name: %s}", name);
+    }
 
-	/**
-	 * Creates a Nation with the given name and extraBlocksPerTown
-	 * 
-	 * @param name
-	 * @param extraBlocksPerTown
-	 */
-	public Nation(String name, int extraBlocksPerTown) {
-		this.name = name;
-		this.extraBlocksPerTown = extraBlocksPerTown;
-	}
+    /* ----- IHasTowns ----- */ // TODO Add Towns to Nation
+    public void addTown(Town town) {
+    }
 
-	/**
-	 * Creates a Nation with the given name
-	 * 
-	 * @param name
-	 */
-	public Nation(String name) {
-		this(name, 0);
-	}
+    public void removeTown(Town town) {
+    }
 
-	/**
-	 * Returns the name of the nation
-	 * 
-	 * @return
-	 */
-	public String getName() {
-		return name;
-	}
+    public boolean hasTown(Town town) {
+        return false;
+    }
 
-	/**
-	 * Sets the name of the Nation
-	 * 
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Collection<Town> getTowns() {
+        return null;
+    }
 
-	/**
-	 * Returns the number of extra blocks each town receives
-	 * 
-	 * @return
-	 */
-	public int getExtraBlocksPerTown() {
-		return extraBlocksPerTown;
-	}
+    /* ----- Comparable ----- */
+    @Override
+    public int compareTo(Nation n) { // TODO Flesh this out some more?
+        int thisNumberOfTowns = getTowns().size(),
+                thatNumberOfTowns = n.getTowns().size();
+        if (thisNumberOfTowns > thatNumberOfTowns)
+            return -1;
+        else if (thisNumberOfTowns == thatNumberOfTowns)
+            return 0;
+        else if (thisNumberOfTowns < thatNumberOfTowns)
+            return 1;
 
-	/**
-	 * Sets the number of extra blocks each town gets per new town
-	 * 
-	 * @param extra
-	 */
-	public void setExtraBlocksPerTown(int extra) {
-		extraBlocksPerTown = extra;
-	}
-
-	// //////////////////////////////////////
-	// Towns
-	// //////////////////////////////////////
-	private Map<Town, Rank> towns = new WeakHashMap<Town, Rank>();
-
-	/**
-	 * Returns the towns associated with this Nation
-	 * 
-	 * @return
-	 */
-	public Set<Town> getTowns() {
-		return towns.keySet();
-	}
-
-	/**
-	 * Returns the Rank of the Town
-	 * 
-	 * @param town
-	 * @return
-	 */
-	public Nation.Rank getTownRank(Town town) {
-		if (hasTown(town))
-			return towns.get(town);
-		else
-			return Rank.None;
-	}
-
-	/**
-	 * Adds a Town with the given Rank
-	 * 
-	 * @param town
-	 * @param rank
-	 */
-	public void addTown(Town town, Rank rank) {
-        if (town == null) throw new NullPointerException("Town can not be null");
-        if (rank == null) throw new NullPointerException("Rank can not be null");
-		towns.put(town, rank);
-	}
-
-	/**
-	 * Checks if the Town is part of this Nation
-	 * 
-	 * @param town
-	 * @return
-	 */
-	public boolean hasTown(Town town) {
-		return towns.containsKey(town);
-	}
-
-	/**
-	 * Promotes a Town to the given Rank
-	 * 
-	 * @param town
-	 * @param rank
-	 */
-	public void setTownRank(Town town, Rank rank) {
-		if (!hasTown(town))
-			return; // TODO Log/Throw Exception
-		addTown(town, rank);
-	}
-
-	/**
-	 * Removes the given Town
-	 * 
-	 * @param town
-	 */
-	public void removeTown(Town town) {
-		towns.remove(town);
-	}
-
-	@Override
-	public String toString() {
-		String temp = EnumChatFormatting.RED + name;
-		return temp;
-	}
+        return -1;
+    }
 }

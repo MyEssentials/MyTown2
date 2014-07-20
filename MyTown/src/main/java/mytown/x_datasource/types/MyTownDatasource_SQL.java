@@ -1,4 +1,4 @@
-package mytown.datasource.types;
+package mytown.x_datasource.types;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,14 +11,14 @@ import java.util.List;
 
 import mytown.api.datasource.MyTownDatasource;
 import mytown.core.utils.config.ConfigProperty;
-import mytown.entities.Nation;
-import mytown.entities.Rank;
-import mytown.entities.Resident;
-import mytown.entities.TownBlock;
-import mytown.entities.TownPlot;
-import mytown.entities.flag2.TownFlag;
-import mytown.entities.town.AdminTown;
-import mytown.entities.town.Town;
+import mytown.x_entities.Nation;
+import mytown.x_entities.Rank;
+import mytown.x_entities.Resident;
+import mytown.x_entities.TownBlock;
+import mytown.x_entities.TownPlot;
+import mytown.x_entities.flag2.TownFlag;
+import mytown.x_entities.town.AdminTown;
+import mytown.x_entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
 import mytown.util.Constants;

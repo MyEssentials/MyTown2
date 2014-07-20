@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLWarning;
 
 import mytown.api.datasource.MyTownDatasource;
-import mytown.datasource.types.MyTownDatasource_SQL;
+import mytown.x_datasource.types.MyTownDatasource_SQL;
 import mytown.proxies.DatasourceProxy;
 import cpw.mods.fml.common.ICrashCallable;
 

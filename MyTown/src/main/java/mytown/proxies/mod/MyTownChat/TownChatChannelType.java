@@ -6,7 +6,7 @@ import java.util.List;
 import mytown.MyTown;
 import mytown.chat.api.IChannelType;
 import mytown.chat.channels.Channel;
-import mytown.entities.Resident;
+import mytown.x_entities.Resident;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.ICommandSender;
 

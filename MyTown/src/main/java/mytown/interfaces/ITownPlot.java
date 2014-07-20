@@ -2,9 +2,9 @@ package mytown.interfaces;
 
 import java.util.List;
 
-import mytown.entities.Resident;
-import mytown.entities.TownBlock;
-import mytown.entities.town.Town;
+import mytown.x_entities.Resident;
+import mytown.x_entities.TownBlock;
+import mytown.x_entities.town.Town;
 
 /**
  * Interface for plots.

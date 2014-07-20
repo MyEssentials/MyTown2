@@ -1,9 +1,9 @@
-package mytown.entities;
+package mytown.x_entities;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mytown.entities.town.Town;
+import mytown.x_entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
 import net.minecraft.util.EnumChatFormatting;

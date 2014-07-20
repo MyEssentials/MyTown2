@@ -1,10 +1,10 @@
-package mytown.datasource.impl;
+package mytown.x_datasource.impl;
 
 import java.sql.DriverManager;
 import java.util.Properties;
 
 import mytown.core.utils.config.ConfigProperty;
-import mytown.datasource.types.MyTownDatasource_SQL;
+import mytown.x_datasource.types.MyTownDatasource_SQL;
 
 //TODO Test
 //TODO Add comments

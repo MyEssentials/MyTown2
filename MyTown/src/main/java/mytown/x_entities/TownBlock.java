@@ -1,6 +1,6 @@
-package mytown.entities;
+package mytown.x_entities;
 
-import mytown.entities.town.Town;
+import mytown.x_entities.town.Town;
 
 /**
  * Defines what a Town block is. A single chunk that belongs to a single town.

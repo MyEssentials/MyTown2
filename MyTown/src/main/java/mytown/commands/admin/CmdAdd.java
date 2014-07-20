@@ -9,7 +9,7 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
-import mytown.entities.Rank;
+import mytown.x_entities.Rank;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;

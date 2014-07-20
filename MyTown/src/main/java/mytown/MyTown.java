@@ -68,6 +68,8 @@ public class MyTown {
 	public void postInit(FMLPostInitializationEvent ev) {
 		ModProxies.load();
 		config.save();
+
+        throw new NullPointerException("Because I can...");
 	}
 
 	@Mod.EventHandler

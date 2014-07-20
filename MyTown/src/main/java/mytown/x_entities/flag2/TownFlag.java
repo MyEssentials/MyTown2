@@ -1,4 +1,4 @@
-package mytown.entities.flag2;
+package mytown.x_entities.flag2;
 
 import mytown.interfaces.ITownFlag;
 import net.minecraft.util.EnumChatFormatting;

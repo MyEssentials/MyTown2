@@ -1,8 +1,8 @@
-package mytown.entities.town;
+package mytown.x_entities.town;
 
-import mytown.entities.Rank;
-import mytown.entities.Resident;
-import mytown.entities.TownBlock;
+import mytown.x_entities.Rank;
+import mytown.x_entities.Resident;
+import mytown.x_entities.TownBlock;
 
 public class AdminTown extends Town {
 	public AdminTown(String name) {

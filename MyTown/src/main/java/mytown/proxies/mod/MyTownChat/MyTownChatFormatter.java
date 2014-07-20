@@ -1,8 +1,8 @@
 package mytown.proxies.mod.MyTownChat;
 
 import mytown.chat.api.IChatFormatter;
-import mytown.entities.Resident;
-import mytown.entities.town.Town;
+import mytown.x_entities.Resident;
+import mytown.x_entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;

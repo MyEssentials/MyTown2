@@ -1,15 +1,14 @@
-package mytown.entities.town;
+package mytown.x_entities.town;
 
 import java.util.*;
 
 import mytown.api.datasource.MyTownDatasource;
-import mytown.entities.Nation;
-import mytown.entities.Rank;
-import mytown.entities.Resident;
-import mytown.entities.TownBlock;
+import mytown.x_entities.Nation;
+import mytown.x_entities.Rank;
+import mytown.x_entities.Resident;
+import mytown.x_entities.TownBlock;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
-import mytown.interfaces.has.HasPlots;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -530,8 +529,7 @@ public class Town implements Comparable<Town> {
 	}
 
 	@Override
-	public int compareTo(Town t) { // TODO Flesh this out more for ranking
-									// towns?
+	public int compareTo(Town t) { // TODO Flesh this out more for ranking towns?
 		int thisNumberOfResidents = residents.size(), thatNumberOfResidents = t.getResidents().size();
 		if (thisNumberOfResidents > thatNumberOfResidents)
 			return -1;

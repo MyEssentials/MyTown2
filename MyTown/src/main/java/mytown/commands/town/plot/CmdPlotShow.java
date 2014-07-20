@@ -4,7 +4,7 @@ import mytown.api.datasource.MyTownDatasource;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.entities.town.Town;
+import mytown.x_entities.town.Town;
 import mytown.handlers.VisualsTickHandler;
 import mytown.interfaces.ITownPlot;
 import mytown.proxies.DatasourceProxy;

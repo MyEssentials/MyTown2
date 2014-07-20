@@ -6,9 +6,9 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
-import mytown.entities.town.Town;
+import mytown.util.x_Formatter;
+import mytown.x_entities.town.Town;
 import mytown.proxies.DatasourceProxy;
-import mytown.util.Formatter;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
@@ -39,7 +39,7 @@ public class CmdRanks extends CommandHandler {
 					throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
 			}
 
-			String jupiter = Formatter.formatRanksToString(temp.getRanks());
+			String jupiter = x_Formatter.formatRanksToString(temp.getRanks());
 			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.ranks", jupiter);
 
 		}

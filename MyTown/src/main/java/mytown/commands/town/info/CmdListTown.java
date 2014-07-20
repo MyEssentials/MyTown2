@@ -6,8 +6,8 @@ import java.util.List;
 
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.entities.comparator.TownComparator;
-import mytown.entities.town.Town;
+import mytown.x_entities.comparator.TownComparator;
+import mytown.x_entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.IChatComponent;

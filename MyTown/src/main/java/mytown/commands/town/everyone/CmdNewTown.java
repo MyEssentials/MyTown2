@@ -2,13 +2,13 @@ package mytown.commands.town.everyone;
 
 import mytown.MyTown;
 import mytown.api.datasource.MyTownDatasource;
-import mytown.api.events.TownEvent.TownCreatedEvent;
+import mytown.api.x_events.TownEvent.TownCreatedEvent;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.entities.Resident;
-import mytown.entities.TownBlock;
-import mytown.entities.flag2.TownFlag;
-import mytown.entities.town.Town;
+import mytown.x_entities.Resident;
+import mytown.x_entities.TownBlock;
+import mytown.x_entities.flag2.TownFlag;
+import mytown.x_entities.town.Town;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.CommandException;

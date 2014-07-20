@@ -8,8 +8,8 @@ import mytown.api.datasource.MyTownDatasource;
 import mytown.config.Config;
 import mytown.core.utils.Log;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.datasource.impl.MyTownDatasource_mysql;
-import mytown.datasource.impl.MyTownDatasource_sqlite;
+import mytown.x_datasource.impl.MyTownDatasource_mysql;
+import mytown.x_datasource.impl.MyTownDatasource_sqlite;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.event.FMLInterModComms;
 
@@ -47,7 +47,7 @@ public class DatasourceProxy {
 		}
 		try {
 			DatasourceProxy.datasource = (MyTownDatasource) DatasourceProxy.types.get(Config.dbType.toLowerCase()).newInstance();
-			DatasourceProxy.datasource.configure(config, DatasourceProxy.log);
+			DatasourceProxy.datasource.configure(DatasourceProxy.log);
 			ConfigProcessor.load(config, datasource.getClass(), datasource);
 			config.save();
 			if (!DatasourceProxy.datasource.connect()) {

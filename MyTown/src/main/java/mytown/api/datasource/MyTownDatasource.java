@@ -7,17 +7,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import mytown.core.utils.Log;
-import mytown.entities.Nation;
-import mytown.entities.Rank;
-import mytown.entities.Resident;
-import mytown.entities.TownBlock;
-import mytown.entities.town.AdminTown;
-import mytown.entities.town.Town;
+import mytown.x_entities.Nation;
+import mytown.x_entities.Rank;
+import mytown.x_entities.Resident;
+import mytown.x_entities.TownBlock;
+import mytown.x_entities.town.AdminTown;
+import mytown.x_entities.town.Town;
 import mytown.interfaces.ITownFlag;
 import mytown.interfaces.ITownPlot;
 import mytown.util.Constants;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.config.Configuration;
 
 // TODO Datasource pool?
 // TODO More/better error reporting and logging
@@ -29,8 +28,6 @@ import net.minecraftforge.common.config.Configuration;
  * @author Joe Goett
  */
 public abstract class MyTownDatasource {
-	protected String configCat = "datasource";
-
 	protected Log log;
 	protected ConcurrentMap<String, Town> towns;
 	protected ConcurrentMap<String, Resident> residents;
@@ -46,7 +43,7 @@ public abstract class MyTownDatasource {
 	 */
 	public abstract boolean connect() throws Exception;
 
-	public void configure(Configuration config, Log log) {
+	public void configure(Log log) {
 		this.log = log;
 		towns = new ConcurrentHashMap<String, Town>();
 		residents = new ConcurrentHashMap<String, Resident>();
