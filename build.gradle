@@ -23,7 +23,7 @@ ext.configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
-subprojects {
+allprojects {
     apply plugin: "forge"
 
     version = "${config.minecraft_version}-${config.mod_version}.${config.build_number}"
