@@ -109,34 +109,6 @@ public class Log {
 	public void trace(String msg, Object... args) {
 		log(Level.TRACE, msg, args);
 	}
-	
-//	public void finest(String msg, Object... args) {
-//		log(Level.FINEST, msg, args);
-//	}
-//
-//	public void finer(String msg, Object... args) {
-//		log(Level.FINER, msg, args);
-//	}
-//
-//	public void fine(String msg, Object... args) {
-//		log(Level.FINE, msg, args);
-//	}
-//
-//	public void config(String msg, Object... args) {
-//		log(Level.CONFIG, msg, args);
-//	}
-//
-//	public void info(String msg, Object... args) {
-//		log(Level.INFO, msg, args);
-//	}
-//
-//	public void warning(String msg, Object... args) {
-//		log(Level.WARNING, msg, args);
-//	}
-//
-//	public void severe(String msg, Object... args) {
-//		log(Level.SEVERE, msg, args);
-//	}
 
 	/**
 	 * Helper method to create a child of this logger
