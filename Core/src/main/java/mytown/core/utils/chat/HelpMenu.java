@@ -12,6 +12,10 @@ public class HelpMenu {
 	private int numberOfPages = 0;
 	private String name;
 	private String[] lines;
+
+    public HelpMenu(String name, String msg) {
+        this(name, msg.split("\n"));
+    }
 	
 	public HelpMenu(String name, String...lines) {
 		this.name = name;
@@ -48,10 +52,10 @@ public class HelpMenu {
 	public void send(ICommandSender sender, int page) {
 		if (page < 1) page = 1;
 		if (page > numberOfPages) page = numberOfPages;
-		int start = maxLines*(page-1);
+		int start = getMaxLines()*(page-1);
 		
 		sender.addChatMessage(new ChatComponentText(String.format("---------- %s Help (%s/%s) ----------", WordUtils.capitalizeFully(name), page, numberOfPages)));
-		for (int i=0; start+i<lines.length && i<maxLines; i++) {
+		for (int i=0; start+i<lines.length && i<getMaxLines(); i++) {
 			sender.addChatMessage(new ChatComponentText(lines[start+i]));
 		}
 	}
