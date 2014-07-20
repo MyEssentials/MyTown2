@@ -30,8 +30,6 @@ subprojects {
     group = config.group
     archivesBaseName = config.archivesBaseName
 
-    libsDirName = "../../Jars/" // This is the location the built jars should end up
-
     minecraft {
         version = "${config.minecraft_version}-${config.forge_version}"
 
@@ -48,5 +46,3 @@ subprojects {
         }
     }
 }
-
-apply from: "vim.gradle"
