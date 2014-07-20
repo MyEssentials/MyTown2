@@ -5,7 +5,6 @@ import java.util.List;
 
 import cpw.mods.fml.common.Loader;
 import mytown.MyTown;
-import mytown.proxies.mod.MyTownChat.MyTownChatModProxy;
 
 public class ModProxies {
 	private static List<ModProxy> proxies = new ArrayList<ModProxy>();
@@ -33,7 +32,6 @@ public class ModProxies {
 	 * Adds all the {@link ModProxy}'s to the list
 	 */
 	public static void addProxies() {
-		ModProxies.addProxy(new MyTownChatModProxy());
 	}
 
 	/**
