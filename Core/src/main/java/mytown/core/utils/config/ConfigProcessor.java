@@ -89,6 +89,9 @@ public class ConfigProcessor {
 		try {
 			f.setAccessible(true);
 			Object defaultValue = f.get(obj);
+            if (defaultValue != null && comment != null && !comment.isEmpty()) { // Display the default value in the comment! :D
+                comment += "\nDefault: " + defaultValue.toString();
+            }
 			switch (type) {
 				case INTEGER:
 					if (f.getType().isArray()) {
