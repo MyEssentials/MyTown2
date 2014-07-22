@@ -61,14 +61,15 @@ public class Localization {
 
 		String line;
 		while ((line = br.readLine()) != null) {
-			if (line.startsWith("#") || line.trim().isEmpty()) {
+            line = line.trim(); // Trim it in-case there is spaces before the actual key-value pairs
+			if (line.startsWith("#") || line.isEmpty()) {
 				continue; // Ignore comments and empty lines
 			}
 			String[] entry = line.split("=");
 			if (entry.length < 2) {
 				continue; // Ignore entries that are not formatted correctly (maybe log later)
 			}
-			localizations.put(entry[0], entry[1]);
+			localizations.put(entry[0].trim(), entry[1].trim());
 		}
 
 		br.close();
@@ -93,4 +94,8 @@ public class Localization {
 			return getLocalizationFromKey(key);
 
 	}
+
+    public Map<String, String> getLocalizationMap() {
+        return localizations;
+    }
 }
