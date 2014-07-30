@@ -34,9 +34,9 @@ public class ConfigProcessor {
 	 * @param c
 	 */
 	public static void load(Configuration config, Class<?> c, Object obj) {
-		getLog().info("Class: %s", c.getName());
+		getLog().debug("Loading Class: %s", c.getName());
 		for (Field f : c.getDeclaredFields()) {
-			getLog().info("- Field: %s", f.getName());
+			getLog().debug("- Field: %s", f.getName());
 			ConfigProperty propAnnot = f.getAnnotation(ConfigProperty.class);
 			if (propAnnot == null)
 				return;
@@ -64,7 +64,9 @@ public class ConfigProcessor {
 	 * @param c
 	 */
 	public static void save(Configuration config, Class<?> c, Object obj) {
+        getLog().debug("Saving Class: %s", c.getName());
 		for (Field f : c.getFields()) {
+            getLog().debug("- Field: %s", f.getName());
 			ConfigProperty propAnnot = f.getAnnotation(ConfigProperty.class);
 			if (propAnnot == null)
 				return;
@@ -90,7 +92,7 @@ public class ConfigProcessor {
 			f.setAccessible(true);
 			Object defaultValue = f.get(obj);
             if (defaultValue != null && comment != null && !comment.isEmpty()) { // Display the default value in the comment! :D
-                comment += "\nDefault: " + defaultValue.toString();
+                //comment += "\nDefault: " + defaultValue.toString();
             }
 			switch (type) {
 				case INTEGER:

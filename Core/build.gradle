@@ -1,4 +1,5 @@
 archivesBaseName = archivesBaseName + "-Core"
+
 dependencies {
     compile "com.esotericsoftware.reflectasm:reflectasm:1.09"
 }

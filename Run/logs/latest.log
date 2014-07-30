@@ -1,0 +1,29 @@
+[21:54:03] [main/INFO]: Setting user: legobear154
+[21:54:04] [Client thread/INFO]: LWJGL Version: 2.9.1
+[21:54:05] [Client thread/ERROR]: Couldn't initialize twitch stream
+[21:54:10] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:MyTown 2, FMLFileResourcePack:MyTownCore
+[21:54:11] [Sound Library Loader/INFO]: Sound engine started
+[21:54:12] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[21:54:12] [Client thread/INFO]: Created: 256x256 textures/items-atlas
+[21:54:13] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:MyTown 2, FMLFileResourcePack:MyTownCore
+[21:54:13] [Client thread/INFO]: Created: 256x256 textures/items-atlas
+[21:54:13] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[21:54:14] [Sound Library Loader/INFO]: Sound engine started
+[21:54:17] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
+[21:54:17] [Server thread/INFO]: Generating keypair
+[21:54:17] [Server thread/INFO]: Preparing start region for level 0
+[21:54:18] [Server thread/INFO]: Preparing spawn area: 58%
+[21:54:20] [Server thread/INFO]: Changing view distance to 12, from 10
+[21:54:20] [Server thread/INFO]: legobear154[local:E:5b5d4442] logged in with entity id 391 at (194.5, 67.0, 251.5)
+[21:54:20] [Server thread/INFO]: legobear154 joined the game
+[21:54:21] [Server thread/INFO]: Saving and pausing game...
+[21:54:21] [Server thread/INFO]: Saving chunks for level 'Test'/Overworld
+[21:54:21] [Server thread/INFO]: Saving chunks for level 'Test'/Nether
+[21:54:21] [Server thread/INFO]: Saving chunks for level 'Test'/The End
+[21:54:29] [Server thread/INFO]: Stopping server
+[21:54:29] [Server thread/INFO]: Saving players
+[21:54:29] [Server thread/INFO]: Saving worlds
+[21:54:29] [Server thread/INFO]: Saving chunks for level 'Test'/Overworld
+[21:54:29] [Server thread/INFO]: Saving chunks for level 'Test'/Nether
+[21:54:29] [Server thread/INFO]: Saving chunks for level 'Test'/The End
+[21:54:30] [Client thread/INFO]: Stopping!

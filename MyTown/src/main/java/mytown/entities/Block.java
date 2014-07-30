@@ -15,14 +15,13 @@ public class Block implements IHasPlots {
     private Town town;
     private String key;
 
-    /* TODO Constructors...
     public Block(int dim, int x, int z, Town town) {
         this.dim = dim;
         this.x = x;
         this.z = z;
         this.town = town;
         updateKey();
-    }*/
+    }
 
     public int getDim() {
         return dim;

@@ -10,6 +10,10 @@ import java.util.Collection;
 public class Nation implements IHasTowns, Comparable<Nation> {
     private String name;
 
+    public Nation(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

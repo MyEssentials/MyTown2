@@ -73,16 +73,12 @@ public class CommandUtils {
 		CommandUtils.registerCommand(command, true);
 	}
 
-	public static boolean doesStringStartWith(String str1, String str2) {
-		return str2.regionMatches(true, 0, str1, 0, str1.length());
-	}
-
 	public static List<String> getListOfStringsMatchingLastWord(String[] strings1, String... strings2) {
 		String s1 = strings1[strings1.length - 1];
 		ArrayList<String> arraylist = new ArrayList<String>();
 		for (String str : strings2) {
 			String s2 = str;
-			if (CommandUtils.doesStringStartWith(s1, s2)) {
+			if (s2.startsWith(s1)) {
 				arraylist.add(s2);
 			}
 		}

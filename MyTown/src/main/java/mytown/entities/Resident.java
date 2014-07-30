@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,9 +15,37 @@ import java.util.UUID;
  * @author Joe Goett
  */
 public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
+    private WeakReference<EntityPlayer> playerRef;
     private UUID playerUUID;
     private String playerName; // This is only for display purposes when the player is offline
-    private WeakReference<EntityPlayer> playerRef;
+    private Date joinDate;
+    private Date lastOnline;
+
+    public Resident(EntityPlayer pl) {
+        setPlayer(pl);
+        this.joinDate = new Date();
+        this.lastOnline = joinDate;
+    }
+
+    public Resident(String uuid) {
+        setUUID(uuid);
+        this.joinDate = new Date();
+        this.lastOnline = joinDate;
+    }
+
+    /**
+     * Creates a new Resident with the given uuid, playerName, joinDate, and lastOnline. Used only during datasource loading!
+     * @param uuid
+     * @param playerName
+     * @param joinDate
+     * @param lastOnline
+     */
+    public Resident(String uuid, String playerName, Date joinDate, Date lastOnline) {
+        setUUID(uuid);
+        this.playerName = playerName;
+        this.joinDate = joinDate;
+        setLastOnline(lastOnline);
+    }
 
     /**
      * Returns the EntityPlayer, or null
@@ -53,6 +82,14 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     }
 
     /**
+     * Sets the UUID from the given string
+     * @param uuid
+     */
+    public void setUUID(String uuid) {
+        setUUID(UUID.fromString(uuid));
+    }
+
+    /**
      * Returns the name of the player for display purposes. <br/>
      * NEVER rely on this to store info against. The player name can change at any point, use the UUID instead.
      * @return
@@ -62,11 +99,27 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     }
 
     /**
-     * Sets the UUID from the given string
-     * @param uuid
+     * Gets when the Resident first joined
+     * @return
      */
-    public void setUUID(String uuid) {
-        setUUID(UUID.fromString(uuid));
+    public Date getJoinDate() {
+        return joinDate;
+    }
+
+    /**
+     * Gets when the Resident was last online
+     * @return
+     */
+    public Date getLastOnline() {
+        return lastOnline;
+    }
+
+    /**
+     * Sets when the resident was last online
+     * @param date
+     */
+    public void setLastOnline(Date date) {
+        this.lastOnline = date;
     }
 
     @Override

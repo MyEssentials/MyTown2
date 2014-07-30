@@ -13,9 +13,9 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
-import mytown.handlers.MyTownEventHandler;
-import mytown.handlers.PlayerTracker;
-import mytown.handlers.VisualsTickHandler;
+import mytown.x_handlers.MyTownEventHandler;
+import mytown.x_handlers.PlayerTracker;
+import mytown.x_handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
@@ -68,8 +68,6 @@ public class MyTown {
 	public void postInit(FMLPostInitializationEvent ev) {
 		ModProxies.load();
 		config.save();
-
-        throw new NullPointerException("Because I can...");
 	}
 
 	@Mod.EventHandler

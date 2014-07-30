@@ -2,6 +2,7 @@ package mytown.entities;
 
 import com.google.common.base.Joiner;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,14 +14,14 @@ public class Rank {
     private List<String> permissions;
     private Town town;
 
-    /* TODO Constructors...
-    public Rank(String name, Town town, List<String> permissions) {
+    // TODO Constructors...
+
+    public Rank(String name, Town town) {
         this.name = name;
         this.town = town;
-        this.permissions = permissions;
+        this.permissions = new ArrayList<String>();
         updateKey();
     }
-    */
 
     public String getName() {
         return name;

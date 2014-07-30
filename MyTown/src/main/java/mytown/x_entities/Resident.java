@@ -8,7 +8,7 @@ import mytown.core.ChatUtils;
 import mytown.core.Localization;
 import mytown.x_entities.town.AdminTown;
 import mytown.x_entities.town.Town;
-import mytown.handlers.VisualsTickHandler;
+import mytown.x_handlers.VisualsTickHandler;
 import mytown.interfaces.IPlotSelector;
 
 import mytown.proxies.DatasourceProxy;

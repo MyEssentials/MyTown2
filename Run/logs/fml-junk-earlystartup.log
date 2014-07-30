@@ -1,0 +1,36 @@
+[21:48:33] [main/INFO] [GradleStart]: username: legobear154
+[21:48:33] [main/INFO] [GradleStart]: tweakClass: cpw.mods.fml.common.launcher.FMLTweaker
+[21:48:33] [main/INFO] [GradleStart]: assetIndex: 1.7.10
+[21:48:33] [main/INFO] [GradleStart]: version: 1.7
+[21:48:33] [main/INFO] [GradleStart]: Extra: [--runDir, /home/joe/.minecraft/assets]
+[21:48:33] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --username, legobear154, --tweakClass, cpw.mods.fml.common.launcher.FMLTweaker, --accessToken, {REDACTED}, --assetIndex, 1.7.10, --assetsDir, /home/joe/.gradle/caches/minecraft/assets, --version, 1.7, --runDir, /home/joe/.minecraft/assets]
+[21:48:33] [main/INFO] [LaunchWrapper]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[21:48:33] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[21:48:33] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[21:49:32] [main/INFO] [GradleStart]: username: legobear154
+[21:49:32] [main/INFO] [GradleStart]: tweakClass: cpw.mods.fml.common.launcher.FMLTweaker
+[21:49:32] [main/INFO] [GradleStart]: assetIndex: 1.7.10
+[21:49:32] [main/INFO] [GradleStart]: version: 1.7
+[21:49:32] [main/INFO] [GradleStart]: Extra: [--runDir, /home/joe/.minecraft/assets]
+[21:49:32] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --username, legobear154, --tweakClass, cpw.mods.fml.common.launcher.FMLTweaker, --accessToken, {REDACTED}, --assetIndex, 1.7.10, --assetsDir, /home/joe/.gradle/caches/minecraft/assets, --version, 1.7, --runDir, /home/joe/.minecraft/assets]
+[21:49:32] [main/INFO] [LaunchWrapper]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[21:49:32] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[21:49:32] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[21:51:41] [main/INFO] [GradleStart]: username: legobear154
+[21:51:41] [main/INFO] [GradleStart]: tweakClass: cpw.mods.fml.common.launcher.FMLTweaker
+[21:51:41] [main/INFO] [GradleStart]: assetIndex: 1.7.10
+[21:51:41] [main/INFO] [GradleStart]: version: 1.7
+[21:51:41] [main/INFO] [GradleStart]: Extra: [--runDir, /home/joe/.minecraft/assets]
+[21:51:41] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --username, legobear154, --tweakClass, cpw.mods.fml.common.launcher.FMLTweaker, --accessToken, {REDACTED}, --assetIndex, 1.7.10, --assetsDir, /home/joe/.gradle/caches/minecraft/assets, --version, 1.7, --runDir, /home/joe/.minecraft/assets]
+[21:51:41] [main/INFO] [LaunchWrapper]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[21:51:41] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[21:51:41] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[21:54:00] [main/INFO] [GradleStart]: username: legobear154
+[21:54:00] [main/INFO] [GradleStart]: tweakClass: cpw.mods.fml.common.launcher.FMLTweaker
+[21:54:00] [main/INFO] [GradleStart]: assetIndex: 1.7.10
+[21:54:00] [main/INFO] [GradleStart]: version: 1.7
+[21:54:00] [main/INFO] [GradleStart]: Extra: [--runDir, /home/joe/.minecraft/assets]
+[21:54:00] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --username, legobear154, --tweakClass, cpw.mods.fml.common.launcher.FMLTweaker, --accessToken, {REDACTED}, --assetIndex, 1.7.10, --assetsDir, /home/joe/.gradle/caches/minecraft/assets, --version, 1.7, --runDir, /home/joe/.minecraft/assets]
+[21:54:00] [main/INFO] [LaunchWrapper]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[21:54:00] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[21:54:00] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
