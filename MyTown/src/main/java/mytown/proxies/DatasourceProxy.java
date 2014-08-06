@@ -1,126 +1,118 @@
 package mytown.proxies;
 
-import java.util.Hashtable;
-import java.util.Map;
-
-import mytown.MyTown;
-import mytown.api.datasource.MyTownDatasource;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import mytown.config.Config;
 import mytown.core.utils.Log;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.x_datasource.impl.MyTownDatasource_mysql;
-import mytown.x_datasource.impl.MyTownDatasource_sqlite;
+import mytown.datasource.MyTownDatasource;
 import net.minecraftforge.common.config.Configuration;
-import cpw.mods.fml.common.event.FMLInterModComms;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Handles all of the Datasource stuffs
- * 
  * @author Joe Goett
  */
 public class DatasourceProxy {
-	private static MyTownDatasource datasource;
-	private static Map<String, Class<?>> types = new Hashtable<String, Class<?>>();
-	private static Log log = MyTown.instance.log.createChild("Datasource");
-	
-	private DatasourceProxy() {}
+    private static Map<String, Class<?>> dbTypes = new HashMap<String, Class<?>>();
+    private static MyTownDatasource datasource = null;
+    private static Log log = null;
 
-	/**
-	 * Adds the default datasource types Should be added when this class is first accessed
-	 */
-	static {
-		DatasourceProxy.types.put("mysql", MyTownDatasource_mysql.class);
-		DatasourceProxy.types.put("sqlite", MyTownDatasource_sqlite.class);
-	}
+    /**
+     * Initializes, configures, and loads the Datasource returning if successful
+     * @return True if started successful
+     */
+    public static boolean start(Configuration config) {
+        if (!dbTypes.containsKey(Config.dbType.toLowerCase())) {
+            log.error("Unknown Datasource type %s!", Config.dbType.toLowerCase());
+            return false;
+        }
 
-	/**
-	 * Starts the datasource
-	 * 
-	 * @param config
-	 * @return
-	 * @throws Exception
-	 */
-	public static boolean start(Configuration config) {
-		if (!DatasourceProxy.types.containsKey(Config.dbType.toLowerCase())) {
-			DatasourceProxy.log.fatal("Failed to find datasource type: %s", Config.dbType.toLowerCase());
-			return false;
-		}
-		try {
-			DatasourceProxy.datasource = (MyTownDatasource) DatasourceProxy.types.get(Config.dbType.toLowerCase()).newInstance();
-			DatasourceProxy.datasource.configure(DatasourceProxy.log);
-			ConfigProcessor.load(config, datasource.getClass(), datasource);
-			config.save();
-			if (!DatasourceProxy.datasource.connect()) {
-				DatasourceProxy.log.fatal("Failed to connect to datasource!");
-				return false;
-			}
+        try {
+            // Create MyTownDatasource instance
+            datasource = (MyTownDatasource) dbTypes.get(Config.dbType.toLowerCase()).newInstance();
+        } catch (Exception e) {
+            log.error("Failed to instantiate the Datasource (%s)!", e, Config.dbType.toLowerCase());
+            return false;
+        }
 
-			// Load everything
-			DatasourceProxy.datasource.loadTowns();
-			DatasourceProxy.datasource.loadResidents();
-			DatasourceProxy.datasource.loadTownFlags();
-			DatasourceProxy.datasource.loadNations();
-			DatasourceProxy.datasource.loadRanks();
-			DatasourceProxy.datasource.loadPlots();
-			DatasourceProxy.datasource.loadPlotFlags();
+        // Load config options
+        ConfigProcessor.load(config, datasource.getClass(), datasource);
 
-			// Load links
-			DatasourceProxy.datasource.loadResidentToTownLinks();
-			DatasourceProxy.datasource.loadTownToNationLinks();
-		} catch (Exception ex) {
-			DatasourceProxy.log.fatal("Failed to start the datasource.", ex);
-			return false;
-		}
-		return true;
-	}
+        // Do actual initialization
+        if (!datasource.initialize()) {
+            log.error("Failed to initialize the Datasource!");
+            return false;
+        }
 
-	/**
-	 * Saves and disconnects the datasource
-	 * 
-	 * @throws Exception
-	 */
-	public static void stop() {
-		try {
-			DatasourceProxy.datasource.save();
-			DatasourceProxy.datasource.disconnect();
-		} catch (Exception ex) {
-			DatasourceProxy.log.fatal("Failed to stop the datasource.", ex);
-		}
-	}
+        // Load everything
+        if (!datasource.loadAll()) {
+            log.error("Failed to load the Datasource!");
+            return false;
+        }
 
-	/**
-	 * Parses the given IMCMessage on behalf of the datasource
-	 * 
-	 * @param msg
-	 */
-	public static void imc(FMLInterModComms.IMCMessage msg) {
-		String[] keyParts = msg.key.split("|");
-		if (keyParts.length < 2) return;
-		
-		if (keyParts[1] == "registerType") {
-			String[] msgSplit = msg.getStringValue().split(",");
-			String datasourceName = msgSplit[0].toLowerCase();
-			String datasourceClassName = msgSplit[1];
-			
-			try {
-				DatasourceProxy.registerType(datasourceName, Class.forName(datasourceClassName));
-			} catch (ClassNotFoundException e) {
-				DatasourceProxy.log.warn("Failed to register datasource type %s from mod %s.", e, datasourceName, msg.getSender());
-			}
-		}
-	}
+        // Yay, initialized/loaded!
+        return true;
+    }
 
-	/**
-	 * Registers a Datasource type to the proxy
-	 * 
-	 * @param name
-	 * @param clazz
-	 */
-	public static void registerType(String name, Class<?> clazz) {
-		DatasourceProxy.types.put(name, clazz);
-	}
+    /**
+     * Stops the Datasource
+     * @return
+     */
+    public static boolean stop() {
+        // TODO Implement stop! xD
+        return true;
+    }
 
-	public static MyTownDatasource getDatasource() {
-		return DatasourceProxy.datasource;
-	}
+    /**
+     * Returns the MyTownDatasource instance
+     * @return
+     */
+    public static MyTownDatasource getDatasource() {
+        return datasource;
+    }
+
+    /**
+     * Sets the Log for this Proxy. Useful when writing JUnit tests that doesn't have access to the MyTown instance
+     * @param log
+     */
+    public static void setLog(Log log) {
+        DatasourceProxy.log = log;
+    }
+
+    /**
+     * Registers the type with the given name
+     * @param name Name of the type
+     * @param type The Class of the the type
+     */
+    public static void registerType(String name, Class<?> type) {
+        if (dbTypes.containsKey(name)) {
+            log.warn("Type %s already registered!", name);
+            return;
+        }
+        dbTypes.put(name, type);
+    }
+
+    /**
+     * Handles registering types over IMC
+     * @param msg
+     */
+    public static void imc(FMLInterModComms.IMCMessage msg) {
+        String[] keyParts = msg.key.split("|");
+        if (keyParts.length < 2) return;
+
+        if (keyParts[1] == "registerType") {
+            String[] msgSplit = msg.getStringValue().split(",");
+            String datasourceName = msgSplit[0].toLowerCase();
+            String datasourceClassName = msgSplit[1];
+
+            try {
+                registerType(datasourceName, Class.forName(datasourceClassName));
+            } catch (ClassNotFoundException e) {
+                log.warn("Failed to register datasource type %s from mod %s", e, datasourceName, msg.getSender());
+            }
+        }
+    }
+
+    private DatasourceProxy() {}
 }
