@@ -23,34 +23,38 @@ ext.configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
-subprojects {
-    apply plugin: "forge"
+apply plugin: "forge"
 
-    version = "${config.minecraft_version}-${config.mod_version}.${config.build_number}"
-    group = config.group
-    archivesBaseName = config.archivesBaseName
+version = "${config.minecraft_version}-${config.mod_version}.${config.build_number}"
+group = config.group
+archivesBaseName = config.archivesBaseName
 
-    dependencies {
-        testCompile "junit:junit:4.11"
+minecraft {
+    version = "${config.minecraft_version}-${config.forge_version}"
+
+    replace "@VERSION@", "${project.version}"
+}
+
+dependencies {
+    testCompile "junit:junit:4.11"
+    compile "com.esotericsoftware.reflectasm:reflectasm:1.09"
+    // Include DB Drivers as deps
+    compile "org.xerial:sqlite-jdbc:3.7.15-M1"
+    compile "mysql:mysql-connector-java:5.1.31"
+    compile project(":MyEssentials-Core")
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'mod_version':project.version, 'minecraft_version':project.minecraft.version
     }
-
-    minecraft {
-        version = "${config.minecraft_version}-${config.forge_version}"
-
-        replace "@VERSION@", "${project.version}"
-    }
-
-    processResources {
-        from(sourceSets.main.resources.srcDirs) {
-            include 'mcmod.info'
-            expand 'mod_version':project.version, 'minecraft_version':project.minecraft.version
-        }
-        from(sourceSets.main.resources.srcDirs) {
-            exclude 'mcmod.info'
-        }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
     }
 }
 
+/*
 def createRunConfig(runManager, name, mainClass, vmParams, programParams) {
     def runConfig = runManager.appendNode('configuration', ['default': 'false', 'name': name, 'type': 'Application', 'factoryName': 'Application'])
     runConfig.appendNode 'extension', ['name': 'coverage', 'enabled': 'false', 'sample_coverage': 'true', 'runner': 'idea']
@@ -70,7 +74,6 @@ def createRunConfig(runManager, name, mainClass, vmParams, programParams) {
     runConfig.appendNode 'method'
 }
 
-/*
 idea {
     workspace {
         iws.withXml { xmlFile ->
