@@ -62,28 +62,6 @@ public class CmdClaim extends CommandBase {
         getDatasource().saveBlock(block);
         res.sendMessage(MyTown.getLocal().getLocalization("mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
 
-        /*
-        ----- Old Implementation -----
-        try {
-            EntityPlayer player = (EntityPlayer) sender;
-            Resident res = getDatasource().getOrMakeResident(player);
-            Town town = res.getSelectedTown();
-
-            if (getDatasource().hasTownBlock(String.format(TownBlock.keyFormat, player.dimension, player.chunkCoordX, player.chunkCoordZ)))
-                throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
-            if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town))
-                throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.claim.farClaim"));
-
-            TownBlock block = new TownBlock(town, player.chunkCoordX, player.chunkCoordZ, player.dimension);
-            getDatasource().insertTownBlock(block);
-
-            ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName());
-        } catch (Exception e) {
-            MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
-            e.printStackTrace();
-        }
-        */
-
 	}
 
 	private boolean checkNearby(int dim, int x, int z, Town town) {

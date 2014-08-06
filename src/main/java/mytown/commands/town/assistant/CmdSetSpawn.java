@@ -47,24 +47,6 @@ public class CmdSetSpawn extends CommandBase {
         town.getSpawn().setDim(player.dimension).setPosition((float)player.posX, (float)player.posY, (float)player.posZ).setRotation(player.cameraYaw, player.cameraPitch);
         getDatasource().saveTown(town);
         ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.setspawn");
-
-        /*
-        ----- Old Implementation -----
-		EntityPlayer player = (EntityPlayer) sender;
-		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-
-		if (!town.isBlockInTown((int) player.posX, (int) player.posZ, player.dimension))
-			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()));
-
-		town.setSpawn(player.posX, player.posY, player.posZ, player.dimension);
-		try {
-			getDatasource().updateTown(town);
-			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.setspawn");
-		} catch (Exception e) {
-			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
-			e.printStackTrace();
-		}
-		*/
 	}
 
 	/**

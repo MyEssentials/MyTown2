@@ -36,27 +36,6 @@ public class CmdLeave extends CommandBase {
         for (Resident r : town.getResidents()) {
             r.sendMessage(MyTown.getLocal().getLocalization("mytown.notification.town.left", res.getPlayerName(), town.getName()));
         }
-
-        /*
-        ----- Old Implementation
-		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		Town town = res.getSelectedTown();
-		if (town == null)
-			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.partOfTown"));
-		try {
-			getDatasource().unlinkResidentFromTown(res, town);
-			// Send message to player that has left the town
-			ChatUtils.sendLocalizedChat(sender, LocalizationProxy.getLocalization(), "mytown.notification.town.left.self", town.getName());
-
-			// Send message to all that player has left the town
-			for (Resident r : town.getResidents()) {
-				r.sendLocalizedMessage(LocalizationProxy.getLocalization(), "mytown.notification.town.left", res.getUUID(), town.getName());
-			}
-		} catch (Exception e) {
-			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
-			e.printStackTrace();
-		}
-		*/
 	}
 
 	/**

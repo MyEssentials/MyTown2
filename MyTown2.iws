@@ -2,176 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="892dbcf3-b6ea-4c08-804e-cda48dbbca33" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/MyEssentials-Core" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitmodules" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.gitignore" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/build.gradle" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/logs/latest.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/api/java/forgeperms/api/ForgePermsAPI.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/api/java/forgeperms/api/IChatManager.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/api/java/forgeperms/api/IEconomyManager.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/api/java/forgeperms/api/IPermissionManager.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/ChatUtils.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/Config.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/Localization.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/MyTownCore.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/PlayerTracker.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/Assert.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/Log.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/chat/HelpMenu.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/chat/JsonMessageBuilder.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/command/CommandBase.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/command/CommandHandler.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/command/CommandUtils.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/command/Permission.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/config/ConfigProcessor.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/main/java/mytown/core/utils/config/ConfigProperty.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/test/java/mytown/core/test/LocalizationTest.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Core/src/test/resources/test.lang" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/build.gradle" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/api/java/forgeperms/api/ForgePermsAPI.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/api/java/forgeperms/api/IChatManager.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/api/java/forgeperms/api/IEconomyManager.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/api/java/forgeperms/api/IPermissionManager.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/MyTown.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/PermissionManager.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/datasource/MyTownDatasource.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/events/BlockEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/events/NationEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/events/PlotEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/events/RankEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/events/ResidentEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/events/TownEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/flag/Flag.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/package-info.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/api/x_events/TownEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/admin/CmdAdd.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/admin/CmdDelete.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/admin/CmdNewTown.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/admin/CmdRem.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/admin/CmdSafeMode.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/admin/CmdTownAdmin.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/admin/config/CmdConfig.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/admin/config/CmdConfigLoad.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/admin/config/CmdConfigSave.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/CmdTown.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/assistant/CmdSetSpawn.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/claim/CmdClaim.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/claim/CmdClaimFar.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/claim/CmdUnclaim.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/everyone/CmdLeave.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/everyone/CmdNewTown.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/everyone/CmdSelect.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/everyone/CmdSpawn.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/info/CmdBlocks.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/info/CmdInfo.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/info/CmdListTown.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/info/CmdMap.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/invite/CmdInvite.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/invite/CmdInviteAccept.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/invite/CmdInviteRefuse.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/perm/CmdPerm.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/perm/CmdPermSet.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/perm/CmdPromote.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/plot/CmdPlot.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/plot/CmdPlotMake.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/plot/CmdPlotRename.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/plot/CmdPlotShow.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/plot/CmdPlotVanish.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/plot/CmdPlots.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/plot/select/CmdPlotSelect.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/plot/select/CmdPlotSelectExpand.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/plot/select/CmdPlotSelectReset.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/rank/CmdRanks.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/rank/CmdRanksAdd.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/rank/CmdRanksPerm.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/rank/CmdRanksPermAdd.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/rank/CmdRanksPermRemove.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/commands/town/rank/CmdRanksRemove.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/config/Config.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/crash/DatasourceCrashCallable.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/datasource/MyTownDatasource.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/datasource/MyTownDatasource_SQL.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/datasource/impl/MySQLDatasource.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/datasource/impl/SQLiteDatasource.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/Block.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/Nation.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/Plot.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/Rank.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/Resident.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/Town.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/interfaces/IHasBlocks.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/interfaces/IHasPlots.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/interfaces/IHasRanks.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/interfaces/IHasResidents.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/entities/interfaces/IHasTowns.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/handlers/PlayerTracker.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/interfaces/IPlotSelector.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/interfaces/ITownFlag.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/interfaces/ITownPlot.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/proxies/DatasourceProxy.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/proxies/LocalizationProxy.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/proxies/X_DatasourceProxy.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/proxies/mod/ModProxies.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/proxies/mod/ModProxy.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/util/Constants.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/util/Formatter.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/util/x_Formatter.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_datasource/impl/MyTownDatasource_mysql.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_datasource/impl/MyTownDatasource_postgresql.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_datasource/impl/MyTownDatasource_sqlite.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_datasource/types/MyTownDatasource_SQL.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_entities/Nation.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_entities/Rank.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_entities/Resident.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_entities/TownBlock.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_entities/TownPlot.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_entities/comparator/TownComparator.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_entities/flag2/TownFlag.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_entities/town/AdminTown.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_entities/town/Town.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_handlers/MyTownEventHandler.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_handlers/PlayerTracker.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/java/mytown/x_handlers/VisualsTickHandler.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/resources/localization/en_US.lang" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/MyTown/src/main/resources/mcmod.info" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/config/MyTown/Core.cfg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/config/MyTown/MyTown.cfg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/config/MyTown/data.db" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/config/forge.cfg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/config/forgeChunkLoading.cfg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/logs/2014-07-27-1.log.gz" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/logs/2014-07-27-2.log.gz" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/logs/fml-client-1.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/logs/fml-client-2.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/logs/fml-client-3.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/logs/fml-client-latest.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/logs/fml-junk-earlystartup.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/logs/latest.log" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/options.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/DIM-1/data/villages.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/DIM-1/forcedchunks.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/DIM1/data/villages.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/DIM1/forcedchunks.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/data/Mineshaft.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/data/villages.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/forcedchunks.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/level.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/level.dat_mcr" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/level.dat_old" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/playerdata/6cb5f784-abab-39b4-a17c-038ede9d92e4.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/region/r.-1.0.mca" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/region/r.0.0.mca" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/session.lock" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Run/saves/Test/stats/6cb5f784-abab-39b4-a17c-038ede9d92e4.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/gradle/.gitignore" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/gradlew" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/gradlew.bat" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.travis.yml" afterPath="$PROJECT_DIR$/.travis.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.gradle" afterPath="$PROJECT_DIR$/settings.gradle" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/claim/CmdClaimFar.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/claim/CmdClaim.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/claim/CmdClaim.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdInfo.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdInfo.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/invite/CmdInvite.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/invite/CmdInvite.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/invite/CmdInviteRefuse.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/invite/CmdInviteRefuse.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdLeave.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdLeave.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdListTown.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdListTown.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdNewTown.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdNewTown.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPerm.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPerm.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPermSet.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPermSet.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPromote.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPromote.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanksPermRemove.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanksPermRemove.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdSelect.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdSelect.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/assistant/CmdSetSpawn.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/assistant/CmdSetSpawn.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdSpawn.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdSpawn.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/commands/town/claim/CmdUnclaim.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/commands/town/claim/CmdUnclaim.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyTown2.iws" afterPath="$PROJECT_DIR$/MyTown2.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mytown/handlers/PlayerTracker.java" afterPath="$PROJECT_DIR$/src/main/java/mytown/handlers/PlayerTracker.java" />
     </list>
     <ignored path="MyTown2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -229,18 +77,7 @@
     <favorites_list name="MyTown2" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="Formatter.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/mytown/util/Formatter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.11904762" vertical-offset="0" max-vertical-offset="756">
-              <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -1254,6 +1091,30 @@
       </map>
     </option>
   </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/main/java/mytown/handlers/PlayerTracker.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanksAdd.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanks.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanksPermRemove.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/assistant/CmdSetSpawn.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/claim/CmdClaim.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/claim/CmdUnclaim.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdLeave.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdNewTown.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdSelect.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdSpawn.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdInfo.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdListTown.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/invite/CmdInvite.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/invite/CmdInviteRefuse.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPerm.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPermSet.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPromote.java" />
+      </list>
+    </option>
+  </component>
   <component name="ModuleEditorState">
     <option name="LAST_EDITED_MODULE_NAME" />
     <option name="LAST_EDITED_TAB_NAME" />
@@ -1314,94 +1175,6 @@
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyTown2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyTown2" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyTown2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyTown2" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyTown2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyTown2" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mytown" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyTown2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyTown2" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mytown" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="util" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
     </panes>
@@ -1416,12 +1189,73 @@
     <property name="recentsLimit" value="5" />
   </component>
   <component name="RunManager">
+    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
+      <module name="" />
+      <option name="TESTING_TYPE" value="0" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Specs2RunConfiguration" factoryName="Specs2">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <method />
+    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
       <option name="SHMEM_ADDRESS" value="javadebug" />
       <option name="HOST" value="localhost" />
       <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
       <method />
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
@@ -1452,6 +1286,19 @@
       <envs />
       <method />
     </configuration>
+    <configuration default="true" type="uTestRunConfiguration" factoryName="utest">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <method />
+    </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <extension enabled="false" merge="false" name="coverage" />
       <module name="" />
@@ -1471,6 +1318,39 @@
       </option>
       <envs />
       <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="false" name="Minecraft Client" type="Application" factoryName="Application">
@@ -1541,7 +1421,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="26" width="1600" height="874" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -1559,7 +1439,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2496871" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2496871" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1601,6 +1481,250 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.11904762" vertical-offset="0" max-vertical-offset="756">
           <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.0.1179/forgeSrc-1.7.10-10.13.0.1179-sources.jar!/cpw/mods/fml/common/gameevent/PlayerEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11904762" vertical-offset="0" max-vertical-offset="900">
+          <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/handlers/PlayerTracker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.52380955" vertical-offset="0" max-vertical-offset="756">
+          <caret line="24" column="9" selection-start-line="24" selection-start-column="9" selection-end-line="24" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#onPlayerLogout#0;class#PlayerTracker#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/entities/Town.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334" vertical-offset="720" max-vertical-offset="2322">
+          <caret line="113" column="28" selection-start-line="113" selection-start-column="28" selection-end-line="113" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanksAdd.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11904762" vertical-offset="36" max-vertical-offset="1206">
+          <caret line="7" column="24" selection-start-line="7" selection-start-column="24" selection-end-line="7" selection-end-column="24" />
+          <folding>
+            <element signature="method#canCommandSenderUseCommand#0;class#CmdRanksAdd#0" expanded="true" />
+            <element signature="method#processCommand#0;class#CmdRanksAdd#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanksPerm.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11904762" vertical-offset="0" max-vertical-offset="756">
+          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanksPermAdd.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11904762" vertical-offset="0" max-vertical-offset="756">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanksRemove.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11904762" vertical-offset="0" max-vertical-offset="756">
+          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanksPermRemove.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7619048" vertical-offset="270" max-vertical-offset="1134">
+          <caret line="49" column="33" selection-start-line="49" selection-start-column="33" selection-end-line="49" selection-end-column="33" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#canCommandSenderUseCommand#0;class#CmdRanksPermRemove#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/assistant/CmdSetSpawn.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.218035" vertical-offset="0" max-vertical-offset="828">
+          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding>
+            <element signature="method#canCommandSenderUseCommand#0;class#CmdSetSpawn#0" expanded="true" />
+            <element signature="method#processCommand#0;class#CmdSetSpawn#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/claim/CmdClaim.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.66083443" vertical-offset="49" max-vertical-offset="792">
+          <caret line="62" column="8" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/claim/CmdUnclaim.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.9285714" vertical-offset="0" max-vertical-offset="900">
+          <caret line="55" column="43" selection-start-line="55" selection-start-column="43" selection-end-line="55" selection-end-column="43" />
+          <folding>
+            <element signature="method#canCommandSenderUseCommand#0;class#CmdUnclaim#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdLeave.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="648">
+          <caret line="37" column="9" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdNewTown.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.73351276" vertical-offset="85" max-vertical-offset="828">
+          <caret line="51" column="111" selection-start-line="51" selection-start-column="111" selection-end-line="51" selection-end-column="111" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdSelect.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.52380955" vertical-offset="0" max-vertical-offset="756">
+          <caret line="39" column="103" selection-start-line="39" selection-start-column="103" selection-end-line="39" selection-end-column="103" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/everyone/CmdSpawn.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7092867" vertical-offset="13" max-vertical-offset="756">
+          <caret line="41" column="9" selection-start-line="41" selection-start-column="9" selection-end-line="41" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdBlocks.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="720">
+          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
+          <folding>
+            <element signature="method#processCommand#0;class#CmdBlocks#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6666667" vertical-offset="126" max-vertical-offset="882">
+          <caret line="50" column="9" selection-start-line="50" selection-start-column="9" selection-end-line="50" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdListTown.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8095238" vertical-offset="72" max-vertical-offset="828">
+          <caret line="52" column="44" selection-start-line="52" selection-start-column="44" selection-end-line="52" selection-end-column="44" />
+          <folding>
+            <element signature="e#887#888#0" expanded="true" />
+            <element signature="e#931#932#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/info/CmdMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.26190478" vertical-offset="0" max-vertical-offset="756">
+          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+          <folding>
+            <element signature="method#processCommand#0;class#CmdMap#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/invite/CmdInviteRefuse.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0952381" vertical-offset="0" max-vertical-offset="756">
+          <caret line="12" column="30" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPerm.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0952381" vertical-offset="0" max-vertical-offset="774">
+          <caret line="15" column="30" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
+          <folding>
+            <element signature="method#processCommand#0;class#CmdPerm#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/invite/CmdInvite.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.04761905" vertical-offset="0" max-vertical-offset="918">
+          <caret line="17" column="44" selection-start-line="17" selection-start-column="44" selection-end-line="19" selection-end-column="30" />
+          <folding>
+            <element signature="method#processCommand#0;class#CmdInvite#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPermSet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0952381" vertical-offset="0" max-vertical-offset="756">
+          <caret line="16" column="30" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/perm/CmdPromote.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.16666667" vertical-offset="0" max-vertical-offset="756">
+          <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/CmdTown.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.14285715" vertical-offset="0" max-vertical-offset="756">
+          <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/rank/CmdRanks.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.14285715" vertical-offset="162" max-vertical-offset="918">
+          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#processCommand#0;class#CmdRanks#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mytown/commands/town/plot/CmdPlot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11904762" vertical-offset="0" max-vertical-offset="756">
+          <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
           <folding />
         </state>
       </provider>

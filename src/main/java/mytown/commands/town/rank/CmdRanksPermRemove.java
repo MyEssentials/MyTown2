@@ -5,6 +5,7 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
+import mytown.proxies.X_DatasourceProxy;
 import mytown.x_entities.Resident;
 import mytown.x_entities.town.Town;
 import mytown.proxies.LocalizationProxy;
@@ -21,7 +22,7 @@ public class CmdRanksPermRemove extends CommandBase {
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		super.canCommandSenderUseCommand(sender);
-		Resident res = MyTown.getDatasource().getResident(sender.getCommandSenderName());
+		Resident res = X_DatasourceProxy.getDatasource().getResident(sender.getCommandSenderName());
 
 		if (res.getSelectedTown() == null)
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
@@ -36,9 +37,9 @@ public class CmdRanksPermRemove extends CommandBase {
 		if (args.length < 2)
 			throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
 
-		Town town = MyTown.getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
+		Town town = X_DatasourceProxy.getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
 
-		if (MyTown.getDatasource().getRank(args[0], town) == null)
+		if (X_DatasourceProxy.getDatasource().getRank(args[0], town) == null)
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.rem.notexist", args[0], town.getName()));
 		if (!CommandUtils.permissionList.containsValue(args[1]))
 			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args[1]));
@@ -46,7 +47,7 @@ public class CmdRanksPermRemove extends CommandBase {
 		try {
 			// Removing permission if everything is alright
 			if (town.getRank(args[0]).removePermission(args[1])) {
-				MyTown.getDatasource().updateRank(town.getRank(args[0]));
+                X_DatasourceProxy.getDatasource().updateRank(town.getRank(args[0]));
 				ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.town.ranks.perm.remove", args[1], args[0]);
 			} else
 				throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.ranks.perm.remove.failed", args[1]));

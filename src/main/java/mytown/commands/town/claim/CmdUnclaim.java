@@ -54,27 +54,6 @@ public class CmdUnclaim extends CommandBase {
             town.setSpawn(null); // Removes the Town's spawn point if in this Block
         }
         getDatasource().deleteBlock(block);
-
-        /*
-        ----- Old Implementation -----
-		EntityPlayer player = (EntityPlayer) sender;
-		Resident res = getDatasource().getResident(sender.getCommandSenderName());
-		TownBlock block = getDatasource().getTownBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, true);
-
-		if (block == null)
-			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.notexist"));
-		try {
-			if (block.isBlockInChunk((int) block.getTown().getSpawnX(), (int) block.getTown().getSpawnZ(), block.getTown().getSpawnDim())) {
-				block.getTown().setSpawnState(false); // No longer has a spawn point
-			}
-
-			getDatasource().deleteTownBlock(block);
-			ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.notification.townblock.removed", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, res.getSelectedTown().getName());
-		} catch (Exception e) {
-			MyTown.instance.log.fatal(LocalizationProxy.getLocalization().getLocalization("mytown.databaseError"));
-			e.printStackTrace();
-		}
-         */
 	}
 
 	/**

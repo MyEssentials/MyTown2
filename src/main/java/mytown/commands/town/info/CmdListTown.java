@@ -18,9 +18,7 @@ import net.minecraft.util.IChatComponent;
 public class CmdListTown extends CommandBase {
 	private static List<Town> sortedTownCache = new ArrayList<Town>();
 	private static IChatComponent cachedTownList = null;
-	//private static String outerJSON = "{'text':'','extra':[%s]}";
-	//private static String townJSON = "{'text': '%1$s','clickEvent': {'action': 'run_command','value': '/t info %1$s'},'hoverEvent': {'action': 'show_text','value': '%2$s'}}";
-	
+
 	public CmdListTown(String name, CommandBase parent) {
 		super(name, parent);
 	}
@@ -53,23 +51,5 @@ public class CmdListTown extends CommandBase {
             }
         }
         cachedTownList = msgBuilder.build();
-
-        /*
-        ----- Old Implementaion -----
-		if (X_DatasourceProxy.getDatasource().getTowns(true).size() <= 0) return;
-		sortedTownCache.clear();
-		sortedTownCache.addAll(X_DatasourceProxy.getDatasource().getTowns(true));
-		Collections.sort(sortedTownCache, townNameComparator);
-
-		List<String> townList = new ArrayList<String>();
-		for (int i=0; i<sortedTownCache.size(); i++) {
-			Town t = sortedTownCache.get(i);
-			townList.add(String.format(townJSON, t.getName(), Joiner.on("").join(t.getInfo())));
-			if (i+1 < sortedTownCache.size()) {
-				townList.add("{'text': ', '}");
-			}
-		}
-		cachedTownList = IChatComponent.Serializer.func_150699_a(String.format(outerJSON, Joiner.on(", ").join(townList)));
-		*/
 	}
 }

@@ -13,6 +13,8 @@ import mytown.interfaces.ITownFlag;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
+// TODO Move to new Datasource
+
 @Permission("mytown.cmd.assistant.perm")
 public class CmdPerm extends CommandHandler {
 

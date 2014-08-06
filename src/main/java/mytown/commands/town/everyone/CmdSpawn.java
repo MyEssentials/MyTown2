@@ -40,17 +40,6 @@ public class CmdSpawn extends CommandBase {
                 throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.spawn.notexist", town.getName()));
             town.sendToSpawn(res);
         }
-        /*
-        ----- Old Implementation -----
-		EntityPlayer player = (EntityPlayer) sender;
-		Town town = getDatasource().getResident(sender.getCommandSenderName()).getSelectedTown();
-
-		if (!town.hasSpawn())
-			throw new CommandException(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.spawn.notexist", town.getName()));
-
-		player.dimension = town.getSpawnDim();
-		player.setPositionAndUpdate(town.getSpawnX(), town.getSpawnY(), town.getSpawnZ());
-         */
 	}
 
 	/**

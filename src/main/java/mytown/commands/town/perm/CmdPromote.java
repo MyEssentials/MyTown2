@@ -13,6 +13,8 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 
+// TODO Move to new Datasource
+
 @Permission("mytown.cmd.assistant.promote")
 public class CmdPromote extends CommandBase {
 	public CmdPromote(String name, CommandBase parent) {

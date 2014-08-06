@@ -17,6 +17,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 
+// TODO Move to new Datasource
+
 @Permission("mytown.cmd.assistant.invite")
 public class CmdInvite extends CommandHandler {
 

@@ -10,6 +10,8 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 
+// TODO Move to new Datasource
+
 @Permission("mytown.cmd.outsider.invite.refuse")
 public class CmdInviteRefuse extends CommandBase {
 

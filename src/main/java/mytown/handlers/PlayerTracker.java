@@ -6,6 +6,7 @@ import mytown.MyTown;
 import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
+import mytown.proxies.DatasourceProxy;
 
 /**
  * @author Joe Goett
@@ -15,8 +16,8 @@ public class PlayerTracker {
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent ev) {
-        MyTownDatasource ds = null; // TODO Get MyTownDatasource
-        Resident res = ds.getOrMakeResident(ev.player.getPersistentID().toString());
+        MyTownDatasource ds = DatasourceProxy.getDatasource();
+        Resident res = ds.getOrMakeResident(ev.player.getPersistentID());
         if (res != null) {
             res.setPlayer(ev.player);
         } else {
@@ -26,8 +27,8 @@ public class PlayerTracker {
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent ev) {
-        MyTownDatasource ds = null; // TODO Get MyTownDatasource
-        Resident res = ds.getResidentsMap().get(ev.player.getPersistentID().toString());
+        MyTownDatasource ds = DatasourceProxy.getDatasource();
+        Resident res = ds.getResidentsMap().get(ev.player.getPersistentID());
         if (res != null) {
             res.setPlayer(null);
         }
