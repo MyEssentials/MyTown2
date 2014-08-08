@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Joe Goett
  */
 public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Comparable<Town> {
-    private String name;
+    private String name, oldName = null;
 
     public Town(String name) {
         setName(name);
@@ -31,6 +31,26 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Renames this current Town setting oldName to the previous name. You MUST set oldName to null after saving it in the Datasource
+     * @param newName
+     */
+    public void rename(String newName) {
+        oldName = name;
+        name = newName;
+    }
+
+    public String getOldName() {
+        return oldName;
+    }
+
+    /**
+     * Resets the oldName to null. You MUST call this after a name change in the Datasource!
+     */
+    public void resetOldName() {
+        oldName = null;
     }
 
     /**
@@ -50,8 +70,17 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     private Map<Resident, Rank> residents = null;
 
+    /**
+     * Adds the Resident with the given Rank
+     * @param res
+     * @param rank
+     */
+    public void addResident(Resident res, Rank rank) {
+        residents.put(res, rank);
+    }
+
     public void addResident(Resident res) {
-        residents.put(res, defaultRank);
+        addResident(res, defaultRank);
     }
 
     public void removeResident(Resident res) {
