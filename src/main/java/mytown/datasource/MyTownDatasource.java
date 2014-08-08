@@ -131,7 +131,7 @@ public abstract class MyTownDatasource {
     /* ----- Read ----- */
 
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadBlocks() && loadRanks() && loadResidents() && loadPlots() && loadNations();
+        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations();
     }
 
     protected abstract boolean loadTowns();
@@ -183,7 +183,6 @@ public abstract class MyTownDatasource {
     public final boolean hasBlock(int dim, int x, int z) {
         return blocks.containsKey(String.format(Block.keyFormat, dim, x, z));
     }
-
 
     /**
      * Checks if the TownBlock with the given coords and dim at the town specified exists
