@@ -306,14 +306,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean saveTown(Town town) {
         try {
             if (towns.containsValue(town)) { // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=? WHERE name=?", true);
-                updateStatement.setString(1, town.getName());
-                updateStatement.setString(2, town.getOldName());
-                updateStatement.executeUpdate();
+                if (town.getOldName() != null) { // Rename Town
+                    PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=? WHERE name=?", true);
+                    updateStatement.setString(1, town.getName());
+                    updateStatement.setString(2, town.getOldName());
+                    updateStatement.executeUpdate();
 
-                // TODO Move this Town in the Map as well!
+                    // Need to move the Town in the map from the old name to the new
+                    towns.remove(town.getOldName());
+                    towns.put(town.getName(), town);
 
-                town.resetOldName();
+                    town.resetOldName();
+                }
+                // TODO Link any new Residents to the given Town
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name) VALUES(?)", true);
                 insertStatement.setString(1, town.getName());
@@ -355,7 +360,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveRank(Rank rank) {
+    public boolean saveRank(Rank rank) { // TODO Insert any new permissions to the RankPermission table
         try {
             if (ranks.containsValue(rank)) { // Update
                 // TODO Update
@@ -453,7 +458,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveNation(Nation nation) {
+    public boolean saveNation(Nation nation) { // TODO Link any new Towns to the given Nation
         try {
             if (nations.containsValue(nation)) { // Update
                 // TODO Update Nation (If needed?)
