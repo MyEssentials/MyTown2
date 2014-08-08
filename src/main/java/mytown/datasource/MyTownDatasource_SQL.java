@@ -140,7 +140,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             while(rs.next()) {
                 Town town = towns.get(rs.getString("townName"));
                 if (town == null) {
-                    log.warn("Failed to load Block (%s, %s, %s) due to missing Town (%s)", rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), rs.getString("townName"));
+                    log.error("Failed to load Block (%s, %s, %s) due to missing Town (%s)", rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), rs.getString("townName"));
                     continue; // TODO Should I just return out?
                 }
                 Block block = new Block(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), town);
@@ -164,7 +164,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 while (rs.next()) {
                     Town town = towns.get(rs.getString("townName"));
                     if (town == null) {
-                        log.warn("Failed to load Rank (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
+                        log.error("Failed to load Rank (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
                         continue; // TODO Should I just return out?
                     }
                     Rank rank = new Rank(rs.getString("name"), town);
@@ -257,12 +257,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 Resident res = residents.get(rs.getString("resident"));
                 Town town = towns.get(rs.getString("town"));
                 if (res == null || town == null) {
-                    log.warn("Failed to link Resident %s to Town %s. Skipping!", rs.getString("resident"), rs.getString("town"));
+                    log.error("Failed to link Resident %s to Town %s. Skipping!", rs.getString("resident"), rs.getString("town"));
                     continue;
                 }
                 Rank rank = ranks.get(String.format("%s;%s", town.getName(), rs.getString("rank")));
                 if (rank == null) {
-                    log.warn("Failed to link Resident %s to Town %s because of unknown Rank %s. Skipping!", rs.getString("resident"), rs.getString("town"), rs.getString("rank"));
+                    log.error("Failed to link Resident %s to Town %s because of unknown Rank %s. Skipping!", rs.getString("resident"), rs.getString("town"), rs.getString("rank"));
                     continue;
                 }
                 town.addResident(res, rank);
@@ -285,7 +285,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 Town town = towns.get("");
                 Nation nation = nations.get("");
                 if (town == null || nation == null) {
-                    log.warn("Failed to link Town %s to Nation %s. Skipping!", rs.getString("town"), rs.getString("nation"));
+                    log.error("Failed to link Town %s to Nation %s. Skipping!", rs.getString("town"), rs.getString("nation"));
                     continue;
                 }
                 nation.addTown(town);
