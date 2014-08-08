@@ -12,10 +12,9 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
+import mytown.handlers.SafemodeHandler;
 import mytown.proxies.DatasourceProxy;
-import mytown.x_handlers.MyTownEventHandler;
-import mytown.x_handlers.PlayerTracker;
-import mytown.x_handlers.VisualsTickHandler;
+import mytown.handlers.PlayerTracker;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
@@ -23,6 +22,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -35,15 +36,12 @@ import forgeperms.api.ForgePermsAPI;
 
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class MyTown {
-	@Mod.Instance
+	@Instance
 	public static MyTown instance;
 	public Log log;
 	public Configuration config;
 
-	// Set to true to kick all non-admin users out with a custom kick message
-	public boolean safemode = false;
-
-	@Mod.EventHandler
+	@EventHandler
 	public void preInit(FMLPreInitializationEvent ev) {
 		// Setup Loggers
 		log = new Log(ev.getModLog());
@@ -63,13 +61,13 @@ public class MyTown {
 		FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent ev) {
 		ModProxies.load();
 		config.save();
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void imcEvent(FMLInterModComms.IMCEvent ev) {
 		for (FMLInterModComms.IMCMessage msg : ev.getMessages()) {
 			String[] keyParts = msg.key.split("|");
@@ -80,17 +78,17 @@ public class MyTown {
 		}
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void serverStarting(FMLServerStartingEvent ev) {
 		registerCommands();
 		ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
 		addDefaultPermissions();
-		safemode = DatasourceProxy.start(config);
+		SafemodeHandler.setSafemode(DatasourceProxy.start(config));
 		
 		CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
 	}
 
-	@Mod.EventHandler
+	@EventHandler
 	public void serverStopping(FMLServerStoppingEvent ev) {
 		config.save();
 		DatasourceProxy.stop();
@@ -139,10 +137,11 @@ public class MyTown {
 	 */
 	private void registerHandlers() {
 		PlayerTracker playerTracker = new PlayerTracker();
-		FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
-		FMLCommonHandler.instance().bus().register(playerTracker);
-		MinecraftForge.EVENT_BUS.register(playerTracker);
-		MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
+        FMLCommonHandler.instance().bus().register(playerTracker);
+        MinecraftForge.EVENT_BUS.register(playerTracker);
+        // TODO Re-add the below two handlers after they are redone
+		//FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
+		//MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
 	}
 
 	// ////////////////////////////

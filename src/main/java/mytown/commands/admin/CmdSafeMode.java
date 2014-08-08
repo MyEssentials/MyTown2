@@ -4,10 +4,12 @@ import java.util.List;
 
 import mytown.MyTown;
 import mytown.config.Config;
+import mytown.core.ChatUtils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandUtils;
 import mytown.core.utils.command.Permission;
+import mytown.handlers.SafemodeHandler;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -29,12 +31,12 @@ public class CmdSafeMode extends CommandBase {
 	public void processCommand(ICommandSender sender, String[] args) {
 		boolean safemode = false;
 		if (args.length < 1) { // Toggle safemode
-			safemode = !MyTown.instance.safemode;
+			safemode = !SafemodeHandler.isInSafemode();
 		} else { // Set safemode
-			safemode = (args[0].equalsIgnoreCase("on") || args[0].equalsIgnoreCase("true") || args[0].equalsIgnoreCase("enable"));
+			safemode = ChatUtils.equalsOn(args[0]);
 		}
 		Assert.Perm(sender, "mytown.adm.cmd.safemode." + (safemode ? "on" : "off"));
-		MyTown.instance.safemode = safemode;
+        SafemodeHandler.setSafemode(safemode);
 		CmdSafeMode.kickPlayers();
 	}
 
