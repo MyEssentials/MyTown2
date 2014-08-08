@@ -5,6 +5,7 @@ import mytown.config.Config;
 import mytown.core.utils.Log;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.impl.InMemoryDatasource;
 import mytown.datasource.impl.MySQLDatasource;
 import mytown.datasource.impl.SQLiteDatasource;
 import net.minecraftforge.common.config.Configuration;
@@ -21,6 +22,7 @@ public class DatasourceProxy {
     private static Log log = null;
 
     static {
+        registerType("in-memory", InMemoryDatasource.class);
         registerType("mysql", MySQLDatasource.class);
         registerType("sqlite", SQLiteDatasource.class);
     }
