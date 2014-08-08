@@ -110,6 +110,9 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
      * @return
      */
     public Date getLastOnline() {
+        if (this.playerRef != null && this.playerRef.get() != null) {
+            lastOnline = new Date(); // TODO Do we REALLY need to update this each time its received, or can we do this better?
+        }
         return lastOnline;
     }
 
