@@ -1,6 +1,5 @@
 package mytown.datasource.impl;
 
-import cpw.mods.fml.relauncher.SideOnly;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.*;
 
