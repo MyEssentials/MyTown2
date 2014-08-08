@@ -109,7 +109,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     /* ----- Read ----- */
 
     @Override
-    public boolean loadTowns() {
+    public boolean loadAll() {
+        return super.loadAll() && loadResidentsToTowns() && loadTownsToNations();
+    }
+
+    @Override
+    protected boolean loadTowns() {
         try {
             PreparedStatement loadTownsStatement = prepare("SELECT * FROM " + prefix + "Towns", true);
             ResultSet rs = loadTownsStatement.executeQuery();
@@ -127,7 +132,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean loadBlocks() {
+    protected boolean loadBlocks() {
         try {
             PreparedStatement loadBlocksStatement = prepare("", true);
             ResultSet rs = loadBlocksStatement.executeQuery();
@@ -150,7 +155,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean loadRanks() {
+    protected boolean loadRanks() {
         try {
             try {
                 getConnection().setAutoCommit(false);
@@ -159,7 +164,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 while (rs.next()) {
                     Town town = towns.get(rs.getString("townName"));
                     if (town == null) {
-                        log.warn("Failed to load Block (%s, %s, %s) due to missing Town (%s)", rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), rs.getString("townName"));
+                        log.warn("Failed to load Rank (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
                         continue; // TODO Should I just return out?
                     }
                     Rank rank = new Rank(rs.getString("name"), town);
@@ -169,6 +174,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     while (rs2.next()) {
                         rank.addPermission(rs2.getString("node"));
                     }
+                    ranks.put(rank.getKey(), rank);
                 }
             } catch(SQLException e) {
                 log.error("Failed to load a rank!", e);
@@ -184,7 +190,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean loadResidents() {
+    protected boolean loadResidents() {
         try {
             PreparedStatement loadResidentsStatement = prepare("SELECT * FROM " + prefix + "Residents", true);
             ResultSet rs = loadResidentsStatement.executeQuery();
@@ -202,7 +208,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean loadPlots() {
+    protected boolean loadPlots() {
         try {
             PreparedStatement loadPlotsStatement = prepare("SELECT * FROM " + prefix + "Plots", true);
             ResultSet rs = loadPlotsStatement.executeQuery();
@@ -225,7 +231,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean loadNations() {
+    protected boolean loadNations() {
         try {
             PreparedStatement loadNationsStatement = prepare("SELECT * FROM " + prefix + "Nations", true);
             ResultSet rs = loadNationsStatement.executeQuery();
@@ -242,13 +248,72 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    protected boolean loadResidentsToTowns() {
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "ResidentsToTowns", true);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Resident res = residents.get(rs.getString("resident"));
+                Town town = towns.get(rs.getString("town"));
+                if (res == null || town == null) {
+                    log.warn("Failed to link Resident %s to Town %s. Skipping!", rs.getString("resident"), rs.getString("town"));
+                    continue;
+                }
+                Rank rank = ranks.get(String.format("%s;%s", town.getName(), rs.getString("rank")));
+                if (rank == null) {
+                    log.warn("Failed to link Resident %s to Town %s because of unknown Rank %s. Skipping!", rs.getString("resident"), rs.getString("town"), rs.getString("rank"));
+                    continue;
+                }
+                town.addResident(res, rank);
+                res.addTown(town);
+            }
+        } catch(SQLException e) {
+            log.error("Failed to link Residents to Towns!", e);
+            return false;
+        }
+
+        return true;
+    }
+
+    protected boolean loadTownsToNations() {
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "TownsToNations", true);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Town town = towns.get("");
+                Nation nation = nations.get("");
+                if (town == null || nation == null) {
+                    log.warn("Failed to link Town %s to Nation %s. Skipping!", rs.getString("town"), rs.getString("nation"));
+                    continue;
+                }
+                nation.addTown(town);
+                nation.promoteTown(town, Nation.Rank.parse(rs.getString("rank")));
+                town.setNation(nation);
+            }
+        } catch(SQLException e) {
+            log.error("Failed to link Towns to Nations!", e);
+            return false;
+        }
+
+        return true;
+    }
+
     /* ----- Save ----- */
 
     @Override
     public boolean saveTown(Town town) {
         try {
             if (towns.containsValue(town)) { // Update
-                // TODO Town update (If needed?)
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=? WHERE name=?", true);
+                updateStatement.setString(1, town.getName());
+                updateStatement.setString(2, town.getOldName());
+                updateStatement.executeUpdate();
+
+                // TODO Move this Town in the Map as well!
+
+                town.resetOldName();
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name) VALUES(?)", true);
                 insertStatement.setString(1, town.getName());
@@ -592,7 +657,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(id)" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.2", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Residents (" +
-                "uuid CHAR(36) NOT NULL," + // TODO Size might be able to go down to 32 depending on how UUID.toString() works
+                "uuid CHAR(36) NOT NULL," +
                 "name VARCHAR(240) NOT NULL," +
                 "joined DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL," +
                 "lastOnline DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL," +
@@ -640,6 +705,25 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         updates.add(new DBUpdate("07.25.2014.8", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Nations (" +
                 "name VARCHAR(32) NOT NULL," + // TODO Allow larger nation names?
                 "PRIMARY KEY(name)" +
+                ");"));
+
+        // Create "Join" Tables
+        updates.add(new DBUpdate("08.07.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "ResidentsToTowns (" +
+                "resident CHAR(36)," +
+                "town VARCHAR(50)," +
+                "rank VARCHAR(50) NOT NULL," +
+                "PRIMARY KEY(resident, town)," +
+                "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(uuid) ON DELETE CASCADE ON UPDATE CASCADE," +
+                "FOREIGN KEY(town) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
+                "FOREIGN KEY(rank) REFERENCES " + prefix + "Ranks(name) ON DELETE CASCADE ON UPDATE CASCADE" +
+                ");"));
+        updates.add(new DBUpdate("08.07.2014.2", "Add TownsToNations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownsToNations (" +
+                "town VARCHAR(50)," +
+                "nation VARCHAR(50)," +
+                "rank CHAR(1) DEFAULT 'T'," +
+                "PRIMARY KEY(town, nation)," +
+                "FOREIGN KEY(town) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
+                "FOREIGN KEY(nation) REFERENCES " + prefix + "Nations(name) ON DELETE CASCADE ON UPDATE CASCADE," +
                 ");"));
     }
 
