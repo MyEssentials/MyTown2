@@ -1,5 +1,6 @@
 package mytown.datasource;
 
+import com.google.common.collect.ImmutableMap;
 import mytown.api.events.*;
 import mytown.core.utils.Log;
 import mytown.entities.*;
@@ -21,33 +22,64 @@ public abstract class MyTownDatasource {
     protected Map<String, Plot> plots = new Hashtable<String, Plot>();
     protected Map<String, Rank> ranks = new Hashtable<String, Rank>();
 
-    public final Map<String, Resident> getResidentsMap() {
-        return residents;
+    /**
+     * Returns an ImmutableMap of Residents
+     *
+     * @return ImmutableMap of Residents
+     */
+    public final ImmutableMap<String, Resident> getResidentsMap() {
+        return ImmutableMap.copyOf(residents);
     }
 
-    public final Map<String, Town> getTownsMap() {
-        return towns;
+    /**
+     * Returns an ImmutableMap of Towns
+     *
+     * @return ImmutableMap of Towns
+     */
+    public final ImmutableMap<String, Town> getTownsMap() {
+        return ImmutableMap.copyOf(towns);
     }
 
-    public final Map<String, Nation> getNationsMap() {
-        return nations;
+    /**
+     * Returns an ImmutableMap of Nations
+     *
+     * @return ImmutableMap of Nations
+     */
+    public final ImmutableMap<String, Nation> getNationsMap() {
+        return ImmutableMap.copyOf(nations);
     }
 
-    public final Map<String, Block> getBlocksMap() {
-        return blocks;
+    /**
+     * Returns an ImmutableMap of Blocks
+     *
+     * @return ImmutableMap of Blocks
+     */
+    public final ImmutableMap<String, Block> getBlocksMap() {
+        return ImmutableMap.copyOf(blocks);
     }
 
-    public final Map<String, Plot> getPlotsMap() {
-        return plots;
+    /**
+     * Returns an ImmutableMap of Plots
+     *
+     * @return ImmutableMap of Plots
+     */
+    public final ImmutableMap<String, Plot> getPlotsMap() {
+        return ImmutableMap.copyOf(plots);
     }
 
-    public final Map<String, Rank> getRanksMap() {
-        return ranks;
+    /**
+     * Returns an ImmutableMap of Ranks
+     *
+     * @return ImmutableMap of Ranks
+     */
+    public final ImmutableMap<String, Rank> getRanksMap() {
+        return ImmutableMap.copyOf(ranks);
     }
 
     /**
      * Sets the Log the Datasource uses
-     * @param log
+     *
+     * @param log The log...
      */
     public final void setLog(Log log) {
         this.log = log;
@@ -56,6 +88,7 @@ public abstract class MyTownDatasource {
     /**
      * Initialize the Datasource.
      * This should create a connection to the database.
+     *
      * @return If false is returned, MyTown is put into safe-mode
      */
     public abstract boolean initialize();
@@ -64,7 +97,8 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Town, or null if it couldn't be created
-     * @return
+     *
+     * @return The new Town, or null if it failed
      */
     public final Town newTown(String name) {
         Town town = new Town(name);
@@ -75,9 +109,10 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Block, or null if it couldn't be created
-     * @return
+     *
+     * @return The new Block, or null if it failed
      */
-    public final Block newBlock(int dim, int x,int z, Town town) {
+    public final Block newBlock(int dim, int x, int z, Town town) {
         Block block = new Block(dim, x, z, town);
         if (BlockEvent.fire(new BlockEvent.BlockCreateEvent(block)))
             return null;
@@ -86,7 +121,8 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Rank, or null if it couldn't be created
-     * @return
+     *
+     * @return The new Rank, or null if it failed
      */
     public final Rank newRank(String name, Town town) {
         Rank rank = new Rank(name, town);
@@ -97,7 +133,8 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Resident, or null if it couldn't be created
-     * @return
+     *
+     * @return The new Resident, or null if it failed
      */
     public final Resident newResident(String uuid) {
         Resident resident = new Resident(uuid);
@@ -108,7 +145,8 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Plot, or null if it couldn't be created
-     * @return
+     *
+     * @return The new Plot, or null if it failed
      */
     public final Plot newPlot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         Plot plot = new Plot(name, town, dim, x1, y1, z1, x2, y2, z2);
@@ -119,7 +157,8 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Nation, or null if it couldn't be created
-     * @return
+     *
+     * @return The new Nation, or null if it failed
      */
     public final Nation newNation(String name) {
         Nation nation = new Nation(name);
@@ -130,56 +169,165 @@ public abstract class MyTownDatasource {
 
     /* ----- Read ----- */
 
+    /**
+     * Loads all the towns, ranks, blocks, residents, plots, and nations. In that order.
+     *
+     * @return If successfully loaded
+     */
     public boolean loadAll() { // TODO Change load order?
         return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations();
     }
 
+    /**
+     * Loads all the Towns
+     *
+     * @return If it was successful
+     */
     protected abstract boolean loadTowns();
 
+    /**
+     * Loads all the Blocks
+     *
+     * @return If it was successful
+     */
     protected abstract boolean loadBlocks();
 
+    /**
+     * Loads all the Ranks
+     *
+     * @return If it was successful
+     */
     protected abstract boolean loadRanks();
 
+    /**
+     * Loads all the Residents
+     *
+     * @return If it was successful
+     */
     protected abstract boolean loadResidents();
 
+    /**
+     * Loads all the Plots
+     *
+     * @return If it was successful
+     */
     protected abstract boolean loadPlots();
 
+    /**
+     * Loads all the Nations
+     *
+     * @return If it was successful
+     */
     protected abstract boolean loadNations();
 
     /* ----- Save ----- */
 
+    /**
+     * Saves the Town
+     *
+     * @return If it was successful
+     */
     public abstract boolean saveTown(Town town);
 
+    /**
+     * Saves the Block
+     *
+     * @return If it was successful
+     */
     public abstract boolean saveBlock(Block block);
 
+    /**
+     * Saves the Rank
+     *
+     * @return If it was successful
+     */
     public abstract boolean saveRank(Rank rank);
 
+    /**
+     * Saves the Resident
+     *
+     * @return If it was successful
+     */
     public abstract boolean saveResident(Resident resident);
 
+    /**
+     * Saves the Plot
+     *
+     * @return If it was successful
+     */
     public abstract boolean savePlot(Plot plot);
 
+    /**
+     * Saves the Nation
+     *
+     * @return If it was successful
+     */
     public abstract boolean saveNation(Nation nation);
 
     /* ----- Delete ----- */
 
+    /**
+     * Deletes the Town
+     *
+     * @return If it was successful
+     */
     public abstract boolean deleteTown(Town town);
 
+    /**
+     * Deletes the Block
+     *
+     * @return If it was successful
+     */
     public abstract boolean deleteBlock(Block block);
 
+    /**
+     * Deletes the Rank
+     *
+     * @return If it was successful
+     */
     public abstract boolean deleteRank(Rank rank);
 
+    /**
+     * Deletes the Resident
+     *
+     * @return If it was successful
+     */
     public abstract boolean deleteResident(Resident resident);
 
+    /**
+     * Deletes the Plot
+     *
+     * @return If it was successful
+     */
     public abstract boolean deletePlot(Plot plot);
 
+    /**
+     * Deletes the Nation
+     *
+     * @return If it was successful
+     */
     public abstract boolean deleteNation(Nation nation);
 
     /* ----- Has ----- */
 
+    /**
+     * Checks if the townName exists
+     *
+     * @param townName The name to check
+     * @return If the name exists
+     */
     public final boolean hasTown(String townName) {
         return towns.containsKey(townName);
     }
 
+    /**
+     * Checks if the Block exists
+     *
+     * @param dim The dimension to check in
+     * @param x The x chunk coord to check at
+     * @param z The z chunk coord to check at
+     * @return If the Block exists
+     */
     public final boolean hasBlock(int dim, int x, int z) {
         return blocks.containsKey(String.format(Block.keyFormat, dim, x, z));
     }
@@ -187,12 +335,11 @@ public abstract class MyTownDatasource {
     /**
      * Checks if the TownBlock with the given coords and dim at the town specified exists
      *
-     * @param dim
-     * @param x
-     * @param z
-     * @param inChunkCoords
-     *            true if x and z are in chunk coordinates, false otherwise
-     * @return
+     * @param dim The dimension to check in
+     * @param x The x coord to check at
+     * @param z The z coord to check at
+     * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
+     * @return If the Block exists
      */
     public boolean hasTownBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
         String key;
@@ -213,9 +360,10 @@ public abstract class MyTownDatasource {
 
     /**
      * Gets or makes a new Resident, optionally saving it. CAN return null!
-     * @param uuid
-     * @param save
-     * @return
+     *
+     * @param uuid The UUID of the Resident (EntityPlayer#getPersistentID())
+     * @param save Whether to save the newly created Resident
+     * @return The new Resident, or null if it failed
      */
     public Resident getOrMakeResident(UUID uuid, boolean save) {
         Resident res = residents.get(uuid.toString());
@@ -232,8 +380,9 @@ public abstract class MyTownDatasource {
 
     /**
      * Gets or makes a new Resident. Does NOT save, and CAN return null!
-     * @param uuid
-     * @return
+     *
+     * @param uuid The UUID of the Resident (EntityPlayer#getPersistentID())
+     * @return The new Resident, or null if it failed
      */
     public Resident getOrMakeResident(UUID uuid) {
         return getOrMakeResident(uuid, false);
@@ -241,10 +390,11 @@ public abstract class MyTownDatasource {
 
     /**
      * Returns the Block at the given location. Can return null if it doesn't exist!
-     * @param dim
-     * @param chunkX
-     * @param chunkZ
-     * @return
+     *
+     * @param dim The dimension to check in
+     * @param chunkX The chunk x to check at
+     * @param chunkZ The chunk z to check at
+     * @return The Block, or null if it doesn't exist
      */
     public Block getBlock(int dim, int chunkX, int chunkZ) {
         return blocks.get(String.format(Block.keyFormat, dim, chunkX, chunkZ));
