@@ -1,5 +1,6 @@
 package mytown.entities.interfaces;
 
+import com.google.common.collect.ImmutableCollection;
 import mytown.entities.Rank;
 
 import java.util.Collection;
@@ -10,18 +11,21 @@ import java.util.Collection;
 public interface IHasRanks {
     /**
      * Adds the Rank to this entity
+     *
      * @param rank
      */
     public void addRank(Rank rank);
 
     /**
      * Removes the Rank from this entity
+     *
      * @param rank
      */
     public void removeRank(Rank rank);
 
     /**
      * Checks if this entity has the Rank
+     *
      * @param rank
      * @return
      */
@@ -29,19 +33,22 @@ public interface IHasRanks {
 
     /**
      * Sets the default Rank for this entity
+     *
      * @param rank
      */
     public void setDefaultRank(Rank rank);
 
     /**
      * Returns the default Rank for this entity
+     *
      * @return
      */
     public Rank getDefaultRank();
 
     /**
      * Returns the Collection of Ranks
+     *
      * @return
      */
-    public Collection<Rank> getRanks();
+    public ImmutableCollection<Rank> getRanks();
 }

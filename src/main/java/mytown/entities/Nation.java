@@ -1,5 +1,7 @@
 package mytown.entities;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import mytown.entities.interfaces.IHasTowns;
 
 import java.util.Collection;
@@ -32,24 +34,29 @@ public class Nation implements IHasTowns, Comparable<Nation> {
 
     private Map<Town, Rank> towns = null;
 
+    @Override
     public void addTown(Town town) {
         towns.put(town, Rank.Town);
     }
 
+    @Override
     public void removeTown(Town town) {
         towns.remove(town);
     }
 
+    @Override
     public boolean hasTown(Town town) {
         return towns.containsKey(town);
     }
 
-    public Collection<Town> getTowns() {
-        return towns.keySet();
+    @Override
+    public ImmutableCollection<Town> getTowns() {
+        return ImmutableList.copyOf(towns.keySet());
     }
 
     /**
      * Sets the given Town to the Rank
+     *
      * @param town
      * @param rank
      */
@@ -59,6 +66,7 @@ public class Nation implements IHasTowns, Comparable<Nation> {
 
     /**
      * Returns the Rank of the given town
+     *
      * @param town
      * @return
      */

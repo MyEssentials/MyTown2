@@ -116,6 +116,7 @@ public class Plot {
 
     /**
      * Checks if the coords are within this plot and in the same dimension
+     *
      * @param dim
      * @param x
      * @param y

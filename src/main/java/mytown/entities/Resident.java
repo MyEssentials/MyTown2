@@ -1,5 +1,7 @@
 package mytown.entities;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import mytown.core.ChatUtils;
 import mytown.entities.interfaces.IHasPlots;
 import mytown.entities.interfaces.IHasTowns;
@@ -34,6 +36,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Creates a new Resident with the given uuid, playerName, joinDate, and lastOnline. Used only during datasource loading!
+     *
      * @param uuid
      * @param playerName
      * @param joinDate
@@ -48,6 +51,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Returns the EntityPlayer, or null
+     *
      * @return
      */
     public EntityPlayer getPlayer() {
@@ -56,6 +60,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Sets the player and the UUID
+     *
      * @param pl
      */
     public void setPlayer(EntityPlayer pl) {
@@ -66,6 +71,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Returns the players UUID
+     *
      * @return
      */
     public UUID getUUID() {
@@ -74,6 +80,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Sets the UUID
+     *
      * @param uuid
      */
     public void setUUID(UUID uuid) {
@@ -82,6 +89,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Sets the UUID from the given string
+     *
      * @param uuid
      */
     public void setUUID(String uuid) {
@@ -91,6 +99,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     /**
      * Returns the name of the player for display purposes. <br/>
      * NEVER rely on this to store info against. The player name can change at any point, use the UUID instead.
+     *
      * @return
      */
     public String getPlayerName() {
@@ -99,6 +108,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Gets when the Resident first joined
+     *
      * @return
      */
     public Date getJoinDate() {
@@ -107,6 +117,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Gets when the Resident was last online
+     *
      * @return
      */
     public Date getLastOnline() {
@@ -118,6 +129,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Sets when the resident was last online
+     *
      * @param date
      */
     public void setLastOnline(Date date) {
@@ -133,31 +145,37 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     private List<Plot> plots = null;
 
+    @Override
     public void addPlot(Plot plot) {
         plots.add(plot);
     }
 
+    @Override
     public void removePlot(Plot plot) {
         plots.remove(plot);
     }
 
+    @Override
     public boolean hasPlot(Plot plot) {
         return plots.contains(plot);
     }
 
-    public Collection<Plot> getPlots() {
-        return plots;
+    @Override
+    public ImmutableCollection<Plot> getPlots() {
+        return ImmutableList.copyOf(plots);
     }
 
     /**
      * This does NOT perform as well as some other methods of retrieving plots. Please use sparingly and with caution!
-     * @see mytown.entities.interfaces.IHasPlots
+     *
      * @param dim
      * @param x
      * @param y
      * @param z
      * @return
+     * @see mytown.entities.interfaces.IHasPlots
      */
+    @Override
     public Plot getPlotAtCoord(int dim, int x, int y, int z) {
         for (Plot plot : plots) {
             if (plot.isCoordWithin(dim, x, y, z)) {
@@ -172,24 +190,29 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     private List<Town> towns = null;
     private Town selectedTown = null;
 
+    @Override
     public void addTown(Town town) {
         towns.add(town);
     }
 
+    @Override
     public void removeTown(Town town) {
         towns.remove(town);
     }
 
+    @Override
     public boolean hasTown(Town town) {
         return towns.contains(town);
     }
 
-    public Collection<Town> getTowns() {
-        return towns;
+    @Override
+    public ImmutableCollection<Town> getTowns() {
+        return ImmutableList.copyOf(towns);
     }
 
     /**
      * Returns the currently selected Town, the first Town (if none is selected), or null if not part of a town.
+     *
      * @return
      */
     public Town getSelectedTown() {
@@ -201,6 +224,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Selects the given Town
+     *
      * @param town
      */
     public void selectTown(Town town) {
@@ -209,6 +233,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Returns this Residents rank in the given Town, or null if the player is not part of the Town (TODO Maybe change?)
+     *
      * @param town
      * @return
      */
@@ -218,7 +243,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     }
 
     /**
-     * Shortcut for getTownRank(getSelectedTown())
+     * Shortcut for Town#getTownRank(Resident#getSelectedTown())
+     *
      * @return
      */
     public Rank getTownRank() {
@@ -235,6 +261,22 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     public void setMapOn(boolean isOn) {
         mapOn = isOn;
+    }
+
+    /* ----- Invites ----- */
+
+    private Town invite = null; // TODO Allow multiple invites at a time?
+
+    public void addInvite(Town invite) {
+        this.invite = invite;
+    }
+
+    public Town getInvite() {
+        return invite;
+    }
+
+    public boolean hasInvite() {
+        return invite != null;
     }
 
     /* ----- Helpers ----- */

@@ -1,5 +1,6 @@
 package mytown.entities.interfaces;
 
+import com.google.common.collect.ImmutableCollection;
 import mytown.entities.Town;
 
 import java.util.Collection;
@@ -10,18 +11,21 @@ import java.util.Collection;
 public interface IHasTowns {
     /**
      * Adds the Town to this entity
+     *
      * @param town
      */
     public void addTown(Town town);
 
     /**
      * Removes the Town from this entity
+     *
      * @param town
      */
     public void removeTown(Town town);
 
     /**
      * Checks if this entity has this Town
+     *
      * @param town
      * @return
      */
@@ -29,7 +33,8 @@ public interface IHasTowns {
 
     /**
      * Returns the Collection of Towns
+     *
      * @return
      */
-    public Collection<Town> getTowns();
+    public ImmutableCollection<Town> getTowns();
 }

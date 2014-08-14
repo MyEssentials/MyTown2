@@ -1,5 +1,6 @@
 package mytown.entities.interfaces;
 
+import com.google.common.collect.ImmutableCollection;
 import mytown.entities.Resident;
 
 import java.util.Collection;
@@ -10,18 +11,21 @@ import java.util.Collection;
 public interface IHasResidents {
     /**
      * Adds the Resident to this entity
+     *
      * @param res
      */
     public void addResident(Resident res);
 
     /**
      * Removes the Resident from this entity
+     *
      * @param res
      */
     public void removeResident(Resident res);
 
     /**
      * Checks if this entity has the Resident
+     *
      * @param res
      * @return
      */
@@ -29,7 +33,8 @@ public interface IHasResidents {
 
     /**
      * Returns the Collection of Residents
+     *
      * @return
      */
-    public Collection<Resident> getResidents();
+    public ImmutableCollection<Resident> getResidents();
 }

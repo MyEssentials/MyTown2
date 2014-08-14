@@ -1,5 +1,7 @@
 package mytown.entities;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.interfaces.IHasBlocks;
 import mytown.entities.interfaces.IHasPlots;
@@ -27,6 +29,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Returns the name of the Town
+     *
      * @return
      */
     public String getName() {
@@ -35,6 +38,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Renames this current Town setting oldName to the previous name. You MUST set oldName to null after saving it in the Datasource
+     *
      * @param newName
      */
     public void rename(String newName) {
@@ -55,6 +59,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Sets the name of the Town
+     *
      * @param name
      */
     public void setName(String name) {
@@ -72,6 +77,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Adds the Resident with the given Rank
+     *
      * @param res
      * @param rank
      */
@@ -79,24 +85,38 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
         residents.put(res, rank);
     }
 
+    @Override
     public void addResident(Resident res) {
         addResident(res, defaultRank);
     }
 
+    @Override
     public void removeResident(Resident res) {
         residents.remove(res);
     }
 
+    @Override
     public boolean hasResident(Resident res) {
         return residents.containsKey(res);
     }
 
-    public Collection<Resident> getResidents() {
-        return residents.keySet();
+    public boolean hasResident(String username) {
+        for (Resident res : residents.keySet()) { // TODO Can this be made faster?
+            if (res.getPlayerName().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public ImmutableCollection<Resident> getResidents() {
+        return ImmutableList.copyOf(residents.keySet());
     }
 
     /**
      * Returns the Rank the Resident is assigned to.
+     *
      * @param
      * @return
      */
@@ -106,6 +126,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Sets the given Residents Rank for this Town.
+     *
      * @param res
      * @param rank
      */
@@ -120,50 +141,61 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
     private List<Rank> ranks = null;
     private Rank defaultRank = null; // TODO Set default rank during creation?
 
+    @Override
     public void addRank(Rank rank) {
         ranks.add(rank);
     }
 
+    @Override
     public void removeRank(Rank rank) {
         ranks.remove(rank);
     }
 
+    @Override
     public void setDefaultRank(Rank rank) {
         defaultRank = rank;
     }
 
+    @Override
     public Rank getDefaultRank() {
         return defaultRank;
     }
 
+    @Override
     public boolean hasRank(Rank rank) {
         return ranks.contains(rank);
     }
 
-    public Collection<Rank> getRanks() {
-        return ranks;
+    @Override
+    public ImmutableCollection<Rank> getRanks() {
+        return ImmutableList.copyOf(ranks);
     }
 
     /* ----- IHasBlocks ----- */
 
     private Map<String, Block> blocks = null;
 
+    @Override
     public void addBlock(Block block) {
         blocks.put(block.getKey(), block);
     }
 
+    @Override
     public void removeBlock(Block block) {
         blocks.remove(block);
     }
 
+    @Override
     public boolean hasBlock(Block block) {
         return blocks.containsValue(block);
     }
 
-    public Collection<Block> getBlocks() {
-        return blocks.values();
+    @Override
+    public ImmutableCollection<Block> getBlocks() {
+        return ImmutableList.copyOf(blocks.values());
     }
 
+    @Override
     public Block getBlockAtCoords(int dim, int x, int z) {
         return blocks.get(String.format(Block.keyFormat, dim, x, z));
     }
@@ -172,22 +204,27 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     private List<Plot> plots = null;
 
+    @Override
     public void addPlot(Plot plot) {
         plots.add(plot);
     }
 
+    @Override
     public void removePlot(Plot plot) {
         plots.remove(plot);
     }
 
+    @Override
     public boolean hasPlot(Plot plot) {
         return plots.contains(plot);
     }
 
-    public Collection<Plot> getPlots() {
-        return plots;
+    @Override
+    public ImmutableCollection<Plot> getPlots() {
+        return ImmutableList.copyOf(plots);
     }
 
+    @Override
     public Plot getPlotAtCoord(int dim, int x, int y, int z) {
         return getBlockAtCoords(dim, x >> 4, z >> 4).getPlotAtCoord(dim, x, y, z);
     }
@@ -210,6 +247,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Sends the Resident to the spawn
+     *
      * @param res
      */
     public void sendToSpawn(Resident res) {
@@ -222,6 +260,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Returns if this Town has a spawn
+     *
      * @return
      */
     public boolean hasSpawn() {
@@ -230,6 +269,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Returns the spawn
+     *
      * @return
      */
     public Teleport getSpawn() {
@@ -238,6 +278,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Sets the spawn
+     *
      * @param spawn
      */
     public void setSpawn(Teleport spawn) {
@@ -248,17 +289,19 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /**
      * Checks if the given point is in this Town
+     *
      * @param dim
      * @param x
      * @param z
      * @return
      */
     public boolean isPointInTown(int dim, float x, float z) {
-        return isChunkInTown(dim, (int)x >> 4, (int)z >> 4);
+        return isChunkInTown(dim, (int) x >> 4, (int) z >> 4);
     }
 
     /**
      * Checks if the chunk is in the town
+     *
      * @param dim
      * @param cx
      * @param cz

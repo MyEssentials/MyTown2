@@ -1,5 +1,7 @@
 package mytown.entities;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import mytown.entities.interfaces.IHasPlots;
 
 import java.util.Collection;
@@ -63,24 +65,29 @@ public class Block implements IHasPlots {
 
     private List<Plot> plots = null;
 
+    @Override
     public void addPlot(Plot plot) {
         if (x >= plot.getStartChunkX() && x <= plot.getEndChunkX() && z >= plot.getStartChunkZ() && z <= plot.getEndChunkZ()) { // TODO Not really sure if this will work. Need to test!
             plots.add(plot);
         }
     }
 
+    @Override
     public void removePlot(Plot plot) {
         plots.remove(plot);
     }
 
+    @Override
     public boolean hasPlot(Plot plot) {
         return plots.contains(plot);
     }
 
-    public Collection<Plot> getPlots() {
-        return plots;
+    @Override
+    public ImmutableCollection<Plot> getPlots() {
+        return ImmutableList.copyOf(plots);
     }
 
+    @Override
     public Plot getPlotAtCoord(int dim, int x, int y, int z) {
         for (Plot plot : plots) {
             if (plot.isCoordWithin(dim, x, y, z)) {
@@ -94,17 +101,19 @@ public class Block implements IHasPlots {
 
     /**
      * Checks if the point is inside this Block
+     *
      * @param dim
      * @param x
      * @param z
      * @return
      */
     public boolean isPointIn(int dim, float x, float z) {
-        return isChunkIn(dim, ((int)x) >> 4, ((int)z) >> 4);
+        return isChunkIn(dim, ((int) x) >> 4, ((int) z) >> 4);
     }
 
     /**
      * Checks if the chunk is this Block
+     *
      * @param dim
      * @param cx
      * @param cz
