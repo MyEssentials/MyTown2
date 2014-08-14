@@ -1,9 +1,7 @@
 package mytown.entities.interfaces;
 
-import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import mytown.entities.Rank;
-
-import java.util.Collection;
 
 /**
  * Created by joe on 7/18/14.
@@ -50,5 +48,5 @@ public interface IHasRanks {
      *
      * @return
      */
-    public ImmutableCollection<Rank> getRanks();
+    public ImmutableList<Rank> getRanks();
 }

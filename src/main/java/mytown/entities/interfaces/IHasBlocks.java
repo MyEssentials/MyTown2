@@ -1,9 +1,7 @@
 package mytown.entities.interfaces;
 
-import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import mytown.entities.Block;
-
-import java.util.Collection;
 
 /**
  * @author Joe Goett
@@ -36,7 +34,7 @@ public interface IHasBlocks {
      *
      * @return
      */
-    public ImmutableCollection<Block> getBlocks();
+    public ImmutableList<Block> getBlocks();
 
     /**
      * Returns the Block in the dim at the given chunk coords

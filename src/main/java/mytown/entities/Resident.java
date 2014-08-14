@@ -1,6 +1,5 @@
 package mytown.entities;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import mytown.core.ChatUtils;
 import mytown.entities.interfaces.IHasPlots;
@@ -8,7 +7,7 @@ import mytown.entities.interfaces.IHasTowns;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.lang.ref.WeakReference;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -161,7 +160,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     }
 
     @Override
-    public ImmutableCollection<Plot> getPlots() {
+    public ImmutableList<Plot> getPlots() {
         return ImmutableList.copyOf(plots);
     }
 
@@ -206,7 +205,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     }
 
     @Override
-    public ImmutableCollection<Town> getTowns() {
+    public ImmutableList<Town> getTowns() {
         return ImmutableList.copyOf(towns);
     }
 
@@ -265,18 +264,27 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /* ----- Invites ----- */
 
-    private Town invite = null; // TODO Allow multiple invites at a time?
+    private List<Town> invites = new ArrayList<Town>();
 
     public void addInvite(Town invite) {
-        this.invite = invite;
+        this.invites.add(invite);
     }
 
-    public Town getInvite() {
-        return invite;
+    public ImmutableList<Town> getInvites() {
+        return ImmutableList.copyOf(invites);
+    }
+
+    public Town getInvite(String townName) {
+        for (Town t : invites) {
+            if (t.getName().equals(townName)) {
+                return t;
+            }
+        }
+        return null;
     }
 
     public boolean hasInvite() {
-        return invite != null;
+        return !invites.isEmpty();
     }
 
     /* ----- Helpers ----- */

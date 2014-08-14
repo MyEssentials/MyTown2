@@ -1,9 +1,7 @@
 package mytown.entities.interfaces;
 
-import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import mytown.entities.Resident;
-
-import java.util.Collection;
 
 /**
  * @author Joe Goett
@@ -36,5 +34,5 @@ public interface IHasResidents {
      *
      * @return
      */
-    public ImmutableCollection<Resident> getResidents();
+    public ImmutableList<Resident> getResidents();
 }

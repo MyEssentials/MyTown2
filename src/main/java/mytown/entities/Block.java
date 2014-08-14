@@ -1,10 +1,8 @@
 package mytown.entities;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import mytown.entities.interfaces.IHasPlots;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -83,7 +81,7 @@ public class Block implements IHasPlots {
     }
 
     @Override
-    public ImmutableCollection<Plot> getPlots() {
+    public ImmutableList<Plot> getPlots() {
         return ImmutableList.copyOf(plots);
     }
 

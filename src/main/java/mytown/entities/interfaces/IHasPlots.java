@@ -1,9 +1,7 @@
 package mytown.entities.interfaces;
 
-import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import mytown.entities.Plot;
-
-import java.util.Collection;
 
 /**
  * @author Joe Goett
@@ -36,7 +34,7 @@ public interface IHasPlots {
      *
      * @return
      */
-    public ImmutableCollection<Plot> getPlots();
+    public ImmutableList<Plot> getPlots();
 
     /**
      * Returns the Plot in the dimension, and at the given coords (non-chunk coords)

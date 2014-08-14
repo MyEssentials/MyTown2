@@ -1,10 +1,8 @@
 package mytown.entities;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import mytown.entities.interfaces.IHasTowns;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -50,7 +48,7 @@ public class Nation implements IHasTowns, Comparable<Nation> {
     }
 
     @Override
-    public ImmutableCollection<Town> getTowns() {
+    public ImmutableList<Town> getTowns() {
         return ImmutableList.copyOf(towns.keySet());
     }
 

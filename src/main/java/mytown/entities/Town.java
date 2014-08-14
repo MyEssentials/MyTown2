@@ -1,15 +1,14 @@
 package mytown.entities;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.interfaces.IHasBlocks;
 import mytown.entities.interfaces.IHasPlots;
 import mytown.entities.interfaces.IHasRanks;
 import mytown.entities.interfaces.IHasResidents;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -110,7 +109,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
     }
 
     @Override
-    public ImmutableCollection<Resident> getResidents() {
+    public ImmutableList<Resident> getResidents() {
         return ImmutableList.copyOf(residents.keySet());
     }
 
@@ -167,7 +166,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
     }
 
     @Override
-    public ImmutableCollection<Rank> getRanks() {
+    public ImmutableList<Rank> getRanks() {
         return ImmutableList.copyOf(ranks);
     }
 
@@ -191,7 +190,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
     }
 
     @Override
-    public ImmutableCollection<Block> getBlocks() {
+    public ImmutableList<Block> getBlocks() {
         return ImmutableList.copyOf(blocks.values());
     }
 
@@ -220,7 +219,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
     }
 
     @Override
-    public ImmutableCollection<Plot> getPlots() {
+    public ImmutableList<Plot> getPlots() {
         return ImmutableList.copyOf(plots);
     }
 
@@ -309,6 +308,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
      */
     public boolean isChunkInTown(int dim, int cx, int cz) {
         return blocks.containsKey(String.format(Block.keyFormat, dim, cx, cz));
+    }
+
+    public void notifyResidentJoin(Resident res) {
+        for (Resident toRes : residents.keySet()) {
+            toRes.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.joined", res.getPlayerName(), getName()));
+        }
     }
 
     /* ----- Comparable ----- */
