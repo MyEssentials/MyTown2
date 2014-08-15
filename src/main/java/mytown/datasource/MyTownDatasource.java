@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public abstract class MyTownDatasource {
     protected Log log = null;
-    protected MyTownUniverse universe;
+//    protected MyTownUniverse universe;
 
     /**
      * Sets the Log the Datasource uses
@@ -259,7 +259,7 @@ public abstract class MyTownDatasource {
      * @return If the name exists
      */
     public final boolean hasTown(String townName) {
-        return universe.towns.containsKey(townName);
+        return MyTownUniverse.getInstance().towns.containsKey(townName);
     }
 
     /**
@@ -271,7 +271,7 @@ public abstract class MyTownDatasource {
      * @return If the Block exists
      */
     public final boolean hasBlock(int dim, int x, int z) {
-        return universe.blocks.containsKey(String.format(Block.keyFormat, dim, x, z));
+        return MyTownUniverse.getInstance().blocks.containsKey(String.format(Block.keyFormat, dim, x, z));
     }
 
     /**
@@ -291,7 +291,7 @@ public abstract class MyTownDatasource {
             key = String.format(Block.keyFormat, dim, x >> 4, z >> 4);
         }
 
-        Block b = universe.blocks.get(key);
+        Block b = MyTownUniverse.getInstance().blocks.get(key);
         if (town != null && b != null && b.getTown() == town)
             return true;
 
@@ -305,7 +305,7 @@ public abstract class MyTownDatasource {
      * @return
      */
     public final boolean hasResident(UUID uuid) {
-        return universe.residents.containsKey(uuid.toString());
+        return MyTownUniverse.getInstance().residents.containsKey(uuid.toString());
     }
 
     /**
@@ -360,7 +360,7 @@ public abstract class MyTownDatasource {
      * @return The new Resident, or null if it failed
      */
     public Resident getOrMakeResident(UUID uuid, boolean save) {
-        Resident res = universe.residents.get(uuid.toString());
+        Resident res = MyTownUniverse.getInstance().residents.get(uuid.toString());
         if (res == null) {
             res = newResident(uuid.toString());
             if (save && res != null) { // Only save if a new Resident
@@ -414,6 +414,6 @@ public abstract class MyTownDatasource {
      * @return The Block, or null if it doesn't exist
      */
     public Block getBlock(int dim, int chunkX, int chunkZ) {
-        return universe.blocks.get(String.format(Block.keyFormat, dim, chunkX, chunkZ));
+        return MyTownUniverse.getInstance().blocks.get(String.format(Block.keyFormat, dim, chunkX, chunkZ));
     }
 }

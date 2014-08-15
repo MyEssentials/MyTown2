@@ -123,7 +123,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             while (rs.next()) {
                 Town town = new Town(rs.getString("name"));
-                universe.towns.put(town.getName(), town);
+                MyTownUniverse.getInstance().towns.put(town.getName(), town);
             }
         } catch (SQLException e) {
             log.error("Failed to load Towns!", e);
@@ -140,13 +140,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             ResultSet rs = loadBlocksStatement.executeQuery();
 
             while (rs.next()) {
-                Town town = universe.towns.get(rs.getString("townName"));
+                Town town = MyTownUniverse.getInstance().towns.get(rs.getString("townName"));
                 if (town == null) {
                     log.error("Failed to load Block (%s, %s, %s) due to missing Town (%s)", rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), rs.getString("townName"));
                     continue; // TODO Should I just return out?
                 }
                 Block block = new Block(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), town);
-                universe.blocks.put(block.getKey(), block);
+                MyTownUniverse.getInstance().blocks.put(block.getKey(), block);
             }
         } catch (SQLException e) {
             log.error("Failed to load blocks!", e);
@@ -164,7 +164,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 PreparedStatement loadRanksStatement = prepare("SELECT * FROM " + prefix + "Ranks", true);
                 ResultSet rs = loadRanksStatement.executeQuery();
                 while (rs.next()) {
-                    Town town = universe.towns.get(rs.getString("townName"));
+                    Town town = MyTownUniverse.getInstance().towns.get(rs.getString("townName"));
                     if (town == null) {
                         log.error("Failed to load Rank (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
                         continue; // TODO Should I just return out?
@@ -176,7 +176,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     while (rs2.next()) {
                         rank.addPermission(rs2.getString("node"));
                     }
-                    universe.ranks.put(rank.getKey(), rank);
+                    MyTownUniverse.getInstance().ranks.put(rank.getKey(), rank);
                 }
             } catch (SQLException e) {
                 log.error("Failed to load a rank!", e);
@@ -199,7 +199,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             while (rs.next()) {
                 Resident res = new Resident(rs.getString("uuid"), rs.getString("name"), rs.getTimestamp("joined"), rs.getTimestamp("lastOnline"));
-                universe.residents.put(res.getUUID().toString(), res);
+                MyTownUniverse.getInstance().residents.put(res.getUUID().toString(), res);
             }
         } catch (SQLException e) {
             log.error("Failed to load Residents!", e);
@@ -216,13 +216,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             ResultSet rs = loadPlotsStatement.executeQuery();
 
             while (rs.next()) {
-                Town town = universe.towns.get(rs.getString("townName"));
+                Town town = MyTownUniverse.getInstance().towns.get(rs.getString("townName"));
                 if (town == null) {
                     log.error("Failed to load Plot (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
                     continue; // TODO Should I just return out?
                 }
                 Plot plot = new Plot(rs.getString("name"), town, rs.getInt("dim"), rs.getInt("x1"), rs.getInt("y1"), rs.getInt("z1"), rs.getInt("x2"), rs.getInt("y2"), rs.getInt("z2"));
-                universe.plots.put(plot.getKey(), plot);
+                MyTownUniverse.getInstance().plots.put(plot.getKey(), plot);
             }
         } catch (SQLException e) {
             log.error("Failed to load Plots!", e);
@@ -240,7 +240,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             while (rs.next()) {
                 Nation nation = new Nation(rs.getString("name"));
-                universe.nations.put(nation.getName(), nation);
+                MyTownUniverse.getInstance().nations.put(nation.getName(), nation);
             }
         } catch (SQLException e) {
             log.error("Failed to load Nations!", e);
@@ -261,13 +261,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                Resident res = universe.residents.get(rs.getString("resident"));
-                Town town = universe.towns.get(rs.getString("town"));
+                Resident res = MyTownUniverse.getInstance().residents.get(rs.getString("resident"));
+                Town town = MyTownUniverse.getInstance().towns.get(rs.getString("town"));
                 if (res == null || town == null) {
                     log.error("Failed to link Resident %s to Town %s. Skipping!", rs.getString("resident"), rs.getString("town"));
                     continue;
                 }
-                Rank rank = universe.ranks.get(String.format("%s;%s", town.getName(), rs.getString("rank")));
+                Rank rank = MyTownUniverse.getInstance().ranks.get(String.format("%s;%s", town.getName(), rs.getString("rank")));
                 if (rank == null) {
                     log.error("Failed to link Resident %s to Town %s because of unknown Rank %s. Skipping!", rs.getString("resident"), rs.getString("town"), rs.getString("rank"));
                     continue;
@@ -294,8 +294,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                Town town = universe.towns.get("");
-                Nation nation = universe.nations.get("");
+                Town town = MyTownUniverse.getInstance().towns.get("");
+                Nation nation = MyTownUniverse.getInstance().nations.get("");
                 if (town == null || nation == null) {
                     log.error("Failed to link Town %s to Nation %s. Skipping!", rs.getString("town"), rs.getString("nation"));
                     continue;
@@ -317,7 +317,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveTown(Town town) {
         try {
-            if (universe.towns.containsValue(town)) { // Update
+            if (MyTownUniverse.getInstance().towns.containsValue(town)) { // Update
                 if (town.getOldName() != null) { // Rename Town
                     PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=? WHERE name=?", true);
                     updateStatement.setString(1, town.getName());
@@ -325,8 +325,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     updateStatement.executeUpdate();
 
                     // Need to move the Town in the map from the old name to the new
-                    universe.towns.remove(town.getOldName());
-                    universe.towns.put(town.getName(), town);
+                    MyTownUniverse.getInstance().towns.remove(town.getOldName());
+                    MyTownUniverse.getInstance().towns.put(town.getName(), town);
 
                     town.resetOldName();
                 }
@@ -337,7 +337,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.executeUpdate();
 
                 // Put the Town in the Map
-                universe.towns.put(town.getName(), town);
+                MyTownUniverse.getInstance().towns.put(town.getName(), town);
             }
         } catch (SQLException e) {
             log.error("Failed to save Town %s!", e, town.getName());
@@ -350,7 +350,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveBlock(Block block) {
         try {
-            if (universe.blocks.containsValue(block)) { // Update
+            if (MyTownUniverse.getInstance().blocks.containsValue(block)) { // Update
                 // TODO Update Block (If needed?)
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Blocks (dim, x, z, towName) VALUES (?, ?, ?, ?)", true);
@@ -361,7 +361,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.executeUpdate();
 
                 // Put the Block in the Map
-                universe.blocks.put(block.getKey(), block);
+                MyTownUniverse.getInstance().blocks.put(block.getKey(), block);
             }
         } catch (SQLException e) {
             log.error("Failed to save Block %s!", e, block.getKey());
@@ -374,7 +374,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveRank(Rank rank) { // TODO Insert any new permissions to the RankPermission table
         try {
-            if (universe.ranks.containsValue(rank)) { // Update
+            if (MyTownUniverse.getInstance().ranks.containsValue(rank)) { // Update
                 // TODO Update
             } else { // Insert
                 try {
@@ -397,7 +397,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     }
 
                     // Put the Rank in the Map
-                    universe.ranks.put(rank.getKey(), rank);
+                    MyTownUniverse.getInstance().ranks.put(rank.getKey(), rank);
                 } catch (SQLException e) {
                     log.error("Failed to insert Rank %s", rank.getKey());
                     getConnection().rollback();
@@ -417,7 +417,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveResident(Resident resident) {
         try {
-            if (universe.residents.containsValue(resident)) { // Update
+            if (MyTownUniverse.getInstance().residents.containsValue(resident)) { // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=? WHERE uuid=?", true);
                 updateStatement.setString(1, resident.getPlayerName());
                 updateStatement.setTimestamp(2, new Timestamp(resident.getLastOnline().getTime())); // Stupid hack...
@@ -430,7 +430,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.executeUpdate();
 
                 // Put the Resident in the Map
-                universe.residents.put(resident.getUUID().toString(), resident);
+                MyTownUniverse.getInstance().residents.put(resident.getUUID().toString(), resident);
             }
         } catch (SQLException e) {
             log.error("Failed to save resident %s!", e, resident.getUUID());
@@ -443,7 +443,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean savePlot(Plot plot) {
         try {
-            if (universe.plots.containsValue(plot)) { // Update
+            if (MyTownUniverse.getInstance().plots.containsValue(plot)) { // Update
                 PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET name=? WHERE dim=? AND x1=? AND y1=? AND z1=? AND x2=? AND y2=? AND z2=? AND townname=?", true);
                 statement.setString(1, plot.getName());
                 statement.setInt(2, plot.getDim());
@@ -468,7 +468,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.executeUpdate();
 
                 // Put the Plot in the Map
-                universe.plots.put(plot.getKey(), plot);
+                MyTownUniverse.getInstance().plots.put(plot.getKey(), plot);
             }
         } catch (SQLException e) {
             log.error("Failed to save Plot %s!", e, plot.getKey());
@@ -481,7 +481,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveNation(Nation nation) { // TODO Link any new Towns to the given Nation
         try {
-            if (universe.nations.containsValue(nation)) { // Update
+            if (MyTownUniverse.getInstance().nations.containsValue(nation)) { // Update
                 // TODO Update Nation (If needed?)
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Nations (name) VALUES(?)", true);
@@ -489,7 +489,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.executeUpdate();
 
                 // Put the Nation in the Map
-                universe.nations.put(nation.getName(), nation);
+                MyTownUniverse.getInstance().nations.put(nation.getName(), nation);
             }
         } catch (SQLException e) {
             log.error("Failed to save Nation %s!", e, nation.getName());
@@ -511,18 +511,18 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             // Remove all Blocks owned by the Town
             for (Block b : town.getBlocks()) {
-                universe.blocks.remove(b.getKey());
+                MyTownUniverse.getInstance().blocks.remove(b.getKey());
             }
             // Remove all Plots owned by the Town
             for (Plot p : town.getPlots()) {
-                universe.plots.remove(p.getKey());
+                MyTownUniverse.getInstance().plots.remove(p.getKey());
             }
             // Remove all Ranks owned by this Town
             for (Rank r : town.getRanks()) {
-                universe.ranks.remove(r.getKey());
+                MyTownUniverse.getInstance().ranks.remove(r.getKey());
             }
             // Remove the Town from the Map
-            universe.towns.remove(town.getName());
+            MyTownUniverse.getInstance().towns.remove(town.getName());
         } catch (SQLException e) {
             log.error("Failed to delete Town %s", e, town.getName());
             return false;
@@ -546,7 +546,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 deletePlot(p);
             }
             // Remove Block from Map
-            universe.blocks.remove(block.getKey());
+            MyTownUniverse.getInstance().blocks.remove(block.getKey());
         } catch (SQLException e) {
             log.error("Failed to delete Block %s!", e, block.getKey());
             return false;
@@ -565,7 +565,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             deleteRankStatement.execute();
 
             // Remove Rank from Map
-            universe.ranks.remove(rank.getKey());
+            MyTownUniverse.getInstance().ranks.remove(rank.getKey());
         } catch (SQLException e) {
             log.error("Failed to delete Rank %s!", e, rank.getKey());
             return false;
@@ -583,7 +583,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             deleteResidentStatement.execute();
 
             // Remove Resident from Map
-            universe.residents.remove(resident.getUUID().toString());
+            MyTownUniverse.getInstance().residents.remove(resident.getUUID().toString());
         } catch (SQLException e) {
             log.error("Failed to delete Resident %s!", e, resident.getUUID());
             return false;
@@ -607,7 +607,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             deletePlotStatement.execute();
 
             // Remove Plot from Map
-            universe.plots.remove(plot.getKey());
+            MyTownUniverse.getInstance().plots.remove(plot.getKey());
         } catch (SQLException e) {
             log.error("Failed to delete Plot %s!", e, plot.getKey());
             return false;
@@ -625,7 +625,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             deleteNationStatement.execute();
 
             // Remove Nation from Map
-            universe.nations.remove(nation.getName());
+            MyTownUniverse.getInstance().nations.remove(nation.getName());
         } catch (SQLException e) {
             log.error("Failed to delete Nation $s!", e, nation.getName());
             return false;

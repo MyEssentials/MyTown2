@@ -10,12 +10,21 @@ import java.util.Map;
  * @author Joe Goett
  */
 public class MyTownUniverse { // TODO Allow migrating between different Datasources
-    protected Map<String, Resident> residents = new Hashtable<String, Resident>();
-    protected Map<String, Town> towns = new Hashtable<String, Town>();
-    protected Map<String, Nation> nations = new Hashtable<String, Nation>();
-    protected Map<String, Block> blocks = new Hashtable<String, Block>();
-    protected Map<String, Plot> plots = new Hashtable<String, Plot>();
-    protected Map<String, Rank> ranks = new Hashtable<String, Rank>();
+    protected Map<String, Resident> residents;
+    protected Map<String, Town> towns;
+    protected Map<String, Nation> nations;
+    protected Map<String, Block> blocks;
+    protected Map<String, Plot> plots;
+    protected Map<String, Rank> ranks;
+
+    private MyTownUniverse() {
+        residents = new Hashtable<String, Resident>();
+        towns = new Hashtable<String, Town>();
+        nations = new Hashtable<String, Nation>();
+        blocks = new Hashtable<String, Block>();
+        plots = new Hashtable<String, Plot>();
+        ranks = new Hashtable<String, Rank>();
+    }
 
     /**
      * Returns an ImmutableMap of Residents
@@ -69,5 +78,14 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
      */
     public final ImmutableMap<String, Rank> getRanksMap() {
         return ImmutableMap.copyOf(ranks);
+    }
+
+    private static MyTownUniverse instance = null;
+
+    public static MyTownUniverse getInstance() {
+        if (instance == null) {
+            instance = new MyTownUniverse();
+        }
+        return instance;
     }
 }
