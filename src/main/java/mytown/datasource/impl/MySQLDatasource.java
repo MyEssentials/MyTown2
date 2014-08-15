@@ -8,16 +8,16 @@ import mytown.datasource.MyTownDatasource_SQL;
  */
 public class MySQLDatasource extends MyTownDatasource_SQL {
     // Config
-    @ConfigProperty(category  ="datasource", comment = "Username to use when connecting")
+    @ConfigProperty(category = "datasource.sql", comment = "Username to use when connecting")
     private String username = "";
 
-    @ConfigProperty(category = "datasource", comment = "Password to use when connecting")
+    @ConfigProperty(category = "datasource.sql", comment = "Password to use when connecting")
     private String password = "";
 
-    @ConfigProperty(category = "datasource", comment = "Hostname:Port of the database")
+    @ConfigProperty(category = "datasource.sql", comment = "Hostname:Port of the database")
     private String host = "localhost";
 
-    @ConfigProperty(category = "datasource", comment = "The database name")
+    @ConfigProperty(category = "datasource.sql", comment = "The database name")
     private String database = "mytown";
 
     @Override

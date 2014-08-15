@@ -8,7 +8,7 @@ import mytown.util.Constants;
  * @author Joe Goett
  */
 public class SQLiteDatasource extends MyTownDatasource_SQL {
-    @ConfigProperty(category="datasource", comment="The database file path. Used by SQLite")
+    @ConfigProperty(category = "datasource.sql", comment = "The database file path. Used by SQLite")
     private String dbPath = Constants.CONFIG_FOLDER + "data.db";
 
     @Override

@@ -1,12 +1,14 @@
 package mytown.datasource;
 
-import com.google.common.collect.ImmutableMap;
+import com.mojang.authlib.GameProfile;
 import mytown.api.events.*;
 import mytown.core.utils.Log;
 import mytown.entities.*;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 
-import java.util.Hashtable;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -14,67 +16,7 @@ import java.util.UUID;
  */
 public abstract class MyTownDatasource {
     protected Log log = null;
-
-    protected Map<String, Resident> residents = new Hashtable<String, Resident>();
-    protected Map<String, Town> towns = new Hashtable<String, Town>();
-    protected Map<String, Nation> nations = new Hashtable<String, Nation>();
-    protected Map<String, Block> blocks = new Hashtable<String, Block>();
-    protected Map<String, Plot> plots = new Hashtable<String, Plot>();
-    protected Map<String, Rank> ranks = new Hashtable<String, Rank>();
-
-    /**
-     * Returns an ImmutableMap of Residents
-     *
-     * @return ImmutableMap of Residents
-     */
-    public final ImmutableMap<String, Resident> getResidentsMap() {
-        return ImmutableMap.copyOf(residents);
-    }
-
-    /**
-     * Returns an ImmutableMap of Towns
-     *
-     * @return ImmutableMap of Towns
-     */
-    public final ImmutableMap<String, Town> getTownsMap() {
-        return ImmutableMap.copyOf(towns);
-    }
-
-    /**
-     * Returns an ImmutableMap of Nations
-     *
-     * @return ImmutableMap of Nations
-     */
-    public final ImmutableMap<String, Nation> getNationsMap() {
-        return ImmutableMap.copyOf(nations);
-    }
-
-    /**
-     * Returns an ImmutableMap of Blocks
-     *
-     * @return ImmutableMap of Blocks
-     */
-    public final ImmutableMap<String, Block> getBlocksMap() {
-        return ImmutableMap.copyOf(blocks);
-    }
-
-    /**
-     * Returns an ImmutableMap of Plots
-     *
-     * @return ImmutableMap of Plots
-     */
-    public final ImmutableMap<String, Plot> getPlotsMap() {
-        return ImmutableMap.copyOf(plots);
-    }
-
-    /**
-     * Returns an ImmutableMap of Ranks
-     *
-     * @return ImmutableMap of Ranks
-     */
-    public final ImmutableMap<String, Rank> getRanksMap() {
-        return ImmutableMap.copyOf(ranks);
-    }
+    protected MyTownUniverse universe;
 
     /**
      * Sets the Log the Datasource uses
@@ -317,7 +259,7 @@ public abstract class MyTownDatasource {
      * @return If the name exists
      */
     public final boolean hasTown(String townName) {
-        return towns.containsKey(townName);
+        return universe.towns.containsKey(townName);
     }
 
     /**
@@ -329,7 +271,7 @@ public abstract class MyTownDatasource {
      * @return If the Block exists
      */
     public final boolean hasBlock(int dim, int x, int z) {
-        return blocks.containsKey(String.format(Block.keyFormat, dim, x, z));
+        return universe.blocks.containsKey(String.format(Block.keyFormat, dim, x, z));
     }
 
     /**
@@ -341,7 +283,7 @@ public abstract class MyTownDatasource {
      * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
      * @return If the Block exists
      */
-    public boolean hasTownBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
+    public final boolean hasTownBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
         String key;
         if (inChunkCoords) {
             key = String.format(Block.keyFormat, dim, x, z);
@@ -349,11 +291,63 @@ public abstract class MyTownDatasource {
             key = String.format(Block.keyFormat, dim, x >> 4, z >> 4);
         }
 
-        Block b = blocks.get(key);
+        Block b = universe.blocks.get(key);
         if (town != null && b != null && b.getTown() == town)
             return true;
 
         return hasBlock(dim, x, z);
+    }
+
+    /**
+     * Checks if the Datasource has a Resident with the given UUID
+     *
+     * @param uuid
+     * @return
+     */
+    public final boolean hasResident(UUID uuid) {
+        return universe.residents.containsKey(uuid.toString());
+    }
+
+    /**
+     * Checks if the Resident exists
+     *
+     * @param pl
+     * @return
+     */
+    public final boolean hasResident(EntityPlayer pl) {
+        return hasResident(pl.getPersistentID());
+    }
+
+    /**
+     * Checks if the Resident exists
+     *
+     * @param sender
+     * @return
+     */
+    public final boolean hasResident(ICommandSender sender) {
+        if (sender instanceof EntityPlayer) {
+            return hasResident((EntityPlayer) sender);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the Datasource has a Resident with the given username
+     *
+     * @param username
+     * @return
+     */
+    public final boolean hasResident(String username) {
+        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username); // TODO I have no idea if this will actually work. xD
+        return profile != null && hasResident(profile.getId());
+        /*
+        for (Resident res : residents.values()) {
+            if (res.getPlayerName().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+        */
     }
 
     /* ----- Helper ----- */
@@ -366,7 +360,7 @@ public abstract class MyTownDatasource {
      * @return The new Resident, or null if it failed
      */
     public Resident getOrMakeResident(UUID uuid, boolean save) {
-        Resident res = residents.get(uuid.toString());
+        Resident res = universe.residents.get(uuid.toString());
         if (res == null) {
             res = newResident(uuid.toString());
             if (save && res != null) { // Only save if a new Resident
@@ -379,13 +373,36 @@ public abstract class MyTownDatasource {
     }
 
     /**
-     * Gets or makes a new Resident. Does NOT save, and CAN return null!
+     * Gets or makes a new Resident. Does save, and CAN return null!
      *
      * @param uuid The UUID of the Resident (EntityPlayer#getPersistentID())
      * @return The new Resident, or null if it failed
      */
     public Resident getOrMakeResident(UUID uuid) {
-        return getOrMakeResident(uuid, false);
+        return getOrMakeResident(uuid, true);
+    }
+
+    public Resident getOrMakeResident(EntityPlayer player) {
+        return getOrMakeResident(player.getPersistentID());
+    }
+
+    public Resident getOrMakeResident(Entity e) {
+        if (e instanceof EntityPlayer) {
+            return getOrMakeResident((EntityPlayer) e);
+        }
+        return null;
+    }
+
+    public Resident getOrMakeResident(ICommandSender sender) {
+        if (sender instanceof EntityPlayer) {
+            return getOrMakeResident((EntityPlayer) sender);
+        }
+        return null;
+    }
+
+    public Resident getOrMakeResident(String username) {
+        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username); // TODO I have no idea if this will actually work. xD
+        return profile == null ? null : getOrMakeResident(profile.getId());
     }
 
     /**
@@ -397,6 +414,6 @@ public abstract class MyTownDatasource {
      * @return The Block, or null if it doesn't exist
      */
     public Block getBlock(int dim, int chunkX, int chunkZ) {
-        return blocks.get(String.format(Block.keyFormat, dim, chunkX, chunkZ));
+        return universe.blocks.get(String.format(Block.keyFormat, dim, chunkX, chunkZ));
     }
 }
