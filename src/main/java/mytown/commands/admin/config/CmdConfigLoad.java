@@ -11,19 +11,19 @@ import net.minecraft.command.ICommandSender;
 
 /**
  * (Re)loads the config file
- * 
+ *
  * @author Joe Goett
  */
 @Permission("mytown.cmd.adm.config.load")
 public class CmdConfigLoad extends CommandBase {
-	public CmdConfigLoad(ICommand parent) {
-		super("load", parent);
-	}
+    public CmdConfigLoad(ICommand parent) {
+        super("load", parent);
+    }
 
-	@Override
-	public void processCommand(ICommandSender sender, String[] args) {
-		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.cmd.config.load.start");
-		ConfigProcessor.load(MyTown.instance.config, Config.class);
-		ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.cmd.config.load.stop");
-	}
+    @Override
+    public void processCommand(ICommandSender sender, String[] args) {
+        ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.cmd.config.load.start");
+        ConfigProcessor.load(MyTown.instance.config, Config.class);
+        ChatUtils.sendLocalizedChat(sender, MyTown.getLocal(), "mytown.cmd.config.load.stop");
+    }
 }

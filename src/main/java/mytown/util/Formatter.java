@@ -15,7 +15,19 @@ import java.util.List;
  * @author Joe Goett
  */
 public class Formatter {
-    private Formatter() {}
+    private Formatter() {
+    }
+
+    public static String formatRanksToString(List<Rank> ranks) {
+        String rs = "";
+        for (Rank r : ranks) {
+            rs += r.getName(); // TODO Make pretty :p
+        }
+        if (ranks.isEmpty()) {
+            rs = EnumChatFormatting.RED + "None";
+        }
+        return rs;
+    }
 
     public static String formatBlockInfo(Block block) {
         return String.format(Config.blockInfoFormat, block.getTown().getName(), block.getDim(), block.getCoordString());

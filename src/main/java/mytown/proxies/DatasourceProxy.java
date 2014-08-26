@@ -5,7 +5,7 @@ import mytown.config.Config;
 import mytown.core.utils.Log;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.datasource.MyTownDatasource;
-import mytown.datasource.impl.InMemoryDatasource;
+import mytown.datasource.InMemoryDatasource;
 import mytown.datasource.impl.MySQLDatasource;
 import mytown.datasource.impl.SQLiteDatasource;
 import net.minecraftforge.common.config.Configuration;
@@ -29,6 +29,7 @@ public class DatasourceProxy {
 
     /**
      * Initializes, configures, and loads the Datasource returning if successful
+     *
      * @return True if started successful
      */
     public static boolean start(Configuration config) {
@@ -66,6 +67,7 @@ public class DatasourceProxy {
 
     /**
      * Stops the Datasource
+     *
      * @return
      */
     public static boolean stop() {
@@ -75,6 +77,7 @@ public class DatasourceProxy {
 
     /**
      * Returns the MyTownDatasource instance
+     *
      * @return
      */
     public static MyTownDatasource getDatasource() {
@@ -83,6 +86,7 @@ public class DatasourceProxy {
 
     /**
      * Sets the Log for this Proxy. Useful when writing JUnit tests that doesn't have access to the MyTown instance
+     *
      * @param log
      */
     public static void setLog(Log log) {
@@ -91,6 +95,7 @@ public class DatasourceProxy {
 
     /**
      * Registers the type with the given name
+     *
      * @param name Name of the type
      * @param type The Class of the the type
      */
@@ -104,6 +109,7 @@ public class DatasourceProxy {
 
     /**
      * Handles registering types over IMC
+     *
      * @param msg
      */
     public static void imc(FMLInterModComms.IMCMessage msg) {
@@ -123,5 +129,6 @@ public class DatasourceProxy {
         }
     }
 
-    private DatasourceProxy() {}
+    private DatasourceProxy() {
+    }
 }

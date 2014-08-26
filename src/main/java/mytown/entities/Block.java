@@ -3,6 +3,7 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import mytown.entities.interfaces.IHasPlots;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class Block implements IHasPlots {
     Since Blocks are just chunks, its much quicker to grab it and return a Collection of Plots the Block has.
     */
 
-    private List<Plot> plots = null;
+    private List<Plot> plots = new ArrayList<Plot>();
 
     @Override
     public void addPlot(Plot plot) {

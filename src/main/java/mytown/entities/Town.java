@@ -9,8 +9,7 @@ import mytown.entities.interfaces.IHasResidents;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 // TODO Implement TownType
 
@@ -72,7 +71,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /* ----- IHasResidents ----- */
 
-    private Map<Resident, Rank> residents = null;
+    private Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
 
     /**
      * Adds the Resident with the given Rank
@@ -137,7 +136,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /* ----- IHasRanks ----- */
 
-    private List<Rank> ranks = null;
+    private List<Rank> ranks = new ArrayList<Rank>();
     private Rank defaultRank = null; // TODO Set default rank during creation?
 
     @Override
@@ -172,7 +171,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /* ----- IHasBlocks ----- */
 
-    private Map<String, Block> blocks = null;
+    private Map<String, Block> blocks = new Hashtable<String, Block>();
 
     @Override
     public void addBlock(Block block) {
@@ -201,7 +200,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
     /* ----- IHasPlots ----- */
 
-    private List<Plot> plots = null;
+    private List<Plot> plots = new ArrayList<Plot>();
 
     @Override
     public void addPlot(Plot plot) {

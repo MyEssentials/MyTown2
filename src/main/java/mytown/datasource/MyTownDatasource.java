@@ -16,7 +16,6 @@ import java.util.UUID;
  */
 public abstract class MyTownDatasource {
     protected Log log = null;
-//    protected MyTownUniverse universe;
 
     /**
      * Sets the Log the Datasource uses
@@ -186,6 +185,15 @@ public abstract class MyTownDatasource {
     public abstract boolean saveRank(Rank rank);
 
     /**
+     * Adds the permission node to the Rank
+     *
+     * @param rank The rank
+     * @param perm The permission node
+     * @return Whether it was successfully added
+     */
+    public abstract boolean addRankPermission(Rank rank, String perm);
+
+    /**
      * Saves the Resident
      *
      * @return If it was successful
@@ -205,6 +213,62 @@ public abstract class MyTownDatasource {
      * @return If it was successful
      */
     public abstract boolean saveNation(Nation nation);
+
+    /* ----- Link ----- */
+
+    /**
+     * Links the Resident to the Town, setting the Rank of the Resident in the Town
+     *
+     * @param res The Resident to Link
+     * @param town The Town to Link
+     * @return If the link was successful
+     */
+    public abstract boolean linkResidentToTown(Resident res, Town town);
+
+    /**
+     * Unlinks the Resident from the Town
+     *
+     * @param res The Resident to Unlink
+     * @param town The Town to Unlink
+     * @return If the unlink was successful
+     */
+    public abstract boolean unlinkResidentToTown(Resident res, Town town);
+
+    /**
+     * Updates the link between the Resident and the Town
+     *
+     * @param res The Resident
+     * @param town the Town
+     * @return If the link update was successful
+     */
+    public abstract boolean updateResidentToTownLink(Resident res, Town town);
+
+    /**
+     * Links the Resident to the Town, setting the Rank of the Resident in the Town
+     *
+     * @param town The Town to Link
+     * @param nation The Nation to Link
+     * @return If the link was successful
+     */
+    public abstract boolean linkTownToNation(Town town, Nation nation);
+
+    /**
+     * Unlinks the Resident from the Town
+     *
+     * @param town The Town to Unlink
+     * @param nation The Nation to Unlink
+     * @return If the unlink was successful
+     */
+    public abstract boolean unlinkTownToNation(Town town, Nation nation);
+
+    /**
+     * Updates the link between the Town and Nation
+     *
+     * @param town The Town
+     * @param nation The Nation
+     * @return If the link update was successful
+     */
+    public abstract boolean updateTownToNationLink(Town town, Nation nation);
 
     /* ----- Delete ----- */
 
@@ -250,6 +314,15 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deleteNation(Nation nation);
 
+    /**
+     * Removes the permission node from the Rank
+     *
+     * @param rank The rank
+     * @param perm The permission node
+     * @return Whether it was successfully removed
+     */
+    public abstract boolean removeRankPermission(Rank rank, String perm);
+
     /* ----- Has ----- */
 
     /**
@@ -283,7 +356,7 @@ public abstract class MyTownDatasource {
      * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
      * @return If the Block exists
      */
-    public final boolean hasTownBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
+    public final boolean hasBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
         String key;
         if (inChunkCoords) {
             key = String.format(Block.keyFormat, dim, x, z);

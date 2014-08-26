@@ -3,6 +3,7 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import mytown.entities.interfaces.IHasTowns;
 
+import java.util.Hashtable;
 import java.util.Map;
 
 /**
@@ -30,7 +31,7 @@ public class Nation implements IHasTowns, Comparable<Nation> {
 
     /* ----- IHasTowns ----- */
 
-    private Map<Town, Rank> towns = null;
+    private Map<Town, Rank> towns = new Hashtable<Town, Rank>();
 
     @Override
     public void addTown(Town town) {

@@ -1,9 +1,9 @@
 package mytown.commands.town.everyone;
 
 import mytown.MyTown;
-import mytown.datasource.MyTownDatasource;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
+import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
@@ -14,19 +14,19 @@ import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Sub command to create a new town
- * 
+ *
  * @author Joe Goett
  */
 @Permission("mytown.cmd.outsider.new")
 public class CmdNewTown extends CommandBase {
 
-	public CmdNewTown(String name, CommandBase parent) {
-		super(name, parent);
-	}
+    public CmdNewTown(CommandBase parent) {
+        super("new", parent);
+    }
 
-	@Override
-	public void processCommand(ICommandSender sender, String[] args) {
-		EntityPlayer player = (EntityPlayer) sender;
+    @Override
+    public void processCommand(ICommandSender sender, String[] args) {
+        EntityPlayer player = (EntityPlayer) sender;
         if (args.length < 1)
             throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.newtown"));
         if (getDatasource().hasTown(args[0])) // Is the town name already in use?
@@ -38,7 +38,7 @@ public class CmdNewTown extends CommandBase {
         if (town == null)
             throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.newtown.failed"));
 
-        Resident res = getDatasource().getOrMakeResident(player.getPersistentID(), true); // Attempt to get or make the Resident
+        Resident res = getDatasource().getOrMakeResident(player); // Attempt to get or make the Resident
         if (res == null)
             throw new CommandException("Failed to get or save resident"); // TODO Localize!
 
@@ -50,14 +50,14 @@ public class CmdNewTown extends CommandBase {
         // TODO Link Resident to Town
 
         res.sendMessage(MyTown.getLocal().getLocalization("mytown.notification.town.created", town.getName()));
-	}
+    }
 
-	/**
-	 * Helper method to return the current MyTownDatasource instance
-	 * 
-	 * @return
-	 */
-	private MyTownDatasource getDatasource() {
-		return DatasourceProxy.getDatasource();
-	}
+    /**
+     * Helper method to return the current MyTownDatasource instance
+     *
+     * @return
+     */
+    private MyTownDatasource getDatasource() {
+        return DatasourceProxy.getDatasource();
+    }
 }

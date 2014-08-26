@@ -330,7 +330,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
                     town.resetOldName();
                 }
-                // TODO Link any new Residents to the given Town
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name) VALUES(?)", true);
                 insertStatement.setString(1, town.getName());
@@ -415,6 +414,20 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
+    public boolean addRankPermission(Rank rank, String perm) {
+        try {
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "RankPermissions (node, rank) VALUES(?, ?)", true);
+            s.setString(1, perm);
+            s.setString(2, rank.getName());
+            s.execute();
+        } catch(SQLException e) {
+            log.error("Failed to add permission (%s) to Rank (%s)", e, perm, rank.getName());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean saveResident(Resident resident) {
         try {
             if (MyTownUniverse.getInstance().residents.containsValue(resident)) { // Update
@@ -444,7 +457,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean savePlot(Plot plot) {
         try {
             if (MyTownUniverse.getInstance().plots.containsValue(plot)) { // Update
-                PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET name=? WHERE dim=? AND x1=? AND y1=? AND z1=? AND x2=? AND y2=? AND z2=? AND townname=?", true);
+                PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET name=? WHERE dim=?, x1=?, y1=?, z1=?, x2=?, y2=?, z2=?, townname=?", true);
                 statement.setString(1, plot.getName());
                 statement.setInt(2, plot.getDim());
                 statement.setInt(3, plot.getStartX());
@@ -496,6 +509,93 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             return false;
         }
 
+        return true;
+    }
+
+    /* ----- Link ----- */
+
+    @Override
+    public boolean linkResidentToTown(Resident res, Town town) {
+        try {
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "ResidentsToTowns (resident, town, rank) VALUES(?, ?, ?);", true);
+            s.setString(1, res.getUUID().toString());
+            s.setString(2, town.getName());
+            s.setString(3, town.getResidentRank(res).getName());
+            s.execute();
+        } catch(SQLException e) {
+            log.error("Failed to link Resident %s (%s) with Town %s", e, res.getPlayerName(), res.getUUID(), town.getName());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean unlinkResidentToTown(Resident res, Town town) {
+        try {
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "ResidentsToTowns WHERE resident = ?, town = ?;", true);
+            s.setString(1, res.getUUID().toString());
+            s.setString(2, town.getName());
+            s.execute();
+        } catch(SQLException e) {
+            log.error("Failed to unlink Resident %s (%s) with Town %s", e, res.getPlayerName() ,res.getUUID(), town.getName());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateResidentToTownLink(Resident res, Town town) {
+        try {
+            PreparedStatement s = prepare("UPDATE " + prefix + "ResidentsToTowns SET rank = ? WHERE resident = ?, town = ?;", true);
+            s.setString(1, town.getResidentRank(res).getName());
+            s.setString(2, res.getUUID().toString());
+            s.setString(3, town.getName());
+            s.executeUpdate();
+        } catch(SQLException e) {
+            log.error("Failed to update link between Resident %s (%s) with Town %s", e, res.getPlayerName() ,res.getUUID(), town.getName());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean linkTownToNation(Town town, Nation nation) {
+        try {
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "TownsToNations (town, nation, rank) VALUES(?, ?, ?);", true);
+            s.setString(1, town.getName());
+            s.setString(2, nation.getName());
+            s.setString(3, nation.getTownRank(town).toString());
+            s.execute();
+        } catch(SQLException e) {
+            log.error("", e);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean unlinkTownToNation(Town town, Nation nation) {
+        try {
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "TownsToNations WHERE town = ?, nation = ?;", true);
+            s.setString(1, town.getName());
+            s.setString(2, nation.getName());
+            s.execute();
+        } catch(SQLException e) {
+            log.error("", e);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateTownToNationLink(Town town, Nation nation) {
+        try {
+            PreparedStatement s = prepare("UPDATE " + prefix + "TownsToNations SET rank = ? WHERE town = ?, nation = ?", true);
+            s.setString(1, nation.getTownRank(town).toString());
+            s.setString(2, town.getName());
+            s.setString(3, nation.getName());
+            s.executeUpdate();
+        } catch(SQLException e) {
+            log.error("", e);
+        }
         return true;
     }
 
@@ -631,6 +731,20 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             return false;
         }
 
+        return true;
+    }
+
+    @Override
+    public boolean removeRankPermission(Rank rank, String perm) {
+        try {
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE node = ?, rank = ?", true);
+            s.setString(1, perm);
+            s.setString(2, rank.getName());
+            s.execute();
+        } catch(SQLException e) {
+            log.error("Failed to add permission (%s) to Rank (%s)", e, perm, rank.getName());
+            return false;
+        }
         return true;
     }
 

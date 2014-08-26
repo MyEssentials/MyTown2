@@ -1,11 +1,11 @@
 package mytown.commands.town.claim;
 
 import mytown.MyTown;
-import mytown.datasource.MyTownDatasource;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
-import mytown.entities.Resident;
+import mytown.datasource.MyTownDatasource;
 import mytown.entities.Block;
+import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.CommandException;
@@ -14,32 +14,32 @@ import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Command to claim TownBlocks
- * 
+ *
  * @author Joe Goett
  */
 @Permission("mytown.cmd.assistant.unclaim")
 public class CmdUnclaim extends CommandBase {
 
-	public CmdUnclaim(String name, CommandBase parent) {
-		super(name, parent);
-	}
+    public CmdUnclaim(CommandBase parent) {
+        super("unclaim", parent);
+    }
 
-	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
-		super.canCommandSenderUseCommand(sender);
-		Resident res = getDatasource().getOrMakeResident(((EntityPlayer)sender).getPersistentID());
+    @Override
+    public boolean canCommandSenderUseCommand(ICommandSender sender) throws CommandException {
+        super.canCommandSenderUseCommand(sender);
+        Resident res = getDatasource().getOrMakeResident(sender);
         if (res == null)
             throw new CommandException("Unknown error"); // TODO Localize
-		if (res.getTowns().size() == 0)
-			throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+        if (res.getTowns().size() == 0)
+            throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public void processCommand(ICommandSender sender, String[] args) {
+    @Override
+    public void processCommand(ICommandSender sender, String[] args) {
         EntityPlayer pl = (EntityPlayer) sender;
-        Resident res = getDatasource().getOrMakeResident(pl.getPersistentID());
+        Resident res = getDatasource().getOrMakeResident(pl);
         if (res == null)
             throw new CommandException("Failed to get/make Resident"); // TODO Localize
         Block block = getDatasource().getBlock(pl.dimension, pl.chunkCoordX, pl.chunkCoordZ);
@@ -54,14 +54,14 @@ public class CmdUnclaim extends CommandBase {
             town.setSpawn(null); // Removes the Town's spawn point if in this Block
         }
         getDatasource().deleteBlock(block);
-	}
+    }
 
-	/**
-	 * Helper method to return the current MyTownDatasource instance
-	 * 
-	 * @return
-	 */
-	private MyTownDatasource getDatasource() {
-		return DatasourceProxy.getDatasource();
-	}
+    /**
+     * Helper method to return the current MyTownDatasource instance
+     *
+     * @return
+     */
+    private MyTownDatasource getDatasource() {
+        return DatasourceProxy.getDatasource();
+    }
 }

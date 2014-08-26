@@ -1,8 +1,5 @@
 package mytown.commands.town;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mytown.commands.town.assistant.CmdSetSpawn;
 import mytown.commands.town.claim.CmdClaim;
 import mytown.commands.town.claim.CmdUnclaim;
@@ -23,48 +20,51 @@ import mytown.commands.town.rank.CmdRanks;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * MyTown command
- * 
+ *
  * @author Joe Goett
  */
 @Permission("mytown.cmd")
 public class CmdTown extends CommandHandler {
-	List<String> aliases = new ArrayList<String>();
+    List<String> aliases = new ArrayList<String>();
 
-	public CmdTown() {
-		super("town");
+    public CmdTown() {
+        super("town");
 
-		// Add commands
-		addSubCommand(new CmdNewTown("new", this));
-		addSubCommand(new CmdClaim("claim", this));
-		addSubCommand(new CmdMap("map", this));
-		addSubCommand(new CmdListTown("list", this));
-		addSubCommand(new CmdInvite("invite", this));
-		addSubCommand(new CmdInfo("info", this));
-		addSubCommand(new CmdSelect("select", this));
-		addSubCommand(new CmdRanks("ranks", this));
-		addSubCommand(new CmdBlocks("blocks", this));
-		addSubCommand(new CmdUnclaim("unclaim", this));
-		addSubCommand(new CmdPlot("plot", this));
-		addSubCommand(new CmdPlots("plots", this));
-		addSubCommand(new CmdPerm("perm", this));
-		addSubCommand(new CmdLeave("leave", this));
-		addSubCommand(new CmdPromote("promote", this));
-		addSubCommand(new CmdSetSpawn("setspawn", this));
-		addSubCommand(new CmdSpawn("spawn", this));
+        // Add commands
+        addSubCommand(new CmdNewTown(this));
+        addSubCommand(new CmdClaim(this));
+        addSubCommand(new CmdMap(this));
+        addSubCommand(new CmdListTown(this));
+        addSubCommand(new CmdInvite(this));
+        addSubCommand(new CmdInfo(this));
+        addSubCommand(new CmdSelect(this));
+        addSubCommand(new CmdRanks(this));
+        addSubCommand(new CmdBlocks(this));
+        addSubCommand(new CmdUnclaim(this));
+        addSubCommand(new CmdPlot(this));
+        addSubCommand(new CmdPlots(this));
+        // addSubCommand(new CmdPerm(this)); TODO Redo the perm commands
+        addSubCommand(new CmdLeave(this));
+        addSubCommand(new CmdPromote(this));
+        addSubCommand(new CmdSetSpawn(this));
+        addSubCommand(new CmdSpawn(this));
 
-		// Add Aliases
-		aliases.add("t");
-	}
+        // Add Aliases
+        aliases.add("t");
+    }
 
-	@Override
-	public boolean canConsoleUse() {
-		return true;
-	}
+    @Override
+    public boolean canConsoleUse() {
+        return true;
+    }
 
-	@Override
-	public List<?> getCommandAliases() {
-		return aliases; // TODO Add aliases!
-	}
+    @Override
+    public List<?> getCommandAliases() {
+        return aliases; // TODO Add aliases!
+    }
 }

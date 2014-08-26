@@ -1,32 +1,30 @@
 package mytown.commands.town.info;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mytown.MyTown;
-import mytown.datasource.MyTownDatasource;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
+import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
-import mytown.proxies.DatasourceProxy;
 import mytown.entities.Town;
+import mytown.proxies.DatasourceProxy;
 import mytown.util.Formatter;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Permission("mytown.cmd.outsider.info")
 public class CmdInfo extends CommandBase {
-	public CmdInfo(String name, CommandBase parent) {
-		super(name, parent);
-	}
+    public CmdInfo(CommandBase parent) {
+        super("info", parent);
+    }
 
-	@Override
-	public void processCommand(ICommandSender sender, String[] args) {
-        EntityPlayer pl = (EntityPlayer) sender;
+    @Override
+    public void processCommand(ICommandSender sender, String[] args) {
         List<Town> towns = new ArrayList<Town>();
 
-        Resident res = getDatasource().getOrMakeResident(pl.getPersistentID());
+        Resident res = getDatasource().getOrMakeResident(sender);
         if (res == null)
             throw new CommandException("Failed to get/make Resident"); // TODO Localize
         if (args.length < 1) {
@@ -49,30 +47,30 @@ public class CmdInfo extends CommandBase {
         for (Town town : towns) {
             res.sendMessage(Formatter.formatTownInfo(town));
         }
-	}
+    }
 
-	@Override
-	public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
-		List<String> tabComplete = new ArrayList<String>();
-		if (args.length == 0 || args[0].isEmpty()) {
-			tabComplete.add("@a"); // Add the "all" selector
-			tabComplete.addAll(getDatasource().getTownsMap().keySet());
-		} else {
-			for (Town t : getDatasource().getTownsMap().values()) {
-				if (t.getName().startsWith(args[0])) {
-					tabComplete.add(t.getName());
-				}
-			}
-		}
-		return tabComplete;
-	}
+    @Override
+    public List<?> addTabCompletionOptions(ICommandSender sender, String[] args) {
+        List<String> tabComplete = new ArrayList<String>();
+        if (args.length == 0 || args[0].isEmpty()) {
+            tabComplete.add("@a"); // Add the "all" selector
+            tabComplete.addAll(getDatasource().getTownsMap().keySet());
+        } else {
+            for (Town t : getDatasource().getTownsMap().values()) {
+                if (t.getName().startsWith(args[0])) {
+                    tabComplete.add(t.getName());
+                }
+            }
+        }
+        return tabComplete;
+    }
 
-	/**
-	 * Helper method to return the current MyTownDatasource instance
-	 * 
-	 * @return
-	 */
-	private MyTownDatasource getDatasource() {
-		return DatasourceProxy.getDatasource();
-	}
+    /**
+     * Helper method to return the current MyTownDatasource instance
+     *
+     * @return
+     */
+    private MyTownDatasource getDatasource() {
+        return DatasourceProxy.getDatasource();
+    }
 }

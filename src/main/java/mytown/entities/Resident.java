@@ -142,7 +142,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /* ----- IHasPlots ----- */
 
-    private List<Plot> plots = null;
+    private List<Plot> plots = new ArrayList<Plot>();
 
     @Override
     public void addPlot(Plot plot) {
@@ -186,7 +186,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /* ----- IHasTowns ----- */
 
-    private List<Town> towns = null;
+    private List<Town> towns = new ArrayList<Town>();
     private Town selectedTown = null;
 
     @Override
@@ -267,7 +267,20 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     private List<Town> invites = new ArrayList<Town>();
 
     public void addInvite(Town invite) {
-        this.invites.add(invite);
+        invites.add(invite);
+    }
+
+    public void removeInvite(Town invite) {
+        invites.remove(invite);
+    }
+
+    public void removeInvite(String name) {
+        for (Town t : invites) {
+            if (t.getName().equals(name)) {
+                invites.remove(t);
+                break;
+            }
+        }
     }
 
     public ImmutableList<Town> getInvites() {
