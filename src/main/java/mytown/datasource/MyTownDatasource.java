@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import mytown.api.events.*;
 import mytown.core.utils.Log;
 import mytown.entities.*;
+import mytown.entities.flag.TownFlag;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -109,6 +110,20 @@ public abstract class MyTownDatasource {
         return nation;
     }
 
+    /**
+     * Creates and returns a new TownFlag or null if it couldn't be created
+     *
+     * @param name
+     * @param descriptionKey
+     * @param value
+     * @return the new TownFlag, or null if failed
+     */
+    public final TownFlag newFlag(String name, String descriptionKey, Object value) {
+        TownFlag<Object> flag = new TownFlag<Object>(name, descriptionKey, value);
+        //TODO: Fire event
+        return flag;
+    }
+
     /* ----- Read ----- */
 
     /**
@@ -117,7 +132,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations();
+        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadFlags();
     }
 
     /**
@@ -161,6 +176,13 @@ public abstract class MyTownDatasource {
      * @return If it was successful
      */
     protected abstract boolean loadNations();
+
+    /**
+     * Loads all the Flags
+     *
+     * @return If it was successful
+     */
+    protected  abstract  boolean loadFlags();
 
     /* ----- Save ----- */
 
@@ -214,6 +236,21 @@ public abstract class MyTownDatasource {
      * @return If it was successful
      */
     public abstract boolean saveNation(Nation nation);
+
+    /**
+     * Saves the Flag
+     *
+     * @return If it was successful
+     */
+    public abstract boolean saveFlag(TownFlag flag, Town town);
+
+    /**
+     * Saves the Flag to the plot
+     *
+     * @return If it was successful
+     */
+    public abstract boolean saveFlag(TownFlag flag, Plot plot);
+
 
     /* ----- Link ----- */
 
@@ -314,6 +351,13 @@ public abstract class MyTownDatasource {
      * @return If it was successful
      */
     public abstract boolean deleteNation(Nation nation);
+
+    /*
+     * Deletes the Flag
+     *
+     * @return If it was successful
+     */
+    //public abstract boolean deleteFlag(TownFlag flag);
 
     /**
      * Removes the permission node from the Rank

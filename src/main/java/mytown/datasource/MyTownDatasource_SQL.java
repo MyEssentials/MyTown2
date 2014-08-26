@@ -1,9 +1,12 @@
 package mytown.datasource;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import mytown.config.Config;
 import mytown.core.utils.config.ConfigProperty;
 import mytown.entities.*;
+import mytown.entities.flag.TownFlag;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -247,6 +250,47 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             return false;
         }
 
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected  boolean loadFlags() {
+        try {
+            PreparedStatement loadFlagsStatement = prepare("SELECT * FROM " + prefix + "Flags", true);
+            ResultSet rs = loadFlagsStatement.executeQuery();
+
+            while(rs.next()) {
+                String plotName = rs.getString("plot");
+                String flagName = rs.getString("name");
+                String descriptionKey = rs.getString("descriptionKey");
+
+                Gson gson = new GsonBuilder().create();
+                TownFlag flag = new TownFlag(flagName, descriptionKey, gson.fromJson(rs.getString("serializedValue"), TownFlag.flagValueTypes.get(flagName)));
+
+                if(plotName == null) {
+                    // Then it is the town's flags
+                    Town town = MyTownUniverse.getInstance().getTownsMap().get(rs.getString("townName"));
+                    if(town != null) {
+                        town.addFlag(flag);
+                    } else {
+                        log.error("Failed to load flag " + flagName + " because the town given was invalid!");
+                        return false;
+                    }
+                } else {
+                    Plot plot = MyTownUniverse.getInstance().getPlotsMap().get(plotName);
+                    if(plot != null) {
+                        plot.addFlag(flag);
+                    } else {
+                        log.error("Failed to load flag " + flagName + " because the plot given was invalid!");
+                        return false;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 
@@ -505,12 +549,66 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 MyTownUniverse.getInstance().nations.put(nation.getName(), nation);
             }
         } catch (SQLException e) {
-            log.error("Failed to save Nation %s!", e, nation.getName());
+            log.error("Failed to save Nation %s!", nation.getName());
+            e.printStackTrace();
             return false;
         }
 
         return true;
     }
+
+    @Override
+    public boolean saveFlag(TownFlag flag, Plot plot) {
+        try {
+            if(plot.hasFlag(flag.getName())) {
+                // Update
+
+            } else {
+                // Insert
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Flags(name, fescriptionKey, serializedValue, townName, plot) VALUES(?, ?, ?, ?, ?)", true);
+                insertStatement.setString(1, flag.getName());
+                insertStatement.setString(2, flag.getDescriptionKey());
+                insertStatement.setString(3, flag.serializeValue());
+                insertStatement.setString(4, plot.getTown().getName());
+                insertStatement.setString(5, plot.getKey());
+                insertStatement.executeUpdate();
+
+                plot.addFlag(flag);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to save Nation %s!", flag.getName());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean saveFlag(TownFlag flag, Town town) {
+        try {
+            if(town.hasFlag(flag.getName())) {
+                // Update
+
+            } else {
+                // Insert
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Flags(name, fescriptionKey, serializedValue, townName, plot) VALUES(?, ?, ?, ?, ?)", true);
+                insertStatement.setString(1, flag.getName());
+                insertStatement.setString(2, flag.getDescriptionKey());
+                insertStatement.setString(3, flag.serializeValue());
+                insertStatement.setString(4, town.getName());
+                insertStatement.setString(5, "NULL");
+                insertStatement.executeUpdate();
+
+                town.addFlag(flag);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to save Nation %s!", flag.getName());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 
     /* ----- Link ----- */
 
@@ -873,6 +971,16 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(town, nation)," +
                 "FOREIGN KEY(town) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
                 "FOREIGN KEY(nation) REFERENCES " + prefix + "Nations(name) ON DELETE CASCADE ON UPDATE CASCADE" +
+                ");"));
+        updates.add(new DBUpdate("08.26.2014", "Add Flags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Flags (" +
+                "name VARCHAR(50) NOT NULL," +
+                "descriptionKey VARCHAR(50), " +
+                "serializedValue VARCHAR(400), " +
+                "townName VARCHAR(50) NOT NULL," +
+                "plot VARCHAR(50) NOT NULL," + // should be something like "" if it's town only flags
+                "PRIMARY KEY(name, townName, plot)," +
+                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
+                "FOREIGN KEY(plot) REFERENCES " + prefix + "Plots(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
     }
 

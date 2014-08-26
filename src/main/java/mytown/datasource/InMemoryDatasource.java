@@ -1,6 +1,7 @@
 package mytown.datasource;
 
 import mytown.entities.*;
+import mytown.entities.flag.TownFlag;
 
 /**
  * @author Joe Goett
@@ -45,6 +46,12 @@ public class InMemoryDatasource extends MyTownDatasource {
     @Override
     protected boolean loadNations() {
         log.debug("Loading Nations");
+        return true;
+    }
+
+    @Override
+    protected boolean loadFlags() {
+        log.debug("Loading Flags");
         return true;
     }
 
@@ -114,6 +121,26 @@ public class InMemoryDatasource extends MyTownDatasource {
         if (MyTownUniverse.getInstance().nations.containsValue(nation)) { // Update
         } else { // Insert
             MyTownUniverse.getInstance().nations.put(nation.getName(), nation);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean saveFlag(TownFlag flag, Plot plot) {
+        log.debug("Saving Flag %s for plot:", flag.getName(), plot.getKey());
+        if (plot.hasFlag(flag.getName())) { // Update
+        } else { // Insert
+            plot.addFlag(flag);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean saveFlag(TownFlag flag, Town town) {
+        log.debug("Saving Flag %s for town:", flag.getName(), town.getName());
+        if (town.hasFlag(flag.getName())) { // Update
+        } else { // Insert
+            town.addFlag(flag);
         }
         return true;
     }
