@@ -4,6 +4,7 @@ import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
+import mytown.datasource.MyTownUniverse;
 import mytown.proxies.DatasourceProxy;
 import mytown.entities.Resident;
 import mytown.proxies.LocalizationProxy;
@@ -25,7 +26,7 @@ public class CmdInviteRefuse extends CommandBase {
             throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.noinvitations"));
         if (args.length == 0)
             throw new WrongUsageException(MyTown.getLocal().getLocalization("mytown.cmd.usage.invite.accept"));
-        if (getDatasource().getTownsMap().get(args[0]) != null)
+        if (getUniverse().getTownsMap().get(args[0]) != null)
             throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
         String townName;
         if (args.length == 0) {
@@ -33,7 +34,7 @@ public class CmdInviteRefuse extends CommandBase {
         } else {
             townName = args[0];
         }
-        if (!res.getInvites().contains(getDatasource().getTownsMap().get(townName)))
+        if (!res.getInvites().contains(getUniverse().getTownsMap().get(townName)))
             throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.invite.accept"));
         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.invited.refuse", townName));
         res.removeInvite(townName);
@@ -47,5 +48,6 @@ public class CmdInviteRefuse extends CommandBase {
     private MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
+    private MyTownUniverse getUniverse() { return MyTownUniverse.getInstance(); }
 
 }

@@ -3,6 +3,7 @@ package mytown.commands.town.everyone;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
@@ -29,7 +30,7 @@ public class CmdSpawn extends CommandBase {
         if (args.length == 0) {
             town = res.getSelectedTown();
         } else {
-            town = getDatasource().getTownsMap().get(args[0]);
+            town = getUniverse().getTownsMap().get(args[0]);
         }
 
         if (town == null) {
@@ -49,4 +50,5 @@ public class CmdSpawn extends CommandBase {
     private MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
+    private MyTownUniverse getUniverse() { return MyTownUniverse.getInstance(); }
 }

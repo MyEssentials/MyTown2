@@ -77,8 +77,9 @@ public abstract class MyTownDatasource {
      *
      * @return The new Resident, or null if it failed
      */
-    public final Resident newResident(String uuid) {
-        Resident resident = new Resident(uuid);
+    public final Resident newResident(String uuid, String playerName) {
+        Resident resident = new Resident(uuid, playerName);
+
         if (ResidentEvent.fire(new ResidentEvent.ResidentCreateEvent(resident)))
             return null;
         return resident;
@@ -432,10 +433,11 @@ public abstract class MyTownDatasource {
      * @param save Whether to save the newly created Resident
      * @return The new Resident, or null if it failed
      */
-    public Resident getOrMakeResident(UUID uuid, boolean save) {
+
+    public Resident getOrMakeResident(UUID uuid, String playerName, boolean save) {
         Resident res = MyTownUniverse.getInstance().residents.get(uuid.toString());
         if (res == null) {
-            res = newResident(uuid.toString());
+            res = newResident(uuid.toString(), playerName);
             if (save && res != null) { // Only save if a new Resident
                 if (!saveResident(res)) { // If saving fails, return null
                     return null;
@@ -445,18 +447,20 @@ public abstract class MyTownDatasource {
         return res;
     }
 
+
     /**
      * Gets or makes a new Resident. Does save, and CAN return null!
      *
      * @param uuid The UUID of the Resident (EntityPlayer#getPersistentID())
      * @return The new Resident, or null if it failed
      */
-    public Resident getOrMakeResident(UUID uuid) {
-        return getOrMakeResident(uuid, true);
+
+    public Resident getOrMakeResident(UUID uuid, String playerName) {
+        return getOrMakeResident(uuid, playerName, true);
     }
 
     public Resident getOrMakeResident(EntityPlayer player) {
-        return getOrMakeResident(player.getPersistentID());
+        return getOrMakeResident(player.getPersistentID(), player.getDisplayName());
     }
 
     public Resident getOrMakeResident(Entity e) {
@@ -475,7 +479,7 @@ public abstract class MyTownDatasource {
 
     public Resident getOrMakeResident(String username) {
         GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username); // TODO I have no idea if this will actually work. xD
-        return profile == null ? null : getOrMakeResident(profile.getId());
+        return profile == null ? null : getOrMakeResident(profile.getId(), profile.getName());
     }
 
     /**

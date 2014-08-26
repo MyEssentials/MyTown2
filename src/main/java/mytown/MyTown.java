@@ -30,7 +30,7 @@ import java.util.ArrayList;
 // TODO Add a way to safely reload
 // TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packaged with this. Maybe even make MyTown just DL them at runtime and inject them
 /**/
-@Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
+@Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES, acceptableRemoteVersions = "*")
 public class MyTown {
     @Instance
     public static MyTown instance;
@@ -79,6 +79,7 @@ public class MyTown {
         registerCommands();
         ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
         // addDefaultPermissions();
+        DatasourceProxy.setLog(log);
         SafemodeHandler.setSafemode(DatasourceProxy.start(config));
 
         CmdListTown.updateTownSortCache(); // Update cache after everything is loaded

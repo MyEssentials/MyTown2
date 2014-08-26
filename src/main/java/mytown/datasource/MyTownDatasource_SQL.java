@@ -136,7 +136,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     protected boolean loadBlocks() {
         try {
-            PreparedStatement loadBlocksStatement = prepare("", true);
+            PreparedStatement loadBlocksStatement = prepare("SELECT * FROM " + prefix + "Blocks", true);
             ResultSet rs = loadBlocksStatement.executeQuery();
 
             while (rs.next()) {
@@ -762,8 +762,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     protected PreparedStatement prepare(String sql, boolean returnGenerationKeys) throws SQLException {
         if (!createConnection())
             throw new SQLException("No SQL Connection");
-        PreparedStatement statement = conn.prepareStatement(sql, returnGenerationKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
-
+        PreparedStatement statement = null;
+        try {
+            statement = conn.prepareStatement(sql, returnGenerationKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
+        } catch(SQLException e) {
+            log.fatal(sql);
+            e.printStackTrace();
+        }
         return statement;
     }
 
@@ -832,7 +837,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.7", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Plots (" +
-                "name VARCHAR(50) NOT NULL" + // TODO Allow larger Plot names?
+                "name VARCHAR(50) NOT NULL," + // TODO Allow larger Plot names?
                 "dim INT NOT NULL," +
                 "x1 INT NOT NULL," +
                 "y1 INT NOT NULL," +
@@ -867,7 +872,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "rank CHAR(1) DEFAULT 'T'," +
                 "PRIMARY KEY(town, nation)," +
                 "FOREIGN KEY(town) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
-                "FOREIGN KEY(nation) REFERENCES " + prefix + "Nations(name) ON DELETE CASCADE ON UPDATE CASCADE," +
+                "FOREIGN KEY(nation) REFERENCES " + prefix + "Nations(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
     }
 

@@ -84,6 +84,11 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    public boolean addRankPermission(Rank rank, String perm) {
+        return false;
+    }
+
+    @Override
     public boolean saveResident(Resident resident) {
         log.debug("Saving Resident %s (%s)", resident.getPlayerName(), resident.getUUID().toString());
         if (MyTownUniverse.getInstance().residents.containsValue(resident)) { // Update
@@ -179,5 +184,10 @@ public class InMemoryDatasource extends MyTownDatasource {
     public boolean deleteNation(Nation nation) {
         log.debug("Deleting Nation %s", nation.getName());
         return MyTownUniverse.getInstance().nations.remove(nation.getName()) != null;
+    }
+
+    @Override
+    public boolean removeRankPermission(Rank rank, String perm) {
+        return false;
     }
 }

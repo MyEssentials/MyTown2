@@ -27,8 +27,9 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         this.lastOnline = joinDate;
     }
 
-    public Resident(String uuid) {
+    public Resident(String uuid, String playerName) {
         setUUID(uuid);
+        this.playerName = playerName;
         this.joinDate = new Date();
         this.lastOnline = joinDate;
     }

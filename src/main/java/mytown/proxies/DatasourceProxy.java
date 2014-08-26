@@ -41,6 +41,7 @@ public class DatasourceProxy {
         try {
             // Create MyTownDatasource instance
             datasource = (MyTownDatasource) dbTypes.get(Config.dbType.toLowerCase()).newInstance();
+            datasource.setLog(log);
         } catch (Exception e) {
             log.error("Failed to instantiate the Datasource (%s)!", e, Config.dbType.toLowerCase());
             return false;
