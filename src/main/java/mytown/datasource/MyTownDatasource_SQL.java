@@ -6,11 +6,10 @@ import com.google.gson.GsonBuilder;
 import mytown.config.Config;
 import mytown.core.utils.config.ConfigProperty;
 import mytown.entities.*;
-import mytown.entities.flag.TownFlag;
+import mytown.entities.flag.Flag;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 
@@ -267,7 +266,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 String descriptionKey = rs.getString("descriptionKey");
 
                 Gson gson = new GsonBuilder().create();
-                TownFlag flag = new TownFlag(flagName, descriptionKey, gson.fromJson(rs.getString("serializedValue"), TownFlag.flagValueTypes.get(flagName)));
+                Flag flag = new Flag(flagName, descriptionKey, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
 
                 if(plotName == null) {
                     // Then it is the town's flags
@@ -279,6 +278,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                         return false;
                     }
                 } else {
+                    // Otherwise is a plot's flag
                     Plot plot = MyTownUniverse.getInstance().getPlotsMap().get(plotName);
                     if(plot != null) {
                         plot.addFlag(flag);
@@ -430,28 +430,34 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     insertRankStatement.executeUpdate();
 
                     if (rank.getPermissions().size() > 0) {
-                        PreparedStatement insertRankPermStatement = prepare("INSERT INTO " + prefix + "RankPermissions (node, rank) VALUES(?, ?)", true);
+
+                        PreparedStatement insertRankPermStatement = prepare("INSERT INTO " + prefix + "RankPermissions(node, rank, townName) VALUES(?, ?, ?)", true);
                         for (String perm : rank.getPermissions()) {
                             insertRankPermStatement.setString(1, perm);
                             insertRankPermStatement.setString(2, rank.getName());
+                            insertRankPermStatement.setString(3, rank.getTown().getName());
                             insertRankPermStatement.addBatch();
                         }
 
                         insertRankPermStatement.executeBatch();
                     }
 
+
                     // Put the Rank in the Map
                     MyTownUniverse.getInstance().ranks.put(rank.getKey(), rank);
+                    rank.getTown().addRank(rank);
                 } catch (SQLException e) {
                     log.error("Failed to insert Rank %s", rank.getKey());
                     getConnection().rollback();
+                    e.printStackTrace();
                     return false;
                 } finally {
                     getConnection().setAutoCommit(true);
                 }
             }
         } catch (SQLException e) {
-            log.error("Failed to save Rank %s!", e, rank.getKey());
+            log.error("Failed to save Rank %s!", rank.getKey());
+            e.printStackTrace();
             return false;
         }
 
@@ -559,14 +565,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveFlag(TownFlag flag, Plot plot) {
+    public boolean saveFlag(Flag flag, Plot plot) {
         try {
             if(plot.hasFlag(flag.getName())) {
                 // Update
 
             } else {
                 // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Flags(name, fescriptionKey, serializedValue, townName, plot) VALUES(?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Flags(name, descriptionKey, serializedValue, townName, plot) VALUES(?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, flag.getName());
                 insertStatement.setString(2, flag.getDescriptionKey());
                 insertStatement.setString(3, flag.serializeValue());
@@ -577,7 +583,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 plot.addFlag(flag);
             }
         } catch (SQLException e) {
-            log.error("Failed to save Nation %s!", flag.getName());
+            log.error("Failed to save Flag %s!", flag.getName());
             e.printStackTrace();
             return false;
         }
@@ -585,14 +591,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveFlag(TownFlag flag, Town town) {
+    public boolean saveFlag(Flag flag, Town town) {
         try {
             if(town.hasFlag(flag.getName())) {
                 // Update
 
             } else {
                 // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Flags(name, fescriptionKey, serializedValue, townName, plot) VALUES(?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Flags(name, descriptionKey, serializedValue, townName, plot) VALUES(?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, flag.getName());
                 insertStatement.setString(2, flag.getDescriptionKey());
                 insertStatement.setString(3, flag.serializeValue());
@@ -603,7 +609,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 town.addFlag(flag);
             }
         } catch (SQLException e) {
-            log.error("Failed to save Nation %s!", flag.getName());
+            log.error("Failed to save Flag %s!", flag.getName());
             e.printStackTrace();
             return false;
         }
@@ -614,13 +620,17 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     /* ----- Link ----- */
 
     @Override
-    public boolean linkResidentToTown(Resident res, Town town) {
+    public boolean linkResidentToTown(Resident res, Town town, Rank rank) {
         try {
-            PreparedStatement s = prepare("INSERT INTO " + prefix + "ResidentsToTowns (resident, town, rank) VALUES(?, ?, ?);", true);
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "ResidentsToTowns (resident, town, rank) VALUES(?, ?, ?)", true);
             s.setString(1, res.getUUID().toString());
             s.setString(2, town.getName());
-            s.setString(3, town.getResidentRank(res).getName());
+            // You need rank since this method is the one that adds the resident to the town and vice-versa
+            s.setString(3, rank.getName());
             s.execute();
+
+            res.addTown(town);
+            town.addResident(res, rank);
         } catch(SQLException e) {
             log.error("Failed to link Resident %s (%s) with Town %s", e, res.getPlayerName(), res.getUUID(), town.getName());
             return false;
@@ -924,8 +934,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         updates.add(new DBUpdate("07.25.2014.5", "Add RankPermissions Table", "CREATE TABLE IF NOT EXISTS " + prefix + "RankPermissions (" +
                 "node VARCHAR(100) NOT NULL," +
                 "rank VARCHAR(50) NOT NULL," +
-                "PRIMARY KEY(rank, node)," +
-                "FOREIGN KEY(rank) REFERENCES " + prefix + "Rank(name) ON DELETE CASCADE ON UPDATE CASCADE" +
+                "townName VARCHAR(32) NOT NULL," +
+                "PRIMARY KEY(node, rank, townName)," +
+                "FOREIGN KEY(rank, townName) REFERENCES " + prefix + "Ranks(name, townName) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.6", "Add Blocks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Blocks (" +
                 "dim INT NOT NULL," +
@@ -957,13 +968,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
         // Create "Join" Tables
         updates.add(new DBUpdate("08.07.2014.1", "Add ResidentsToTowns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "ResidentsToTowns (" +
-                "resident CHAR(36)," +
-                "town VARCHAR(50)," +
+                "resident CHAR(36) NOT NULL," +
+                "town VARCHAR(32) NOT NULL," +
                 "rank VARCHAR(50) NOT NULL," +
                 "PRIMARY KEY(resident, town)," +
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(uuid) ON DELETE CASCADE ON UPDATE CASCADE," +
-                "FOREIGN KEY(town) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
-                "FOREIGN KEY(rank) REFERENCES " + prefix + "Ranks(name) ON DELETE CASCADE ON UPDATE CASCADE" +
+                "FOREIGN KEY(rank, town) REFERENCES " + prefix + "Ranks(name, townName) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("08.07.2014.2", "Add TownsToNations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownsToNations (" +
                 "town VARCHAR(50)," +

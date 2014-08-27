@@ -4,6 +4,7 @@ import mytown.MyTown;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
@@ -42,9 +43,29 @@ public class CmdNewTown extends CommandBase {
         if (res == null)
             throw new CommandException("Failed to get or save resident"); // TODO Localize!
 
-        town.addResident(res);
+        Rank onCreationDefaultRank = null;
+
         if (!getDatasource().saveTown(town))
             throw new CommandException("Failed to save Town"); // TODO Localize!
+
+        for(String rankName : Rank.defaultRanks.keySet()) {
+            Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);
+            getDatasource().saveRank(rank);
+            if(rankName.equals(Rank.theDefaultRank)) {
+                town.setDefaultRank(rank);
+            }
+            if(rankName.equals(Rank.theMayorDefaultRank)) {
+                onCreationDefaultRank = rank;
+            }
+        }
+
+
+        if(!getDatasource().linkResidentToTown(res, town, onCreationDefaultRank))
+            MyTown.instance.log.error("Problem linking resident " + res.getPlayerName() + " to town " + town.getName());
+
+
+
+
         // TODO Town Flags
         // TODO Set Town spawn
         // TODO Link Resident to Town

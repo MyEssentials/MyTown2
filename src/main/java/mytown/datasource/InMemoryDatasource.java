@@ -1,7 +1,7 @@
 package mytown.datasource;
 
 import mytown.entities.*;
-import mytown.entities.flag.TownFlag;
+import mytown.entities.flag.Flag;
 
 /**
  * @author Joe Goett
@@ -126,7 +126,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveFlag(TownFlag flag, Plot plot) {
+    public boolean saveFlag(Flag flag, Plot plot) {
         log.debug("Saving Flag %s for plot:", flag.getName(), plot.getKey());
         if (plot.hasFlag(flag.getName())) { // Update
         } else { // Insert
@@ -136,7 +136,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveFlag(TownFlag flag, Town town) {
+    public boolean saveFlag(Flag flag, Town town) {
         log.debug("Saving Flag %s for town:", flag.getName(), town.getName());
         if (town.hasFlag(flag.getName())) { // Update
         } else { // Insert
@@ -148,7 +148,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     /* ----- Link ----- */
 
     @Override
-    public boolean linkResidentToTown(Resident res, Town town) {
+    public boolean linkResidentToTown(Resident res, Town town, Rank rank) {
         return true;
     }
 

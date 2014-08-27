@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import mytown.api.events.*;
 import mytown.core.utils.Log;
 import mytown.entities.*;
-import mytown.entities.flag.TownFlag;
+import mytown.entities.flag.Flag;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -118,8 +118,8 @@ public abstract class MyTownDatasource {
      * @param value
      * @return the new TownFlag, or null if failed
      */
-    public final TownFlag newFlag(String name, String descriptionKey, Object value) {
-        TownFlag<Object> flag = new TownFlag<Object>(name, descriptionKey, value);
+    public final Flag newFlag(String name, String descriptionKey, Object value) {
+        Flag<Object> flag = new Flag<Object>(name, descriptionKey, value);
         //TODO: Fire event
         return flag;
     }
@@ -242,14 +242,14 @@ public abstract class MyTownDatasource {
      *
      * @return If it was successful
      */
-    public abstract boolean saveFlag(TownFlag flag, Town town);
+    public abstract boolean saveFlag(Flag flag, Town town);
 
     /**
      * Saves the Flag to the plot
      *
      * @return If it was successful
      */
-    public abstract boolean saveFlag(TownFlag flag, Plot plot);
+    public abstract boolean saveFlag(Flag flag, Plot plot);
 
 
     /* ----- Link ----- */
@@ -259,9 +259,10 @@ public abstract class MyTownDatasource {
      *
      * @param res The Resident to Link
      * @param town The Town to Link
+     * @param rank The Rank with which the resident is assigned to the town
      * @return If the link was successful
      */
-    public abstract boolean linkResidentToTown(Resident res, Town town);
+    public abstract boolean linkResidentToTown(Resident res, Town town, Rank rank);
 
     /**
      * Unlinks the Resident from the Town

@@ -2,7 +2,7 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.core.utils.teleport.Teleport;
-import mytown.entities.flag.TownFlag;
+import mytown.entities.flag.Flag;
 import mytown.entities.interfaces.*;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
@@ -226,29 +226,29 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
     /* ----- IHasFlags ------ */
 
-    private List<TownFlag> flags = new ArrayList<TownFlag>();
+    private List<Flag> flags = new ArrayList<Flag>();
 
     @Override
-    public void addFlag(TownFlag flag) {
+    public void addFlag(Flag flag) {
         flags.add(flag);
     }
 
     @Override
     public boolean hasFlag(String name) {
-        for(TownFlag flag : flags)
+        for(Flag flag : flags)
             if(flag.getName().equals(name))
                 return true;
         return false;
     }
 
     @Override
-    public ImmutableList<TownFlag> getFlags() {
+    public ImmutableList<Flag> getFlags() {
         return ImmutableList.copyOf(flags);
     }
 
     @Override
-    public TownFlag getFlag(String name) {
-        for(TownFlag flag : flags)
+    public Flag getFlag(String name) {
+        for(Flag flag : flags)
             if(flag.getName().equals(name))
                 return flag;
         return null;
