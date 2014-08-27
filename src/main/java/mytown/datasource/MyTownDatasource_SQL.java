@@ -10,6 +10,7 @@ import mytown.entities.flag.TownFlag;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 
@@ -201,7 +202,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             ResultSet rs = loadResidentsStatement.executeQuery();
 
             while (rs.next()) {
-                Resident res = new Resident(rs.getString("uuid"), rs.getString("name"), rs.getTimestamp("joined"), rs.getTimestamp("lastOnline"));
+                Resident res = new Resident(rs.getString("uuid"), rs.getString("name"), rs.getString("joined"), rs.getString("lastOnline"));
                 MyTownUniverse.getInstance().residents.put(res.getUUID().toString(), res);
             }
         } catch (SQLException e) {
@@ -477,7 +478,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             if (MyTownUniverse.getInstance().residents.containsValue(resident)) { // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=? WHERE uuid=?", true);
                 updateStatement.setString(1, resident.getPlayerName());
-                updateStatement.setTimestamp(2, new Timestamp(resident.getLastOnline().getTime())); // Stupid hack...
+                updateStatement.setTimestamp(2, (Timestamp)resident.getLastOnline()); // Stupid hack...
                 updateStatement.setString(3, resident.getUUID().toString());
                 updateStatement.executeUpdate();
             } else { // Insert
@@ -972,7 +973,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(town) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
                 "FOREIGN KEY(nation) REFERENCES " + prefix + "Nations(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
-        updates.add(new DBUpdate("08.26.2014", "Add Flags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Flags (" +
+        updates.add(new DBUpdate("08.26.2014.1", "Add Flags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Flags (" +
                 "name VARCHAR(50) NOT NULL," +
                 "descriptionKey VARCHAR(50), " +
                 "serializedValue VARCHAR(400), " +

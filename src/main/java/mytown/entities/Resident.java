@@ -7,10 +7,11 @@ import mytown.entities.interfaces.IHasTowns;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.lang.ref.WeakReference;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 
 /**
  * @author Joe Goett
@@ -42,12 +43,17 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
      * @param joinDate
      * @param lastOnline
      */
-    public Resident(String uuid, String playerName, Timestamp joinDate, Timestamp lastOnline) {
+    public Resident(String uuid, String playerName, String joinDate, String lastOnline) {
         setUUID(uuid);
 
-        this.joinDate = joinDate;
-        setLastOnline(lastOnline);
+        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS", Locale.ENGLISH);
 
+        try {
+            this.joinDate = format.parse(joinDate);
+            setLastOnline(format.parse(lastOnline));
+        } catch(ParseException e) {
+            e.printStackTrace();
+        }
         this.playerName = playerName;
     }
 
