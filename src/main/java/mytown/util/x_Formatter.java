@@ -12,35 +12,6 @@ import java.util.List;
 
 public class x_Formatter {
 
-    /**
-     * Formats a list of ranks to a String that is then sent to the player.
-     *
-     * @param ranks
-     * @return
-     */
-    public static String formatRanksToString(List<Rank> ranks) {
-        EnumChatFormatting color;
-        String res = null;
-        for (Rank r : ranks) {
-            if (r.getName().equals("Resident")) {
-                color = EnumChatFormatting.RED;
-            } else if (Constants.DEFAULT_RANK_VALUES.containsKey(r.getName())) {
-                color = EnumChatFormatting.GREEN;
-            } else {
-                color = EnumChatFormatting.YELLOW;
-            }
-            if (res == null) {
-                res = color + r.getName();
-            } else {
-                res += EnumChatFormatting.WHITE + ", " + color + r.getName();
-            }
-        }
-        if (ranks.size() == 0) {
-            res = EnumChatFormatting.RED + "NONE";
-        }
-
-        return res;
-    }
 
     /**
      * Formats a list of resident in a town to a String that is then sent to the player.

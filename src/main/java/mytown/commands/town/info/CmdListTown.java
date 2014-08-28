@@ -3,6 +3,7 @@ package mytown.commands.town.info;
 import mytown.core.utils.chat.JsonMessageBuilder;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.Formatter;
@@ -34,9 +35,9 @@ public class CmdListTown extends CommandBase {
     }
 
     public static void updateTownSortCache() {
-        if (DatasourceProxy.getDatasource().getTownsMap().size() <= 0) return;
+        if (MyTownUniverse.getInstance().getTownsMap().size() <= 0) return;
         sortedTownCache.clear();
-        sortedTownCache.addAll(DatasourceProxy.getDatasource().getTownsMap().values());
+        sortedTownCache.addAll(MyTownUniverse.getInstance().getTownsMap().values());
         // TODO Sort
 
         JsonMessageBuilder msgBuilder = new JsonMessageBuilder();
@@ -52,4 +53,6 @@ public class CmdListTown extends CommandBase {
         }
         cachedTownList = msgBuilder.build();
     }
+
+
 }

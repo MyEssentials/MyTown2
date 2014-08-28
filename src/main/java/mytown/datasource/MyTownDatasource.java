@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import mytown.api.events.*;
 import mytown.core.utils.Log;
 import mytown.entities.*;
+import mytown.entities.flag.Flag;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -77,8 +78,9 @@ public abstract class MyTownDatasource {
      *
      * @return The new Resident, or null if it failed
      */
-    public final Resident newResident(String uuid) {
-        Resident resident = new Resident(uuid);
+    public final Resident newResident(String uuid, String playerName) {
+        Resident resident = new Resident(uuid, playerName);
+
         if (ResidentEvent.fire(new ResidentEvent.ResidentCreateEvent(resident)))
             return null;
         return resident;
@@ -108,6 +110,20 @@ public abstract class MyTownDatasource {
         return nation;
     }
 
+    /**
+     * Creates and returns a new TownFlag or null if it couldn't be created
+     *
+     * @param name
+     * @param descriptionKey
+     * @param value
+     * @return the new TownFlag, or null if failed
+     */
+    public final Flag newFlag(String name, String descriptionKey, Object value) {
+        Flag<Object> flag = new Flag<Object>(name, descriptionKey, value);
+        //TODO: Fire event
+        return flag;
+    }
+
     /* ----- Read ----- */
 
     /**
@@ -116,7 +132,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations();
+        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadFlags();
     }
 
     /**
@@ -160,6 +176,13 @@ public abstract class MyTownDatasource {
      * @return If it was successful
      */
     protected abstract boolean loadNations();
+
+    /**
+     * Loads all the Flags
+     *
+     * @return If it was successful
+     */
+    protected  abstract  boolean loadFlags();
 
     /* ----- Save ----- */
 
@@ -214,6 +237,21 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean saveNation(Nation nation);
 
+    /**
+     * Saves the Flag
+     *
+     * @return If it was successful
+     */
+    public abstract boolean saveFlag(Flag flag, Town town);
+
+    /**
+     * Saves the Flag to the plot
+     *
+     * @return If it was successful
+     */
+    public abstract boolean saveFlag(Flag flag, Plot plot);
+
+
     /* ----- Link ----- */
 
     /**
@@ -221,9 +259,10 @@ public abstract class MyTownDatasource {
      *
      * @param res The Resident to Link
      * @param town The Town to Link
+     * @param rank The Rank with which the resident is assigned to the town
      * @return If the link was successful
      */
-    public abstract boolean linkResidentToTown(Resident res, Town town);
+    public abstract boolean linkResidentToTown(Resident res, Town town, Rank rank);
 
     /**
      * Unlinks the Resident from the Town
@@ -313,6 +352,13 @@ public abstract class MyTownDatasource {
      * @return If it was successful
      */
     public abstract boolean deleteNation(Nation nation);
+
+    /*
+     * Deletes the Flag
+     *
+     * @return If it was successful
+     */
+    //public abstract boolean deleteFlag(TownFlag flag);
 
     /**
      * Removes the permission node from the Rank
@@ -432,10 +478,11 @@ public abstract class MyTownDatasource {
      * @param save Whether to save the newly created Resident
      * @return The new Resident, or null if it failed
      */
-    public Resident getOrMakeResident(UUID uuid, boolean save) {
+
+    public Resident getOrMakeResident(UUID uuid, String playerName, boolean save) {
         Resident res = MyTownUniverse.getInstance().residents.get(uuid.toString());
         if (res == null) {
-            res = newResident(uuid.toString());
+            res = newResident(uuid.toString(), playerName);
             if (save && res != null) { // Only save if a new Resident
                 if (!saveResident(res)) { // If saving fails, return null
                     return null;
@@ -445,18 +492,20 @@ public abstract class MyTownDatasource {
         return res;
     }
 
+
     /**
      * Gets or makes a new Resident. Does save, and CAN return null!
      *
      * @param uuid The UUID of the Resident (EntityPlayer#getPersistentID())
      * @return The new Resident, or null if it failed
      */
-    public Resident getOrMakeResident(UUID uuid) {
-        return getOrMakeResident(uuid, true);
+
+    public Resident getOrMakeResident(UUID uuid, String playerName) {
+        return getOrMakeResident(uuid, playerName, true);
     }
 
     public Resident getOrMakeResident(EntityPlayer player) {
-        return getOrMakeResident(player.getPersistentID());
+        return getOrMakeResident(player.getPersistentID(), player.getDisplayName());
     }
 
     public Resident getOrMakeResident(Entity e) {
@@ -475,7 +524,7 @@ public abstract class MyTownDatasource {
 
     public Resident getOrMakeResident(String username) {
         GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username); // TODO I have no idea if this will actually work. xD
-        return profile == null ? null : getOrMakeResident(profile.getId());
+        return profile == null ? null : getOrMakeResident(profile.getId(), profile.getName());
     }
 
     /**

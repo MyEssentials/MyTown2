@@ -6,6 +6,7 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.CommandHandler;
 import mytown.core.utils.command.Permission;
+import mytown.datasource.MyTownUniverse;
 import mytown.proxies.DatasourceProxy;
 import mytown.entities.Town;
 import mytown.util.Formatter;
@@ -34,7 +35,7 @@ public class CmdRanks extends CommandHandler {
                     throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.partOfTown"));
             }
             if (args.length >= 1) {
-                temp = getDatasource().getTownsMap().get(args[0]);
+                temp = getUniverse().getTownsMap().get(args[0]);
                 if (temp == null)
                     throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
             }
@@ -51,4 +52,5 @@ public class CmdRanks extends CommandHandler {
     private MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
+    private MyTownUniverse getUniverse() { return MyTownUniverse.getInstance(); }
 }

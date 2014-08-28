@@ -10,6 +10,7 @@ import mytown.commands.admin.CmdTownAdmin;
 import mytown.commands.town.CmdTown;
 import mytown.commands.town.info.CmdListTown;
 import mytown.config.Config;
+import mytown.config.RanksConfig;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandUtils;
@@ -30,12 +31,13 @@ import java.util.ArrayList;
 // TODO Add a way to safely reload
 // TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packaged with this. Maybe even make MyTown just DL them at runtime and inject them
 /**/
-@Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
+@Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES, acceptableRemoteVersions = "*")
 public class MyTown {
     @Instance
     public static MyTown instance;
     public Log log;
     public Configuration config;
+    public RanksConfig ranksConfig;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
@@ -46,6 +48,7 @@ public class MyTown {
 
         // Read Configs
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
+
         ConfigProcessor.load(config, Config.class);
         LocalizationProxy.load();
         registerHandlers();
@@ -77,8 +80,11 @@ public class MyTown {
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
         registerCommands();
+        // This needs to be after registerCommands... might want to move both methods...
+        ranksConfig = new RanksConfig(new File(Constants.CONFIG_FOLDER, "DefaultRanks.json"));
         ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
         // addDefaultPermissions();
+        DatasourceProxy.setLog(log);
         SafemodeHandler.setSafemode(DatasourceProxy.start(config));
 
         CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
@@ -89,38 +95,6 @@ public class MyTown {
         config.save();
         DatasourceProxy.stop();
     }
-
-    /**
-     * Adds all the default permissions
-     */
-    /*
-    private void addDefaultPermissions() {
-        // TODO: Config files for all default ranks?
-        ArrayList<String> pOutsider = new ArrayList<String>();
-        ArrayList<String> pResident = new ArrayList<String>();
-        ArrayList<String> pAssistant = new ArrayList<String>();
-        ArrayList<String> pMayor = new ArrayList<String>();
-
-        for (String s : CommandUtils.permissionList.values()) {
-            if (s.startsWith("mytown.cmd")) {
-                pMayor.add(s);
-                if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) {
-                    pAssistant.add(s);
-                }
-                if (s.startsWith("mytown.cmd.resident") || s.startsWith("mytown.cmd.outsider")) {
-                    pResident.add(s);
-                }
-                if (s.startsWith("mytown.cmd.outsider")) {
-                    pOutsider.add(s);
-                }
-            }
-        }
-        Constants.DEFAULT_RANK_VALUES.put("Outsider", pOutsider);
-        Constants.DEFAULT_RANK_VALUES.put("Resident", pResident);
-        Constants.DEFAULT_RANK_VALUES.put("Assistant", pAssistant);
-        Constants.DEFAULT_RANK_VALUES.put("Mayor", pMayor);
-    }
-    */
 
     /**
      * Registers all commands

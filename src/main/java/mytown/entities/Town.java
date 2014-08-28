@@ -2,10 +2,8 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.core.utils.teleport.Teleport;
-import mytown.entities.interfaces.IHasBlocks;
-import mytown.entities.interfaces.IHasPlots;
-import mytown.entities.interfaces.IHasRanks;
-import mytown.entities.interfaces.IHasResidents;
+import mytown.entities.flag.Flag;
+import mytown.entities.interfaces.*;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -18,7 +16,7 @@ import java.util.*;
  *
  * @author Joe Goett
  */
-public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Comparable<Town> {
+public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, Comparable<Town> {
     private String name, oldName = null;
 
     public Town(String name) {
@@ -226,7 +224,35 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
     public Plot getPlotAtCoord(int dim, int x, int y, int z) {
         return getBlockAtCoords(dim, x >> 4, z >> 4).getPlotAtCoord(dim, x, y, z);
     }
+    /* ----- IHasFlags ------ */
 
+    private List<Flag> flags = new ArrayList<Flag>();
+
+    @Override
+    public void addFlag(Flag flag) {
+        flags.add(flag);
+    }
+
+    @Override
+    public boolean hasFlag(String name) {
+        for(Flag flag : flags)
+            if(flag.getName().equals(name))
+                return true;
+        return false;
+    }
+
+    @Override
+    public ImmutableList<Flag> getFlags() {
+        return ImmutableList.copyOf(flags);
+    }
+
+    @Override
+    public Flag getFlag(String name) {
+        for(Flag flag : flags)
+            if(flag.getName().equals(name))
+                return flag;
+        return null;
+    }
     /* ----- Nation ----- */
 
     private Nation nation = null;
@@ -330,4 +356,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, Co
 
         return -1;
     }
+
+
 }

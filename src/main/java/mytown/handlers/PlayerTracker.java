@@ -34,8 +34,9 @@ public class PlayerTracker {
         MyTownDatasource ds = DatasourceProxy.getDatasource();
         Resident res = ds.getOrMakeResident(ev.player);
         if (res != null) {
-            res.setPlayer(null);
+            res.setPlayer(ev.player);
         }
+
     }
 
     @SubscribeEvent

@@ -4,6 +4,7 @@ import mytown.MyTown;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
@@ -35,10 +36,10 @@ public class CmdInfo extends CommandBase {
             }
         } else {
             if (args[0].equals("@a")) {
-                towns = new ArrayList<Town>(getDatasource().getTownsMap().values());
+                towns = new ArrayList<Town>(getUniverse().getTownsMap().values());
                 // TODO Sort
             } else if (getDatasource().hasTown(args[0])) {
-                towns.add(getDatasource().getTownsMap().get(args[0]));
+                towns.add(getUniverse().getTownsMap().get(args[0]));
             } else {
                 throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.town.notexist", args[0]));
             }
@@ -54,9 +55,9 @@ public class CmdInfo extends CommandBase {
         List<String> tabComplete = new ArrayList<String>();
         if (args.length == 0 || args[0].isEmpty()) {
             tabComplete.add("@a"); // Add the "all" selector
-            tabComplete.addAll(getDatasource().getTownsMap().keySet());
+            tabComplete.addAll(getUniverse().getTownsMap().keySet());
         } else {
-            for (Town t : getDatasource().getTownsMap().values()) {
+            for (Town t : getUniverse().getTownsMap().values()) {
                 if (t.getName().startsWith(args[0])) {
                     tabComplete.add(t.getName());
                 }
@@ -73,4 +74,5 @@ public class CmdInfo extends CommandBase {
     private MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
+    private MyTownUniverse getUniverse() { return MyTownUniverse.getInstance(); }
 }

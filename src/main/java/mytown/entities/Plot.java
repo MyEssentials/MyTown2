@@ -2,10 +2,17 @@ package mytown.entities;
 
 // TODO Implement PlotType
 
+import com.google.common.collect.ImmutableList;
+import mytown.entities.flag.Flag;
+import mytown.entities.interfaces.IHasFlags;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Joe Goett
  */
-public class Plot {
+public class Plot implements IHasFlags{
     private int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
     private String key, name;
@@ -130,5 +137,35 @@ public class Plot {
     @Override
     public String toString() {
         return String.format("Plot: {Name: %s, Dim: %s, Start: [%s, %s, %s], End: [%s, %s, %s]}", name, dim, x1, y1, z1, x2, y2, z2);
+    }
+
+    /* ---- IHasFlags ----- */
+
+    private List<Flag> flags = new ArrayList<Flag>();
+
+    @Override
+    public void addFlag(Flag flag) {
+        flags.add(flag);
+    }
+
+    @Override
+    public boolean hasFlag(String name) {
+        for(Flag flag : flags)
+            if(flag.getName().equals(name))
+                return true;
+        return false;
+    }
+
+    @Override
+    public ImmutableList<Flag> getFlags() {
+        return ImmutableList.copyOf(flags);
+    }
+
+    @Override
+    public Flag getFlag(String name) {
+        for(Flag flag : flags)
+            if(flag.getName().equals(name))
+                return flag;
+        return null;
     }
 }

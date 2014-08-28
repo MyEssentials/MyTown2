@@ -4,6 +4,7 @@ import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Constants {
@@ -15,8 +16,5 @@ public class Constants {
     public static final String TICK_HANDLER_LABEL = "MyTownTickHandler";
     public static final int DEFAULT_BLOCK_CHANGE_COUNTER = 100;
     public static final String EDIT_TOOL_NAME = EnumChatFormatting.BLUE + "Selector"; // TODO: Get localization for it, maybe?
-
-    // TODO Allow configuring them
-    public static Map<String, ArrayList<String>> DEFAULT_RANK_VALUES = new HashMap<String, ArrayList<String>>();
-
+    public static Map<String, List<String>> DEFAULT_RANK_VALUES;
 }

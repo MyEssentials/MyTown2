@@ -4,6 +4,7 @@ import mytown.MyTown;
 import mytown.core.utils.command.CommandBase;
 import mytown.core.utils.command.Permission;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
@@ -30,7 +31,7 @@ public class CmdSelect extends CommandBase {
         Resident res = getDatasource().getOrMakeResident(sender);
         if (res == null)
             throw new CommandException("Failed to get or make Resident"); // TODO Localize
-        Town town = getDatasource().getTownsMap().get(args[0]);
+        Town town = getUniverse().getTownsMap().get(args[0]);
         if (!town.hasResident(res))
             throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.select.notpart", args[0]));
         res.selectTown(town);
@@ -63,4 +64,5 @@ public class CmdSelect extends CommandBase {
     private MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
+    private MyTownUniverse getUniverse() { return MyTownUniverse.getInstance(); }
 }

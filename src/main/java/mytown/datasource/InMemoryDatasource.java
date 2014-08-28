@@ -1,6 +1,7 @@
 package mytown.datasource;
 
 import mytown.entities.*;
+import mytown.entities.flag.Flag;
 
 /**
  * @author Joe Goett
@@ -49,6 +50,12 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    protected boolean loadFlags() {
+        log.debug("Loading Flags");
+        return true;
+    }
+
+    @Override
     public boolean saveTown(Town town) {
         log.debug("Saving Town %s", town.getName());
         if (MyTownUniverse.getInstance().towns.containsValue(town)) { // Update
@@ -84,6 +91,11 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    public boolean addRankPermission(Rank rank, String perm) {
+        return false;
+    }
+
+    @Override
     public boolean saveResident(Resident resident) {
         log.debug("Saving Resident %s (%s)", resident.getPlayerName(), resident.getUUID().toString());
         if (MyTownUniverse.getInstance().residents.containsValue(resident)) { // Update
@@ -113,10 +125,30 @@ public class InMemoryDatasource extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean saveFlag(Flag flag, Plot plot) {
+        log.debug("Saving Flag %s for plot:", flag.getName(), plot.getKey());
+        if (plot.hasFlag(flag.getName())) { // Update
+        } else { // Insert
+            plot.addFlag(flag);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean saveFlag(Flag flag, Town town) {
+        log.debug("Saving Flag %s for town:", flag.getName(), town.getName());
+        if (town.hasFlag(flag.getName())) { // Update
+        } else { // Insert
+            town.addFlag(flag);
+        }
+        return true;
+    }
+
     /* ----- Link ----- */
 
     @Override
-    public boolean linkResidentToTown(Resident res, Town town) {
+    public boolean linkResidentToTown(Resident res, Town town, Rank rank) {
         return true;
     }
 
@@ -179,5 +211,10 @@ public class InMemoryDatasource extends MyTownDatasource {
     public boolean deleteNation(Nation nation) {
         log.debug("Deleting Nation %s", nation.getName());
         return MyTownUniverse.getInstance().nations.remove(nation.getName()) != null;
+    }
+
+    @Override
+    public boolean removeRankPermission(Rank rank, String perm) {
+        return false;
     }
 }
