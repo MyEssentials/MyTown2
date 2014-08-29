@@ -6,14 +6,18 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import forgeperms.api.ForgePermsAPI;
-import mytown.commands.admin.CmdTownAdmin;
-import mytown.commands.town.CmdTown;
-import mytown.commands.town.info.CmdListTown;
+import mytown.commands.CommandsAdmin;
+import mytown.commands.CommandsAssistant;
+import mytown.commands.CommandsEveryone;
+import mytown.core.utils.command.CommandManager;
+import mytown.x_commands.admin.CmdTownAdmin;
+import mytown.x_commands.town.CmdTown;
+import mytown.x_commands.town.info.CmdListTown;
 import mytown.config.Config;
 import mytown.config.RanksConfig;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
-import mytown.core.utils.command.CommandUtils;
+import mytown.core.utils.x_command.CommandUtils;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.PlayerTracker;
@@ -26,7 +30,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
-import java.util.ArrayList;
 
 // TODO Add a way to safely reload
 // TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packaged with this. Maybe even make MyTown just DL them at runtime and inject them
@@ -100,8 +103,18 @@ public class MyTown {
      * Registers all commands
      */
     private void registerCommands() {
+
+        CommandManager.registerCommands(CommandsEveryone.class);
+        CommandManager.registerCommands(CommandsAssistant.class);
+        CommandManager.registerCommands(CommandsAdmin.class);
+
+
+        /*
+        // No longer registering old commands, still keeping them around tho
+
         CommandUtils.registerCommand(new CmdTown());
         CommandUtils.registerCommand(new CmdTownAdmin());
+        */
     }
 
     /**

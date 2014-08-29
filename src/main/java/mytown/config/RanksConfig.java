@@ -2,7 +2,7 @@ package mytown.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import mytown.core.utils.command.CommandUtils;
+import mytown.core.utils.x_command.CommandUtils;
 import mytown.entities.Rank;
 
 import java.io.*;
