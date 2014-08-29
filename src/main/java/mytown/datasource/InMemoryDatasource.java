@@ -153,13 +153,13 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean unlinkResidentToTown(Resident res, Town town) {
+    public boolean unlinkResidentFromTown(Resident res, Town town) {
         return true;
     }
 
     @Override
-    public boolean updateResidentToTownLink(Resident res, Town town) {
-        return true;
+    public boolean updateResidentToTownLink(Resident res, Town town, Rank rank) {
+        return false;
     }
 
     @Override
@@ -168,7 +168,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean unlinkTownToNation(Town town, Nation nation) {
+    public boolean unlinkTownFromNation(Town town, Nation nation) {
         return true;
     }
 

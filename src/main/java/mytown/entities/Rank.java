@@ -28,23 +28,35 @@ public class Rank {
         return name;
     }
 
-    public void addPermission(String permission) {
-        permissions.add(permission);
+    /**
+     * Adds permission to the list
+     *
+     * @param permission
+     * @return false if permission already exists, true otherwise
+     */
+    public boolean addPermission(String permission) {
+        return permissions.add(permission);
     }
 
     public void addPermissions(Collection<String> permissions) {
         this.permissions.addAll(permissions);
     }
 
-    public void removePermission(String permission) {
-        permissions.remove(permission);
+    /**
+     * Removes permission from the list
+     *
+     * @param permission
+     * @return false if permission doesn't exist, true otherwise
+     */
+    public boolean removePermission(String permission) {
+        return permissions.remove(permission);
     }
 
     public boolean hasPermission(String permission) {
         return permissions.contains(permission);
     }
 
-    public Collection<String> getPermissions() {
+    public List<String> getPermissions() {
         return permissions;
     }
 

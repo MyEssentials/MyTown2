@@ -397,7 +397,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             if (MyTownUniverse.getInstance().blocks.containsValue(block)) { // Update
                 // TODO Update Block (If needed?)
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Blocks (dim, x, z, towName) VALUES (?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Blocks (dim, x, z, townName) VALUES (?, ?, ?, ?)", true);
                 insertStatement.setInt(1, block.getDim());
                 insertStatement.setInt(2, block.getX());
                 insertStatement.setInt(3, block.getZ());
@@ -406,6 +406,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
                 // Put the Block in the Map
                 MyTownUniverse.getInstance().blocks.put(block.getKey(), block);
+
+                block.getTown().addBlock(block);
             }
         } catch (SQLException e) {
             log.error("Failed to save Block %s!", e, block.getKey());
@@ -639,12 +641,15 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean unlinkResidentToTown(Resident res, Town town) {
+    public boolean unlinkResidentFromTown(Resident res, Town town) {
         try {
             PreparedStatement s = prepare("DELETE FROM " + prefix + "ResidentsToTowns WHERE resident = ?, town = ?;", true);
             s.setString(1, res.getUUID().toString());
             s.setString(2, town.getName());
             s.execute();
+
+            res.removeTown(town);
+            town.removeResident(res);
         } catch(SQLException e) {
             log.error("Failed to unlink Resident %s (%s) with Town %s", e, res.getPlayerName() ,res.getUUID(), town.getName());
             return false;
@@ -653,13 +658,15 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean updateResidentToTownLink(Resident res, Town town) {
+    public boolean updateResidentToTownLink(Resident res, Town town, Rank rank) {
         try {
             PreparedStatement s = prepare("UPDATE " + prefix + "ResidentsToTowns SET rank = ? WHERE resident = ?, town = ?;", true);
             s.setString(1, town.getResidentRank(res).getName());
             s.setString(2, res.getUUID().toString());
             s.setString(3, town.getName());
             s.executeUpdate();
+
+            town.promoteResident(res, rank);
         } catch(SQLException e) {
             log.error("Failed to update link between Resident %s (%s) with Town %s", e, res.getPlayerName() ,res.getUUID(), town.getName());
             return false;
@@ -682,7 +689,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean unlinkTownToNation(Town town, Nation nation) {
+    public boolean unlinkTownFromNation(Town town, Nation nation) {
         try {
             PreparedStatement s = prepare("DELETE FROM " + prefix + "TownsToNations WHERE town = ?, nation = ?;", true);
             s.setString(1, town.getName());

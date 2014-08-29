@@ -1,10 +1,12 @@
 package mytown.commands;
 
+import mytown.core.Localization;
 import mytown.core.MyTownCore;
 import mytown.core.utils.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.command.ICommandSender;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public abstract class Commands {
     public static MyTownUniverse getUniverse() {
         return MyTownUniverse.getInstance();
     }
+    public static Localization getLocal() { return LocalizationProxy.getLocalization(); }
     public static boolean callSubFunctions(ICommandSender sender, List<String> args, List<String> subCommands, String callersPermNode) {
         if(args.size() > 0) {
             for(String s : subCommands) {

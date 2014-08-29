@@ -271,7 +271,7 @@ public abstract class MyTownDatasource {
      * @param town The Town to Unlink
      * @return If the unlink was successful
      */
-    public abstract boolean unlinkResidentToTown(Resident res, Town town);
+    public abstract boolean unlinkResidentFromTown(Resident res, Town town);
 
     /**
      * Updates the link between the Resident and the Town
@@ -280,7 +280,7 @@ public abstract class MyTownDatasource {
      * @param town the Town
      * @return If the link update was successful
      */
-    public abstract boolean updateResidentToTownLink(Resident res, Town town);
+    public abstract boolean updateResidentToTownLink(Resident res, Town town, Rank rank);
 
     /**
      * Links the Resident to the Town, setting the Rank of the Resident in the Town
@@ -298,7 +298,7 @@ public abstract class MyTownDatasource {
      * @param nation The Nation to Unlink
      * @return If the unlink was successful
      */
-    public abstract boolean unlinkTownToNation(Town town, Nation nation);
+    public abstract boolean unlinkTownFromNation(Town town, Nation nation);
 
     /**
      * Updates the link between the Town and Nation
@@ -537,5 +537,20 @@ public abstract class MyTownDatasource {
      */
     public Block getBlock(int dim, int chunkX, int chunkZ) {
         return MyTownUniverse.getInstance().blocks.get(String.format(Block.keyFormat, dim, chunkX, chunkZ));
+    }
+
+    /**
+     * Returns the rank with the name and town specified
+     *
+     * @param rankName
+     * @param town
+     * @return
+     */
+    public Rank getRank(String rankName, Town town) {
+        for(Rank rank : MyTownUniverse.getInstance().getRanksMap().values()) {
+            if(rank.getName().equals(rankName) && rank.getTown().equals(town))
+                return rank;
+        }
+        return null;
     }
 }

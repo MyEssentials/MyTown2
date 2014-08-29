@@ -163,13 +163,41 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
+    public boolean hasRankName(String rankName) {
+        for(Rank r : ranks) {
+            if(r.getName().equals(rankName))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Rank getRank(String rankName) {
+        for(Rank r : ranks) {
+            if(r.getName().equals(rankName))
+                return r;
+        }
+        return null;
+    }
+    @Override
+    public boolean promoteResident(Resident res, Rank rank) {
+        if(hasResident(res) && hasRank(rank)) {
+            residents.remove(res);
+            residents.put(res, rank);
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
     public ImmutableList<Rank> getRanks() {
         return ImmutableList.copyOf(ranks);
     }
 
     /* ----- IHasBlocks ----- */
 
-    private Map<String, Block> blocks = new Hashtable<String, Block>();
+    protected Map<String, Block> blocks = new Hashtable<String, Block>();
 
     @Override
     public void addBlock(Block block) {
@@ -221,9 +249,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public Plot getPlotAtCoord(int dim, int x, int y, int z) {
-        return getBlockAtCoords(dim, x >> 4, z >> 4).getPlotAtCoord(dim, x, y, z);
+    public Plot getPlotAtCoords(int dim, int x, int y, int z) {
+        return getBlockAtCoords(dim, x >> 4, z >> 4).getPlotAtCoords(dim, x, y, z);
     }
+
     /* ----- IHasFlags ------ */
 
     private List<Flag> flags = new ArrayList<Flag>();

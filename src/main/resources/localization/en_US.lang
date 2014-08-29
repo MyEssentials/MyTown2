@@ -57,7 +57,7 @@ mytown.cmd.err.plot.notSelected=You need to select 2 corners first!
 mytown.cmd.err.plot.rename.notexist=You are not standing in a plot!
 
 # /t perm
-mytown.cmd.err.perm.set.usage=/t perm set <flag-name> <true|false>
+mytown.cmd.err.perm.set.usage=/t perm set <flag-name> <value>
 mytown.cmd.err.flagNotExists=That flag does not exist!
 mytown.cmd.err.perm.valueNotValid=Invalid value!
 
@@ -79,7 +79,7 @@ mytown.adm.cmd.usage.rem=/ta rem [resident] [fromTown]
 mytown.adm.cmd.err.rem.resident=Player %s is not part of the town %s
 
 # /ta add
-mytown.adm.cmd.usage.add=/ta add [resident] [toTown]
+mytown.adm.cmd.usage.add=/ta add [resident] [toTown] <rankName>
 mytown.adm.cmd.err.add.already=Player %s is already a resident of the town %s
 
 # Notifications
