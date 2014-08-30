@@ -3,6 +3,7 @@ package mytown.entities.flag;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import mytown.MyTown;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -64,16 +65,27 @@ public class Flag<T> {
         try {
             if (value instanceof String) {
                 value = (T) str;
+                return true;
             } else if (value instanceof Integer) {
                 value = (T) (Integer) Integer.parseInt(str); // double cast... lol
+                return true;
             } else if (value instanceof Boolean) {
-                value = (T) (Boolean) Boolean.parseBoolean(str);
+                // Extra check since any String that is not "true" gets converted to false
+                if(str.equals("true") || str.equals("false")) {
+                    value = (T) (Boolean) Boolean.parseBoolean(str);
+                    return true;
+                } else {
+                    return false;
+                }
             } else if (value instanceof Float) {
                 value = (T) (Float) Float.parseFloat(str);
+                return true;
             } else if (value instanceof Character) {
                 value = (T) (Character) str.charAt(0);
+                return true;
+            } else {
+                return false;
             }
-            return true;
         } catch (ClassCastException e) {
             e.printStackTrace();
             return false;

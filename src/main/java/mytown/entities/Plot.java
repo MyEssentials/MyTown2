@@ -13,6 +13,7 @@ import java.util.List;
  * @author Joe Goett
  */
 public class Plot implements IHasFlags{
+    private int db_ID;
     private int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
     private String key, name;
@@ -124,6 +125,10 @@ public class Plot implements IHasFlags{
     public void setName(String name) {
         this.name = name;
     }
+
+    public void setDb_ID(int ID) {this.db_ID = db_ID; }
+
+    public int getDb_ID() {return this.db_ID; }
 
     /**
      * Checks if the coords are within this plot and in the same dimension

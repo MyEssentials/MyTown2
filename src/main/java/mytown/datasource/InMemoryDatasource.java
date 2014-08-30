@@ -50,7 +50,13 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    protected boolean loadFlags() {
+    protected boolean loadTownFlags() {
+        log.debug("Loading Flags");
+        return true;
+    }
+
+    @Override
+    protected boolean loadPlotFlags() {
         log.debug("Loading Flags");
         return true;
     }
@@ -110,7 +116,7 @@ public class InMemoryDatasource extends MyTownDatasource {
         log.debug("Saving Plot %s", plot.getKey());
         if (MyTownUniverse.getInstance().plots.containsValue(plot)) { // Update
         } else { // Insert
-            MyTownUniverse.getInstance().plots.put(plot.getKey(), plot);
+            MyTownUniverse.getInstance().plots.put(plot.getDb_ID(), plot);
         }
         return true;
     }

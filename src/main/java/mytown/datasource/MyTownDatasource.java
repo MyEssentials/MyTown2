@@ -37,6 +37,7 @@ public abstract class MyTownDatasource {
 
     /* ----- Create ----- */
 
+    // TODO: Delete this at one point
     /**
      * Creates and returns a new Town, or null if it couldn't be created
      *
@@ -44,6 +45,18 @@ public abstract class MyTownDatasource {
      */
     public final Town newTown(String name) {
         Town town = new Town(name);
+        if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
+            return null;
+        return town;
+    }
+
+    /**
+     * Creates and returns a new Town with basic entities saved to db, or null if it couldn't be created
+     *
+     * @return The new Town, or null if it failed
+     */
+    public final Town newTown(String name, Resident creator) {
+        Town town = new Town(name, creator);
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;
         return town;
@@ -132,7 +145,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadFlags();
+        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags();
     }
 
     /**
@@ -178,11 +191,18 @@ public abstract class MyTownDatasource {
     protected abstract boolean loadNations();
 
     /**
-     * Loads all the Flags
+     * Loads all the Flags for the Towns
      *
      * @return If it was successful
      */
-    protected  abstract  boolean loadFlags();
+    protected abstract boolean loadTownFlags();
+
+    /**
+     * Loads all the Flags for the Plots
+     *
+     * @return
+     */
+    protected abstract boolean loadPlotFlags();
 
     /* ----- Save ----- */
 
@@ -346,6 +366,8 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deletePlot(Plot plot);
 
+
+
     /**
      * Deletes the Nation
      *
@@ -353,12 +375,24 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deleteNation(Nation nation);
 
-    /*
-     * Deletes the Flag
+    // TODO: Decide whether or not we want these functions
+    /**
+     * Deletes the Flag from the given town
      *
      * @return If it was successful
      */
-    //public abstract boolean deleteFlag(TownFlag flag);
+    //public abstract boolean deleteFlag(Flag flag, Town town);
+
+    /**
+     * Deletes the Flag from the given plot
+     *
+     * @param flag
+     * @param plot
+     * @return
+     */
+    //public abstract boolean deleteFlag(Flag flag, Plot plot);
+
+
 
     /**
      * Removes the permission node from the Rank

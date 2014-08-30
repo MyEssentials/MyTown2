@@ -3,6 +3,7 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import mytown.core.ChatUtils;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.interfaces.IHasPlots;
 import mytown.entities.interfaces.IHasTowns;
 import mytown.entities.interfaces.IPlotSelector;
@@ -323,6 +324,16 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
 
     public void sendMessage(String msg) {
         ChatUtils.sendChat(getPlayer(), msg);
+    }
+
+
+    @SuppressWarnings("ConstantConditions")
+    public Plot getPlotAtPlayerPosition() {
+        for(Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
+            if(plot.isCoordWithin(playerRef.get().dimension, (int)playerRef.get().posX, (int)playerRef.get().posY, (int)playerRef.get().posZ));
+                return plot;
+        }
+        return null;
     }
 
     // //////////////////////////////////////

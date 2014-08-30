@@ -2,6 +2,8 @@ package mytown.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import mytown.MyTown;
+import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.x_command.CommandUtils;
 import mytown.entities.Rank;
 
@@ -29,8 +31,6 @@ public class RanksConfig {
         } else {
             readFile();
         }
-
-
     }
     private void writeFile() {
         try {
@@ -45,13 +45,13 @@ public class RanksConfig {
 
             // Filling arrays
 
-            for(String s : CommandUtils.permissionList.values()) {
+            for(String s : CommandManager.commandList.keySet()) {
                 if (s.startsWith("mytown.cmd")) {
                     pMayor.add(s);
-                    if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.resident")) {
+                    if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone")) {
                         pAssistant.add(s);
                     }
-                    if (s.startsWith("mytown.cmd.resident")) {
+                    if (s.startsWith("mytown.cmd.everyone")) {
                         pResident.add(s);
                     }
                 }
@@ -100,7 +100,7 @@ public class RanksConfig {
 
             for(Wrapper w : wrappedObjects) {
                 for(String s : w.permissions) {
-                    if(!CommandUtils.permissionList.containsValue(s))
+                    if(!CommandManager.commandList.containsKey(s))
                         throw new RuntimeException("Permission node " + s + " does not exist!");
                 }
 
@@ -109,6 +109,7 @@ public class RanksConfig {
                     Rank.theDefaultRank = w.name;
                 if(w.isSuperRank)
                     Rank.theMayorDefaultRank = w.name;
+                MyTown.instance.log.info("Setting rank " + w.name);
             }
 
         } catch (Exception e) {

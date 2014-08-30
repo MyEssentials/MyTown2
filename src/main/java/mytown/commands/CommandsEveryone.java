@@ -65,8 +65,8 @@ public class CommandsEveryone extends Commands{
         }
 
         for (Town town : towns) {
-            //FIXME: Info for towns moved to its own class
-            res.sendMessage(Formatter.formatTownInfo(town));
+
+            res.sendMessage(town.getTownInfo());
         }
     }
 
@@ -105,13 +105,16 @@ public class CommandsEveryone extends Commands{
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?   TODO Bit-shift the coords?
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.positionError"));
 
-        Town town = getDatasource().newTown(args.get(0)); // Attempt to create the Town
-        if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.failed"));
-
         Resident res = getDatasource().getOrMakeResident(player); // Attempt to get or make the Resident
         if (res == null)
             throw new CommandException("Failed to get or save resident"); // TODO Localize!
+
+        Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
+        if (town == null)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.failed"));
+
+        /*
+        // Moved to town constructor
 
         Rank onCreationDefaultRank = null;
 
@@ -140,7 +143,7 @@ public class CommandsEveryone extends Commands{
         // Linking resident to town
         if(!getDatasource().linkResidentToTown(res, town, onCreationDefaultRank))
             MyTown.instance.log.error("Problem linking resident " + res.getPlayerName() + " to town " + town.getName());
-
+        */
 
 
         // TODO Town Flags

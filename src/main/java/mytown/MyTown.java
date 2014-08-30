@@ -10,6 +10,7 @@ import mytown.commands.CommandsAdmin;
 import mytown.commands.CommandsAssistant;
 import mytown.commands.CommandsEveryone;
 import mytown.core.utils.command.CommandManager;
+import mytown.entities.flag.Flag;
 import mytown.x_commands.admin.CmdTownAdmin;
 import mytown.x_commands.town.CmdTown;
 import mytown.x_commands.town.info.CmdListTown;
@@ -82,6 +83,7 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
+        setupFlags();
         registerCommands();
         // This needs to be after registerCommands... might want to move both methods...
         ranksConfig = new RanksConfig(new File(Constants.CONFIG_FOLDER, "DefaultRanks.json"));
@@ -128,6 +130,11 @@ public class MyTown {
         // TODO Re-add the below two handlers after they are redone
         //FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
         //MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
+    }
+
+    private void setupFlags() {
+        Flag.flagValueTypes.put("enter", Boolean.class);
+        Flag.flagValueTypes.put("name", String.class);
     }
 
     // ////////////////////////////

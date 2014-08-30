@@ -150,6 +150,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 }
                 Block block = new Block(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), town);
                 MyTownUniverse.getInstance().blocks.put(block.getKey(), block);
+                block.getTown().addBlock(block);
             }
         } catch (SQLException e) {
             log.error("Failed to load blocks!", e);
@@ -180,6 +181,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                         rank.addPermission(rs2.getString("node"));
                     }
                     MyTownUniverse.getInstance().ranks.put(rank.getKey(), rank);
+                    rank.getTown().addRank(rank);
                 }
             } catch (SQLException e) {
                 log.error("Failed to load a rank!", e);
@@ -225,7 +227,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     continue; // TODO Should I just return out?
                 }
                 Plot plot = new Plot(rs.getString("name"), town, rs.getInt("dim"), rs.getInt("x1"), rs.getInt("y1"), rs.getInt("z1"), rs.getInt("x2"), rs.getInt("y2"), rs.getInt("z2"));
-                MyTownUniverse.getInstance().plots.put(plot.getKey(), plot);
+                plot.setDb_ID(rs.getInt("ID"));
+                MyTownUniverse.getInstance().plots.put(plot.getDb_ID(), plot);
+                plot.getTown().addPlot(plot);
             }
         } catch (SQLException e) {
             log.error("Failed to load Plots!", e);
@@ -255,43 +259,62 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected  boolean loadFlags() {
+    protected boolean loadTownFlags() {
         try {
-            PreparedStatement loadFlagsStatement = prepare("SELECT * FROM " + prefix + "Flags", true);
+            PreparedStatement loadFlagsStatement = prepare("SELECT * FROM " + prefix + "TownFlags", true);
             ResultSet rs = loadFlagsStatement.executeQuery();
 
             while(rs.next()) {
-                String plotName = rs.getString("plot");
+                String townName = rs.getString("townName");
                 String flagName = rs.getString("name");
                 String descriptionKey = rs.getString("descriptionKey");
 
                 Gson gson = new GsonBuilder().create();
                 Flag flag = new Flag(flagName, descriptionKey, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
 
-                if(plotName == null) {
-                    // Then it is the town's flags
-                    Town town = MyTownUniverse.getInstance().getTownsMap().get(rs.getString("townName"));
-                    if(town != null) {
-                        town.addFlag(flag);
-                    } else {
-                        log.error("Failed to load flag " + flagName + " because the town given was invalid!");
-                        return false;
-                    }
+                Town town = MyTownUniverse.getInstance().getTownsMap().get(townName);
+                if(town != null) {
+                    town.addFlag(flag);
                 } else {
-                    // Otherwise is a plot's flag
-                    Plot plot = MyTownUniverse.getInstance().getPlotsMap().get(plotName);
-                    if(plot != null) {
-                        plot.addFlag(flag);
-                    } else {
-                        log.error("Failed to load flag " + flagName + " because the plot given was invalid!");
-                        return false;
-                    }
+                    log.error("Failed to load flag " + flagName + " because the town given was invalid!");
+                    return false;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean loadPlotFlags() {
+        try {
+            PreparedStatement loadFlagsStatement = prepare("SELECT * FROM " + prefix + "PlotFlags", true);
+            ResultSet rs = loadFlagsStatement.executeQuery();
+
+            while (rs.next()) {
+                int plotID = rs.getInt("ID");
+                String flagName = rs.getString("name");
+                String descriptionKey = rs.getString("descriptionKey");
+
+                Gson gson = new GsonBuilder().create();
+                Flag flag = new Flag(flagName, descriptionKey, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
+
+                Plot plot = MyTownUniverse.getInstance().plots.get(plotID);
+                if(plot != null) {
+                    plot.addFlag(flag);
+                } else {
+                    log.error("Failed to load flag " + flagName + " because the town given was invalid!");
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
         return true;
     }
 
@@ -510,7 +533,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean savePlot(Plot plot) {
         try {
             if (MyTownUniverse.getInstance().plots.containsValue(plot)) { // Update
-                PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET name=? WHERE dim=?, x1=?, y1=?, z1=?, x2=?, y2=?, z2=?, townname=?", true);
+                PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET name=?, dim=?, x1=?, y1=?, z1=?, x2=?, y2=?, z2=? WHERE ID=?", true);
                 statement.setString(1, plot.getName());
                 statement.setInt(2, plot.getDim());
                 statement.setInt(3, plot.getStartX());
@@ -519,7 +542,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 statement.setInt(6, plot.getEndX());
                 statement.setInt(7, plot.getEndY());
                 statement.setInt(8, plot.getEndZ());
-                statement.setString(9, plot.getTown().getName());
+                statement.setInt(9, plot.getDb_ID());
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Plots (name, dim, x1, y1, z1, x2, y2, z2, townName) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, plot.getName());
@@ -533,8 +556,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.setString(9, plot.getTown().getName());
                 insertStatement.executeUpdate();
 
+                ResultSet generatedKeys = insertStatement.getGeneratedKeys();
+                if(generatedKeys.next())
+                    plot.setDb_ID(generatedKeys.getInt(1));
+
                 // Put the Plot in the Map
-                MyTownUniverse.getInstance().plots.put(plot.getKey(), plot);
+                MyTownUniverse.getInstance().plots.put(plot.getDb_ID(), plot);
             }
         } catch (SQLException e) {
             log.error("Failed to save Plot %s!", e, plot.getKey());
@@ -571,15 +598,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         try {
             if(plot.hasFlag(flag.getName())) {
                 // Update
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE ID=?", true);
+                updateStatement.setString(1, flag.serializeValue());
+                updateStatement.setInt(2, plot.getDb_ID());
+                updateStatement.executeUpdate();
+
 
             } else {
                 // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Flags(name, descriptionKey, serializedValue, townName, plot) VALUES(?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "PlotFlags(name, descriptionKey, serializedValue, plotID) VALUES(?, ?, ?, ?)", true);
                 insertStatement.setString(1, flag.getName());
                 insertStatement.setString(2, flag.getDescriptionKey());
                 insertStatement.setString(3, flag.serializeValue());
-                insertStatement.setString(4, plot.getTown().getName());
-                insertStatement.setString(5, plot.getKey());
+                insertStatement.setInt(4, plot.getDb_ID());
                 insertStatement.executeUpdate();
 
                 plot.addFlag(flag);
@@ -597,15 +628,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         try {
             if(town.hasFlag(flag.getName())) {
                 // Update
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "TownFlags SET serializedValue=? WHERE townName=? AND name=?", true);
+                updateStatement.setString(1, flag.serializeValue());
+                updateStatement.setString(2, town.getName());
+                updateStatement.setString(3, flag.getName());
+                updateStatement.executeUpdate();
 
             } else {
                 // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Flags(name, descriptionKey, serializedValue, townName, plot) VALUES(?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "TownFlags(name, descriptionKey, serializedValue, townName) VALUES(?, ?, ?, ?)", true);
                 insertStatement.setString(1, flag.getName());
                 insertStatement.setString(2, flag.getDescriptionKey());
                 insertStatement.setString(3, flag.serializeValue());
                 insertStatement.setString(4, town.getName());
-                insertStatement.setString(5, "NULL");
                 insertStatement.executeUpdate();
 
                 town.addFlag(flag);
@@ -812,14 +847,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean deletePlot(Plot plot) {
         try {
             // Delete Plot from Datasource
-            PreparedStatement deletePlotStatement = prepare("DELETE FROM " + prefix + "Plots WHERE dim=?, x1=?, y1=?, z1=?, x2=?, y2=?, z2=?", true);
-            deletePlotStatement.setInt(1, plot.getDim());
-            deletePlotStatement.setInt(2, plot.getStartX());
-            deletePlotStatement.setInt(3, plot.getStartY());
-            deletePlotStatement.setInt(4, plot.getStartZ());
-            deletePlotStatement.setInt(4, plot.getEndX());
-            deletePlotStatement.setInt(5, plot.getEndY());
-            deletePlotStatement.setInt(6, plot.getEndZ());
+            PreparedStatement deletePlotStatement = prepare("DELETE FROM " + prefix + "Plots WHERE ID=?", true);
+            deletePlotStatement.setInt(1, plot.getDb_ID());
             deletePlotStatement.execute();
 
             // Remove Plot from Map
@@ -850,6 +879,21 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    /*
+    @Override
+    public boolean deleteFlag(Flag flag, Town town) {
+        try {
+            PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
+            deleteFlagStatement.setString(1, flag.getName());
+            deleteFlagStatement.setString(2, town.getName());
+            deleteFlagStatement.execute();
+
+
+        } catch (SQLException e) {
+            log.error("Failed to delete flag %s!", e, flag.getName());
+        }
+    }
+    */
     @Override
     public boolean removeRankPermission(Rank rank, String perm) {
         try {
@@ -954,6 +998,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.7", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Plots (" +
+                "ID INT NOT NULL," + // Just because it's a pain with this many primary keys
                 "name VARCHAR(50) NOT NULL," + // TODO Allow larger Plot names?
                 "dim INT NOT NULL," +
                 "x1 INT NOT NULL," +
@@ -964,7 +1009,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "z2 INT NOT NULL," +
                 "townName VARCHAR(32) NOT NULL," +
                 "owner CHAR(36) DEFAULT NULL," + // TODO Allow multiple owners?
-                "PRIMARY KEY(dim, x1, y1, z1, x2, y2, z2)," +
+                "PRIMARY KEY(ID)," +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
                 "FOREIGN KEY(owner) REFERENCES " + prefix + "Residents(uuid) ON DELETE SET NULL" +
                 ");"));
@@ -990,15 +1035,21 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(town) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
                 "FOREIGN KEY(nation) REFERENCES " + prefix + "Nations(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
-        updates.add(new DBUpdate("08.26.2014.1", "Add Flags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Flags (" +
+        updates.add(new DBUpdate("08.26.2014.1", "Add TownFlags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownFlags (" +
                 "name VARCHAR(50) NOT NULL," +
                 "descriptionKey VARCHAR(50), " +
                 "serializedValue VARCHAR(400), " +
                 "townName VARCHAR(50) NOT NULL," +
-                "plot VARCHAR(50) NOT NULL," + // should be something like "" if it's town only flags
-                "PRIMARY KEY(name, townName, plot)," +
-                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
-                "FOREIGN KEY(plot) REFERENCES " + prefix + "Plots(name) ON DELETE CASCADE ON UPDATE CASCADE" +
+                "PRIMARY KEY(name, townName)," +
+                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
+                ");"));
+        updates.add(new DBUpdate("08.30.2014", "Add PlotFlags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "PlotFlags (" +
+                "name VARCHAR(50) NOT NULL," +
+                "descriptionKey VARCHAR(50), " +
+                "serializedValue VARCHAR(400), " +
+                "plot INT NOT NULL," +
+                "PRIMARY KEY(name, plot)," +
+                "FOREIGN KEY(plot) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
     }
 

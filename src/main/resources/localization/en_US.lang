@@ -57,7 +57,7 @@ mytown.cmd.err.plot.notSelected=You need to select 2 corners first!
 mytown.cmd.err.plot.rename.notexist=You are not standing in a plot!
 
 # /t perm
-mytown.cmd.err.perm.set.usage=/t perm set <flag-name> <value>
+mytown.cmd.err.perm.set.usage=/t perm set <town/plot> <flag-name> <value>
 mytown.cmd.err.flagNotExists=That flag does not exist!
 mytown.cmd.err.perm.valueNotValid=Invalid value!
 

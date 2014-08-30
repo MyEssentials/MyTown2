@@ -1,10 +1,15 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import mytown.MyTown;
+import mytown.config.Config;
 import mytown.core.utils.teleport.Teleport;
+import mytown.datasource.MyTownDatasource;
 import mytown.entities.flag.Flag;
 import mytown.entities.interfaces.*;
+import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.*;
@@ -19,8 +24,50 @@ import java.util.*;
 public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, Comparable<Town> {
     private String name, oldName = null;
 
+    @Deprecated
     public Town(String name) {
         setName(name);
+    }
+
+    /**
+     * Constructor that provides the minimal amount of entities and saves them to the datasource.
+     * (Ranks, Flags, etc...)
+     *
+     * @param name
+     * @param creator
+     */
+    public Town(String name, Resident creator) {
+        setName(name);
+
+        Rank onCreationDefaultRank = null;
+
+        // Saving town to database
+        if (!getDatasource().saveTown(this))
+            throw new CommandException("Failed to save Town"); // TODO Localize!
+
+        // Saving all ranks to database and town
+        for(String rankName : Rank.defaultRanks.keySet()) {
+            Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), this);
+            getDatasource().saveRank(rank);
+            if(rankName.equals(Rank.theDefaultRank)) {
+                setDefaultRank(rank);
+            }
+            if(rankName.equals(Rank.theMayorDefaultRank)) {
+                onCreationDefaultRank = rank;
+            }
+        }
+
+        // Linking resident to town
+        if(!getDatasource().linkResidentToTown(creator, this, onCreationDefaultRank))
+            MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + getName());
+
+        //Claiming first block
+        Block block = getDatasource().newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, this);
+        // Saving block to db and town
+        getDatasource().saveBlock(block);
+
+        getDatasource().saveFlag(new Flag<Boolean>("enter", "mytown.flag.enter", false), this);
+        getDatasource().saveFlag(new Flag<String>("name", "mytown.flag.name", getName()), this);
     }
 
     /**
@@ -368,6 +415,44 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         for (Resident toRes : residents.keySet()) {
             toRes.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.joined", res.getPlayerName(), getName()));
         }
+    }
+
+    /**
+     * Gets the String that is sent to the player using the proper format
+     *
+     * @return
+     */
+    public String getTownInfo() {
+        String msg;
+
+        String residentsString = null;
+        for(Resident res : residents.keySet()) {
+            if(residentsString == null)
+                residentsString = res.getPlayerName();
+            else
+                residentsString += ", " + res.getPlayerName();
+        }
+        if(residentsString == null)
+            residentsString = "";
+
+        String ranksString = null;
+        for(Rank rank : ranks) {
+            if(ranksString == null)
+                ranksString = rank.getName();
+            else
+                ranksString += ", " + rank.getName();
+        }
+        if(ranksString == null)
+            ranksString = "";
+
+
+        msg = String.format(Config.townInfoFormat, name, residents.size(), blocks.size(), plots.size(), residentsString, ranksString);
+
+        return msg;
+    }
+
+    private MyTownDatasource getDatasource() {
+        return DatasourceProxy.getDatasource();
     }
 
     /* ----- Comparable ----- */
