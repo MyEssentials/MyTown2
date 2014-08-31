@@ -116,16 +116,17 @@ public class PlayerTracker {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
         // TODO: Implement wilderness perms too
         Block block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
         if (block != null) {
             Town town = block.getTown();
-            Flag flag = town.getFlagAtCoords(ev.world.provider.dimensionId ,ev.x, ev.y, ev.z, "breakBlocks");
+            Flag<Boolean> flag = town.getFlagAtCoords(ev.world.provider.dimensionId ,ev.x, ev.y, ev.z, "breakBlocks");
             if (flag == null)
                 return;
-            if (flag.getValue() == true)
+            if (flag.getValue())
                 return;
             // TODO: Instead, check for the permission at one point
             if (DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer()).hasTown(town))

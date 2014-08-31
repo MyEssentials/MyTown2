@@ -8,7 +8,9 @@ import mytown.proxies.LocalizationProxy;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,12 +20,11 @@ import java.util.Map;
 public class Flag<T> {
 
     private String name;
-    private String descriptionKey;
     private T value;
 
-    public Flag(String name, String localizedDescription, T defaultValue) {
+
+    public Flag(String name, T defaultValue) {
         this.name = name;
-        this.descriptionKey = localizedDescription;
         this.value = defaultValue;
     }
 
@@ -32,15 +33,15 @@ public class Flag<T> {
     }
 
     public String getLocalizedDescription() {
-        return LocalizationProxy.getLocalization().getLocalization(descriptionKey);
+        return LocalizationProxy.getLocalization().getLocalization(descriptionKeys.get(this.name));
+    }
+
+    public String getDescriptionKey() {
+        return descriptionKeys.get(this.name);
     }
 
     public T getValue() {
         return value;
-    }
-
-    public String getDescriptionKey() {
-        return descriptionKey;
     }
 
     public String serializeValue() {
@@ -61,35 +62,55 @@ public class Flag<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public boolean setValueFromString(String str) {
+    public boolean isValueValid(T val) {
+        List<T> valids = (List<T>)validValues.get(name);
+        if(valids == null)
+            return true; // There are no limitations
+        else {
+            for(T t : valids) {
+                if(val.equals(t))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T getValueFromString(String str) {
         try {
             if (value instanceof String) {
-                value = (T) str;
-                return true;
+                return (T) str;
             } else if (value instanceof Integer) {
-                value = (T) (Integer) Integer.parseInt(str); // double cast... lol
-                return true;
+                return (T) (Integer) Integer.parseInt(str); // double cast... lol
             } else if (value instanceof Boolean) {
                 // Extra check since any String that is not "true" gets converted to false
                 if(str.equals("true") || str.equals("false")) {
-                    value = (T) (Boolean) Boolean.parseBoolean(str);
-                    return true;
+                    return (T) (Boolean) Boolean.parseBoolean(str);
                 } else {
-                    return false;
+                    return null;
                 }
             } else if (value instanceof Float) {
-                value = (T) (Float) Float.parseFloat(str);
-                return true;
+                return (T) (Float) Float.parseFloat(str);
             } else if (value instanceof Character) {
-                value = (T) (Character) str.charAt(0);
-                return true;
+                return (T) (Character) str.charAt(0);
             } else {
-                return false;
+                return null;
             }
         } catch (ClassCastException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
+    }
+
+    public boolean setValueFromString(String str) {
+        T val = getValueFromString(str);
+        if(val == null)
+            return false;
+        if(isValueValid(val)) {
+            value = val;
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -114,6 +135,38 @@ public class Flag<T> {
      */
     public static Map<String, Class> flagValueTypes = new HashMap<String, Class>();
 
+    /**
+     * Map for keeping description keys, since all flags have exactly the same description.
+     */
+    public static Map<String, String> descriptionKeys = new HashMap<String, String>();
 
+    /**
+     * Map for putting restricted values to the flags... If key is not found then it has no restrictions
+     */
+    public static Map<String, List<?>> validValues = new HashMap<String, List<?>>();
 
+    /**
+     * Initialize all flags
+     *
+     */
+    public static void initFlags() {
+        flagValueTypes.put("enter", Boolean.class);
+        flagValueTypes.put("breakBlocks", Boolean.class);
+        flagValueTypes.put("accessBlocks", Boolean.class);
+        flagValueTypes.put("pickup", Boolean.class);
+        flagValueTypes.put("enter", Boolean.class);
+        flagValueTypes.put("explosions", Boolean.class);
+        flagValueTypes.put("mobs", String.class);
+
+        for(String s : flagValueTypes.keySet()) {
+           descriptionKeys.put(s, "mytown.flag." + s); // Because I'm lazy
+        }
+
+        List<String> mobsRestrictedValues = new ArrayList<String>();
+        mobsRestrictedValues.add("all");
+        mobsRestrictedValues.add("none");
+        mobsRestrictedValues.add("hostiles");
+
+        validValues.put("mobs", mobsRestrictedValues);
+    }
 }

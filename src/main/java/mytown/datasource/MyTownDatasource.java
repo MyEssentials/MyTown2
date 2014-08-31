@@ -131,8 +131,8 @@ public abstract class MyTownDatasource {
      * @param value
      * @return the new TownFlag, or null if failed
      */
-    public final Flag newFlag(String name, String descriptionKey, Object value) {
-        Flag<Object> flag = new Flag<Object>(name, descriptionKey, value);
+    public final Flag newFlag(String name, Object value) {
+        Flag<Object> flag = new Flag<Object>(name, value);
         //TODO: Fire event
         return flag;
     }

@@ -310,6 +310,44 @@ public class CommandsEveryone extends Commands{
             res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
     }
 
+
+    @CommandNode(
+            name = "set",
+            permission = "mytown.cmd.everyone.perm.plot.set",
+            parentName = "mytown.cmd.assistant.perm.plot")
+    public static void permSetPlotCommand(ICommandSender sender, List<String> args) {
+
+        if (args.size() < 2)
+            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.err.perm.set.usage"));
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Plot plot = res.getPlotAtPlayerPosition();
+        if(plot == null)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.notInPlot"));
+        if(!plot.hasOwner(res))
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.perm.set.noPermission"));
+
+        Flag flag = plot.getFlag(args.get(0));
+
+        if (flag == null)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", args.get(0)));
+
+        if (flag.setValueFromString(args.get(1))) {
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
+        } else
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
+
+        getDatasource().saveFlag(flag, plot);
+    }
+
+    @CommandNode(
+            name = "plot",
+            permission = "mytown.cmd.everyone.perm.plot",
+            parentName = "mytown.cmd.assistant.perm")
+    public static void permPlotCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.perm.plot");
+    }
+
+
     @CommandNode(
             name = "plot",
             permission = "mytown.cmd.everyone.plot",

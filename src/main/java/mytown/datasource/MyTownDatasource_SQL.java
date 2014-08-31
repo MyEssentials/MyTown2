@@ -267,10 +267,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             while(rs.next()) {
                 String townName = rs.getString("townName");
                 String flagName = rs.getString("name");
-                String descriptionKey = rs.getString("descriptionKey");
 
                 Gson gson = new GsonBuilder().create();
-                Flag flag = new Flag(flagName, descriptionKey, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
+                Flag flag = new Flag(flagName, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
 
                 Town town = MyTownUniverse.getInstance().getTownsMap().get(townName);
                 if(town != null) {
@@ -297,10 +296,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             while (rs.next()) {
                 int plotID = rs.getInt("ID");
                 String flagName = rs.getString("name");
-                String descriptionKey = rs.getString("descriptionKey");
 
                 Gson gson = new GsonBuilder().create();
-                Flag flag = new Flag(flagName, descriptionKey, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
+                Flag flag = new Flag(flagName, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
 
                 Plot plot = MyTownUniverse.getInstance().plots.get(plotID);
                 if(plot != null) {
@@ -564,6 +562,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 statement.setInt(7, plot.getEndY());
                 statement.setInt(8, plot.getEndZ());
                 statement.setInt(9, plot.getDb_ID());
+                statement.executeUpdate();
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Plots (name, dim, x1, y1, z1, x2, y2, z2, townName) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, plot.getName());
@@ -580,6 +579,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 ResultSet generatedKeys = insertStatement.getGeneratedKeys();
                 if(generatedKeys.next())
                     plot.setDb_ID(generatedKeys.getInt(1));
+                log.info("Saved plot with ID " + generatedKeys.getInt(1));
 
                 // Put the Plot in the Map
                 MyTownUniverse.getInstance().plots.put(plot.getDb_ID(), plot);
@@ -657,11 +657,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             } else {
                 // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "TownFlags(name, descriptionKey, serializedValue, townName) VALUES(?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "TownFlags(name,  serializedValue, townName) VALUES(?, ?, ?)", true);
                 insertStatement.setString(1, flag.getName());
-                insertStatement.setString(2, flag.getDescriptionKey());
-                insertStatement.setString(3, flag.serializeValue());
-                insertStatement.setString(4, town.getName());
+                insertStatement.setString(2, flag.serializeValue());
+                insertStatement.setString(3, town.getName());
                 insertStatement.executeUpdate();
 
                 town.addFlag(flag);
@@ -699,7 +698,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean unlinkResidentFromTown(Resident res, Town town) {
         try {
-            PreparedStatement s = prepare("DELETE FROM " + prefix + "ResidentsToTowns WHERE resident = ?, town = ?;", true);
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "ResidentsToTowns WHERE resident = ? AND town = ?", true);
             s.setString(1, res.getUUID().toString());
             s.setString(2, town.getName());
             s.execute();
@@ -747,7 +746,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean unlinkTownFromNation(Town town, Nation nation) {
         try {
-            PreparedStatement s = prepare("DELETE FROM " + prefix + "TownsToNations WHERE town = ?, nation = ?;", true);
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "TownsToNations WHERE town = ? AND nation = ?", true);
             s.setString(1, town.getName());
             s.setString(2, nation.getName());
             s.execute();
@@ -786,6 +785,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             log.error("Failed to link " + res.getPlayerName() + " to plot " + plot.getName() + " in town " + plot.getTown().getName());
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -858,7 +858,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean deleteBlock(Block block) {
         try {
             // Delete Block from Datasource
-            PreparedStatement deleteBlockStatement = prepare("DELETE FROM " + prefix + "Blocks WHERE dim=?, x=?, z=?", true);
+            PreparedStatement deleteBlockStatement = prepare("DELETE FROM " + prefix + "Blocks WHERE dim=? AND x=? AND z=?", true);
             deleteBlockStatement.setInt(1, block.getDim());
             deleteBlockStatement.setInt(2, block.getX());
             deleteBlockStatement.setInt(3, block.getZ());
@@ -882,7 +882,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean deleteRank(Rank rank) {
         try {
             // Delete Rank from Datasource
-            PreparedStatement deleteRankStatement = prepare("DELETE FROM " + prefix + "Ranks WHERE name=?, townName=?", true);
+            PreparedStatement deleteRankStatement = prepare("DELETE FROM " + prefix + "Ranks WHERE name=? AND townName=?", true);
             deleteRankStatement.setString(1, rank.getName());
             deleteRankStatement.setString(2, rank.getTown().getName());
             deleteRankStatement.execute();
@@ -969,7 +969,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean removeRankPermission(Rank rank, String perm) {
         try {
-            PreparedStatement s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE node = ?, rank = ?", true);
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE node = ? AND rank = ?", true);
             s.setString(1, perm);
             s.setString(2, rank.getName());
             s.execute();
@@ -1070,7 +1070,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.7", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Plots (" +
-                "ID INT," + // Just because it's a pain with this many primary keys
+                "ID INTEGER NOT NULL," + // Just because it's a pain with this many primary keys
                 "name VARCHAR(50) NOT NULL," + // TODO Allow larger Plot names?
                 "dim INT NOT NULL," +
                 "x1 INT NOT NULL," +
@@ -1080,10 +1080,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "y2 INT NOT NULL," +
                 "z2 INT NOT NULL," +
                 "townName VARCHAR(32) NOT NULL," +
-                "owner CHAR(36) DEFAULT NULL," + // TODO Allow multiple owners?
                 "PRIMARY KEY(ID)," +
-                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE," +
-                "FOREIGN KEY(owner) REFERENCES " + prefix + "Residents(uuid) ON DELETE SET NULL" +
+                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.8", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Nations (" +
                 "name VARCHAR(32) NOT NULL," + // TODO Allow larger nation names?
@@ -1109,7 +1107,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 ");"));
         updates.add(new DBUpdate("08.26.2014.1", "Add TownFlags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownFlags (" +
                 "name VARCHAR(50) NOT NULL," +
-                "descriptionKey VARCHAR(50), " +
                 "serializedValue VARCHAR(400), " +
                 "townName VARCHAR(50) NOT NULL," +
                 "PRIMARY KEY(name, townName)," +
@@ -1117,7 +1114,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 ");"));
         updates.add(new DBUpdate("08.30.2014.1", "Add PlotFlags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "PlotFlags (" +
                 "name VARCHAR(50) NOT NULL," +
-                "descriptionKey VARCHAR(50), " +
                 "serializedValue VARCHAR(400), " +
                 "plot INT NOT NULL," +
                 "PRIMARY KEY(name, plot)," +

@@ -24,7 +24,6 @@ import java.util.*;
 public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, Comparable<Town> {
     private String name, oldName = null;
 
-    @Deprecated
     public Town(String name) {
         setName(name);
     }
@@ -66,8 +65,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         // Saving block to db and town
         getDatasource().saveBlock(block);
 
-        getDatasource().saveFlag(new Flag<Boolean>("enter", "mytown.flag.enter", false), this);
-        getDatasource().saveFlag(new Flag<String>("name", "mytown.flag.name", getName()), this);
+        // Saving and adding all flags to the database
+        getDatasource().saveFlag(new Flag<Boolean>("enter", false), this);
+        getDatasource().saveFlag(new Flag<Boolean>("breakBlocks", false), this);
+        getDatasource().saveFlag(new Flag<Boolean>("explosions", false), this);
+        getDatasource().saveFlag(new Flag<Boolean>("accessBlocks", false), this);
+        getDatasource().saveFlag(new Flag<Boolean>("pickup", true), this);
+        getDatasource().saveFlag(new Flag<Boolean>("enter", true), this);
+        getDatasource().saveFlag(new Flag<String>("mobs", "all"), this);
     }
 
     /**

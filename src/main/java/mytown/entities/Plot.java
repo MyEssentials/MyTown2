@@ -127,7 +127,7 @@ public class Plot implements IHasFlags, IHasResidents{
         this.name = name;
     }
 
-    public void setDb_ID(int ID) {this.db_ID = db_ID; }
+    public void setDb_ID(int ID) {this.db_ID = ID; }
 
     public int getDb_ID() {return this.db_ID; }
 

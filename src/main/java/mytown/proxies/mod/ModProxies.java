@@ -14,7 +14,7 @@ public class ModProxies {
     }
 
     public static void load() {
-        if (ModProxies.loaded == false) {
+        if (!ModProxies.loaded) {
             ModProxies.loaded = true;
             MyTown.instance.config.getCategory("modproxies").setComment("Holds the enable state of the different ModProxies.\nModProxies handle interaction with other mods.\nIf a mod interaction causes issues, just set it to false.");
         }

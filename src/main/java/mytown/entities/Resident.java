@@ -23,7 +23,7 @@ import java.util.Date;
  * @author Joe Goett
  */
 public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO Make Comparable
-    private WeakReference<EntityPlayer> playerRef;
+    private EntityPlayer player;
     private UUID playerUUID;
     private String playerName; // This is only for display purposes when the player is offline
     private Date joinDate, lastOnline;
@@ -79,7 +79,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
      * @return
      */
     public EntityPlayer getPlayer() {
-        return playerRef.get();
+        return player;
     }
 
     /**
@@ -88,7 +88,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
      * @param pl
      */
     public void setPlayer(EntityPlayer pl) {
-        this.playerRef = new WeakReference<EntityPlayer>(pl);
+        this.player = pl;
         setUUID(pl.getPersistentID());
         this.playerName = pl.getDisplayName();
     }
@@ -145,7 +145,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
      * @return
      */
     public Date getLastOnline() {
-        if (this.playerRef != null && this.playerRef.get() != null) {
+        if (this.player != null) {
             lastOnline = new Date(); // TODO Do we REALLY need to update this each time its received, or can we do this better?
         }
         return lastOnline;
@@ -297,7 +297,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
      * @param dimension
      */
     public void checkLocation(int oldChunkX, int oldChunkZ, int newChunkX, int newChunkZ, int dimension) {
-        if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && playerRef.get() != null) {
+        if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null) {
             Block oldTownBlock, newTownBlock;
 
             oldTownBlock = getDatasource().getBlock(lastDim, oldChunkX, oldChunkZ);
@@ -392,7 +392,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
     @SuppressWarnings("ConstantConditions")
     public Plot getPlotAtPlayerPosition() {
         for(Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
-            if(plot.isCoordWithin(playerRef.get().dimension, (int)playerRef.get().posX, (int)playerRef.get().posY, (int)playerRef.get().posZ));
+            if(plot.isCoordWithin(player.dimension, (int)player.posX, (int)player.posY, (int)player.posZ));
                 return plot;
         }
         return null;
@@ -525,7 +525,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
 
         selectionY1 = 1;
         try {
-            selectionY2 = playerRef.get().worldObj.getActualHeight() - 1;
+            selectionY2 = player.worldObj.getActualHeight() - 1;
         } catch (NullPointerException e) {
             e.printStackTrace();
             return;
