@@ -115,7 +115,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean loadAll() {
-        return super.loadAll() && loadResidentsToTowns() && loadTownsToNations();
+        return super.loadAll() && loadResidentsToTowns() && loadTownsToNations() && loadResidentsToPlots();
     }
 
     @Override
@@ -380,6 +380,27 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    protected boolean loadResidentsToPlots() {
+        try {
+            PreparedStatement loadStatement = prepare("SELECT * FROM " + prefix + "ResidentsToPlots", true);
+            ResultSet rs = loadStatement.executeQuery();
+
+            while(rs.next()) {
+                Plot plot = MyTownUniverse.getInstance().getPlotsMap().get(rs.getInt("plotID"));
+                Resident res = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident"));
+
+                if(rs.getBoolean("isOwner"))
+                    plot.addOwner(res);
+
+                plot.addResident(res);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to link Residents to Plots");
+            return false;
+        }
+        return true;
+    }
+
     /* ----- Save ----- */
 
     @Override
@@ -544,7 +565,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 statement.setInt(8, plot.getEndZ());
                 statement.setInt(9, plot.getDb_ID());
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Plots (name, dim, x1, y1, z1, x2, y2, z2, townName) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Plots (name, dim, x1, y1, z1, x2, y2, z2, townName) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, plot.getName());
                 insertStatement.setInt(2, plot.getDim());
                 insertStatement.setInt(3, plot.getStartX());
@@ -746,6 +767,57 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.executeUpdate();
         } catch(SQLException e) {
             log.error("", e);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean linkResidentToPlot(Resident res, Plot plot, boolean isOwner) {
+        try {
+            PreparedStatement s = prepare("INSERT INTO " + prefix + " ResidentsToPlots(resident, plotID, isOwner) VALUES(?, ?, ?)", true);
+            s.setString(1, res.getUUID().toString());
+            s.setInt(2, plot.getDb_ID());
+            s.setBoolean(3, isOwner);
+            s.executeUpdate();
+
+            if(isOwner)
+                plot.addOwner(res);
+            plot.addResident(res);
+
+        } catch (SQLException e) {
+            log.error("Failed to link " + res.getPlayerName() + " to plot " + plot.getName() + " in town " + plot.getTown().getName());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean unlinkResidentFromPlot(Resident res, Plot plot) {
+        try {
+            PreparedStatement s = prepare("DELETE FROM" + prefix + " ResidentsToPlots WHERE resident=? AND plotID=?", true);
+            s.setString(1, res.getUUID().toString());
+            s.setInt(2, plot.getDb_ID());
+            s.executeUpdate();
+
+        } catch (SQLException e) {
+            log.error("Failed to link " + res.getPlayerName() + " to plot " + plot.getName() + " in town " + plot.getTown().getName());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner) {
+        try {
+            PreparedStatement s = prepare("UPDATE" + prefix + " ResidentsToPlots SET isOwner=? WHERE resident=? AND plotID=?", true);
+            s.setBoolean(1, isOwner);
+            s.setString(2, res.getUUID().toString());
+            s.setInt(3, plot.getDb_ID());
+            s.executeUpdate();
+
+        } catch (SQLException e) {
+            log.error("Failed to link " + res.getPlayerName() + " to plot " + plot.getName() + " in town " + plot.getTown().getName());
+            return false;
         }
         return true;
     }
@@ -998,7 +1070,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.7", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Plots (" +
-                "ID INT NOT NULL," + // Just because it's a pain with this many primary keys
+                "ID INT," + // Just because it's a pain with this many primary keys
                 "name VARCHAR(50) NOT NULL," + // TODO Allow larger Plot names?
                 "dim INT NOT NULL," +
                 "x1 INT NOT NULL," +
@@ -1043,7 +1115,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(name, townName)," +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
-        updates.add(new DBUpdate("08.30.2014", "Add PlotFlags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "PlotFlags (" +
+        updates.add(new DBUpdate("08.30.2014.1", "Add PlotFlags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "PlotFlags (" +
                 "name VARCHAR(50) NOT NULL," +
                 "descriptionKey VARCHAR(50), " +
                 "serializedValue VARCHAR(400), " +
@@ -1051,6 +1123,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(name, plot)," +
                 "FOREIGN KEY(plot) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
+        updates.add(new DBUpdate("08.31.2014.1", "Add ResidentsToPlots", "CREATE TABLE IF NOT EXISTS " + prefix +
+                "ResidentsToPlots(" +
+                "resident varchar(36) NOT NULL, " +
+                "plotID INT NOT NULL, " +
+                "isOwner boolean, " + // false if it's ONLY whitelisted, if neither then shouldn't be in this list
+                "PRIMARY KEY(resident, plotID), " +
+                "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, " +
+                "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
     }
 
     /**

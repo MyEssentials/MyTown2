@@ -315,7 +315,7 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.plot",
             parentName = "mytown.cmd")
     public static void plotCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.eveyone.plot");
+        callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot");
     }
 
     @CommandNode(
@@ -342,14 +342,16 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.plot.make",
             parentName = "mytown.cmd.everyone.plot")
     public static void plotMakeCommand(ICommandSender sender, List<String> args) {
-        Resident res = getUniverse().getResidentsMap().get(sender.getCommandSenderName());
+        Resident res = getDatasource().getOrMakeResident(sender);
         String plotName = "NoName";
 
         if (args.size() > 0) {
             plotName = args.get(0);
         }
 
+        // This handles all the db stuff... Not sure if I should change :/
         boolean result = res.makePlotFromSelection(plotName);
+
         if (result) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.plot.created");
         } else
@@ -388,8 +390,9 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.plot.select",
             parentName = "mytown.cmd.everyone.plot")
     public static void plotSelectCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        if(args.size() == 0) {
+        MyTown.instance.log.info("Select for plots command here");
 
+        if(args.size() == 0) {
             ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
             selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
             NBTTagList lore = new NBTTagList();
@@ -418,7 +421,7 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.plot.select.expand",
             parentName = "mytown.cmd.everyone.plot.select")
     public static void plotSelectExpandCommand(ICommandSender sender, List<String> args) {
-        Resident res = getUniverse().getResidentsMap().get(sender.getCommandSenderName());
+        Resident res = getDatasource().getOrMakeResident(sender);
 
         if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.notSelected"));
@@ -444,7 +447,7 @@ public class CommandsEveryone extends Commands{
     @CommandNode(
             name = "show",
             permission = "mytown.cmd.everyone.plot.show",
-            parentName = "mytown.cmd.everyong.plot")
+            parentName = "mytown.cmd.everyone.plot")
         public static void plotShowCommand(ICommandSender sender, List<String> args) {
         Town town = getDatasource().getOrMakeResident(sender).getSelectedTown();
         for (Plot plot : town.getPlots()) {
@@ -456,7 +459,7 @@ public class CommandsEveryone extends Commands{
     @CommandNode(
             name = "vanish",
             permission = "mytown.cmd.everyone.plot.vanish",
-            parentName = "mytown.cmd.everyong.plot")
+            parentName = "mytown.cmd.everyone.plot")
     public static void plotVanishCommand(ICommandSender sender, List<String> args) {
 
         Town town = getDatasource().getOrMakeResident(sender).getSelectedTown();

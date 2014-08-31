@@ -156,17 +156,11 @@ public class CommandsAssistant extends Commands {
         Flag flag = town.getFlag(args.get(0));
         if (flag == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", args.get(0)));
-        try {
-            if (flag.setValueFromString(args.get(1))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
-            } else
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
-
-            getDatasource().saveFlag(flag, town);
-        } catch (Exception e) {
-            MyTown.instance.log.fatal(getLocal().getLocalization("mytown.databaseError"));
-            e.printStackTrace();
-        }
+        if (flag.setValueFromString(args.get(1))) {
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
+        } else
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
+        getDatasource().saveFlag(flag, town);
     }
 
     @CommandNode(
@@ -187,17 +181,14 @@ public class CommandsAssistant extends Commands {
 
         if (flag == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", args.get(0)));
-        try {
-            if (flag.setValueFromString(args.get(1))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
-            } else
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
 
-            getDatasource().saveFlag(flag, plot);
-        } catch (Exception e) {
-            MyTown.instance.log.fatal(getLocal().getLocalization("mytown.databaseError"));
-            e.printStackTrace();
-        }
+        if (flag.setValueFromString(args.get(1))) {
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
+        } else
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
+
+        getDatasource().saveFlag(flag, plot);
+
     }
 
     @CommandNode(

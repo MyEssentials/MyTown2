@@ -5,6 +5,7 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import mytown.entities.flag.Flag;
 import mytown.entities.interfaces.IHasFlags;
+import mytown.entities.interfaces.IHasResidents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * @author Joe Goett
  */
-public class Plot implements IHasFlags{
+public class Plot implements IHasFlags, IHasResidents{
     private int db_ID;
     private int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
@@ -176,5 +177,47 @@ public class Plot implements IHasFlags{
             if(flag.getName().equals(name))
                 return flag;
         return null;
+    }
+
+    /* ---- IHasResidents ----- */
+
+    private List<Resident> whitelist = new ArrayList<Resident>();
+
+    @Override
+    public void addResident(Resident res) {
+        whitelist.add(res);
+    }
+
+    @Override
+    public void removeResident(Resident res) {
+        whitelist.remove(res);
+    }
+
+    @Override
+    public boolean hasResident(Resident res) {
+        return whitelist.contains(res);
+    }
+
+    @Override
+    public ImmutableList<Resident> getResidents() {
+        return ImmutableList.copyOf(whitelist);
+    }
+
+    private List<Resident> owners = new ArrayList<Resident>();
+
+    public void addOwner(Resident res) {
+        owners.add(res);
+    }
+
+    public void removeOwner(Resident res) {
+        owners.remove(res);
+    }
+
+    public boolean hasOwner(Resident res) {
+        return owners.contains(res);
+    }
+
+    public ImmutableList<Resident> getOwners() {
+        return ImmutableList.copyOf(owners);
     }
 }

@@ -184,6 +184,21 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    public boolean linkResidentToPlot(Resident res, Plot plot, boolean isOwner) {
+        return false;
+    }
+
+    @Override
+    public boolean unlinkResidentFromPlot(Resident res, Plot plot) {
+        return false;
+    }
+
+    @Override
+    public boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner) {
+        return false;
+    }
+
+    @Override
     public boolean deleteTown(Town town) {
         log.debug("Deleting Town %s", town);
         return MyTownUniverse.getInstance().towns.remove(town.getName()) != null;

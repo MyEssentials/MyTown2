@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
@@ -32,6 +33,10 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
     private Town selectionTown;
     private boolean firstSelectionActive = false, secondSelectionActive = false;
     private boolean selectionExpandedVert = false;
+
+    // Location checking
+    private int lastChunkZ, lastChunkX;
+    private int lastDim;
 
     public Resident(EntityPlayer pl) {
         setPlayer(pl);
@@ -282,6 +287,63 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
         mapOn = isOn;
     }
 
+    /**
+     * Called when a player changes location from a chunk to another
+     *
+     * @param oldChunkX
+     * @param oldChunkZ
+     * @param newChunkX
+     * @param newChunkZ
+     * @param dimension
+     */
+    public void checkLocation(int oldChunkX, int oldChunkZ, int newChunkX, int newChunkZ, int dimension) {
+        if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && playerRef.get() != null) {
+            Block oldTownBlock, newTownBlock;
+
+            oldTownBlock = getDatasource().getBlock(lastDim, oldChunkX, oldChunkZ);
+            newTownBlock = getDatasource().getBlock(dimension, newChunkX, newChunkZ);
+
+            if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
+                if (towns.contains(newTownBlock.getTown())) {
+                    sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
+                } else {
+                    sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
+                }
+            } else if (oldTownBlock != null && newTownBlock == null) {
+                sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.wild"));
+            }
+
+            lastDim = dimension;
+            lastChunkX = newChunkX;
+            lastChunkZ = newChunkZ;
+        }
+    }
+
+    /**
+     * More simpler version of location check, without the need to know the old chunk's coords
+     *
+     * @param newChunkX
+     * @param newChunkZ
+     * @param dimension
+     */
+    public void checkLocationOnDimensionChanged(int newChunkX, int newChunkZ, int dimension) {
+        Block newTownBlock;
+
+        newTownBlock = getDatasource().getBlock(dimension, newChunkX, newChunkZ);
+
+        if (newTownBlock == null) {
+            sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.wild"));
+        } else if (towns.contains(newTownBlock.getTown())) {
+            sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
+        } else {
+            sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
+        }
+
+        lastDim = dimension;
+        lastChunkX = newChunkX;
+        lastChunkZ = newChunkZ;
+    }
+
     /* ----- Invites ----- */
 
     private List<Town> invites = new ArrayList<Town>();
@@ -336,6 +398,8 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
         return null;
     }
 
+
+
     // //////////////////////////////////////
     // PLOT SELECTION
     // //////////////////////////////////////
@@ -347,8 +411,10 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
         Block tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
         if (firstSelectionActive && selectionDim != dim)
             return false;
-        if (tb == null || tb.getTown() != getSelectedTown() && !firstSelectionActive || tb.getTown() != selectionTown && firstSelectionActive)
+        if (tb == null || tb.getTown() != getSelectedTown() && !firstSelectionActive || tb.getTown() != selectionTown && firstSelectionActive) {
+
             return false;
+        }
         if (!firstSelectionActive) {
             secondSelectionActive = false;
             selectionDim = dim;
@@ -395,7 +461,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
         // TODO: Check everything separately or throw exceptions?
 
         if (!secondSelectionActive || !firstSelectionActive || (Math.abs(selectionX1 - selectionX2) < Plot.minX || Math.abs(selectionY1 - selectionY2) < Plot.minY || Math.abs(selectionZ1 - selectionZ2) < Plot.minZ) && !(selectedTown instanceof AdminTown)) {
-            System.out.println("In calculations");
             resetSelection();
             return false;
         }
@@ -443,8 +508,10 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
 
         Plot plot = new Plot(plotName, selectionTown, selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2);
 
-        if(getDatasource().savePlot(plot))
+        if(!getDatasource().savePlot(plot))
             return false;
+
+        getDatasource().linkResidentToPlot(this, plot, true);
 
         resetSelection();
         return true;

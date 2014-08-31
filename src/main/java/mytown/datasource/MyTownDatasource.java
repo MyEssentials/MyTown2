@@ -329,6 +329,35 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean updateTownToNationLink(Town town, Nation nation);
 
+    /**
+     * Links resident to plot as owner or not
+     *
+     * @param res
+     * @param plot
+     * @param isOwner
+     * @return
+     */
+    public abstract boolean linkResidentToPlot(Resident res, Plot plot, boolean isOwner);
+
+    /**
+     * Unlink the Resident from the Plot
+     *
+     * @param res
+     * @param plot
+     * @return
+     */
+    public abstract boolean unlinkResidentFromPlot(Resident res, Plot plot);
+
+    /**
+     * Updates the link between the Resident and the Plot
+     *
+     * @param res
+     * @param plot
+     * @param isOwner
+     * @return
+     */
+    public abstract boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner);
+
     /* ----- Delete ----- */
 
     /**
