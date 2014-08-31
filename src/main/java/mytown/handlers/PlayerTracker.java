@@ -6,7 +6,10 @@ import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Block;
 import mytown.entities.Resident;
+import mytown.entities.Town;
+import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
@@ -18,6 +21,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.world.BlockEvent;
 
 /**
  * @author Joe Goett
@@ -109,6 +113,24 @@ public class PlayerTracker {
 
             }
             System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
+        // TODO: Implement wilderness perms too
+        Block block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+        if (block != null) {
+            Town town = block.getTown();
+            Flag flag = town.getFlagAtCoords(ev.world.provider.dimensionId ,ev.x, ev.y, ev.z, "breakBlocks");
+            if (flag == null)
+                return;
+            if (flag.getValue() == true)
+                return;
+            // TODO: Instead, check for the permission at one point
+            if (DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer()).hasTown(town))
+                return;
+            ev.setCanceled(true);
         }
     }
 }

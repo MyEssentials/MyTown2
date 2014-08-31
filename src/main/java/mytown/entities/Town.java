@@ -329,6 +329,22 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
                 return flag;
         return null;
     }
+
+    /**
+     * Gets the flag on the specified coordinates. Returns town's flag if no plot is found.
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param flagName
+     * @return
+     */
+    public Flag getFlagAtCoords(int dim, int x, int y, int z, String flagName) {
+        Plot plot = getPlotAtCoords(dim, x, y, z);
+        if (plot == null)
+            return getFlag(flagName);
+        return plot.getFlag(flagName);
+    }
     /* ----- Nation ----- */
 
     private Nation nation = null;
