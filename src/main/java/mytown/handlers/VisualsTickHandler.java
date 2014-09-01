@@ -191,6 +191,7 @@ public class VisualsTickHandler {
     public boolean isBlockMarked(int x, int y, int z, int dim) {
         for(BlockCoords coords : markedBlocks) {
             if(coords.x == x && coords.y == y && coords.z == z && coords.dim == dim) {
+                coords.packetSent = false;
                 return true;
             }
         }
