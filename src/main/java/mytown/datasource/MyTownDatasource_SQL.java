@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mytown.config.Config;
 import mytown.core.utils.config.ConfigProperty;
+import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 
@@ -125,7 +126,15 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             ResultSet rs = loadTownsStatement.executeQuery();
 
             while (rs.next()) {
-                Town town = new Town(rs.getString("name"));
+                Town town;
+                if(rs.getBoolean("isAdminTown")) {
+                    town = new AdminTown(rs.getString("name"));
+                } else {
+                    town = new Town(rs.getString("name"));
+                }
+                // TODO: Maybe spawn is not needed when town is an admintown?
+                town.setSpawn(new Teleport(rs.getInt("spawnDim"), rs.getFloat("spawnX"), rs.getFloat("spawnY"), rs.getFloat("spawnZ"), rs.getFloat("cameraYaw"), rs.getFloat("cameraPitch")));
+
                 MyTownUniverse.getInstance().towns.put(town.getName(), town);
             }
         } catch (SQLException e) {
@@ -182,6 +191,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     }
                     MyTownUniverse.getInstance().ranks.put(rank.getKey(), rank);
                     rank.getTown().addRank(rank);
+                    log.info("Trying to set up a default rank.");
+                    if(rs.getBoolean("isDefault")) {
+                        town.setDefaultRank(rank);
+                        log.info("Default rank has been found.");
+                    }
                 }
             } catch (SQLException e) {
                 log.error("Failed to load a rank!", e);
@@ -294,7 +308,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             ResultSet rs = loadFlagsStatement.executeQuery();
 
             while (rs.next()) {
-                int plotID = rs.getInt("ID");
+                int plotID = rs.getInt("plotID");
                 String flagName = rs.getString("name");
 
                 Gson gson = new GsonBuilder().create();
@@ -405,21 +419,38 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean saveTown(Town town) {
         try {
             if (MyTownUniverse.getInstance().towns.containsValue(town)) { // Update
-                if (town.getOldName() != null) { // Rename Town
-                    PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=? WHERE name=?", true);
-                    updateStatement.setString(1, town.getName());
-                    updateStatement.setString(2, town.getOldName());
-                    updateStatement.executeUpdate();
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=?, spawnDim=?, spawnX=?, spawnY=?, spawnZ=?, cameraYaw=?, cameraPitch=? WHERE name=?", true);
+                updateStatement.setString(1, town.getName());
+                updateStatement.setInt(2, town.getSpawn().getDim());
+                updateStatement.setFloat(3, town.getSpawn().getX());
+                updateStatement.setFloat(4, town.getSpawn().getY());
+                updateStatement.setFloat(5, town.getSpawn().getZ());
+                updateStatement.setFloat(6, town.getSpawn().getYaw());
+                updateStatement.setFloat(7, town.getSpawn().getPitch());
 
-                    // Need to move the Town in the map from the old name to the new
+                if(town.getOldName() == null)
+                    updateStatement.setString(8, town.getName());
+                else
+                    updateStatement.setString(8, town.getOldName());
+
+                updateStatement.executeUpdate();
+
+                // Need to move the Town in the map from the old name to the new
+                if(town.getOldName() != null) {
                     MyTownUniverse.getInstance().towns.remove(town.getOldName());
                     MyTownUniverse.getInstance().towns.put(town.getName(), town);
-
-                    town.resetOldName();
                 }
+                town.resetOldName();
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name) VALUES(?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name, spawnDim, spawnX, spawnY, spawnZ, cameraYaw, cameraPitch, isAdminTown) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, town.getName());
+                insertStatement.setInt(2, town.getSpawn().getDim());
+                insertStatement.setFloat(3, town.getSpawn().getX());
+                insertStatement.setFloat(4, town.getSpawn().getY());
+                insertStatement.setFloat(5, town.getSpawn().getZ());
+                insertStatement.setFloat(6, town.getSpawn().getYaw());
+                insertStatement.setFloat(7, town.getSpawn().getPitch());
+                insertStatement.setBoolean(8, town instanceof AdminTown);
                 insertStatement.executeUpdate();
 
                 // Put the Town in the Map
@@ -460,7 +491,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveRank(Rank rank) { // TODO Insert any new permissions to the RankPermission table
+    public boolean saveRank(Rank rank, boolean isDefault) { // TODO Insert any new permissions to the RankPermission table
         try {
             if (MyTownUniverse.getInstance().ranks.containsValue(rank)) { // Update
                 // TODO Update
@@ -468,9 +499,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 try {
                     getConnection().setAutoCommit(false);
 
-                    PreparedStatement insertRankStatement = prepare("INSERT INTO " + prefix + "Ranks (name, townName) VALUES(?, ?)", true);
+                    PreparedStatement insertRankStatement = prepare("INSERT INTO " + prefix + "Ranks (name, townName, isDefault) VALUES(?, ?, ?)", true);
                     insertRankStatement.setString(1, rank.getName());
                     insertRankStatement.setString(2, rank.getTown().getName());
+                    insertRankStatement.setBoolean(3, isDefault);
                     insertRankStatement.executeUpdate();
 
                     if (rank.getPermissions().size() > 0) {
@@ -482,14 +514,15 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                             insertRankPermStatement.setString(3, rank.getTown().getName());
                             insertRankPermStatement.addBatch();
                         }
-
                         insertRankPermStatement.executeBatch();
                     }
-
 
                     // Put the Rank in the Map
                     MyTownUniverse.getInstance().ranks.put(rank.getKey(), rank);
                     rank.getTown().addRank(rank);
+
+                    if(isDefault)
+                        rank.getTown().setDefaultRank(rank);
                 } catch (SQLException e) {
                     log.error("Failed to insert Rank %s", rank.getKey());
                     getConnection().rollback();
@@ -581,6 +614,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     plot.setDb_ID(generatedKeys.getInt(1));
                 log.info("Saved plot with ID " + generatedKeys.getInt(1));
 
+                for(Flag flag : plot.getTown().getFlags()) {
+                    saveFlag(flag, plot);
+                }
+
                 // Put the Plot in the Map
                 MyTownUniverse.getInstance().plots.put(plot.getDb_ID(), plot);
             }
@@ -619,22 +656,25 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         try {
             if(plot.hasFlag(flag.getName())) {
                 // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE ID=?", true);
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE plotID=? AND name=?", true);
                 updateStatement.setString(1, flag.serializeValue());
                 updateStatement.setInt(2, plot.getDb_ID());
+                updateStatement.setString(3, flag.getName());
                 updateStatement.executeUpdate();
 
 
             } else {
                 // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "PlotFlags(name, descriptionKey, serializedValue, plotID) VALUES(?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "PlotFlags(name, serializedValue, plotID) VALUES(?, ?, ?)", true);
                 insertStatement.setString(1, flag.getName());
-                insertStatement.setString(2, flag.getDescriptionKey());
-                insertStatement.setString(3, flag.serializeValue());
-                insertStatement.setInt(4, plot.getDb_ID());
+                insertStatement.setString(2, flag.serializeValue());
+                insertStatement.setInt(3, plot.getDb_ID());
                 insertStatement.executeUpdate();
 
                 plot.addFlag(flag);
+
+
+
             }
         } catch (SQLException e) {
             log.error("Failed to save Flag %s!", flag.getName());
@@ -715,8 +755,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean updateResidentToTownLink(Resident res, Town town, Rank rank) {
         try {
-            PreparedStatement s = prepare("UPDATE " + prefix + "ResidentsToTowns SET rank = ? WHERE resident = ?, town = ?;", true);
-            s.setString(1, town.getResidentRank(res).getName());
+            PreparedStatement s = prepare("UPDATE " + prefix + "ResidentsToTowns SET rank = ? WHERE resident = ? AND town = ?", true);
+            s.setString(1, rank.getName());
             s.setString(2, res.getUUID().toString());
             s.setString(3, town.getName());
             s.executeUpdate();
@@ -1046,11 +1086,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 ");"));
         updates.add(new DBUpdate("07.25.2014.3", "Add Towns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Towns (" +
                 "name VARCHAR(32) NOT NULL," + // TODO Allow larger town names?
+                "isAdminTown BOOLEAN, " +
+                "spawnDim INT NOT NULL, " +
+                "spawnX FLOAT NOT NULL, " +
+                "spawnY FLOAT NOT NULL, " +
+                "spawnZ FLOAT NOT NULL, " +
+                "cameraYaw FLOAT NOT NULL, " +
+                "cameraPitch FLOAT NOT NULL, " +
                 "PRIMARY KEY(name)" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.4", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Ranks (" +
                 "name VARCHAR(50) NOT NULL," +  // TODO Allow larger rank names?
                 "townName VARCHAR(32) NOT NULL," +
+                "isDefault BOOLEAN, " +
                 "PRIMARY KEY(name, townName)," +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
@@ -1115,9 +1163,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         updates.add(new DBUpdate("08.30.2014.1", "Add PlotFlags Table", "CREATE TABLE IF NOT EXISTS " + prefix + "PlotFlags (" +
                 "name VARCHAR(50) NOT NULL," +
                 "serializedValue VARCHAR(400), " +
-                "plot INT NOT NULL," +
-                "PRIMARY KEY(name, plot)," +
-                "FOREIGN KEY(plot) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE" +
+                "plotID INT NOT NULL," +
+                "PRIMARY KEY(name, plotID)," +
+                "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("08.31.2014.1", "Add ResidentsToPlots", "CREATE TABLE IF NOT EXISTS " + prefix +
                 "ResidentsToPlots(" +

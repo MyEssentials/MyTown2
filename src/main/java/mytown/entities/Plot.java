@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import mytown.entities.flag.Flag;
 import mytown.entities.interfaces.IHasFlags;
 import mytown.entities.interfaces.IHasResidents;
+import mytown.proxies.DatasourceProxy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ public class Plot implements IHasFlags, IHasResidents{
         this.y2 = y2;
         this.z2 = z2;
         this.dim = dim;
+
 
         updateKey();
     }
@@ -141,7 +143,7 @@ public class Plot implements IHasFlags, IHasResidents{
      * @return
      */
     public boolean isCoordWithin(int dim, int x, int y, int z) { // TODO Is dim really needed?
-        return dim == this.dim && (x > x1 && x < x2) && (y > y1 && y < y2) && (z > z1 && z < z2);
+        return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
     }
 
     @Override

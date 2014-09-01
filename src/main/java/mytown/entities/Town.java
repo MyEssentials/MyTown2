@@ -40,6 +40,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
         Rank onCreationDefaultRank = null;
 
+        // Setting spawn before saving
+        setSpawn(new Teleport(creator.getPlayer().dimension, (float)creator.getPlayer().posX, (float)creator.getPlayer().posY, (float)creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
+
         // Saving town to database
         if (!getDatasource().saveTown(this))
             throw new CommandException("Failed to save Town"); // TODO Localize!
@@ -47,14 +50,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         // Saving all ranks to database and town
         for(String rankName : Rank.defaultRanks.keySet()) {
             Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), this);
-            getDatasource().saveRank(rank);
-            if(rankName.equals(Rank.theDefaultRank)) {
-                setDefaultRank(rank);
-            }
+
+            getDatasource().saveRank(rank, rankName.equals(Rank.theDefaultRank));
+
             if(rankName.equals(Rank.theMayorDefaultRank)) {
                 onCreationDefaultRank = rank;
             }
         }
+
 
         // Linking resident to town
         if(!getDatasource().linkResidentToTown(creator, this, onCreationDefaultRank))
@@ -302,7 +305,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public Plot getPlotAtCoords(int dim, int x, int y, int z) {
-        return getBlockAtCoords(dim, x >> 4, z >> 4).getPlotAtCoords(dim, x, y, z);
+        for (Plot plot : plots) {
+            if (plot.isCoordWithin(dim, x, y, z)) {
+                return plot;
+            }
+        }
+        return null;
     }
 
     /* ----- IHasFlags ------ */
@@ -346,8 +354,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      */
     public Flag getFlagAtCoords(int dim, int x, int y, int z, String flagName) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
-        if (plot == null)
+        if (plot == null) {
             return getFlag(flagName);
+        }
+        MyTown.instance.log.info("Found plot and sending flag.");
         return plot.getFlag(flagName);
     }
     /* ----- Nation ----- */
@@ -472,7 +482,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return msg;
     }
 
-    private MyTownDatasource getDatasource() {
+    protected MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
 

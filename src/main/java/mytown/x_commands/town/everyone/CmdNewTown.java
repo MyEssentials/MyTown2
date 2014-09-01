@@ -50,7 +50,7 @@ public class CmdNewTown extends CommandBase {
 
         for(String rankName : Rank.defaultRanks.keySet()) {
             Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);
-            getDatasource().saveRank(rank);
+            getDatasource().saveRank(rank, false);
             if(rankName.equals(Rank.theDefaultRank)) {
                 town.setDefaultRank(rank);
             }

@@ -63,6 +63,20 @@ public abstract class MyTownDatasource {
     }
 
     /**
+     * Creates and returns a new AdminTown and fires event
+     *
+     * @param name
+     * @param creator
+     * @return
+     */
+    public final AdminTown newAdminTown(String name, Resident creator) {
+        AdminTown town = new AdminTown(name, creator);
+        if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
+            return null;
+        return town;
+    }
+
+    /**
      * Creates and returns a new Block, or null if it couldn't be created
      *
      * @return The new Block, or null if it failed
@@ -127,7 +141,6 @@ public abstract class MyTownDatasource {
      * Creates and returns a new TownFlag or null if it couldn't be created
      *
      * @param name
-     * @param descriptionKey
      * @param value
      * @return the new TownFlag, or null if failed
      */
@@ -225,7 +238,7 @@ public abstract class MyTownDatasource {
      *
      * @return If it was successful
      */
-    public abstract boolean saveRank(Rank rank);
+    public abstract boolean saveRank(Rank rank, boolean isDefault);
 
     /**
      * Adds the permission node to the Rank

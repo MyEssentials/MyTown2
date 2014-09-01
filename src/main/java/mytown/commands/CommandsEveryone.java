@@ -198,7 +198,7 @@ public class CommandsEveryone extends Commands{
 
     @CommandNode(
             name = "list",
-            permission = "mytown.cmd.everyone.blocks",
+            permission = "mytown.cmd.everyone.blocks.list",
             parentName = "mytown.cmd.assistant.blocks")
     public static void blocksListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -215,7 +215,15 @@ public class CommandsEveryone extends Commands{
             town = res.getSelectedTown();
         }
 
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.townblock.list", town.getName(), ""); // Formatter.formatTownBlocksToString(town.getBlocks(), true)  TODO Get block list
+        String s = null;
+        for(Block block : town.getBlocks()) {
+            if(s == null)
+                s = block.toString();
+            else
+                s += "\n" + block.toString();
+        }
+
+        res.sendMessage(getLocal().getLocalization("mytown.notification.block.list", town.getName(), "\n" + s));
     }
 
     @CommandNode(
@@ -314,7 +322,7 @@ public class CommandsEveryone extends Commands{
     @CommandNode(
             name = "set",
             permission = "mytown.cmd.everyone.perm.plot.set",
-            parentName = "mytown.cmd.assistant.perm.plot")
+            parentName = "mytown.cmd.everyone.perm.plot")
     public static void permSetPlotCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
@@ -344,7 +352,7 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.perm.plot",
             parentName = "mytown.cmd.assistant.perm")
     public static void permPlotCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.perm.plot");
+        callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.perm.plot");
     }
 
 
@@ -413,11 +421,8 @@ public class CommandsEveryone extends Commands{
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.rename.notexist"));
 
         plot.setName(args.get(0));
-        try {
-            getDatasource().savePlot(plot);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        getDatasource().savePlot(plot);
+
 
         ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
 

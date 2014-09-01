@@ -72,7 +72,6 @@ public class CommandsAdmin extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getUniverse().getTownsMap().get(args.get(1));
 
-
         if (town == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist", args.get(1)));
         if (target == null)
@@ -93,7 +92,7 @@ public class CommandsAdmin extends Commands {
         getDatasource().linkResidentToTown(target, town, rank);
         // TODO: add failed message ... too lazy right now :P
         // TODO: maybe too much info here
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.resident.add", args.get(0), args.get(1), args.get(2)));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.resident.add", args.get(0), args.get(1), args.size() > 2 ? args.get(2) : town.getDefaultRank().getName()));
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.added", town.getName()));
     }
     @CommandNode(
@@ -134,39 +133,15 @@ public class CommandsAdmin extends Commands {
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?   TODO Bit-shift the coords?
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.positionError"));
 
-        Town town = getDatasource().newTown(args.get(0)); // Attempt to create the Town
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getDatasource().newAdminTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.failed"));
-
-        Resident res = getDatasource().getOrMakeResident(player); // Attempt to get or make the Resident
-        if (res == null)
-            throw new CommandException("Failed to get or save resident"); // TODO Localize!
-
-        Rank onCreationDefaultRank = null;
 
         if (!getDatasource().saveTown(town))
             throw new CommandException("Failed to save Town"); // TODO Localize!
 
-        for(String rankName : Rank.defaultRanks.keySet()) {
-            Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);
-            getDatasource().saveRank(rank);
-            if(rankName.equals(Rank.theDefaultRank)) {
-                town.setDefaultRank(rank);
-            }
-            if(rankName.equals(Rank.theMayorDefaultRank)) {
-                onCreationDefaultRank = rank;
-            }
-        }
-
-        if(!getDatasource().linkResidentToTown(res, town, onCreationDefaultRank))
-            MyTown.instance.log.error("Problem linking resident " + res.getPlayerName() + " to town " + town.getName());
-
-        // TODO Town Flags
-        // TODO Set Town spawn
-        // TODO Link Resident to Town
-
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
-
     }
 
     @CommandNode(

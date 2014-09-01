@@ -385,6 +385,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
     /* ----- Helpers ----- */
 
     public void sendMessage(String msg) {
+        if(getPlayer() != null)
         ChatUtils.sendChat(getPlayer(), msg);
     }
 

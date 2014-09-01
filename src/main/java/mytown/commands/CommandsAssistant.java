@@ -83,10 +83,13 @@ public class CommandsAssistant extends Commands {
         if (res.getTownRank(town).hasPermission(permNode))
             throw new CommandException("commands.generic.permission");
             */
-        if (block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
-            town.setSpawn(null); // Removes the Town's spawn point if in this Block
+        if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
+            getDatasource().deleteBlock(block);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
+        } else {
+            throw new CommandException("You cannot delete the Block containing the spawn point!");
         }
-        getDatasource().deleteBlock(block);
+
     }
 
     @CommandNode(
@@ -186,22 +189,17 @@ public class CommandsAssistant extends Commands {
         //TODO: implement this properly
         if (args.get(1).equalsIgnoreCase("mayor"))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.promote.notMayor"));
-        try {
-            Rank rank = town.getRank(args.get(1));
-            if(getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
-                resSender.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.sender"));
-                resTarget.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.target", rank.getName(), town.getName()));
-            }
-        } catch (Exception e) {
-            MyTown.instance.log.fatal(getLocal().getLocalization("mytown.databaseError"));
-            e.printStackTrace();
+        Rank rank = town.getRank(args.get(1));
+        if(getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
+            resSender.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.sender"));
+            resTarget.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.target", rank.getName(), town.getName()));
         }
 
     }
     @CommandNode(
             name = "add",
-            permission = "cmd.assistant.ranks.add",
-            parentName = "cmd.everyone.ranks")
+            permission = "mytown.cmd.assistant.ranks.add",
+            parentName = "mytown.cmd.everyone.ranks")
     public static void ranksAddCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 1)
@@ -214,21 +212,16 @@ public class CommandsAssistant extends Commands {
         if (!town.hasRankName(args.get(1)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.add.notexist", args.get(1)));
 
-        try {
-            Rank rank = new Rank(args.get(0), town.getRank(args.get(1)).getPermissions(), town);
-            getDatasource().saveRank(rank);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(0), town.getName()));
-        } catch (Exception e) {
-            MyTown.instance.log.fatal(getLocal().getLocalization("mytown.databaseError"));
-            e.printStackTrace();
-        }
 
+        Rank rank = new Rank(args.get(0), town.getRank(args.get(1)).getPermissions(), town);
+        getDatasource().saveRank(rank, false); // TODO: Set default properly?
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(0), town.getName()));
     }
 
     @CommandNode(
             name = "remove",
-            permission = "cmd.assistant.ranks.remove",
-            parentName = "cmd.everyone.ranks")
+            permission = "mytown.cmd.assistant.ranks.remove",
+            parentName = "mytown.cmd.everyone.ranks")
     public static void ranksRemoveCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 1)
@@ -237,15 +230,11 @@ public class CommandsAssistant extends Commands {
         Town town = res.getSelectedTown();
         if (!town.hasRankName(args.get(0)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notexist", args.get(0), town.getName()));
-        try {
-            if (getDatasource().deleteRank(town.getRank(args.get(0)))) {
-                res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
-            } else {
-                res.sendMessage(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notallowed", args.get(0)));
-            }
-        } catch (Exception e) {
-            MyTown.instance.log.fatal(getLocal().getLocalization("mytown.databaseError"));
-            e.printStackTrace();
+
+        if (getDatasource().deleteRank(town.getRank(args.get(0)))) {
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
+        } else {
+            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notallowed", args.get(0)));
         }
 
     }
@@ -304,18 +293,13 @@ public class CommandsAssistant extends Commands {
         if (!CommandManager.commandList.keySet().contains(args.get(1)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));
 
-        try {
-            // Adding permission if everything is alright
-            if (rank.addPermission(args.get(1))) {
-                getDatasource().saveRank(rank);
-                res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
-            } else
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.add.failed", args.get(1)));
-        } catch (Exception e) {
-            MyTown.instance.log.fatal(getLocal().getLocalization("mytown.databaseError"));
-            e.printStackTrace();
-        }
 
+        // Adding permission if everything is alright
+        if (rank.addPermission(args.get(1))) {
+            getDatasource().saveRank(rank, rank.getTown().getDefaultRank().equals(rank));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
+        } else
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.add.failed", args.get(1)));
     }
 
     @CommandNode(
@@ -338,18 +322,12 @@ public class CommandsAssistant extends Commands {
         if (!CommandManager.commandList.keySet().contains(args.get(1)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));
 
-        try {
-            // Removing permission if everything is alright
-            if (rank.removePermission(args.get(1))) {
-                getDatasource().saveRank(rank);
-                res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
-            } else
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.remove.failed", args.get(1)));
-        } catch (Exception e) {
-            MyTown.instance.log.fatal(getLocal().getLocalization("mytown.databaseError"));
-            e.printStackTrace();
-        }
-
+        // Removing permission if everything is alright
+        if (rank.removePermission(args.get(1))) {
+            getDatasource().saveRank(rank, rank.getTown().getDefaultRank().equals(rank));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
+        } else
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.remove.failed", args.get(1)));
     }
 
     // Temporary here, might integrate in the methods

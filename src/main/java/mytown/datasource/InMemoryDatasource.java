@@ -87,7 +87,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveRank(Rank rank) {
+    public boolean saveRank(Rank rank, boolean isDefault) {
         log.debug("Saving Rank %s", rank.getKey());
         if (MyTownUniverse.getInstance().ranks.containsValue(rank)) { // Update
         } else { // Insert
