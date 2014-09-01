@@ -4,6 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import mytown.MyTown;
 import mytown.entities.Plot;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S23PacketBlockChange;
@@ -14,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class VisualsTickHandler {
-    private class BlockCoords {
+    public class BlockCoords {
         public int x, y, z, dim;
         public boolean deleted = false;
         public boolean packetSent = false;
@@ -181,5 +182,18 @@ public class VisualsTickHandler {
             unmarkBlock(x1, y2, i, dim);
             unmarkBlock(x2, y2, i, dim);
         }
+    }
+
+    public List<BlockCoords> getMarkedBlocks() {
+        return this.markedBlocks;
+    }
+
+    public boolean isBlockMarked(int x, int y, int z, int dim) {
+        for(BlockCoords coords : markedBlocks) {
+            if(coords.x == x && coords.y == y && coords.z == z && coords.dim == dim) {
+                return true;
+            }
+        }
+        return false;
     }
 }

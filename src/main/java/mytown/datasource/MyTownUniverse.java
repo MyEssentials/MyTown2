@@ -17,6 +17,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     protected Map<Integer, Plot> plots;
     protected Map<String, Rank> ranks;
 
+    //TODO: Some stuff are stored twice, fix it
+
     private MyTownUniverse() {
         residents = new Hashtable<String, Resident>();
         towns = new Hashtable<String, Town>();

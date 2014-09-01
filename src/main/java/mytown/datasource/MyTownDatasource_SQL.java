@@ -620,6 +620,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
                 // Put the Plot in the Map
                 MyTownUniverse.getInstance().plots.put(plot.getDb_ID(), plot);
+                plot.getTown().addPlot(plot);
             }
         } catch (SQLException e) {
             log.error("Failed to save Plot %s!", e, plot.getKey());

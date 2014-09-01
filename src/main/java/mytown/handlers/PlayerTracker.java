@@ -124,14 +124,16 @@ public class PlayerTracker {
         Block block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
         if (block != null) {
             Town town = block.getTown();
-            Flag<Boolean> flag = town.getFlagAtCoords(ev.world.provider.dimensionId ,ev.x, ev.y, ev.z, "breakBlocks");
-            if (flag == null)
-                return;
-            if (flag.getValue())
-                return;
-            // TODO: Instead, check for the permission at one point
-            if (DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer()).hasTown(town))
-                return;
+            if(!VisualsTickHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) { // Checking if it's the border of a plot
+                Flag<Boolean> flag = town.getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breakBlocks");
+                if (flag == null)
+                    return;
+                if (flag.getValue())
+                    return;
+                // TODO: Instead, check for the permission at one point
+                if (DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer()).hasTown(town))
+                    return;
+            }
             ev.setCanceled(true);
         }
     }
