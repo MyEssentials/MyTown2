@@ -28,13 +28,10 @@ public class CommandsAssistant extends Commands {
     public static void setSpawnCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
-        if (res == null)
-            throw new CommandException("Failed to get/make Resident"); // TODO Localize
-        Town town = res.getSelectedTown();
-        if (!town.isChunkInTown(player.dimension, player.chunkCoordX, player.chunkCoordZ))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()));
+        Town town = getTownFromResident(res);
 
         town.getSpawn().setDim(player.dimension).setPosition((float) player.posX, (float) player.posY, (float) player.posZ).setRotation(player.cameraYaw, player.cameraPitch);
+
         getDatasource().saveTown(town);
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.setspawn"));
@@ -47,11 +44,8 @@ public class CommandsAssistant extends Commands {
     public static void claimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
-        if (res == null)
-            throw new CommandException("Failed to get/make resident"); // TODO Localize
-        Town town = res.getSelectedTown();
-        if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+        Town town = getTownFromResident(res);
+
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
         if (checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
@@ -70,19 +64,9 @@ public class CommandsAssistant extends Commands {
     public static void unclaimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(pl);
-        if (res == null)
-            throw new CommandException("Failed to get/make Resident"); // TODO Localize
-        Block block = getDatasource().getBlock(pl.dimension, pl.chunkCoordX, pl.chunkCoordZ);
-        if (block == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.notexist"));
+        Block block = getBlockAtResident(res);
         Town town = block.getTown();
-        if (!town.hasResident(res))
-            throw new CommandException("Your not part of that town!"); // TODO Localize
-        /*
-        No reason to be here
-        if (res.getTownRank(town).hasPermission(permNode))
-            throw new CommandException("commands.generic.permission");
-            */
+
         if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
             getDatasource().deleteBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
@@ -106,26 +90,13 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd")
     public static void inviteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        if (res == null)
-            throw new CommandException("Failed to get/make Resident"); // TODO Localize
-        if (res.getTowns().size() == 0)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-        /*
-        if (!res.getTownRank().hasPermission(permNode))
-            throw new CommandException("commands.generic.permission");
-            */
+        Town town = getTownFromResident(res);
         if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.invite"));
-        if (!getDatasource().hasResident(args.get(0)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.notexist", args.get(0)));
-
-        Town town = res.getSelectedTown();
-        if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+        Resident target = getResidentFromName(args.get(0));
         if (town.hasResident(args.get(0)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.already", args.get(0), town.getName()));
 
-        Resident target = getDatasource().getOrMakeResident(args.get(0));
         target.addInvite(town);
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.invited", town.getName()));
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.sent", args.get(0)));
@@ -155,10 +126,10 @@ public class CommandsAssistant extends Commands {
 
         if (args.size() < 2)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.err.perm.set.usage"));
-        Town town = getDatasource().getOrMakeResident(sender).getSelectedTown();
-        Flag flag = town.getFlag(args.get(0));
-        if (flag == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", args.get(0)));
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+        Flag flag = getFlagFromTown(town, args.get(0));
+
         if (flag.setValueFromString(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
         } else
@@ -176,20 +147,16 @@ public class CommandsAssistant extends Commands {
         if (args.size() < 2)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.promote"));
         Resident resSender = getDatasource().getOrMakeResident(sender);
-        Resident resTarget = getDatasource().getOrMakeResident(args.get(0));
-        Town town = resSender.getSelectedTown();
+        Resident resTarget = getResidentFromName(args.get(0));
+        Town town = getTownFromResident(resSender);
 
-        if (resTarget == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.notexist", args.get(0)));
         if (!resTarget.getTowns().contains(town))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.notsametown", args.get(0), town.getName()));
-        if (!resSender.getSelectedTown().hasRankName(args.get(1)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.rank.notexist", args.get(1), town.getName()));
 
         //TODO: implement this properly
         if (args.get(1).equalsIgnoreCase("mayor"))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.promote.notMayor"));
-        Rank rank = town.getRank(args.get(1));
+        Rank rank = getRankFromTown(town, args.get(1));
         if(getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
             resSender.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.sender"));
             resTarget.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.target", rank.getName(), town.getName()));
@@ -205,7 +172,7 @@ public class CommandsAssistant extends Commands {
         if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks"));
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = res.getSelectedTown();
+        Town town = getTownFromResident(res);
 
         if (town.hasRankName(args.get(0)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.add.already", args.get(0)));
@@ -228,15 +195,16 @@ public class CommandsAssistant extends Commands {
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks"));
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = res.getSelectedTown();
-        if (!town.hasRankName(args.get(0)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notexist", args.get(0), town.getName()));
+        Rank rank = getRankFromTown(town, args.get(0));
 
-        if (getDatasource().deleteRank(town.getRank(args.get(0)))) {
+        if(town.getDefaultRank().equals(rank))
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.rank.defaultDeletion"));
+
+        if (getDatasource().deleteRank(rank)) {
             res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
         } else {
             res.sendMessage(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notallowed", args.get(0)));
         }
-
     }
 
     @CommandNode(
@@ -255,14 +223,12 @@ public class CommandsAssistant extends Commands {
 
         Rank rank;
         Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
         if (args.size() == 0) {
-            rank = res.getTownRank();
+            rank = getRankFromResident(res);
         } else {
-            rank = getUniverse().getRanksMap().get(args.get(0));
+            rank = getRankFromTown(town, args.get(0));
         }
-
-        if (rank == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.notexist", args.get(0), res.getSelectedTown().getName()));
 
         String msg = "";
         for (String s : rank.getPermissions()) {
@@ -283,16 +249,11 @@ public class CommandsAssistant extends Commands {
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
 
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = res.getSelectedTown();
-
-        Rank rank = town.getRank(args.get(0));
-
-        if (rank == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notexist", args.get(0), town.getName()));
+        Town town = getTownFromResident(res);
+        Rank rank = getRankFromTown(town, args.get(0));
 
         if (!CommandManager.commandList.keySet().contains(args.get(1)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));
-
 
         // Adding permission if everything is alright
         if (rank.addPermission(args.get(1))) {
@@ -312,12 +273,9 @@ public class CommandsAssistant extends Commands {
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
 
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = res.getSelectedTown();
+        Town town = getTownFromResident(res);
 
-        Rank rank = town.getRank(args.get(0));
-
-        if (rank == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notexist", args.get(0), town.getName()));
+        Rank rank = getRankFromTown(town, args.get(0));
 
         if (!CommandManager.commandList.keySet().contains(args.get(1)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));

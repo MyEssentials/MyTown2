@@ -45,27 +45,18 @@ public class CommandsEveryone extends Commands{
         List<Town> towns = new ArrayList<Town>();
 
         Resident res = getDatasource().getOrMakeResident(sender);
-        if (res == null)
-            throw new CommandException("Failed to get/make Resident"); // TODO Localize
         if (args.size() < 1) {
-            if (res.getSelectedTown() != null) {
-                towns.add(res.getSelectedTown());
-            } else {
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.info.notpart"));
-            }
+            towns.add(getTownFromResident(res));
         } else {
             if (args.get(0).equals("@a")) {
                 towns = new ArrayList<Town>(getUniverse().getTownsMap().values());
                 // TODO Sort
-            } else if (getDatasource().hasTown(args.get(0))) {
-                towns.add(getUniverse().getTownsMap().get(args.get(0)));
             } else {
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist", args.get(0)));
+                towns.add(getTownFromName(args.get(0)));
             }
         }
 
         for (Town town : towns) {
-
             res.sendMessage(town.getTownInfo());
         }
     }
@@ -76,12 +67,7 @@ public class CommandsEveryone extends Commands{
             parentName = "mytown.cmd")
     public static void leaveCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        if (res == null)
-            throw new CommandException("Resident is null"); // TODO Localize!
-
-        Town town = res.getSelectedTown();
-        if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+        Town town = getTownFromResident(res);
 
         getDatasource().unlinkResidentFromTown(res, town);
 
@@ -106,8 +92,6 @@ public class CommandsEveryone extends Commands{
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.positionError"));
 
         Resident res = getDatasource().getOrMakeResident(player); // Attempt to get or make the Resident
-        if (res == null)
-            throw new CommandException("Failed to get or save resident"); // TODO Localize!
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
@@ -158,23 +142,18 @@ public class CommandsEveryone extends Commands{
             parentName = "mytown.cmd")
     public static void spawnCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        if (res == null)
-            throw new CommandException("Failed to get or make Resident"); // TODO Localize!
         Town town = null;
 
         if (args.size() == 0) {
-            town = res.getSelectedTown();
+            town = getTownFromResident(res);
         } else {
-            town = getUniverse().getTownsMap().get(args.get(0));
+            town = getTownFromName(args.get(0));
         }
 
-        if (town == null) {
-            throw new CommandException("Town doesn't exist!"); // TODO localize!
-        } else { // TODO Check if the Resident is allowed to go to spawn
-            if (!town.hasSpawn())
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.spawn.notexist", town.getName()));
-            town.sendToSpawn(res);
-        }
+        // TODO Check if the Resident is allowed to go to spawn
+        if (!town.hasSpawn())
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.spawn.notexist", town.getName()));
+        town.sendToSpawn(res);
     }
 
     @CommandNode(
@@ -184,12 +163,8 @@ public class CommandsEveryone extends Commands{
     public static void selectCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.select"));
-        if (!getDatasource().hasTown(args.get(0)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist", args.get(0)));
         Resident res = getDatasource().getOrMakeResident(sender);
-        if (res == null)
-            throw new CommandException("Failed to get or make Resident"); // TODO Localize
-        Town town = getUniverse().getTownsMap().get(args.get(0));
+        Town town = getTownFromName(args.get(0));
         if (!town.hasResident(res))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.select.notpart", args.get(0)));
         res.selectTown(town);
@@ -202,18 +177,7 @@ public class CommandsEveryone extends Commands{
             parentName = "mytown.cmd.assistant.blocks")
     public static void blocksListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town;
-        if (args.size() == 0)
-            if (res.getSelectedTown() == null)
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-            else {
-                town = res.getSelectedTown();
-            }
-        else if (!DatasourceProxy.getDatasource().hasTown(args.get(0)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist", args.get(0)));
-        else {
-            town = res.getSelectedTown();
-        }
+        Town town = getTownFromResident(res);
 
         String s = null;
         for(Block block : town.getBlocks()) {
@@ -245,29 +209,26 @@ public class CommandsEveryone extends Commands{
             parentName = "mytown.cmd")
     public static void acceptCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        if (res.getInvites().isEmpty())
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.noinvitations"));
-        if (getUniverse().getTownsMap().get(args.get(0)) == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist", args.get(0)));
-        String townName;
-        if (args.size() == 0) {
-            townName = res.getInvites().get(0).getName();
-        } else {
-            townName = args.get(0);
-        }
-        if (!res.getInvites().contains(getUniverse().getTownsMap().get(townName)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.invite"));
-        Town t = res.getInvite(townName);
-        res.removeInvite(t);
+        List<Town> invites = getInvitesFromResident(res);
+        Town town;
+        if(args.size() == 0)
+            town = invites.get(0);
+        else
+            town = getTownFromName(args.get(0));
+
+        // Basically true only if player specifies a town that is not in its invites
+        if (!invites.contains(town))
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
+
+        //TODO: Database stuff...
+        res.removeInvite(town);
 
         // Notify everyone
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.accept", townName));
-        t.notifyResidentJoin(res);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.accept", town.getName()));
+        town.notifyResidentJoin(res);
 
         // Link Resident to Town
-        t.addResident(res);
-        res.addTown(t);
-        getDatasource().saveTown(t);
+        getDatasource().linkResidentToTown(res, town, town.getDefaultRank());
     }
 
     @CommandNode(
@@ -276,22 +237,20 @@ public class CommandsEveryone extends Commands{
             parentName = "mytown.cmd")
     public static void refuseCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        if (res.getInvites().size() == 0)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.noinvitations"));
-        if (args.size() == 0)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.invite.accept"));
-        if (getUniverse().getTownsMap().get(args.get(0)) != null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist", args.get(0)));
-        String townName;
-        if (args.size() == 0) {
-            townName = res.getInvites().get(0).getName();
-        } else {
-            townName = args.get(0);
-        }
-        if (!res.getInvites().contains(getUniverse().getTownsMap().get(townName)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.accept"));
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.refuse", townName));
-        res.removeInvite(townName);
+
+        List<Town> invites = getInvitesFromResident(res);
+        Town town;
+        if(args.size() == 0)
+            town = invites.get(0);
+        else
+            town = getTownFromName(args.get(0));
+        if (!invites.contains(town))
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
+
+        // TODO: notify resident refused invite
+
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.refuse", town.getName()));
+        res.removeInvite(town.getName());
     }
 
     @CommandNode(
@@ -301,7 +260,7 @@ public class CommandsEveryone extends Commands{
     public static void listPermCommand(ICommandSender sender, List<String> args) {
 
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = res.getSelectedTown();
+        Town town = getTownFromResident(res);
 
         String formattedFlagList = null;
         for (Flag flag : town.getFlags()) {
@@ -328,16 +287,11 @@ public class CommandsEveryone extends Commands{
         if (args.size() < 2)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.err.perm.set.usage"));
         Resident res = getDatasource().getOrMakeResident(sender);
-        Plot plot = res.getPlotAtPlayerPosition();
-        if(plot == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.notInPlot"));
+        Plot plot = getPlotAtResident(res);
         if(!plot.hasOwner(res))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.perm.set.noPermission"));
 
-        Flag flag = plot.getFlag(args.get(0));
-
-        if (flag == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", args.get(0)));
+        Flag flag = getFlagFromPlot(plot, args.get(0));
 
         if (flag.setValueFromString(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
@@ -360,13 +314,10 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.perm.plot.list",
             parentName = "mytown.cmd.everyone.perm.plot")
     public static void permPlotListCommand(ICommandSender sender, List<String> args) {
-        EntityPlayer player = (EntityPlayer) sender;
+
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = res.getSelectedTown();
-        Plot plot = town.getPlotAtCoords(player.dimension, (int)player.posX, (int)player.posY, (int)player.posZ);
-        if(plot == null) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.notInPlot"));
-        }
+        Plot plot = getPlotAtResident(res);
+
         String formattedFlagList = null;
         for (Flag flag : plot.getFlags()) {
             if (formattedFlagList == null) {
@@ -397,10 +348,8 @@ public class CommandsEveryone extends Commands{
             parentName = "mytown.cmd")
     public static void plotListCommand(ICommandSender sender, List<String> args) {
         //TODO: check if this works
-        Resident resident = getDatasource().getOrMakeResident(sender);
-        Town town = resident.getSelectedTown();
-        if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
 
         String formattedPlotsList = "";
         for (Plot plot : town.getPlots()) {
@@ -440,19 +389,14 @@ public class CommandsEveryone extends Commands{
         if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.plot.rename"));
 
-        EntityPlayer player = (EntityPlayer) sender;
-        Town town = getUniverse().getResidentsMap().get(sender.getCommandSenderName()).getSelectedTown();
-
-        Plot plot = town.getPlotAtCoords(player.dimension, (int) player.posX, (int) player.posY, (int) player.posZ);
-        if (plot == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.rename.notexist"));
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Plot plot = getPlotAtResident(res);
 
         plot.setName(args.get(0));
+
         getDatasource().savePlot(plot);
 
-
         ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
-
     }
 
     @CommandNode(
@@ -460,8 +404,6 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.plot.select",
             parentName = "mytown.cmd.everyone.plot")
     public static void plotSelectCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        MyTown.instance.log.info("Select for plots command here");
-
         if(args.size() == 0) {
             ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
             selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
@@ -499,7 +441,6 @@ public class CommandsEveryone extends Commands{
         res.expandSelectionVert();
 
         ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.plot.expanded");
-
     }
 
     @CommandNode(
@@ -519,7 +460,8 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.plot.show",
             parentName = "mytown.cmd.everyone.plot")
         public static void plotShowCommand(ICommandSender sender, List<String> args) {
-        Town town = getDatasource().getOrMakeResident(sender).getSelectedTown();
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
         for (Plot plot : town.getPlots()) {
             VisualsTickHandler.instance.markPlotBorders(plot);
         }
@@ -531,8 +473,8 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.plot.vanish",
             parentName = "mytown.cmd.everyone.plot")
     public static void plotVanishCommand(ICommandSender sender, List<String> args) {
-
-        Town town = getDatasource().getOrMakeResident(sender).getSelectedTown();
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
         for (Plot plot : town.getPlots()) {
             VisualsTickHandler.instance.unmarkPlotBorders(plot);
         }
@@ -555,15 +497,8 @@ public class CommandsEveryone extends Commands{
         if(args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.plot.add"));
         Resident res = getDatasource().getOrMakeResident(sender);
-        Resident target = getDatasource().getOrMakeResident(args.get(0));
-        if(target == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.notexist", args.get(0)));
-        Town town = res.getSelectedTown();
-        if(town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-        Plot plot = town.getPlotAtResident(res);
-        if(plot == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.notInPlot"));
+        Resident target = getResidentFromName(args.get(0));
+        Plot plot = getPlotAtResident(res);
 
         getDatasource().linkResidentToPlot(target, plot, true);
 
@@ -579,15 +514,8 @@ public class CommandsEveryone extends Commands{
         if(args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.plot.add"));
         Resident res = getDatasource().getOrMakeResident(sender);
-        Resident target = getDatasource().getOrMakeResident(args.get(0));
-        if(target == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.notexist", args.get(0)));
-        Town town = res.getSelectedTown();
-        if(town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-        Plot plot = town.getPlotAtResident(res);
-        if(plot == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.notInPlot"));
+        Resident target = getResidentFromName(args.get(0));
+        Plot plot = getPlotAtResident(res);
 
         getDatasource().linkResidentToPlot(target, plot, false);
 
@@ -601,12 +529,7 @@ public class CommandsEveryone extends Commands{
             parentName = "mytown.cmd.everyone.plot")
     public static void plotInfoCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = res.getSelectedTown();
-        if(town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-        Plot plot = town.getPlotAtResident(res);
-        if(plot == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.notInPlot"));
+        Plot plot = getPlotAtResident(res);
 
         res.sendMessage(plot.getPlotInfo());
     }
@@ -616,12 +539,7 @@ public class CommandsEveryone extends Commands{
             parentName = "mytown.cmd.everyone.plot")
     public static void plotDeleteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = res.getSelectedTown();
-        if(town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-        Plot plot = town.getPlotAtResident(res);
-        if(plot == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.notInPlot"));
+        Plot plot = getPlotAtResident(res);
         if(!plot.hasOwner(res))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.notOwner"));
 
@@ -641,28 +559,9 @@ public class CommandsEveryone extends Commands{
             permission = "mytown.cmd.everyone.ranks.list",
             parentName = "mytown.cmd.everyone.ranks")
     public static void listRanksCommand(ICommandSender sender, List<String> args) {
-        Town temp = null;
-        if (args.size() < 1) {
-            temp = getDatasource().getOrMakeResident(sender).getSelectedTown();
-            if (temp == null)
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
-        }
-        if (args.size() >= 1) {
-            temp = getUniverse().getTownsMap().get(args.get(0));
-            if (temp == null)
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist", args.get(0)));
-        }
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
 
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.ranks", Formatter.formatRanksToString(temp.getRanks()));
+        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.ranks", Formatter.formatRanksToString(town.getRanks()));
     }
-
-
-
-
-
-
-
-
-
-
 }

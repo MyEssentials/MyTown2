@@ -77,6 +77,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         getDatasource().saveFlag(new Flag<Boolean>("pickup", true), this);
         getDatasource().saveFlag(new Flag<Boolean>("enter", true), this);
         getDatasource().saveFlag(new Flag<String>("mobs", "all"), this);
+        getDatasource().saveFlag(new Flag<Boolean>("attackEntities", false), this);
     }
 
     /**

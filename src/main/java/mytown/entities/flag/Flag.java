@@ -157,6 +157,7 @@ public class Flag<T> {
         flagValueTypes.put("enter", Boolean.class);
         flagValueTypes.put("explosions", Boolean.class);
         flagValueTypes.put("mobs", String.class);
+        flagValueTypes.put("attackEntities", Boolean.class);
 
         for(String s : flagValueTypes.keySet()) {
            descriptionKeys.put(s, "mytown.flag." + s); // Because I'm lazy

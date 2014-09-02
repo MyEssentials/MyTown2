@@ -1,9 +1,12 @@
 package mytown.protection;
 
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Town;
+import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.mod.ModProxy;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ public abstract class Protection {
      */
     public List<Class<? extends Entity>> trackedAnyEntity = new ArrayList<Class<? extends Entity>>();
     public List<Class<? extends Entity>> trackedHostileEntities = new ArrayList<Class<? extends Entity>>();
+    public List<Class<? extends Entity>> protectedEntities = new ArrayList<Class<? extends Entity>>();
     public List<Class<? extends TileEntity>> trackedTileEntities = new ArrayList<Class<? extends TileEntity>>();
 
     public boolean isHandlingEvents;
@@ -30,7 +34,28 @@ public abstract class Protection {
      * @param entity
      * @return
      */
-    public boolean checkEntity(Entity entity) { return false; }
+    @SuppressWarnings("unchecked")
+    public boolean checkEntity(Entity entity) {
+        Town town = Town.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+        if(town == null)
+            return false;
+
+        Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "mobs");
+        String value = mobFlag.getValue();
+
+        if(value.equals("all")) {
+            if(entity instanceof EntityLivingBase) {
+                entity.setDead();
+                return true;
+            }
+        } else if(value.equals("hostiles")) {
+            if(trackedHostileEntities.contains(entity.getClass())) {
+                entity.setDead();
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Checks the tile entity and returns whether or not the te was destroyed

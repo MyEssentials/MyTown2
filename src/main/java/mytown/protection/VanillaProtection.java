@@ -2,6 +2,7 @@ package mytown.protection;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import mytown.MyTown;
 import mytown.entities.Block;
 import mytown.entities.Plot;
@@ -15,12 +16,17 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.monster.*;
+import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
+
+import javax.xml.crypto.Data;
 
 
 /**
@@ -56,8 +62,19 @@ public class VanillaProtection extends Protection {
         this.trackedAnyEntity.add(EntityLivingBase.class);
 
         // Hi, my name is TNT
-        this.trackedAnyEntity.add(EntityTNTPrimed.class);
+        //this.trackedAnyEntity.add(EntityTNTPrimed.class);
 
+        this.protectedEntities.add(EntityHorse.class);
+        this.protectedEntities.add(EntityOcelot.class);
+        this.protectedEntities.add(EntityWolf.class);
+        this.protectedEntities.add(EntityChicken.class);
+        this.protectedEntities.add(EntityCow.class);
+        this.protectedEntities.add(EntitySheep.class);
+        this.protectedEntities.add(EntityVillager.class);
+        this.protectedEntities.add(EntityIronGolem.class);
+        this.protectedEntities.add(EntityMooshroom.class);
+        this.protectedEntities.add(EntityPig.class);
+        this.protectedEntities.add(EntitySnowman.class);
 
         this.trackedTileEntities.add(TileEntityPiston.class);
     }
@@ -97,21 +114,8 @@ public class VanillaProtection extends Protection {
             return false;
         }
 
-
-        Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "mobs");
-        String value = mobFlag.getValue();
-
-        if(value.equals("all")) {
-            if(entity instanceof EntityLivingBase) {
-                entity.setDead();
-                return true;
-            }
-        } else if(value.equals("hostiles")) {
-            if(trackedHostileEntities.contains(entity.getClass())) {
-                entity.setDead();
-                return true;
-            }
-        }
+        if(super.checkEntity(entity))
+            return true;
         return false;
     }
 
@@ -142,6 +146,28 @@ public class VanillaProtection extends Protection {
                 return;
 
             ev.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onPlayerOpenContainer(PlayerOpenContainerEvent ev) {
+        //TODO: To be implemented... maybe
+    }
+
+    @SuppressWarnings("unchecked")
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onPlayerAttackEntityEvent(AttackEntityEvent ev) {
+        // TODO: More wilderness goes here
+        Block block = DatasourceProxy.getDatasource().getBlock(ev.target.dimension, ev.target.chunkCoordX, ev.target.chunkCoordZ);
+        if(block != null) {
+            Town town = block.getTown();
+            Flag<Boolean> attackFlag = town.getFlagAtCoords(ev.target.dimension, (int)ev.target.posX, (int)ev.target.posY, (int)ev.target.posZ, "attackEntities");
+            if(!attackFlag.getValue() && protectedEntities.contains(ev.target.getClass())) {
+                // TODO: Check for permission instead
+                if(!DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer).hasTown(town)) {
+                    ev.setCanceled(true);
+                }
+            }
         }
     }
 
