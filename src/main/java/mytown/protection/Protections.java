@@ -5,6 +5,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import mytown.MyTown;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,12 @@ public class Protections {
         MyTown.instance.log.info("Protections initializing started...");
         protections = new ArrayList<Protection>();
         protections.add(new VanillaProtection());
+
+        for(Protection prot : protections) {
+            if(prot.isHandlingEvents) {
+                MinecraftForge.EVENT_BUS.register(prot);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

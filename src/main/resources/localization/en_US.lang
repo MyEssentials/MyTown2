@@ -63,6 +63,8 @@ mytown.cmd.err.perm.valueNotValid=Invalid value!
 
 # /t promote
 mytown.cmd.err.promote.notMayor=You cannot promote anyone to mayor. Try /t ...
+mytown.cmd.promote.success.sender=%s has been promoted to rank %s.
+mytown.cmd.promote.success.target=You have been promoted to rank %s.
 
 # /t setspawn
 mytown.cmd.err.setspawn.notintown=The position that you're in is not inside %s!
@@ -97,7 +99,7 @@ mytown.notification.town.select=The town %s has been selected as your primary to
 mytown.notification.town.resident.remove=Resident %s has been removed from town %s!
 mytown.notification.town.resident.add=Resident %s has been added to town %s!
 mytown.notification.town.ranks=Ranks: %s
-mytown.notification.block.added=Town block from (%s, %s) to (%s, %s) has been added to town %s!
+mytown.notification.townblock.added=Town block from (%s, %s) to (%s, %s) has been added to town %s!
 mytown.notification.block.removed=The town block from (%s, %s) to (%s, %s) has been removed from town %s!
 mytown.notification.block.list=Blocks in town %s: %s
 mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s: %s
@@ -120,3 +122,4 @@ mytown.notification.town.setspawn=Spawn has been set!
 mytown.notification.plot.renamed=The plot has been successfully renamed!
 mytown.notification.plot.showing=Plots are now showing borders. Use "/t plot vanish" in order to hide them.
 mytown.notification.plot.vanished=Plots have been successfully hidden!
+mytown.notification.town.added=You have been added to town %s!

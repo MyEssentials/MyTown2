@@ -144,6 +144,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public void removeResident(Resident res) {
+        for(Iterator<Plot> it = plots.iterator(); it.hasNext();) {
+            Plot plot = it.next();
+            if(plot.hasOwner(res) && plot.getOwners().size() <= 1) {
+                it.remove();
+            }
+        }
         residents.remove(res);
     }
 
@@ -312,6 +318,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
             }
         }
         return null;
+    }
+
+    public Plot getPlotAtResident(Resident res) {
+        return getPlotAtCoords(res.getPlayer().dimension, (int)res.getPlayer().posX, (int)res.getPlayer().posY, (int)res.getPlayer().posZ);
     }
 
     /* ----- IHasFlags ------ */

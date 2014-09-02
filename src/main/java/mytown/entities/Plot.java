@@ -7,6 +7,7 @@ import mytown.entities.flag.Flag;
 import mytown.entities.interfaces.IHasFlags;
 import mytown.entities.interfaces.IHasResidents;
 import mytown.proxies.DatasourceProxy;
+import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,5 +222,21 @@ public class Plot implements IHasFlags, IHasResidents{
 
     public ImmutableList<Resident> getOwners() {
         return ImmutableList.copyOf(owners);
+    }
+
+
+    public String getPlotInfo() {
+        String info = null;
+        String residents = null;
+        for(Resident res : whitelist) {
+            if(residents == null)
+                residents = (hasOwner(res) ? EnumChatFormatting.RED : "") + res.getPlayerName();
+            else
+                residents += EnumChatFormatting.WHITE + ", " + (hasOwner(res) ? EnumChatFormatting.RED : "") + res.getPlayerName();
+        }
+        residents += EnumChatFormatting.WHITE;
+        String position = String.format("(%s, %s, %s) --> (%s, %s, %s)", x1, y1, z1, x2, y2, z2);
+        info = "Plot: " + getName() + "\nResidents: " + residents + "\nBorders: " + position;
+        return info;
     }
 }

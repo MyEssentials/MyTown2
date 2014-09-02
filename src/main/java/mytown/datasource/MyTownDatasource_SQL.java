@@ -615,7 +615,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 log.info("Saved plot with ID " + generatedKeys.getInt(1));
 
                 for(Flag flag : plot.getTown().getFlags()) {
-                    saveFlag(flag, plot);
+                    saveFlag(new Flag(flag.getName(), flag.getValue()), plot);
                 }
 
                 // Put the Plot in the Map
@@ -673,9 +673,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.executeUpdate();
 
                 plot.addFlag(flag);
-
-
-
             }
         } catch (SQLException e) {
             log.error("Failed to save Flag %s!", flag.getName());
@@ -879,12 +876,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             }
             // Remove all Plots owned by the Town
             for (Plot p : town.getPlots()) {
-                MyTownUniverse.getInstance().plots.remove(p.getKey());
+                MyTownUniverse.getInstance().plots.remove(p.getDb_ID());
             }
             // Remove all Ranks owned by this Town
             for (Rank r : town.getRanks()) {
                 MyTownUniverse.getInstance().ranks.remove(r.getKey());
             }
+
             // Remove the Town from the Map
             MyTownUniverse.getInstance().towns.remove(town.getName());
         } catch (SQLException e) {
@@ -965,7 +963,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             deletePlotStatement.execute();
 
             // Remove Plot from Map
-            MyTownUniverse.getInstance().plots.remove(plot.getKey());
+            MyTownUniverse.getInstance().plots.remove(plot.getDb_ID());
+            plot.getTown().removePlot(plot);
         } catch (SQLException e) {
             log.error("Failed to delete Plot %s!", e, plot.getKey());
             return false;
