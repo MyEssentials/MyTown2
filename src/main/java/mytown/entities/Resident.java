@@ -398,7 +398,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
         ((EntityPlayerMP) player).playerNetServerHandler.setPlayerLocation(spawn.posX, spawn.posY, spawn.posZ, player.rotationYaw, player.rotationPitch);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public Plot getPlotAtPlayerPosition() {
         for(Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
             if(plot.isCoordWithin(player.dimension, (int)player.posX, (int)player.posY, (int)player.posZ));
