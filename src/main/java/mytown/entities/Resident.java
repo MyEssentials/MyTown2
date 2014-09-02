@@ -11,6 +11,8 @@ import mytown.entities.interfaces.IPlotSelector;
 import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChunkCoordinates;
 
 import java.lang.ref.WeakReference;
 import java.sql.*;
@@ -389,6 +391,12 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
         ChatUtils.sendChat(getPlayer(), msg);
     }
 
+    public void respawnPlayer() {
+        ChunkCoordinates spawn = player.getBedLocation(player.dimension);
+        if(spawn == null)
+            spawn = player.worldObj.getSpawnPoint();
+        ((EntityPlayerMP) player).playerNetServerHandler.setPlayerLocation(spawn.posX, spawn.posY, spawn.posZ, player.rotationYaw, player.rotationPitch);
+    }
 
     @SuppressWarnings("ConstantConditions")
     public Plot getPlotAtPlayerPosition() {

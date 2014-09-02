@@ -12,6 +12,7 @@ import mytown.commands.CommandsEveryone;
 import mytown.core.utils.command.CommandManager;
 import mytown.entities.flag.Flag;
 import mytown.handlers.VisualsTickHandler;
+import mytown.protection.Protections;
 import mytown.x_commands.admin.CmdTownAdmin;
 import mytown.x_commands.town.CmdTown;
 import mytown.x_commands.town.info.CmdListTown;
@@ -130,6 +131,7 @@ public class MyTown {
         MinecraftForge.EVENT_BUS.register(playerTracker);
         // TODO Re-add the below two handlers after they are redone
         FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
+        FMLCommonHandler.instance().bus().register(Protections.instance);
         //MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
     }
 

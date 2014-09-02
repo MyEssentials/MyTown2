@@ -5,6 +5,7 @@ import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.utils.teleport.Teleport;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.Flag;
 import mytown.entities.interfaces.*;
 import mytown.proxies.DatasourceProxy;
@@ -502,5 +503,22 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return -1;
     }
 
+
+    /**
+     * Returns the town at the specified position or null if nothing found.
+     *
+     * @param dim
+     * @param x
+     * @param z
+     * @return
+     */
+    public static Town getTownAtPosition(int dim, int x, int z) {
+        for(Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
+            if(town.isChunkInTown(dim, x, z)) {
+                return town;
+            }
+        }
+        return null;
+    }
 
 }
