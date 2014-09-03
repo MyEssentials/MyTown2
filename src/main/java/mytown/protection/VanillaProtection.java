@@ -10,6 +10,7 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
@@ -20,9 +21,12 @@ import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityWitherSkull;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -169,6 +173,88 @@ public class VanillaProtection extends Protection {
                 }
             }
         }
+    }
+
+
+    @SuppressWarnings("unchecked")
+    @SubscribeEvent
+    public void onPlayerInteract(PlayerInteractEvent ev) {
+        if (ev.entityPlayer.worldObj.isRemote)
+            return;
+
+        Resident res = getDatasource().getOrMakeResident(ev.entityPlayer);
+        if(res == null) {
+            return;
+        }
+        ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
+
+
+        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+
+            //System.out.println(currentStack.getItem().getUnlocalizedName());
+            //System.out.println(Block.blocksList[ev.entityPlayer.worldObj.getBlockId(ev.x, ev.y, ev.z)].getUnlocalizedName());
+
+
+            int x = ev.x, y = ev.y, z = ev.z; // Coords for the block that WILL be placed
+            switch(ev.face)
+            {
+                case 0:
+                    y--;
+                    break;
+                case 1:
+                    y++;
+                    break;
+                case 2:
+                    z--;
+                    break;
+                case 3:
+                    z++;
+                    break;
+                case 4:
+                    x--;
+                    break;
+                case 5:
+                    x++;
+                    break;
+            }
+
+
+
+
+
+            // In-Town specific interactions from here
+            Block tblock = getDatasource().getBlock(ev.entity.dimension, ev.x >> 4, ev.z >> 4);
+            if(tblock == null)
+                return;
+
+            TileEntity te = ev.entityPlayer.worldObj.getTileEntity(ev.x, ev.y, ev.z);
+
+            // In case the player wants to access a block... checking if player is shifting too
+            if(te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && res.getPlayer().isSneaking())) {
+                Flag<Boolean> accessFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks");
+
+                // Checking if a player wants to access a block here
+                //TODO: Check for permission instead
+                if(!accessFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
+                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.access"));
+                    ev.setCanceled(true);
+                    return;
+                }
+            }
+            if(currentStack != null && currentStack.getItem() instanceof ItemBlock) {
+                Flag<Boolean> placeFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, x, y, z, "placeBlocks");
+                //TODO: Check for permission instead
+                if(!placeFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
+                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.place"));
+                    ev.setCanceled(true);
+                    return;
+                }
+            }
+
+            // if(te == null && currentStack != null && currentStack.getItem() instanceof ItemBlock)
+            //    UniversalChecker.instance.addToChecklist(new ResidentBlockCoordsPair(x, y, z, ev.entityPlayer.dimension, getDatasource().getResident(ev.entityPlayer.username)));
+        }
+
     }
 
 }

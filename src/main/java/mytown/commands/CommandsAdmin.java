@@ -78,7 +78,7 @@ public class CommandsAdmin extends Commands {
         Rank rank;
 
         if (args.size() > 2) {
-            rank = getRankFromTown(town, args.get(1));
+            rank = getRankFromTown(town, args.get(2));
         } else {
             rank = town.getDefaultRank();
         }

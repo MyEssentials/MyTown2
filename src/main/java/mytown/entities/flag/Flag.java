@@ -153,6 +153,7 @@ public class Flag<T> {
         flagValueTypes.put("enter", Boolean.class);
         flagValueTypes.put("breakBlocks", Boolean.class);
         flagValueTypes.put("accessBlocks", Boolean.class);
+        flagValueTypes.put("placeBlocks", Boolean.class);
         flagValueTypes.put("pickup", Boolean.class);
         flagValueTypes.put("enter", Boolean.class);
         flagValueTypes.put("explosions", Boolean.class);
