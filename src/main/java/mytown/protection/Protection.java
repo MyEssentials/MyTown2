@@ -1,13 +1,18 @@
 package mytown.protection;
 
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Block;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.mod.ModProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +26,25 @@ public abstract class Protection {
     /**
      * Any entity except the player and hostile entities
      */
-    public List<Class<? extends Entity>> trackedAnyEntity = new ArrayList<Class<? extends Entity>>();
-    public List<Class<? extends Entity>> trackedHostileEntities = new ArrayList<Class<? extends Entity>>();
-    public List<Class<? extends Entity>> protectedEntities = new ArrayList<Class<? extends Entity>>();
-    public List<Class<? extends TileEntity>> trackedTileEntities = new ArrayList<Class<? extends TileEntity>>();
+
+    public List<Class<? extends Item>> itemUsageProtection;
+    public List<Class<? extends Entity>> trackedAnyEntity;
+    public List<Class<? extends Entity>> trackedHostileEntities;
+    public List<Class<? extends Entity>> protectedEntities;
+    public List<Class<? extends TileEntity>> trackedTileEntities;
+    public List<net.minecraft.block.Block> activatedBlocks;
 
     public boolean isHandlingEvents;
 
+    public Protection() {
+        itemUsageProtection = new ArrayList<Class<? extends Item>>();
+        trackedAnyEntity = new ArrayList<Class<? extends Entity>>();
+        trackedHostileEntities = new ArrayList<Class<? extends Entity>>();
+        protectedEntities = new ArrayList<Class<? extends Entity>>();
+        trackedTileEntities = new ArrayList<Class<? extends TileEntity>>();
+        activatedBlocks = new ArrayList<net.minecraft.block.Block>();
+        isHandlingEvents = false;
+    }
     /**
      * Checks the entity and returns whether or not the entity was destroyed
      *
@@ -64,6 +81,8 @@ public abstract class Protection {
      * @return
      */
     public boolean checkTileEntity(TileEntity te) { return false; }
+
+
 
     /* ---- Proxy ---- */
     protected ModProxy proxy;

@@ -154,11 +154,13 @@ public class Flag<T> {
         flagValueTypes.put("breakBlocks", Boolean.class);
         flagValueTypes.put("accessBlocks", Boolean.class);
         flagValueTypes.put("placeBlocks", Boolean.class);
-        flagValueTypes.put("pickup", Boolean.class);
+        flagValueTypes.put("pickupItems", Boolean.class);
         flagValueTypes.put("enter", Boolean.class);
         flagValueTypes.put("explosions", Boolean.class);
         flagValueTypes.put("mobs", String.class);
         flagValueTypes.put("attackEntities", Boolean.class);
+        flagValueTypes.put("useItems", Boolean.class);
+        flagValueTypes.put("activateBlocks", Boolean.class);
 
         for(String s : flagValueTypes.keySet()) {
            descriptionKeys.put(s, "mytown.flag." + s); // Because I'm lazy

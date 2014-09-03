@@ -502,8 +502,8 @@ public class CommandsEveryone extends Commands{
 
         getDatasource().linkResidentToPlot(target, plot, true);
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.owner.sender.added"));
-        target.sendMessage(getLocal().getLocalization("mytown.notification.plot.owner.target.added"));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.owner.sender.added", target.getPlayerName(), plot.getName()));
+        target.sendMessage(getLocal().getLocalization("mytown.notification.plot.owner.target.added", plot.getName()));
     }
 
     @CommandNode(
@@ -519,8 +519,8 @@ public class CommandsEveryone extends Commands{
 
         getDatasource().linkResidentToPlot(target, plot, false);
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.member.sender.added"));
-        target.sendMessage(getLocal().getLocalization("mytown.notification.plot.member.target.added"));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.member.sender.added", target.getPlayerName(), plot.getName()));
+        target.sendMessage(getLocal().getLocalization("mytown.notification.plot.member.target.added", plot.getName()));
     }
 
     @CommandNode(
@@ -544,7 +544,7 @@ public class CommandsEveryone extends Commands{
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.notOwner"));
 
         getDatasource().deletePlot(plot);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.deleted"));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.deleted"));
     }
     @CommandNode(
             name = "ranks",

@@ -127,11 +127,12 @@ public class MyTown {
     private void registerHandlers() {
         FMLCommonHandler.instance().bus().register(new SafemodeHandler());
         PlayerTracker playerTracker = new PlayerTracker();
+
         FMLCommonHandler.instance().bus().register(playerTracker);
         MinecraftForge.EVENT_BUS.register(playerTracker);
-        // TODO Re-add the below two handlers after they are redone
+
         FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
-        FMLCommonHandler.instance().bus().register(Protections.instance);
+        MinecraftForge.EVENT_BUS.register(Protections.instance);
         //MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
     }
 

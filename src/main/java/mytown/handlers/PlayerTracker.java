@@ -11,6 +11,8 @@ import mytown.entities.Block;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
+import mytown.protection.Protection;
+import mytown.protection.Protections;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
@@ -21,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -117,6 +120,8 @@ public class PlayerTracker {
         }
     }
 
+
+
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
         if(VisualsTickHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
@@ -124,6 +129,8 @@ public class PlayerTracker {
             ev.setCanceled(true);
         }
     }
+
+
 
 
 }

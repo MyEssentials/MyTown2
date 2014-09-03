@@ -74,11 +74,15 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         getDatasource().saveFlag(new Flag<Boolean>("breakBlocks", false), this);
         getDatasource().saveFlag(new Flag<Boolean>("explosions", false), this);
         getDatasource().saveFlag(new Flag<Boolean>("accessBlocks", false), this);
-        getDatasource().saveFlag(new Flag<Boolean>("pickup", true), this);
+        getDatasource().saveFlag(new Flag<Boolean>("activateBlocks", false), this);
+        getDatasource().saveFlag(new Flag<Boolean>("useItems", false), this);
+        getDatasource().saveFlag(new Flag<Boolean>("pickupItems", true), this);
         getDatasource().saveFlag(new Flag<Boolean>("enter", true), this);
         getDatasource().saveFlag(new Flag<String>("mobs", "all"), this);
         getDatasource().saveFlag(new Flag<Boolean>("attackEntities", false), this);
         getDatasource().saveFlag(new Flag<Boolean>("placeBlocks", false), this);
+
+
     }
 
     /**

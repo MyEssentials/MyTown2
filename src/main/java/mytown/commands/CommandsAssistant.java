@@ -54,7 +54,7 @@ public class CommandsAssistant extends Commands {
         if (block == null)
             throw new CommandException("Failed to create Block"); // TODO Localize
         getDatasource().saveBlock(block);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.townblock.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
     }
 
     @CommandNode(
