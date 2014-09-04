@@ -16,6 +16,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -173,6 +174,30 @@ public class CommandsAdmin extends Commands {
         SafemodeHandler.setSafemode(safemode);
         SafemodeHandler.kickPlayers();
     }
+
+    @CommandNode(
+            name = "db",
+            permission = "mytown.adm.cmd.db",
+            parentName = "mytown.adm.cmd")
+    public static void dbCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.db");
+    }
+
+    @CommandNode(
+            name = "purge",
+            permission = "mytown.adm.cmd.db.purge",
+            parentName = "mytown.adm.cmd.db")
+    public static void dbCommand(ICommandSender sender, List<String> args) {
+        for(Iterator<Town> it = getUniverse().getTownsMap().values().iterator(); it.hasNext(); ) {
+            getDatasource().deleteTown(it.next());
+        }
+        for(Iterator<Resident> it = getUniverse().getResidentsMap().values().iterator(); it.hasNext(); ) {
+            getDatasource().deleteResident(it.next());
+        }
+        Resident res = getDatasource().getOrMakeResident(sender);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.db.purging"));
+    }
+
 
 
 

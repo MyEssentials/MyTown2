@@ -124,4 +124,16 @@ public abstract class Commands {
         return rank;
     }
 
+    public static Plot getPlotAtPosition(int dim, int x, int y, int z) {
+        Town town = Town.getTownAtPosition(dim, x >> 4, z >> 4);
+        if(town == null)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.blockNotInPlot"));
+        Plot plot = town.getPlotAtCoords(dim, x, y, z);
+        if(plot == null)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.blockNotInPlot"));
+        return plot;
+    }
+
+
+
 }

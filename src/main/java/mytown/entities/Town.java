@@ -22,7 +22,7 @@ import java.util.*;
  *
  * @author Joe Goett
  */
-public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, Comparable<Town> {
+public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, IHasBlockWhitelists, Comparable<Town> {
     private String name, oldName = null;
 
     public Town(String name) {
@@ -377,6 +377,70 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         MyTown.instance.log.info("Found plot and sending flag.");
         return plot.getFlag(flagName);
     }
+
+    /* ---- IHasBlockWhitelists ---- */
+
+    private List<BlockWhitelist> blockWhitelists = new ArrayList<BlockWhitelist>();
+
+    @Override
+    public void addBlockWhitelist(BlockWhitelist bw) {
+        blockWhitelists.add(bw);
+    }
+
+    @Override
+    public boolean hasBlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+        for(BlockWhitelist bw : blockWhitelists) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagName().equals(flagName) && bw.getPlotID() == plotID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasBlockWhitelist(BlockWhitelist bw) {
+        return blockWhitelists.contains(bw);
+    }
+
+    @Override
+    public void removeBlockWhitelist(BlockWhitelist bw) {
+        blockWhitelists.remove(bw);
+    }
+
+    @Override
+    public void removeBlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+        for(Iterator<BlockWhitelist> it = blockWhitelists.iterator(); it.hasNext();) {
+            BlockWhitelist bw = it.next();
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagName().equals(flagName) && bw.getPlotID() == plotID) {
+                it.remove();
+            }
+        }
+    }
+
+    @Override
+    public BlockWhitelist getBlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+        for(BlockWhitelist bw : blockWhitelists) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagName().equals(flagName) && bw.getPlotID() == plotID) {
+                return bw;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<BlockWhitelist> getWhitelists() {
+        return blockWhitelists;
+    }
+
+    public boolean flagValueOfPossiblyWhitelisted(int dim, int x, int y, int z) {
+        if(!isPointInTown(dim, x >> 4, y >> 4)) {
+            return false;
+        } else {
+            
+        }
+    }
+
+
     /* ----- Nation ----- */
 
     private Nation nation = null;

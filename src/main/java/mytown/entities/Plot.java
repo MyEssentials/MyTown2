@@ -4,18 +4,20 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.entities.flag.Flag;
+import mytown.entities.interfaces.IHasBlockWhitelists;
 import mytown.entities.interfaces.IHasFlags;
 import mytown.entities.interfaces.IHasResidents;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author Joe Goett
  */
-public class Plot implements IHasFlags, IHasResidents{
+public class Plot implements IHasFlags, IHasResidents {
     private int db_ID;
     private int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
@@ -239,4 +241,6 @@ public class Plot implements IHasFlags, IHasResidents{
         info = "Plot: " + getName() + "\nResidents: " + residents + "\nBorders: " + position;
         return info;
     }
+
+
 }

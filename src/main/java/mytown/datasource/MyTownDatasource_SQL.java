@@ -363,6 +363,28 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    protected boolean loadBlockWhitelists() {
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "BlockWhitelists", true);
+            ResultSet rs = statement.executeQuery();
+
+            while(rs.next()) {
+                // plotID will be 0 if it's a town's whitelist
+                BlockWhitelist bw = new BlockWhitelist(rs.getInt("dim"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("flagName"), rs.getInt("plotID"));
+                bw.setDb_ID(rs.getInt("ID"));
+                Town town = MyTownUniverse.getInstance().getTownsMap().get(rs.getString("townName"));
+                // This can't be null
+                town.addBlockWhitelist(bw);
+            }
+
+        } catch (SQLException e) {
+            log.error("Failed to load a Block whitelist");
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Loads the links between Towns and Nations
      *
@@ -412,6 +434,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         }
         return true;
     }
+
+
 
     /* ----- Save ----- */
 
@@ -711,6 +735,39 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    //Why?
+    @SuppressWarnings("SuspiciousNameCombination")
+    @Override
+    public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {
+        try {
+            if(!town.hasBlockWhitelist(bw)) {
+                log.info(bw.getPlotID() + ", " + bw.getPlot().getName());
+                log.info(town.getName());
+                log.info(bw.getFlagName());
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "BlockWhitelists(dim, x, y, z, flagName, townName, plotID) VALUES(?, ?, ?, ?, ?, ?," + (bw.getPlotID() != 0 ? bw.getPlotID() : "NULL") + ")", true);
+                insertStatement.setInt(1, bw.dim);
+                insertStatement.setInt(2, bw.x);
+                insertStatement.setInt(3, bw.y);
+                insertStatement.setInt(4, bw.z);
+                insertStatement.setString(5, bw.getFlagName());
+                insertStatement.setString(6, town.getName());
+
+                insertStatement.executeUpdate();
+
+                ResultSet keys = insertStatement.getGeneratedKeys();
+                if(keys.next())
+                    bw.setDb_ID(keys.getInt(1));
+
+                town.addBlockWhitelist(bw);
+            }
+                // NO update since ID can't change
+        } catch (SQLException e) {
+            log.error("Failed to save a Block Whitelist!");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
     /* ----- Link ----- */
 
@@ -991,6 +1048,21 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean deleteBlockWhitelist(BlockWhitelist bw, Town town) {
+        try {
+            PreparedStatement deleteStatement = prepare("DELETE FROM " + prefix + "BlockWhitelists WHERE ID=?", false);
+            deleteStatement.setInt(1, bw.getDb_id());
+            deleteStatement.executeUpdate();
+
+            town.removeBlockWhitelist(bw);
+        } catch (SQLException e) {
+            log.error("Failed to delete BlockWhitelist!");
+            return false;
+        }
+        return true;
+    }
+
     /*
     @Override
     public boolean deleteFlag(Flag flag, Town town) {
@@ -1175,6 +1247,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(resident, plotID), " +
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, " +
                 "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
+        updates.add(new DBUpdate("09.04.2014.1", "Add BlockWhitelists", "CREATE TABLE IF NOT EXISTS " + prefix +
+                "BlockWhitelists(" +
+                "ID INTEGER NOT NULL, " +
+                "dim INT NOT NULL, " +
+                "x INT NOT NULL, " +
+                "y INT NOT NULL, " +
+                "z INT NOT NULL, " +
+                "townName VARCHAR(50), " +
+                "plotID INT, " +
+                "flagName VARCHAR(50) NOT NULL, " +
+                "PRIMARY KEY(ID), " +
+                "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON UPDATE CASCADE ON DELETE CASCADE, " +
+                "FOREIGN KEY(flagName, townName) REFERENCES " + prefix + "TownFlags(name, townName) ON UPDATE CASCADE ON DELETE CASCADE)"));
     }
 
     /**

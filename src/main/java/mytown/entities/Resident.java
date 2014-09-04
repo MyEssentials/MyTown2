@@ -2,17 +2,28 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
+import mytown.commands.Commands;
 import mytown.core.ChatUtils;
+import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
+import mytown.entities.interfaces.IBlockWhitelister;
 import mytown.entities.interfaces.IHasPlots;
 import mytown.entities.interfaces.IHasTowns;
 import mytown.entities.interfaces.IPlotSelector;
 import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
+import mytown.util.Constants;
+import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumChatFormatting;
 
 import java.lang.ref.WeakReference;
 import java.sql.*;
@@ -24,7 +35,7 @@ import java.util.Date;
 /**
  * @author Joe Goett
  */
-public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO Make Comparable
+public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhitelister { // TODO Make Comparable
     private EntityPlayer player;
     private UUID playerUUID;
     private String playerName; // This is only for display purposes when the player is offline
@@ -553,6 +564,93 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector { // TODO M
         } else {
             VisualsTickHandler.instance.unmarkPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
         }
+    }
+
+
+    // //////////////////////////////////////
+    // BLOCK WHITELISTER
+    // //////////////////////////////////////
+
+    private String whitelisterFlagName;
+
+    /**
+     * Assists in selecting a plot...
+     * Called by commands.. it's throwing RuntimeExceptions that are supposed to be catched by commands.
+     *
+     * @param plot
+     * @param flagName
+     * @param remove
+     * @return
+     */
+    @Override
+    public boolean startSelection(String flagName, boolean remove, boolean inPlot) {
+        whitelisterFlagName = flagName;
+
+        //Give item to player
+        ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
+        selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
+        NBTTagList lore = new NBTTagList();
+        lore.appendTag(new NBTTagString(remove ? Constants.EDIT_TOOL_DESCRIPTION_BLOCK_DEWHITELIST : Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST));
+        lore.appendTag(new NBTTagString(inPlot ? Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT : Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN));
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Flag: " + flagName));
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
+        selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
+
+        return player.inventory.addItemStackToInventory(selectionTool);
+    }
+
+    @Override
+    public boolean select(int dim, int x, int y, int z, boolean remove, boolean inPlot) {
+        Plot whitelisterPlot = null;
+        if(inPlot) {
+            try {
+                whitelisterPlot = Commands.getPlotAtPosition(dim, x, y, z);
+
+            } catch (Throwable e) {
+                return false;
+            }
+        }
+        // If flag is missing you can get it from the Lore of the Selector
+        if(whitelisterFlagName == null) {
+            ItemStack currentStack = player.inventory.getCurrentItem();
+            NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
+            String flagLore = lore.getStringTagAt(2); // Second in line
+            whitelisterFlagName = flagLore.substring(8); // We use hacks in here
+        }
+
+
+
+        // TOWN WHITELISTING
+        if(whitelisterPlot == null) {
+            Town town = Town.getTownAtPosition(dim, x >> 4, y >> 4);
+            if(town == null) {
+                sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
+                return false;
+            }
+
+            if(remove) {
+                BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, whitelisterFlagName, 0);
+                return getDatasource().deleteBlockWhitelist(bw, town);
+            } else {
+                BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, whitelisterFlagName, 0);
+                return getDatasource().saveBlockWhitelist(bw, town);
+            }
+        }
+
+        // PLOT WHITELISTING
+        if(!whitelisterPlot.isCoordWithin(dim, x, y, z)) {
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInPlot"));
+            return false;
+        }
+
+        if(remove) {
+            BlockWhitelist bw = whitelisterPlot.getTown().getBlockWhitelist(dim, x, y, z, whitelisterFlagName, whitelisterPlot.getDb_ID());
+            return getDatasource().deleteBlockWhitelist(bw, whitelisterPlot.getTown());
+        } else {
+            BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, whitelisterFlagName, whitelisterPlot.getDb_ID());
+            return getDatasource().saveBlockWhitelist(bw, whitelisterPlot.getTown());
+        }
+
     }
 
     private MyTownDatasource getDatasource() {

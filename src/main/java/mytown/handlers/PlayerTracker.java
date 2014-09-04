@@ -20,6 +20,9 @@ import mytown.util.Formatter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -97,26 +100,48 @@ public class PlayerTracker {
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
         if (currentStack == null)
             return;
+        // TEMP
+        if(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+
+        }
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-            if (res == null)
-                return;
+            NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
+            String description = lore.getStringTagAt(0);
 
-            if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
-                ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
-            } else {
-                boolean result = res.selectBlockForPlot(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
-                if (result) {
-                    if (!res.isSecondPlotSelectionActive()) {
-                        ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionStart");
-                    } else {
-                        ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionEnd");
-                    }
-                } else
-                    ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.selectionFailed");
 
+            if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
+
+                if (res == null)
+                    return;
+
+                if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
+                    ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
+                } else {
+                    boolean result = res.selectBlockForPlot(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
+                    if (result) {
+                        if (!res.isSecondPlotSelectionActive()) {
+                            ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionStart");
+                        } else {
+                            ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.town.plot.selectionEnd");
+                        }
+                    } else
+                        ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.selectionFailed");
+
+                }
+                System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
+                // TODO: rewrite this to be more clean :/
+            } else if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
+                if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT))
+                    res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, false, true);
+                else
+                    res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, false, false);
+            } else if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_DEWHITELIST)) {
+                if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT))
+                    res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, true, true);
+                else
+                    res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, true, false);
             }
-            System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
         }
     }
 

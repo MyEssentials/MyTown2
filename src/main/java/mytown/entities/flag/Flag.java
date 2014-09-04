@@ -135,6 +135,8 @@ public class Flag<T> {
      */
     public static Map<String, Class> flagValueTypes = new HashMap<String, Class>();
 
+    public static List<String> flagsForWhitelist = new ArrayList<String>();
+
     /**
      * Map for keeping description keys, since all flags have exactly the same description.
      */
@@ -155,12 +157,15 @@ public class Flag<T> {
         flagValueTypes.put("accessBlocks", Boolean.class);
         flagValueTypes.put("placeBlocks", Boolean.class);
         flagValueTypes.put("pickupItems", Boolean.class);
-        flagValueTypes.put("enter", Boolean.class);
         flagValueTypes.put("explosions", Boolean.class);
         flagValueTypes.put("mobs", String.class);
         flagValueTypes.put("attackEntities", Boolean.class);
         flagValueTypes.put("useItems", Boolean.class);
         flagValueTypes.put("activateBlocks", Boolean.class);
+
+        flagsForWhitelist.add("breakBlocks");
+        flagsForWhitelist.add("accessBlocks");
+        flagsForWhitelist.add("activateBlocks");
 
         for(String s : flagValueTypes.keySet()) {
            descriptionKeys.put(s, "mytown.flag." + s); // Because I'm lazy

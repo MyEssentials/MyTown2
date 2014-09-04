@@ -8,9 +8,7 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import mytown.MyTown;
 import mytown.core.Localization;
-import mytown.entities.Block;
-import mytown.entities.Resident;
-import mytown.entities.Town;
+import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -142,8 +140,9 @@ public class Protections {
 
             TileEntity te = ev.entityPlayer.worldObj.getTileEntity(ev.x, ev.y, ev.z);
 
+            //TODO: Verify properly
             // In case the player wants to access a block... checking if player is shifting too
-            if(te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && ev.entityPlayer.isSneaking())) {
+            if(te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && ev.entityPlayer.isSneaking()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", 0)) {
                 Flag<Boolean> accessFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks");
 
                 // Checking if a player wants to access a block here
@@ -157,7 +156,7 @@ public class Protections {
             if(currentStack == null) {
                 Flag<Boolean> activateFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks");
                 //TODO: Check for permission
-                if(!activateFlag.getValue() && !res.hasTown(tblock.getTown())) {
+                if(!activateFlag.getValue() && !res.hasTown(tblock.getTown()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", 0)) {
                     for(Protection prot : protections) {
                         if(prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.activateBlock"));
@@ -196,6 +195,19 @@ public class Protections {
             if (flag.getValue())
                 return;
             // TODO: Instead, check for the permission at one point
+            Plot plot = town.getPlotAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z);
+
+            // If it's a town whitelist then it's universal
+            if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", 0))
+                return;
+
+            // If it's a plot only whitelist then only residents of the same town can access
+            if(plot != null) {
+                if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", plot.getDb_ID()) && res.hasTown(town))
+                    return;
+            }
+
+
             if (DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer()).hasTown(town))
                 return;
             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.break"));

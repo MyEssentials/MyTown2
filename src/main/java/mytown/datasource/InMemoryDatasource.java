@@ -62,6 +62,11 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    protected boolean loadBlockWhitelists() {
+        return false;
+    }
+
+    @Override
     public boolean saveTown(Town town) {
         log.debug("Saving Town %s", town.getName());
         if (MyTownUniverse.getInstance().towns.containsValue(town)) { // Update
@@ -139,6 +144,11 @@ public class InMemoryDatasource extends MyTownDatasource {
             plot.addFlag(flag);
         }
         return true;
+    }
+
+    @Override
+    public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {
+        return false;
     }
 
     @Override
@@ -232,6 +242,11 @@ public class InMemoryDatasource extends MyTownDatasource {
     public boolean deleteNation(Nation nation) {
         log.debug("Deleting Nation %s", nation.getName());
         return MyTownUniverse.getInstance().nations.remove(nation.getName()) != null;
+    }
+
+    @Override
+    public boolean deleteBlockWhitelist(BlockWhitelist bw, Town town) {
+        return false;
     }
 
     @Override

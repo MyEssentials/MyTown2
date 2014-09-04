@@ -333,6 +333,52 @@ public class CommandsEveryone extends Commands{
             res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
     }
 
+    @CommandNode(
+            name = "whitelist",
+            permission = "mytown.cmd.everyone.perm.plot.whitelist",
+            parentName = "mytown.cmd.everyone.perm.plot")
+    public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.perm.plot.whitelist");
+    }
+
+    @CommandNode(
+            name = "add",
+            permission = "mytown.cmd.everyone.perm.plot.whitelist.add",
+            parentName = "mytown.cmd.everyone.perm.plot.whitelist")
+    public static void permPlotWhitelistAddCommand(ICommandSender sender, List<String> args) {
+        if(args.size() == 0)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Plot plot = getPlotAtResident(res);
+        String flagName = args.get(0);
+
+        if(Flag.flagsForWhitelist.contains(flagName))
+            res.startSelection(flagName, false, true);
+        else
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
+    }
+
+    @CommandNode(
+            name = "remove",
+            permission = "mytown.cmd.everyone.perm.plot.whitelist.remove",
+            parentName = "mytown.cmd.everyone.perm.plot.whitelist")
+    public static void permPlotWhitelistRemoveCommand(ICommandSender sender, List<String> args) {
+        if(args.size() == 0)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Plot plot = getPlotAtResident(res);
+        String flagName = args.get(0);
+
+        if(Flag.flagsForWhitelist.contains(flagName))
+            res.startSelection(flagName, true, true);
+        else
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
+
+    }
+
+
 
     @CommandNode(
             name = "plot",
@@ -408,7 +454,7 @@ public class CommandsEveryone extends Commands{
             ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
             selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
             NBTTagList lore = new NBTTagList();
-            lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot."));
+            lore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_PLOT));
             lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
             selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
 
