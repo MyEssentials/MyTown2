@@ -1,6 +1,7 @@
 package mytown.entities.interfaces;
 
 import mytown.entities.Plot;
+import mytown.entities.Town;
 
 /**
  * Created by AfterWind on 9/4/2014.
@@ -8,6 +9,7 @@ import mytown.entities.Plot;
  */
 public interface IBlockWhitelister {
 
-    boolean startSelection(String flagName, boolean remove, boolean inPlot);
-    boolean select(int dim, int x, int y, int z, boolean remove, boolean inPlot);
+    boolean startBlockSelection(String flagName, boolean inPlot);
+    boolean select(int dim, int x, int y, int z, Plot plot);
+    boolean select(int dim, int x, int y, int z, Town town);
 }

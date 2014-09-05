@@ -13,6 +13,7 @@ import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -25,7 +26,9 @@ import net.minecraftforge.event.world.BlockEvent;
 
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by AfterWind on 9/2/2014.
@@ -34,6 +37,10 @@ import java.util.List;
 public class Protections {
     public List<Protection> protections;
 
+    public Map<TileEntity, Boolean> checkedTileEntities;
+    public Map<Entity, Boolean> checkedEntities;
+
+    private int ticker = 20;
 
     public static Protections instance = new Protections();
     public Protections() {
@@ -41,6 +48,9 @@ public class Protections {
         MyTown.instance.log.info("Protections initializing started...");
         protections = new ArrayList<Protection>();
         protections.add(new VanillaProtection());
+
+        checkedTileEntities = new HashMap<TileEntity, Boolean>();
+        checkedEntities = new HashMap<Entity, Boolean>();
 
         for(Protection prot : protections) {
             if(prot.isHandlingEvents) {
@@ -51,18 +61,46 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent ev) {
+        // Checking the checked maps (check-ception?)
+        if(ticker == 0) {
+            MyTown.instance.log.info("Updating check maps.");
+            for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
+                entry.setValue(false);
+            }
+            for(Map.Entry<TileEntity, Boolean> entry : checkedTileEntities.entrySet()) {
+                entry.setValue(false);
+            }
+            ticker = 20;
+        } else {
+            ticker--;
+        }
+
         // Why does it return only a generic List? :S
+        // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
             for (Protection prot : protections) {
-                if (prot.checkEntity(entity)) {
-                    MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
+                if (prot.hasToCheckEntity(entity)) {
+                    if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
+                        if(!(entity instanceof EntityPlayer)) {
+                            MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
+                        } else {
+                            MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
+                        }
+                    } else {
+                        checkedEntities.put(entity, true);
+                    }
                 }
             }
         }
         for (TileEntity te : (List<TileEntity>) ev.world.loadedTileEntityList) {
             for (Protection prot : protections) {
-                if (prot.checkTileEntity(te)) {
-                    MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
+                if (prot.hasToCheckTileEntity(te)) {
+                    if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
+                        te.invalidate();
+                        MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
+                    } else {
+                        checkedTileEntities.put(te, true);
+                    }
                 }
             }
         }
@@ -138,6 +176,7 @@ public class Protections {
             if(tblock == null)
                 return;
 
+            Plot plot = tblock.getTown().getPlotAtResident(res);
             TileEntity te = ev.entityPlayer.worldObj.getTileEntity(ev.x, ev.y, ev.z);
 
             //TODO: Verify properly
@@ -145,6 +184,15 @@ public class Protections {
             if(te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && ev.entityPlayer.isSneaking()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", 0)) {
                 Flag<Boolean> accessFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks");
 
+                // If it's a town whitelist then it's universal
+                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", 0))
+                    return;
+
+                // If it's a plot only whitelist then only residents of the same town can access
+                if(plot != null) {
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", plot.getDb_ID()) && res.hasTown(tblock.getTown()))
+                        return;
+                }
                 // Checking if a player wants to access a block here
                 //TODO: Check for permission instead
                 if(!accessFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
@@ -156,6 +204,17 @@ public class Protections {
             if(currentStack == null) {
                 Flag<Boolean> activateFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks");
                 //TODO: Check for permission
+
+                // If it's a town whitelist then it's universal
+                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", 0))
+                    return;
+
+                // If it's a plot only whitelist then only residents of the same town can access
+                if(plot != null) {
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", plot.getDb_ID()) && res.hasTown(tblock.getTown()))
+                        return;
+                }
+
                 if(!activateFlag.getValue() && !res.hasTown(tblock.getTown()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", 0)) {
                     for(Protection prot : protections) {
                         if(prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
@@ -169,6 +228,7 @@ public class Protections {
             if(currentStack != null && currentStack.getItem() instanceof ItemBlock) {
                 Flag<Boolean> placeFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, x, y, z, "placeBlocks");
                 //TODO: Check for permission instead
+
                 if(!placeFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
                     res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.place"));
                     ev.setCanceled(true);
@@ -195,7 +255,7 @@ public class Protections {
             if (flag.getValue())
                 return;
             // TODO: Instead, check for the permission at one point
-            Plot plot = town.getPlotAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z);
+            Plot plot = town.getPlotAtResident(res);
 
             // If it's a town whitelist then it's universal
             if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", 0))
@@ -206,7 +266,6 @@ public class Protections {
                 if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", plot.getDb_ID()) && res.hasTown(town))
                     return;
             }
-
 
             if (DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer()).hasTown(town))
                 return;

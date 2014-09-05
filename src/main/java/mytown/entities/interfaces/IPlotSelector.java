@@ -7,6 +7,8 @@ package mytown.entities.interfaces;
  */
 public interface IPlotSelector {
 
+    void startPlotSelection();
+
     boolean selectBlockForPlot(int dim, int x, int y, int z);
 
     boolean isFirstPlotSelectionActive();

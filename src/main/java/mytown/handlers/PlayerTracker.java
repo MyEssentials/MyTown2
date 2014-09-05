@@ -8,6 +8,7 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Block;
+import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
@@ -23,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -100,21 +102,38 @@ public class PlayerTracker {
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
         if (currentStack == null)
             return;
-        // TEMP
-        if(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
 
+        if((ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) && ev.entityPlayer.isSneaking()) {
+            if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+                // On shift right-click change MODE of the selector tool
+                NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
+                String description = lore.getStringTagAt(0);
+                if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
+                    String mode = lore.getStringTagAt(1);
+                    if (mode.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT))
+                        mode = Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN;
+                    else {
+                        // TODO: check for permission
+                        mode = Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT;
+                    }
+                    NBTTagList newLore = new NBTTagList();
+                    newLore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST));
+                    newLore.appendTag(new NBTTagString(mode));
+                    newLore.appendTag(new NBTTagString(lore.getStringTagAt(2)));
+                    newLore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
+                    currentStack.getTagCompound().getCompoundTag("display").setTag("Lore", newLore);
+
+                }
+            }
         }
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+            Town town = res.getSelectedTown();
             NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
             String description = lore.getStringTagAt(0);
 
 
             if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
-
-                if (res == null)
-                    return;
-
                 if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
                     ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
                 } else {
@@ -130,17 +149,27 @@ public class PlayerTracker {
 
                 }
                 System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
-                // TODO: rewrite this to be more clean :/
             } else if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
-                if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT))
-                    res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, false, true);
-                else
-                    res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, false, false);
-            } else if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_DEWHITELIST)) {
-                if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT))
-                    res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, true, true);
-                else
-                    res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, true, false);
+
+                if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT)) {
+                    Plot plot = town.getPlotAtResident(res);
+                    if(!plot.isCoordWithin(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInPlot"));
+                        return;
+                    } else {
+                        res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, plot);
+                        ev.setCanceled(true);
+                    }
+                } else if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN)){
+                    Town townAt = Town.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+                    if(town == null || town != townAt) {
+                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
+                        return;
+                    } else {
+                        res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, townAt);
+                        ev.setCanceled(true);
+                    }
+                }
             }
         }
     }

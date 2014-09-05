@@ -378,6 +378,24 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return plot.getFlag(flagName);
     }
 
+    /*
+    @SuppressWarnings("unchecked")
+    public boolean getFlagValue(int dim, int x, int y, int z, String flagName) {
+        Plot plot = getPlotAtCoords(dim, x, y, z);
+        if (plot == null) {
+            if(hasBlockWhitelist(dim, x, y, z, flagName, 0))
+                return true;
+            else
+                return ((Flag<Boolean>)getFlag(flagName)).getValue();
+        }
+        //MyTown.instance.log.info("Found plot and sending flag.");
+        if(hasBlockWhitelist(dim, x, y, z, flagName, plot.getDb_ID()))
+            return true && ;
+        else
+            return plot.getFlag(flagName);
+    }
+    */
+
     /* ---- IHasBlockWhitelists ---- */
 
     private List<BlockWhitelist> blockWhitelists = new ArrayList<BlockWhitelist>();
@@ -432,13 +450,15 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return blockWhitelists;
     }
 
+    /*
     public boolean flagValueOfPossiblyWhitelisted(int dim, int x, int y, int z) {
         if(!isPointInTown(dim, x >> 4, y >> 4)) {
             return false;
         } else {
-            
+
         }
     }
+    */
 
 
     /* ----- Nation ----- */

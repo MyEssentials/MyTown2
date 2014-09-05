@@ -191,10 +191,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     }
                     MyTownUniverse.getInstance().ranks.put(rank.getKey(), rank);
                     rank.getTown().addRank(rank);
-                    log.info("Trying to set up a default rank.");
                     if(rs.getBoolean("isDefault")) {
                         town.setDefaultRank(rank);
-                        log.info("Default rank has been found.");
                     }
                 }
             } catch (SQLException e) {
@@ -741,7 +739,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {
         try {
             if(!town.hasBlockWhitelist(bw)) {
-                log.info(bw.getPlotID() + ", " + bw.getPlot().getName());
                 log.info(town.getName());
                 log.info(bw.getFlagName());
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "BlockWhitelists(dim, x, y, z, flagName, townName, plotID) VALUES(?, ?, ?, ?, ?, ?," + (bw.getPlotID() != 0 ? bw.getPlotID() : "NULL") + ")", true);

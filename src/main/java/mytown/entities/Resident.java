@@ -426,6 +426,27 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     // Mostly a workaround, might be changed
 
     @Override
+    public void startPlotSelection() {
+        ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
+        selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
+        NBTTagList lore = new NBTTagList();
+        lore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_PLOT));
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
+        selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
+
+        boolean ok = !player.inventory.hasItemStack(selectionTool);
+        boolean result = false;
+        if (ok) {
+            result = player.inventory.addItemStackToInventory(selectionTool);
+        }
+        if (result) {
+           sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.plot.start"));
+        } else if (ok) {
+           sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.start.failed"));
+        }
+    }
+
+    @Override
     public boolean selectBlockForPlot(int dim, int x, int y, int z) {
         Block tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
         if (firstSelectionActive && selectionDim != dim)
@@ -531,7 +552,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
             return false;
 
         getDatasource().linkResidentToPlot(this, plot, true);
-
+        player.setCurrentItemOrArmor(0, null);
         resetSelection();
         return true;
     }
@@ -571,26 +592,20 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     // BLOCK WHITELISTER
     // //////////////////////////////////////
 
-    private String whitelisterFlagName;
-
     /**
      * Assists in selecting a plot...
      * Called by commands.. it's throwing RuntimeExceptions that are supposed to be catched by commands.
      *
-     * @param plot
      * @param flagName
-     * @param remove
      * @return
      */
     @Override
-    public boolean startSelection(String flagName, boolean remove, boolean inPlot) {
-        whitelisterFlagName = flagName;
-
+    public boolean startBlockSelection(String flagName, boolean inPlot) {
         //Give item to player
         ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
         selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
         NBTTagList lore = new NBTTagList();
-        lore.appendTag(new NBTTagString(remove ? Constants.EDIT_TOOL_DESCRIPTION_BLOCK_DEWHITELIST : Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST));
+        lore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST));
         lore.appendTag(new NBTTagString(inPlot ? Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT : Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Flag: " + flagName));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
@@ -600,57 +615,46 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     @Override
-    public boolean select(int dim, int x, int y, int z, boolean remove, boolean inPlot) {
-        Plot whitelisterPlot = null;
-        if(inPlot) {
-            try {
-                whitelisterPlot = Commands.getPlotAtPosition(dim, x, y, z);
+    public boolean select(int dim, int x, int y, int z, Plot plot) {
 
-            } catch (Throwable e) {
-                return false;
-            }
-        }
-        // If flag is missing you can get it from the Lore of the Selector
-        if(whitelisterFlagName == null) {
-            ItemStack currentStack = player.inventory.getCurrentItem();
-            NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-            String flagLore = lore.getStringTagAt(2); // Second in line
-            whitelisterFlagName = flagLore.substring(8); // We use hacks in here
-        }
-
-
-
-        // TOWN WHITELISTING
-        if(whitelisterPlot == null) {
-            Town town = Town.getTownAtPosition(dim, x >> 4, y >> 4);
-            if(town == null) {
-                sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
-                return false;
-            }
-
-            if(remove) {
-                BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, whitelisterFlagName, 0);
-                return getDatasource().deleteBlockWhitelist(bw, town);
-            } else {
-                BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, whitelisterFlagName, 0);
-                return getDatasource().saveBlockWhitelist(bw, town);
-            }
-        }
-
-        // PLOT WHITELISTING
-        if(!whitelisterPlot.isCoordWithin(dim, x, y, z)) {
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInPlot"));
-            return false;
-        }
-
-        if(remove) {
-            BlockWhitelist bw = whitelisterPlot.getTown().getBlockWhitelist(dim, x, y, z, whitelisterFlagName, whitelisterPlot.getDb_ID());
-            return getDatasource().deleteBlockWhitelist(bw, whitelisterPlot.getTown());
+        String whitelisterFlagName = getFlagNameFromLore();
+        player.setCurrentItemOrArmor(0, null);
+        BlockWhitelist bw = plot.getTown().getBlockWhitelist(dim, x, y, z, whitelisterFlagName, plot.getDb_ID());
+        if(bw == null) {
+            bw = new BlockWhitelist(dim, x, y, z, whitelisterFlagName, plot.getDb_ID());
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.added"));
+            return getDatasource().saveBlockWhitelist(bw, plot.getTown());
         } else {
-            BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, whitelisterFlagName, whitelisterPlot.getDb_ID());
-            return getDatasource().saveBlockWhitelist(bw, whitelisterPlot.getTown());
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.removed"));
+            return getDatasource().deleteBlockWhitelist(bw, plot.getTown());
+        }
+    }
+
+    @Override
+    public boolean select(int dim, int x, int y, int z, Town town) {
+
+        String whitelisterFlagName = getFlagNameFromLore();
+        player.setCurrentItemOrArmor(0, null);
+        BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, whitelisterFlagName, 0);
+        if(bw == null) {
+            bw = new BlockWhitelist(dim, x, y, z, whitelisterFlagName, 0);
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
+            return getDatasource().saveBlockWhitelist(bw, town);
+        } else {
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
+            return getDatasource().deleteBlockWhitelist(bw, town);
         }
 
+    }
+
+
+
+
+    private String getFlagNameFromLore() {
+        ItemStack currentStack = player.inventory.getCurrentItem();
+        NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
+        String flagLore = lore.getStringTagAt(2); // Second in line
+        return flagLore.substring(8); // We use hacks in here
     }
 
     private MyTownDatasource getDatasource() {

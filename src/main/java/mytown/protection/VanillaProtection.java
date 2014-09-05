@@ -2,15 +2,11 @@ package mytown.protection;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import mytown.MyTown;
-import mytown.entities.Block;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
-import mytown.proxies.DatasourceProxy;
-import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
@@ -22,17 +18,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
-import net.minecraftforge.event.world.BlockEvent;
-
-import javax.xml.crypto.Data;
 
 
 /**
@@ -44,30 +32,30 @@ public class VanillaProtection extends Protection {
         super();
         MyTown.instance.log.info("Vanilla protection initializing...");
 
-        //this.trackedAnyEntity.add(EntityPlayer.class);
+        //this.anyEntity.add(EntityPlayer.class);
 
-        this.trackedHostileEntities.add(EntityCreeper.class);
-        this.trackedHostileEntities.add(EntityZombie.class);
-        this.trackedHostileEntities.add(EntityArrow.class);
-        this.trackedHostileEntities.add(EntityGhast.class);
-        this.trackedHostileEntities.add(EntitySkeleton.class);
-        this.trackedHostileEntities.add(EntityPigZombie.class);
-        this.trackedHostileEntities.add(EntitySpider.class);
-        this.trackedHostileEntities.add(EntityBlaze.class);
-        this.trackedHostileEntities.add(EntityCaveSpider.class);
-        this.trackedHostileEntities.add(EntitySilverfish.class);
-        this.trackedHostileEntities.add(EntityEnderman.class);
-        this.trackedHostileEntities.add(EntityMagmaCube.class);
-        this.trackedHostileEntities.add(EntitySlime.class);
-        this.trackedHostileEntities.add(EntityWitch.class);
-        this.trackedHostileEntities.add(EntityWither.class);
-        this.trackedHostileEntities.add(EntityWitherSkull.class);
-        this.trackedHostileEntities.add(EntityDragon.class);
+        this.hostileEntities.add(EntityCreeper.class);
+        this.hostileEntities.add(EntityZombie.class);
+        this.hostileEntities.add(EntityArrow.class);
+        this.hostileEntities.add(EntityGhast.class);
+        this.hostileEntities.add(EntitySkeleton.class);
+        this.hostileEntities.add(EntityPigZombie.class);
+        this.hostileEntities.add(EntitySpider.class);
+        this.hostileEntities.add(EntityBlaze.class);
+        this.hostileEntities.add(EntityCaveSpider.class);
+        this.hostileEntities.add(EntitySilverfish.class);
+        this.hostileEntities.add(EntityEnderman.class);
+        this.hostileEntities.add(EntityMagmaCube.class);
+        this.hostileEntities.add(EntitySlime.class);
+        this.hostileEntities.add(EntityWitch.class);
+        this.hostileEntities.add(EntityWither.class);
+        this.hostileEntities.add(EntityWitherSkull.class);
+        this.hostileEntities.add(EntityDragon.class);
         // If the flag "mobs" is set to "none"
-        this.trackedAnyEntity.add(EntityLivingBase.class);
+        this.anyEntity.add(EntityLivingBase.class);
 
         // Hi, my name is TNT
-        //this.trackedAnyEntity.add(EntityTNTPrimed.class);
+        //this.anyEntity.add(EntityTNTPrimed.class);
 
         this.protectedEntities.add(EntityHorse.class);
         this.protectedEntities.add(EntityOcelot.class);
@@ -107,7 +95,6 @@ public class VanillaProtection extends Protection {
         if(entity instanceof EntityTNTPrimed) {
             Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "explosions");
             if(!explosionsFlag.getValue()) {
-                entity.setDead();
                 return true;
             }
             return false;

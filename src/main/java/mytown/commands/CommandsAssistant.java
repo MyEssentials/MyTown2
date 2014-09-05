@@ -142,32 +142,6 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.perm.town.whitelist",
             parentName = "mytown.cmd.assistant.perm.town")
     public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.perm.town.whitelist");
-    }
-
-    @CommandNode(
-            name = "add",
-            permission = "mytown.cmd.assistant.perm.town.whitelist.add",
-            parentName = "mytown.cmd.assistant.perm.town.whitelist")
-    public static void permPlotWhitelistAddCommand(ICommandSender sender, List<String> args) {
-        if(args.size() == 0)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.town.whitelist.add"));
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
-        String flagName = args.get(0);
-
-        if(Flag.flagsForWhitelist.contains(flagName))
-            res.startSelection(flagName, false, false);
-        else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
-    }
-
-    @CommandNode(
-            name = "remove",
-            permission = "mytown.cmd.assistant.perm.town.whitelist.remove",
-            parentName = "mytown.cmd.assistant.perm.town.whitelist")
-    public static void permPlotWhitelistRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() == 0)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
 
@@ -176,7 +150,7 @@ public class CommandsAssistant extends Commands {
         String flagName = args.get(0);
 
         if(Flag.flagsForWhitelist.contains(flagName))
-            res.startSelection(flagName, true, false);
+            res.startBlockSelection(flagName, false);
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
 

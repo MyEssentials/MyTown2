@@ -109,9 +109,7 @@ public class RanksConfig {
                     Rank.theDefaultRank = w.name;
                 if(w.isSuperRank)
                     Rank.theMayorDefaultRank = w.name;
-                MyTown.instance.log.info("Setting rank " + w.name);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

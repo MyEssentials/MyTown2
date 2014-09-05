@@ -91,7 +91,7 @@ public class CommandsEveryone extends Commands{
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?   TODO Bit-shift the coords?
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.positionError"));
 
-        Resident res = getDatasource().getOrMakeResident(player); // Attempt to get or make the Resident
+        Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
@@ -337,15 +337,7 @@ public class CommandsEveryone extends Commands{
             name = "whitelist",
             permission = "mytown.cmd.everyone.perm.plot.whitelist",
             parentName = "mytown.cmd.everyone.perm.plot")
-    public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.perm.plot.whitelist");
-    }
-
-    @CommandNode(
-            name = "add",
-            permission = "mytown.cmd.everyone.perm.plot.whitelist.add",
-            parentName = "mytown.cmd.everyone.perm.plot.whitelist")
-    public static void permPlotWhitelistAddCommand(ICommandSender sender, List<String> args) {
+    public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args) {
         if(args.size() == 0)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
 
@@ -353,32 +345,13 @@ public class CommandsEveryone extends Commands{
         Plot plot = getPlotAtResident(res);
         String flagName = args.get(0);
 
-        if(Flag.flagsForWhitelist.contains(flagName))
-            res.startSelection(flagName, false, true);
+        if(Flag.flagsForWhitelist.contains(flagName)) {
+            res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
+            res.startBlockSelection(flagName, true);
+        }
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
     }
-
-    @CommandNode(
-            name = "remove",
-            permission = "mytown.cmd.everyone.perm.plot.whitelist.remove",
-            parentName = "mytown.cmd.everyone.perm.plot.whitelist")
-    public static void permPlotWhitelistRemoveCommand(ICommandSender sender, List<String> args) {
-        if(args.size() == 0)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Plot plot = getPlotAtResident(res);
-        String flagName = args.get(0);
-
-        if(Flag.flagsForWhitelist.contains(flagName))
-            res.startSelection(flagName, true, true);
-        else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
-
-    }
-
-
 
     @CommandNode(
             name = "plot",
@@ -451,25 +424,8 @@ public class CommandsEveryone extends Commands{
             parentName = "mytown.cmd.everyone.plot")
     public static void plotSelectCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if(args.size() == 0) {
-            ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
-            selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
-            NBTTagList lore = new NBTTagList();
-            lore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_PLOT));
-            lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
-            selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
-
-            EntityPlayer player = (EntityPlayer) sender;
-
-            boolean ok = !player.inventory.hasItemStack(selectionTool);
-            boolean result = false;
-            if (ok) {
-                result = player.inventory.addItemStackToInventory(selectionTool);
-            }
-            if (result) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.plot.start");
-            } else if (ok) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.cmd.err.plot.start.failed");
-            }
+            Resident res = getDatasource().getOrMakeResident(sender);
+            res.startPlotSelection();
         } else {
             callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot.select");
         }
