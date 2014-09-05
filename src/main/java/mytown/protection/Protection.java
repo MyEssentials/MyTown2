@@ -95,8 +95,6 @@ public abstract class Protection {
         return false;
     }
 
-
-
     /**
      * Checks the tile entity and returns whether or not the te was destroyed
      *

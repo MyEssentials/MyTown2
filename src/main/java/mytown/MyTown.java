@@ -133,6 +133,7 @@ public class MyTown {
 
         FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
         MinecraftForge.EVENT_BUS.register(Protections.instance);
+        FMLCommonHandler.instance().bus().register(Protections.instance);
         //MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
     }
 

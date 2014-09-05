@@ -20,6 +20,7 @@ import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
 
@@ -54,6 +55,7 @@ public class VanillaProtection extends Protection {
         // If the flag "mobs" is set to "none"
         this.anyEntity.add(EntityLivingBase.class);
 
+        this.trackedEntities.add(EntityPlayer.class);
         // Hi, my name is TNT
         //this.anyEntity.add(EntityTNTPrimed.class);
 
@@ -82,6 +84,8 @@ public class VanillaProtection extends Protection {
         this.activatedBlocks.add(Blocks.wooden_door);
         //this.activatedBlocks.add(Blocks.);
         this.activatedBlocks.add(Blocks.fence_gate);
+
+        isHandlingEvents = true;
     }
 
     @SuppressWarnings("unchecked")
@@ -131,6 +135,11 @@ public class VanillaProtection extends Protection {
         return false;
     }
 
+    @Override
+    public boolean hasToCheckEntity(Entity e) {
+        return super.hasToCheckEntity(e) || e instanceof EntityPlayer;
+    }
+
     /* ---- EventHandlers ---- */
 
 
@@ -139,6 +148,4 @@ public class VanillaProtection extends Protection {
     public void onPlayerOpenContainer(PlayerOpenContainerEvent ev) {
         //TODO: To be implemented... maybe
     }
-
-
 }

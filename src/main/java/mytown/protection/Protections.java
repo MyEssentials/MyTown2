@@ -63,7 +63,7 @@ public class Protections {
     public void tick(TickEvent.WorldTickEvent ev) {
         // Checking the checked maps (check-ception?)
         if(ticker == 0) {
-            MyTown.instance.log.info("Updating check maps.");
+            //MyTown.instance.log.info("Updating check maps.");
             for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
                 entry.setValue(false);
             }
@@ -83,8 +83,11 @@ public class Protections {
                     if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
                         if(!(entity instanceof EntityPlayer)) {
                             MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
+                            checkedEntities.remove(entity);
+                            entity.setDead();
                         } else {
                             MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
+                            checkedEntities.put(entity, false);
                         }
                     } else {
                         checkedEntities.put(entity, true);
