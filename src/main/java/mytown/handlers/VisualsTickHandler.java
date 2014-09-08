@@ -63,8 +63,13 @@ public class VisualsTickHandler {
     }
 
     public void markBlock(int x, int y, int z, int dim) {
+        for(BlockCoords block : markedBlocks) {
+            if(block.x == x && block.y == y && block.z == z && block.dim == dim)
+                return;
+        }
         markedBlocks.add(new BlockCoords(x, y, z, dim));
     }
+
 
     public boolean unmarkBlock(int x, int y, int z, int dim) {
         if (markedBlocks.size() == 0)

@@ -11,9 +11,15 @@ public class ModProxies {
     private static boolean loaded = false;
 
     private ModProxies() {
+
     }
 
     public static void load() {
+
+        MyTown.instance.log.info("Starting proxies...");
+
+        proxies.add(new IC2Proxy());
+
         if (!ModProxies.loaded) {
             ModProxies.loaded = true;
             MyTown.instance.config.getCategory("modproxies").setComment("Holds the enable state of the different ModProxies.\nModProxies handle interaction with other mods.\nIf a mod interaction causes issues, just set it to false.");
@@ -21,9 +27,11 @@ public class ModProxies {
 
         // Load ModProxies
         for (ModProxy p : ModProxies.proxies) {
-            if ((p.getModID() != null && !Loader.isModLoaded(p.getName())) || !MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
+            /*
+            if (p.getModID() == null || !Loader.isModLoaded(p.getName())) {// || !MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
                 continue;
             }
+            */
             p.load();
         }
     }

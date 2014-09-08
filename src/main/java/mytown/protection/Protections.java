@@ -47,17 +47,19 @@ public class Protections {
 
         MyTown.instance.log.info("Protections initializing started...");
         protections = new ArrayList<Protection>();
-        protections.add(new VanillaProtection());
-
         checkedTileEntities = new HashMap<TileEntity, Boolean>();
         checkedEntities = new HashMap<Entity, Boolean>();
+        addProtection(new VanillaProtection());
+    }
 
-        for(Protection prot : protections) {
-            if(prot.isHandlingEvents) {
-                MinecraftForge.EVENT_BUS.register(prot);
-            }
+    public void addProtection(Protection prot) {
+        protections.add(prot);
+
+        if(prot.isHandlingEvents) {
+            MinecraftForge.EVENT_BUS.register(prot);
         }
     }
+
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent ev) {

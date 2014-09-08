@@ -123,18 +123,11 @@ public abstract class Protection {
         return trackedEntities.contains(e.getClass()) || hostileEntities.contains(e.getClass()) || anyEntity.contains(e.getClass());
     }
 
-
-    /* ---- Proxy ---- */
-    protected ModProxy proxy;
-    public void setProxy(ModProxy proxy) {
-        this.proxy = proxy;
-    }
-    public ModProxy getProxy() {
-        return proxy;
-    }
-
     /* ---- Helpers ---- */
     protected MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
+    }
+    protected static Town getTownFromEntity(Entity entity) {
+        return  Town.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
     }
 }
