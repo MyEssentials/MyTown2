@@ -140,9 +140,13 @@ public abstract class MyTownDatasource {
         saveFlag(new Flag<Boolean>("breakBlocks", false), town);
         saveFlag(new Flag<Boolean>("explosions", false), town);
         saveFlag(new Flag<Boolean>("accessBlocks", false), town);
-        saveFlag(new Flag<Boolean>("pickup", true), town);
+        saveFlag(new Flag<Boolean>("activateBlocks", false), town);
+        saveFlag(new Flag<Boolean>("useItems", false), town);
+        saveFlag(new Flag<Boolean>("pickupItems", true), town);
         saveFlag(new Flag<Boolean>("enter", true), town);
         saveFlag(new Flag<String>("mobs", "all"), town);
+        saveFlag(new Flag<Boolean>("attackEntities", false), town);
+        saveFlag(new Flag<Boolean>("placeBlocks", false), town);
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;

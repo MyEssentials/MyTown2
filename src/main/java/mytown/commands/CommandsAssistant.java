@@ -141,7 +141,7 @@ public class CommandsAssistant extends Commands {
             name = "whitelist",
             permission = "mytown.cmd.assistant.perm.town.whitelist",
             parentName = "mytown.cmd.assistant.perm.town")
-    public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if(args.size() == 0)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
 
@@ -150,7 +150,7 @@ public class CommandsAssistant extends Commands {
         String flagName = args.get(0);
 
         if(Flag.flagsForWhitelist.contains(flagName))
-            res.startBlockSelection(flagName, false);
+            res.startBlockSelection(flagName, town.getName(), false);
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
 

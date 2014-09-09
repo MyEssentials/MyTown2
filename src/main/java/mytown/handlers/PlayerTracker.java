@@ -7,6 +7,7 @@ import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.protection.Protection;
@@ -150,7 +151,7 @@ public class PlayerTracker {
                 }
                 System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
             } else if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
-
+                town = MyTownUniverse.getInstance().getTownsMap().get(Utils.getTownNameFromLore(ev.entityPlayer));
                 if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT)) {
                     Plot plot = town.getPlotAtResident(res);
                     if(!plot.isCoordWithin(ev.world.provider.dimensionId, ev.x, ev.y, ev.z) && plot.hasOwner(res)) {

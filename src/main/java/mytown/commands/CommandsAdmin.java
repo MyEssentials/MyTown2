@@ -10,6 +10,7 @@ import mytown.core.utils.config.ConfigProcessor;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.flag.Flag;
 import mytown.handlers.SafemodeHandler;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -186,7 +187,7 @@ public class CommandsAdmin extends Commands {
             name = "purge",
             permission = "mytown.adm.cmd.db.purge",
             parentName = "mytown.adm.cmd.db")
-    public static void dbCommand(ICommandSender sender, List<String> args) {
+    public static void dbCommandPurge(ICommandSender sender, List<String> args) {
         for(Iterator<Town> it = getUniverse().getTownsMap().values().iterator(); it.hasNext(); ) {
             getDatasource().deleteTown(it.next());
         }
@@ -197,7 +198,80 @@ public class CommandsAdmin extends Commands {
         res.sendMessage(getLocal().getLocalization("mytown.notification.db.purging"));
     }
 
+    @CommandNode(
+            name = "perm",
+            permission = "mytown.adm.cmd.perm",
+            parentName = "mytown.adm.cmd")
+    public static void permCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.perm");
+    }
 
+    @CommandNode(
+            name = "list",
+            permission = "mytown.adm.cmd.perm.list",
+            parentName = "mytown.adm.cmd.perm")
+    public static void permListCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1) {
+            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.list"));
+        }
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromName(args.get(0));
+
+        String formattedFlagList = null;
+        for (Flag flag : town.getFlags()) {
+            if (formattedFlagList == null) {
+                formattedFlagList = "";
+            } else {
+                formattedFlagList += '\n';
+            }
+            formattedFlagList += flag;
+        }
+        if(formattedFlagList != null)
+            res.sendMessage(formattedFlagList);
+        else
+            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
+    }
+
+    @CommandNode(
+            name = "set",
+            permission = "mytown.adm.cmd.perm.set",
+            parentName = "mytown.adm.cmd.perm")
+    public static void permSetCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 3) {
+            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.set"));
+        }
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromName(args.get(0));
+        Flag flag = getFlagFromTown(town, args.get(1));
+
+        if (flag.setValueFromString(args.get(2))) {
+            // Should be okay if it's the same :/
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(1), args.get(2));
+        } else
+            // Same here
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(2)));
+        getDatasource().saveFlag(flag, town);
+
+    }
+
+    @CommandNode(
+            name = "whitelist",
+            permission = "mytown.adm.cmd.perm.whitelist",
+            parentName = "mytown.adm.cmd.perm")
+    public static void permWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        if(args.size() < 2)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromName(args.get(0));
+        String flagName = args.get(1);
+
+        if(Flag.flagsForWhitelist.contains(flagName))
+            res.startBlockSelection(flagName, town.getName(), false);
+        else
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
+    }
 
 
 
