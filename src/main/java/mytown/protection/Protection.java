@@ -5,6 +5,7 @@ import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.mod.ModProxy;
+import mytown.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
@@ -55,6 +56,14 @@ public abstract class Protection {
      */
     public List<net.minecraft.block.Block> activatedBlocks;
 
+    /**
+     * The list of types of blocks that are affected by the "explosions" flag
+     */
+    public List<Class<? extends Entity>> explosiveBlocks;
+
+    //TODO: Map for place check outside towns
+    //public Map<Class<? extends Block>>
+
     public boolean isHandlingEvents;
 
     public Protection() {
@@ -65,6 +74,7 @@ public abstract class Protection {
         trackedTileEntities = new ArrayList<Class<? extends TileEntity>>();
         trackedEntities = new ArrayList<Class<? extends Entity>>();
         activatedBlocks = new ArrayList<net.minecraft.block.Block>();
+        explosiveBlocks = new ArrayList<Class<? extends Entity>>();
         isHandlingEvents = false;
     }
     /**
@@ -76,7 +86,7 @@ public abstract class Protection {
      */
     @SuppressWarnings("unchecked")
     public boolean checkEntity(Entity entity) {
-        Town town = Town.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+        Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
         if(town == null)
             return false;
 
@@ -92,6 +102,16 @@ public abstract class Protection {
                 return true;
             }
         }
+
+        Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "explosions");
+
+        if(!explosionsFlag.getValue()) {
+            if(explosiveBlocks.contains(entity.getClass())) {
+                return true;
+            }
+        }
+
+
         return false;
     }
 
@@ -120,14 +140,12 @@ public abstract class Protection {
      * @return
      */
     public boolean hasToCheckEntity(Entity e) {
-        return trackedEntities.contains(e.getClass()) || hostileEntities.contains(e.getClass()) || anyEntity.contains(e.getClass());
+        return trackedEntities.contains(e.getClass()) || hostileEntities.contains(e.getClass()) || anyEntity.contains(e.getClass()) || explosiveBlocks.contains(e.getClass());
     }
 
     /* ---- Helpers ---- */
     protected MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
-    protected static Town getTownFromEntity(Entity entity) {
-        return  Town.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-    }
+
 }

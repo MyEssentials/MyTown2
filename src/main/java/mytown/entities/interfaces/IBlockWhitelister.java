@@ -8,8 +8,5 @@ import mytown.entities.Town;
  * If somebody comes up with a better name please change xD
  */
 public interface IBlockWhitelister {
-
     boolean startBlockSelection(String flagName, boolean inPlot);
-    boolean select(int dim, int x, int y, int z, Plot plot);
-    boolean select(int dim, int x, int y, int z, Town town);
 }

@@ -6,6 +6,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
 import mytown.MyTown;
 import mytown.core.Localization;
 import mytown.entities.*;
@@ -18,6 +19,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -77,10 +79,12 @@ public class Protections {
             ticker--;
         }
 
+
         // Why does it return only a generic List? :S
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
             for (Protection prot : protections) {
+                //MyTown.instance.log.info("Checking entity: " + entity.toString());
                 if (prot.hasToCheckEntity(entity)) {
                     if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
                         if(!(entity instanceof EntityPlayer)) {
@@ -305,6 +309,7 @@ public class Protections {
     }
     */
 
+
     private int counter = 0;
 
     @SuppressWarnings("unchecked")
@@ -330,6 +335,32 @@ public class Protections {
             }
         }
     }
+
+    /*
+    @SuppressWarnings("unchecked")
+    @SubscribeEvent
+    public void onSpawn(EntityJoinWorldEvent ev) {
+        if(DatasourceProxy.getDatasource() == null)
+            return;
+        Block block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.entity.chunkCoordX, ev.entity.chunkCoordZ);
+        if(block == null)
+            return;
+        for(Protection prot : protections) {
+            Flag<String> mobsFlag = block.getTown().getFlagAtCoords(ev.world.provider.dimensionId, (int) ev.entity.posX, (int) ev.entity.posY, (int) ev.entity.posZ, "mobs");
+            if (mobsFlag.getValue().equals("all")) {
+                if (!(ev.entity instanceof EntityPlayer)) {
+                    ev.setCanceled(true);
+                    return;
+                }
+            } else if (mobsFlag.getValue().equals("hostiles")) {
+                if (prot.hostileEntities.contains(ev.entity.getClass())) {
+                    ev.setCanceled(true);
+                    return;
+                }
+            }
+        }
+    }
+    */
 
 
 

@@ -403,6 +403,11 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     public void respawnPlayer() {
+
+        if(getSelectedTown() != null) {
+            getSelectedTown().sendToSpawn(this);
+            return;
+        }
         ChunkCoordinates spawn = player.getBedLocation(player.dimension);
         if(spawn == null)
             spawn = player.worldObj.getSpawnPoint();
@@ -490,12 +495,12 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     @Override
-    public boolean makePlotFromSelection(String plotName) {
+    public Plot makePlotFromSelection(String plotName) {
         // TODO: Check everything separately or throw exceptions?
 
         if (!secondSelectionActive || !firstSelectionActive || (Math.abs(selectionX1 - selectionX2) < Plot.minX || Math.abs(selectionY1 - selectionY2) < Plot.minY || Math.abs(selectionZ1 - selectionZ2) < Plot.minZ) && !(selectedTown instanceof AdminTown)) {
             resetSelection();
-            return false;
+            return null;
         }
 
         int x1 = selectionX1, x2 = selectionX2, y1 = selectionY1, y2 = selectionY2, z1 = selectionZ1, z2 = selectionZ2;
@@ -525,7 +530,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
                     if (!getDatasource().hasBlock(selectionDim, lastX, lastZ, true, selectionTown)) {
                         System.out.println("Outside town boundaries");
                         resetSelection();
-                        return false;
+                        return null;
                     }
                 }
                 for (int k = y1; k <= y2; k++) {
@@ -533,21 +538,17 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
                         System.out.println("Inside another plot" + selectionTown.getPlotAtCoords(selectionDim, i, k, j) + "\n" + i + " " + k + " " + j);
                         System.out.println("For selection: " + x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2);
                         resetSelection();
-                        return false;
+                        return null;
                     }
                 }
             }
         }
 
-        Plot plot = new Plot(plotName, selectionTown, selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2);
+        Plot plot = DatasourceProxy.getDatasource().newPlot(plotName, selectionTown, selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2);
 
-        if(!getDatasource().savePlot(plot))
-            return false;
-
-        getDatasource().linkResidentToPlot(this, plot, true);
         player.setCurrentItemOrArmor(0, null);
         resetSelection();
-        return true;
+        return plot;
     }
 
     @Override
@@ -587,7 +588,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * Assists in selecting a plot...
-     * Called by commands.. it's throwing RuntimeExceptions that are supposed to be catched by commands.
      *
      * @param flagName
      * @return
@@ -607,48 +607,8 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return player.inventory.addItemStackToInventory(selectionTool);
     }
 
-    @Override
-    public boolean select(int dim, int x, int y, int z, Plot plot) {
-
-        String whitelisterFlagName = getFlagNameFromLore();
-        player.setCurrentItemOrArmor(0, null);
-        BlockWhitelist bw = plot.getTown().getBlockWhitelist(dim, x, y, z, whitelisterFlagName, plot.getDb_ID());
-        if(bw == null) {
-            bw = new BlockWhitelist(dim, x, y, z, whitelisterFlagName, plot.getDb_ID());
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.added"));
-            return getDatasource().saveBlockWhitelist(bw, plot.getTown());
-        } else {
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.removed"));
-            return getDatasource().deleteBlockWhitelist(bw, plot.getTown());
-        }
-    }
-
-    @Override
-    public boolean select(int dim, int x, int y, int z, Town town) {
-
-        String whitelisterFlagName = getFlagNameFromLore();
-        player.setCurrentItemOrArmor(0, null);
-        BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, whitelisterFlagName, 0);
-        if(bw == null) {
-            bw = new BlockWhitelist(dim, x, y, z, whitelisterFlagName, 0);
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
-            return getDatasource().saveBlockWhitelist(bw, town);
-        } else {
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
-            return getDatasource().deleteBlockWhitelist(bw, town);
-        }
-
-    }
 
 
-
-
-    private String getFlagNameFromLore() {
-        ItemStack currentStack = player.inventory.getCurrentItem();
-        NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-        String flagLore = lore.getStringTagAt(2); // Second in line
-        return flagLore.substring(8); // We use hacks in here
-    }
 
     private MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();

@@ -1,5 +1,7 @@
 package mytown.entities.interfaces;
 
+import mytown.entities.Plot;
+
 /**
  * Interface for selecting plots.
  *
@@ -15,7 +17,7 @@ public interface IPlotSelector {
 
     boolean isSecondPlotSelectionActive();
 
-    boolean makePlotFromSelection(String plotName);
+    Plot makePlotFromSelection(String plotName);
 
     void expandSelectionVert();
 

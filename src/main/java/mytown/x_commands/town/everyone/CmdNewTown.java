@@ -35,13 +35,15 @@ public class CmdNewTown extends CommandBase {
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?   TODO Bit-shift the coords?
             throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.newtown.positionError"));
 
-        Town town = getDatasource().newTown(args[0]); // Attempt to create the Town
-        if (town == null)
-            throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.newtown.failed"));
 
         Resident res = getDatasource().getOrMakeResident(player); // Attempt to get or make the Resident
         if (res == null)
             throw new CommandException("Failed to get or save resident"); // TODO Localize!
+
+        Town town = getDatasource().newTown(args[0], res); // Attempt to create the Town
+        if (town == null)
+            throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.newtown.failed"));
+
 
         Rank onCreationDefaultRank = null;
 

@@ -109,7 +109,6 @@ public class CommandsAdmin extends Commands {
                 res.sendMessage(getLocal().getLocalization("mytown.notification.town.deleted", s));
             }
         }
-
     }
 
     @CommandNode(

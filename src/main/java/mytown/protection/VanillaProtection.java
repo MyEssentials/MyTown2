@@ -7,6 +7,7 @@ import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
+import mytown.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
@@ -85,6 +86,10 @@ public class VanillaProtection extends Protection {
         //this.activatedBlocks.add(Blocks.);
         this.activatedBlocks.add(Blocks.fence_gate);
 
+        this.explosiveBlocks.add(EntityTNTPrimed.class);
+
+
+
         isHandlingEvents = true;
     }
 
@@ -92,7 +97,7 @@ public class VanillaProtection extends Protection {
     @Override
     public boolean checkEntity(Entity entity) {
         //TODO: Implement wilderness
-        Town town = Town.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+        Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
         if(town == null)
             return false;
 

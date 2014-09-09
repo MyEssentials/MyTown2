@@ -6,9 +6,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import forgeperms.api.ForgePermsAPI;
-import mytown.commands.CommandsAdmin;
-import mytown.commands.CommandsAssistant;
-import mytown.commands.CommandsEveryone;
+import mytown.commands.*;
 import mytown.core.utils.command.CommandManager;
 import mytown.entities.flag.Flag;
 import mytown.handlers.VisualsTickHandler;
@@ -29,10 +27,12 @@ import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
+import net.minecraft.command.ICommandSender;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 // TODO Add a way to safely reload
 // TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packaged with this. Maybe even make MyTown just DL them at runtime and inject them
@@ -108,9 +108,17 @@ public class MyTown {
      */
     private void registerCommands() {
 
-        CommandManager.registerCommands(CommandsEveryone.class);
-        CommandManager.registerCommands(CommandsAssistant.class);
+        Method m = null;
+        try {
+            m = Commands.class.getMethod("firstPermissionBreach", String.class, ICommandSender.class);
+        } catch (Exception e) {
+            log.info("Failed to get first permission breach method.");
+            e.printStackTrace();
+        }
+        CommandManager.registerCommands(CommandsEveryone.class, m);
+        CommandManager.registerCommands(CommandsAssistant.class, m);
         CommandManager.registerCommands(CommandsAdmin.class);
+        CommandManager.registerCommands(CommandsOutsider.class, m);
 
 
         /*

@@ -7,10 +7,7 @@ import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
-import mytown.entities.Block;
-import mytown.entities.Plot;
-import mytown.entities.Resident;
-import mytown.entities.Town;
+import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.protection.Protection;
 import mytown.protection.Protections;
@@ -18,6 +15,7 @@ import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.Formatter;
+import mytown.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -129,6 +127,8 @@ public class PlayerTracker {
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             Town town = res.getSelectedTown();
+            //TODO: Verify permission
+
             NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
             String description = lore.getStringTagAt(0);
 
@@ -153,20 +153,45 @@ public class PlayerTracker {
 
                 if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT)) {
                     Plot plot = town.getPlotAtResident(res);
-                    if(!plot.isCoordWithin(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                    if(!plot.isCoordWithin(ev.world.provider.dimensionId, ev.x, ev.y, ev.z) && plot.hasOwner(res)) {
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInPlot"));
                         return;
                     } else {
-                        res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, plot);
+                        // If plot is within the bounds of a plot then create or delete the blockwhitelist
+
+                        String whitelisterFlagName = Utils.getFlagNameFromLore(ev.entityPlayer);
+                        ev.entityPlayer.setCurrentItemOrArmor(0, null);
+                        BlockWhitelist bw = plot.getTown().getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, plot.getDb_ID());
+                        if(bw == null) {
+                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, plot.getDb_ID());
+                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.added"));
+                            DatasourceProxy.getDatasource().saveBlockWhitelist(bw, plot.getTown());
+                        } else {
+                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.removed"));
+                            DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, plot.getTown());
+                        }
+
                         ev.setCanceled(true);
                     }
                 } else if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN)){
-                    Town townAt = Town.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+                    Town townAt = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
                     if(town == null || town != townAt) {
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
                         return;
                     } else {
-                        res.select(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, townAt);
+                        // If town is found then create of delete the block whitelist
+
+                        String whitelisterFlagName = Utils.getFlagNameFromLore(ev.entityPlayer);
+                        ev.entityPlayer.setCurrentItemOrArmor(0, null);
+                        BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, 0);
+                        if(bw == null) {
+                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, 0);
+                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
+                            DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
+                        } else {
+                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
+                            DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
+                        }
                         ev.setCanceled(true);
                     }
                 }

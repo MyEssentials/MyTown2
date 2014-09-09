@@ -30,62 +30,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     /**
-     * Constructor that provides the minimal amount of entities and saves them to the datasource.
-     * (Ranks, Flags, etc...)
-     *
-     * @param name
-     * @param creator
-     */
-    public Town(String name, Resident creator) {
-        setName(name);
-
-        Rank onCreationDefaultRank = null;
-
-        // Setting spawn before saving
-        setSpawn(new Teleport(creator.getPlayer().dimension, (float)creator.getPlayer().posX, (float)creator.getPlayer().posY, (float)creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
-
-        // Saving town to database
-        if (!getDatasource().saveTown(this))
-            throw new CommandException("Failed to save Town"); // TODO Localize!
-
-        // Saving all ranks to database and town
-        for(String rankName : Rank.defaultRanks.keySet()) {
-            Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), this);
-
-            getDatasource().saveRank(rank, rankName.equals(Rank.theDefaultRank));
-
-            if(rankName.equals(Rank.theMayorDefaultRank)) {
-                onCreationDefaultRank = rank;
-            }
-        }
-
-
-        // Linking resident to town
-        if(!getDatasource().linkResidentToTown(creator, this, onCreationDefaultRank))
-            MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + getName());
-
-        //Claiming first block
-        Block block = getDatasource().newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, this);
-        // Saving block to db and town
-        getDatasource().saveBlock(block);
-
-        // Saving and adding all flags to the database
-        getDatasource().saveFlag(new Flag<Boolean>("enter", false), this);
-        getDatasource().saveFlag(new Flag<Boolean>("breakBlocks", false), this);
-        getDatasource().saveFlag(new Flag<Boolean>("explosions", false), this);
-        getDatasource().saveFlag(new Flag<Boolean>("accessBlocks", false), this);
-        getDatasource().saveFlag(new Flag<Boolean>("activateBlocks", false), this);
-        getDatasource().saveFlag(new Flag<Boolean>("useItems", false), this);
-        getDatasource().saveFlag(new Flag<Boolean>("pickupItems", true), this);
-        getDatasource().saveFlag(new Flag<Boolean>("enter", true), this);
-        getDatasource().saveFlag(new Flag<String>("mobs", "all"), this);
-        getDatasource().saveFlag(new Flag<Boolean>("attackEntities", false), this);
-        getDatasource().saveFlag(new Flag<Boolean>("placeBlocks", false), this);
-
-
-    }
-
-    /**
      * Returns the name of the Town
      *
      * @return
@@ -374,27 +318,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         if (plot == null) {
             return getFlag(flagName);
         }
-        MyTown.instance.log.info("Found plot and sending flag.");
         return plot.getFlag(flagName);
     }
-
-    /*
-    @SuppressWarnings("unchecked")
-    public boolean getFlagValue(int dim, int x, int y, int z, String flagName) {
-        Plot plot = getPlotAtCoords(dim, x, y, z);
-        if (plot == null) {
-            if(hasBlockWhitelist(dim, x, y, z, flagName, 0))
-                return true;
-            else
-                return ((Flag<Boolean>)getFlag(flagName)).getValue();
-        }
-        //MyTown.instance.log.info("Found plot and sending flag.");
-        if(hasBlockWhitelist(dim, x, y, z, flagName, plot.getDb_ID()))
-            return true && ;
-        else
-            return plot.getFlag(flagName);
-    }
-    */
 
     /* ---- IHasBlockWhitelists ---- */
 
@@ -583,10 +508,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return msg;
     }
 
-    protected MyTownDatasource getDatasource() {
-        return DatasourceProxy.getDatasource();
-    }
-
     /* ----- Comparable ----- */
 
     @Override
@@ -602,23 +523,4 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
         return -1;
     }
-
-
-    /**
-     * Returns the town at the specified position or null if nothing found.
-     *
-     * @param dim
-     * @param x
-     * @param z
-     * @return
-     */
-    public static Town getTownAtPosition(int dim, int x, int z) {
-        for(Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
-            if(town.isChunkInTown(dim, x, z)) {
-                return town;
-            }
-        }
-        return null;
-    }
-
 }

@@ -936,7 +936,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             for (Rank r : town.getRanks()) {
                 MyTownUniverse.getInstance().ranks.remove(r.getKey());
             }
-
+            for (Resident res : town.getResidents()) {
+                res.removeTown(town);
+            }
             // Remove the Town from the Map
             MyTownUniverse.getInstance().towns.remove(town.getName());
         } catch (SQLException e) {

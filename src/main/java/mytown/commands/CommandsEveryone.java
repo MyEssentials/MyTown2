@@ -38,30 +38,6 @@ public class CommandsEveryone extends Commands{
     }
 
     @CommandNode(
-            name = "info",
-            permission = "mytown.cmd.everyone.info",
-            parentName = "mytown.cmd")
-    public static void infoCommand(ICommandSender sender, List<String> args) {
-        List<Town> towns = new ArrayList<Town>();
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        if (args.size() < 1) {
-            towns.add(getTownFromResident(res));
-        } else {
-            if (args.get(0).equals("@a")) {
-                towns = new ArrayList<Town>(getUniverse().getTownsMap().values());
-                // TODO Sort
-            } else {
-                towns.add(getTownFromName(args.get(0)));
-            }
-        }
-
-        for (Town town : towns) {
-            res.sendMessage(town.getTownInfo());
-        }
-    }
-
-    @CommandNode(
             name = "leave",
             permission = "mytown.cmd.everyone.leave",
             parentName = "mytown.cmd")
@@ -78,63 +54,6 @@ public class CommandsEveryone extends Commands{
         }
     }
 
-    @CommandNode(
-            name = "new",
-            permission = "mytown.cmd.everyone.new",
-            parentName = "mytown.cmd")
-    public static void newTownCommand(ICommandSender sender, List<String> args) {
-        EntityPlayer player = (EntityPlayer) sender;
-        if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.newtown"));
-        if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.nameinuse", args.get(0)));
-        if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?   TODO Bit-shift the coords?
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.positionError"));
-
-        Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
-
-        Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
-        if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.failed"));
-
-        /*
-        // Moved to town constructor
-
-        Rank onCreationDefaultRank = null;
-
-        // Saving town to database
-        if (!getDatasource().saveTown(town))
-            throw new CommandException("Failed to save Town"); // TODO Localize!
-
-        // Saving all ranks to database and town
-        for(String rankName : Rank.defaultRanks.keySet()) {
-            Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);
-            getDatasource().saveRank(rank);
-            if(rankName.equals(Rank.theDefaultRank)) {
-                town.setDefaultRank(rank);
-            }
-            if(rankName.equals(Rank.theMayorDefaultRank)) {
-                onCreationDefaultRank = rank;
-            }
-        }
-
-        //Claiming first block
-        Block block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
-
-        // Saving block to db and town
-        getDatasource().saveBlock(block);
-
-        // Linking resident to town
-        if(!getDatasource().linkResidentToTown(res, town, onCreationDefaultRank))
-            MyTown.instance.log.error("Problem linking resident " + res.getPlayerName() + " to town " + town.getName());
-        */
-
-
-        // TODO Town Flags
-        // TODO Set Town spawn
-
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
-    }
 
     @CommandNode(
             name = "spawn",
@@ -191,69 +110,6 @@ public class CommandsEveryone extends Commands{
     }
 
     @CommandNode(
-            name = "map",
-            permission = "mytown.cmd.everyone.map",
-            parentName = "mytown.cmd")
-    public static void mapCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-        if (args.size() == 0) {
-            Formatter.sendMap(res);
-        } else {
-            res.setMapOn(ChatUtils.equalsOn(args.get(0)));
-        }
-    }
-
-    @CommandNode(
-            name = "accept",
-            permission = "mytown.cmd.everyone.accept",
-            parentName = "mytown.cmd")
-    public static void acceptCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-        List<Town> invites = getInvitesFromResident(res);
-        Town town;
-        if(args.size() == 0)
-            town = invites.get(0);
-        else
-            town = getTownFromName(args.get(0));
-
-        // Basically true only if player specifies a town that is not in its invites
-        if (!invites.contains(town))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
-
-        //TODO: Database stuff...
-        res.removeInvite(town);
-
-        // Notify everyone
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.accept", town.getName()));
-        town.notifyResidentJoin(res);
-
-        // Link Resident to Town
-        getDatasource().linkResidentToTown(res, town, town.getDefaultRank());
-    }
-
-    @CommandNode(
-            name = "refuse",
-            permission = "mytown.cmd.everyone.refuse",
-            parentName = "mytown.cmd")
-    public static void refuseCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-
-        List<Town> invites = getInvitesFromResident(res);
-        Town town;
-        if(args.size() == 0)
-            town = invites.get(0);
-        else
-            town = getTownFromName(args.get(0));
-        if (!invites.contains(town))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
-
-        // TODO: notify resident refused invite
-
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.refuse", town.getName()));
-        res.removeInvite(town.getName());
-    }
-
-    @CommandNode(
             name = "list",
             permission = "mytown.cmd.everyone.perm.town.list",
             parentName = "mytown.cmd.assistant.perm.town")
@@ -276,7 +132,6 @@ public class CommandsEveryone extends Commands{
         else
             res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
     }
-
 
     @CommandNode(
             name = "set",
@@ -391,9 +246,12 @@ public class CommandsEveryone extends Commands{
         }
 
         // This handles all the db stuff... Not sure if I should change :/
-        boolean result = res.makePlotFromSelection(plotName);
+        Plot plot = res.makePlotFromSelection(plotName);
 
-        if (result) {
+        if (plot != null) {
+            getDatasource().savePlot(plot);
+            getDatasource().linkResidentToPlot(res, plot, true);
+
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.plot.created");
         } else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.failed"));

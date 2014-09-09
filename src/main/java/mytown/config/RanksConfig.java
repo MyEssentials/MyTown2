@@ -39,23 +39,31 @@ public class RanksConfig {
             String mayorRank = "Mayor";
             String assistantRank = "Assistant";
             String residentRank = "Resident";
+            String outsiderRank = "Outsider";
             List<String> pMayor = new ArrayList<String>();
             List<String> pAssistant = new ArrayList<String>();
             List<String> pResident = new ArrayList<String>();
+            List<String> pOutsider = new ArrayList<String>();
 
             // Filling arrays
 
             for(String s : CommandManager.commandList.keySet()) {
                 if (s.startsWith("mytown.cmd")) {
                     pMayor.add(s);
-                    if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone")) {
+                    if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
                         pAssistant.add(s);
                     }
-                    if (s.startsWith("mytown.cmd.everyone")) {
+                    if (s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
                         pResident.add(s);
+                    }
+                    if(s.startsWith("mytown.cmd.outsider")) {
+                        pOutsider.add(s);
                     }
                 }
             }
+            pOutsider.add("mytown.cmd");
+            pResident.add("mytown.cmd");
+            pAssistant.add("mytown.cmd");
 
             // Sorting
 
@@ -69,17 +77,19 @@ public class RanksConfig {
             Rank.defaultRanks.put(assistantRank, pAssistant);
             Rank.defaultRanks.put(residentRank, pResident);
 
-
             Rank.theDefaultRank = residentRank;
             Rank.theMayorDefaultRank = mayorRank;
+
+            Rank.theOutsiderPerms = pOutsider;
 
 
             // Preparing to add them to JSON file
 
-            Wrapper[] wrappedObjects = new Wrapper[3];
-            wrappedObjects[0] = new Wrapper(mayorRank, pMayor, false, true);
-            wrappedObjects[1] = new Wrapper(assistantRank, pAssistant, false, false);
-            wrappedObjects[2] = new Wrapper(residentRank, pResident, true, false);
+            Wrapper[] wrappedObjects = new Wrapper[4];
+            wrappedObjects[0] = new Wrapper(mayorRank, pMayor, RankType.DefaultMayor);
+            wrappedObjects[1] = new Wrapper(assistantRank, pAssistant, RankType.Other);
+            wrappedObjects[2] = new Wrapper(residentRank, pResident, RankType.Default);
+            wrappedObjects[3] = new Wrapper(outsiderRank, pOutsider, RankType.Outsider);
 
             // Adding to JSON file
 
@@ -89,7 +99,6 @@ public class RanksConfig {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void readFile() {
@@ -103,12 +112,14 @@ public class RanksConfig {
                     if(!CommandManager.commandList.containsKey(s))
                         throw new RuntimeException("Permission node " + s + " does not exist!");
                 }
-
-                Rank.defaultRanks.put(w.name, w.permissions);
-                if(w.isDefault)
+                if(w.type != RankType.Outsider)
+                    Rank.defaultRanks.put(w.name, w.permissions);
+                if(w.type == RankType.Default)
                     Rank.theDefaultRank = w.name;
-                if(w.isSuperRank)
+                if(w.type == RankType.DefaultMayor)
                     Rank.theMayorDefaultRank = w.name;
+                if(w.type == RankType.Outsider)
+                    Rank.theOutsiderPerms = w.permissions;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,18 +127,22 @@ public class RanksConfig {
     }
 
 
+    private enum RankType {
+        Default,
+        DefaultMayor,
+        Outsider,
+        Other
+    }
 
     private class Wrapper {
         public String name;
-        public boolean isDefault;
-        public boolean isSuperRank;
+        public RankType type;
         public List<String> permissions;
 
-        public Wrapper(String name, List<String> permissions, boolean isDefault, boolean isSuperRank) {
+        public Wrapper(String name, List<String> permissions, RankType type) {
             this.name = name;
             this.permissions = permissions;
-            this.isDefault = isDefault;
-            this.isSuperRank = isSuperRank;
+            this.type = type;
         }
     }
 

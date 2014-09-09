@@ -15,6 +15,7 @@ import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.entities.Rank;
+import mytown.util.Utils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
@@ -50,6 +51,21 @@ public abstract class Commands {
         }
         return false;
     }
+
+    public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+        // Get its rank with the permissions
+        Rank rank = res.getTownRank(res.getSelectedTown());
+
+        if(rank == null) {
+            MyTown.instance.log.info("Did not find rank..." + permission);
+            return Rank.outsiderPermCheck(permission);
+        }
+        MyTown.instance.log.info("Found rank " + rank.getName() + permission);
+        return rank.hasPermissionOrSuperPermission(permission);
+    }
+
+    /* ---- HELPERS ---- */
 
     public static Town getTownFromResident(Resident res) {
         Town town = res.getSelectedTown();
@@ -125,7 +141,7 @@ public abstract class Commands {
     }
 
     public static Plot getPlotAtPosition(int dim, int x, int y, int z) {
-        Town town = Town.getTownAtPosition(dim, x >> 4, z >> 4);
+        Town town = Utils.getTownAtPosition(dim, x >> 4, z >> 4);
         if(town == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.blockNotInPlot"));
         Plot plot = town.getPlotAtCoords(dim, x, y, z);
@@ -133,7 +149,4 @@ public abstract class Commands {
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.blockNotInPlot"));
         return plot;
     }
-
-
-
 }
