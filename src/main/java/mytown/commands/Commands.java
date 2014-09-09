@@ -53,6 +53,10 @@ public abstract class Commands {
     }
 
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
+        // Since everybody should have permission to /t
+        if(permission.equals("mytown.cmd"))
+            return true;
+
         Resident res = getDatasource().getOrMakeResident(sender);
         // Get its rank with the permissions
         Rank rank = res.getTownRank(res.getSelectedTown());

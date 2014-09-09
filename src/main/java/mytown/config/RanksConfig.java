@@ -61,9 +61,6 @@ public class RanksConfig {
                     }
                 }
             }
-            pOutsider.add("mytown.cmd");
-            pResident.add("mytown.cmd");
-            pAssistant.add("mytown.cmd");
 
             // Sorting
 
