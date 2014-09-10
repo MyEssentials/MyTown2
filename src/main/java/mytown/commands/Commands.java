@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
 import mytown.core.Localization;
 import mytown.core.MyTownCore;
-import mytown.core.utils.command.CommandManager;
+import mytown.core.utils.command.*;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Block;
@@ -19,6 +19,7 @@ import mytown.util.Utils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,6 +68,36 @@ public abstract class Commands {
         }
         MyTown.instance.log.info("Found rank " + rank.getName() + permission);
         return rank.hasPermissionOrSuperPermission(permission);
+    }
+
+    public static void populateCompletionMap() {
+        MyTown.instance.log.info("Populating tab completion map...");
+        List<String> populator = new ArrayList<String>();
+        populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
+        populator.add("@a");
+        CommandCompletion.completionMap.put("townCompletionAndAll", populator);
+
+        populator = new ArrayList<String>();
+        populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
+        CommandCompletion.completionMap.put("townCompletion", populator);
+
+        populator = new ArrayList<String>();
+        for(Resident res : MyTownUniverse.getInstance().getResidentsMap().values()) {
+            populator.add(res.getPlayerName());
+        }
+        CommandCompletion.completionMap.put("residentCompletion", populator);
+
+        populator = new ArrayList<String>();
+        populator.addAll(Flag.flagValueTypes.keySet());
+        CommandCompletion.completionMap.put("flagCompletion", populator);
+
+        populator = new ArrayList<String>();
+        populator.addAll(Flag.flagsForWhitelist);
+        CommandCompletion.completionMap.put("flagCompletionWhitelist", populator);
+
+        populator = new ArrayList<String>();
+        populator.addAll(Rank.defaultRanks.keySet());
+        CommandCompletion.completionMap.put("rankCompletion", populator);
     }
 
     /* ---- HELPERS ---- */

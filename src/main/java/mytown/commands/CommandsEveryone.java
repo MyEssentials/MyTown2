@@ -58,7 +58,8 @@ public class CommandsEveryone extends Commands{
     @CommandNode(
             name = "spawn",
             permission = "mytown.cmd.everyone.spawn",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            completionKeys = {"townCompletion"})
     public static void spawnCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = null;
@@ -78,7 +79,8 @@ public class CommandsEveryone extends Commands{
     @CommandNode(
             name = "select",
             permission = "mytown.cmd.everyone.select",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            completionKeys = {"townCompletion"})
     public static void selectCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.select"));
@@ -136,7 +138,8 @@ public class CommandsEveryone extends Commands{
     @CommandNode(
             name = "set",
             permission = "mytown.cmd.everyone.perm.plot.set",
-            parentName = "mytown.cmd.everyone.perm.plot")
+            parentName = "mytown.cmd.everyone.perm.plot",
+            completionKeys = {"flagCompletion"})
     public static void permSetPlotCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
@@ -191,7 +194,8 @@ public class CommandsEveryone extends Commands{
     @CommandNode(
             name = "whitelist",
             permission = "mytown.cmd.everyone.perm.plot.whitelist",
-            parentName = "mytown.cmd.everyone.perm.plot")
+            parentName = "mytown.cmd.everyone.perm.plot",
+            completionKeys = {"flagCompletionWhitelist"})
     public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args) {
         if(args.size() == 0)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
@@ -352,7 +356,8 @@ public class CommandsEveryone extends Commands{
     @CommandNode(
             name = "owner",
             permission = "mytown.cmd.everyone.plot.add.owner",
-            parentName = "mytown.cmd.everyone.plot.add")
+            parentName = "mytown.cmd.everyone.plot.add",
+            completionKeys = {"residentCompletion"})
     public static void plotAddOwnerCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if(args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.plot.add"));
@@ -369,7 +374,8 @@ public class CommandsEveryone extends Commands{
     @CommandNode(
             name = "member",
             permission = "mytown.cmd.everyone.plot.add.member",
-            parentName = "mytown.cmd.everyone.plot.add")
+            parentName = "mytown.cmd.everyone.plot.add",
+            completionKeys = {"residentCompletion"})
     public static void plotAddMemberCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if(args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.plot.add"));

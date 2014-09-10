@@ -7,6 +7,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import forgeperms.api.ForgePermsAPI;
 import mytown.commands.*;
+import mytown.core.utils.command.CommandCompletion;
 import mytown.core.utils.command.CommandManager;
 import mytown.entities.flag.Flag;
 import mytown.handlers.VisualsTickHandler;
@@ -95,6 +96,7 @@ public class MyTown {
         SafemodeHandler.setSafemode(DatasourceProxy.start(config));
 
         CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
+        Commands.populateCompletionMap();
     }
 
     @EventHandler

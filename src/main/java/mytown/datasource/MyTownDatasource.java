@@ -136,7 +136,7 @@ public abstract class MyTownDatasource {
         saveBlock(block);
 
         // Saving and adding all flags to the database
-        saveFlag(new Flag<Boolean>("enter", false), town);
+        saveFlag(new Flag<Boolean>("enter", true), town);
         saveFlag(new Flag<Boolean>("breakBlocks", false), town);
         saveFlag(new Flag<Boolean>("explosions", false), town);
         saveFlag(new Flag<Boolean>("accessBlocks", false), town);

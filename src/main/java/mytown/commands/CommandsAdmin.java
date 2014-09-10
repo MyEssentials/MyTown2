@@ -65,7 +65,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "add",
             permission = "mytown.adm.cmd.add",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            completionKeys = {"residentCompletion", "townCompletion"})
     public static void addCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.add"));
@@ -94,7 +95,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "delete",
             permission = "mytown.adm.cmd.delete",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            completionKeys = {"townCompletion"})
     public static void deleteCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.delete.usage"));
@@ -142,7 +144,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "rem",
             permission = "mytown.adm.cmd.rem",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            completionKeys = {"residentCompletion", "townCompletion"})
     public static void remCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
@@ -235,7 +238,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "set",
             permission = "mytown.adm.cmd.perm.set",
-            parentName = "mytown.adm.cmd.perm")
+            parentName = "mytown.adm.cmd.perm",
+            completionKeys = {"flagCompletion"})
     public static void permSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 3) {
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.set"));
@@ -258,7 +262,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "whitelist",
             permission = "mytown.adm.cmd.perm.whitelist",
-            parentName = "mytown.adm.cmd.perm")
+            parentName = "mytown.adm.cmd.perm",
+            completionKeys = {"flagCompletionWhitelist"})
     public static void permWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if(args.size() < 2)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));

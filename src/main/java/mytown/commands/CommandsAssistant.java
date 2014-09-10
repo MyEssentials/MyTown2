@@ -87,7 +87,8 @@ public class CommandsAssistant extends Commands {
     @CommandNode(
             name = "invite",
             permission = "mytown.cmd.assistant.invite",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            completionKeys = {"residentCompletion"})
     public static void inviteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
@@ -121,7 +122,8 @@ public class CommandsAssistant extends Commands {
     @CommandNode(
             name = "set",
             permission = "mytown.cmd.assistant.perm.town.set",
-            parentName = "mytown.cmd.assistant.perm.town")
+            parentName = "mytown.cmd.assistant.perm.town",
+            completionKeys = "flagCompletion")
     public static void permSetTownCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
@@ -140,7 +142,8 @@ public class CommandsAssistant extends Commands {
     @CommandNode(
             name = "whitelist",
             permission = "mytown.cmd.assistant.perm.town.whitelist",
-            parentName = "mytown.cmd.assistant.perm.town")
+            parentName = "mytown.cmd.assistant.perm.town",
+            completionKeys = {"flagCompletionWhitelist"})
     public static void permTownWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if(args.size() == 0)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
@@ -159,7 +162,8 @@ public class CommandsAssistant extends Commands {
     @CommandNode(
             name = "promote",
             permission = "mytown.cmd.assistant.promote",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            completionKeys = {"residentCompletion", "rankCompletion"})
     public static void promoteCommand(ICommandSender sender, List<String> args) {
 
         // /t promote <user> <rank>
@@ -185,10 +189,11 @@ public class CommandsAssistant extends Commands {
     @CommandNode(
             name = "add",
             permission = "mytown.cmd.assistant.ranks.add",
-            parentName = "mytown.cmd.everyone.ranks")
+            parentName = "mytown.cmd.everyone.ranks",
+            completionKeys = {"-", "ranksCompletion"})
     public static void ranksAddCommand(ICommandSender sender, List<String> args) {
 
-        if (args.size() < 1)
+        if (args.size() < 2)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks"));
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
@@ -207,7 +212,8 @@ public class CommandsAssistant extends Commands {
     @CommandNode(
             name = "remove",
             permission = "mytown.cmd.assistant.ranks.remove",
-            parentName = "mytown.cmd.everyone.ranks")
+            parentName = "mytown.cmd.everyone.ranks",
+            completionKeys = {"rankCompletion"})
     public static void ranksRemoveCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 1)
