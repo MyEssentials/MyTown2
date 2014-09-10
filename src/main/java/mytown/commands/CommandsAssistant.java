@@ -71,7 +71,7 @@ public class CommandsAssistant extends Commands {
             getDatasource().deleteBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
         } else {
-            throw new CommandException("You cannot delete the Block containing the spawn point!");
+            throw new CommandException("§cYou cannot delete the Block containing the spawn point!");
         }
 
     }
@@ -100,7 +100,7 @@ public class CommandsAssistant extends Commands {
 
         target.addInvite(town);
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.invited", town.getName()));
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.sent", args.get(0)));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invite.sent", args.get(0)));
     }
 
     @CommandNode(

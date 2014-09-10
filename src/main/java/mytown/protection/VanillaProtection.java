@@ -116,11 +116,11 @@ public class VanillaProtection extends Protection {
                 Resident res = getDatasource().getOrMakeResident(entity);
                 if(!town.hasResident(res)) {
                     res.respawnPlayer();
-                    res.sendMessage("You have been moved because you can't access this place!");
+                    res.sendMessage("§cYou have been moved because you can't access this place!");
                     return true;
                 } else if(plot != null && !(plot.getResidents().contains(res) || plot.getOwners().contains(res))) {
                     res.respawnPlayer();
-                    res.sendMessage("You have been moved because you can't access this place!");
+                    res.sendMessage("§cYou have been moved because you can't access this place!");
                     return true;
                 }
             }

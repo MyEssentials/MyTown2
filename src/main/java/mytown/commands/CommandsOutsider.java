@@ -44,6 +44,25 @@ public class CommandsOutsider extends Commands {
     }
 
     @CommandNode(
+            name = "list",
+            permission = "mytown.cmd.outsider.list",
+            parentName = "mytown.cmd")
+    public static void listCommand(ICommandSender sender, List<String> args) {
+        //TODO: check if this works
+        Resident res = getDatasource().getOrMakeResident(sender);
+
+        String formattedTownList = null;
+        for(Town town : getUniverse().getTownsMap().values()) {
+            if(formattedTownList == null)
+                formattedTownList = town.toString();
+            else
+                formattedTownList += "\n" + town.toString();
+        }
+
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.list", formattedTownList));
+    }
+
+    @CommandNode(
             name = "new",
             permission = "mytown.cmd.outsider.new",
             parentName = "mytown.cmd")

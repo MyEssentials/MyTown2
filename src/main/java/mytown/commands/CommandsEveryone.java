@@ -220,22 +220,7 @@ public class CommandsEveryone extends Commands{
         callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot");
     }
 
-    @CommandNode(
-            name = "list",
-            permission = "mytown.cmd.everyone.plot.list",
-            parentName = "mytown.cmd")
-    public static void plotListCommand(ICommandSender sender, List<String> args) {
-        //TODO: check if this works
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
 
-        String formattedPlotsList = "";
-        for (Plot plot : town.getPlots()) {
-            formattedPlotsList += "\n";
-            formattedPlotsList += plot;
-        }
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.plots", town, formattedPlotsList);
-    }
 
     @CommandNode(
             name = "make",

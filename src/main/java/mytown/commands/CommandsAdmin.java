@@ -212,7 +212,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "list",
             permission = "mytown.adm.cmd.perm.list",
-            parentName = "mytown.adm.cmd.perm")
+            parentName = "mytown.adm.cmd.perm",
+            completionKeys = {"townCompletion"})
     public static void permListCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1) {
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.list"));
@@ -239,7 +240,7 @@ public class CommandsAdmin extends Commands {
             name = "set",
             permission = "mytown.adm.cmd.perm.set",
             parentName = "mytown.adm.cmd.perm",
-            completionKeys = {"flagCompletion"})
+            completionKeys = {"townCompletion", "flagCompletion"})
     public static void permSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 3) {
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.set"));
@@ -263,7 +264,7 @@ public class CommandsAdmin extends Commands {
             name = "whitelist",
             permission = "mytown.adm.cmd.perm.whitelist",
             parentName = "mytown.adm.cmd.perm",
-            completionKeys = {"flagCompletionWhitelist"})
+            completionKeys = {"townCompletion", "flagCompletionWhitelist"})
     public static void permWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if(args.size() < 2)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
