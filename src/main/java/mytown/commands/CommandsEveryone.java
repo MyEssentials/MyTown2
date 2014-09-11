@@ -88,7 +88,7 @@ public class CommandsEveryone extends Commands{
         Town town = getTownFromName(args.get(0));
         if (!town.hasResident(res))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.select.notpart", args.get(0)));
-        res.selectTown(town);
+        getDatasource().saveSelectedTown(res, town);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.select", args.get(0)));
     }
 

@@ -9,6 +9,7 @@ import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -378,6 +379,24 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             log.error("Failed to load a Block whitelist");
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean loadSelectedTowns() {
+        try {
+            PreparedStatement statement = prepare("SELECT * FROM " + prefix + "SelectedTown", true);
+            ResultSet rs = statement.executeQuery();
+
+            while(rs.next()) {
+                Resident res = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident"));
+                Town town = MyTownUniverse.getInstance().getTownsMap().get(rs.getString("townName"));
+                res.selectTown(town);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to load a town selection.");
             return false;
         }
         return true;
@@ -766,6 +785,31 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean saveSelectedTown(Resident res, Town town) {
+        try {
+            if(res.selectedTown == null) {
+                PreparedStatement statement = prepare("INSERT INTO " + prefix + "SelectedTown(resident, townName) VALUES(?, ?)", true);
+                statement.setString(1, res.getUUID().toString());
+                statement.setString(2, town.getName());
+                statement.executeUpdate();
+            } else {
+                PreparedStatement statement = prepare("UPDATE " + prefix + "SelectedTown SET townName=? WHERE resident=?", true);
+                statement.setString(1, town.getName());
+                statement.setString(2, res.getUUID().toString());
+                statement.executeUpdate();
+            }
+            res.selectTown(town);
+
+        } catch (SQLException e) {
+            log.error("Failed to save a town selection!");
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
     /* ----- Link ----- */
 
     @Override
@@ -938,6 +982,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             }
             for (Resident res : town.getResidents()) {
                 res.removeTown(town);
+                if(res.selectedTown == town)
+                    deleteSelectedTown(res);
             }
             // Remove the Town from the Map
             MyTownUniverse.getInstance().towns.remove(town.getName());
@@ -1062,21 +1108,36 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
-    /*
     @Override
-    public boolean deleteFlag(Flag flag, Town town) {
+    public boolean deleteSelectedTown(Resident res) {
         try {
-            PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
-            deleteFlagStatement.setString(1, flag.getName());
-            deleteFlagStatement.setString(2, town.getName());
-            deleteFlagStatement.execute();
+            PreparedStatement statement = prepare("DELETE FROM " + prefix + "SelectedTown WHERE resident=?", true);
+            statement.setString(1, res.getUUID().toString());
+            statement.executeUpdate();
 
-
-        } catch (SQLException e) {
-            log.error("Failed to delete flag %s!", e, flag.getName());
+            res.selectedTown = null;
+        } catch (Exception e) {
+            log.error("Failed to delete a town selection!");
+            return false;
         }
+        return true;
     }
-    */
+
+    /*
+        @Override
+        public boolean deleteFlag(Flag flag, Town town) {
+            try {
+                PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
+                deleteFlagStatement.setString(1, flag.getName());
+                deleteFlagStatement.setString(2, town.getName());
+                deleteFlagStatement.execute();
+
+
+            } catch (SQLException e) {
+                log.error("Failed to delete flag %s!", e, flag.getName());
+            }
+        }
+        */
     @Override
     public boolean removeRankPermission(Rank rank, String perm) {
         try {
@@ -1259,6 +1320,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(ID), " +
                 "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON UPDATE CASCADE ON DELETE CASCADE, " +
                 "FOREIGN KEY(flagName, townName) REFERENCES " + prefix + "TownFlags(name, townName) ON UPDATE CASCADE ON DELETE CASCADE)"));
+        updates.add(new DBUpdate("09.11.2014.1", "Add SelectedTown", "CREATE TABLE IF NOT EXISTS " + prefix +
+                "SelectedTown(" +
+                "resident CHAR(36), " +
+                "townName VARCHAR(50)," +
+                "PRIMARY KEY(resident), " +
+                "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE," +
+                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name))"));
     }
 
     /**

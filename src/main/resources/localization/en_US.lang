@@ -151,5 +151,5 @@ mytown.notification.town.added=§aYou have been added to town %s!
 mytown.notification.town.ranks.add=§3Rank %s has been added to town %s!
 mytown.notification.db.purging=§3The requested data-base files have been purged!
 mytown.notification.town.ranks.perm.remove=§aThe permission has been successfully §cremoved§a!
-mytown.notification.perm.whitelist.start=§3Right-Click a block to change his flag value, depending on what flag you choosed, that flag will be changed for the block you selected.\nShift & Right-Click to change the mode from §9Town§3 to §9Plot§3 or from §9Plot§3 to §9Town§3!
+mytown.notification.perm.whitelist.start=§3Right-Click a block to change his flag value, depending on what flag you choosed, that flag will be changed for the block you selected.\nShift § Right-Click to change the mode from §9Town§3 to §9Plot§3 or from §9Plot§3 to §9Town§3!
 

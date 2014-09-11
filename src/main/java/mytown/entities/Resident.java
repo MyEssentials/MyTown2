@@ -225,7 +225,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     /* ----- IHasTowns ----- */
 
     private List<Town> towns = new ArrayList<Town>();
-    private Town selectedTown = null;
+    public Town selectedTown = null;
 
     @Override
     public void addTown(Town town) {

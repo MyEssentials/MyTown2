@@ -38,16 +38,13 @@ public abstract class Commands {
         if(args.size() > 0) {
             for(String s : subCommands) {
                 String name = CommandManager.commandNames.get(s);
-                MyTown.instance.log.info("Found command " + s);
                 // Checking if name corresponds and if parent's corresponds
                 if(name.equals(args.get(0)) && CommandManager.getParentPermNode(s).equals(callersPermNode)) {
-                    MyTown.instance.log.info("Called " + s);
                     CommandManager.commandCall(s, sender, args.subList(1, args.size()));
                     return true;
                 }
             }
         } else {
-            MyTownCore.Instance.log.info("Nothing found...");
             // TODO: Give help
         }
         return false;
@@ -63,10 +60,8 @@ public abstract class Commands {
         Rank rank = res.getTownRank(res.getSelectedTown());
 
         if(rank == null) {
-            MyTown.instance.log.info("Did not find rank..." + permission);
             return Rank.outsiderPermCheck(permission);
         }
-        MyTown.instance.log.info("Found rank " + rank.getName() + permission);
         return rank.hasPermissionOrSuperPermission(permission);
     }
 

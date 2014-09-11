@@ -19,6 +19,7 @@ public class ModProxies {
         MyTown.instance.log.info("Starting proxies...");
 
         proxies.add(new IC2Proxy());
+        proxies.add(new ForgePermsProxy());
 
         if (!ModProxies.loaded) {
             ModProxies.loaded = true;
@@ -32,7 +33,9 @@ public class ModProxies {
                 continue;
             }
             */
-            p.load();
+            if(p.getModID() != null && Loader.isModLoaded(p.getModID())) {
+                p.load();
+            }
         }
     }
 

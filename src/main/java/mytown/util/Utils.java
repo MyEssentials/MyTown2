@@ -1,7 +1,6 @@
 package mytown.util;
 
 import mytown.datasource.MyTownDatasource;
-import mytown.datasource.MyTownUniverse;
 import mytown.entities.Block;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
@@ -9,6 +8,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
  * Created by AfterWind on 9/9/2014.
@@ -60,6 +67,45 @@ public class Utils {
         String flagLore = lore.getStringTagAt(3);
         return flagLore.substring(8);
     }
+
+    public static void saveUrl(final String filename, final String urlString)
+            throws IOException {
+        BufferedInputStream in = null;
+        FileOutputStream fout = null;
+        try {
+            in = new BufferedInputStream(new URL(urlString).openStream());
+            fout = new FileOutputStream(filename);
+
+            final byte data[] = new byte[1024];
+            int count;
+            while ((count = in.read(data, 0, 1024)) != -1) {
+                fout.write(data, 0, count);
+            }
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+            if (fout != null) {
+                fout.close();
+            }
+        }
+    }
+
+    public static void addFile(File file) {
+        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Class<?> sysclass = URLClassLoader.class;
+
+        try {
+            URL u = file.toURL();
+            Method method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
+            method.setAccessible(true);
+            method.invoke(sysloader, u);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+
 
     /**
      * Gets the datasource

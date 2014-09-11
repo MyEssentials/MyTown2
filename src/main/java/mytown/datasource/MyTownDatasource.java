@@ -235,7 +235,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists();
+        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns();
     }
 
     /**
@@ -300,6 +300,13 @@ public abstract class MyTownDatasource {
      * @return
      */
     protected abstract boolean loadBlockWhitelists();
+
+    /**
+     * Loads the selected towns
+     *
+     * @return
+     */
+    protected abstract boolean loadSelectedTowns();
 
     /* ----- Save ----- */
 
@@ -376,6 +383,14 @@ public abstract class MyTownDatasource {
      * @return
      */
     public abstract boolean saveBlockWhitelist(BlockWhitelist bw, Town town);
+
+    /**
+     * Saves a link of the town with the resident
+     *
+     * @param res
+     * @return
+     */
+    public abstract boolean saveSelectedTown(Resident res, Town town);
 
 
     /* ----- Link ----- */
@@ -536,6 +551,8 @@ public abstract class MyTownDatasource {
      * @return
      */
     public abstract boolean deleteBlockWhitelist(BlockWhitelist bw, Town town);
+
+    public abstract boolean deleteSelectedTown(Resident res);
 
     /**
      * Removes the permission node from the Rank

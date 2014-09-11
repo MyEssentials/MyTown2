@@ -314,7 +314,7 @@ public class CommandsAssistant extends Commands {
     }
 
     // Temporary here, might integrate in the methods
-    private static boolean checkNearby(int dim, int x, int z, Town town) {
+    protected static boolean checkNearby(int dim, int x, int z, Town town) {
         int[] dx = {1, 0, -1, 0};
         int[] dz = {0, 1, 0, -1};
 

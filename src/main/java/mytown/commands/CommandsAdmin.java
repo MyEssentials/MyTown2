@@ -7,6 +7,7 @@ import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.core.utils.config.ConfigProcessor;
+import mytown.entities.Block;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -279,6 +280,51 @@ public class CommandsAdmin extends Commands {
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
     }
 
+    @CommandNode(
+            name = "claim",
+            permission = "mytown.adm.cmd.claim",
+            parentName = "mytown.adm.cmd",
+            completionKeys = {"townCompletion"})
+    public static void claimCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.claim"));
+        EntityPlayer player = (EntityPlayer) sender;
+        Resident res = getDatasource().getOrMakeResident(player);
+        Town town = getTownFromName(args.get(0));
+
+        if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
+        if (CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.farClaim.unimplemented"));
+            //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+        Block block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+        if (block == null)
+            throw new CommandException("Failed to create Block"); // TODO Localize
+        getDatasource().saveBlock(block);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+    }
+
+    @CommandNode(
+            name = "unclaim",
+            permission = "mytown.adm.cmd.unclaim",
+            parentName = "mytown.adm.cmd")
+    public static void unclaimCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.claim"));
+
+        EntityPlayer pl = (EntityPlayer) sender;
+        Resident res = getDatasource().getOrMakeResident(pl);
+        Block block = getBlockAtResident(res);
+        Town town = block.getTown();
+
+        if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
+            getDatasource().deleteBlock(block);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
+        } else {
+            throw new CommandException("§cYou cannot delete the Block containing the spawn point!");
+        }
+
+    }
 
 
 }

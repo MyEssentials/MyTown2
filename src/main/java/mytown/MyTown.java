@@ -1,17 +1,20 @@
 package mytown;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import forgeperms.api.ForgePermsAPI;
+import forgeperms.api.IPermissionManager;
 import mytown.commands.*;
 import mytown.core.utils.command.CommandCompletion;
 import mytown.core.utils.command.CommandManager;
 import mytown.entities.flag.Flag;
 import mytown.handlers.VisualsTickHandler;
 import mytown.protection.Protections;
+import mytown.util.Utils;
 import mytown.x_commands.admin.CmdTownAdmin;
 import mytown.x_commands.town.CmdTown;
 import mytown.x_commands.town.info.CmdListTown;
@@ -29,6 +32,7 @@ import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
 import net.minecraft.command.ICommandSender;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -48,13 +52,16 @@ public class MyTown {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
+
         // Setup Loggers
         log = new Log(ev.getModLog());
-
+        downloadDependencies(ev);
         Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyTown/";
 
         // Read Configs
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
+
+
 
         ConfigProcessor.load(config, Config.class);
         LocalizationProxy.load();
@@ -78,7 +85,7 @@ public class MyTown {
         for (FMLInterModComms.IMCMessage msg : ev.getMessages()) {
             String[] keyParts = msg.key.split("|");
 
-            if (keyParts[0] == "datasource") {
+            if (keyParts[0].equals("datasource")) {
                 DatasourceProxy.imc(msg);
             }
         }
@@ -90,10 +97,10 @@ public class MyTown {
         registerCommands();
         // This needs to be after registerCommands... might want to move both methods...
         ranksConfig = new RanksConfig(new File(Constants.CONFIG_FOLDER, "DefaultRanks.json"));
-        ForgePermsAPI.permManager = new PermissionManager(); // temporary for testing, returns true all the time
+        registerPermissionHandler();
         // addDefaultPermissions();
         DatasourceProxy.setLog(log);
-        SafemodeHandler.setSafemode(DatasourceProxy.start(config));
+        SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
 
         CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
         Commands.populateCompletionMap();
@@ -131,6 +138,21 @@ public class MyTown {
         */
     }
 
+    private void registerPermissionHandler() {
+        ForgePermsAPI.permManager = new PermissionManager();
+        /*
+        try {
+            Class<?> c = Class.forName("forgeperms.ForgePerms");
+            Method m = c.getMethod("getPermissionManager");
+            ForgePermsAPI.permManager = (IPermissionManager)m.invoke(null);
+        } catch (Exception e) {
+            MyTown.instance.log.error("Failed to load ForgePerms. Currently not using ANY protection for commands usage!");
+            e.printStackTrace();
+
+        }
+        */
+    }
+
     /**
      * Registers all handlers (Event, etc)
      */
@@ -145,6 +167,32 @@ public class MyTown {
         MinecraftForge.EVENT_BUS.register(Protections.instance);
         FMLCommonHandler.instance().bus().register(Protections.instance);
         //MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
+    }
+
+    public void downloadDependencies(FMLPreInitializationEvent ev) {
+        File jdbc = new File(ev.getSourceFile().getAbsoluteFile().getParentFile().getAbsolutePath(), "/sqlite-jdbc-3.7.2.jar");
+        if(!jdbc.exists() || jdbc.isDirectory()) {
+            log.info("Downloading jdbc to " + jdbc.getAbsolutePath());
+            try {
+                Utils.saveUrl(jdbc.getAbsolutePath(), "https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.7.2.jar");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Utils.addFile(jdbc);
+
+        File reflectasm = new File(ev.getSourceFile().getAbsoluteFile().getParentFile().getAbsolutePath(), "/reflectasm-1.09.jar");
+        if(!reflectasm.exists() || reflectasm.isDirectory()) {
+            log.info("Downloading reflectasm to " + reflectasm.getAbsolutePath());
+            try {
+                Utils.saveUrl(reflectasm.getAbsolutePath(), "http://central.maven.org/maven2/com/esotericsoftware/reflectasm/reflectasm/1.09/reflectasm-1.09.jar");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Utils.addFile(reflectasm);
     }
 
     // ////////////////////////////
