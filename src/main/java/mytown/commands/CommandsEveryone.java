@@ -382,7 +382,7 @@ public class CommandsEveryone extends Commands{
         Resident res = getDatasource().getOrMakeResident(sender);
         Plot plot = getPlotAtResident(res);
 
-        res.sendMessage(plot.getPlotInfo());
+        res.sendMessage(Formatter.formatPlotInfo(plot));
     }
     @CommandNode(
             name = "delete",

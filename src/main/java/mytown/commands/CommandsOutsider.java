@@ -39,7 +39,7 @@ public class CommandsOutsider extends Commands {
         }
 
         for (Town town : towns) {
-            res.sendMessage(town.getTownInfo());
+            res.sendMessage(Formatter.formatTownInfo(town));
         }
     }
 

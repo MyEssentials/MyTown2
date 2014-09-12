@@ -474,40 +474,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         }
     }
 
-    /**
-     * Gets the String that is sent to the player using the proper format
-     *
-     * @return
-     */
-    public String getTownInfo() {
-        String msg;
-
-        String residentsString = null;
-        for(Resident res : residents.keySet()) {
-            if(residentsString == null)
-                residentsString = res.getPlayerName();
-            else
-                residentsString += ", " + res.getPlayerName();
-        }
-        if(residentsString == null)
-            residentsString = "";
-
-        String ranksString = null;
-        for(Rank rank : ranks) {
-            if(ranksString == null)
-                ranksString = rank.getName();
-            else
-                ranksString += ", " + rank.getName();
-        }
-        if(ranksString == null)
-            ranksString = "";
-
-
-        msg = String.format(Config.townInfoFormat, name, residents.size(), blocks.size(), plots.size(), residentsString, ranksString);
-
-        return msg;
-    }
-
     /* ----- Comparable ----- */
 
     @Override
