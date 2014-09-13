@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import com.google.common.base.Joiner;
+import mytown.MyTown;
 
 import java.util.*;
 
@@ -28,23 +29,47 @@ public class Rank {
         return name;
     }
 
-    public void addPermission(String permission) {
-        permissions.add(permission);
+    /**
+     * Adds permission to the list
+     *
+     * @param permission
+     * @return false if permission already exists, true otherwise
+     */
+    public boolean addPermission(String permission) {
+        return permissions.add(permission);
     }
 
     public void addPermissions(Collection<String> permissions) {
         this.permissions.addAll(permissions);
     }
 
-    public void removePermission(String permission) {
-        permissions.remove(permission);
+    /**
+     * Removes permission from the list
+     *
+     * @param permission
+     * @return false if permission doesn't exist, true otherwise
+     */
+    public boolean removePermission(String permission) {
+        return permissions.remove(permission);
     }
 
     public boolean hasPermission(String permission) {
         return permissions.contains(permission);
     }
 
-    public Collection<String> getPermissions() {
+    public boolean hasPermissionOrSuperPermission(String permission) {
+        if(hasPermission(permission))
+            return true;
+        for(String p : permissions) {
+            if(permission.contains(p)) {
+                MyTown.instance.log.info("Rank " + getName() + " doesn't contain " + permission + " but contains permission " + p);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<String> getPermissions() {
         return permissions;
     }
 
@@ -76,4 +101,20 @@ public class Rank {
     public static Map<String, List<String>> defaultRanks = new HashMap<String, List<String>>();
     public static String theDefaultRank;
     public static String theMayorDefaultRank; // ok not the best name
+    public static List<String> theOutsiderPerms = new ArrayList<String>();
+
+    public static boolean outsiderPermCheck(String permission) {
+        if(theOutsiderPerms.contains(permission)) {
+            MyTown.instance.log.info("Returning true since it has permission in the outsider list.");
+            return true;
+        }
+        for(String p : theOutsiderPerms) {
+            if(permission.contains(p)) {
+                MyTown.instance.log.info("Returning true since it has permission in the outsider list.");
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

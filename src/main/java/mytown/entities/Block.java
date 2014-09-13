@@ -87,7 +87,7 @@ public class Block implements IHasPlots {
     }
 
     @Override
-    public Plot getPlotAtCoord(int dim, int x, int y, int z) {
+    public Plot getPlotAtCoords(int dim, int x, int y, int z) {
         for (Plot plot : plots) {
             if (plot.isCoordWithin(dim, x, y, z)) {
                 return plot;

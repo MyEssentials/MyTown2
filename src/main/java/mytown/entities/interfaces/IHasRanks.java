@@ -2,6 +2,7 @@ package mytown.entities.interfaces;
 
 import com.google.common.collect.ImmutableList;
 import mytown.entities.Rank;
+import mytown.entities.Resident;
 
 /**
  * Created by joe on 7/18/14.
@@ -30,6 +31,22 @@ public interface IHasRanks {
     public boolean hasRank(Rank rank);
 
     /**
+     * Checks if the rank with the name specified exists
+     *
+     * @param rankName
+     * @return
+     */
+    public boolean hasRankName(String rankName);
+
+    /**
+     * Gets the rank with the name specified
+     *
+     * @param rankName
+     * @return
+     */
+    public Rank getRank(String rankName);
+
+    /**
      * Sets the default Rank for this entity
      *
      * @param rank
@@ -42,6 +59,15 @@ public interface IHasRanks {
      * @return
      */
     public Rank getDefaultRank();
+
+    /**
+     * Promotes the resident to the rank specified
+     *
+     * @param res
+     * @param rank
+     * @return
+     */
+    public boolean promoteResident(Resident res, Rank rank);
 
     /**
      * Returns the Collection of Ranks

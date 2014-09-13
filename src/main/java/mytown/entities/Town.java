@@ -1,10 +1,16 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import mytown.MyTown;
+import mytown.config.Config;
 import mytown.core.utils.teleport.Teleport;
+import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.Flag;
 import mytown.entities.interfaces.*;
+import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.*;
@@ -16,7 +22,7 @@ import java.util.*;
  *
  * @author Joe Goett
  */
-public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, Comparable<Town> {
+public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, IHasBlockWhitelists, Comparable<Town> {
     private String name, oldName = null;
 
     public Town(String name) {
@@ -88,6 +94,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public void removeResident(Resident res) {
+        for(Iterator<Plot> it = plots.iterator(); it.hasNext();) {
+            Plot plot = it.next();
+            if(plot.hasOwner(res) && plot.getOwners().size() <= 1) {
+                it.remove();
+            }
+        }
         residents.remove(res);
     }
 
@@ -163,13 +175,41 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
+    public boolean hasRankName(String rankName) {
+        for(Rank r : ranks) {
+            if(r.getName().equals(rankName))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Rank getRank(String rankName) {
+        for(Rank r : ranks) {
+            if(r.getName().equals(rankName))
+                return r;
+        }
+        return null;
+    }
+    @Override
+    public boolean promoteResident(Resident res, Rank rank) {
+        if(hasResident(res) && hasRank(rank)) {
+            residents.remove(res);
+            residents.put(res, rank);
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
     public ImmutableList<Rank> getRanks() {
         return ImmutableList.copyOf(ranks);
     }
 
     /* ----- IHasBlocks ----- */
 
-    private Map<String, Block> blocks = new Hashtable<String, Block>();
+    protected Map<String, Block> blocks = new Hashtable<String, Block>();
 
     @Override
     public void addBlock(Block block) {
@@ -221,9 +261,19 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public Plot getPlotAtCoord(int dim, int x, int y, int z) {
-        return getBlockAtCoords(dim, x >> 4, z >> 4).getPlotAtCoord(dim, x, y, z);
+    public Plot getPlotAtCoords(int dim, int x, int y, int z) {
+        for (Plot plot : plots) {
+            if (plot.isCoordWithin(dim, x, y, z)) {
+                return plot;
+            }
+        }
+        return null;
     }
+
+    public Plot getPlotAtResident(Resident res) {
+        return getPlotAtCoords(res.getPlayer().dimension, (int)res.getPlayer().posX, (int)res.getPlayer().posY, (int)res.getPlayer().posZ);
+    }
+
     /* ----- IHasFlags ------ */
 
     private List<Flag> flags = new ArrayList<Flag>();
@@ -253,6 +303,89 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
                 return flag;
         return null;
     }
+
+    /**
+     * Gets the flag on the specified coordinates. Returns town's flag if no plot is found.
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param flagName
+     * @return
+     */
+    public Flag getFlagAtCoords(int dim, int x, int y, int z, String flagName) {
+        Plot plot = getPlotAtCoords(dim, x, y, z);
+        if (plot == null) {
+            return getFlag(flagName);
+        }
+        return plot.getFlag(flagName);
+    }
+
+    /* ---- IHasBlockWhitelists ---- */
+
+    private List<BlockWhitelist> blockWhitelists = new ArrayList<BlockWhitelist>();
+
+    @Override
+    public void addBlockWhitelist(BlockWhitelist bw) {
+        blockWhitelists.add(bw);
+    }
+
+    @Override
+    public boolean hasBlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+        for(BlockWhitelist bw : blockWhitelists) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagName().equals(flagName) && bw.getPlotID() == plotID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasBlockWhitelist(BlockWhitelist bw) {
+        return blockWhitelists.contains(bw);
+    }
+
+    @Override
+    public void removeBlockWhitelist(BlockWhitelist bw) {
+        blockWhitelists.remove(bw);
+    }
+
+    @Override
+    public void removeBlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+        for(Iterator<BlockWhitelist> it = blockWhitelists.iterator(); it.hasNext();) {
+            BlockWhitelist bw = it.next();
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagName().equals(flagName) && bw.getPlotID() == plotID) {
+                it.remove();
+            }
+        }
+    }
+
+    @Override
+    public BlockWhitelist getBlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+        for(BlockWhitelist bw : blockWhitelists) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagName().equals(flagName) && bw.getPlotID() == plotID) {
+                return bw;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<BlockWhitelist> getWhitelists() {
+        return blockWhitelists;
+    }
+
+    /*
+    public boolean flagValueOfPossiblyWhitelisted(int dim, int x, int y, int z) {
+        if(!isPointInTown(dim, x >> 4, y >> 4)) {
+            return false;
+        } else {
+
+        }
+    }
+    */
+
+
     /* ----- Nation ----- */
 
     private Nation nation = null;
@@ -356,6 +489,4 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
         return -1;
     }
-
-
 }

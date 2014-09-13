@@ -19,18 +19,22 @@ public class Formatter {
     }
 
     public static String formatRanksToString(List<Rank> ranks) {
-        String rs = "";
+        String rs = null;
         for (Rank r : ranks) {
-            rs += r.getName(); // TODO Make pretty :p
+            String added = (r.getTown().getDefaultRank().equals(r) ? EnumChatFormatting.RED : EnumChatFormatting.GREEN) + r.getName() + EnumChatFormatting.WHITE;
+            if(rs == null)
+                rs = added;
+            else
+                rs += ", " + added;
         }
-        if (ranks.isEmpty()) {
+        if (rs == null) {
             rs = EnumChatFormatting.RED + "None";
         }
         return rs;
     }
 
     public static String formatBlockInfo(Block block) {
-        return String.format(Config.blockInfoFormat, block.getTown().getName(), block.getDim(), block.getCoordString());
+        return String.format(" ---------- Block ----------\nTown: %1$s\nDimension: %2$s\nLocation: %3$s", block.getTown().getName(), block.getDim(), block.getCoordString());
     }
 
     public static String formatNationInfo(Nation nation) {
@@ -38,7 +42,18 @@ public class Formatter {
     }
 
     public static String formatPlotInfo(Plot plot) {
-        return String.format(Config.plotInfoFormat, plot.getName(), plot.getTown().getName(), plot.getDim(), plot.getStartCoordString(), plot.getEndCoordString());
+        String residents = null;
+        for(Resident res : plot.getResidents()) {
+            String added = (plot.hasOwner(res) ? EnumChatFormatting.RED : EnumChatFormatting.WHITE) + res.getPlayerName() + EnumChatFormatting.WHITE;
+
+            if(residents == null)
+                residents = added;
+            else
+                residents += ", " + added;
+        }
+        residents += EnumChatFormatting.WHITE;
+        String position = String.format("(%s, %s, %s) --> (%s, %s, %s)", plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ());
+        return "Plot: " + plot.getName() + "\nResidents: " + residents + "\nBorders: " + position;
     }
 
     public static String formatRankInfo(Rank rank) {
@@ -46,13 +61,45 @@ public class Formatter {
     }
 
     public static String formatResidentInfo(Resident resident) {
-        return String.format(Config.residentInfoFormat, resident.getPlayerName());
+        String towns = null;
+        for(Town town : resident.getTowns()) {
+            String added = (resident.getSelectedTown().equals(town) ? EnumChatFormatting.RED : EnumChatFormatting.WHITE) + town.getName() + EnumChatFormatting.WHITE;
+            if(towns == null)
+                towns = added;
+            else
+                towns += ", " + added;
+        }
+        String format = EnumChatFormatting.WHITE + "Resident: %s" + EnumChatFormatting.WHITE + "\nTowns: %s" + EnumChatFormatting.WHITE;
+        return String.format(format, resident.getPlayerName(), towns);
     }
 
     public static String formatTownInfo(Town town) { // TODO Show spawn/home-block location?
-        List<String> residentNames = getResidentNameList(town.getResidents());
-        List<String> rankNames = getRankNameList(town.getRanks());
-        return String.format(Config.townInfoFormat, town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getPlots().size(), Joiner.on(", ").join(residentNames), Joiner.on(", ").join(rankNames));
+        String msg;
+
+        String residentsString = null;
+        for(Resident res : town.getResidents()) {
+            if(residentsString == null)
+                residentsString = res.getPlayerName();
+            else
+                residentsString += ", " + res.getPlayerName();
+        }
+        if(residentsString == null)
+            residentsString = "";
+
+        String ranksString = null;
+        for(Rank rank : town.getRanks()) {
+            if(ranksString == null)
+                ranksString = rank.getName();
+            else
+                ranksString += ", " + rank.getName();
+        }
+        if(ranksString == null)
+            ranksString = "";
+
+
+        msg = String.format(Config.townInfoFormat, town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getPlots().size(), residentsString, ranksString);
+
+        return msg;
     }
 
     public static void sendMap(Resident res, int dim, int cx, int cz) {

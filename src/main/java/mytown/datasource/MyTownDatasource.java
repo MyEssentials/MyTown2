@@ -1,10 +1,13 @@
 package mytown.datasource;
 
 import com.mojang.authlib.GameProfile;
+import mytown.MyTown;
 import mytown.api.events.*;
 import mytown.core.utils.Log;
+import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,13 +40,114 @@ public abstract class MyTownDatasource {
 
     /* ----- Create ----- */
 
+    // TODO: Delete this at one point
     /**
      * Creates and returns a new Town, or null if it couldn't be created
      *
      * @return The new Town, or null if it failed
      */
+    /*
     public final Town newTown(String name) {
         Town town = new Town(name);
+        if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
+            return null;
+        return town;
+    }
+    */
+
+    /**
+     * Creates and returns a new Town with basic entities saved to db, or null if it couldn't be created
+     *
+     * @return The new Town, or null if it failed
+     */
+    public final Town newTown(String name, Resident creator) {
+        Town town = new Town(name);
+
+        Rank onCreationDefaultRank = null;
+
+        // Setting spawn before saving
+        town.setSpawn(new Teleport(creator.getPlayer().dimension, (float)creator.getPlayer().posX, (float)creator.getPlayer().posY, (float)creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
+
+        // Saving town to database
+        if (!saveTown(town))
+            throw new CommandException("Failed to save Town"); // TODO Localize!
+
+        // Saving all ranks to database and town
+        for(String rankName : Rank.defaultRanks.keySet()) {
+            Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);
+
+            saveRank(rank, rankName.equals(Rank.theDefaultRank));
+
+            if(rankName.equals(Rank.theMayorDefaultRank)) {
+                onCreationDefaultRank = rank;
+            }
+        }
+
+        // Linking resident to town
+        if(!linkResidentToTown(creator, town, onCreationDefaultRank))
+            MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
+
+        //Claiming first block
+        Block block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
+        // Saving block to db and town
+        saveBlock(block);
+
+        // Saving and adding all flags to the database
+        saveFlag(new Flag<Boolean>("enter", false), town);
+        saveFlag(new Flag<Boolean>("breakBlocks", false), town);
+        saveFlag(new Flag<Boolean>("explosions", false), town);
+        saveFlag(new Flag<Boolean>("accessBlocks", false), town);
+        saveFlag(new Flag<Boolean>("activateBlocks", false), town);
+        saveFlag(new Flag<Boolean>("useItems", false), town);
+        saveFlag(new Flag<Boolean>("pickupItems", true), town);
+        saveFlag(new Flag<Boolean>("enter", true), town);
+        saveFlag(new Flag<String>("mobs", "all"), town);
+        saveFlag(new Flag<Boolean>("attackEntities", false), town);
+        saveFlag(new Flag<Boolean>("placeBlocks", false), town);
+
+        if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
+            return null;
+        return town;
+    }
+
+    /**
+     * Creates and returns a new AdminTown and fires event
+     *
+     * @param name
+     * @param creator
+     * @return
+     */
+    public final AdminTown newAdminTown(String name, Resident creator) {
+        AdminTown town = new AdminTown(name);
+
+        Rank onCreationDefaultRank = null;
+
+        // Setting spawn before saving
+        town.setSpawn(new Teleport(creator.getPlayer().dimension, (float)creator.getPlayer().posX, (float)creator.getPlayer().posY, (float)creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
+
+        // Saving town to database
+        if (!saveTown(town))
+            throw new CommandException("Failed to save Town"); // TODO Localize!
+
+
+        //Claiming first block
+        Block block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
+        // Saving block to db and town
+        saveBlock(block);
+
+        // Saving and adding all flags to the database
+        saveFlag(new Flag<Boolean>("enter", true), town);
+        saveFlag(new Flag<Boolean>("breakBlocks", false), town);
+        saveFlag(new Flag<Boolean>("explosions", false), town);
+        saveFlag(new Flag<Boolean>("accessBlocks", false), town);
+        saveFlag(new Flag<Boolean>("activateBlocks", false), town);
+        saveFlag(new Flag<Boolean>("useItems", false), town);
+        saveFlag(new Flag<Boolean>("pickupItems", true), town);
+        saveFlag(new Flag<Boolean>("enter", true), town);
+        saveFlag(new Flag<String>("mobs", "all"), town);
+        saveFlag(new Flag<Boolean>("attackEntities", false), town);
+        saveFlag(new Flag<Boolean>("placeBlocks", false), town);
+
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;
         return town;
@@ -114,12 +218,11 @@ public abstract class MyTownDatasource {
      * Creates and returns a new TownFlag or null if it couldn't be created
      *
      * @param name
-     * @param descriptionKey
      * @param value
      * @return the new TownFlag, or null if failed
      */
-    public final Flag newFlag(String name, String descriptionKey, Object value) {
-        Flag<Object> flag = new Flag<Object>(name, descriptionKey, value);
+    public final Flag newFlag(String name, Object value) {
+        Flag<Object> flag = new Flag<Object>(name, value);
         //TODO: Fire event
         return flag;
     }
@@ -132,7 +235,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadFlags();
+        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns();
     }
 
     /**
@@ -178,11 +281,32 @@ public abstract class MyTownDatasource {
     protected abstract boolean loadNations();
 
     /**
-     * Loads all the Flags
+     * Loads all the Flags for the Towns
      *
      * @return If it was successful
      */
-    protected  abstract  boolean loadFlags();
+    protected abstract boolean loadTownFlags();
+
+    /**
+     * Loads all the Flags for the Plots
+     *
+     * @return
+     */
+    protected abstract boolean loadPlotFlags();
+
+    /**
+     * Loads all the BlockWhitelists
+     *
+     * @return
+     */
+    protected abstract boolean loadBlockWhitelists();
+
+    /**
+     * Loads the selected towns
+     *
+     * @return
+     */
+    protected abstract boolean loadSelectedTowns();
 
     /* ----- Save ----- */
 
@@ -205,7 +329,7 @@ public abstract class MyTownDatasource {
      *
      * @return If it was successful
      */
-    public abstract boolean saveRank(Rank rank);
+    public abstract boolean saveRank(Rank rank, boolean isDefault);
 
     /**
      * Adds the permission node to the Rank
@@ -251,6 +375,23 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean saveFlag(Flag flag, Plot plot);
 
+    /**
+     * Saves the BlockWhitelist to the town
+     *
+     * @param bw
+     * @param town
+     * @return
+     */
+    public abstract boolean saveBlockWhitelist(BlockWhitelist bw, Town town);
+
+    /**
+     * Saves a link of the town with the resident
+     *
+     * @param res
+     * @return
+     */
+    public abstract boolean saveSelectedTown(Resident res, Town town);
+
 
     /* ----- Link ----- */
 
@@ -271,7 +412,7 @@ public abstract class MyTownDatasource {
      * @param town The Town to Unlink
      * @return If the unlink was successful
      */
-    public abstract boolean unlinkResidentToTown(Resident res, Town town);
+    public abstract boolean unlinkResidentFromTown(Resident res, Town town);
 
     /**
      * Updates the link between the Resident and the Town
@@ -280,7 +421,7 @@ public abstract class MyTownDatasource {
      * @param town the Town
      * @return If the link update was successful
      */
-    public abstract boolean updateResidentToTownLink(Resident res, Town town);
+    public abstract boolean updateResidentToTownLink(Resident res, Town town, Rank rank);
 
     /**
      * Links the Resident to the Town, setting the Rank of the Resident in the Town
@@ -298,7 +439,7 @@ public abstract class MyTownDatasource {
      * @param nation The Nation to Unlink
      * @return If the unlink was successful
      */
-    public abstract boolean unlinkTownToNation(Town town, Nation nation);
+    public abstract boolean unlinkTownFromNation(Town town, Nation nation);
 
     /**
      * Updates the link between the Town and Nation
@@ -308,6 +449,35 @@ public abstract class MyTownDatasource {
      * @return If the link update was successful
      */
     public abstract boolean updateTownToNationLink(Town town, Nation nation);
+
+    /**
+     * Links resident to plot as owner or not
+     *
+     * @param res
+     * @param plot
+     * @param isOwner
+     * @return
+     */
+    public abstract boolean linkResidentToPlot(Resident res, Plot plot, boolean isOwner);
+
+    /**
+     * Unlink the Resident from the Plot
+     *
+     * @param res
+     * @param plot
+     * @return
+     */
+    public abstract boolean unlinkResidentFromPlot(Resident res, Plot plot);
+
+    /**
+     * Updates the link between the Resident and the Plot
+     *
+     * @param res
+     * @param plot
+     * @param isOwner
+     * @return
+     */
+    public abstract boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner);
 
     /* ----- Delete ----- */
 
@@ -346,6 +516,8 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deletePlot(Plot plot);
 
+
+
     /**
      * Deletes the Nation
      *
@@ -353,12 +525,34 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deleteNation(Nation nation);
 
-    /*
-     * Deletes the Flag
+    // TODO: Decide whether or not we want these functions
+    /**
+     * Deletes the Flag from the given town
      *
      * @return If it was successful
      */
-    //public abstract boolean deleteFlag(TownFlag flag);
+    //public abstract boolean deleteFlag(Flag flag, Town town);
+
+    /**
+     * Deletes the Flag from the given plot
+     *
+     * @param flag
+     * @param plot
+     * @return
+     */
+    //public abstract boolean deleteFlag(Flag flag, Plot plot);
+
+
+    /**
+     * Deletes the BlockWhitelist from the given town
+     *
+     * @param bw
+     * @param town
+     * @return
+     */
+    public abstract boolean deleteBlockWhitelist(BlockWhitelist bw, Town town);
+
+    public abstract boolean deleteSelectedTown(Resident res);
 
     /**
      * Removes the permission node from the Rank
@@ -537,5 +731,20 @@ public abstract class MyTownDatasource {
      */
     public Block getBlock(int dim, int chunkX, int chunkZ) {
         return MyTownUniverse.getInstance().blocks.get(String.format(Block.keyFormat, dim, chunkX, chunkZ));
+    }
+
+    /**
+     * Returns the rank with the name and town specified
+     *
+     * @param rankName
+     * @param town
+     * @return
+     */
+    public Rank getRank(String rankName, Town town) {
+        for(Rank rank : MyTownUniverse.getInstance().getRanksMap().values()) {
+            if(rank.getName().equals(rankName) && rank.getTown().equals(town))
+                return rank;
+        }
+        return null;
     }
 }

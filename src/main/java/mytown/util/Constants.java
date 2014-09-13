@@ -16,5 +16,10 @@ public class Constants {
     public static final String TICK_HANDLER_LABEL = "MyTownTickHandler";
     public static final int DEFAULT_BLOCK_CHANGE_COUNTER = 100;
     public static final String EDIT_TOOL_NAME = EnumChatFormatting.BLUE + "Selector"; // TODO: Get localization for it, maybe?
+    public static final String EDIT_TOOL_DESCRIPTION_PLOT = EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.";
+    public static final String EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection.";
+    public static final String EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN = EnumChatFormatting.DARK_AQUA + "MODE: (TOWN) Bypass for everyone";
+    public static final String EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT = EnumChatFormatting.DARK_AQUA + "MODE: (PLOT) Bypass for residents";
+
     public static Map<String, List<String>> DEFAULT_RANK_VALUES;
 }

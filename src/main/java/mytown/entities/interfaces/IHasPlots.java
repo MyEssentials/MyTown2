@@ -45,5 +45,5 @@ public interface IHasPlots {
      * @param z
      * @return
      */
-    public Plot getPlotAtCoord(int dim, int x, int y, int z);
+    public Plot getPlotAtCoords(int dim, int x, int y, int z);
 }
