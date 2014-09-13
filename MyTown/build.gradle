@@ -1,9 +1,0 @@
-dependencies {
-	compile project(":Core")
-	compile project(":Chat")
-	compile "org.xerial:sqlite-jdbc:3.7.15-M1"
-}
-
-eclipse.project {
-	name = group
-}

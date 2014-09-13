@@ -1,9 +1,0 @@
-dependencies {
-	compile "com.esotericsoftware.reflectasm:reflectasm:1.09"
-}
-
-archivesBaseName = archivesBaseName + "-Core"
-
-eclipse.project {
-	name = group + "-core"
-}

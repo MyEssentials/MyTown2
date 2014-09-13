@@ -5,9 +5,13 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
@@ -19,30 +23,63 @@ ext.configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
-subprojects {
-    apply plugin: "forge"
+apply plugin: "forge"
 
-    version = "${config.minecraft_version}-${config.mod_version}.${config.build_number}"
-    group = config.group
-    archivesBaseName = config.archivesBaseName
+version = "${config.minecraft_version}-${config.mod_version}.${config.build_number}"
+group = config.group
+archivesBaseName = config.archivesBaseName
 
-    libsDirName = "../../Jars/" // This is the location the built jars should end up
+minecraft {
+    version = "${config.minecraft_version}-${config.forge_version}"
 
-    minecraft {
-        version = "${config.minecraft_version}-${config.forge_version}"
+    replace "@VERSION@", "${project.version}"
+}
 
-        replace "@VERSION@", "${project.version}"
+dependencies {
+    testCompile "junit:junit:4.11"
+    compile "com.esotericsoftware.reflectasm:reflectasm:1.09"
+    // Include DB Drivers as deps
+    compile "org.xerial:sqlite-jdbc:3.7.15-M1"
+    compile "mysql:mysql-connector-java:5.1.31"
+    compile project(":MyEssentials-Core")
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'mod_version': project.version, 'minecraft_version': project.minecraft.version
     }
-
-    processResources {
-        from(sourceSets.main.resources.srcDirs) {
-            include 'mcmod.info'
-            expand 'mod_version':project.version, 'minecraft_version':project.minecraft.version
-        }
-        from(sourceSets.main.resources.srcDirs) {
-            exclude 'mcmod.info'
-        }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
     }
 }
 
-apply from: "vim.gradle"
+/*
+def createRunConfig(runManager, name, mainClass, vmParams, programParams) {
+    def runConfig = runManager.appendNode('configuration', ['default': 'false', 'name': name, 'type': 'Application', 'factoryName': 'Application'])
+    runConfig.appendNode 'extension', ['name': 'coverage', 'enabled': 'false', 'sample_coverage': 'true', 'runner': 'idea']
+    runConfig.appendNode 'option', ['name': 'MAIN_CLASS_NAME', 'value': mainClass]
+    runConfig.appendNode 'option', ['name': 'VM_PARAMETERS', 'value': vmParams]
+    runConfig.appendNode 'option', ['name': 'PROGRAM_PARAMETERS', 'value': programParams]
+    runConfig.appendNode 'option', ['name': 'WORKING_DIRECTORY', 'value': 'file://$PROJECT_DIR$/Run']
+    runConfig.appendNode 'option', ['name': 'ALTERNATIVE_JRE_PATH_ENABLED', 'value': 'false']
+    runConfig.appendNode 'option', ['name': 'ALTERNATIVE_JRE_PATH', 'value': '']
+    runConfig.appendNode 'option', ['name': 'ENABLE_SWING_INSPECTOR', 'value': 'false']
+    runConfig.appendNode 'option', ['name': 'ENV_VARIABLES']
+    runConfig.appendNode 'option', ['name': 'PASS_PARENT_ENVS', 'value': 'true']
+    runConfig.appendNode 'module', ['name': 'MyTown'] // TODO
+    runConfig.appendNode 'envs'
+    runConfig.appendNode 'RunnerSettings', ['RunnerId': 'Run']
+    runConfig.appendNode 'ConfigurationWrapper', ['RunnerId': 'Run']
+    runConfig.appendNode 'method'
+}
+
+idea {
+    workspace {
+        iws.withXml { xmlFile ->
+            def runManager = xmlFile.asNode().component.find { it.@name == 'RunManager' }
+            createRunConfig(runManager, 'Client', 'GradleStart', '-Xincgc -Xmx1024M -Xms1024M -Djava.library.path="$PROJECT_DIR$/Core/build/natives" -Dfml.ignoreInvalidMinecraftCertificates=true', '--version 1.7 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --username=legobear154 --assetIndex 1.7.10 --runDir $USER_HOME$/.minecraft/assets')
+        }
+    }
+}
+*/

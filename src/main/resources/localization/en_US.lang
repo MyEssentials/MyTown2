@@ -1,0 +1,155 @@
+mytown.cmd.unimplemented=§c%s is currently unimplemented!
+mytown.cmd.err.partOfTown=§cYou need to be part of a town!
+mytown.cmd.err.town.notexist=§cThe town %s does not exist!
+mytown.cmd.err.resident.notexist=§cThe player %s does not exist!
+mytown.cmd.err.resident.notsametown=§cThe player %s is not in the town you've selected(%s)!
+mytown.cmd.err.rank.notexist=§cThe rank %s does not exist in %s!
+
+# Protection
+
+mytown.protection.vanilla.activateBlock=§cYou cannot activate that block!
+mytown.protection.vanilla.access=§cYou cannot access that block!
+mytown.protection.vanilla.break=§cYou cannot break that block!
+mytown.protection.vanilla.place=§cYou cannot place blocks in here!
+mytown.protection.vanilla.pickup=§cYou cannot pickup blocks/items in here!
+
+# /ta config [load|save]
+mytown.cmd.config.load.start=§3Loading config...
+mytown.cmd.config.load.stop=§aConfig loaded
+mytown.cmd.config.save.start=§3Saving config...
+mytown.cmd.config.save.stop=§aConfig saved
+
+# /t new [townname]
+mytown.cmd.err.newtown.nameinuse=§cTown name %s already in use!
+mytown.cmd.err.newtown.positionError=§cYou cannot make a new town on a claimed chunk.
+mytown.cmd.err.newtown.failed=§cThe town has failed to be created!
+mytown.cmd.usage.newtown=§3/t new <townname>
+
+# /t invite
+mytown.cmd.err.invite.already=§cResident %s already exists in town %s!
+mytown.cmd.err.invite.noinvitations=§cYou have no invitations!
+mytown.cmd.usage.invite=§3/t invite <player-name|accept|refuse> [town-name]
+mytown.cmd.err.resident.notexist=§cThat player does not exist!
+mytown.cmd.err.invite.accept=§cYou have more invitations! §3Choose what invitation you want to accept: "/t invite accept <town-name>".
+
+# /t claim
+mytown.cmd.err.claim.failed=§cFailed to claim block!
+mytown.cmd.err.claim.already=§cThis block has already been claimed!
+mytown.cmd.err.claim.notexist=§cThis block is not claimed by town %s!
+
+# /t info
+mytown.cmd.usage.info=§3/t info <townname>
+mytown.cmd.err.info.notpart=§cYou are not part of a town. §3Alternative usage: "/t info <townname>".
+
+# /t select
+mytown.cmd.usage.select=§3/t select <townname>
+mytown.cmd.err.select.notpart=§cYou are not part of town %s. §3Please choose a town that you're a member of.
+
+# /t ranks
+mytown.cmd.usage.ranks=§3/t ranks <add|remove|perm>
+mytown.cmd.usage.ranks.perm=§3/t ranks perm <add|remove|list> <rank> <permission>
+mytown.cmd.err.ranks.add.already=§cThe rank %s already exists
+mytown.cmd.err.ranks.add.notexist=§cThe template rank %s does not exist! 
+mytown.cmd.err.ranks.rem.notexist=§cThe rank %s does not exist in town %s
+mytown.cmd.err.ranks.rem.notallowed=§cThe rank %s is not allowed to be deleted!
+mytown.cmd.err.ranks.perm.notexist=§cThe permission %s does not exist!
+mytown.cmd.err.ranks.perm.add.already=§cThe rank %s already has permission %s!
+mytown.cmd.err.ranks.perm.add.failed=§cFailed to add permission!
+mytown.cmd.err.ranks.perm.remove.failed=§cFailed to remove permission!
+
+# /t plot
+mytown.cmd.usage.plot.rename=§3/t plot rename <name>
+mytown.cmd.usage.plot.add=§3/t plot add <owner|member> <resident>
+mytown.cmd.err.plot.start.failed=§cYour inventory is full!
+mytown.cmd.err.plot.failed=§cCreating plot failed!
+mytown.cmd.err.plot.alreadySelected=§cYou already selected!
+mytown.cmd.err.plot.selectionFailed=§cYou cannot make a plot outside the town!
+mytown.cmd.err.plot.notSelected=§cYou need to select 2 corners first!
+mytown.cmd.err.plot.notInPlot=§cYou are not standing in a plot!
+mytown.cmd.err.plot.notOwner=§cYou do not have permission for this plot, only owners can set flags, rename or delete this plot!
+
+# /t perm
+mytown.cmd.err.perm.set.usage=§3/t perm <town/plot> set <flag-name> <value>
+mytown.cmd.err.flagNotExists=§cThat flag does not exist!
+mytown.cmd.err.perm.valueNotValid=§cInvalid value!
+mytown.cmd.err.flag.notForWhitelist=§cThe flag you selected is not allowed on block whitelist!
+mytown.cmd.err.flag.list=§cThere's no flag in town!
+mytown.adm.cmd.err.perm.valueNotValid=§cInvalid value!
+mytown.cmd.err.perm.valueNotValid=§cInvalid value!
+mytown.adm.cmd.usage.perm.list=§3/ta perm list <townname>
+mytown.adm.cmd.usage.perm.set=§3/ta perm set <townname> <flag> <value>
+mytown.cmd.usage.plot.whitelist.add=§3/t perm plot whitelist add <flag>
+
+# /t promote
+mytown.cmd.usage.promote=§3/t promote <resident> <rank>
+mytown.cmd.err.promote.notMayor=§cYou cannot promote anyone to mayor. §3Try /t ...
+mytown.cmd.promote.success.sender=§3%s has been §apromoted§3 to rank §f%s!
+mytown.cmd.promote.success.target=§aYou have been promoted to rank %s!
+
+# /t setspawn
+mytown.cmd.err.setspawn.notintown=§cThe position that you're in is not inside the town %s!
+
+# /t spawn
+mytown.cmd.err.spawn.notexist=§cThe TownBlock that the spawn of %s was on got deleted or the spawn wasn't set! §3Please use "/t setspawn" to set another one.
+
+# /ta delete
+mytown.adm.cmd.delete.usage=§3/ta delete <townname> [townname2 townname3...]
+mytown.adm.cmd.delete.success=§cDeleted town with name %s!
+
+# /ta rem
+mytown.adm.cmd.usage.rem=§3/ta rem <resident> <fromTown>
+mytown.adm.cmd.err.rem.resident=§cPlayer %s is not part of the town %s
+
+# /ta add
+mytown.adm.cmd.usage.add=§3/ta add <resident> <toTown> [rankName]
+mytown.adm.cmd.err.add.already=§cPlayer %s is already a resident of the town %s
+
+# Notifications
+mytown.notification.town.created=§aTown %s created!
+mytown.notification.admtown.created=§aAdmin town %s created!
+mytown.notification.town.deleted=§cTown %s deleted!
+mytown.notification.nation.created=Nation %s created!
+mytown.notification.nation.deleted=Nation %s deleted!
+mytown.notification.enter.wild=You just entered the wild!
+mytown.notification.enter.town=Welcome to %s!
+mytown.notification.enter.ownTown=Welcome back!
+mytown.notification.town.list=Towns: %s
+mytown.notification.town.info=%sResidents: %sRanks: %s
+mytown.notification.town.select=§cThe town %s has been selected as your primary town!
+mytown.notification.town.resident.remove=§aResident %s has been §cremoved§a from town %s!
+mytown.notification.town.resident.add=§aResident %s has been added to town %s!
+mytown.notification.town.ranks=Ranks: %s
+mytown.notification.block.added=§aTown block from (%s, %s) to (%s, %s) has been added to town %s!
+mytown.notification.block.removed=§aTown block from (%s, %s) to (%s, %s) has been removed from town %s!
+mytown.notification.block.list=Blocks in town %s: %s
+mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s: %s
+mytown.notification.town.plot.start=§3Pick 2 corners with the Selector to create a plot!
+mytown.notification.town.plot.selectionStart=§9First§f corner selected!
+mytown.notification.town.plot.selectionEnd=§9Second§f corner selected!
+mytown.notification.town.plot.expanded=§aThe plot has been successfully expanded vertically!
+mytown.notification.town.plot.selectionReset=§aSelection has successfully reset!
+mytown.notification.town.plot.created=§aNew plot created!
+mytown.notification.town.plot.deleted=§cPlot has been deleted!
+mytown.notification.town.plots=Plots in town %s:%s
+mytown.notification.town.left=§3%s has §cleft§3 the town %s!
+mytown.notification.town.left.self=§aYou have §cleft§a the town %s!
+mytown.notification.town.perm.set.success=§aFlag successfully changed!
+mytown.notification.town.invited.refuse=§aYou've §crefused§a the invitation from town %s!
+mytown.notification.town.invited.accept=§aYou've §aaccepted§a the invitation from town %s!
+mytown.notification.town.joined=§3%s has §ajoined§3 the town %s!
+mytown.notification.town.invited=§cYou have been invited to town %s!
+mytown.notification.town.invite.sent=§aThe invitation was successfully sent!
+mytown.notification.town.setspawn=§aSpawn has been set!
+mytown.notification.plot.renamed=§aThe plot has been successfully renamed!
+mytown.notification.plot.showing=§3Plots are now showing borders. §3Use "/t plot vanish" in order to hide them.
+mytown.notification.plot.vanished=§aPlots have been successfully hidden!
+mytown.notification.plot.owner.sender.added=§3%s has been §aadded§f as owner to plot %s!
+mytown.notification.plot.owner.target.added=§aYou have been added as owner to plot %s!
+mytown.notification.plot.member.sender.added=§3%s has been §aadded§f as member to plot %s!
+mytown.notification.plot.member.target.added=§aYou have been added as member to plot %s!
+mytown.notification.town.added=§aYou have been added to town %s!
+mytown.notification.town.ranks.add=§3Rank %s has been added to town %s!
+mytown.notification.db.purging=§3The requested data-base files have been purged!
+mytown.notification.town.ranks.perm.remove=§aThe permission has been successfully §cremoved§a!
+mytown.notification.perm.whitelist.start=§3Right-Click a block to change his flag value, depending on what flag you choosed, that flag will be changed for the block you selected.\nShift § Right-Click to change the mode from §9Town§3 to §9Plot§3 or from §9Plot§3 to §9Town§3!
+

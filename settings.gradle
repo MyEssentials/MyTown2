@@ -1,1 +1,2 @@
-include "Core", "Chat", "MyTown"
+rootProject.name = "MyTown2"
+include ":MyEssentials-Core"

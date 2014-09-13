@@ -1,0 +1,17 @@
+[
+{
+  "modid": "MyTown2",
+  "name": "MyTown 2",
+  "description": "Create towns, protect your stuff! Continuation of the original MyTown by Alpha!",
+  "version": "${mod_version}",
+  "mcversion": "${minecraft_version}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": [
+    "Alpha",
+    "Legobear154",
+	"AfterWind"
+  ],
+  "credits": "Alpha, Legobear154 and AfterWind"
+}
+]
