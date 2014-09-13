@@ -4,7 +4,7 @@ Version 2 of MyTown - A Minecraft Server Protection Mod
 
 [![Build Status](http://img.shields.io/travis/MyEssentials/MyTown2.svg)](https://travis-ci.org/MyEssentials/MyTown2)
 [![Support via Gittip](http://img.shields.io/gittip/legobear154.svg)](https://www.gittip.com/legobear154/)
-[![Release](http://img.shields.io/github/release/MyEssentials/MyTown2.svg)](https://github.com/MyEssentials/MyTown2/releases)
+[![Release][release-img]][release-url]
 
 Features
 ========
@@ -34,3 +34,7 @@ Contacting
 ==========
 * On Espernet #mytown
 * On the Minecraft Forum
+
+
+[release-img]: https://img.shields.io/github/release/MyEssentials/MyTown2.svg
+[release-url]: http://minecraft.curseforge.com/mc-mods/224242-mytown2/files
