@@ -17,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -43,6 +44,7 @@ public class Protections {
     public Map<Entity, Boolean> checkedEntities;
 
     private int ticker = 20;
+    private int tickStart = 20;
 
     public static Protections instance = new Protections();
     public Protections() {
@@ -74,7 +76,7 @@ public class Protections {
             for(Map.Entry<TileEntity, Boolean> entry : checkedTileEntities.entrySet()) {
                 entry.setValue(false);
             }
-            ticker = 20;
+            ticker = MinecraftServer.getServer().worldServers.length * tickStart;
         } else {
             ticker--;
         }
@@ -83,8 +85,8 @@ public class Protections {
         // Why does it return only a generic List? :S
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
+
             for (Protection prot : protections) {
-                //MyTown.instance.log.info("Checking entity: " + entity.toString());
                 if (prot.hasToCheckEntity(entity)) {
                     if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
                         if(!(entity instanceof EntityPlayer)) {
@@ -102,10 +104,11 @@ public class Protections {
             }
         }
         for (TileEntity te : (List<TileEntity>) ev.world.loadedTileEntityList) {
+            //MyTown.instance.log.info("Checking tile: " + te.toString());
             for (Protection prot : protections) {
                 if (prot.hasToCheckTileEntity(te)) {
                     if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
-                        te.invalidate();
+                        ev.world.removeTileEntity(te.xCoord, te.yCoord, te.zCoord);
                         MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
                     } else {
                         checkedTileEntities.put(te, true);
@@ -153,6 +156,12 @@ public class Protections {
 
 
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+            // DEV STUFF
+            TileEntity te23 = ev.world.getTileEntity(ev.x, ev.y, ev.z);
+            if(te23 != null) {
+                MyTown.instance.log.info("Player clicked: " + te23);
+                MyTown.instance.log.info("Invalid:" + te23.isInvalid() + " Can update: " + te23.canUpdate() + " " + (te23.xCoord >> 4) + ", " + (te23.zCoord >> 4));
+            }
 
             //System.out.println(currentStack.getItem().getUnlocalizedName());
             //System.out.println(Block.blocksList[ev.entityPlayer.worldObj.getBlockId(ev.x, ev.y, ev.z)].getUnlocalizedName());

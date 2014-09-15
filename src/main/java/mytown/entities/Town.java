@@ -474,6 +474,13 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         }
     }
 
+    public void notifyEveryone(String message) {
+        // TODO: Check permission for if it should receive message
+        for(Resident r : residents.keySet()) {
+            r.sendMessage(message);
+        }
+    }
+
     /* ----- Comparable ----- */
 
     @Override

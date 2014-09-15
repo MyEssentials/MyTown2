@@ -6,11 +6,13 @@ import ic2.api.event.LaserEvent;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.entities.Block;
+import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import mytown.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -18,16 +20,19 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by AfterWind on 7/8/2014.
  *
  * IC2 mod implementation here
  */
 public class IC2Protection extends Protection {
-    public static final String ModID = "IC2";
 
-    private Class<?> clsItemCable;
-    private Class<?> clsItemBlockIC2;
+    private Class<? extends TileEntity> clsTileEntityElectricMachine;
+    private Class<? extends TileEntity> clsTileEntityCable;
+    private Class<? extends TileEntity> clsTileEntityBaseGenerator;
 
 
     @SuppressWarnings("unchecked")
@@ -37,8 +42,14 @@ public class IC2Protection extends Protection {
         try {
             this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityNuke"));
             this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityItnt"));
-            clsItemCable = Class.forName("ic2.core.item.block.ItemCable");
-            clsItemBlockIC2 = Class.forName("ic2.core.item.block.ItemBlockIC2");
+
+            clsTileEntityBaseGenerator = (Class<? extends TileEntity>)Class.forName("ic2.core.block.generator.tileentity.TileEntityBaseGenerator");
+            clsTileEntityElectricMachine = (Class<? extends TileEntity>)Class.forName("ic2.core.block.machine.tileentity.TileEntityElectricMachine");
+            clsTileEntityCable = (Class<? extends TileEntity>)Class.forName("ic2.core.block.wiring.TileEntityCable");
+
+            this.trackedTileEntities.add(clsTileEntityBaseGenerator);
+            this.trackedTileEntities.add(clsTileEntityCable);
+            this.trackedTileEntities.add(clsTileEntityElectricMachine);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -68,6 +79,59 @@ public class IC2Protection extends Protection {
 
         return false;
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean checkTileEntity(TileEntity te) {
+        //MyTown.instance.log.info("It's alive!" + te);
+        //FIXME: This doesn't work for some reason
+
+        List<TileEntity> nearbyTiles = new ArrayList<TileEntity>();
+        if(clsTileEntityBaseGenerator.isAssignableFrom(te.getClass())) {
+            // If generator, then check for cable or machine
+            nearbyTiles.addAll(Utils.getNearbyTileEntity(te, clsTileEntityCable));
+            nearbyTiles.addAll(Utils.getNearbyTileEntity(te, clsTileEntityElectricMachine));
+        } else if(clsTileEntityCable.isAssignableFrom(te.getClass())) {
+            // If cable then check for cable, machine or generator
+            nearbyTiles.addAll(Utils.getNearbyTileEntity(te, clsTileEntityCable));
+            nearbyTiles.addAll(Utils.getNearbyTileEntity(te, clsTileEntityElectricMachine));
+            nearbyTiles.addAll(Utils.getNearbyTileEntity(te, clsTileEntityBaseGenerator));
+        } else if(clsTileEntityElectricMachine.isAssignableFrom(te.getClass())) {
+            // If machine then check for generator or cable
+            nearbyTiles.addAll(Utils.getNearbyTileEntity(te, clsTileEntityBaseGenerator));
+            nearbyTiles.addAll(Utils.getNearbyTileEntity(te, clsTileEntityCable));
+        }
+
+        for(TileEntity tile : nearbyTiles) {
+            Town town = Utils.getTownAtPosition(tile.getWorldObj().provider.dimensionId, tile.xCoord >> 4, tile.zCoord >> 4);
+            if(town != null) {
+                Flag<Boolean> energyFlag = town.getFlagAtCoords(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord, "energyFlow");
+                if(!energyFlag.getValue()) {
+
+                    Town townAtEntity = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
+                    if(townAtEntity != null && town == townAtEntity) {
+                        Plot plot1 = town.getPlotAtCoords(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord);
+                        Plot plot2 = townAtEntity.getPlotAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord);
+                        if(plot1 != plot2) {
+                            // If 2 different plots on the same town then we invalidate
+                            MyTown.instance.log.info("TileEntity " + tile + " has been disabled, because it's too close to town " + town.getName());
+                            town.notifyEveryone(getLocal().getLocalization("mytown.protection.ic2.energy"));
+                            return true;
+                        }
+                    } else {
+                        // If wild near town or town near other town then we invalidate
+                        MyTown.instance.log.info("TileEntity " + tile + " has been disabled, because it's too close to town " + town.getName());
+                        town.notifyEveryone(getLocal().getLocalization("mytown.protection.ic2.energy"));
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+
 
     // EVENTS
     @SuppressWarnings("unchecked")

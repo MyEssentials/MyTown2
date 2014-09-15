@@ -1,9 +1,11 @@
 package mytown.protection;
 
+import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxy;
 import mytown.util.Utils;
 import net.minecraft.entity.Entity;
@@ -130,7 +132,14 @@ public abstract class Protection {
      * @return
      */
     public boolean hasToCheckTileEntity(TileEntity te) {
-        return trackedTileEntities.contains(te.getClass());
+
+        if(trackedTileEntities.contains(te.getClass()))
+            return true;
+        for(Class<? extends TileEntity> cls : trackedTileEntities) {
+            if(cls.isAssignableFrom(te.getClass()))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -147,5 +156,6 @@ public abstract class Protection {
     protected MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
+    protected Localization getLocal() {return LocalizationProxy.getLocalization(); }
 
 }

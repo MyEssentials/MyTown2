@@ -19,6 +19,7 @@ public class ModProxies {
         MyTown.instance.log.info("Starting proxies...");
 
         proxies.add(new IC2Proxy());
+        proxies.add(new BuildCraftProxy());
         proxies.add(new ForgePermsProxy());
 
         if (!ModProxies.loaded) {
@@ -35,6 +36,7 @@ public class ModProxies {
             */
             if(p.getModID() != null && Loader.isModLoaded(p.getModID())) {
                 p.load();
+                p.isLoaded = true;
             }
         }
     }
@@ -61,5 +63,19 @@ public class ModProxies {
      */
     public static void removeProxy(ModProxy proxy) {
         ModProxies.proxies.remove(proxy);
+    }
+
+    /**
+     * Checks if the proxy with the give mod_id is loaded
+     *
+     * @param mod_id
+     * @return
+     */
+    public static boolean isProxyLoaded(String mod_id) {
+        for(ModProxy proxy : proxies) {
+            if(proxy.getModID().equals(mod_id))
+                return true;
+        }
+        return false;
     }
 }

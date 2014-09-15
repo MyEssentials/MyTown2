@@ -30,7 +30,8 @@ public class CommandsAdmin extends Commands {
     @Command(
             name = "townadmin",
             permission = "mytown.adm.cmd",
-            alias = {"ta"})
+            alias = {"ta"},
+            opsOnlyAccess = true)
     public static void townAdminCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.adm.cmd");
     }

@@ -162,10 +162,14 @@ public class Flag<T> {
         flagValueTypes.put("attackEntities", Boolean.class);
         flagValueTypes.put("useItems", Boolean.class);
         flagValueTypes.put("activateBlocks", Boolean.class);
+        flagValueTypes.put("energyFlow", Boolean.class);
+        flagValueTypes.put("bcBuildingMining", Boolean.class);
 
         flagsForWhitelist.add("breakBlocks");
         flagsForWhitelist.add("accessBlocks");
         flagsForWhitelist.add("activateBlocks");
+        flagsForWhitelist.add("energyFlow");
+        flagsForWhitelist.add("bcBuildingMining");
 
         for(String s : flagValueTypes.keySet()) {
            descriptionKeys.put(s, "mytown.flag." + s); // Because I'm lazy

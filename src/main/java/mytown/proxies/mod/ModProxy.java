@@ -6,6 +6,8 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
  * @author Joe Goett
  */
 public abstract class ModProxy {
+
+    public boolean isLoaded = false;
     /**
      * Returns the name of the ModProxy
      *

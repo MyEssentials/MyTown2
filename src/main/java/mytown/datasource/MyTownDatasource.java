@@ -7,6 +7,9 @@ import mytown.core.utils.Log;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.proxies.mod.BuildCraftProxy;
+import mytown.proxies.mod.IC2Proxy;
+import mytown.proxies.mod.ModProxies;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -104,6 +107,14 @@ public abstract class MyTownDatasource {
         saveFlag(new Flag<String>("mobs", "all"), town);
         saveFlag(new Flag<Boolean>("attackEntities", false), town);
         saveFlag(new Flag<Boolean>("placeBlocks", false), town);
+        if(ModProxies.isProxyLoaded(IC2Proxy.MOD_ID)) {
+            // IC2 specific flags here
+            saveFlag(new Flag<Boolean>("energyFlow", false), town);
+        }
+        if(ModProxies.isProxyLoaded(BuildCraftProxy.MOD_ID)) {
+            saveFlag(new Flag<Boolean>("bcBuildingMining", false), town);
+        }
+
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;
@@ -147,6 +158,13 @@ public abstract class MyTownDatasource {
         saveFlag(new Flag<String>("mobs", "all"), town);
         saveFlag(new Flag<Boolean>("attackEntities", false), town);
         saveFlag(new Flag<Boolean>("placeBlocks", false), town);
+        if(ModProxies.isProxyLoaded(IC2Proxy.MOD_ID)) {
+            // IC2 specific flags here
+            saveFlag(new Flag<Boolean>("energyFlow", false), town);
+        }
+        if(ModProxies.isProxyLoaded(BuildCraftProxy.MOD_ID)) {
+            saveFlag(new Flag<Boolean>("bcBuildingMining", false), town);
+        }
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;

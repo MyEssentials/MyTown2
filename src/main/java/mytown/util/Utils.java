@@ -1,5 +1,6 @@
 package mytown.util;
 
+import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Block;
 import mytown.entities.Town;
@@ -8,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -16,6 +18,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by AfterWind on 9/9/2014.
@@ -105,6 +109,31 @@ public class Utils {
         }
     }
 
+    public static List<TileEntity> getNearbyTileEntity(TileEntity te, Class<? extends TileEntity> type) {
+        List<TileEntity> result = new ArrayList<TileEntity>();
+        int[] dx = {0, 1, 0, -1, 0, 0};
+        int[] dy = {1, 0, -1, 0, 0, 0};
+        int[] dz = {0, 0, 0, 0, 1, -1};
+
+        for(int i = 0; i < 6; i++) {
+            TileEntity found = te.getWorldObj().getTileEntity(te.xCoord + dx[i], te.yCoord + dy[i], te.zCoord + dz[i]);
+            if(found != null && type.isAssignableFrom(found.getClass())) {
+                MyTown.instance.log.info("Found tile entity " + found + " for class " + type.getName());
+                result.add(found);
+            }
+        }
+        return result;
+    }
+
+    public static List<ChunkPos> getChunksInBox(int minX, int minZ, int maxX, int maxZ) {
+        List<ChunkPos> list = new ArrayList<ChunkPos>();
+        for(int i = minX >> 4; i <= maxX >> 4; i++) {
+            for(int j = minZ >> 4; j <= maxZ >> 4; j++) {
+                list.add(new ChunkPos(i, j));
+            }
+        }
+        return list;
+    }
 
 
     /**
