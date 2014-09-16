@@ -8,8 +8,8 @@ import mytown.core.utils.config.ConfigProperty;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -282,11 +282,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 String flagName = rs.getString("name");
 
                 Gson gson = new GsonBuilder().create();
-                Flag flag = new Flag(flagName, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
+                Flag flag = new Flag(FlagType.valueOf(flagName), gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
 
                 Town town = MyTownUniverse.getInstance().getTownsMap().get(townName);
                 if(town != null) {
-                    town.addFlag(flag);
+                    if(flag.flagType.shouldLoad())
+                        town.addFlag(flag);
                 } else {
                     log.error("Failed to load flag " + flagName + " because the town given was invalid!");
                     return false;
@@ -311,11 +312,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 String flagName = rs.getString("name");
 
                 Gson gson = new GsonBuilder().create();
-                Flag flag = new Flag(flagName, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
+                Flag flag = new Flag(FlagType.valueOf(flagName), gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
 
                 Plot plot = MyTownUniverse.getInstance().plots.get(plotID);
                 if(plot != null) {
-                    plot.addFlag(flag);
+                    if(flag.flagType.shouldLoad())
+                        plot.addFlag(flag);
                 } else {
                     log.error("Failed to load flag " + flagName + " because the town given was invalid!");
                     return false;
@@ -370,7 +372,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             while(rs.next()) {
                 // plotID will be 0 if it's a town's whitelist
-                BlockWhitelist bw = new BlockWhitelist(rs.getInt("dim"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("flagName"), rs.getInt("plotID"));
+                BlockWhitelist bw = new BlockWhitelist(rs.getInt("dim"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), FlagType.valueOf(rs.getString("flagName")), rs.getInt("plotID"));
                 bw.setDb_ID(rs.getInt("ID"));
                 Town town = MyTownUniverse.getInstance().getTownsMap().get(rs.getString("townName"));
                 // This can't be null
@@ -622,6 +624,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean savePlot(Plot plot) {
         try {
@@ -656,7 +659,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 log.info("Saved plot with ID " + generatedKeys.getInt(1));
 
                 for(Flag flag : plot.getTown().getFlags()) {
-                    saveFlag(new Flag(flag.getName(), flag.getValue()), plot);
+                    if(!flag.flagType.isTownOnly())
+                        saveFlag(new Flag(flag.flagType, flag.getValue()), plot);
                 }
 
                 // Put the Plot in the Map
@@ -695,20 +699,21 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Plot plot) {
+        if(!flag.flagType.shouldLoad()) return false;
         try {
-            if(plot.hasFlag(flag.getName())) {
+            if(plot.hasFlag(flag.flagType)) {
                 // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE plotID=? AND name=?", true);
                 updateStatement.setString(1, flag.serializeValue());
                 updateStatement.setInt(2, plot.getDb_ID());
-                updateStatement.setString(3, flag.getName());
+                updateStatement.setString(3, flag.flagType.toString());
                 updateStatement.executeUpdate();
 
 
             } else {
                 // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "PlotFlags(name, serializedValue, plotID) VALUES(?, ?, ?)", true);
-                insertStatement.setString(1, flag.getName());
+                insertStatement.setString(1, flag.flagType.toString());
                 insertStatement.setString(2, flag.serializeValue());
                 insertStatement.setInt(3, plot.getDb_ID());
                 insertStatement.executeUpdate();
@@ -716,7 +721,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 plot.addFlag(flag);
             }
         } catch (SQLException e) {
-            log.error("Failed to save Flag %s!", flag.getName());
+            log.error("Failed to save Flag %s!", flag.flagType.toString());
             e.printStackTrace();
             return false;
         }
@@ -725,19 +730,20 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Town town) {
+        if(!flag.flagType.shouldLoad()) return false;
         try {
-            if(town.hasFlag(flag.getName())) {
+            if(town.hasFlag(flag.flagType)) {
                 // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "TownFlags SET serializedValue=? WHERE townName=? AND name=?", true);
                 updateStatement.setString(1, flag.serializeValue());
                 updateStatement.setString(2, town.getName());
-                updateStatement.setString(3, flag.getName());
+                updateStatement.setString(3, flag.flagType.toString());
                 updateStatement.executeUpdate();
 
             } else {
                 // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "TownFlags(name,  serializedValue, townName) VALUES(?, ?, ?)", true);
-                insertStatement.setString(1, flag.getName());
+                insertStatement.setString(1, flag.flagType.toString());
                 insertStatement.setString(2, flag.serializeValue());
                 insertStatement.setString(3, town.getName());
                 insertStatement.executeUpdate();
@@ -745,7 +751,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 town.addFlag(flag);
             }
         } catch (SQLException e) {
-            log.error("Failed to save Flag %s!", flag.getName());
+            log.error("Failed to save Flag %s!", flag.flagType.toString());
             e.printStackTrace();
             return false;
         }
@@ -758,14 +764,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {
         try {
             if(!town.hasBlockWhitelist(bw)) {
-                log.info(town.getName());
-                log.info(bw.getFlagName());
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "BlockWhitelists(dim, x, y, z, flagName, townName, plotID) VALUES(?, ?, ?, ?, ?, ?," + (bw.getPlotID() != 0 ? bw.getPlotID() : "NULL") + ")", true);
                 insertStatement.setInt(1, bw.dim);
                 insertStatement.setInt(2, bw.x);
                 insertStatement.setInt(3, bw.y);
                 insertStatement.setInt(4, bw.z);
-                insertStatement.setString(5, bw.getFlagName());
+                insertStatement.setString(5, bw.getFlagType().toString());
                 insertStatement.setString(6, town.getName());
 
                 insertStatement.executeUpdate();

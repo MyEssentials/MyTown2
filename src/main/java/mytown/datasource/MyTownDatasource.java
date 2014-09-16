@@ -7,6 +7,7 @@ import mytown.core.utils.Log;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.mod.BuildCraftProxy;
 import mytown.proxies.mod.IC2Proxy;
 import mytown.proxies.mod.ModProxies;
@@ -96,25 +97,18 @@ public abstract class MyTownDatasource {
         saveBlock(block);
 
         // Saving and adding all flags to the database
-        saveFlag(new Flag<Boolean>("enter", false), town);
-        saveFlag(new Flag<Boolean>("breakBlocks", false), town);
-        saveFlag(new Flag<Boolean>("explosions", false), town);
-        saveFlag(new Flag<Boolean>("accessBlocks", false), town);
-        saveFlag(new Flag<Boolean>("activateBlocks", false), town);
-        saveFlag(new Flag<Boolean>("useItems", false), town);
-        saveFlag(new Flag<Boolean>("pickupItems", true), town);
-        saveFlag(new Flag<Boolean>("enter", true), town);
-        saveFlag(new Flag<String>("mobs", "all"), town);
-        saveFlag(new Flag<Boolean>("attackEntities", false), town);
-        saveFlag(new Flag<Boolean>("placeBlocks", false), town);
-        if(ModProxies.isProxyLoaded(IC2Proxy.MOD_ID)) {
-            // IC2 specific flags here
-            saveFlag(new Flag<Boolean>("energyFlow", false), town);
-        }
-        if(ModProxies.isProxyLoaded(BuildCraftProxy.MOD_ID)) {
-            saveFlag(new Flag<Boolean>("bcBuildingMining", false), town);
-        }
-
+        saveFlag(new Flag<Boolean>(FlagType.enter, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.breakBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.explosions, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.accessBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.activateBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.useItems, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.pickupItems, true), town);
+        saveFlag(new Flag<String>(FlagType.mobs, "all"), town);
+        saveFlag(new Flag<Boolean>(FlagType.attackEntities, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.placeBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.bcBuildingMining, false), town);
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;
@@ -147,24 +141,21 @@ public abstract class MyTownDatasource {
         saveBlock(block);
 
         // Saving and adding all flags to the database
-        saveFlag(new Flag<Boolean>("enter", true), town);
-        saveFlag(new Flag<Boolean>("breakBlocks", false), town);
-        saveFlag(new Flag<Boolean>("explosions", false), town);
-        saveFlag(new Flag<Boolean>("accessBlocks", false), town);
-        saveFlag(new Flag<Boolean>("activateBlocks", false), town);
-        saveFlag(new Flag<Boolean>("useItems", false), town);
-        saveFlag(new Flag<Boolean>("pickupItems", true), town);
-        saveFlag(new Flag<Boolean>("enter", true), town);
-        saveFlag(new Flag<String>("mobs", "all"), town);
-        saveFlag(new Flag<Boolean>("attackEntities", false), town);
-        saveFlag(new Flag<Boolean>("placeBlocks", false), town);
-        if(ModProxies.isProxyLoaded(IC2Proxy.MOD_ID)) {
-            // IC2 specific flags here
-            saveFlag(new Flag<Boolean>("energyFlow", false), town);
-        }
-        if(ModProxies.isProxyLoaded(BuildCraftProxy.MOD_ID)) {
-            saveFlag(new Flag<Boolean>("bcBuildingMining", false), town);
-        }
+        saveFlag(new Flag<Boolean>(FlagType.enter, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.breakBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.explosions, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.accessBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.activateBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.useItems, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.pickupItems, true), town);
+        saveFlag(new Flag<String>(FlagType.mobs, "all"), town);
+        saveFlag(new Flag<Boolean>(FlagType.attackEntities, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.placeBlocks, false), town);
+        // No need for checking if mod loaded FlagType and save method handles all that
+
+        saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.bcBuildingMining, false), town);
+
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;
@@ -235,12 +226,11 @@ public abstract class MyTownDatasource {
     /**
      * Creates and returns a new TownFlag or null if it couldn't be created
      *
-     * @param name
      * @param value
      * @return the new TownFlag, or null if failed
      */
-    public final Flag newFlag(String name, Object value) {
-        Flag<Object> flag = new Flag<Object>(name, value);
+    public final Flag newFlag(FlagType type, Object value) {
+        Flag<Object> flag = new Flag<Object>(type, value);
         //TODO: Fire event
         return flag;
     }

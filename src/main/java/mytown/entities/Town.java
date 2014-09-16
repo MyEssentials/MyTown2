@@ -7,6 +7,7 @@ import mytown.core.utils.teleport.Teleport;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.entities.interfaces.*;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -284,9 +285,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public boolean hasFlag(String name) {
+    public boolean hasFlag(FlagType type) {
         for(Flag flag : flags)
-            if(flag.getName().equals(name))
+            if(flag.flagType == type)
                 return true;
         return false;
     }
@@ -297,9 +298,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public Flag getFlag(String name) {
+    public Flag getFlag(FlagType type) {
         for(Flag flag : flags)
-            if(flag.getName().equals(name))
+            if(flag.flagType == type)
                 return flag;
         return null;
     }
@@ -310,15 +311,15 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * @param x
      * @param y
      * @param z
-     * @param flagName
+     * @param flagType
      * @return
      */
-    public Flag getFlagAtCoords(int dim, int x, int y, int z, String flagName) {
+    public Flag getFlagAtCoords(int dim, int x, int y, int z, FlagType flagType) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
         if (plot == null) {
-            return getFlag(flagName);
+            return getFlag(flagType);
         }
-        return plot.getFlag(flagName);
+        return plot.getFlag(flagType);
     }
 
     /* ---- IHasBlockWhitelists ---- */
@@ -331,9 +332,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public boolean hasBlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+    public boolean hasBlockWhitelist(int dim, int x, int y, int z, FlagType flagType, int plotID) {
         for(BlockWhitelist bw : blockWhitelists) {
-            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagName().equals(flagName) && bw.getPlotID() == plotID) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType) && bw.getPlotID() == plotID) {
                 return true;
             }
         }
@@ -351,19 +352,19 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public void removeBlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+    public void removeBlockWhitelist(int dim, int x, int y, int z, FlagType flagType, int plotID) {
         for(Iterator<BlockWhitelist> it = blockWhitelists.iterator(); it.hasNext();) {
             BlockWhitelist bw = it.next();
-            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagName().equals(flagName) && bw.getPlotID() == plotID) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType) && bw.getPlotID() == plotID) {
                 it.remove();
             }
         }
     }
 
     @Override
-    public BlockWhitelist getBlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+    public BlockWhitelist getBlockWhitelist(int dim, int x, int y, int z, FlagType flagType, int plotID) {
         for(BlockWhitelist bw : blockWhitelists) {
-            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagName().equals(flagName) && bw.getPlotID() == plotID) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType) && bw.getPlotID() == plotID) {
                 return bw;
             }
         }

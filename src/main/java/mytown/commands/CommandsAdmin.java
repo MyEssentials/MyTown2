@@ -12,6 +12,7 @@ import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -273,10 +274,10 @@ public class CommandsAdmin extends Commands {
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
-        String flagName = args.get(1);
+        FlagType flagType = getFlagTypeFromName(args.get(1));
 
-        if(Flag.flagsForWhitelist.contains(flagName))
-            res.startBlockSelection(flagName, town.getName(), false);
+        if(flagType.isWhitelistable())
+            res.startBlockSelection(flagType, town.getName(), false);
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
     }

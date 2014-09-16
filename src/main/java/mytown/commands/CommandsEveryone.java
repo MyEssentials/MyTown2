@@ -6,6 +6,7 @@ import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.Constants;
@@ -202,11 +203,11 @@ public class CommandsEveryone extends Commands{
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Plot plot = getPlotAtResident(res);
-        String flagName = args.get(0);
+        FlagType flagType = getFlagTypeFromName(args.get(0));
 
-        if(Flag.flagsForWhitelist.contains(flagName)) {
+        if(flagType.isWhitelistable()) {
             res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
-            res.startBlockSelection(flagName, plot.getTown().getName(), true);
+            res.startBlockSelection(flagType, plot.getTown().getName(), true);
         }
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));

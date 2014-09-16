@@ -7,6 +7,7 @@ import mytown.core.ChatUtils;
 import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
+import mytown.entities.flag.FlagType;
 import mytown.entities.interfaces.IBlockWhitelister;
 import mytown.entities.interfaces.IHasPlots;
 import mytown.entities.interfaces.IHasTowns;
@@ -589,18 +590,18 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     /**
      * Assists in selecting a block
      *
-     * @param flagName
+     * @param flagType
      * @return
      */
     @Override
-    public boolean startBlockSelection(String flagName, String townName, boolean inPlot) {
+    public boolean startBlockSelection(FlagType flagType, String townName, boolean inPlot) {
         //Give item to player
         ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
         selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
         NBTTagList lore = new NBTTagList();
         lore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST));
         lore.appendTag(new NBTTagString(inPlot ? Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT : Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Flag: " + flagName));
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Flag: " + flagType.toString()));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Town: " + townName));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
         selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);

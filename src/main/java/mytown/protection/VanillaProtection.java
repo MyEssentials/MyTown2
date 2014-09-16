@@ -7,6 +7,7 @@ import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -102,7 +103,7 @@ public class VanillaProtection extends Protection {
             return false;
 
         if(entity instanceof EntityTNTPrimed) {
-            Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "explosions");
+            Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, FlagType.explosions);
             if(!explosionsFlag.getValue()) {
                 return true;
             }
@@ -110,7 +111,7 @@ public class VanillaProtection extends Protection {
         }
 
         if(entity instanceof EntityPlayer) {
-            Flag<Boolean> enterFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "enter");
+            Flag<Boolean> enterFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, FlagType.enter);
             Plot plot = town.getPlotAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ);
             if(!enterFlag.getValue()) {
                 Resident res = getDatasource().getOrMakeResident(entity);

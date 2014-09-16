@@ -10,6 +10,7 @@ import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Utils;
@@ -105,7 +106,7 @@ public class IC2Protection extends Protection {
         for(TileEntity tile : nearbyTiles) {
             Town town = Utils.getTownAtPosition(tile.getWorldObj().provider.dimensionId, tile.xCoord >> 4, tile.zCoord >> 4);
             if(town != null) {
-                Flag<Boolean> energyFlag = town.getFlagAtCoords(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord, "energyFlow");
+                Flag<Boolean> energyFlag = town.getFlagAtCoords(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord, FlagType.ic2EnergyFlow);
                 if(!energyFlag.getValue()) {
 
                     Town townAtEntity = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
@@ -143,7 +144,7 @@ public class IC2Protection extends Protection {
             return;
         MyTown.instance.log.info("Block is not null, checking...");
 
-        Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.owner.dimension, ev.x, ev.y, ev.z, "breakBlocks");
+        Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.owner.dimension, ev.x, ev.y, ev.z, FlagType.breakBlocks);
         if(!breakFlag.getValue()) {
             if(ev.owner instanceof EntityPlayer) {
                 MyTown.instance.log.info("Found things and stuff...");
@@ -168,7 +169,7 @@ public class IC2Protection extends Protection {
         Block tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.lasershot.chunkCoordX, ev.lasershot.chunkCoordZ);
         if(tblock == null)
             return;
-        Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.lasershot.dimension, (int) ev.lasershot.posX, (int) ev.lasershot.posY, (int) Math.floor(ev.lasershot.posZ), "breakBlocks");
+        Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.lasershot.dimension, (int) ev.lasershot.posX, (int) ev.lasershot.posY, (int) Math.floor(ev.lasershot.posZ), FlagType.breakBlocks);
         if(!breakFlag.getValue()) {
             if(ev.owner instanceof EntityPlayer) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.owner);

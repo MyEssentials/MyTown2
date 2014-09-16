@@ -133,6 +133,34 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveNation(Nation nation) {
+        return false;
+    }
+
+    @Override
+    public boolean saveFlag(Flag flag, Town town) {
+        return false;
+    }
+
+    @Override
+    public boolean saveFlag(Flag flag, Plot plot) {
+        return false;
+    }
+
+    @Override
+    public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {
+        return false;
+    }
+
+    @Override
+    public boolean saveSelectedTown(Resident res, Town town) {
+        return false;
+    }
+
+    /*
+    FIXME: This is partially borken
+
+    @Override
+    public boolean saveNation(Nation nation) {
         log.debug("Saving Nation %s", nation.getName());
         if (MyTownUniverse.getInstance().nations.containsValue(nation)) { // Update
         } else { // Insert
@@ -150,6 +178,7 @@ public class InMemoryDatasource extends MyTownDatasource {
         }
         return true;
     }
+
 
     @Override
     public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {
@@ -170,6 +199,7 @@ public class InMemoryDatasource extends MyTownDatasource {
         }
         return true;
     }
+    */
 
     /* ----- Link ----- */
 

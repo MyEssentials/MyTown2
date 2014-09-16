@@ -7,6 +7,7 @@ import mytown.datasource.MyTownUniverse;
 import mytown.entities.Block;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.util.ChunkPos;
 import mytown.util.Utils;
 import net.minecraft.tileentity.TileEntity;
@@ -48,7 +49,7 @@ public class BuildCraftProtection extends Protection {
                 Block block = MyTownUniverse.getInstance().getBlocksMap().get(String.format(Block.keyFormat, te.getWorldObj().provider.dimensionId, p.getX(), p.getZ()));
                 if(block != null) {
                     // Directly from the town, not checking per plot since it's quite the pain
-                    Flag<Boolean> bcFlag = block.getTown().getFlag("bcBuildingMining");
+                    Flag<Boolean> bcFlag = block.getTown().getFlag(FlagType.bcBuildingMining);
                     if(!bcFlag.getValue()) {
                         block.getTown().notifyEveryone(getLocal().getLocalization("mytown.protection.bcBuildingMining"));
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
@@ -59,11 +60,5 @@ public class BuildCraftProtection extends Protection {
         }
 
         return false;
-    }
-
-
-
-    public Town getTownFromBox() {
-
     }
 }

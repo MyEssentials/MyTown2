@@ -127,7 +127,7 @@ import buildcraft.core.Version;
 import buildcraft.core.blueprints.RealBlueprintDeployer;
 import buildcraft.core.proxy.CoreProxy;
 
-@Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
+//@Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
 
 	public static final char BPT_SEP_CHARACTER = '-';

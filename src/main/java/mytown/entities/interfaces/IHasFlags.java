@@ -2,6 +2,7 @@ package mytown.entities.interfaces;
 
 import com.google.common.collect.ImmutableList;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 
 /**
  * Created by AfterWind on 8/26/2014.
@@ -20,7 +21,7 @@ public interface IHasFlags {
      *
      * @return
      */
-    boolean hasFlag(String name);
+    boolean hasFlag(FlagType type);
 
     /**
      * Gets the immutable list of flags
@@ -35,6 +36,6 @@ public interface IHasFlags {
      * @param name
      * @return
      */
-    Flag getFlag(String name);
+    Flag getFlag(FlagType type);
 
 }

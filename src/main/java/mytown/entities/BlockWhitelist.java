@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import mytown.datasource.MyTownUniverse;
+import mytown.entities.flag.FlagType;
 
 /**
  * Created by AfterWind on 9/4/2014.
@@ -10,20 +11,20 @@ public class BlockWhitelist {
 
     private int db_id;
     public int dim, x, y, z;
-    private String flagName;
+    private FlagType flagType;
     private int plotID;
 
-    public BlockWhitelist(int dim, int x, int y, int z, String flagName, int plotID) {
+    public BlockWhitelist(int dim, int x, int y, int z, FlagType flagType, int plotID) {
         this.dim = dim;
         this.x = x;
         this.y = y;
         this.z = z;
-        this.flagName = flagName;
+        this.flagType = flagType;
         this.plotID = plotID;
     }
 
-    public String getFlagName() {
-        return this.flagName;
+    public FlagType getFlagType() {
+        return this.flagType;
     }
 
     public int getPlotID() {

@@ -7,6 +7,7 @@ import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -150,10 +151,10 @@ public class CommandsAssistant extends Commands {
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        String flagName = args.get(0);
+        FlagType flagType = getFlagTypeFromName(args.get(1));
 
-        if(Flag.flagsForWhitelist.contains(flagName))
-            res.startBlockSelection(flagName, town.getName(), false);
+        if(flagType.isWhitelistable())
+            res.startBlockSelection(flagType, town.getName(), false);
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
 

@@ -4,6 +4,7 @@ import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxy;
@@ -92,7 +93,7 @@ public abstract class Protection {
         if(town == null)
             return false;
 
-        Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "mobs");
+        Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, FlagType.mobs);
         String value = mobFlag.getValue();
 
         if(value.equals("all")) {
@@ -105,7 +106,7 @@ public abstract class Protection {
             }
         }
 
-        Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "explosions");
+        Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, FlagType.explosions);
 
         if(!explosionsFlag.getValue()) {
             if(explosiveBlocks.contains(entity.getClass())) {

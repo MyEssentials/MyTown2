@@ -4,6 +4,7 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.entities.interfaces.IHasBlockWhitelists;
 import mytown.entities.interfaces.IHasFlags;
 import mytown.entities.interfaces.IHasResidents;
@@ -164,9 +165,9 @@ public class Plot implements IHasFlags, IHasResidents {
     }
 
     @Override
-    public boolean hasFlag(String name) {
+    public boolean hasFlag(FlagType type) {
         for(Flag flag : flags)
-            if(flag.getName().equals(name))
+            if(flag.flagType.equals(type))
                 return true;
         return false;
     }
@@ -177,9 +178,9 @@ public class Plot implements IHasFlags, IHasResidents {
     }
 
     @Override
-    public Flag getFlag(String name) {
+    public Flag getFlag(FlagType type) {
         for(Flag flag : flags)
-            if(flag.getName().equals(name))
+            if(flag.flagType.equals(type))
                 return flag;
         return null;
     }

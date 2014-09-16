@@ -10,6 +10,7 @@ import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.protection.Protection;
 import mytown.protection.Protections;
 import mytown.proxies.DatasourceProxy;
@@ -160,11 +161,11 @@ public class PlayerTracker {
                     } else {
                         // If plot is within the bounds of a plot then create or delete the blockwhitelist
 
-                        String whitelisterFlagName = Utils.getFlagNameFromLore(ev.entityPlayer);
+                        FlagType flagType = FlagType.valueOf(Utils.getFlagNameFromLore(ev.entityPlayer));
                         ev.entityPlayer.setCurrentItemOrArmor(0, null);
-                        BlockWhitelist bw = plot.getTown().getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, plot.getDb_ID());
+                        BlockWhitelist bw = plot.getTown().getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType, plot.getDb_ID());
                         if(bw == null) {
-                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, plot.getDb_ID());
+                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType, plot.getDb_ID());
                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.added"));
                             DatasourceProxy.getDatasource().saveBlockWhitelist(bw, plot.getTown());
                         } else {
@@ -182,11 +183,11 @@ public class PlayerTracker {
                     } else {
                         // If town is found then create of delete the block whitelist
 
-                        String whitelisterFlagName = Utils.getFlagNameFromLore(ev.entityPlayer);
+                        FlagType flagType = FlagType.valueOf(Utils.getFlagNameFromLore(ev.entityPlayer));
                         ev.entityPlayer.setCurrentItemOrArmor(0, null);
-                        BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, 0);
+                        BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType, 0);
                         if(bw == null) {
-                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, 0);
+                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType, 0);
                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
                             DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
                         } else {

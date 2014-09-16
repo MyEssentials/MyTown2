@@ -11,6 +11,7 @@ import mytown.MyTown;
 import mytown.core.Localization;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.Entity;
@@ -127,7 +128,7 @@ public class Protections {
         if(block != null) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             Town town = block.getTown();
-            Flag<Boolean> attackFlag = town.getFlagAtCoords(ev.target.dimension, (int)ev.target.posX, (int)ev.target.posY, (int)ev.target.posZ, "attackEntities");
+            Flag<Boolean> attackFlag = town.getFlagAtCoords(ev.target.dimension, (int)ev.target.posX, (int)ev.target.posY, (int)ev.target.posZ, FlagType.attackEntities);
             if(!attackFlag.getValue()) {
                 for (Protection prot : protections) {
                     if (prot.protectedEntities.contains(ev.target.getClass())) {
@@ -199,44 +200,45 @@ public class Protections {
 
             //TODO: Verify properly
             // In case the player wants to access a block... checking if player is shifting too
-            if(te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && ev.entityPlayer.isSneaking()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", 0)) {
-                Flag<Boolean> accessFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks");
+            if(te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && ev.entityPlayer.isSneaking()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, 0)) {
+                Flag<Boolean> accessFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks);
 
                 // If it's a town whitelist then it's universal
-                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", 0))
+                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, 0))
                     return;
 
                 // If it's a plot only whitelist then only residents of the same town can access
-                if(plot != null) {
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", plot.getDb_ID()) && res.hasTown(tblock.getTown()))
+                Plot plotAtBlock = tblock.getTown().getPlotAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord);
+                if(plotAtBlock != null) {
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, plotAtBlock.getDb_ID()) && res.hasTown(tblock.getTown()))
                         return;
                 }
                 // Checking if a player wants to access a block here
                 //TODO: Check for permission instead
                 if(!accessFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
-                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.access"));
+                    res.sendMessage(accessFlag.flagType.getLocalizedProtectionDenial());
                     ev.setCanceled(true);
                     return;
                 }
             }
             if(currentStack == null) {
-                Flag<Boolean> activateFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks");
+                Flag<Boolean> activateFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks);
                 //TODO: Check for permission
 
                 // If it's a town whitelist then it's universal
-                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", 0))
+                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, 0))
                     return;
 
                 // If it's a plot only whitelist then only residents of the same town can access
                 if(plot != null) {
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", plot.getDb_ID()) && res.hasTown(tblock.getTown()))
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, plot.getDb_ID()) && res.hasTown(tblock.getTown()))
                         return;
                 }
 
-                if(!activateFlag.getValue() && !res.hasTown(tblock.getTown()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", 0)) {
+                if(!activateFlag.getValue() && !res.hasTown(tblock.getTown()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, 0)) {
                     for(Protection prot : protections) {
                         if(prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
-                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.activateBlock"));
+                            res.sendMessage(activateFlag.flagType.getLocalizedProtectionDenial());
                             ev.setCanceled(true);
                             return;
                         }
@@ -244,11 +246,11 @@ public class Protections {
                 }
             }
             if(currentStack != null && currentStack.getItem() instanceof ItemBlock) {
-                Flag<Boolean> placeFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, x, y, z, "placeBlocks");
+                Flag<Boolean> placeFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, x, y, z, FlagType.placeBlocks);
                 //TODO: Check for permission instead
 
                 if(!placeFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
-                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.place"));
+                    res.sendMessage(placeFlag.flagType.getLocalizedProtectionDenial());
                     ev.setCanceled(true);
                     return;
                 }
@@ -267,7 +269,7 @@ public class Protections {
         if (block != null) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer());
             Town town = block.getTown();
-            Flag<Boolean> flag = town.getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breakBlocks");
+            Flag<Boolean> flag = town.getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.breakBlocks);
             if (flag == null)
                 return;
             if (flag.getValue())
@@ -276,18 +278,18 @@ public class Protections {
             Plot plot = town.getPlotAtResident(res);
 
             // If it's a town whitelist then it's universal
-            if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", 0))
+            if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.breakBlocks, 0))
                 return;
 
             // If it's a plot only whitelist then only residents of the same town can access
             if(plot != null) {
-                if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", plot.getDb_ID()) && res.hasTown(town))
+                if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.breakBlocks, plot.getDb_ID()) && res.hasTown(town))
                     return;
             }
 
             if (DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer()).hasTown(town))
                 return;
-            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.break"));
+            res.sendMessage(flag.flagType.getLocalizedProtectionDenial());
             ev.setCanceled(true);
         }
     }
@@ -328,13 +330,13 @@ public class Protections {
         if(block != null) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             Town town = block.getTown();
-            Flag<Boolean> pickupFlag = town.getFlagAtCoords(ev.entityPlayer.dimension, (int)ev.entityPlayer.posX, (int)ev.entityPlayer.posY, (int)ev.entityPlayer.posZ, "pickupItems");
+            Flag<Boolean> pickupFlag = town.getFlagAtCoords(ev.entityPlayer.dimension, (int)ev.entityPlayer.posX, (int)ev.entityPlayer.posY, (int)ev.entityPlayer.posZ, FlagType.pickupItems);
             if(!pickupFlag.getValue()) {
                 //TODO: Check for protection
                 if(!res.hasTown(town)) {
                     //TODO: Maybe centralise this too
                     if(counter == 0) {
-                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.pickup"));
+                        res.sendMessage(pickupFlag.flagType.getLocalizedProtectionDenial());
                         counter = 100;
                     } else
                       counter--;
