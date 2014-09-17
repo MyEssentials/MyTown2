@@ -153,6 +153,17 @@ public abstract class Protection {
         return trackedEntities.contains(e.getClass()) || hostileEntities.contains(e.getClass()) || anyEntity.contains(e.getClass()) || explosiveBlocks.contains(e.getClass());
     }
 
+    /**
+     * Checks if the given tile entity position has any whitelists
+     *
+     * @param te
+     * @return
+     */
+    public boolean checkForWhitelist(TileEntity te) { return false; }
+
+    public List<FlagType> getFlagTypeForTile(TileEntity te) { return getFlagTypeForTile(te.getClass()); }
+    public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) { return null; }
+
     /* ---- Helpers ---- */
     protected MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();

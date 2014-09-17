@@ -159,7 +159,7 @@ public class PlayerTracker {
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInPlot"));
                         return;
                     } else {
-                        // If plot is within the bounds of a plot then create or delete the blockwhitelist
+                        // If plot is within the bounds of a town then create or delete the blockwhitelist
 
                         FlagType flagType = FlagType.valueOf(Utils.getFlagNameFromLore(ev.entityPlayer));
                         ev.entityPlayer.setCurrentItemOrArmor(0, null);

@@ -17,7 +17,7 @@ public class IC2Proxy extends ModProxy {
 
     @Override
     public void load() {
-        Protections.instance.addProtection(new IC2Protection());
+        Protections.instance.addProtection(new IC2Protection(), MOD_ID);
     }
 
     @Override

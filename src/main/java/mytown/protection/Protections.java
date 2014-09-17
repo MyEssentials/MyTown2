@@ -1,35 +1,28 @@
 package mytown.protection;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
 import mytown.MyTown;
-import mytown.core.Localization;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
-import javax.xml.crypto.Data;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +32,7 @@ import java.util.Map;
  * Class handling all the protections
  */
 public class Protections {
-    public List<Protection> protections;
+    public Map<String, Protection> protections;
 
     public Map<TileEntity, Boolean> checkedTileEntities;
     public Map<Entity, Boolean> checkedEntities;
@@ -51,17 +44,48 @@ public class Protections {
     public Protections() {
 
         MyTown.instance.log.info("Protections initializing started...");
-        protections = new ArrayList<Protection>();
+        protections = new HashMap<String, Protection>();
         checkedTileEntities = new HashMap<TileEntity, Boolean>();
         checkedEntities = new HashMap<Entity, Boolean>();
-        addProtection(new VanillaProtection());
+        addProtection(new VanillaProtection(), "");
     }
 
-    public void addProtection(Protection prot) {
-        protections.add(prot);
+    public void addProtection(Protection prot, String modid) {
+        protections.put(modid, prot);
 
         if(prot.isHandlingEvents) {
             MinecraftForge.EVENT_BUS.register(prot);
+        }
+    }
+
+    private void addToBlockWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
+        for(Protection prot : protections.values()) {
+            if(prot.getFlagTypeForTile(te) != null)
+                for(FlagType flagType : prot.getFlagTypeForTile(te)) {
+                    if (flagType != null) {
+                        MyTown.instance.log.info("Ooooh shiny! Found flag " + flagType.toString());
+                        if (!town.hasBlockWhitelist(dim, x, y, z, flagType, 0)) {
+                            BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, flagType, 0);
+                            DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
+                        } else {
+                            MyTown.instance.log.info("Flag already is there.");
+                        }
+                    }
+                }
+        }
+    }
+
+    private void removeFromWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
+        for(Protection prot : protections.values()) {
+            if(prot.getFlagTypeForTile(te) != null)
+                for(FlagType flagType : prot.getFlagTypeForTile(te)) {
+                    if (flagType != null) {
+                        if (town.hasBlockWhitelist(dim, x, y, z, flagType, 0)) {
+                            DatasourceProxy.getDatasource().deleteBlockWhitelist(town.getBlockWhitelist(dim, x, y, z, flagType, 0), town);
+                            MyTown.instance.log.info("Removed flag " + flagType + " from block!");
+                        }
+                    }
+                }
         }
     }
 
@@ -87,7 +111,7 @@ public class Protections {
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
 
-            for (Protection prot : protections) {
+            for (Protection prot : protections.values()) {
                 if (prot.hasToCheckEntity(entity)) {
                     if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
                         if(!(entity instanceof EntityPlayer)) {
@@ -106,10 +130,14 @@ public class Protections {
         }
         for (TileEntity te : (List<TileEntity>) ev.world.loadedTileEntityList) {
             //MyTown.instance.log.info("Checking tile: " + te.toString());
-            for (Protection prot : protections) {
-                if (prot.hasToCheckTileEntity(te)) {
+            for (Protection prot : protections.values()) {
+                // Prechecks go here
+                if (prot.hasToCheckTileEntity(te) && !prot.checkForWhitelist(te)) {
+                    // Checks go here
                     if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
-                        ev.world.removeTileEntity(te.xCoord, te.yCoord, te.zCoord);
+                        //ev.world.removeTileEntity(te.xCoord, te.yCoord, te.zCoord);
+                        te.getBlockType().dropBlockAsItem(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, 1, te.blockMetadata);
+                        te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
                         MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
                     } else {
                         checkedTileEntities.put(te, true);
@@ -130,7 +158,7 @@ public class Protections {
             Town town = block.getTown();
             Flag<Boolean> attackFlag = town.getFlagAtCoords(ev.target.dimension, (int)ev.target.posX, (int)ev.target.posY, (int)ev.target.posZ, FlagType.attackEntities);
             if(!attackFlag.getValue()) {
-                for (Protection prot : protections) {
+                for (Protection prot : protections.values()) {
                     if (prot.protectedEntities.contains(ev.target.getClass())) {
                         // TODO: Check for permission instead
                         if (!DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer).hasTown(town)) {
@@ -229,14 +257,15 @@ public class Protections {
                 if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, 0))
                     return;
 
+                Plot plotAtBlock = tblock.getTown().getPlotAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z);
                 // If it's a plot only whitelist then only residents of the same town can access
-                if(plot != null) {
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, plot.getDb_ID()) && res.hasTown(tblock.getTown()))
+                if(plotAtBlock != null) {
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, plotAtBlock.getDb_ID()) && res.hasTown(tblock.getTown()))
                         return;
                 }
 
                 if(!activateFlag.getValue() && !res.hasTown(tblock.getTown()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, 0)) {
-                    for(Protection prot : protections) {
+                    for(Protection prot : protections.values()) {
                         if(prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
                             res.sendMessage(activateFlag.flagType.getLocalizedProtectionDenial());
                             ev.setCanceled(true);
@@ -249,10 +278,17 @@ public class Protections {
                 Flag<Boolean> placeFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, x, y, z, FlagType.placeBlocks);
                 //TODO: Check for permission instead
 
-                if(!placeFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
+                if(!placeFlag.getValue() && !res.hasTown(tblock.getTown())) {
                     res.sendMessage(placeFlag.flagType.getLocalizedProtectionDenial());
                     ev.setCanceled(true);
                     return;
+                }
+                MyTown.instance.log.info("Checking for te...");
+                if(res.hasTown(tblock.getTown()) && ((ItemBlock)currentStack.getItem()).field_150939_a instanceof ITileEntityProvider) {
+                    // Getting TileEntity TYPE by creating a tileentity from the itileentityprovider inside blockcontainer inside itemblock... lol
+                    Class<? extends TileEntity> clsTe = ((ITileEntityProvider)((ItemBlock)currentStack.getItem()).field_150939_a).createNewTileEntity(ev.world, currentStack.getItemDamage()).getClass();
+                    MyTown.instance.log.info("Found tile entity type from block, it's: " + clsTe.toString());
+                    addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, x, y, z, tblock.getTown());
                 }
             }
 
@@ -287,6 +323,8 @@ public class Protections {
                     return;
             }
 
+            if(ev.block instanceof ITileEntityProvider)
+                removeFromWhitelist(((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata).getClass(), ev.world.provider.dimensionId, ev.x, ev.y, ev.z, town);
             if (DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer()).hasTown(town))
                 return;
             res.sendMessage(flag.flagType.getLocalizedProtectionDenial());

@@ -22,6 +22,6 @@ public class BuildCraftProxy extends ModProxy {
 
     @Override
     public void load() {
-        Protections.instance.addProtection(new BuildCraftProtection());
+        Protections.instance.addProtection(new BuildCraftProtection(), MOD_ID);
     }
 }

@@ -25,6 +25,9 @@ import net.minecraft.tileentity.TileEntityPiston;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by AfterWind on 9/2/2014.
@@ -144,6 +147,14 @@ public class VanillaProtection extends Protection {
     @Override
     public boolean hasToCheckEntity(Entity e) {
         return super.hasToCheckEntity(e) || e instanceof EntityPlayer;
+    }
+
+    @Override
+    public List<FlagType> getFlagTypeForTile(TileEntity te) {
+        List<FlagType> list = new ArrayList<FlagType>();
+        list.add(FlagType.accessBlocks);
+        list.add(FlagType.activateBlocks);
+        return list;
     }
 
     /* ---- EventHandlers ---- */

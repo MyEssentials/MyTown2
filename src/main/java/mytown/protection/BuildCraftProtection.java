@@ -5,14 +5,15 @@ import buildcraft.core.Box;
 import mytown.MyTown;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Block;
+import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.util.ChunkPos;
 import mytown.util.Utils;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,12 +54,30 @@ public class BuildCraftProtection extends Protection {
                     if(!bcFlag.getValue()) {
                         block.getTown().notifyEveryone(getLocal().getLocalization("mytown.protection.bcBuildingMining"));
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
-                        return false;
+                        return true;
                     }
                 }
             }
         }
 
         return false;
+    }
+
+    @Override
+    public boolean checkForWhitelist(TileEntity te) {
+        if(clsTileAbstractBuilder.isAssignableFrom(te.getClass())) {
+            return Utils.isBlockWhitelisted(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.bcBuildingMining);
+        }
+        return false;
+    }
+
+    @Override
+    public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
+        if(clsTileAbstractBuilder.isAssignableFrom(te)) {
+            List<FlagType> list = new ArrayList<FlagType>();
+            list.add(FlagType.bcBuildingMining);
+            return list;
+        }
+        return null;
     }
 }
