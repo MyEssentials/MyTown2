@@ -243,7 +243,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns();
+        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends();
     }
 
     /**
@@ -315,6 +315,20 @@ public abstract class MyTownDatasource {
      * @return
      */
     protected abstract boolean loadSelectedTowns();
+
+    /**
+     * Loads the link between to residents which represents friendship
+     *
+     * @return
+     */
+    protected abstract boolean loadFriends();
+
+    /**
+     * Loads all the friend requests
+     *
+     * @return
+     */
+    protected abstract boolean loadFriendRequests();
 
     /* ----- Save ----- */
 
@@ -399,6 +413,24 @@ public abstract class MyTownDatasource {
      * @return
      */
     public abstract boolean saveSelectedTown(Resident res, Town town);
+
+    /**
+     * Saves a link between 2 residents which represents friendship
+     *
+     * @param res1
+     * @param res2
+     * @return
+     */
+    public abstract boolean saveFriendLink(Resident res1, Resident res2);
+
+    /**
+     * Saves a friend request to the database
+     *
+     * @param res1
+     * @param res2
+     * @return
+     */
+    public abstract boolean saveFriendRequest(Resident res1, Resident res2);
 
 
     /* ----- Link ----- */
@@ -560,8 +592,33 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deleteBlockWhitelist(BlockWhitelist bw, Town town);
 
+    /**
+     * Deletes a town that was selected previously
+     * Not extremely useful, the selected town is changed when saving another on top
+     *
+     * @param res
+     * @return
+     */
     public abstract boolean deleteSelectedTown(Resident res);
 
+    /**
+     * Deletes the friend link between 2 residents
+     * #whydidyouruinafriendshipsadface
+     *
+     * @param res1
+     * @param res2
+     * @return
+     */
+    public abstract boolean deleteFriendLink(Resident res1, Resident res2);
+
+    /**
+     * Deletes a friend request
+     *
+     * @param res1
+     * @param res2
+     * @return
+     */
+    public abstract boolean deleteFriendRequest(Resident res1, Resident res2, boolean response);
     /**
      * Removes the permission node from the Rank
      *

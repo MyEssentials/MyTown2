@@ -454,7 +454,42 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    protected boolean loadFriends() {
+        try {
+            PreparedStatement s = prepare("SELECT * FROM " + prefix + "Friends", true);
+            ResultSet rs = s.executeQuery();
+            while(rs.next()) {
+                Resident res1 = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident1"));
+                Resident res2 = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident2"));
 
+                res1.addFriend(res2);
+                res2.addFriend(res1);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to load friends.");
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean loadFriendRequests() {
+        try {
+            PreparedStatement s = prepare("SELECT * FROM " + prefix + "FriendRequests", true);
+            ResultSet rs = s.executeQuery();
+            while(rs.next()) {
+                Resident res1 = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident"));
+                Resident res2 = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("residentTarget"));
+
+                res2.addFriendRequest(res1);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to load friend requests.");
+            return false;
+        }
+        return true;
+    }
 
     /* ----- Save ----- */
 
@@ -814,6 +849,44 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean saveFriendLink(Resident res1, Resident res2) {
+        try {
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "Friends(resident1, resident2) VALUES(?, ?)", true);
+            s.setString(1, res1.getUUID().toString());
+            s.setString(2, res2.getUUID().toString());
+            s.executeUpdate();
+
+            /*
+            Adding them BEFORE saving, only when a friend request is accepted
+            res1.addFriend(res2);
+            res2.addFriend(res1);
+            */
+        } catch (SQLException e) {
+            log.error("Failed to save friend link between " + res1.getPlayerName() + " and " + res2.getPlayerName());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean saveFriendRequest(Resident res1, Resident res2) {
+        try {
+            if(res2.addFriendRequest(res1)) {
+                PreparedStatement s = prepare("INSERT INTO " + prefix + "FriendRequests(resident, residentTarget) VALUES(?, ?)", true);
+                s.setString(1, res1.getUUID().toString());
+                s.setString(2, res2.getUUID().toString());
+                s.executeUpdate();
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            log.error("Failed to save friend request from " + res1.getPlayerName() + " to " + res2.getPlayerName());
+            return false;
+        }
+        return true;
+    }
+
     /* ----- Link ----- */
 
     @Override
@@ -1127,21 +1200,55 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
-    /*
-        @Override
-        public boolean deleteFlag(Flag flag, Town town) {
-            try {
-                PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
-                deleteFlagStatement.setString(1, flag.getName());
-                deleteFlagStatement.setString(2, town.getName());
-                deleteFlagStatement.execute();
-
-
-            } catch (SQLException e) {
-                log.error("Failed to delete flag %s!", e, flag.getName());
-            }
+    @Override
+    public boolean deleteFriendLink(Resident res1, Resident res2) {
+        try {
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "Friends WHERE resident1=? AND resident2=?", true);
+            s.setString(1, res1.getUUID().toString());
+            s.setString(2, res2.getUUID().toString());
+            s.executeUpdate();
+        } catch (SQLException e) {
+            log.error("Failed to delete link between " + res1.getPlayerName() + " and " + res2.getPlayerName());
+            return false;
         }
-        */
+        return true;
+    }
+
+    @Override
+    public boolean deleteFriendRequest(Resident res1, Resident res2, boolean response) {
+        try {
+            if(res2.hasFriendRequest(res1)) {
+                PreparedStatement s = prepare("DELETE FROM " + prefix + "FriendRequests WHERE resident=? AND residentTarget=?", true);
+                s.setString(1, res1.getUUID().toString());
+                s.setString(2, res2.getUUID().toString());
+                s.executeUpdate();
+
+                if(response)
+                    saveFriendLink(res1, res2);
+                res2.verifyFriendRequest(res1, response);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to delete friend request from " + res1.getPlayerName() + " to " + res2.getPlayerName());
+            return false;
+        }
+        return true;
+    }
+
+    /*
+            @Override
+            public boolean deleteFlag(Flag flag, Town town) {
+                try {
+                    PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
+                    deleteFlagStatement.setString(1, flag.getName());
+                    deleteFlagStatement.setString(2, town.getName());
+                    deleteFlagStatement.execute();
+
+
+                } catch (SQLException e) {
+                    log.error("Failed to delete flag %s!", e, flag.getName());
+                }
+            }
+            */
     @Override
     public boolean removeRankPermission(Rank rank, String perm) {
         try {
@@ -1331,6 +1438,18 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(resident), " +
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE," +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name))"));
+        updates.add(new DBUpdate("09.19.2014.1", "Add Friends", "CREATE TABLE IF NOT EXISTS " + prefix + "Friends(" +
+                "resident1 CHAR(36)," +
+                "resident2 CHAR(36)," +
+                "PRIMARY KEY(resident1, resident2)," +
+                "FOREIGN KEY(resident1) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE," +
+                "FOREIGN KEY(resident2) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE)"));
+        updates.add(new DBUpdate("09.19.2014.2", "Add FriendRequests", "CREATE TABLE IF NOT EXISTS " + prefix + "FriendRequests(" +
+                "resident CHAR(36)," +
+                "residentTarget CHAR(36)," +
+                "PRIMARY KEY(resident, residentTarget)," +
+                "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE," +
+                "FOREIGN KEY(residentTarget) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE)"));
     }
 
     /**

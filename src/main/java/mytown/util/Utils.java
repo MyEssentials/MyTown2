@@ -3,6 +3,7 @@ package mytown.util;
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Block;
+import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
@@ -139,7 +140,15 @@ public class Utils {
     public static boolean isBlockWhitelisted(int dim, int x, int y, int z, FlagType flagType) {
         Town town = getTownAtPosition(dim, x >> 4, z >> 4);
         if(town == null) return false;
-        return town.hasBlockWhitelist(dim, x, y, z, flagType, 0);
+        BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType, 0);
+        if(bw != null) {
+            if(bw.isDeleted) {
+                getDatasource().deleteBlockWhitelist(bw, town);
+                return true;
+            }
+            return true;
+        }
+        return false;
     }
 
 

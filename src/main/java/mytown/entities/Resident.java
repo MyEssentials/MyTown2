@@ -392,9 +392,50 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return null;
     }
 
+
+
     public boolean hasInvite() {
         return !invites.isEmpty();
     }
+
+    /* ---- Friends ---- */
+
+    private List<Resident> friends = new ArrayList<Resident>();
+    private List<Resident> friendRequests = new ArrayList<Resident>();
+    public boolean addFriend(Resident res) {
+        return friends.add(res);
+    }
+
+    public boolean removeFriend(Resident res) {
+        return friends.remove(res);
+    }
+
+    public boolean hasFriend(Resident res) {
+        return friends.contains(res);
+    }
+
+    public List<Resident> getFriends() {
+        return friends;
+    }
+
+    public boolean addFriendRequest(Resident res) {
+        if(friends.contains(res) || friendRequests.contains(res)) return false;
+        return friendRequests.add(res);
+    }
+
+    public void verifyFriendRequest(Resident res, boolean response) {
+        if(response) {
+            friends.add(res);
+            res.addFriend(this);
+        }
+        friendRequests.remove(res);
+    }
+
+    public boolean hasFriendRequest(Resident res) {
+        return friendRequests.contains(res);
+    }
+
+
 
     /* ----- Helpers ----- */
 
@@ -422,8 +463,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         }
         return null;
     }
-
-
 
     // //////////////////////////////////////
     // PLOT SELECTION

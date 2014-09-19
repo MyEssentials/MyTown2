@@ -75,13 +75,14 @@ public class Protections {
         }
     }
 
-    private void removeFromWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for(Protection prot : protections.values()) {
-            if(prot.getFlagTypeForTile(te) != null)
-                for(FlagType flagType : prot.getFlagTypeForTile(te)) {
+    private void removeFromWhitelist(final Class<? extends TileEntity> te, final int dim, final int x, final int y, final int z, final Town town) {
+        for (Protection prot : protections.values()) {
+            if (prot.getFlagTypeForTile(te) != null)
+                for (FlagType flagType : prot.getFlagTypeForTile(te)) {
                     if (flagType != null) {
-                        if (town.hasBlockWhitelist(dim, x, y, z, flagType, 0)) {
-                            DatasourceProxy.getDatasource().deleteBlockWhitelist(town.getBlockWhitelist(dim, x, y, z, flagType, 0), town);
+                        BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType, 0);
+                        if (bw != null) {
+                            bw.delete();
                             MyTown.instance.log.info("Removed flag " + flagType + " from block!");
                         }
                     }
@@ -231,7 +232,7 @@ public class Protections {
             if(te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && ev.entityPlayer.isSneaking()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, 0)) {
                 Flag<Boolean> accessFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks);
 
-                // If it's a town whitelist then it's universal
+                // If it's a town whitelist then it's for everyone
                 if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, 0))
                     return;
 

@@ -148,4 +148,94 @@ public class CommandsOutsider extends Commands {
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.refuse", town.getName()));
         res.removeInvite(town.getName());
     }
+
+    @CommandNode(
+            name = "friends",
+            permission = "mytown.cmd.outsider.friends",
+            parentName = "mytown.cmd")
+         public static void friendsCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        callSubFunctions(sender, args, subCommands, "mytown.cmd.outsider.friends");
+    }
+
+    @CommandNode(
+            name = "list",
+            permission = "mytown.cmd.outsider.friends.list",
+            parentName = "mytown.cmd.outsider.friends")
+    public static void friendsListCommand(ICommandSender sender, List<String> args) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+
+        String friends = null;
+        for(Resident friend : res.getFriends()) {
+            if(friends == null)
+                friends = friend.getPlayerName();
+            else
+                friends += ", " + friend.getPlayerName();
+        }
+
+        res.sendMessage(getLocal().getLocalization("mytown.notification.resident.friends.list", friends));
+    }
+
+    @CommandNode(
+            name = "add",
+            permission = "mytown.cmd.outsider.friends.add",
+            parentName = "mytown.cmd.outsider.friends",
+            completionKeys = {"residentCompletion"})
+    public static void friendsAddCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.friends.add"));
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident toAdd = getResidentFromName(args.get(0));
+        if(!getDatasource().saveFriendRequest(res, toAdd)) {
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.add"));
+        }
+        res.sendMessage(getLocal().getLocalization("mytown.notification.friends.invitationSent"));
+    }
+
+    @CommandNode(
+            name = "remove",
+            permission = "mytown.cmd.outsider.friends.remove",
+            parentName = "mytown.cmd.outsider.friends",
+            completionKeys = {"residentCompletion"})
+    public static void friendsRemoveCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.friends.remove"));
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident toAdd = getResidentFromName(args.get(0));
+        if(!toAdd.removeFriend(res)) {
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.add"));
+        } else {
+            res.removeFriend(toAdd);
+        }
+        res.sendMessage(getLocal().getLocalization("mytown.notification.friends.removed"));
+    }
+
+    @CommandNode(
+            name = "accept",
+            permission = "mytown.cmd.outsider.friends.accept",
+            parentName = "mytown.cmd.outsider.friends",
+            completionKeys = {"residentCompletion"})
+    public static void friendsAcceptCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.accept"));
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident toAdd = getResidentFromName(args.get(0));
+
+        getDatasource().deleteFriendRequest(res, toAdd, true);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.friends.accepted", toAdd.getPlayerName()));
+    }
+
+    @CommandNode(
+            name = "refuse",
+            permission = "mytown.cmd.outsider.friends.refuse",
+            parentName = "mytown.cmd.outsider.friends",
+            completionKeys = {"residentCompletion"})
+    public static void friendsRefuseCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.refuse"));
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident toAdd = getResidentFromName(args.get(0));
+
+        getDatasource().deleteFriendRequest(res, toAdd, false);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.friends.refused", toAdd.getPlayerName()));
+    }
 }
