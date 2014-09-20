@@ -1,17 +1,11 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.MyTown;
-import mytown.config.Config;
 import mytown.core.utils.teleport.Teleport;
-import mytown.datasource.MyTownDatasource;
-import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.entities.interfaces.*;
-import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.*;
@@ -210,31 +204,31 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /* ----- IHasBlocks ----- */
 
-    protected Map<String, Block> blocks = new Hashtable<String, Block>();
+    protected Map<String, TownBlock> blocks = new Hashtable<String, TownBlock>();
 
     @Override
-    public void addBlock(Block block) {
+    public void addBlock(TownBlock block) {
         blocks.put(block.getKey(), block);
     }
 
     @Override
-    public void removeBlock(Block block) {
+    public void removeBlock(TownBlock block) {
         blocks.remove(block);
     }
 
     @Override
-    public boolean hasBlock(Block block) {
+    public boolean hasBlock(TownBlock block) {
         return blocks.containsValue(block);
     }
 
     @Override
-    public ImmutableList<Block> getBlocks() {
+    public ImmutableList<TownBlock> getBlocks() {
         return ImmutableList.copyOf(blocks.values());
     }
 
     @Override
-    public Block getBlockAtCoords(int dim, int x, int z) {
-        return blocks.get(String.format(Block.keyFormat, dim, x, z));
+    public TownBlock getBlockAtCoords(int dim, int x, int z) {
+        return blocks.get(String.format(TownBlock.keyFormat, dim, x, z));
     }
 
     /* ----- IHasPlots ----- */
@@ -466,7 +460,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * @return
      */
     public boolean isChunkInTown(int dim, int cx, int cz) {
-        return blocks.containsKey(String.format(Block.keyFormat, dim, cx, cz));
+        return blocks.containsKey(String.format(TownBlock.keyFormat, dim, cx, cz));
     }
 
     public void notifyResidentJoin(Resident res) {
@@ -481,6 +475,37 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
             r.sendMessage(message);
         }
     }
+
+    public boolean residentHasFriendInTown(Resident res) {
+        if(res.hasTown(this))
+            return true;
+        for(Resident r : residents.keySet()) {
+            if(r.hasFriend(res))
+                return true;
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean checkPermission(Resident res, FlagType flagType, int dim, int x, int y, int z) {
+        if(flagType.getType() != Boolean.class)
+            throw new RuntimeException("FlagType is not boolean!");
+        Plot plot = getPlotAtCoords(dim, x, y, z);
+        Flag<Boolean> flag;
+        if(plot == null) {
+            flag = getFlag(flagType);
+            if(!flag.getValue() && !hasResident(res) && !residentHasFriendInTown(res)) {
+                //TODO: Check for permission
+                return false;
+            }
+        } else {
+            flag = plot.getFlag(flagType);
+            if(!flag.getValue() && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
+                return false;
+        }
+        return true;
+    }
+
 
     /* ----- Comparable ----- */
 

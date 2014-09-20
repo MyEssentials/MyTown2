@@ -7,7 +7,7 @@ import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.entities.Block;
+import mytown.entities.TownBlock;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -299,7 +299,7 @@ public class CommandsAdmin extends Commands {
         if (CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.farClaim.unimplemented"));
             //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
-        Block block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+        TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
             throw new CommandException("Failed to create Block"); // TODO Localize
         getDatasource().saveBlock(block);
@@ -316,7 +316,7 @@ public class CommandsAdmin extends Commands {
 
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(pl);
-        Block block = getBlockAtResident(res);
+        TownBlock block = getBlockAtResident(res);
         Town town = block.getTown();
 
         if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {

@@ -97,7 +97,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveBlock(Block block) {
+    public boolean saveBlock(TownBlock block) {
         log.debug("Saving Block %s", block.getKey());
         if (MyTownUniverse.getInstance().blocks.containsValue(block)) { // Update
         } else { // Insert
@@ -275,9 +275,9 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean deleteBlock(Block block) {
-        log.debug("Deleting Block %s", block.getKey());
-        return MyTownUniverse.getInstance().blocks.remove(block.getKey()) != null;
+    public boolean deleteBlock(TownBlock townBlock) {
+        log.debug("Deleting Block %s", townBlock.getKey());
+        return MyTownUniverse.getInstance().blocks.remove(townBlock.getKey()) != null;
     }
 
     @Override

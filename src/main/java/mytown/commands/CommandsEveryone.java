@@ -1,6 +1,5 @@
 package mytown.commands;
 
-import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
@@ -8,20 +7,11 @@ import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
-import mytown.proxies.DatasourceProxy;
-import mytown.util.Constants;
 import mytown.util.Formatter;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumChatFormatting;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -102,7 +92,7 @@ public class CommandsEveryone extends Commands{
         Town town = getTownFromResident(res);
 
         String s = null;
-        for(Block block : town.getBlocks()) {
+        for(TownBlock block : town.getBlocks()) {
             if(s == null)
                 s = block.toString();
             else

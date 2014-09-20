@@ -1,10 +1,5 @@
 package mytown.entities;
 
-import mytown.MyTown;
-import mytown.core.utils.teleport.Teleport;
-import mytown.entities.flag.Flag;
-import net.minecraft.command.CommandException;
-
 public class AdminTown extends Town {
     public AdminTown(String name) {
         super(name);
@@ -15,8 +10,8 @@ public class AdminTown extends Town {
 
 
     @Override
-    public void addBlock(Block block) {
-        blocks.put(block.getKey(), block);
+    public void addBlock(TownBlock townBlock) {
+        blocks.put(townBlock.getKey(), townBlock);
         // TODO: To be edited when checking distance between towns.
     }
 

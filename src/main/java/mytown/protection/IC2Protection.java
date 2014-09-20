@@ -1,25 +1,22 @@
 package mytown.protection;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import ic2.api.energy.tile.IEnergyTile;
 import ic2.api.event.LaserEvent;
 import mytown.MyTown;
-import mytown.core.ChatUtils;
-import mytown.entities.Block;
+import mytown.entities.TownBlock;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.LocalizationProxy;
+import mytown.util.BlockPair;
+import mytown.util.BlockPos;
 import mytown.util.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +32,7 @@ public class IC2Protection extends Protection {
     private Class<? extends TileEntity> clsTileEntityCable;
     private Class<? extends TileEntity> clsTileEntityBaseGenerator;
 
+    private Block blockCable, blockElectric, blockChargepad, blockMachine1, blockMachine2, blockMachine3, blockGenerator;
 
     @SuppressWarnings("unchecked")
     public IC2Protection() {
@@ -51,6 +49,15 @@ public class IC2Protection extends Protection {
             this.trackedTileEntities.add(clsTileEntityBaseGenerator);
             this.trackedTileEntities.add(clsTileEntityCable);
             this.trackedTileEntities.add(clsTileEntityElectricMachine);
+
+            blockCable = Block.getBlockFromName("blockCable");
+            blockElectric = Block.getBlockFromName("blockElectric");
+            blockChargepad = Block.getBlockFromName("blockChargepad");
+            blockMachine1 = Block.getBlockFromName("blockMachine");
+            blockMachine2 = Block.getBlockFromName("blockMachine2");
+            blockMachine3 = Block.getBlockFromName("blockMachine3");
+            blockGenerator = Block.getBlockFromName("blockGenerator");
+
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -108,7 +115,6 @@ public class IC2Protection extends Protection {
             if(town != null) {
                 Flag<Boolean> energyFlag = town.getFlagAtCoords(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord, FlagType.ic2EnergyFlow);
                 if(!energyFlag.getValue()) {
-
                     Town townAtEntity = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
                     if(townAtEntity != null && town == townAtEntity) {
                         Plot plot1 = town.getPlotAtCoords(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord);
@@ -132,29 +138,46 @@ public class IC2Protection extends Protection {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean checkBlock(BlockPos bp) {
+        List<BlockPos> blocksNearby = Utils.getBlockAndPositionNearby(bp);
+        for(BlockPos bn : blocksNearby) {
+            // This is never null
+            Town town = Utils.getTownAtPosition(bn.dim, bn.x >> 4, bn.z >> 4);
 
+            Flag<Boolean> ic2Flag = town.getFlagAtCoords(bn.dim, bn.x, bn.y, bn.z, FlagType.ic2EnergyFlow);
+            if(!ic2Flag.getValue()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasToCheckBlock(Block block) {
+        return block == blockCable || block == blockChargepad|| block == blockElectric|| block == blockGenerator|| block == blockMachine1|| block == blockMachine2|| block == blockMachine3;
+    }
 
     // EVENTS
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void onLaserBreak(LaserEvent.LaserHitsBlockEvent ev) {
         MyTown.instance.log.info("Detected laser break.");
-        Block tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.x >> 4, ev.z >> 4);
+        TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.x >> 4, ev.z >> 4);
         if(tblock == null)
             return;
-        MyTown.instance.log.info("Block is not null, checking...");
-
-        Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.owner.dimension, ev.x, ev.y, ev.z, FlagType.breakBlocks);
-        if(!breakFlag.getValue()) {
-            if(ev.owner instanceof EntityPlayer) {
-                MyTown.instance.log.info("Found things and stuff...");
-                Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.owner);
-                //TODO: Check for permission node
-                if(!res.getTowns().contains(tblock.getTown())) {
-                    ev.setCanceled(true);
-                    ev.lasershot.setDead();
-                }
-            } else {
+        if(ev.owner instanceof EntityPlayer) {
+            Resident res = getDatasource().getOrMakeResident(ev.owner);
+            //TODO: Check for permission node
+            if (!tblock.getTown().checkPermission(res, FlagType.breakBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                ev.setCanceled(true);
+                ev.lasershot.setDead();
+            }
+        } else {
+            // Verifying only the flag itself, not for resident
+            Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.breakBlocks);
+            if(!breakFlag.getValue()) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
             }
@@ -162,22 +185,27 @@ public class IC2Protection extends Protection {
     }
 
 
+
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void onLaserExplodes(LaserEvent.LaserExplodesEvent ev) {
         MyTown.instance.log.info("Detected explosion.");
-        Block tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.lasershot.chunkCoordX, ev.lasershot.chunkCoordZ);
+        TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.lasershot.chunkCoordX, ev.lasershot.chunkCoordZ);
         if(tblock == null)
             return;
-        Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.lasershot.dimension, (int) ev.lasershot.posX, (int) ev.lasershot.posY, (int) Math.floor(ev.lasershot.posZ), FlagType.breakBlocks);
-        if(!breakFlag.getValue()) {
-            if(ev.owner instanceof EntityPlayer) {
-                Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.owner);
-                if(res == null || !res.getTowns().contains(tblock.getTown())) {
-                    ev.setCanceled(true);
-                }
-            } else {
+        if(ev.owner instanceof EntityPlayer) {
+            Resident res = getDatasource().getOrMakeResident(ev.owner);
+            //TODO: Check for permission node
+            if (!tblock.getTown().checkPermission(res, FlagType.breakBlocks, ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ)) {
                 ev.setCanceled(true);
+                ev.lasershot.setDead();
+            }
+        } else {
+            // Verifying only the flag itself, not for resident
+            Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.breakBlocks);
+            if(!breakFlag.getValue()) {
+                ev.setCanceled(true);
+                ev.lasershot.setDead();
             }
         }
     }

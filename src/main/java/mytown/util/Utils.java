@@ -2,7 +2,7 @@ package mytown.util;
 
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
-import mytown.entities.Block;
+import mytown.entities.TownBlock;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.DimensionManager;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -38,7 +39,7 @@ public class Utils {
      * @return
      */
     public static Town getTownAtPosition(int dim, int x, int z) {
-        Block block = getDatasource().getBlock(dim, x, z);
+        TownBlock block = getDatasource().getBlock(dim, x, z);
         if(block == null)
             return null;
         return block.getTown();
@@ -151,6 +152,20 @@ public class Utils {
         return false;
     }
 
+    public static List<BlockPos> getBlockAndPositionNearby(BlockPos block) {
+        List<BlockPos> list = new ArrayList<BlockPos>();
+        int[] dx = {0, 1, 0, -1};
+        int[] dz = {1, 0, -1, 0};
+
+        for(int i = 0; i < 4; i++) {
+            Town town = getTownAtPosition(block.dim, (block.x + dx[i]) >> 4, (block.z + dz[i]) >> 4);
+            if(town != null) {
+                MyTown.instance.log.info("Got block at position " + (block.x + dx[i]) + ", " + block.y + ", " + (block.z + dz[i]));
+                list.add(new BlockPos(DimensionManager.getWorld(block.dim).getBlock(block.x + dx[i], block.y, block.z + dz[i]), block.x + dx[i], block.y, block.z + dz[i], block.dim));
+            }
+        }
+        return list;
+    }
 
     /**
      * Gets the datasource

@@ -5,7 +5,7 @@ import mytown.core.utils.Assert;
 import mytown.core.utils.x_command.CommandBase;
 import mytown.core.utils.x_command.Permission;
 import mytown.datasource.MyTownDatasource;
-import mytown.entities.Block;
+import mytown.entities.TownBlock;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
@@ -53,11 +53,11 @@ public class CmdClaim extends CommandBase {
             throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.already"));
         if (checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             Assert.Perm(player, "mytown.cmd.assistant.claim.far");
-        Block block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
-        if (block == null)
+        TownBlock townBlock = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+        if (townBlock == null)
             throw new CommandException("Failed to create Block"); // TODO Localize
-        getDatasource().saveBlock(block);
-        res.sendMessage(MyTown.getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+        getDatasource().saveBlock(townBlock);
+        res.sendMessage(MyTown.getLocal().getLocalization("mytown.notification.block.added", townBlock.getX() * 16, townBlock.getZ() * 16, townBlock.getX() * 16 + 15, townBlock.getZ() * 16 + 15, town.getName()));
 
     }
 

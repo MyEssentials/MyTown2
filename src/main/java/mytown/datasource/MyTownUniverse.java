@@ -13,7 +13,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     protected Map<String, Resident> residents;
     protected Map<String, Town> towns;
     protected Map<String, Nation> nations;
-    protected Map<String, Block> blocks;
+    protected Map<String, TownBlock> blocks;
     protected Map<Integer, Plot> plots;
     protected Map<String, Rank> ranks;
 
@@ -23,7 +23,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         residents = new Hashtable<String, Resident>();
         towns = new Hashtable<String, Town>();
         nations = new Hashtable<String, Nation>();
-        blocks = new Hashtable<String, Block>();
+        blocks = new Hashtable<String, TownBlock>();
         plots = new Hashtable<Integer, Plot>();
         ranks = new Hashtable<String, Rank>();
     }
@@ -60,7 +60,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
      *
      * @return ImmutableMap of Blocks
      */
-    public final ImmutableMap<String, Block> getBlocksMap() {
+    public final ImmutableMap<String, TownBlock> getBlocksMap() {
         return ImmutableMap.copyOf(blocks);
     }
 

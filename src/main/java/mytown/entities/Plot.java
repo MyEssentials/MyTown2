@@ -201,7 +201,7 @@ public class Plot implements IHasFlags, IHasResidents {
 
     @Override
     public boolean hasResident(Resident res) {
-        return whitelist.contains(res);
+        return whitelist.contains(res) || owners.contains(res);
     }
 
     @Override
@@ -225,5 +225,12 @@ public class Plot implements IHasFlags, IHasResidents {
 
     public ImmutableList<Resident> getOwners() {
         return ImmutableList.copyOf(owners);
+    }
+
+    public boolean residentHasFriendInPlot(Resident res) {
+        for(Resident r : owners)
+            if(r.hasFriend(res))
+                return true;
+        return false;
     }
 }

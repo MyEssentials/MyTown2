@@ -3,19 +3,15 @@ package mytown.commands;
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
 import mytown.core.Localization;
-import mytown.core.MyTownCore;
 import mytown.core.utils.command.*;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
-import mytown.entities.Block;
-import mytown.entities.Plot;
-import mytown.entities.Resident;
-import mytown.entities.Town;
+import mytown.entities.*;
+import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.entities.Rank;
 import mytown.util.Utils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -167,8 +163,8 @@ public abstract class Commands {
         return flag;
     }
 
-    public static Block getBlockAtResident(Resident res) {
-        Block block = getDatasource().getBlock(res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
+    public static TownBlock getBlockAtResident(Resident res) {
+        TownBlock block = getDatasource().getBlock(res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
         if(block == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.notexist"));
         return block;

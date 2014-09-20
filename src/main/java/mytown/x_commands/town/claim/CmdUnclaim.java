@@ -4,7 +4,7 @@ import mytown.MyTown;
 import mytown.core.utils.x_command.CommandBase;
 import mytown.core.utils.x_command.Permission;
 import mytown.datasource.MyTownDatasource;
-import mytown.entities.Block;
+import mytown.entities.TownBlock;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
@@ -42,7 +42,7 @@ public class CmdUnclaim extends CommandBase {
         Resident res = getDatasource().getOrMakeResident(pl);
         if (res == null)
             throw new CommandException("Failed to get/make Resident"); // TODO Localize
-        Block block = getDatasource().getBlock(pl.dimension, pl.chunkCoordX, pl.chunkCoordZ);
+        TownBlock block = getDatasource().getBlock(pl.dimension, pl.chunkCoordX, pl.chunkCoordZ);
         if (block == null)
             throw new CommandException(MyTown.getLocal().getLocalization("mytown.cmd.err.claim.notexist"));
         Town town = block.getTown();

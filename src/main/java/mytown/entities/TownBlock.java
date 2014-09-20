@@ -9,14 +9,14 @@ import java.util.List;
 /**
  * @author Joe Goett
  */
-public class Block implements IHasPlots {
+public class TownBlock implements IHasPlots {
     public static String keyFormat = "%s;%s;%s";
 
     private int dim, x, z;
     private Town town;
     private String key;
 
-    public Block(int dim, int x, int z, Town town) {
+    public TownBlock(int dim, int x, int z, Town town) {
         this.dim = dim;
         this.x = x;
         this.z = z;

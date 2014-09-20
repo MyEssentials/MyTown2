@@ -1,6 +1,5 @@
 package mytown.util;
 
-import com.google.common.base.Joiner;
 import mytown.config.Config;
 import mytown.core.utils.chat.JsonMessageBuilder;
 import mytown.entities.*;
@@ -33,7 +32,7 @@ public class Formatter {
         return rs;
     }
 
-    public static String formatBlockInfo(Block block) {
+    public static String formatBlockInfo(TownBlock block) {
         return String.format(" ---------- Block ----------\nTown: %1$s\nDimension: %2$s\nLocation: %3$s", block.getTown().getName(), block.getDim(), block.getCoordString());
     }
 
@@ -110,7 +109,7 @@ public class Formatter {
             JsonMessageBuilder msgBuilder = new JsonMessageBuilder();
 
             for (int x = cx - widthRad; x <= cx + widthRad; x++) {
-                Block b = DatasourceProxy.getDatasource().getBlock(dim, x, z);
+                TownBlock b = DatasourceProxy.getDatasource().getBlock(dim, x, z);
                 JsonMessageBuilder extraBuilder = msgBuilder.addExtra();
 
                 boolean mid = z == cz && x == cx;

@@ -4,9 +4,7 @@ import buildcraft.builders.TileAbstractBuilder;
 import buildcraft.core.Box;
 import mytown.MyTown;
 import mytown.datasource.MyTownUniverse;
-import mytown.entities.Block;
-import mytown.entities.BlockWhitelist;
-import mytown.entities.Town;
+import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.util.ChunkPos;
@@ -47,7 +45,7 @@ public class BuildCraftProtection extends Protection {
             }
             List<ChunkPos> chunks = Utils.getChunksInBox(box.xMin, box.zMin, box.xMax, box.zMax);
             for(ChunkPos p : chunks) {
-                Block block = MyTownUniverse.getInstance().getBlocksMap().get(String.format(Block.keyFormat, te.getWorldObj().provider.dimensionId, p.getX(), p.getZ()));
+                TownBlock block = MyTownUniverse.getInstance().getBlocksMap().get(String.format(TownBlock.keyFormat, te.getWorldObj().provider.dimensionId, p.getX(), p.getZ()));
                 if(block != null) {
                     // Directly from the town, not checking per plot since it's quite the pain
                     Flag<Boolean> bcFlag = block.getTown().getFlag(FlagType.bcBuildingMining);

@@ -2,9 +2,7 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
-import mytown.commands.Commands;
 import mytown.core.ChatUtils;
-import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
@@ -16,7 +14,6 @@ import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
-import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -26,8 +23,6 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
 
-import java.lang.ref.WeakReference;
-import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -312,7 +307,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      */
     public void checkLocation(int oldChunkX, int oldChunkZ, int newChunkX, int newChunkZ, int dimension) {
         if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null) {
-            Block oldTownBlock, newTownBlock;
+            TownBlock oldTownBlock, newTownBlock;
 
             oldTownBlock = getDatasource().getBlock(lastDim, oldChunkX, oldChunkZ);
             newTownBlock = getDatasource().getBlock(dimension, newChunkX, newChunkZ);
@@ -341,7 +336,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      * @param dimension
      */
     public void checkLocationOnDimensionChanged(int newChunkX, int newChunkZ, int dimension) {
-        Block newTownBlock;
+        TownBlock newTownBlock;
 
         newTownBlock = getDatasource().getBlock(dimension, newChunkX, newChunkZ);
 
@@ -435,8 +430,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return friendRequests.contains(res);
     }
 
-
-
     /* ----- Helpers ----- */
 
     public void sendMessage(String msg) {
@@ -493,7 +486,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     @Override
     public boolean selectBlockForPlot(int dim, int x, int y, int z) {
-        Block tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
+        TownBlock tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
         if (firstSelectionActive && selectionDim != dim)
             return false;
         if (tb == null || tb.getTown() != getSelectedTown() && !firstSelectionActive || tb.getTown() != selectionTown && firstSelectionActive) {

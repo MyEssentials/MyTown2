@@ -158,7 +158,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     log.error("Failed to load Block (%s, %s, %s) due to missing Town (%s)", rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), rs.getString("townName"));
                     continue; // TODO Should I just return out?
                 }
-                Block block = new Block(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), town);
+                TownBlock block = new TownBlock(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), town);
                 MyTownUniverse.getInstance().blocks.put(block.getKey(), block);
                 block.getTown().addBlock(block);
             }
@@ -543,7 +543,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveBlock(Block block) {
+    public boolean saveBlock(TownBlock block) {
         try {
             if (MyTownUniverse.getInstance().blocks.containsValue(block)) { // Update
                 // TODO Update Block (If needed?)
@@ -1046,7 +1046,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             deleteTownStatement.execute();
 
             // Remove all Blocks owned by the Town
-            for (Block b : town.getBlocks()) {
+            for (TownBlock b : town.getBlocks()) {
                 MyTownUniverse.getInstance().blocks.remove(b.getKey());
             }
             // Remove all Plots owned by the Town
@@ -1073,7 +1073,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean deleteBlock(Block block) {
+    public boolean deleteBlock(TownBlock block) {
         try {
             // Delete Block from Datasource
             PreparedStatement deleteBlockStatement = prepare("DELETE FROM " + prefix + "Blocks WHERE dim=? AND x=? AND z=?", true);

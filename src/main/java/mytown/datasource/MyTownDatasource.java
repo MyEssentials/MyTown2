@@ -8,9 +8,6 @@ import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.mod.BuildCraftProxy;
-import mytown.proxies.mod.IC2Proxy;
-import mytown.proxies.mod.ModProxies;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -92,7 +89,7 @@ public abstract class MyTownDatasource {
             MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
 
         //Claiming first block
-        Block block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
+        TownBlock block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
         // Saving block to db and town
         saveBlock(block);
 
@@ -136,7 +133,7 @@ public abstract class MyTownDatasource {
 
 
         //Claiming first block
-        Block block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
+        TownBlock block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
         // Saving block to db and town
         saveBlock(block);
 
@@ -167,8 +164,8 @@ public abstract class MyTownDatasource {
      *
      * @return The new Block, or null if it failed
      */
-    public final Block newBlock(int dim, int x, int z, Town town) {
-        Block block = new Block(dim, x, z, town);
+    public final TownBlock newBlock(int dim, int x, int z, Town town) {
+        TownBlock block = new TownBlock(dim, x, z, town);
         if (BlockEvent.fire(new BlockEvent.BlockCreateEvent(block)))
             return null;
         return block;
@@ -344,7 +341,7 @@ public abstract class MyTownDatasource {
      *
      * @return If it was successful
      */
-    public abstract boolean saveBlock(Block block);
+    public abstract boolean saveBlock(TownBlock block);
 
     /**
      * Saves the Rank
@@ -533,7 +530,7 @@ public abstract class MyTownDatasource {
      *
      * @return If it was successful
      */
-    public abstract boolean deleteBlock(Block block);
+    public abstract boolean deleteBlock(TownBlock block);
 
     /**
      * Deletes the Rank
@@ -649,7 +646,7 @@ public abstract class MyTownDatasource {
      * @return If the Block exists
      */
     public final boolean hasBlock(int dim, int x, int z) {
-        return MyTownUniverse.getInstance().blocks.containsKey(String.format(Block.keyFormat, dim, x, z));
+        return MyTownUniverse.getInstance().blocks.containsKey(String.format(TownBlock.keyFormat, dim, x, z));
     }
 
     /**
@@ -664,12 +661,12 @@ public abstract class MyTownDatasource {
     public final boolean hasBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
         String key;
         if (inChunkCoords) {
-            key = String.format(Block.keyFormat, dim, x, z);
+            key = String.format(TownBlock.keyFormat, dim, x, z);
         } else {
-            key = String.format(Block.keyFormat, dim, x >> 4, z >> 4);
+            key = String.format(TownBlock.keyFormat, dim, x >> 4, z >> 4);
         }
 
-        Block b = MyTownUniverse.getInstance().blocks.get(key);
+        TownBlock b = MyTownUniverse.getInstance().blocks.get(key);
         if (town != null && b != null && b.getTown() == town)
             return true;
 
@@ -794,8 +791,8 @@ public abstract class MyTownDatasource {
      * @param chunkZ The chunk z to check at
      * @return The Block, or null if it doesn't exist
      */
-    public Block getBlock(int dim, int chunkX, int chunkZ) {
-        return MyTownUniverse.getInstance().blocks.get(String.format(Block.keyFormat, dim, chunkX, chunkZ));
+    public TownBlock getBlock(int dim, int chunkX, int chunkZ) {
+        return MyTownUniverse.getInstance().blocks.get(String.format(TownBlock.keyFormat, dim, chunkX, chunkZ));
     }
 
     /**

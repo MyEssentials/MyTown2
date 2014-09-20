@@ -1,6 +1,5 @@
 package mytown.commands;
 
-import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.CommandManager;
@@ -12,7 +11,6 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class CommandsAssistant extends Commands {
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
         if (checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             Assert.Perm(player, "mytown.cmd.assistant.claim.far");
-        Block block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+        TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
             throw new CommandException("Failed to create Block"); // TODO Localize
         getDatasource().saveBlock(block);
@@ -65,7 +63,7 @@ public class CommandsAssistant extends Commands {
     public static void unclaimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(pl);
-        Block block = getBlockAtResident(res);
+        TownBlock block = getBlockAtResident(res);
         Town town = block.getTown();
 
         if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {

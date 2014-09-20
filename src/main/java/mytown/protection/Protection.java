@@ -8,10 +8,14 @@ import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxy;
+import mytown.util.BlockPair;
+import mytown.util.BlockPos;
 import mytown.util.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
@@ -127,6 +131,14 @@ public abstract class Protection {
     public boolean checkTileEntity(TileEntity te) { return false; }
 
     /**
+     * Checks if the block with position is valid.
+     *
+     * @param bp
+     * @return
+     */
+    public boolean checkBlock(BlockPos bp) { return false; }
+
+    /**
      * Checks if the tile entity specified needs to be checked on server tick
      *
      * @param te
@@ -160,6 +172,29 @@ public abstract class Protection {
      * @return
      */
     public boolean checkForWhitelist(TileEntity te) { return false; }
+
+    /**
+     * Checks if the ItemBlock needs to be checked in the interactingBlocks list
+     *
+     * @param item
+     * @return
+     */
+    public boolean hasToCheckBlock(Item item) {
+        if(item instanceof ItemBlock) {
+            return hasToCheckBlock(((ItemBlock) item).field_150939_a);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the block needs to be checked in the interractingBlocks list
+     *
+     * @param block
+     * @return
+     */
+    public boolean hasToCheckBlock(Block block) {
+        return false;
+    }
 
     public List<FlagType> getFlagTypeForTile(TileEntity te) { return getFlagTypeForTile(te.getClass()); }
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) { return null; }
