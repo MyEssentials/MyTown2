@@ -2,7 +2,6 @@ package ic2.api.energy;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**

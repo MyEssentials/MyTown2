@@ -21,7 +21,6 @@ import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
 
@@ -89,7 +88,6 @@ public class VanillaProtection extends Protection {
         this.explosiveBlocks.add(EntityTNTPrimed.class);
 
 
-
         isHandlingEvents = true;
     }
 
@@ -98,27 +96,27 @@ public class VanillaProtection extends Protection {
     public boolean checkEntity(Entity entity) {
         //TODO: Implement wilderness
         Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-        if(town == null)
+        if (town == null)
             return false;
 
-        if(entity instanceof EntityTNTPrimed) {
-            Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "explosions");
-            if(!explosionsFlag.getValue()) {
+        if (entity instanceof EntityTNTPrimed) {
+            Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, "explosions");
+            if (!explosionsFlag.getValue()) {
                 return true;
             }
             return false;
         }
 
-        if(entity instanceof EntityPlayer) {
-            Flag<Boolean> enterFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "enter");
-            Plot plot = town.getPlotAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ);
-            if(!enterFlag.getValue()) {
+        if (entity instanceof EntityPlayer) {
+            Flag<Boolean> enterFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, "enter");
+            Plot plot = town.getPlotAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ);
+            if (!enterFlag.getValue()) {
                 Resident res = getDatasource().getOrMakeResident(entity);
-                if(!town.hasResident(res)) {
+                if (!town.hasResident(res)) {
                     res.respawnPlayer();
                     res.sendMessage("§cYou have been moved because you can't access this place!");
                     return true;
-                } else if(plot != null && !(plot.getResidents().contains(res) || plot.getOwners().contains(res))) {
+                } else if (plot != null && !(plot.getResidents().contains(res) || plot.getOwners().contains(res))) {
                     res.respawnPlayer();
                     res.sendMessage("§cYou have been moved because you can't access this place!");
                     return true;
@@ -127,14 +125,14 @@ public class VanillaProtection extends Protection {
             return false;
         }
 
-        if(super.checkEntity(entity))
+        if (super.checkEntity(entity))
             return true;
         return false;
     }
 
     @Override
     public boolean checkTileEntity(TileEntity te) {
-        if(trackedTileEntities.contains(te.getClass())) {
+        if (trackedTileEntities.contains(te.getClass())) {
             // TODO: idkhowtoworkthissomebodyhalp
         }
         return false;
@@ -146,7 +144,6 @@ public class VanillaProtection extends Protection {
     }
 
     /* ---- EventHandlers ---- */
-
 
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

@@ -33,7 +33,7 @@ public class ModProxies {
                 continue;
             }
             */
-            if(p.getModID() != null && Loader.isModLoaded(p.getModID())) {
+            if (p.getModID() != null && Loader.isModLoaded(p.getModID())) {
                 p.load();
             }
         }

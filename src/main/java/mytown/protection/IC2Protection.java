@@ -1,26 +1,18 @@
 package mytown.protection;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import ic2.api.energy.tile.IEnergyTile;
 import ic2.api.event.LaserEvent;
 import mytown.MyTown;
-import mytown.core.ChatUtils;
 import mytown.entities.Block;
 import mytown.entities.Resident;
-import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 /**
  * Created by AfterWind on 7/8/2014.
- *
+ * <p/>
  * IC2 mod implementation here
  */
 public class IC2Protection extends Protection {
@@ -35,8 +27,8 @@ public class IC2Protection extends Protection {
         MyTown.instance.log.info("Initializing IC2 protection...");
         isHandlingEvents = true;
         try {
-            this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityNuke"));
-            this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityItnt"));
+            this.explosiveBlocks.add((Class<? extends Entity>) Class.forName("ic2.core.block.EntityNuke"));
+            this.explosiveBlocks.add((Class<? extends Entity>) Class.forName("ic2.core.block.EntityItnt"));
             clsItemCable = Class.forName("ic2.core.item.block.ItemCable");
             clsItemBlockIC2 = Class.forName("ic2.core.item.block.ItemBlockIC2");
         } catch (ClassNotFoundException ex) {
@@ -51,7 +43,7 @@ public class IC2Protection extends Protection {
 
         MyTown.instance.log.info("Checking entity: " + entity.toString());
 
-        if(explosiveBlocks.contains(entity.getClass())) {
+        if (explosiveBlocks.contains(entity.getClass())) {
             return true;
         }
 
@@ -75,17 +67,17 @@ public class IC2Protection extends Protection {
     public void onLaserBreak(LaserEvent.LaserHitsBlockEvent ev) {
         MyTown.instance.log.info("Detected laser break.");
         Block tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.x >> 4, ev.z >> 4);
-        if(tblock == null)
+        if (tblock == null)
             return;
         MyTown.instance.log.info("Block is not null, checking...");
 
         Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.owner.dimension, ev.x, ev.y, ev.z, "breakBlocks");
-        if(!breakFlag.getValue()) {
-            if(ev.owner instanceof EntityPlayer) {
+        if (!breakFlag.getValue()) {
+            if (ev.owner instanceof EntityPlayer) {
                 MyTown.instance.log.info("Found things and stuff...");
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.owner);
                 //TODO: Check for permission node
-                if(!res.getTowns().contains(tblock.getTown())) {
+                if (!res.getTowns().contains(tblock.getTown())) {
                     ev.setCanceled(true);
                     ev.lasershot.setDead();
                 }
@@ -102,13 +94,13 @@ public class IC2Protection extends Protection {
     public void onLaserExplodes(LaserEvent.LaserExplodesEvent ev) {
         MyTown.instance.log.info("Detected explosion.");
         Block tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.lasershot.chunkCoordX, ev.lasershot.chunkCoordZ);
-        if(tblock == null)
+        if (tblock == null)
             return;
         Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.lasershot.dimension, (int) ev.lasershot.posX, (int) ev.lasershot.posY, (int) Math.floor(ev.lasershot.posZ), "breakBlocks");
-        if(!breakFlag.getValue()) {
-            if(ev.owner instanceof EntityPlayer) {
+        if (!breakFlag.getValue()) {
+            if (ev.owner instanceof EntityPlayer) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.owner);
-                if(res == null || !res.getTowns().contains(tblock.getTown())) {
+                if (res == null || !res.getTowns().contains(tblock.getTown())) {
                     ev.setCanceled(true);
                 }
             } else {

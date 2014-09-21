@@ -3,7 +3,6 @@ package mytown.entities.flag;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import mytown.MyTown;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -46,14 +45,15 @@ public class Flag<T> {
 
     public String serializeValue() {
         Gson gson = new GsonBuilder().create();
-        Type type = new TypeToken<T>() {}.getType();
+        Type type = new TypeToken<T>() {
+        }.getType();
         return gson.toJson(value, type);
     }
 
     public String valueToString() {
-        if(value instanceof String)
-            return (String)value;
-        else if(value instanceof Integer || value instanceof Boolean || value instanceof Float || value instanceof Character) {
+        if (value instanceof String)
+            return (String) value;
+        else if (value instanceof Integer || value instanceof Boolean || value instanceof Float || value instanceof Character) {
             return String.valueOf(value);
         } else {
             // TODO: not sure if this will fully work
@@ -63,12 +63,12 @@ public class Flag<T> {
 
     @SuppressWarnings("unchecked")
     public boolean isValueValid(T val) {
-        List<T> valids = (List<T>)validValues.get(name);
-        if(valids == null)
+        List<T> valids = (List<T>) validValues.get(name);
+        if (valids == null)
             return true; // There are no limitations
         else {
-            for(T t : valids) {
-                if(val.equals(t))
+            for (T t : valids) {
+                if (val.equals(t))
                     return true;
             }
         }
@@ -84,7 +84,7 @@ public class Flag<T> {
                 return (T) (Integer) Integer.parseInt(str); // double cast... lol
             } else if (value instanceof Boolean) {
                 // Extra check since any String that is not "true" gets converted to false
-                if(str.equals("true") || str.equals("false")) {
+                if (str.equals("true") || str.equals("false")) {
                     return (T) (Boolean) Boolean.parseBoolean(str);
                 } else {
                     return null;
@@ -104,9 +104,9 @@ public class Flag<T> {
 
     public boolean setValueFromString(String str) {
         T val = getValueFromString(str);
-        if(val == null)
+        if (val == null)
             return false;
-        if(isValueValid(val)) {
+        if (isValueValid(val)) {
             value = val;
             return true;
         }
@@ -149,7 +149,6 @@ public class Flag<T> {
 
     /**
      * Initialize all flags
-     *
      */
     public static void initFlags() {
         flagValueTypes.put("enter", Boolean.class);
@@ -167,8 +166,8 @@ public class Flag<T> {
         flagsForWhitelist.add("accessBlocks");
         flagsForWhitelist.add("activateBlocks");
 
-        for(String s : flagValueTypes.keySet()) {
-           descriptionKeys.put(s, "mytown.flag." + s); // Because I'm lazy
+        for (String s : flagValueTypes.keySet()) {
+            descriptionKeys.put(s, "mytown.flag." + s); // Because I'm lazy
         }
 
         List<String> mobsRestrictedValues = new ArrayList<String>();

@@ -58,10 +58,10 @@ public class Rank {
     }
 
     public boolean hasPermissionOrSuperPermission(String permission) {
-        if(hasPermission(permission))
+        if (hasPermission(permission))
             return true;
-        for(String p : permissions) {
-            if(permission.contains(p)) {
+        for (String p : permissions) {
+            if (permission.contains(p)) {
                 MyTown.instance.log.info("Rank " + getName() + " doesn't contain " + permission + " but contains permission " + p);
                 return true;
             }
@@ -104,12 +104,12 @@ public class Rank {
     public static List<String> theOutsiderPerms = new ArrayList<String>();
 
     public static boolean outsiderPermCheck(String permission) {
-        if(theOutsiderPerms.contains(permission)) {
+        if (theOutsiderPerms.contains(permission)) {
             MyTown.instance.log.info("Returning true since it has permission in the outsider list.");
             return true;
         }
-        for(String p : theOutsiderPerms) {
-            if(permission.contains(p)) {
+        for (String p : theOutsiderPerms) {
+            if (permission.contains(p)) {
                 MyTown.instance.log.info("Returning true since it has permission in the outsider list.");
                 return true;
             }

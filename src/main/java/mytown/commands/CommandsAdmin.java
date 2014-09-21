@@ -93,6 +93,7 @@ public class CommandsAdmin extends Commands {
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.resident.add", args.get(0), args.get(1), args.size() > 2 ? args.get(2) : town.getDefaultRank().getName()));
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.added", town.getName()));
     }
+
     @CommandNode(
             name = "delete",
             permission = "mytown.adm.cmd.delete",
@@ -156,7 +157,7 @@ public class CommandsAdmin extends Commands {
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromName(args.get(1));
 
-         if (!town.hasResident(target))
+        if (!town.hasResident(target))
             throw new CommandException(getLocal().getLocalization("mytown.adm.cmd.err.rem.resident", args.get(0), args.get(1)));
 
         getDatasource().unlinkResidentFromTown(target, town);
@@ -192,10 +193,10 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.db.purge",
             parentName = "mytown.adm.cmd.db")
     public static void dbCommandPurge(ICommandSender sender, List<String> args) {
-        for(Iterator<Town> it = getUniverse().getTownsMap().values().iterator(); it.hasNext(); ) {
+        for (Iterator<Town> it = getUniverse().getTownsMap().values().iterator(); it.hasNext(); ) {
             getDatasource().deleteTown(it.next());
         }
-        for(Iterator<Resident> it = getUniverse().getResidentsMap().values().iterator(); it.hasNext(); ) {
+        for (Iterator<Resident> it = getUniverse().getResidentsMap().values().iterator(); it.hasNext(); ) {
             getDatasource().deleteResident(it.next());
         }
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -216,7 +217,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.perm",
             completionKeys = {"townCompletion"})
     public static void permListCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1) {
+        if (args.size() < 1) {
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.list"));
         }
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -231,7 +232,7 @@ public class CommandsAdmin extends Commands {
             }
             formattedFlagList += flag;
         }
-        if(formattedFlagList != null)
+        if (formattedFlagList != null)
             res.sendMessage(formattedFlagList);
         else
             res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
@@ -243,7 +244,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.perm",
             completionKeys = {"townCompletion", "flagCompletion"})
     public static void permSetCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 3) {
+        if (args.size() < 3) {
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.set"));
         }
 
@@ -267,14 +268,14 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.perm",
             completionKeys = {"townCompletion", "flagCompletionWhitelist"})
     public static void permWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        if(args.size() < 2)
+        if (args.size() < 2)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
         String flagName = args.get(1);
 
-        if(Flag.flagsForWhitelist.contains(flagName))
+        if (Flag.flagsForWhitelist.contains(flagName))
             res.startBlockSelection(flagName, town.getName(), false);
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
@@ -286,7 +287,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             completionKeys = {"townCompletion"})
     public static void claimCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
+        if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.claim"));
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
@@ -296,7 +297,7 @@ public class CommandsAdmin extends Commands {
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
         if (CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.farClaim.unimplemented"));
-            //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+        //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         Block block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
             throw new CommandException("Failed to create Block"); // TODO Localize
@@ -309,7 +310,7 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.unclaim",
             parentName = "mytown.adm.cmd")
     public static void unclaimCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
+        if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.claim"));
 
         EntityPlayer pl = (EntityPlayer) sender;

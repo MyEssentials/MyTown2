@@ -1,10 +1,10 @@
 package ic2.api.recipe;
 
-import java.util.Arrays;
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.Arrays;
+import java.util.List;
 
 public final class RecipeOutput {
 	public RecipeOutput(NBTTagCompound metadata1, List<ItemStack> items1) {

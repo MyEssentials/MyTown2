@@ -2,9 +2,7 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
-import mytown.commands.Commands;
 import mytown.core.ChatUtils;
-import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.interfaces.IBlockWhitelister;
@@ -15,7 +13,6 @@ import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
-import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -25,12 +22,9 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
 
-import java.lang.ref.WeakReference;
-import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 
 /**
  * @author Joe Goett
@@ -80,7 +74,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         try {
             this.joinDate = format.parse(joinDate);
             setLastOnline(format.parse(lastOnline));
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         this.playerName = playerName;
@@ -398,30 +392,29 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     /* ----- Helpers ----- */
 
     public void sendMessage(String msg) {
-        if(getPlayer() != null)
-        ChatUtils.sendChat(getPlayer(), msg);
+        if (getPlayer() != null)
+            ChatUtils.sendChat(getPlayer(), msg);
     }
 
     public void respawnPlayer() {
 
-        if(getSelectedTown() != null) {
+        if (getSelectedTown() != null) {
             getSelectedTown().sendToSpawn(this);
             return;
         }
         ChunkCoordinates spawn = player.getBedLocation(player.dimension);
-        if(spawn == null)
+        if (spawn == null)
             spawn = player.worldObj.getSpawnPoint();
         ((EntityPlayerMP) player).playerNetServerHandler.setPlayerLocation(spawn.posX, spawn.posY, spawn.posZ, player.rotationYaw, player.rotationPitch);
     }
 
     public Plot getPlotAtPlayerPosition() {
-        for(Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
-            if(plot.isCoordWithin(player.dimension, (int)player.posX, (int)player.posY, (int)player.posZ));
-                return plot;
+        for (Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
+            if (plot.isCoordWithin(player.dimension, (int) player.posX, (int) player.posY, (int) player.posZ)) ;
+            return plot;
         }
         return null;
     }
-
 
 
     // //////////////////////////////////////
@@ -445,9 +438,9 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
             result = player.inventory.addItemStackToInventory(selectionTool);
         }
         if (result) {
-           sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.plot.start"));
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.plot.start"));
         } else if (ok) {
-           sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.start.failed"));
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.start.failed"));
         }
     }
 
@@ -607,8 +600,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
         return player.inventory.addItemStackToInventory(selectionTool);
     }
-
-
 
 
     private MyTownDatasource getDatasource() {

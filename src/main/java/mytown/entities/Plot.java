@@ -4,14 +4,10 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.entities.flag.Flag;
-import mytown.entities.interfaces.IHasBlockWhitelists;
 import mytown.entities.interfaces.IHasFlags;
 import mytown.entities.interfaces.IHasResidents;
-import mytown.proxies.DatasourceProxy;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -132,9 +128,13 @@ public class Plot implements IHasFlags, IHasResidents {
         this.name = name;
     }
 
-    public void setDb_ID(int ID) {this.db_ID = ID; }
+    public void setDb_ID(int ID) {
+        this.db_ID = ID;
+    }
 
-    public int getDb_ID() {return this.db_ID; }
+    public int getDb_ID() {
+        return this.db_ID;
+    }
 
     /**
      * Checks if the coords are within this plot and in the same dimension
@@ -165,8 +165,8 @@ public class Plot implements IHasFlags, IHasResidents {
 
     @Override
     public boolean hasFlag(String name) {
-        for(Flag flag : flags)
-            if(flag.getName().equals(name))
+        for (Flag flag : flags)
+            if (flag.getName().equals(name))
                 return true;
         return false;
     }
@@ -178,8 +178,8 @@ public class Plot implements IHasFlags, IHasResidents {
 
     @Override
     public Flag getFlag(String name) {
-        for(Flag flag : flags)
-            if(flag.getName().equals(name))
+        for (Flag flag : flags)
+            if (flag.getName().equals(name))
                 return flag;
         return null;
     }

@@ -1,10 +1,10 @@
 package ic2.api.network;
 
-import java.lang.reflect.Method;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
+import java.lang.reflect.Method;
 
 /**
  * Provides methods to initiate events and synchronize tile entity fields in SMP.

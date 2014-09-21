@@ -1,6 +1,5 @@
 package mytown.util;
 
-import com.google.common.base.Joiner;
 import mytown.config.Config;
 import mytown.core.utils.chat.JsonMessageBuilder;
 import mytown.entities.*;
@@ -22,7 +21,7 @@ public class Formatter {
         String rs = null;
         for (Rank r : ranks) {
             String added = (r.getTown().getDefaultRank().equals(r) ? EnumChatFormatting.RED : EnumChatFormatting.GREEN) + r.getName() + EnumChatFormatting.WHITE;
-            if(rs == null)
+            if (rs == null)
                 rs = added;
             else
                 rs += ", " + added;
@@ -43,10 +42,10 @@ public class Formatter {
 
     public static String formatPlotInfo(Plot plot) {
         String residents = null;
-        for(Resident res : plot.getResidents()) {
+        for (Resident res : plot.getResidents()) {
             String added = (plot.hasOwner(res) ? EnumChatFormatting.RED : EnumChatFormatting.WHITE) + res.getPlayerName() + EnumChatFormatting.WHITE;
 
-            if(residents == null)
+            if (residents == null)
                 residents = added;
             else
                 residents += ", " + added;
@@ -62,9 +61,9 @@ public class Formatter {
 
     public static String formatResidentInfo(Resident resident) {
         String towns = null;
-        for(Town town : resident.getTowns()) {
+        for (Town town : resident.getTowns()) {
             String added = (resident.getSelectedTown().equals(town) ? EnumChatFormatting.RED : EnumChatFormatting.WHITE) + town.getName() + EnumChatFormatting.WHITE;
-            if(towns == null)
+            if (towns == null)
                 towns = added;
             else
                 towns += ", " + added;
@@ -77,23 +76,23 @@ public class Formatter {
         String msg;
 
         String residentsString = null;
-        for(Resident res : town.getResidents()) {
-            if(residentsString == null)
+        for (Resident res : town.getResidents()) {
+            if (residentsString == null)
                 residentsString = res.getPlayerName();
             else
                 residentsString += ", " + res.getPlayerName();
         }
-        if(residentsString == null)
+        if (residentsString == null)
             residentsString = "";
 
         String ranksString = null;
-        for(Rank rank : town.getRanks()) {
-            if(ranksString == null)
+        for (Rank rank : town.getRanks()) {
+            if (ranksString == null)
                 ranksString = rank.getName();
             else
                 ranksString += ", " + rank.getName();
         }
-        if(ranksString == null)
+        if (ranksString == null)
             ranksString = "";
 
 

@@ -4,7 +4,6 @@ import mytown.datasource.MyTownDatasource;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.mod.ModProxy;
 import mytown.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,7 +12,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by AfterWind on 8/31/2014.
@@ -77,6 +75,7 @@ public abstract class Protection {
         explosiveBlocks = new ArrayList<Class<? extends Entity>>();
         isHandlingEvents = false;
     }
+
     /**
      * Checks the entity and returns whether or not the entity was destroyed
      * If you override this, call super method.
@@ -87,26 +86,26 @@ public abstract class Protection {
     @SuppressWarnings("unchecked")
     public boolean checkEntity(Entity entity) {
         Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-        if(town == null)
+        if (town == null)
             return false;
 
-        Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "mobs");
+        Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, "mobs");
         String value = mobFlag.getValue();
 
-        if(value.equals("all")) {
-            if(entity instanceof EntityLivingBase) {
+        if (value.equals("all")) {
+            if (entity instanceof EntityLivingBase) {
                 return true;
             }
-        } else if(value.equals("hostiles")) {
-            if(hostileEntities.contains(entity.getClass())) {
+        } else if (value.equals("hostiles")) {
+            if (hostileEntities.contains(entity.getClass())) {
                 return true;
             }
         }
 
-        Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "explosions");
+        Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, "explosions");
 
-        if(!explosionsFlag.getValue()) {
-            if(explosiveBlocks.contains(entity.getClass())) {
+        if (!explosionsFlag.getValue()) {
+            if (explosiveBlocks.contains(entity.getClass())) {
                 return true;
             }
         }
@@ -121,7 +120,9 @@ public abstract class Protection {
      * @param te
      * @return
      */
-    public boolean checkTileEntity(TileEntity te) { return false; }
+    public boolean checkTileEntity(TileEntity te) {
+        return false;
+    }
 
     /**
      * Checks if the tile entity specified needs to be checked on server tick

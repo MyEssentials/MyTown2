@@ -1,9 +1,9 @@
 package ic2.api.item;
 
+import net.minecraft.item.ItemStack;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.item.ItemStack;
 
 /**
  * Allows for charging, discharging and using electric items (IElectricItem).

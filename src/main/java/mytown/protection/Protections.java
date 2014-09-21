@@ -1,15 +1,13 @@
 package mytown.protection;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.network.internal.EntitySpawnHandler;
 import mytown.MyTown;
-import mytown.core.Localization;
-import mytown.entities.*;
+import mytown.entities.Block;
+import mytown.entities.Plot;
+import mytown.entities.Resident;
+import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -19,14 +17,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +40,7 @@ public class Protections {
     private int ticker = 20;
 
     public static Protections instance = new Protections();
+
     public Protections() {
 
         MyTown.instance.log.info("Protections initializing started...");
@@ -57,7 +53,7 @@ public class Protections {
     public void addProtection(Protection prot) {
         protections.add(prot);
 
-        if(prot.isHandlingEvents) {
+        if (prot.isHandlingEvents) {
             MinecraftForge.EVENT_BUS.register(prot);
         }
     }
@@ -66,12 +62,12 @@ public class Protections {
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent ev) {
         // Checking the checked maps (check-ception?)
-        if(ticker == 0) {
+        if (ticker == 0) {
             //MyTown.instance.log.info("Updating check maps.");
             for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
                 entry.setValue(false);
             }
-            for(Map.Entry<TileEntity, Boolean> entry : checkedTileEntities.entrySet()) {
+            for (Map.Entry<TileEntity, Boolean> entry : checkedTileEntities.entrySet()) {
                 entry.setValue(false);
             }
             ticker = 20;
@@ -87,7 +83,7 @@ public class Protections {
                 //MyTown.instance.log.info("Checking entity: " + entity.toString());
                 if (prot.hasToCheckEntity(entity)) {
                     if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
-                        if(!(entity instanceof EntityPlayer)) {
+                        if (!(entity instanceof EntityPlayer)) {
                             MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
                             checkedEntities.remove(entity);
                             entity.setDead();
@@ -104,7 +100,7 @@ public class Protections {
         for (TileEntity te : (List<TileEntity>) ev.world.loadedTileEntityList) {
             for (Protection prot : protections) {
                 if (prot.hasToCheckTileEntity(te)) {
-                    if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
+                    if ((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
                         te.invalidate();
                         MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
                     } else {
@@ -121,11 +117,11 @@ public class Protections {
     public void onPlayerAttackEntityEvent(AttackEntityEvent ev) {
         // TODO: More wilderness goes here
         Block block = DatasourceProxy.getDatasource().getBlock(ev.target.dimension, ev.target.chunkCoordX, ev.target.chunkCoordZ);
-        if(block != null) {
+        if (block != null) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             Town town = block.getTown();
-            Flag<Boolean> attackFlag = town.getFlagAtCoords(ev.target.dimension, (int)ev.target.posX, (int)ev.target.posY, (int)ev.target.posZ, "attackEntities");
-            if(!attackFlag.getValue()) {
+            Flag<Boolean> attackFlag = town.getFlagAtCoords(ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ, "attackEntities");
+            if (!attackFlag.getValue()) {
                 for (Protection prot : protections) {
                     if (prot.protectedEntities.contains(ev.target.getClass())) {
                         // TODO: Check for permission instead
@@ -146,7 +142,7 @@ public class Protections {
             return;
 
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-        if(res == null) {
+        if (res == null) {
             return;
         }
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
@@ -158,8 +154,7 @@ public class Protections {
             //System.out.println(Block.blocksList[ev.entityPlayer.worldObj.getBlockId(ev.x, ev.y, ev.z)].getUnlocalizedName());
 
             int x = ev.x, y = ev.y, z = ev.z; // Coords for the block that WILL be placed
-            switch(ev.face)
-            {
+            switch (ev.face) {
                 case 0:
                     y--;
                     break;
@@ -182,7 +177,7 @@ public class Protections {
 
             // In-Town specific interactions from here
             Block tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, ev.x >> 4, ev.z >> 4);
-            if(tblock == null)
+            if (tblock == null)
                 return;
 
             Plot plot = tblock.getTown().getPlotAtResident(res);
@@ -190,43 +185,43 @@ public class Protections {
 
             //TODO: Verify properly
             // In case the player wants to access a block... checking if player is shifting too
-            if(te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && ev.entityPlayer.isSneaking()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", 0)) {
+            if (te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && ev.entityPlayer.isSneaking()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", 0)) {
                 Flag<Boolean> accessFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks");
 
                 // If it's a town whitelist then it's universal
-                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", 0))
+                if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", 0))
                     return;
 
                 // If it's a plot only whitelist then only residents of the same town can access
-                if(plot != null) {
+                if (plot != null) {
                     if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "accessBlocks", plot.getDb_ID()) && res.hasTown(tblock.getTown()))
                         return;
                 }
                 // Checking if a player wants to access a block here
                 //TODO: Check for permission instead
-                if(!accessFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
+                if (!accessFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
                     res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.access"));
                     ev.setCanceled(true);
                     return;
                 }
             }
-            if(currentStack == null) {
+            if (currentStack == null) {
                 Flag<Boolean> activateFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks");
                 //TODO: Check for permission
 
                 // If it's a town whitelist then it's universal
-                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", 0))
+                if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", 0))
                     return;
 
                 // If it's a plot only whitelist then only residents of the same town can access
-                if(plot != null) {
+                if (plot != null) {
                     if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", plot.getDb_ID()) && res.hasTown(tblock.getTown()))
                         return;
                 }
 
-                if(!activateFlag.getValue() && !res.hasTown(tblock.getTown()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", 0)) {
-                    for(Protection prot : protections) {
-                        if(prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
+                if (!activateFlag.getValue() && !res.hasTown(tblock.getTown()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "activateBlocks", 0)) {
+                    for (Protection prot : protections) {
+                        if (prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.activateBlock"));
                             ev.setCanceled(true);
                             return;
@@ -234,11 +229,11 @@ public class Protections {
                     }
                 }
             }
-            if(currentStack != null && currentStack.getItem() instanceof ItemBlock) {
+            if (currentStack != null && currentStack.getItem() instanceof ItemBlock) {
                 Flag<Boolean> placeFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, x, y, z, "placeBlocks");
                 //TODO: Check for permission instead
 
-                if(!placeFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
+                if (!placeFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
                     res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.place"));
                     ev.setCanceled(true);
                     return;
@@ -267,12 +262,12 @@ public class Protections {
             Plot plot = town.getPlotAtResident(res);
 
             // If it's a town whitelist then it's universal
-            if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", 0))
+            if (town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", 0))
                 return;
 
             // If it's a plot only whitelist then only residents of the same town can access
-            if(plot != null) {
-                if(town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", plot.getDb_ID()) && res.hasTown(town))
+            if (plot != null) {
+                if (town.hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, "breaksBlocks", plot.getDb_ID()) && res.hasTown(town))
                     return;
             }
 
@@ -316,19 +311,19 @@ public class Protections {
     @SubscribeEvent
     public void onItemPickup(EntityItemPickupEvent ev) {
         Block block = DatasourceProxy.getDatasource().getBlock(ev.entityPlayer.dimension, ev.entityPlayer.chunkCoordX, ev.entityPlayer.chunkCoordZ);
-        if(block != null) {
+        if (block != null) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             Town town = block.getTown();
-            Flag<Boolean> pickupFlag = town.getFlagAtCoords(ev.entityPlayer.dimension, (int)ev.entityPlayer.posX, (int)ev.entityPlayer.posY, (int)ev.entityPlayer.posZ, "pickupItems");
-            if(!pickupFlag.getValue()) {
+            Flag<Boolean> pickupFlag = town.getFlagAtCoords(ev.entityPlayer.dimension, (int) ev.entityPlayer.posX, (int) ev.entityPlayer.posY, (int) ev.entityPlayer.posZ, "pickupItems");
+            if (!pickupFlag.getValue()) {
                 //TODO: Check for protection
-                if(!res.hasTown(town)) {
+                if (!res.hasTown(town)) {
                     //TODO: Maybe centralise this too
-                    if(counter == 0) {
+                    if (counter == 0) {
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.pickup"));
                         counter = 100;
                     } else
-                      counter--;
+                        counter--;
                     ev.setCanceled(true);
                     return;
                 }
@@ -361,7 +356,6 @@ public class Protections {
         }
     }
     */
-
 
 
 }

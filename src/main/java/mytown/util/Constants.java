@@ -2,8 +2,6 @@ package mytown.util;
 
 import net.minecraft.util.EnumChatFormatting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

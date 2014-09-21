@@ -1,9 +1,9 @@
 package ic2.api.recipe;
 
-import java.util.Map;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.Map;
 
 /**
  * Recipe manager interface for basic machines.

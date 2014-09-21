@@ -1,38 +1,30 @@
 package mytown;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import forgeperms.api.ForgePermsAPI;
-import forgeperms.api.IPermissionManager;
 import mytown.commands.*;
-import mytown.core.utils.command.CommandCompletion;
-import mytown.core.utils.command.CommandManager;
-import mytown.entities.flag.Flag;
-import mytown.handlers.VisualsTickHandler;
-import mytown.protection.Protections;
-import mytown.util.Utils;
-import mytown.x_commands.admin.CmdTownAdmin;
-import mytown.x_commands.town.CmdTown;
-import mytown.x_commands.town.info.CmdListTown;
 import mytown.config.Config;
 import mytown.config.RanksConfig;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
-import mytown.core.utils.x_command.CommandUtils;
+import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
+import mytown.entities.flag.Flag;
 import mytown.handlers.PlayerTracker;
 import mytown.handlers.SafemodeHandler;
+import mytown.handlers.VisualsTickHandler;
+import mytown.protection.Protections;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
+import mytown.util.Utils;
 import net.minecraft.command.ICommandSender;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -60,7 +52,6 @@ public class MyTown {
 
         // Read Configs
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
-
 
 
         ConfigProcessor.load(config, Config.class);
@@ -102,7 +93,6 @@ public class MyTown {
         DatasourceProxy.setLog(log);
         SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
 
-        CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
         Commands.populateCompletionMap();
     }
 
@@ -171,7 +161,7 @@ public class MyTown {
 
     public void downloadDependencies(FMLPreInitializationEvent ev) {
         File jdbc = new File(ev.getSourceFile().getAbsoluteFile().getParentFile().getAbsolutePath(), "/sqlite-jdbc-3.7.2.jar");
-        if(!jdbc.exists() || jdbc.isDirectory()) {
+        if (!jdbc.exists() || jdbc.isDirectory()) {
             log.info("Downloading jdbc to " + jdbc.getAbsolutePath());
             try {
                 Utils.saveUrl(jdbc.getAbsolutePath(), "https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.7.2.jar");
@@ -183,7 +173,7 @@ public class MyTown {
         Utils.addFile(jdbc);
 
         File reflectasm = new File(ev.getSourceFile().getAbsoluteFile().getParentFile().getAbsolutePath(), "/reflectasm-1.09.jar");
-        if(!reflectasm.exists() || reflectasm.isDirectory()) {
+        if (!reflectasm.exists() || reflectasm.isDirectory()) {
             log.info("Downloading reflectasm to " + reflectasm.getAbsolutePath());
             try {
                 Utils.saveUrl(reflectasm.getAbsolutePath(), "http://central.maven.org/maven2/com/esotericsoftware/reflectasm/reflectasm/1.09/reflectasm-1.09.jar");

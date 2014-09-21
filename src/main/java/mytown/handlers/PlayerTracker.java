@@ -8,10 +8,10 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
-import mytown.entities.*;
-import mytown.entities.flag.Flag;
-import mytown.protection.Protection;
-import mytown.protection.Protections;
+import mytown.entities.BlockWhitelist;
+import mytown.entities.Plot;
+import mytown.entities.Resident;
+import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
@@ -20,14 +20,12 @@ import mytown.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -102,12 +100,12 @@ public class PlayerTracker {
         if (currentStack == null)
             return;
 
-        if((ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) && ev.entityPlayer.isSneaking()) {
-            if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+        if ((ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) && ev.entityPlayer.isSneaking()) {
+            if (currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
                 // On shift right-click change MODE of the selector tool
                 NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
                 String description = lore.getStringTagAt(0);
-                if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
+                if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
                     String mode = lore.getStringTagAt(1);
                     if (mode.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT))
                         mode = Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN;
@@ -134,7 +132,7 @@ public class PlayerTracker {
             String description = lore.getStringTagAt(0);
 
 
-            if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
+            if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
                 if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
                     ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
                 } else {
@@ -150,11 +148,11 @@ public class PlayerTracker {
 
                 }
                 System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
-            } else if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
+            } else if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
                 town = MyTownUniverse.getInstance().getTownsMap().get(Utils.getTownNameFromLore(ev.entityPlayer));
-                if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT)) {
+                if (lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT)) {
                     Plot plot = town.getPlotAtResident(res);
-                    if(!plot.isCoordWithin(ev.world.provider.dimensionId, ev.x, ev.y, ev.z) && plot.hasOwner(res)) {
+                    if (!plot.isCoordWithin(ev.world.provider.dimensionId, ev.x, ev.y, ev.z) && plot.hasOwner(res)) {
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInPlot"));
                         return;
                     } else {
@@ -163,7 +161,7 @@ public class PlayerTracker {
                         String whitelisterFlagName = Utils.getFlagNameFromLore(ev.entityPlayer);
                         ev.entityPlayer.setCurrentItemOrArmor(0, null);
                         BlockWhitelist bw = plot.getTown().getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, plot.getDb_ID());
-                        if(bw == null) {
+                        if (bw == null) {
                             bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, plot.getDb_ID());
                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.added"));
                             DatasourceProxy.getDatasource().saveBlockWhitelist(bw, plot.getTown());
@@ -174,9 +172,9 @@ public class PlayerTracker {
 
                         ev.setCanceled(true);
                     }
-                } else if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN)){
+                } else if (lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN)) {
                     Town townAt = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
-                    if(town == null || town != townAt) {
+                    if (town == null || town != townAt) {
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
                         return;
                     } else {
@@ -185,7 +183,7 @@ public class PlayerTracker {
                         String whitelisterFlagName = Utils.getFlagNameFromLore(ev.entityPlayer);
                         ev.entityPlayer.setCurrentItemOrArmor(0, null);
                         BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, 0);
-                        if(bw == null) {
+                        if (bw == null) {
                             bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, whitelisterFlagName, 0);
                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
                             DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
@@ -201,16 +199,13 @@ public class PlayerTracker {
     }
 
 
-
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
-        if(VisualsTickHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
+        if (VisualsTickHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
             // Cancel event if it's a border that has been broken
             ev.setCanceled(true);
         }
     }
-
-
 
 
 }

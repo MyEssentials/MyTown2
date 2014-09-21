@@ -9,7 +9,6 @@ import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +127,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             while (rs.next()) {
                 Town town;
-                if(rs.getBoolean("isAdminTown")) {
+                if (rs.getBoolean("isAdminTown")) {
                     town = new AdminTown(rs.getString("name"));
                 } else {
                     town = new Town(rs.getString("name"));
@@ -192,7 +191,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     }
                     MyTownUniverse.getInstance().ranks.put(rank.getKey(), rank);
                     rank.getTown().addRank(rank);
-                    if(rs.getBoolean("isDefault")) {
+                    if (rs.getBoolean("isDefault")) {
                         town.setDefaultRank(rank);
                     }
                 }
@@ -277,7 +276,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             PreparedStatement loadFlagsStatement = prepare("SELECT * FROM " + prefix + "TownFlags", true);
             ResultSet rs = loadFlagsStatement.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 String townName = rs.getString("townName");
                 String flagName = rs.getString("name");
 
@@ -285,7 +284,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 Flag flag = new Flag(flagName, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
 
                 Town town = MyTownUniverse.getInstance().getTownsMap().get(townName);
-                if(town != null) {
+                if (town != null) {
                     town.addFlag(flag);
                 } else {
                     log.error("Failed to load flag " + flagName + " because the town given was invalid!");
@@ -314,7 +313,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 Flag flag = new Flag(flagName, gson.fromJson(rs.getString("serializedValue"), Flag.flagValueTypes.get(flagName)));
 
                 Plot plot = MyTownUniverse.getInstance().plots.get(plotID);
-                if(plot != null) {
+                if (plot != null) {
                     plot.addFlag(flag);
                 } else {
                     log.error("Failed to load flag " + flagName + " because the town given was invalid!");
@@ -368,7 +367,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "BlockWhitelists", true);
             ResultSet rs = statement.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 // plotID will be 0 if it's a town's whitelist
                 BlockWhitelist bw = new BlockWhitelist(rs.getInt("dim"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("flagName"), rs.getInt("plotID"));
                 bw.setDb_ID(rs.getInt("ID"));
@@ -390,7 +389,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "SelectedTown", true);
             ResultSet rs = statement.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 Resident res = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident"));
                 Town town = MyTownUniverse.getInstance().getTownsMap().get(rs.getString("townName"));
                 res.selectTown(town);
@@ -436,11 +435,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             PreparedStatement loadStatement = prepare("SELECT * FROM " + prefix + "ResidentsToPlots", true);
             ResultSet rs = loadStatement.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 Plot plot = MyTownUniverse.getInstance().getPlotsMap().get(rs.getInt("plotID"));
                 Resident res = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident"));
 
-                if(rs.getBoolean("isOwner"))
+                if (rs.getBoolean("isOwner"))
                     plot.addOwner(res);
 
                 plot.addResident(res);
@@ -469,7 +468,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 updateStatement.setFloat(6, town.getSpawn().getYaw());
                 updateStatement.setFloat(7, town.getSpawn().getPitch());
 
-                if(town.getOldName() == null)
+                if (town.getOldName() == null)
                     updateStatement.setString(8, town.getName());
                 else
                     updateStatement.setString(8, town.getOldName());
@@ -477,7 +476,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 updateStatement.executeUpdate();
 
                 // Need to move the Town in the map from the old name to the new
-                if(town.getOldName() != null) {
+                if (town.getOldName() != null) {
                     MyTownUniverse.getInstance().towns.remove(town.getOldName());
                     MyTownUniverse.getInstance().towns.put(town.getName(), town);
                 }
@@ -562,7 +561,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     MyTownUniverse.getInstance().ranks.put(rank.getKey(), rank);
                     rank.getTown().addRank(rank);
 
-                    if(isDefault)
+                    if (isDefault)
                         rank.getTown().setDefaultRank(rank);
                 } catch (SQLException e) {
                     log.error("Failed to insert Rank %s", rank.getKey());
@@ -589,7 +588,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.setString(1, perm);
             s.setString(2, rank.getName());
             s.execute();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             log.error("Failed to add permission (%s) to Rank (%s)", e, perm, rank.getName());
             return false;
         }
@@ -602,7 +601,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             if (MyTownUniverse.getInstance().residents.containsValue(resident)) { // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=? WHERE uuid=?", true);
                 updateStatement.setString(1, resident.getPlayerName());
-                updateStatement.setTimestamp(2, (Timestamp)resident.getLastOnline()); // Stupid hack...
+                updateStatement.setTimestamp(2, (Timestamp) resident.getLastOnline()); // Stupid hack...
                 updateStatement.setString(3, resident.getUUID().toString());
                 updateStatement.executeUpdate();
             } else { // Insert
@@ -651,11 +650,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.executeUpdate();
 
                 ResultSet generatedKeys = insertStatement.getGeneratedKeys();
-                if(generatedKeys.next())
+                if (generatedKeys.next())
                     plot.setDb_ID(generatedKeys.getInt(1));
                 log.info("Saved plot with ID " + generatedKeys.getInt(1));
 
-                for(Flag flag : plot.getTown().getFlags()) {
+                for (Flag flag : plot.getTown().getFlags()) {
                     saveFlag(new Flag(flag.getName(), flag.getValue()), plot);
                 }
 
@@ -696,7 +695,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveFlag(Flag flag, Plot plot) {
         try {
-            if(plot.hasFlag(flag.getName())) {
+            if (plot.hasFlag(flag.getName())) {
                 // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE plotID=? AND name=?", true);
                 updateStatement.setString(1, flag.serializeValue());
@@ -726,7 +725,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveFlag(Flag flag, Town town) {
         try {
-            if(town.hasFlag(flag.getName())) {
+            if (town.hasFlag(flag.getName())) {
                 // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "TownFlags SET serializedValue=? WHERE townName=? AND name=?", true);
                 updateStatement.setString(1, flag.serializeValue());
@@ -757,7 +756,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {
         try {
-            if(!town.hasBlockWhitelist(bw)) {
+            if (!town.hasBlockWhitelist(bw)) {
                 log.info(town.getName());
                 log.info(bw.getFlagName());
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "BlockWhitelists(dim, x, y, z, flagName, townName, plotID) VALUES(?, ?, ?, ?, ?, ?," + (bw.getPlotID() != 0 ? bw.getPlotID() : "NULL") + ")", true);
@@ -771,12 +770,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.executeUpdate();
 
                 ResultSet keys = insertStatement.getGeneratedKeys();
-                if(keys.next())
+                if (keys.next())
                     bw.setDb_ID(keys.getInt(1));
 
                 town.addBlockWhitelist(bw);
             }
-                // NO update since ID can't change
+            // NO update since ID can't change
         } catch (SQLException e) {
             log.error("Failed to save a Block Whitelist!");
             e.printStackTrace();
@@ -788,7 +787,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveSelectedTown(Resident res, Town town) {
         try {
-            if(res.selectedTown == null) {
+            if (res.selectedTown == null) {
                 PreparedStatement statement = prepare("INSERT INTO " + prefix + "SelectedTown(resident, townName) VALUES(?, ?)", true);
                 statement.setString(1, res.getUUID().toString());
                 statement.setString(2, town.getName());
@@ -824,7 +823,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             res.addTown(town);
             town.addResident(res, rank);
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             log.error("Failed to link Resident %s (%s) with Town %s", e, res.getPlayerName(), res.getUUID(), town.getName());
             return false;
         }
@@ -841,8 +840,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             res.removeTown(town);
             town.removeResident(res);
-        } catch(SQLException e) {
-            log.error("Failed to unlink Resident %s (%s) with Town %s", e, res.getPlayerName() ,res.getUUID(), town.getName());
+        } catch (SQLException e) {
+            log.error("Failed to unlink Resident %s (%s) with Town %s", e, res.getPlayerName(), res.getUUID(), town.getName());
             return false;
         }
         return true;
@@ -858,8 +857,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.executeUpdate();
 
             town.promoteResident(res, rank);
-        } catch(SQLException e) {
-            log.error("Failed to update link between Resident %s (%s) with Town %s", e, res.getPlayerName() ,res.getUUID(), town.getName());
+        } catch (SQLException e) {
+            log.error("Failed to update link between Resident %s (%s) with Town %s", e, res.getPlayerName(), res.getUUID(), town.getName());
             return false;
         }
         return true;
@@ -873,7 +872,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.setString(2, nation.getName());
             s.setString(3, nation.getTownRank(town).toString());
             s.execute();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             log.error("", e);
         }
         return true;
@@ -886,7 +885,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.setString(1, town.getName());
             s.setString(2, nation.getName());
             s.execute();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             log.error("", e);
         }
         return true;
@@ -900,7 +899,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.setString(2, town.getName());
             s.setString(3, nation.getName());
             s.executeUpdate();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             log.error("", e);
         }
         return true;
@@ -915,7 +914,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.setBoolean(3, isOwner);
             s.executeUpdate();
 
-            if(isOwner)
+            if (isOwner)
                 plot.addOwner(res);
             plot.addResident(res);
 
@@ -982,7 +981,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             }
             for (Resident res : town.getResidents()) {
                 res.removeTown(town);
-                if(res.selectedTown == town)
+                if (res.selectedTown == town)
                     deleteSelectedTown(res);
             }
             // Remove the Town from the Map
@@ -1145,7 +1144,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.setString(1, perm);
             s.setString(2, rank.getName());
             s.execute();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             log.error("Failed to add permission (%s) to Rank (%s)", e, perm, rank.getName());
             return false;
         }
@@ -1157,9 +1156,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     /**
      * Returns a PreparedStatement using the given sql
      *
-     * @param sql The SQL Statement
+     * @param sql                  The SQL Statement
      * @param returnGenerationKeys A flag indicating whether auto-generated keys
-     *        should be returned
+     *                             should be returned
      * @return
      * @throws Exception
      */
@@ -1169,7 +1168,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         PreparedStatement statement = null;
         try {
             statement = conn.prepareStatement(sql, returnGenerationKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             log.fatal(sql);
             e.printStackTrace();
         }

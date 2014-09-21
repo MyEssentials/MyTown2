@@ -4,7 +4,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
-import mytown.MyTown;
 import mytown.entities.Plot;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S23PacketBlockChange;
@@ -63,8 +62,8 @@ public class VisualsTickHandler {
     }
 
     public void markBlock(int x, int y, int z, int dim) {
-        for(BlockCoords block : markedBlocks) {
-            if(block.x == x && block.y == y && block.z == z && block.dim == dim)
+        for (BlockCoords block : markedBlocks) {
+            if (block.x == x && block.y == y && block.z == z && block.dim == dim)
                 return;
         }
         markedBlocks.add(new BlockCoords(x, y, z, dim));
@@ -194,8 +193,8 @@ public class VisualsTickHandler {
     }
 
     public boolean isBlockMarked(int x, int y, int z, int dim) {
-        for(BlockCoords coords : markedBlocks) {
-            if(coords.x == x && coords.y == y && coords.z == z && coords.dim == dim) {
+        for (BlockCoords coords : markedBlocks) {
+            if (coords.x == x && coords.y == y && coords.z == z && coords.dim == dim) {
                 coords.packetSent = false;
                 return true;
             }

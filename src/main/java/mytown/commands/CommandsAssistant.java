@@ -1,17 +1,18 @@
 package mytown.commands;
 
-import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandNode;
-import mytown.entities.*;
+import mytown.entities.Block;
+import mytown.entities.Rank;
+import mytown.entities.Resident;
+import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.List;
 
@@ -145,14 +146,14 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd.assistant.perm.town",
             completionKeys = {"flagCompletionWhitelist"})
     public static void permTownWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        if(args.size() == 0)
+        if (args.size() == 0)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         String flagName = args.get(0);
 
-        if(Flag.flagsForWhitelist.contains(flagName))
+        if (Flag.flagsForWhitelist.contains(flagName))
             res.startBlockSelection(flagName, town.getName(), false);
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
@@ -180,12 +181,13 @@ public class CommandsAssistant extends Commands {
         if (args.get(1).equalsIgnoreCase("mayor"))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.promote.notMayor"));
         Rank rank = getRankFromTown(town, args.get(1));
-        if(getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
+        if (getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
             resSender.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.sender"));
             resTarget.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.target", rank.getName(), town.getName()));
         }
 
     }
+
     @CommandNode(
             name = "add",
             permission = "mytown.cmd.assistant.ranks.add",
@@ -222,7 +224,7 @@ public class CommandsAssistant extends Commands {
         Town town = res.getSelectedTown();
         Rank rank = getRankFromTown(town, args.get(0));
 
-        if(town.getDefaultRank().equals(rank))
+        if (town.getDefaultRank().equals(rank))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.rank.defaultDeletion"));
 
         if (getDatasource().deleteRank(rank)) {

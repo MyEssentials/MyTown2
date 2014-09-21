@@ -31,13 +31,18 @@ public class BlockWhitelist {
     }
 
     public Plot getPlot() {
-        if(plotID != -1) {
+        if (plotID != -1) {
             return MyTownUniverse.getInstance().getPlotsMap().get(plotID);
         } else {
             return null;
         }
     }
 
-    public void setDb_ID(int id) {this.db_id = id; }
-    public int getDb_id() {return this.db_id; }
+    public void setDb_ID(int id) {
+        this.db_id = id;
+    }
+
+    public int getDb_id() {
+        return this.db_id;
+    }
 }

@@ -1,10 +1,5 @@
 package mytown.entities;
 
-import mytown.MyTown;
-import mytown.core.utils.teleport.Teleport;
-import mytown.entities.flag.Flag;
-import net.minecraft.command.CommandException;
-
 public class AdminTown extends Town {
     public AdminTown(String name) {
         super(name);

@@ -33,7 +33,7 @@ public class Utils {
      */
     public static Town getTownAtPosition(int dim, int x, int z) {
         Block block = getDatasource().getBlock(dim, x, z);
-        if(block == null)
+        if (block == null)
             return null;
         return block.getTown();
     }
@@ -45,7 +45,7 @@ public class Utils {
      * @return
      */
     protected static Town getTownFromEntity(Entity entity) {
-        return  getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+        return getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
     }
 
     /**
@@ -106,11 +106,12 @@ public class Utils {
     }
 
 
-
     /**
      * Gets the datasource
      *
      * @return
      */
-    public static MyTownDatasource getDatasource() {return DatasourceProxy.getDatasource(); }
+    public static MyTownDatasource getDatasource() {
+        return DatasourceProxy.getDatasource();
+    }
 }

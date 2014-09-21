@@ -1,8 +1,8 @@
 package ic2.api.recipe;
 
-import java.util.Map;
-
 import net.minecraftforge.fluids.Fluid;
+
+import java.util.Map;
 
 
 public interface IFluidHeatManager extends ILiquidAcceptManager {

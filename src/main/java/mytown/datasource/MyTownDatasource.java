@@ -66,25 +66,25 @@ public abstract class MyTownDatasource {
         Rank onCreationDefaultRank = null;
 
         // Setting spawn before saving
-        town.setSpawn(new Teleport(creator.getPlayer().dimension, (float)creator.getPlayer().posX, (float)creator.getPlayer().posY, (float)creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
+        town.setSpawn(new Teleport(creator.getPlayer().dimension, (float) creator.getPlayer().posX, (float) creator.getPlayer().posY, (float) creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
 
         // Saving town to database
         if (!saveTown(town))
             throw new CommandException("Failed to save Town"); // TODO Localize!
 
         // Saving all ranks to database and town
-        for(String rankName : Rank.defaultRanks.keySet()) {
+        for (String rankName : Rank.defaultRanks.keySet()) {
             Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);
 
             saveRank(rank, rankName.equals(Rank.theDefaultRank));
 
-            if(rankName.equals(Rank.theMayorDefaultRank)) {
+            if (rankName.equals(Rank.theMayorDefaultRank)) {
                 onCreationDefaultRank = rank;
             }
         }
 
         // Linking resident to town
-        if(!linkResidentToTown(creator, town, onCreationDefaultRank))
+        if (!linkResidentToTown(creator, town, onCreationDefaultRank))
             MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
 
         //Claiming first block
@@ -123,7 +123,7 @@ public abstract class MyTownDatasource {
         Rank onCreationDefaultRank = null;
 
         // Setting spawn before saving
-        town.setSpawn(new Teleport(creator.getPlayer().dimension, (float)creator.getPlayer().posX, (float)creator.getPlayer().posY, (float)creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
+        town.setSpawn(new Teleport(creator.getPlayer().dimension, (float) creator.getPlayer().posX, (float) creator.getPlayer().posY, (float) creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
 
         // Saving town to database
         if (!saveTown(town))
@@ -398,7 +398,7 @@ public abstract class MyTownDatasource {
     /**
      * Links the Resident to the Town, setting the Rank of the Resident in the Town
      *
-     * @param res The Resident to Link
+     * @param res  The Resident to Link
      * @param town The Town to Link
      * @param rank The Rank with which the resident is assigned to the town
      * @return If the link was successful
@@ -408,7 +408,7 @@ public abstract class MyTownDatasource {
     /**
      * Unlinks the Resident from the Town
      *
-     * @param res The Resident to Unlink
+     * @param res  The Resident to Unlink
      * @param town The Town to Unlink
      * @return If the unlink was successful
      */
@@ -417,7 +417,7 @@ public abstract class MyTownDatasource {
     /**
      * Updates the link between the Resident and the Town
      *
-     * @param res The Resident
+     * @param res  The Resident
      * @param town the Town
      * @return If the link update was successful
      */
@@ -426,7 +426,7 @@ public abstract class MyTownDatasource {
     /**
      * Links the Resident to the Town, setting the Rank of the Resident in the Town
      *
-     * @param town The Town to Link
+     * @param town   The Town to Link
      * @param nation The Nation to Link
      * @return If the link was successful
      */
@@ -435,7 +435,7 @@ public abstract class MyTownDatasource {
     /**
      * Unlinks the Resident from the Town
      *
-     * @param town The Town to Unlink
+     * @param town   The Town to Unlink
      * @param nation The Nation to Unlink
      * @return If the unlink was successful
      */
@@ -444,7 +444,7 @@ public abstract class MyTownDatasource {
     /**
      * Updates the link between the Town and Nation
      *
-     * @param town The Town
+     * @param town   The Town
      * @param nation The Nation
      * @return If the link update was successful
      */
@@ -517,7 +517,6 @@ public abstract class MyTownDatasource {
     public abstract boolean deletePlot(Plot plot);
 
 
-
     /**
      * Deletes the Nation
      *
@@ -579,8 +578,8 @@ public abstract class MyTownDatasource {
      * Checks if the Block exists
      *
      * @param dim The dimension to check in
-     * @param x The x chunk coord to check at
-     * @param z The z chunk coord to check at
+     * @param x   The x chunk coord to check at
+     * @param z   The z chunk coord to check at
      * @return If the Block exists
      */
     public final boolean hasBlock(int dim, int x, int z) {
@@ -590,9 +589,9 @@ public abstract class MyTownDatasource {
     /**
      * Checks if the TownBlock with the given coords and dim at the town specified exists
      *
-     * @param dim The dimension to check in
-     * @param x The x coord to check at
-     * @param z The z coord to check at
+     * @param dim           The dimension to check in
+     * @param x             The x coord to check at
+     * @param z             The z coord to check at
      * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
      * @return If the Block exists
      */
@@ -724,7 +723,7 @@ public abstract class MyTownDatasource {
     /**
      * Returns the Block at the given location. Can return null if it doesn't exist!
      *
-     * @param dim The dimension to check in
+     * @param dim    The dimension to check in
      * @param chunkX The chunk x to check at
      * @param chunkZ The chunk z to check at
      * @return The Block, or null if it doesn't exist
@@ -741,8 +740,8 @@ public abstract class MyTownDatasource {
      * @return
      */
     public Rank getRank(String rankName, Town town) {
-        for(Rank rank : MyTownUniverse.getInstance().getRanksMap().values()) {
-            if(rank.getName().equals(rankName) && rank.getTown().equals(town))
+        for (Rank rank : MyTownUniverse.getInstance().getRanksMap().values()) {
+            if (rank.getName().equals(rankName) && rank.getTown().equals(town))
                 return rank;
         }
         return null;

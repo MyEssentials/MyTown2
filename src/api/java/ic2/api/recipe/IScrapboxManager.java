@@ -1,8 +1,8 @@
 package ic2.api.recipe;
 
-import java.util.Map;
-
 import net.minecraft.item.ItemStack;
+
+import java.util.Map;
 
 public interface IScrapboxManager {
 	void addDrop(ItemStack drop, float rawChance);

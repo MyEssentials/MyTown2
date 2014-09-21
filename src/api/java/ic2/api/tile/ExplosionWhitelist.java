@@ -1,9 +1,9 @@
 package ic2.api.tile;
 
+import net.minecraft.block.Block;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import net.minecraft.block.Block;
 
 /**
  * Blocks on this whitelist will not resist an explosion but won't be destroyed.

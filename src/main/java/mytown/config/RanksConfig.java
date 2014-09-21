@@ -2,9 +2,7 @@ package mytown.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import mytown.MyTown;
 import mytown.core.utils.command.CommandManager;
-import mytown.core.utils.x_command.CommandUtils;
 import mytown.entities.Rank;
 
 import java.io.*;
@@ -15,7 +13,7 @@ import java.util.List;
 /**
  * Created by AfterWind on 7/4/2014
  * JSON Default ranks config
- *
+ * <p/>
  * TODO: STOP USING THE DAMN BOOLEANS FOR EVERYTHING AND USE PROPER JSON
  */
 public class RanksConfig {
@@ -26,12 +24,13 @@ public class RanksConfig {
         gson = new GsonBuilder().setPrettyPrinting().create();
         this.path = file.getPath();
 
-        if(!file.exists()) {
+        if (!file.exists()) {
             writeFile();
         } else {
             readFile();
         }
     }
+
     private void writeFile() {
         try {
             Writer writer = new FileWriter(path);
@@ -47,7 +46,7 @@ public class RanksConfig {
 
             // Filling arrays
 
-            for(String s : CommandManager.commandList.keySet()) {
+            for (String s : CommandManager.commandList.keySet()) {
                 if (s.startsWith("mytown.cmd")) {
                     pMayor.add(s);
                     if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
@@ -56,7 +55,7 @@ public class RanksConfig {
                     if (s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
                         pResident.add(s);
                     }
-                    if(s.startsWith("mytown.cmd.outsider")) {
+                    if (s.startsWith("mytown.cmd.outsider")) {
                         pOutsider.add(s);
                     }
                 }
@@ -104,18 +103,18 @@ public class RanksConfig {
 
             Wrapper[] wrappedObjects = gson.fromJson(reader, Wrapper[].class);
 
-            for(Wrapper w : wrappedObjects) {
-                for(String s : w.permissions) {
-                    if(!CommandManager.commandList.containsKey(s))
+            for (Wrapper w : wrappedObjects) {
+                for (String s : w.permissions) {
+                    if (!CommandManager.commandList.containsKey(s))
                         throw new RuntimeException("Permission node " + s + " does not exist!");
                 }
-                if(w.type != RankType.Outsider)
+                if (w.type != RankType.Outsider)
                     Rank.defaultRanks.put(w.name, w.permissions);
-                if(w.type == RankType.Default)
+                if (w.type == RankType.Default)
                     Rank.theDefaultRank = w.name;
-                if(w.type == RankType.DefaultMayor)
+                if (w.type == RankType.DefaultMayor)
                     Rank.theMayorDefaultRank = w.name;
-                if(w.type == RankType.Outsider)
+                if (w.type == RankType.Outsider)
                     Rank.theOutsiderPerms = w.permissions;
             }
         } catch (Exception e) {
@@ -142,8 +141,6 @@ public class RanksConfig {
             this.type = type;
         }
     }
-
-
 
 
 }

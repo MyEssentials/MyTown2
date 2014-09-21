@@ -52,8 +52,8 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
 
         String formattedTownList = null;
-        for(Town town : getUniverse().getTownsMap().values()) {
-            if(formattedTownList == null)
+        for (Town town : getUniverse().getTownsMap().values()) {
+            if (formattedTownList == null)
                 formattedTownList = town.toString();
             else
                 formattedTownList += "\n" + town.toString();
@@ -106,7 +106,7 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
-        if(args.size() == 0)
+        if (args.size() == 0)
             town = invites.get(0);
         else
             town = getTownFromName(args.get(0));
@@ -136,7 +136,7 @@ public class CommandsOutsider extends Commands {
 
         List<Town> invites = getInvitesFromResident(res);
         Town town;
-        if(args.size() == 0)
+        if (args.size() == 0)
             town = invites.get(0);
         else
             town = getTownFromName(args.get(0));
