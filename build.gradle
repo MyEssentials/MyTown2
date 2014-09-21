@@ -53,33 +53,3 @@ processResources {
         exclude 'mcmod.info'
     }
 }
-
-/*
-def createRunConfig(runManager, name, mainClass, vmParams, programParams) {
-    def runConfig = runManager.appendNode('configuration', ['default': 'false', 'name': name, 'type': 'Application', 'factoryName': 'Application'])
-    runConfig.appendNode 'extension', ['name': 'coverage', 'enabled': 'false', 'sample_coverage': 'true', 'runner': 'idea']
-    runConfig.appendNode 'option', ['name': 'MAIN_CLASS_NAME', 'value': mainClass]
-    runConfig.appendNode 'option', ['name': 'VM_PARAMETERS', 'value': vmParams]
-    runConfig.appendNode 'option', ['name': 'PROGRAM_PARAMETERS', 'value': programParams]
-    runConfig.appendNode 'option', ['name': 'WORKING_DIRECTORY', 'value': 'file://$PROJECT_DIR$/Run']
-    runConfig.appendNode 'option', ['name': 'ALTERNATIVE_JRE_PATH_ENABLED', 'value': 'false']
-    runConfig.appendNode 'option', ['name': 'ALTERNATIVE_JRE_PATH', 'value': '']
-    runConfig.appendNode 'option', ['name': 'ENABLE_SWING_INSPECTOR', 'value': 'false']
-    runConfig.appendNode 'option', ['name': 'ENV_VARIABLES']
-    runConfig.appendNode 'option', ['name': 'PASS_PARENT_ENVS', 'value': 'true']
-    runConfig.appendNode 'module', ['name': 'MyTown'] // TODO
-    runConfig.appendNode 'envs'
-    runConfig.appendNode 'RunnerSettings', ['RunnerId': 'Run']
-    runConfig.appendNode 'ConfigurationWrapper', ['RunnerId': 'Run']
-    runConfig.appendNode 'method'
-}
-
-idea {
-    workspace {
-        iws.withXml { xmlFile ->
-            def runManager = xmlFile.asNode().component.find { it.@name == 'RunManager' }
-            createRunConfig(runManager, 'Client', 'GradleStart', '-Xincgc -Xmx1024M -Xms1024M -Djava.library.path="$PROJECT_DIR$/Core/build/natives" -Dfml.ignoreInvalidMinecraftCertificates=true', '--version 1.7 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --username=legobear154 --assetIndex 1.7.10 --runDir $USER_HOME$/.minecraft/assets')
-        }
-    }
-}
-*/
