@@ -166,6 +166,7 @@ public class MyTown {
 
         DependencyManager.Dep[] deps = {
                 new DependencyManager.Dep(libsFolder + "/sqlite-jdbc-3.7.2.jar", "https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.7.2.jar"),
+                new DependencyManager.Dep(libsFolder + "/mysql-connector-java-5.1.32.jar", "http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar"),
                 new DependencyManager.Dep(libsFolder + "/reflectasm-1.09.jar", "http://central.maven.org/maven2/com/esotericsoftware/reflectasm/reflectasm/1.09/reflectasm-1.09.jar")
         };
 
