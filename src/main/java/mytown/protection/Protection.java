@@ -1,6 +1,6 @@
 package mytown.protection;
 
-import mytown.api.datasource.MyTownDatasource;
+import mytown.datasource.MyTownDatasource;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;

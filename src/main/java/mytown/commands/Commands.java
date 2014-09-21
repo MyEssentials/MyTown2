@@ -5,7 +5,7 @@ import mytown.MyTown;
 import mytown.core.Localization;
 import mytown.core.utils.command.CommandCompletion;
 import mytown.core.utils.command.CommandManager;
-import mytown.api.datasource.MyTownDatasource;
+import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;

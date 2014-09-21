@@ -1,4 +1,4 @@
-package mytown.api.datasource;
+package mytown.datasource;
 
 import com.mojang.authlib.GameProfile;
 import mytown.MyTown;

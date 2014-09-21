@@ -1,7 +1,7 @@
 package mytown.crash;
 
 import cpw.mods.fml.common.ICrashCallable;
-import mytown.api.datasource.MyTownDatasource;
+import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownDatasource_SQL;
 import mytown.datasource.MyTownUniverse;
 import mytown.proxies.DatasourceProxy;
@@ -12,7 +12,7 @@ import java.sql.SQLWarning;
 // TODO Add more info about the datasource?
 
 /**
- * Adds {@link mytown.api.datasource.MyTownDatasource} and {@link Connection} info to the crash report
+ * Adds {@link mytown.datasource.MyTownDatasource} and {@link Connection} info to the crash report
  *
  * @author Joe Goett
  */

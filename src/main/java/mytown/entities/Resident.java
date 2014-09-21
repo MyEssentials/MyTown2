@@ -3,7 +3,7 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
-import mytown.api.datasource.MyTownDatasource;
+import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.api.interfaces.IBlockWhitelister;
 import mytown.api.interfaces.IHasPlots;

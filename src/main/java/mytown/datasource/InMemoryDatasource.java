@@ -1,6 +1,5 @@
 package mytown.datasource;
 
-import mytown.api.datasource.MyTownDatasource;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 

@@ -1,6 +1,6 @@
 package mytown.util;
 
-import mytown.api.datasource.MyTownDatasource;
+import mytown.datasource.MyTownDatasource;
 import mytown.entities.Block;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
