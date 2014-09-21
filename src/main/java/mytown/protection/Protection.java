@@ -83,7 +83,6 @@ public abstract class Protection {
      * @param entity
      * @return
      */
-    @SuppressWarnings("unchecked")
     public boolean checkEntity(Entity entity) {
         Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
         if (town == null)

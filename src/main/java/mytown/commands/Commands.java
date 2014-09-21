@@ -73,25 +73,25 @@ public abstract class Commands {
         populator.add("@a");
         CommandCompletion.completionMap.put("townCompletionAndAll", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
         CommandCompletion.completionMap.put("townCompletion", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         for (Resident res : MyTownUniverse.getInstance().getResidentsMap().values()) {
             populator.add(res.getPlayerName());
         }
         CommandCompletion.completionMap.put("residentCompletion", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         populator.addAll(Flag.flagValueTypes.keySet());
         CommandCompletion.completionMap.put("flagCompletion", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         populator.addAll(Flag.flagsForWhitelist);
         CommandCompletion.completionMap.put("flagCompletionWhitelist", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         populator.addAll(Rank.defaultRanks.keySet());
         CommandCompletion.completionMap.put("rankCompletion", populator);
     }

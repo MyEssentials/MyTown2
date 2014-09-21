@@ -117,7 +117,7 @@ public class DatasourceProxy {
         String[] keyParts = msg.key.split("|");
         if (keyParts.length < 2) return;
 
-        if (keyParts[1] == "registerType") {
+        if (keyParts[1].equals("registerType")) {
             String[] msgSplit = msg.getStringValue().split(",");
             String datasourceName = msgSplit[0].toLowerCase();
             String datasourceClassName = msgSplit[1];
