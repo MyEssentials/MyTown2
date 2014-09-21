@@ -1,7 +1,7 @@
 package mytown.protection;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import ic2.api.event.LaserEvent;
+import cpw.mods.fml.common.Optional;
 import mytown.MyTown;
 import mytown.entities.Block;
 import mytown.entities.Resident;
@@ -21,7 +21,6 @@ public class IC2Protection extends Protection {
     private Class<?> clsItemCable;
     private Class<?> clsItemBlockIC2;
 
-
     @SuppressWarnings("unchecked")
     public IC2Protection() {
         MyTown.instance.log.info("Initializing IC2 protection...");
@@ -35,7 +34,6 @@ public class IC2Protection extends Protection {
             ex.printStackTrace();
         }
     }
-
 
     @SuppressWarnings("unchecked")
     @Override
@@ -62,9 +60,9 @@ public class IC2Protection extends Protection {
     }
 
     // EVENTS
-    @SuppressWarnings("unchecked")
     @SubscribeEvent
-    public void onLaserBreak(LaserEvent.LaserHitsBlockEvent ev) {
+    @Optional.Method(modid=ModID)
+    public void onLaserBreak(ic2.api.event.LaserEvent.LaserHitsBlockEvent ev) {
         MyTown.instance.log.info("Detected laser break.");
         Block tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.x >> 4, ev.z >> 4);
         if (tblock == null)
@@ -88,10 +86,9 @@ public class IC2Protection extends Protection {
         }
     }
 
-
-    @SuppressWarnings("unchecked")
     @SubscribeEvent
-    public void onLaserExplodes(LaserEvent.LaserExplodesEvent ev) {
+    @Optional.Method(modid=ModID)
+    public void onLaserExplodes(ic2.api.event.LaserEvent.LaserExplodesEvent ev) {
         MyTown.instance.log.info("Detected explosion.");
         Block tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.lasershot.chunkCoordX, ev.lasershot.chunkCoordZ);
         if (tblock == null)
@@ -108,7 +105,6 @@ public class IC2Protection extends Protection {
             }
         }
     }
-
 
     /*
     @SubscribeEvent

@@ -308,7 +308,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * @param flagName
      * @return
      */
-    public Flag getFlagAtCoords(int dim, int x, int y, int z, String flagName) {
+    public <T> Flag<T> getFlagAtCoords(int dim, int x, int y, int z, String flagName) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
         if (plot == null) {
             return getFlag(flagName);
