@@ -1,7 +1,7 @@
 package mytown.protection;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import ic2.api.event.LaserEvent;
 import mytown.MyTown;
 import mytown.entities.Block;
@@ -61,8 +61,9 @@ public class IC2Protection extends Protection {
     }
 
     // EVENTS
+    @SuppressWarnings("unchecked")
     @SubscribeEvent
-    @Optional.Method(modid=ModID)
+    @Optional.Method(modid = ModID)
     public void onLaserBreak(LaserEvent.LaserHitsBlockEvent ev) {
         MyTown.instance.log.info("Detected laser break.");
         Block tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.x >> 4, ev.z >> 4);
@@ -87,8 +88,9 @@ public class IC2Protection extends Protection {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @SubscribeEvent
-    @Optional.Method(modid=ModID)
+    @Optional.Method(modid = ModID)
     public void onLaserExplodes(LaserEvent.LaserExplodesEvent ev) {
         MyTown.instance.log.info("Detected explosion.");
         Block tblock = DatasourceProxy.getDatasource().getBlock(ev.owner.dimension, ev.lasershot.chunkCoordX, ev.lasershot.chunkCoordZ);

@@ -236,7 +236,6 @@ public class Protections {
                 if (!placeFlag.getValue() && !res.getTowns().contains(tblock.getTown())) {
                     res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.place"));
                     ev.setCanceled(true);
-                    return;
                 }
             }
 
@@ -325,7 +324,6 @@ public class Protections {
                     } else
                         counter--;
                     ev.setCanceled(true);
-                    return;
                 }
             }
         }

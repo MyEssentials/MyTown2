@@ -101,10 +101,7 @@ public class VanillaProtection extends Protection {
 
         if (entity instanceof EntityTNTPrimed) {
             Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, "explosions");
-            if (!explosionsFlag.getValue()) {
-                return true;
-            }
-            return false;
+            return !explosionsFlag.getValue();
         }
 
         if (entity instanceof EntityPlayer) {
@@ -125,9 +122,7 @@ public class VanillaProtection extends Protection {
             return false;
         }
 
-        if (super.checkEntity(entity))
-            return true;
-        return false;
+        return super.checkEntity(entity);
     }
 
     @Override

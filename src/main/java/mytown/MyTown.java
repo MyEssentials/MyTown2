@@ -32,7 +32,6 @@ import java.io.File;
 import java.lang.reflect.Method;
 
 // TODO Add a way to safely reload
-// TODO Make sure ALL DB drivers are included when built. Either as a separate mod, or packaged with this. Maybe even make MyTown just DL them at runtime and inject them
 /**/
 @Mod(modid = Constants.MODID, name = Constants.MODNAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES, acceptableRemoteVersions = "*")
 public class MyTown {
@@ -44,7 +43,6 @@ public class MyTown {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
-
         // Setup Loggers
         log = new Log(ev.getModLog());
 
@@ -54,7 +52,6 @@ public class MyTown {
 
         // Read Configs
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
-
 
         ConfigProcessor.load(config, Config.class);
         LocalizationProxy.load();
@@ -91,7 +88,6 @@ public class MyTown {
         // This needs to be after registerCommands... might want to move both methods...
         ranksConfig = new RanksConfig(new File(Constants.CONFIG_FOLDER, "DefaultRanks.json"));
         registerPermissionHandler();
-        // addDefaultPermissions();
         DatasourceProxy.setLog(log);
         SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
 
@@ -108,7 +104,6 @@ public class MyTown {
      * Registers all commands
      */
     private void registerCommands() {
-
         Method m = null;
         try {
             m = Commands.class.getMethod("firstPermissionBreach", String.class, ICommandSender.class);
@@ -120,29 +115,10 @@ public class MyTown {
         CommandManager.registerCommands(CommandsAssistant.class, m);
         CommandManager.registerCommands(CommandsAdmin.class);
         CommandManager.registerCommands(CommandsOutsider.class, m);
-
-
-        /*
-        // No longer registering old commands, still keeping them around tho
-
-        CommandUtils.registerCommand(new CmdTown());
-        CommandUtils.registerCommand(new CmdTownAdmin());
-        */
     }
 
     private void registerPermissionHandler() {
         ForgePermsAPI.permManager = new PermissionManager();
-        /*
-        try {
-            Class<?> c = Class.forName("forgeperms.ForgePerms");
-            Method m = c.getMethod("getPermissionManager");
-            ForgePermsAPI.permManager = (IPermissionManager)m.invoke(null);
-        } catch (Exception e) {
-            MyTown.instance.log.error("Failed to load ForgePerms. Currently not using ANY protection for commands usage!");
-            e.printStackTrace();
-
-        }
-        */
     }
 
     /**
@@ -158,19 +134,16 @@ public class MyTown {
         FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
         MinecraftForge.EVENT_BUS.register(Protections.instance);
         FMLCommonHandler.instance().bus().register(Protections.instance);
-        //MinecraftForge.EVENT_BUS.register(new MyTownEventHandler());
     }
 
     public void downloadDependencies(FMLPreInitializationEvent ev) {
         String libsFolder = Constants.CONFIG_FOLDER + "libs/";
 
-        DependencyManager.Dep[] deps = {
+        DependencyManager.downloadDependencies(new DependencyManager.Dep[]{
                 new DependencyManager.Dep(libsFolder + "/sqlite-jdbc-3.7.2.jar", "https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.7.2.jar"),
                 new DependencyManager.Dep(libsFolder + "/mysql-connector-java-5.1.32.jar", "http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar"),
                 new DependencyManager.Dep(libsFolder + "/reflectasm-1.09.jar", "http://central.maven.org/maven2/com/esotericsoftware/reflectasm/reflectasm/1.09/reflectasm-1.09.jar")
-        };
-
-        DependencyManager.downloadDependencies(deps);
+        });
     }
 
     // ////////////////////////////

@@ -10,7 +10,7 @@ import java.util.List;
  * @author Joe Goett
  */
 public class Block implements IHasPlots {
-    public static String keyFormat = "%s;%s;%s";
+    public static final String keyFormat = "%s;%s;%s";
 
     private int dim, x, z;
     private Town town;

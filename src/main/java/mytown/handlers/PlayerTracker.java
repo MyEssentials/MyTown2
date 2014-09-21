@@ -154,7 +154,6 @@ public class PlayerTracker {
                     Plot plot = town.getPlotAtResident(res);
                     if (!plot.isCoordWithin(ev.world.provider.dimensionId, ev.x, ev.y, ev.z) && plot.hasOwner(res)) {
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInPlot"));
-                        return;
                     } else {
                         // If plot is within the bounds of a plot then create or delete the blockwhitelist
 
@@ -176,7 +175,6 @@ public class PlayerTracker {
                     Town townAt = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
                     if (town == null || town != townAt) {
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
-                        return;
                     } else {
                         // If town is found then create of delete the block whitelist
 

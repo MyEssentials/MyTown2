@@ -169,7 +169,7 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.safemode",
             parentName = "mytown.adm.cmd")
     public static void safemodeCommand(ICommandSender sender, List<String> args) {
-        boolean safemode = false;
+        boolean safemode;
         if (args.size() < 1) { // Toggle safemode
             safemode = !SafemodeHandler.isInSafemode();
         } else { // Set safemode
@@ -248,7 +248,6 @@ public class CommandsAdmin extends Commands {
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.set"));
         }
 
-        Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromTown(town, args.get(1));
 

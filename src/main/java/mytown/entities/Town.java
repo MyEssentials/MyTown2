@@ -1,9 +1,9 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import mytown.api.interfaces.*;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.flag.Flag;
-import mytown.api.interfaces.*;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -213,7 +213,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public void removeBlock(Block block) {
-        blocks.remove(block);
+        blocks.remove(block.getKey());
     }
 
     @Override
@@ -308,7 +308,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * @param flagName
      * @return
      */
-    public <T> Flag<T> getFlagAtCoords(int dim, int x, int y, int z, String flagName) {
+    public Flag getFlagAtCoords(int dim, int x, int y, int z, String flagName) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
         if (plot == null) {
             return getFlag(flagName);

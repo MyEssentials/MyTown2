@@ -2,13 +2,13 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
-import mytown.core.ChatUtils;
-import mytown.datasource.MyTownDatasource;
-import mytown.datasource.MyTownUniverse;
 import mytown.api.interfaces.IBlockWhitelister;
 import mytown.api.interfaces.IHasPlots;
 import mytown.api.interfaces.IHasTowns;
 import mytown.api.interfaces.IPlotSelector;
+import mytown.core.ChatUtils;
+import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -410,8 +410,8 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     public Plot getPlotAtPlayerPosition() {
         for (Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
-            if (plot.isCoordWithin(player.dimension, (int) player.posX, (int) player.posY, (int) player.posZ)) ;
-            return plot;
+            if (plot.isCoordWithin(player.dimension, (int) player.posX, (int) player.posY, (int) player.posZ))
+                return plot;
         }
         return null;
     }

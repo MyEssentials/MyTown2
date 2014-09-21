@@ -14,7 +14,6 @@ import net.minecraft.nbt.NBTTagList;
  * Utils class for random useful things
  */
 public class Utils {
-
     /**
      * Returns the town at the specified position or null if nothing found.
      *

@@ -3,9 +3,9 @@ package mytown.entities;
 // TODO Implement PlotType
 
 import com.google.common.collect.ImmutableList;
-import mytown.entities.flag.Flag;
 import mytown.api.interfaces.IHasFlags;
 import mytown.api.interfaces.IHasResidents;
+import mytown.entities.flag.Flag;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,7 +5,6 @@ import mytown.MyTown;
 import mytown.api.events.*;
 import mytown.core.utils.Log;
 import mytown.core.utils.teleport.Teleport;
-import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import net.minecraft.command.CommandException;

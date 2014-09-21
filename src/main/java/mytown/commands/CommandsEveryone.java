@@ -55,7 +55,7 @@ public class CommandsEveryone extends Commands {
             completionKeys = {"townCompletion"})
     public static void spawnCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = null;
+        Town town;
 
         if (args.size() == 0) {
             town = getTownFromResident(res);

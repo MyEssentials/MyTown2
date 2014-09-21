@@ -245,7 +245,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     @Override
     public boolean deletePlot(Plot plot) {
         log.debug("Deleting Plot %s", plot.getKey());
-        return MyTownUniverse.getInstance().plots.remove(plot.getKey()) != null;
+        return MyTownUniverse.getInstance().plots.remove(plot.getDb_ID()) != null;
     }
 
     @Override

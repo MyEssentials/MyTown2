@@ -51,7 +51,7 @@ public class SafemodeHandler {
 
     public static void setSafemode(boolean safemode) {
         SafemodeHandler.safemode = safemode;
-        if (SafemodeHandler.safemode == false) {
+        if (!SafemodeHandler.safemode) {
             kickPlayers();
         }
     }
