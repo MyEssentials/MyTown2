@@ -106,6 +106,7 @@ public abstract class MyTownDatasource {
         saveFlag(new Flag<Boolean>(FlagType.placeBlocks, false), town);
         saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);
         saveFlag(new Flag<Boolean>(FlagType.bcBuildingMining, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.bcPipeFlow, false), town);
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;
@@ -152,6 +153,7 @@ public abstract class MyTownDatasource {
 
         saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);
         saveFlag(new Flag<Boolean>(FlagType.bcBuildingMining, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.bcPipeFlow, false), town);
 
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))

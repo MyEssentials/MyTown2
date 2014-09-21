@@ -8,12 +8,10 @@ import net.minecraft.block.Block;
  */
 public class BlockPos {
     public int x, y, z, dim;
-    public Block block;
-    public BlockPos(Block block, int x, int y, int z, int dim) {
+    public BlockPos(int x, int y, int z, int dim) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.dim = dim;
-        this.block = block;
     }
 }

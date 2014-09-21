@@ -18,12 +18,12 @@ import java.util.List;
  * Created by AfterWind on 9/15/2014.
  * All buildcraft protection
  */
-public class BuildCraftProtection extends Protection {
+public class BuildCraftFactoryProtection extends Protection {
 
     Class<? extends TileEntity> clsTileAbstractBuilder;
 
 
-    public BuildCraftProtection() {
+    public BuildCraftFactoryProtection() {
         // We need reflection only for loading the mod
         clsTileAbstractBuilder = TileAbstractBuilder.class;
         trackedTileEntities.add(clsTileAbstractBuilder);
@@ -50,7 +50,7 @@ public class BuildCraftProtection extends Protection {
                     // Directly from the town, not checking per plot since it's quite the pain
                     Flag<Boolean> bcFlag = block.getTown().getFlag(FlagType.bcBuildingMining);
                     if(!bcFlag.getValue()) {
-                        block.getTown().notifyEveryone(getLocal().getLocalization("mytown.protection.bcBuildingMining"));
+                        block.getTown().notifyEveryone(FlagType.bcBuildingMining.getLocalizedProtectionDenial());
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
                         return true;
                     }

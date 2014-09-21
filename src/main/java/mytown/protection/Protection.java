@@ -68,6 +68,11 @@ public abstract class Protection {
      */
     public List<Class<? extends Entity>> explosiveBlocks;
 
+    /**
+     * List of blocks that can interact with other blocks if put near each other
+     */
+    public List<Block> interactiveBlocks;
+
     //TODO: Map for place check outside towns
     //public Map<Class<? extends Block>>
 
@@ -82,6 +87,7 @@ public abstract class Protection {
         trackedEntities = new ArrayList<Class<? extends Entity>>();
         activatedBlocks = new ArrayList<net.minecraft.block.Block>();
         explosiveBlocks = new ArrayList<Class<? extends Entity>>();
+        interactiveBlocks = new ArrayList<Block>();
         isHandlingEvents = false;
     }
     /**
@@ -136,7 +142,7 @@ public abstract class Protection {
      * @param bp
      * @return
      */
-    public boolean checkBlock(BlockPos bp) { return false; }
+    public boolean checkPlacement(BlockPos bp, Item item) { return false; }
 
     /**
      * Checks if the tile entity specified needs to be checked on server tick
@@ -172,29 +178,6 @@ public abstract class Protection {
      * @return
      */
     public boolean checkForWhitelist(TileEntity te) { return false; }
-
-    /**
-     * Checks if the ItemBlock needs to be checked in the interactingBlocks list
-     *
-     * @param item
-     * @return
-     */
-    public boolean hasToCheckBlock(Item item) {
-        if(item instanceof ItemBlock) {
-            return hasToCheckBlock(((ItemBlock) item).field_150939_a);
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the block needs to be checked in the interractingBlocks list
-     *
-     * @param block
-     * @return
-     */
-    public boolean hasToCheckBlock(Block block) {
-        return false;
-    }
 
     public List<FlagType> getFlagTypeForTile(TileEntity te) { return getFlagTypeForTile(te.getClass()); }
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) { return null; }

@@ -1,7 +1,8 @@
 package mytown.entities.flag;
 
 import mytown.proxies.LocalizationProxy;
-import mytown.proxies.mod.BuildCraftProxy;
+import mytown.proxies.mod.BuildCraftFactoryProxy;
+import mytown.proxies.mod.BuildCraftTrasportationProxy;
 import mytown.proxies.mod.IC2Proxy;
 import mytown.proxies.mod.ModProxies;
 
@@ -23,7 +24,8 @@ public enum FlagType {
     activateBlocks(Boolean.class, null, false, null, true),
     ic2EnergyFlow(Boolean.class, null, false, IC2Proxy.MOD_ID),
     // Only allowed in towns, not in plots
-    bcBuildingMining(Boolean.class, null, true, BuildCraftProxy.MOD_ID);
+    bcBuildingMining(Boolean.class, null, true, BuildCraftFactoryProxy.MOD_ID),
+    bcPipeFlow(Boolean.class, null, true, BuildCraftTrasportationProxy.MOD_ID);
 
     private Class<?> type;
     private String descriptionKey;

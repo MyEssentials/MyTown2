@@ -16,7 +16,10 @@ import mytown.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,7 @@ public class IC2Protection extends Protection {
     private Class<? extends TileEntity> clsTileEntityBaseGenerator;
 
     private Block blockCable, blockElectric, blockChargepad, blockMachine1, blockMachine2, blockMachine3, blockGenerator;
+    private Item itemCable;
 
     @SuppressWarnings("unchecked")
     public IC2Protection() {
@@ -57,6 +61,16 @@ public class IC2Protection extends Protection {
             blockMachine2 = Block.getBlockFromName("blockMachine2");
             blockMachine3 = Block.getBlockFromName("blockMachine3");
             blockGenerator = Block.getBlockFromName("blockGenerator");
+
+            itemCable = (Item)Item.itemRegistry.getObject("itemCable");
+
+            interactiveBlocks.add(blockCable);
+            interactiveBlocks.add(blockElectric);
+            interactiveBlocks.add(blockChargepad);
+            interactiveBlocks.add(blockMachine1);
+            interactiveBlocks.add(blockMachine2);
+            interactiveBlocks.add(blockMachine3);
+            interactiveBlocks.add(blockGenerator);
 
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
@@ -135,12 +149,22 @@ public class IC2Protection extends Protection {
             }
         }
 
+
         return false;
     }
 
+    /*
     @SuppressWarnings("unchecked")
     @Override
-    public boolean checkBlock(BlockPos bp) {
+    public boolean checkPlacement(BlockPos bp, Item item) {
+        Block blockChecked = null;
+        if(!(item instanceof ItemBlock && interactiveBlocks.contains(((ItemBlock) item).field_150939_a))) {
+            if(!(item == itemCable))
+                return false;
+        } else {
+            blockChecked = ((ItemBlock) item).field_150939_a;
+        }
+
         List<BlockPos> blocksNearby = Utils.getBlockAndPositionNearby(bp);
         for(BlockPos bn : blocksNearby) {
             // This is never null
@@ -148,16 +172,21 @@ public class IC2Protection extends Protection {
 
             Flag<Boolean> ic2Flag = town.getFlagAtCoords(bn.dim, bn.x, bn.y, bn.z, FlagType.ic2EnergyFlow);
             if(!ic2Flag.getValue()) {
+                Block block = DimensionManager.getWorld(bn.dim).getBlock(bn.x, bn.y, bn.z);
+
+                // Why IC2? Why?
+                if(blockChecked == null && item == itemCable)
+                    blockChecked = blockCable;
+
+
+
+
                 return true;
             }
         }
         return false;
     }
-
-    @Override
-    public boolean hasToCheckBlock(Block block) {
-        return block == blockCable || block == blockChargepad|| block == blockElectric|| block == blockGenerator|| block == blockMachine1|| block == blockMachine2|| block == blockMachine3;
-    }
+    */
 
     // EVENTS
     @SuppressWarnings("unchecked")

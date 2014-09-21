@@ -136,11 +136,51 @@ public class VanillaProtection extends Protection {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean checkTileEntity(TileEntity te) {
-        if(trackedTileEntities.contains(te.getClass())) {
-            // TODO: idkhowtoworkthissomebodyhalp
+        MyTown.instance.log.info("Found vanilla te " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord);
+
+        Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
+        if(town != null) {
+            Flag<Boolean> placeFlag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.placeBlocks);
+            if(!placeFlag.getValue()) {
+                return true;
+            }
+        } else {
+            TileEntityPiston piston = (TileEntityPiston) te;
+            int x = te.xCoord, y = te.yCoord, z = te.zCoord;
+            switch (piston.getPistonOrientation()) {
+                case 0:
+                    y--;
+                    break;
+                case 1:
+                    y++;
+                    break;
+                case 2:
+                    z--;
+                    break;
+                case 3:
+                    z++;
+                    break;
+                case 4:
+                    x--;
+                    break;
+                case 5:
+                    x++;
+                    break;
+            }
+            town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
+            if(town != null) {
+                Flag<Boolean> placeFlag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
+                if(!placeFlag.getValue()) {
+                    //TODO: Create a flag only for this
+                    town.notifyEveryone(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                    return true;
+                }
+            }
         }
+
         return false;
     }
 

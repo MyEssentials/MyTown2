@@ -8,10 +8,12 @@ import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 import java.io.BufferedInputStream;
@@ -161,10 +163,25 @@ public class Utils {
             Town town = getTownAtPosition(block.dim, (block.x + dx[i]) >> 4, (block.z + dz[i]) >> 4);
             if(town != null) {
                 MyTown.instance.log.info("Got block at position " + (block.x + dx[i]) + ", " + block.y + ", " + (block.z + dz[i]));
-                list.add(new BlockPos(DimensionManager.getWorld(block.dim).getBlock(block.x + dx[i], block.y, block.z + dz[i]), block.x + dx[i], block.y, block.z + dz[i], block.dim));
+                list.add(new BlockPos(block.x + dx[i], block.y, block.z + dz[i], block.dim));
             }
         }
         return list;
+    }
+
+    public static void dropAsEntity(World world, int x, int y, int z, ItemStack itemStack)
+    {
+        if (itemStack == null) {
+            return;
+        }
+        double f = 0.7D;
+        double dx = world.rand.nextFloat() * f + (1.0D - f) * 0.5D;
+        double dy = world.rand.nextFloat() * f + (1.0D - f) * 0.5D;
+        double dz = world.rand.nextFloat() * f + (1.0D - f) * 0.5D;
+
+        EntityItem entityItem = new EntityItem(world, x + dx, y + dy, z + dz, itemStack);
+        //entityItem.field_145804_b = 10;
+        world.spawnEntityInWorld(entityItem);
     }
 
     /**

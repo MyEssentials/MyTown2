@@ -9,6 +9,7 @@ import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.BlockPos;
+import mytown.util.Utils;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +25,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +95,8 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent ev) {
+        if(ev.world.isRemote)
+            return;
         // Checking the checked maps (check-ception?)
         if(ticker == 0) {
             //MyTown.instance.log.info("Updating check maps.");
@@ -129,15 +133,16 @@ public class Protections {
                 }
             }
         }
-        for (TileEntity te : (List<TileEntity>) ev.world.loadedTileEntityList) {
+        for (Iterator<TileEntity> it = ev.world.loadedTileEntityList.iterator(); it.hasNext(); ) {
+            TileEntity te = it.next();
             //MyTown.instance.log.info("Checking tile: " + te.toString());
             for (Protection prot : protections.values()) {
                 // Prechecks go here
                 if (prot.hasToCheckTileEntity(te) && !prot.checkForWhitelist(te)) {
                     // Checks go here
                     if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
-                        //ev.world.removeTileEntity(te.xCoord, te.yCoord, te.zCoord);
-                        te.getBlockType().dropBlockAsItem(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, 1, te.blockMetadata);
+                        Utils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
+                        //te.getBlockType().breakBlock(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, te.blockType, te.blockMetadata);
                         te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
                         MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
                     } else {
@@ -219,20 +224,6 @@ public class Protections {
             // In-Town specific interactions from here
             TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, ev.x >> 4, ev.z >> 4);
             if(tblock == null) {
-                MyTown.instance.log.info("Found no town block, checking for block placement near towns...");
-                if(currentStack != null && currentStack.getItem() instanceof ItemBlock) {
-                    MyTown.instance.log.info("Checking the block with name " + ((ItemBlock) currentStack.getItem()).field_150939_a.getUnlocalizedName());
-                    for(Protection prot : protections.values()) {
-                        if(prot.hasToCheckBlock(((ItemBlock) currentStack.getItem()).field_150939_a)) {
-
-                            if(prot.checkBlock(new BlockPos(((ItemBlock) currentStack.getItem()).field_150939_a, ev.x, ev.y, ev.z, ev.world.provider.dimensionId))) {
-                                res.sendMessage(FlagType.ic2EnergyFlow.getLocalizedProtectionDenial());
-                                ev.setCanceled(true);
-                                return;
-                            }
-                        }
-                    }
-                }
                 return;
             }
 
@@ -287,16 +278,6 @@ public class Protections {
                     res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                     ev.setCanceled(true);
                     return;
-                } else {
-                    for(Protection prot : protections.values()) {
-                        if(prot.hasToCheckBlock(((ItemBlock) currentStack.getItem()).field_150939_a)) {
-                            if(prot.checkBlock(new BlockPos(((ItemBlock) currentStack.getItem()).field_150939_a, ev.x, ev.y, ev.z, ev.world.provider.dimensionId))) {
-                                res.sendMessage(FlagType.ic2EnergyFlow.getLocalizedProtectionDenial());
-                                ev.setCanceled(true);
-                                return;
-                            }
-                        }
-                    }
                 }
                 MyTown.instance.log.info("Checking for te...");
                 if(res.hasTown(tblock.getTown()) && ((ItemBlock)currentStack.getItem()).field_150939_a instanceof ITileEntityProvider) {
