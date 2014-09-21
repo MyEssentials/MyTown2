@@ -1,4 +1,4 @@
-package mytown.entities.interfaces;
+package mytown.api.interfaces;
 
 import com.google.common.collect.ImmutableList;
 import mytown.entities.Plot;

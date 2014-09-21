@@ -6,7 +6,7 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
-import mytown.datasource.MyTownDatasource;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Plot;

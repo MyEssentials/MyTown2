@@ -5,7 +5,7 @@ import mytown.config.Config;
 import mytown.core.utils.Log;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.datasource.InMemoryDatasource;
-import mytown.datasource.MyTownDatasource;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.datasource.impl.MySQLDatasource;
 import mytown.datasource.impl.SQLiteDatasource;
 import net.minecraftforge.common.config.Configuration;

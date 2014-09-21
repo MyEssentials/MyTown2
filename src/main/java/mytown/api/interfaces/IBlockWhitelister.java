@@ -1,4 +1,4 @@
-package mytown.entities.interfaces;
+package mytown.api.interfaces;
 
 /**
  * Created by AfterWind on 9/4/2014.

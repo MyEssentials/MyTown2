@@ -3,12 +3,12 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
 import mytown.core.ChatUtils;
-import mytown.datasource.MyTownDatasource;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
-import mytown.entities.interfaces.IBlockWhitelister;
-import mytown.entities.interfaces.IHasPlots;
-import mytown.entities.interfaces.IHasTowns;
-import mytown.entities.interfaces.IPlotSelector;
+import mytown.api.interfaces.IBlockWhitelister;
+import mytown.api.interfaces.IHasPlots;
+import mytown.api.interfaces.IHasTowns;
+import mytown.api.interfaces.IPlotSelector;
 import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -204,7 +204,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      * @param y
      * @param z
      * @return
-     * @see mytown.entities.interfaces.IHasPlots
+     * @see mytown.api.interfaces.IHasPlots
      */
     @Override
     public Plot getPlotAtCoords(int dim, int x, int y, int z) {

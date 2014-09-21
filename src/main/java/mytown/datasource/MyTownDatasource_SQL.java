@@ -3,6 +3,7 @@ package mytown.datasource;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import mytown.api.datasource.MyTownDatasource;
 import mytown.config.Config;
 import mytown.core.utils.config.ConfigProperty;
 import mytown.core.utils.teleport.Teleport;

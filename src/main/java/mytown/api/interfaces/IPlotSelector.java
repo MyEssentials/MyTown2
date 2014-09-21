@@ -1,4 +1,4 @@
-package mytown.entities.interfaces;
+package mytown.api.interfaces;
 
 import mytown.entities.Plot;
 
