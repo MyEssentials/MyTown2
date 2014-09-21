@@ -3,6 +3,7 @@ package mytown.commands;
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
 import mytown.core.Localization;
+import mytown.core.utils.command.CommandCompletion;
 import mytown.core.utils.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
