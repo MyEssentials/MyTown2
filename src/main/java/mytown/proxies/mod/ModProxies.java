@@ -11,15 +11,10 @@ public class ModProxies {
     private static boolean loaded = false;
 
     private ModProxies() {
-
     }
 
     public static void load() {
-
         MyTown.instance.log.info("Starting proxies...");
-
-        proxies.add(new IC2Proxy());
-        proxies.add(new ForgePermsProxy());
 
         if (!ModProxies.loaded) {
             ModProxies.loaded = true;
@@ -28,11 +23,8 @@ public class ModProxies {
 
         // Load ModProxies
         for (ModProxy p : ModProxies.proxies) {
-            /*
-            if (p.getModID() == null || !Loader.isModLoaded(p.getName())) {// || !MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
-                continue;
-            }
-            */
+            // TODO Re-add config options for proxies
+            // TODO Check for the mod's API as well?
             if (p.getModID() != null && Loader.isModLoaded(p.getModID())) {
                 p.load();
             }
@@ -43,6 +35,8 @@ public class ModProxies {
      * Adds all the {@link ModProxy}'s to the list
      */
     public static void addProxies() {
+        addProxy(new IC2Proxy());
+        addProxy(new ForgePermsProxy());
     }
 
     /**
