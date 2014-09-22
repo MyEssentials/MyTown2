@@ -10,7 +10,6 @@ import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.RanksConfig;
 import mytown.core.Localization;
-import mytown.core.utils.DependencyManager;
 import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.config.ConfigProcessor;
@@ -47,8 +46,6 @@ public class MyTown {
         log = new Log(ev.getModLog());
 
         Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyTown/";
-
-        downloadDependencies(ev);
 
         // Read Configs
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
@@ -134,16 +131,6 @@ public class MyTown {
         FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
         MinecraftForge.EVENT_BUS.register(Protections.instance);
         FMLCommonHandler.instance().bus().register(Protections.instance);
-    }
-
-    public void downloadDependencies(FMLPreInitializationEvent ev) {
-        String libsFolder = Constants.CONFIG_FOLDER + "libs/";
-
-        DependencyManager.downloadDependencies(new DependencyManager.Dep[]{
-                new DependencyManager.Dep(libsFolder + "/sqlite-jdbc-3.7.2.jar", "https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.7.2.jar"),
-                new DependencyManager.Dep(libsFolder + "/mysql-connector-java-5.1.32.jar", "http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar"),
-                new DependencyManager.Dep(libsFolder + "/reflectasm-1.09.jar", "http://central.maven.org/maven2/com/esotericsoftware/reflectasm/reflectasm/1.09/reflectasm-1.09.jar")
-        });
     }
 
     // ////////////////////////////

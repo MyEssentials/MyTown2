@@ -37,19 +37,24 @@ minecraft {
 
 dependencies {
     testCompile "junit:junit:4.11"
-    compile "com.esotericsoftware.reflectasm:reflectasm:1.09"
-    // Include DB Drivers as deps
-    compile "org.xerial:sqlite-jdbc:3.7.15-M1"
-    compile "mysql:mysql-connector-java:5.1.31"
+    compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
+    compile "org.xerial:sqlite-jdbc:${config.sqlite_version}"
+    compile "mysql:mysql-connector-java:${config.mysql_version}"
     compile project(":MyEssentials-Core")
 }
 
 processResources {
+    inputs.property "mod_version", project.version
+    inputs.property "minecraft_version", project.minecraft.version
+    inputs.property "reflectasm_version", config.reflectasm_version
+    inputs.property "mysql_version", config.mysql_version
+    inputs.property "sqlite_version", config.sqlite_version
+
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand 'mod_version': project.version, 'minecraft_version': project.minecraft.version
+        include '*.info'
+        expand 'mod_version': project.version, 'minecraft_version': project.minecraft.version, 'reflectasm_version': config.reflectasm_version, 'mysql_version': config.mysql_version, 'sqlite_version': config.sqlite_version
     }
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+        exclude '*.info'
     }
 }
