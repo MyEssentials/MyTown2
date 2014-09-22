@@ -1,5 +1,6 @@
 package mytown.protection;
 
+import mytown.MyTown;
 import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Town;
@@ -151,7 +152,7 @@ public abstract class Protection {
      * @return
      */
     public boolean hasToCheckTileEntity(TileEntity te) {
-
+        //MyTown.instance.log.info("Trying to check for te: " + te.toString() + " on protection " + this.toString());
         if(trackedTileEntities.contains(te.getClass()))
             return true;
         for(Class<? extends TileEntity> cls : trackedTileEntities) {

@@ -1,9 +1,12 @@
 package mytown.protection;
 
 import buildcraft.builders.TileAbstractBuilder;
+import buildcraft.core.BlockIndex;
 import buildcraft.core.Box;
+import buildcraft.factory.TilePump;
 import mytown.MyTown;
 import mytown.datasource.MyTownUniverse;
+import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -11,6 +14,7 @@ import mytown.util.ChunkPos;
 import mytown.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +25,16 @@ import java.util.List;
 public class BuildCraftFactoryProtection extends Protection {
 
     Class<? extends TileEntity> clsTileAbstractBuilder;
+    Class<? extends TileEntity> clsTilePump;
+
 
 
     public BuildCraftFactoryProtection() {
         // We need reflection only for loading the mod
         clsTileAbstractBuilder = TileAbstractBuilder.class;
+        clsTilePump = TilePump.class;
         trackedTileEntities.add(clsTileAbstractBuilder);
+        trackedTileEntities.add(clsTilePump);
     }
 
     @SuppressWarnings("unchecked")
@@ -56,6 +64,19 @@ public class BuildCraftFactoryProtection extends Protection {
                     }
                 }
             }
+        } else if(clsTilePump.isAssignableFrom(te.getClass())) {
+            try {
+                Method method = clsTilePump.getMethod("getNextIndexToPump", Boolean.class);
+                method.setAccessible(true);
+                // Invoke method: getting the next block to pump, but not removing it
+                BlockIndex blockIndex = (BlockIndex)method.invoke(te, false);
+                Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, blockIndex.x >> 4, blockIndex.z >> 4);
+                if(town != null && !((Flag<Boolean>)town.getFlag(FlagType.pumps)).getValue()) {
+                    return true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return false;
@@ -71,8 +92,8 @@ public class BuildCraftFactoryProtection extends Protection {
 
     @Override
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
+        List<FlagType> list = new ArrayList<FlagType>();
         if(clsTileAbstractBuilder.isAssignableFrom(te)) {
-            List<FlagType> list = new ArrayList<FlagType>();
             list.add(FlagType.bcBuildingMining);
             return list;
         }

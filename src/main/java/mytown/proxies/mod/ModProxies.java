@@ -22,6 +22,7 @@ public class ModProxies {
         proxies.add(new BuildCraftFactoryProxy());
         proxies.add(new BuildCraftTrasportationProxy());
         proxies.add(new ForgePermsProxy());
+        proxies.add(new ExtraUtilitiesProxy());
 
         if (!ModProxies.loaded) {
             ModProxies.loaded = true;

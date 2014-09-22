@@ -104,6 +104,7 @@ public abstract class MyTownDatasource {
         saveFlag(new Flag<String>(FlagType.mobs, "all"), town);
         saveFlag(new Flag<Boolean>(FlagType.attackEntities, false), town);
         saveFlag(new Flag<Boolean>(FlagType.placeBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.pumps, true), town);
         saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);
         saveFlag(new Flag<Boolean>(FlagType.bcBuildingMining, false), town);
         saveFlag(new Flag<Boolean>(FlagType.bcPipeFlow, false), town);
@@ -149,6 +150,7 @@ public abstract class MyTownDatasource {
         saveFlag(new Flag<String>(FlagType.mobs, "all"), town);
         saveFlag(new Flag<Boolean>(FlagType.attackEntities, false), town);
         saveFlag(new Flag<Boolean>(FlagType.placeBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.pumps, true), town);
         // No need for checking if mod loaded FlagType and save method handles all that
 
         saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);

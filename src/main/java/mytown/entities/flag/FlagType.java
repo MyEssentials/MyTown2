@@ -1,10 +1,7 @@
 package mytown.entities.flag;
 
 import mytown.proxies.LocalizationProxy;
-import mytown.proxies.mod.BuildCraftFactoryProxy;
-import mytown.proxies.mod.BuildCraftTrasportationProxy;
-import mytown.proxies.mod.IC2Proxy;
-import mytown.proxies.mod.ModProxies;
+import mytown.proxies.mod.*;
 
 /**
  * Created by AfterWind on 9/16/2014.
@@ -22,10 +19,12 @@ public enum FlagType {
     attackEntities(Boolean.class, null, false, null),
     useItems(Boolean.class, null, false, null),
     activateBlocks(Boolean.class, null, false, null, true),
+    pumps(Boolean.class, null, true, ExtraUtilitiesProxy.MOD_ID),
     ic2EnergyFlow(Boolean.class, null, false, IC2Proxy.MOD_ID),
     // Only allowed in towns, not in plots
     bcBuildingMining(Boolean.class, null, true, BuildCraftFactoryProxy.MOD_ID),
     bcPipeFlow(Boolean.class, null, true, BuildCraftTrasportationProxy.MOD_ID);
+
 
     private Class<?> type;
     private String descriptionKey;
