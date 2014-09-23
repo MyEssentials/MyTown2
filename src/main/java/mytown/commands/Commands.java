@@ -63,36 +63,35 @@ public abstract class Commands {
     }
 
     public static void populateCompletionMap() {
-        MyTown.instance.log.info("Populating tab completion map...");
         List<String> populator = new ArrayList<String>();
         populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
         populator.add("@a");
         CommandCompletion.completionMap.put("townCompletionAndAll", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
         CommandCompletion.completionMap.put("townCompletion", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         for(Resident res : MyTownUniverse.getInstance().getResidentsMap().values()) {
             populator.add(res.getPlayerName());
         }
         CommandCompletion.completionMap.put("residentCompletion", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         for(FlagType flag : FlagType.values()) {
             populator.add(flag.toString());
         }
         CommandCompletion.completionMap.put("flagCompletion", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         for(FlagType flag : FlagType.values()) {
             if(flag.isWhitelistable())
                 populator.add(flag.toString());
         }
         CommandCompletion.completionMap.put("flagCompletionWhitelist", populator);
 
-        populator = new ArrayList<String>();
+        populator.clear();
         populator.addAll(Rank.defaultRanks.keySet());
         CommandCompletion.completionMap.put("rankCompletion", populator);
     }

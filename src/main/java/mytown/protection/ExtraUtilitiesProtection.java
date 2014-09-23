@@ -27,12 +27,9 @@ public class ExtraUtilitiesProtection extends Protection {
         try {
             clsTileEnderQuarry = (Class<? extends TileEntity>)Class.forName("com.rwtema.extrautils.tileentity.enderquarry.TileEntityEnderQuarry");
             clsTileEnderPump = (Class<? extends TileEntity>)Class.forName("com.rwtema.extrautils.tileentity.TileEntityEnderThermicLavaPump");
-
-            trackedTileEntities.add(clsTileEnderQuarry);
-            trackedTileEntities.add(clsTileEnderPump);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            MyTown.instance.log.info("Failed to load ExtraUtilities classes!");
+            MyTown.instance.log.error("Failed to load ExtraUtilities classes!");
         }
     }
 
@@ -89,5 +86,14 @@ public class ExtraUtilitiesProtection extends Protection {
         else if(clsTileEnderPump.isAssignableFrom(te))
             list.add(FlagType.pumps);
         return list;
+    }
+
+    @Override
+    public boolean checkForWhitelist(TileEntity te) {
+        if(clsTileEnderQuarry.isAssignableFrom(te.getClass()))
+            return Utils.isBlockWhitelisted(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks);
+        else if(clsTileEnderPump.isAssignableFrom(te.getClass()))
+            return Utils.isBlockWhitelisted(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.pumps);
+        return false;
     }
 }

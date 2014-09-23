@@ -50,10 +50,6 @@ public class IC2Protection extends Protection {
             clsTileEntityElectricMachine = (Class<? extends TileEntity>)Class.forName("ic2.core.block.machine.tileentity.TileEntityElectricMachine");
             clsTileEntityCable = (Class<? extends TileEntity>)Class.forName("ic2.core.block.wiring.TileEntityCable");
 
-            this.trackedTileEntities.add(clsTileEntityBaseGenerator);
-            this.trackedTileEntities.add(clsTileEntityCable);
-            this.trackedTileEntities.add(clsTileEntityElectricMachine);
-
             blockCable = Block.getBlockFromName("blockCable");
             blockElectric = Block.getBlockFromName("blockElectric");
             blockChargepad = Block.getBlockFromName("blockChargepad");

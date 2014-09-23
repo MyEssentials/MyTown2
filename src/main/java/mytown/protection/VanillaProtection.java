@@ -20,8 +20,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
@@ -35,11 +39,6 @@ import java.util.List;
  */
 public class VanillaProtection extends Protection {
     public VanillaProtection() {
-        super();
-        MyTown.instance.log.info("Vanilla protection initializing...");
-
-        //this.anyEntity.add(EntityPlayer.class);
-
         this.hostileEntities.add(EntityCreeper.class);
         this.hostileEntities.add(EntityZombie.class);
         this.hostileEntities.add(EntityArrow.class);
@@ -57,12 +56,8 @@ public class VanillaProtection extends Protection {
         this.hostileEntities.add(EntityWither.class);
         this.hostileEntities.add(EntityWitherSkull.class);
         this.hostileEntities.add(EntityDragon.class);
-        // If the flag "mobs" is set to "none"
-        this.anyEntity.add(EntityLivingBase.class);
 
         this.trackedEntities.add(EntityPlayer.class);
-        // Hi, my name is TNT
-        //this.anyEntity.add(EntityTNTPrimed.class);
 
         this.protectedEntities.add(EntityHorse.class);
         this.protectedEntities.add(EntityOcelot.class);
@@ -76,8 +71,6 @@ public class VanillaProtection extends Protection {
         this.protectedEntities.add(EntityPig.class);
         this.protectedEntities.add(EntitySnowman.class);
 
-        this.trackedTileEntities.add(TileEntityPiston.class);
-
         this.activatedBlocks.add(Blocks.stone_button);
         this.activatedBlocks.add(Blocks.lever);
         this.activatedBlocks.add(Blocks.wooden_button);
@@ -87,12 +80,10 @@ public class VanillaProtection extends Protection {
         this.activatedBlocks.add(Blocks.noteblock);
         this.activatedBlocks.add(Blocks.trapdoor);
         this.activatedBlocks.add(Blocks.wooden_door);
-        //this.activatedBlocks.add(Blocks.);
+        // TODO: Check for upper part of the door
         this.activatedBlocks.add(Blocks.fence_gate);
 
         this.explosiveBlocks.add(EntityTNTPrimed.class);
-
-
 
         isHandlingEvents = true;
     }
@@ -131,52 +122,50 @@ public class VanillaProtection extends Protection {
             return false;
         }
 
-        if(super.checkEntity(entity))
-            return true;
-        return false;
+        return super.checkEntity(entity);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean checkTileEntity(TileEntity te) {
-        MyTown.instance.log.info("Found vanilla te " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord);
-
-        Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
-        if(town != null) {
-            Flag<Boolean> placeFlag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.placeBlocks);
-            if(!placeFlag.getValue()) {
-                return true;
-            }
-        } else {
-            TileEntityPiston piston = (TileEntityPiston) te;
-            int x = te.xCoord, y = te.yCoord, z = te.zCoord;
-            switch (piston.getPistonOrientation()) {
-                case 0:
-                    y--;
-                    break;
-                case 1:
-                    y++;
-                    break;
-                case 2:
-                    z--;
-                    break;
-                case 3:
-                    z++;
-                    break;
-                case 4:
-                    x--;
-                    break;
-                case 5:
-                    x++;
-                    break;
-            }
-            town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
-            if(town != null) {
-                Flag<Boolean> placeFlag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
-                if(!placeFlag.getValue()) {
-                    //TODO: Create a flag only for this
-                    town.notifyEveryone(FlagType.placeBlocks.getLocalizedProtectionDenial());
+        if(te instanceof TileEntityPiston) {
+            Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
+            if (town != null) {
+                Flag<Boolean> placeFlag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.placeBlocks);
+                if (!placeFlag.getValue()) {
                     return true;
+                }
+            } else {
+                TileEntityPiston piston = (TileEntityPiston) te;
+                int x = te.xCoord, y = te.yCoord, z = te.zCoord;
+                switch (piston.getPistonOrientation()) {
+                    case 0:
+                        y--;
+                        break;
+                    case 1:
+                        y++;
+                        break;
+                    case 2:
+                        z--;
+                        break;
+                    case 3:
+                        z++;
+                        break;
+                    case 4:
+                        x--;
+                        break;
+                    case 5:
+                        x++;
+                        break;
+                }
+                town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
+                if (town != null) {
+                    Flag<Boolean> placeFlag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
+                    if (!placeFlag.getValue()) {
+                        //TODO: Create a flag only for this
+                        town.notifyEveryone(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                        return true;
+                    }
                 }
             }
         }
@@ -184,9 +173,55 @@ public class VanillaProtection extends Protection {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public boolean hasToCheckEntity(Entity e) {
-        return super.hasToCheckEntity(e) || e instanceof EntityPlayer;
+    public boolean checkItemUsage(ItemStack itemStack, Resident res) {
+        if(itemStack.getItem() instanceof ItemBucket) {
+            MovingObjectPosition pos = Utils.getMovingObjectPositionFromPlayer(res.getPlayer().worldObj, res.getPlayer(), false);
+            if(pos != null) {
+                //TODO: Properly check for fluid pickup
+                if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+                    int x = pos.blockX;
+                    int y = pos.blockY;
+                    int z = pos.blockZ;
+
+                    switch (pos.sideHit) {
+                        case 0:
+                            y--;
+                            break;
+                        case 1:
+                            y++;
+                            break;
+                        case 2:
+                            z--;
+                            break;
+                        case 3:
+                            z++;
+                            break;
+                        case 4:
+                            x--;
+                            break;
+                        case 5:
+                            x++;
+                            break;
+                    }
+
+                    Town town = Utils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
+                    if (town != null) {
+                        Flag<Boolean> itemUsage = town.getFlagAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
+                        if (!itemUsage.getValue() && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
+                            res.sendMessage(FlagType.useItems.getLocalizedProtectionDenial());
+                            return true;
+                        }
+                    }
+                } else if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.MISS) {
+                    //MyTown.instance.log.info("It missed! Not checking!");
+                }
+            } else {
+                //MyTown.instance.log.info("It's null, nothing to check :/");
+            }
+        }
+        return false;
     }
 
     @Override

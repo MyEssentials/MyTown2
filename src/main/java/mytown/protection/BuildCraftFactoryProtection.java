@@ -33,8 +33,6 @@ public class BuildCraftFactoryProtection extends Protection {
         // We need reflection only for loading the mod
         clsTileAbstractBuilder = TileAbstractBuilder.class;
         clsTilePump = TilePump.class;
-        trackedTileEntities.add(clsTileAbstractBuilder);
-        trackedTileEntities.add(clsTilePump);
     }
 
     @SuppressWarnings("unchecked")

@@ -3,6 +3,7 @@ package mytown.protection;
 import mytown.MyTown;
 import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -17,6 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
@@ -35,11 +37,6 @@ public abstract class Protection {
     public List<Class<? extends Item>> itemUsageProtection;
 
     /**
-     * The list of any entity found in each protection
-     */
-    public List<Class<? extends Entity>> anyEntity;
-
-    /**
      * The list of the types of hostile entities which there is protection against
      */
     public List<Class<? extends Entity>> hostileEntities;
@@ -48,11 +45,6 @@ public abstract class Protection {
      * The list of protected types of entities
      */
     public List<Class<? extends Entity>> protectedEntities;
-
-    /**
-     * The list of TRACKED types of tile entities. This list is checked every world tick.
-     */
-    public List<Class<? extends TileEntity>> trackedTileEntities;
 
     /**
      * The list of TRACKED types of entities. This list is checked every world tick
@@ -81,10 +73,8 @@ public abstract class Protection {
 
     public Protection() {
         itemUsageProtection = new ArrayList<Class<? extends Item>>();
-        anyEntity = new ArrayList<Class<? extends Entity>>();
         hostileEntities = new ArrayList<Class<? extends Entity>>();
         protectedEntities = new ArrayList<Class<? extends Entity>>();
-        trackedTileEntities = new ArrayList<Class<? extends TileEntity>>();
         trackedEntities = new ArrayList<Class<? extends Entity>>();
         activatedBlocks = new ArrayList<net.minecraft.block.Block>();
         explosiveBlocks = new ArrayList<Class<? extends Entity>>();
@@ -146,31 +136,13 @@ public abstract class Protection {
     public boolean checkPlacement(BlockPos bp, Item item) { return false; }
 
     /**
-     * Checks if the tile entity specified needs to be checked on server tick
+     * Checks if the resident can use this item.
      *
-     * @param te
+     * @param itemStack
+     * @param res
      * @return
      */
-    public boolean hasToCheckTileEntity(TileEntity te) {
-        //MyTown.instance.log.info("Trying to check for te: " + te.toString() + " on protection " + this.toString());
-        if(trackedTileEntities.contains(te.getClass()))
-            return true;
-        for(Class<? extends TileEntity> cls : trackedTileEntities) {
-            if(cls.isAssignableFrom(te.getClass()))
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * * Checks if the entity specified needs to be checked on server tick
-     *
-     * @param e
-     * @return
-     */
-    public boolean hasToCheckEntity(Entity e) {
-        return trackedEntities.contains(e.getClass()) || hostileEntities.contains(e.getClass()) || anyEntity.contains(e.getClass()) || explosiveBlocks.contains(e.getClass());
-    }
+    public boolean checkItemUsage(ItemStack itemStack, Resident res) { return false; }
 
     /**
      * Checks if the given tile entity position has any whitelists

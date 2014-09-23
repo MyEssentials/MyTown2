@@ -25,8 +25,6 @@ public class BuildCraftTransportProtection extends Protection {
     public BuildCraftTransportProtection() {
         try {
             clsTileGenericPipe = (Class<? extends TileEntity>)Class.forName("buildcraft.transport.TileGenericPipe");
-
-            trackedTileEntities.add(clsTileGenericPipe);
         } catch (ClassNotFoundException e) {
             MyTown.instance.log.error("Failed to load bc-transport classes!");
             e.printStackTrace();
@@ -36,6 +34,7 @@ public class BuildCraftTransportProtection extends Protection {
     @SuppressWarnings("unchecked")
     @Override
     public boolean checkTileEntity(TileEntity te) {
+
         TownBlock bl = getDatasource().getBlock(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
         if(clsTileGenericPipe.isAssignableFrom(te.getClass()) && bl == null) {
             List<BlockPos> blocksNearby = Utils.getBlockAndPositionNearby(new BlockPos(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().provider.dimensionId));

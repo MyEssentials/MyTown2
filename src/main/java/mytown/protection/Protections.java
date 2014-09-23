@@ -5,6 +5,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import mytown.MyTown;
 import mytown.entities.*;
+import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -22,7 +23,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fluids.FluidEvent;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -115,21 +118,18 @@ public class Protections {
         // Why does it return only a generic List? :S
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
-
             for (Protection prot : protections.values()) {
-                if (prot.hasToCheckEntity(entity)) {
-                    if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
-                        if(!(entity instanceof EntityPlayer)) {
-                            MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
-                            checkedEntities.remove(entity);
-                            entity.setDead();
-                        } else {
-                            MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
-                            checkedEntities.put(entity, false);
-                        }
+                if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
+                    if(!(entity instanceof EntityPlayer)) {
+                        MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
+                        checkedEntities.remove(entity);
+                        entity.setDead();
                     } else {
-                        checkedEntities.put(entity, true);
+                        MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
+                        checkedEntities.put(entity, false);
                     }
+                } else {
+                    checkedEntities.put(entity, true);
                 }
             }
         }
@@ -138,7 +138,7 @@ public class Protections {
             //MyTown.instance.log.info("Checking tile: " + te.toString());
             for (Protection prot : protections.values()) {
                 // Prechecks go here
-                if (prot.hasToCheckTileEntity(te) && !prot.checkForWhitelist(te)) {
+                if (!prot.checkForWhitelist(te)) {
                     // Checks go here
                     if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
                         Utils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
@@ -185,7 +185,18 @@ public class Protections {
         }
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
 
+        // Item usage check here
+        if(currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
+            MyTown.instance.log.info("Checking item...");
+            for(Protection protection : protections.values()) {
+                if(protection.checkItemUsage(currentStack, res)) {
+                    ev.setCanceled(true);
+                    return;
+                }
+            }
+        }
 
+        // Place, activate and access check here
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             // DEV STUFF
             TileEntity te23 = ev.world.getTileEntity(ev.x, ev.y, ev.z);
@@ -219,6 +230,7 @@ public class Protections {
                     x++;
                     break;
             }
+
 
 
             // In-Town specific interactions from here
@@ -326,30 +338,24 @@ public class Protections {
     }
 
 
+
+
+
     /*
-    // Pretty sure it's a Forge bug... need to update
+    For now checking in player interact event, and autonomous activator-like blocks will be checked somewhere else
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent
-    public void onItemUse(PlayerUseItemEvent ev) {
-        Block block = DatasourceProxy.getDatasource().getBlock(ev.entityPlayer.dimension, ev.entityPlayer.chunkCoordX, ev.entityPlayer.chunkCoordZ);
-        if(block != null) {
-            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-            Town town = block.getTown();
-            Flag<Boolean> useFlag = town.getFlagAtCoords(ev.entityPlayer.dimension, (int)ev.entityPlayer.posX, (int)ev.entityPlayer.posY, (int)ev.entityPlayer.posZ, "useItems");
-            if(!useFlag.getValue()) {
-                for(Protection protection : Protections.instance.protections) {
-                    //TODO: Check for protection
-                    if(protection.itemUsageProtection.contains(ev.item.getItem().getClass()) && !res.hasTown(town)) {
-                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.itemuse"));
-                        ev.setCanceled(true);
-                        return;
-                    }
-                }
+    public void onItemUse(PlayerUseItemEvent.Start ev) {
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        for(Protection protection : protections.values()) {
+            if(protection.checkItemUsage(ev.item, res)) {
+                ev.setCanceled(true);
             }
         }
     }
     */
+
 
 
     private int counter = 0;
@@ -372,6 +378,18 @@ public class Protections {
                     ev.setCanceled(true);
                     return;
                 }
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @SubscribeEvent
+    public void onFluidMoving(FluidEvent.FluidMotionEvent ev) {
+        Town town = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+        if(town != null) {
+            Flag<Boolean> placeFlag = town.getFlag(FlagType.placeBlocks);
+            if(!placeFlag.getValue()) {
+                ev.setCanceled(true);
             }
         }
     }

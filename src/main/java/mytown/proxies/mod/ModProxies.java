@@ -23,7 +23,7 @@ public class ModProxies {
         proxies.add(new BuildCraftTrasportationProxy());
         proxies.add(new ForgePermsProxy());
         proxies.add(new ExtraUtilitiesProxy());
-
+        proxies.add(new BloodMagicProxy());
         if (!ModProxies.loaded) {
             ModProxies.loaded = true;
             MyTown.instance.config.getCategory("modproxies").setComment("Holds the enable state of the different ModProxies.\nModProxies handle interaction with other mods.\nIf a mod interaction causes issues, just set it to false.");
@@ -37,7 +37,7 @@ public class ModProxies {
             }
             */
             if(p.getModID() != null && Loader.isModLoaded(p.getModID())) {
-                MyTown.instance.log.info("Loading proxy: " + p.getName());
+                MyTown.instance.log.info("Loading proxy and protection: " + p.getName());
                 p.load();
                 p.isLoaded = true;
             }

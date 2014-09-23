@@ -8,6 +8,7 @@ import mytown.entities.interfaces.*;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 
+
 import java.util.*;
 
 // TODO Implement TownType
