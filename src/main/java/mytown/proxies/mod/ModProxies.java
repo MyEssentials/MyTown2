@@ -24,6 +24,8 @@ public class ModProxies {
         proxies.add(new ForgePermsProxy());
         proxies.add(new ExtraUtilitiesProxy());
         proxies.add(new BloodMagicProxy());
+        proxies.add(new ThermalExpansionProxy());
+
         if (!ModProxies.loaded) {
             ModProxies.loaded = true;
             MyTown.instance.config.getCategory("modproxies").setComment("Holds the enable state of the different ModProxies.\nModProxies handle interaction with other mods.\nIf a mod interaction causes issues, just set it to false.");

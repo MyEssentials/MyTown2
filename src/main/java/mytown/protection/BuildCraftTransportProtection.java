@@ -1,11 +1,13 @@
 package mytown.protection;
 
 import buildcraft.transport.BlockGenericPipe;
+import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.proxies.mod.BuildCraftTrasportationProxy;
 import mytown.util.BlockPos;
 import mytown.util.Utils;
 import net.minecraft.tileentity.TileEntity;
@@ -29,6 +31,8 @@ public class BuildCraftTransportProtection extends Protection {
             MyTown.instance.log.error("Failed to load bc-transport classes!");
             e.printStackTrace();
         }
+
+        activatedBlocks.add(GameRegistry.findBlock(BuildCraftTrasportationProxy.MOD_ID, "tile.pipeBlock"));
     }
 
     @SuppressWarnings("unchecked")

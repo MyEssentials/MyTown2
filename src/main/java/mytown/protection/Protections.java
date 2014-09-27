@@ -15,6 +15,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -55,7 +56,14 @@ public class Protections {
         addProtection(new VanillaProtection(), "");
     }
 
+    /**
+     * Adds a protection with the specified mod id.
+     *
+     * @param prot
+     * @param modid
+     */
     public void addProtection(Protection prot, String modid) {
+        MyTown.instance.log.info("Registered protection with modid: " + modid);
         protections.put(modid, prot);
 
         if(prot.isHandlingEvents) {
@@ -63,6 +71,16 @@ public class Protections {
         }
     }
 
+    /**
+     * Adds to the whitelist of the specified town. Used when placing blocks.
+     *
+     * @param te
+     * @param dim
+     * @param x
+     * @param y
+     * @param z
+     * @param town
+     */
     private void addToBlockWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
         for(Protection prot : protections.values()) {
             if(prot.getFlagTypeForTile(te) != null)
@@ -80,6 +98,16 @@ public class Protections {
         }
     }
 
+    /**
+     * Removes from the whitelist. Used when breaking blocks.
+     *
+     * @param te
+     * @param dim
+     * @param x
+     * @param y
+     * @param z
+     * @param town
+     */
     private void removeFromWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
         for (Protection prot : protections.values()) {
             if (prot.getFlagTypeForTile(te) != null)
@@ -95,12 +123,29 @@ public class Protections {
         }
     }
 
+    public boolean checkTileEntity(TileEntity te) {
+        for(Protection prot : protections.values())
+            if(prot.checkTileEntity(te))
+                return true;
+        return false;
+    }
+
+    public boolean checkItemUsage(ItemStack stack, Resident res, BlockPos bp) {
+        for(Protection prot : protections.values())
+            if(prot.checkItemUsage(stack, res, bp))
+                return true;
+        return false;
+    }
+
+
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent ev) {
+
         if(ev.world.isRemote)
             return;
-        // Checking the checked maps (check-ception?)
+
+        // Ticker for updating the map
         if(ticker == 0) {
             //MyTown.instance.log.info("Updating check maps.");
             for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
@@ -115,7 +160,7 @@ public class Protections {
         }
 
 
-        // Why does it return only a generic List? :S
+        // Entity check
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
             for (Protection prot : protections.values()) {
@@ -133,6 +178,8 @@ public class Protections {
                 }
             }
         }
+
+        // TileEntity check
         for (Iterator<TileEntity> it = ev.world.loadedTileEntityList.iterator(); it.hasNext(); ) {
             TileEntity te = it.next();
             //MyTown.instance.log.info("Checking tile: " + te.toString());
@@ -140,6 +187,7 @@ public class Protections {
                 // Prechecks go here
                 if (!prot.checkForWhitelist(te)) {
                     // Checks go here
+                    prot.checkTileEntity(te);
                     if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
                         Utils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
                         //te.getBlockType().breakBlock(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, te.blockType, te.blockMetadata);
@@ -153,6 +201,13 @@ public class Protections {
         }
     }
 
+    /*
+    @SubscribeEvent
+    private void onPlayerTick(TickEvent.PlayerTickEvent ev) {
+        // Inventory check
+        // TODO: Check inventory
+    }
+    */
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -189,7 +244,7 @@ public class Protections {
         if(currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
             MyTown.instance.log.info("Checking item...");
             for(Protection protection : protections.values()) {
-                if(protection.checkItemUsage(currentStack, res)) {
+                if(protection.checkItemUsage(currentStack, res, new BlockPos((int)res.getPlayer().posX, (int)res.getPlayer().posY, (int)res.getPlayer().posZ, res.getPlayer().dimension))) {
                     ev.setCanceled(true);
                     return;
                 }
@@ -198,11 +253,12 @@ public class Protections {
 
         // Place, activate and access check here
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-            // DEV STUFF
-            TileEntity te23 = ev.world.getTileEntity(ev.x, ev.y, ev.z);
-            if(te23 != null) {
-                MyTown.instance.log.info("Player clicked: " + te23);
-                MyTown.instance.log.info("Invalid:" + te23.isInvalid() + " Can update: " + te23.canUpdate() + " " + (te23.xCoord >> 4) + ", " + (te23.zCoord >> 4));
+
+            TileEntity te = ev.world.getTileEntity(ev.x, ev.y, ev.z);
+
+            // DEV: Developement only
+            if(te != null) {
+                MyTown.instance.log.info("Found tile with name " + te.toString() + " on block " + ev.world.getBlock(ev.x, ev.y, ev.z).getUnlocalizedName());
             }
 
             //System.out.println(currentStack.getItem().getUnlocalizedName());
@@ -231,61 +287,14 @@ public class Protections {
                     break;
             }
 
-
-
             // In-Town specific interactions from here
             TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, ev.x >> 4, ev.z >> 4);
             if(tblock == null) {
                 return;
             }
 
-            Plot plot = tblock.getTown().getPlotAtResident(res);
-            TileEntity te = ev.entityPlayer.worldObj.getTileEntity(ev.x, ev.y, ev.z);
-
-            //TODO: Verify properly
-            // In case the player wants to access a block... checking if player is shifting too
-            if(te != null && !(currentStack != null && currentStack.getItem() instanceof ItemBlock && ev.entityPlayer.isSneaking()) && !tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, 0)) {
-
-                // If it's a town whitelist then it's for everyone
-                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, 0))
-                    return;
-
-                // If it's a plot only whitelist then only residents of the same town can access
-                Plot plotAtBlock = tblock.getTown().getPlotAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord);
-                if(plotAtBlock != null) {
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, plotAtBlock.getDb_ID()) && res.hasTown(tblock.getTown()))
-                        return;
-                }
-                // Checking if a player wants to access a block here
-                if(!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                    res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
-                    ev.setCanceled(true);
-                    return;
-                }
-            }
-            if(currentStack == null) {
-                // If it's a town whitelist then it's universal
-                if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, 0))
-                    return;
-
-                Plot plotAtBlock = tblock.getTown().getPlotAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z);
-                // If it's a plot only whitelist then only residents of the same town can access
-                if(plotAtBlock != null) {
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, plotAtBlock.getDb_ID()) && res.hasTown(tblock.getTown()))
-                        return;
-                }
-
-                if(!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                    for(Protection prot : protections.values()) {
-                        if(prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
-                            res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
-                            ev.setCanceled(true);
-                            return;
-                        }
-                    }
-                }
-            }
-            if(currentStack != null && currentStack.getItem() instanceof ItemBlock) {
+            // If player is trying to place a block
+            if(currentStack != null && currentStack.getItem() instanceof ItemBlock && !(te != null && te instanceof IInventory && !ev.entityPlayer.isSneaking())) {
                 if(!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
                     res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                     ev.setCanceled(true);
@@ -298,10 +307,48 @@ public class Protections {
                     MyTown.instance.log.info("Found tile entity type from block, it's: " + clsTe.toString());
                     addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, x, y, z, tblock.getTown());
                 }
-            }
+            } else {
+                // If player is trying to "access"/open an inventory
+                if(te instanceof IInventory) {
+                    // If it's a town whitelist then it's for everyone
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, 0))
+                        return;
 
-            // if(te == null && currentStack != null && currentStack.getItem() instanceof ItemBlock)
-            //    UniversalChecker.instance.addToChecklist(new ResidentBlockCoordsPair(x, y, z, ev.entityPlayer.dimension, getDatasource().getResident(ev.entityPlayer.username)));
+                    // If it's a plot only whitelist then only residents of the same town can access
+                    Plot plotAtBlock = tblock.getTown().getPlotAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z);
+                    if (plotAtBlock != null) {
+                        if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks, plotAtBlock.getDb_ID()) && res.hasTown(tblock.getTown()))
+                            return;
+                    }
+                    // Checking if a player wants to access a block here
+                    if (!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                        res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
+                        ev.setCanceled(true);
+                    }
+                // If player is trying to "activate" block
+                } else {
+                    // If it's a town whitelist then it's universal
+                    if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, 0))
+                        return;
+
+                    Plot plotAtBlock = tblock.getTown().getPlotAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z);
+                    // If it's a plot only whitelist then only residents of the same town can access
+                    if(plotAtBlock != null) {
+                        if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks, plotAtBlock.getDb_ID()) && res.hasTown(tblock.getTown()))
+                            return;
+                    }
+
+                    if(!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                        for(Protection prot : protections.values()) {
+                            if(prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
+                                res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
+                                ev.setCanceled(true);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

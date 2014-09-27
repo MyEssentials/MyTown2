@@ -136,13 +136,14 @@ public abstract class Protection {
     public boolean checkPlacement(BlockPos bp, Item item) { return false; }
 
     /**
-     * Checks if the resident can use this item.
+     * Checks if the resident or block with tile entity can use this item.
+     * Resident can be null.
      *
      * @param itemStack
      * @param res
      * @return
      */
-    public boolean checkItemUsage(ItemStack itemStack, Resident res) { return false; }
+    public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) { return false; }
 
     /**
      * Checks if the given tile entity position has any whitelists

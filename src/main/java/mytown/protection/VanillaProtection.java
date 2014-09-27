@@ -8,6 +8,7 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.util.BlockPos;
 import mytown.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
@@ -175,50 +177,86 @@ public class VanillaProtection extends Protection {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean checkItemUsage(ItemStack itemStack, Resident res) {
+    public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
         if(itemStack.getItem() instanceof ItemBucket) {
-            MovingObjectPosition pos = Utils.getMovingObjectPositionFromPlayer(res.getPlayer().worldObj, res.getPlayer(), false);
-            if(pos != null) {
-                //TODO: Properly check for fluid pickup
-                if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-                    int x = pos.blockX;
-                    int y = pos.blockY;
-                    int z = pos.blockZ;
+            if(res != null) {
+                MovingObjectPosition pos = Utils.getMovingObjectPositionFromPlayer(res.getPlayer().worldObj, res.getPlayer(), false);
+                if(pos != null) {
+                    //TODO: Properly check for fluid pickup
+                    if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+                        int x = pos.blockX;
+                        int y = pos.blockY;
+                        int z = pos.blockZ;
 
-                    switch (pos.sideHit) {
-                        case 0:
-                            y--;
-                            break;
-                        case 1:
-                            y++;
-                            break;
-                        case 2:
-                            z--;
-                            break;
-                        case 3:
-                            z++;
-                            break;
-                        case 4:
-                            x--;
-                            break;
-                        case 5:
-                            x++;
-                            break;
-                    }
-
-                    Town town = Utils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
-                    if (town != null) {
-                        Flag<Boolean> itemUsage = town.getFlagAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
-                        if (!itemUsage.getValue() && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
-                            res.sendMessage(FlagType.useItems.getLocalizedProtectionDenial());
-                            return true;
+                        switch (pos.sideHit) {
+                            case 0:
+                                y--;
+                                break;
+                            case 1:
+                                y++;
+                                break;
+                            case 2:
+                                z--;
+                                break;
+                            case 3:
+                                z++;
+                                break;
+                            case 4:
+                                x--;
+                                break;
+                            case 5:
+                                x++;
+                                break;
                         }
+
+                        Town town = Utils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
+                        if (town != null) {
+                            Flag<Boolean> itemUsage = town.getFlagAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
+                            if (!itemUsage.getValue() && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
+                                res.sendMessage(FlagType.useItems.getLocalizedProtectionDenial());
+                                return true;
+                            }
+                        }
+                    } else if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.MISS) {
+                        //MyTown.instance.log.info("It missed! Not checking!");
                     }
-                } else if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.MISS) {
-                    //MyTown.instance.log.info("It missed! Not checking!");
                 }
             } else {
-                //MyTown.instance.log.info("It's null, nothing to check :/");
+                int x = bp.x;
+                int y = bp.y;
+                int z = bp.z;
+
+                // TODO: Chenge to global protections instead of te only
+                switch (ThermalExpansionProtection.getFacing(DimensionManager.getWorld(bp.dim).getTileEntity(bp.x, bp.y, bp.z))) {
+                    case 0:
+                        y--;
+                        break;
+                    case 1:
+                        y++;
+                        break;
+                    case 2:
+                        z--;
+                        break;
+                    case 3:
+                        z++;
+                        break;
+                    case 4:
+                        x--;
+                        break;
+                    case 5:
+                        x++;
+                        break;
+                }
+
+                Town town = Utils.getTownAtPosition(bp.dim, x >> 4, z >> 4);
+                if (town != null) {
+                    Flag<Boolean> itemUsage = town.getFlagAtCoords(bp.dim, x, y, z, FlagType.useItems);
+                    if (!itemUsage.getValue()) {
+                        town.notifyEveryone(FlagType.useItems.getLocalizedProtectionDenial());
+                        return true;
+                    }
+                }
+
             }
         }
         return false;

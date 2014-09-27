@@ -1,38 +1,29 @@
 package mytown;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
-import forgeperms.api.ForgePermsAPI;
-import forgeperms.api.IPermissionManager;
 import mytown.commands.*;
-import mytown.core.utils.command.CommandCompletion;
-import mytown.core.utils.command.CommandManager;
-import mytown.entities.flag.Flag;
-import mytown.handlers.VisualsTickHandler;
-import mytown.protection.Protections;
-import mytown.util.Utils;
-import mytown.x_commands.admin.CmdTownAdmin;
-import mytown.x_commands.town.CmdTown;
-import mytown.x_commands.town.info.CmdListTown;
 import mytown.config.Config;
 import mytown.config.RanksConfig;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
-import mytown.core.utils.x_command.CommandUtils;
+import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.PlayerTracker;
 import mytown.handlers.SafemodeHandler;
+import mytown.handlers.VisualsTickHandler;
+import mytown.protection.Protections;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
+import mytown.util.Utils;
+import mytown.x_commands.town.info.CmdListTown;
 import net.minecraft.command.ICommandSender;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -138,7 +129,6 @@ public class MyTown {
     }
 
     private void registerPermissionHandler() {
-        ForgePermsAPI.permManager = new PermissionManager();
         /*
         try {
             Class<?> c = Class.forName("forgeperms.ForgePerms");

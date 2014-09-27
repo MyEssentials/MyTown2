@@ -1,3 +1,4 @@
+/*
 package mytown;
 
 import forgeperms.api.IPermissionManager;
@@ -45,3 +46,4 @@ public class PermissionManager implements IPermissionManager {
     }
 
 }
+*/

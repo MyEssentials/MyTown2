@@ -3,7 +3,6 @@ package mytown.handlers;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
-import forgeperms.api.ForgePermsAPI;
 import mytown.config.Config;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -40,7 +39,7 @@ public class SafemodeHandler {
      * @param pl
      */
     public static void kickPlayer(EntityPlayerMP pl) {
-        if (!(pl instanceof FakePlayer) && !ForgePermsAPI.permManager.canAccess(pl.getCommandSenderName(), pl.worldObj.provider.getDimensionName(), "mytown.adm.safemode")) {
+        if (!(pl instanceof FakePlayer)) {//&& !ForgePermsAPI.permManager.canAccess(pl.getCommandSenderName(), pl.worldObj.provider.getDimensionName(), "mytown.adm.safemode")) {
             pl.playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
         }
     }
