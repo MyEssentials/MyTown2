@@ -1,6 +1,5 @@
 package mytown.protection;
 
-import mytown.MyTown;
 import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
@@ -9,21 +8,17 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.proxies.mod.ModProxy;
-import mytown.util.BlockPair;
 import mytown.util.BlockPos;
 import mytown.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by AfterWind on 8/31/2014.
@@ -34,7 +29,7 @@ public abstract class Protection {
     /**
      * The items which there is protection against
      */
-    public List<Class<? extends Item>> itemUsageProtection;
+    public List<Class<? extends Item>> trackedItems;
 
     /**
      * The list of the types of hostile entities which there is protection against
@@ -62,6 +57,11 @@ public abstract class Protection {
     public List<Class<? extends Entity>> explosiveBlocks;
 
     /**
+     * The list of types of tile entities which need to be checked
+     */
+    public List<Class<? extends TileEntity>> trackedTileEntities;
+
+    /**
      * List of blocks that can interact with other blocks if put near each other
      */
     public List<Block> interactiveBlocks;
@@ -72,12 +72,13 @@ public abstract class Protection {
     public boolean isHandlingEvents;
 
     public Protection() {
-        itemUsageProtection = new ArrayList<Class<? extends Item>>();
+        trackedItems = new ArrayList<Class<? extends Item>>();
         hostileEntities = new ArrayList<Class<? extends Entity>>();
         protectedEntities = new ArrayList<Class<? extends Entity>>();
         trackedEntities = new ArrayList<Class<? extends Entity>>();
         activatedBlocks = new ArrayList<net.minecraft.block.Block>();
         explosiveBlocks = new ArrayList<Class<? extends Entity>>();
+        trackedTileEntities = new ArrayList<Class<? extends TileEntity>>();
         interactiveBlocks = new ArrayList<Block>();
         isHandlingEvents = false;
     }
@@ -145,13 +146,8 @@ public abstract class Protection {
      */
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) { return false; }
 
-    /**
-     * Checks if the given tile entity position has any whitelists
-     *
-     * @param te
-     * @return
-     */
-    public boolean checkForWhitelist(TileEntity te) { return false; }
+    public boolean hasToCheckTileEntity(TileEntity te) { return trackedTileEntities.contains(te.getClass()); }
+    public boolean hasToCheckEntity(Entity entity) { return trackedEntities.contains(entity.getClass()); }
 
     public List<FlagType> getFlagTypeForTile(TileEntity te) { return getFlagTypeForTile(te.getClass()); }
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) { return null; }

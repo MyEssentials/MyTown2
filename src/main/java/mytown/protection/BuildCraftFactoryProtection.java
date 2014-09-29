@@ -33,6 +33,9 @@ public class BuildCraftFactoryProtection extends Protection {
         // We need reflection only for loading the mod
         clsTileAbstractBuilder = TileAbstractBuilder.class;
         clsTilePump = TilePump.class;
+
+        trackedTileEntities.add(clsTilePump);
+        trackedTileEntities.add(clsTileAbstractBuilder);
     }
 
     @SuppressWarnings("unchecked")
@@ -77,14 +80,6 @@ public class BuildCraftFactoryProtection extends Protection {
             }
         }
 
-        return false;
-    }
-
-    @Override
-    public boolean checkForWhitelist(TileEntity te) {
-        if(clsTileAbstractBuilder.isAssignableFrom(te.getClass())) {
-            return Utils.isBlockWhitelisted(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.bcBuildingMining);
-        }
         return false;
     }
 

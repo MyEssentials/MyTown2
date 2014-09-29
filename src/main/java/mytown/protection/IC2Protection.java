@@ -40,7 +40,6 @@ public class IC2Protection extends Protection {
 
     @SuppressWarnings("unchecked")
     public IC2Protection() {
-        MyTown.instance.log.info("Initializing IC2 protection...");
         isHandlingEvents = true;
         try {
             this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityNuke"));
@@ -49,6 +48,11 @@ public class IC2Protection extends Protection {
             clsTileEntityBaseGenerator = (Class<? extends TileEntity>)Class.forName("ic2.core.block.generator.tileentity.TileEntityBaseGenerator");
             clsTileEntityElectricMachine = (Class<? extends TileEntity>)Class.forName("ic2.core.block.machine.tileentity.TileEntityElectricMachine");
             clsTileEntityCable = (Class<? extends TileEntity>)Class.forName("ic2.core.block.wiring.TileEntityCable");
+
+            trackedTileEntities.add(clsTileEntityBaseGenerator);
+            trackedTileEntities.add(clsTileEntityCable);
+            trackedTileEntities.add(clsTileEntityElectricMachine);
+
 
             blockCable = Block.getBlockFromName("blockCable");
             blockElectric = Block.getBlockFromName("blockElectric");

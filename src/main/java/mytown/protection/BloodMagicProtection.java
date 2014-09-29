@@ -9,15 +9,12 @@ import mytown.entities.flag.FlagType;
 import mytown.proxies.mod.BloodMagicProxy;
 import mytown.util.BlockPos;
 import mytown.util.Utils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -47,11 +44,11 @@ public class BloodMagicProtection extends Protection {
         activatedBlocks.add(GameRegistry.findBlock(BloodMagicProxy.MOD_ID, "blockMasterStone"));
         activatedBlocks.add(GameRegistry.findBlock(BloodMagicProxy.MOD_ID, "bloodPedestal"));
 
-        itemUsageProtection.add(clsBoundPickaxe);
-        itemUsageProtection.add(clsSigilWater);
-        itemUsageProtection.add(clsSigilLava);
-        itemUsageProtection.add(clsSigilVoid);
-        itemUsageProtection.add(clsSigilMagnetism);
+        trackedItems.add(clsBoundPickaxe);
+        trackedItems.add(clsSigilWater);
+        trackedItems.add(clsSigilLava);
+        trackedItems.add(clsSigilVoid);
+        trackedItems.add(clsSigilMagnetism);
     }
 
     @SuppressWarnings("unchecked")

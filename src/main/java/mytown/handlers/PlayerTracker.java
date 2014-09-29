@@ -153,49 +153,25 @@ public class PlayerTracker {
                 System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
             } else if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
                 town = MyTownUniverse.getInstance().getTownsMap().get(Utils.getTownNameFromLore(ev.entityPlayer));
-                if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT)) {
-                    Plot plot = town.getPlotAtResident(res);
-                    if(!plot.isCoordWithin(ev.world.provider.dimensionId, ev.x, ev.y, ev.z) && plot.hasOwner(res)) {
-                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInPlot"));
-                        return;
+                Town townAt = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+                if(town == null || town != townAt) {
+                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
+                    return;
+                } else {
+                    // If town is found then create of delete the block whitelist
+
+                    FlagType flagType = FlagType.valueOf(Utils.getFlagNameFromLore(ev.entityPlayer));
+                    ev.entityPlayer.setCurrentItemOrArmor(0, null);
+                    BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
+                    if(bw == null) {
+                        bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
+                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
+                        DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
                     } else {
-                        // If plot is within the bounds of a town then create or delete the blockwhitelist
-
-                        FlagType flagType = FlagType.valueOf(Utils.getFlagNameFromLore(ev.entityPlayer));
-                        ev.entityPlayer.setCurrentItemOrArmor(0, null);
-                        BlockWhitelist bw = plot.getTown().getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType, plot.getDb_ID());
-                        if(bw == null) {
-                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType, plot.getDb_ID());
-                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.added"));
-                            DatasourceProxy.getDatasource().saveBlockWhitelist(bw, plot.getTown());
-                        } else {
-                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.plot.whitelist.removed"));
-                            DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, plot.getTown());
-                        }
-
-                        ev.setCanceled(true);
+                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
+                        DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
                     }
-                } else if(lore.getStringTagAt(1).equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN)){
-                    Town townAt = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
-                    if(town == null || town != townAt) {
-                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
-                        return;
-                    } else {
-                        // If town is found then create of delete the block whitelist
-
-                        FlagType flagType = FlagType.valueOf(Utils.getFlagNameFromLore(ev.entityPlayer));
-                        ev.entityPlayer.setCurrentItemOrArmor(0, null);
-                        BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType, 0);
-                        if(bw == null) {
-                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType, 0);
-                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
-                            DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
-                        } else {
-                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
-                            DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
-                        }
-                        ev.setCanceled(true);
-                    }
+                    ev.setCanceled(true);
                 }
             }
         }

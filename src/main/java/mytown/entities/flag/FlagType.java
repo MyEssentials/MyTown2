@@ -9,9 +9,9 @@ import mytown.proxies.mod.*;
  */
 public enum FlagType {
     enter(Boolean.class, null, false, null),
-    breakBlocks(Boolean.class, null, false, null, true),
+    breakBlocks(Boolean.class, null, false, null),
     accessBlocks(Boolean.class, null, false, null, true),
-    placeBlocks(Boolean.class, null, false, null, true),
+    placeBlocks(Boolean.class, null, false, null),
     pickupItems(Boolean.class, null, false, null),
     explosions(Boolean.class, null, false, null),
     // Only the values in the array are allowed
@@ -20,7 +20,7 @@ public enum FlagType {
     useItems(Boolean.class, null, false, null),
     activateBlocks(Boolean.class, null, false, null, true),
     pumps(Boolean.class, null, true, ExtraUtilitiesProxy.MOD_ID),
-    ic2EnergyFlow(Boolean.class, null, false, IC2Proxy.MOD_ID),
+    ic2EnergyFlow(Boolean.class, null, false, IC2Proxy.MOD_ID, true),
     // Only allowed in towns, not in plots
     bcBuildingMining(Boolean.class, null, true, BuildCraftFactoryProxy.MOD_ID),
     bcPipeFlow(Boolean.class, null, true, BuildCraftTrasportationProxy.MOD_ID);

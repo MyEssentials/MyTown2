@@ -327,9 +327,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public boolean hasBlockWhitelist(int dim, int x, int y, int z, FlagType flagType, int plotID) {
+    public boolean hasBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
         for(BlockWhitelist bw : blockWhitelists) {
-            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType) && bw.getPlotID() == plotID) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
                 return true;
             }
         }
@@ -347,19 +347,19 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public void removeBlockWhitelist(int dim, int x, int y, int z, FlagType flagType, int plotID) {
+    public void removeBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
         for(Iterator<BlockWhitelist> it = blockWhitelists.iterator(); it.hasNext();) {
             BlockWhitelist bw = it.next();
-            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType) && bw.getPlotID() == plotID) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
                 it.remove();
             }
         }
     }
 
     @Override
-    public BlockWhitelist getBlockWhitelist(int dim, int x, int y, int z, FlagType flagType, int plotID) {
+    public BlockWhitelist getBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
         for(BlockWhitelist bw : blockWhitelists) {
-            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType) && bw.getPlotID() == plotID) {
+            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
                 return bw;
             }
         }

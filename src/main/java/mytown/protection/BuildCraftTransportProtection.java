@@ -27,6 +27,8 @@ public class BuildCraftTransportProtection extends Protection {
     public BuildCraftTransportProtection() {
         try {
             clsTileGenericPipe = (Class<? extends TileEntity>)Class.forName("buildcraft.transport.TileGenericPipe");
+
+            trackedTileEntities.add(clsTileGenericPipe);
         } catch (ClassNotFoundException e) {
             MyTown.instance.log.error("Failed to load bc-transport classes!");
             e.printStackTrace();

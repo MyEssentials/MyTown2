@@ -87,6 +87,8 @@ public class VanillaProtection extends Protection {
 
         this.explosiveBlocks.add(EntityTNTPrimed.class);
 
+        this.trackedTileEntities.add(TileEntityPiston.class);
+
         isHandlingEvents = true;
     }
 

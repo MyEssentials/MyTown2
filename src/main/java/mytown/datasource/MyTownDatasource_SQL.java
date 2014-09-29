@@ -372,7 +372,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
             while(rs.next()) {
                 // plotID will be 0 if it's a town's whitelist
-                BlockWhitelist bw = new BlockWhitelist(rs.getInt("dim"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), FlagType.valueOf(rs.getString("flagName")), rs.getInt("plotID"));
+                BlockWhitelist bw = new BlockWhitelist(rs.getInt("dim"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), FlagType.valueOf(rs.getString("flagName")));
                 bw.setDb_ID(rs.getInt("ID"));
                 Town town = MyTownUniverse.getInstance().getTownsMap().get(rs.getString("townName"));
                 // This can't be null
@@ -799,7 +799,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {
         try {
             if(!town.hasBlockWhitelist(bw)) {
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "BlockWhitelists(dim, x, y, z, flagName, townName, plotID) VALUES(?, ?, ?, ?, ?, ?," + (bw.getPlotID() != 0 ? bw.getPlotID() : "NULL") + ")", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "BlockWhitelists(dim, x, y, z, flagName, townName) VALUES(?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setInt(1, bw.dim);
                 insertStatement.setInt(2, bw.x);
                 insertStatement.setInt(3, bw.y);
@@ -1426,10 +1426,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "y INT NOT NULL, " +
                 "z INT NOT NULL, " +
                 "townName VARCHAR(50), " +
-                "plotID INT, " +
                 "flagName VARCHAR(50) NOT NULL, " +
                 "PRIMARY KEY(ID), " +
-                "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON UPDATE CASCADE ON DELETE CASCADE, " +
                 "FOREIGN KEY(flagName, townName) REFERENCES " + prefix + "TownFlags(name, townName) ON UPDATE CASCADE ON DELETE CASCADE)"));
         updates.add(new DBUpdate("09.11.2014.1", "Add SelectedTown", "CREATE TABLE IF NOT EXISTS " + prefix +
                 "SelectedTown(" +
