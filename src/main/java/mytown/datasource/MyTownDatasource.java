@@ -638,7 +638,7 @@ public abstract class MyTownDatasource {
      * @return If the name exists
      */
     public final boolean hasTown(String townName) {
-        return MyTownUniverse.getInstance().towns.containsKey(townName);
+        return MyTownUniverse.getInstance().getTown(townName) != null;
     }
 
     /**
@@ -650,7 +650,7 @@ public abstract class MyTownDatasource {
      * @return If the Block exists
      */
     public final boolean hasBlock(int dim, int x, int z) {
-        return MyTownUniverse.getInstance().blocks.containsKey(String.format(TownBlock.keyFormat, dim, x, z));
+        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.keyFormat, dim, x, z)) != null;
     }
 
     /**
@@ -670,7 +670,7 @@ public abstract class MyTownDatasource {
             key = String.format(TownBlock.keyFormat, dim, x >> 4, z >> 4);
         }
 
-        TownBlock b = MyTownUniverse.getInstance().blocks.get(key);
+        TownBlock b = MyTownUniverse.getInstance().getTownBlock(key);
         if (town != null && b != null && b.getTown() == town)
             return true;
 
@@ -684,7 +684,7 @@ public abstract class MyTownDatasource {
      * @return
      */
     public final boolean hasResident(UUID uuid) {
-        return MyTownUniverse.getInstance().residents.containsKey(uuid.toString());
+        return MyTownUniverse.getInstance().getResident(uuid.toString()) != null;
     }
 
     /**
@@ -740,7 +740,7 @@ public abstract class MyTownDatasource {
      */
 
     public Resident getOrMakeResident(UUID uuid, String playerName, boolean save) {
-        Resident res = MyTownUniverse.getInstance().residents.get(uuid.toString());
+        Resident res = MyTownUniverse.getInstance().getResident(uuid.toString());
         if (res == null) {
             res = newResident(uuid.toString(), playerName);
             if (save && res != null) { // Only save if a new Resident
@@ -796,7 +796,7 @@ public abstract class MyTownDatasource {
      * @return The Block, or null if it doesn't exist
      */
     public TownBlock getBlock(int dim, int chunkX, int chunkZ) {
-        return MyTownUniverse.getInstance().blocks.get(String.format(TownBlock.keyFormat, dim, chunkX, chunkZ));
+        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.keyFormat, dim, chunkX, chunkZ));
     }
 
     /**

@@ -68,23 +68,23 @@ public abstract class Commands {
         populator.add("@a");
         CommandCompletion.completionMap.put("townCompletionAndAll", populator);
 
-        populator.clear();
+        populator = new ArrayList<String>();
         populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
         CommandCompletion.completionMap.put("townCompletion", populator);
 
-        populator.clear();
+        populator = new ArrayList<String>();
         for(Resident res : MyTownUniverse.getInstance().getResidentsMap().values()) {
             populator.add(res.getPlayerName());
         }
         CommandCompletion.completionMap.put("residentCompletion", populator);
 
-        populator.clear();
+        populator = new ArrayList<String>();
         for(FlagType flag : FlagType.values()) {
             populator.add(flag.toString());
         }
         CommandCompletion.completionMap.put("flagCompletion", populator);
 
-        populator.clear();
+        populator = new ArrayList<String>();
         for(FlagType flag : FlagType.values()) {
             if(flag.isWhitelistable())
                 populator.add(flag.toString());

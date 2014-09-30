@@ -149,6 +149,12 @@ public abstract class Protection {
     public boolean hasToCheckTileEntity(TileEntity te) { return trackedTileEntities.contains(te.getClass()); }
     public boolean hasToCheckEntity(Entity entity) { return trackedEntities.contains(entity.getClass()); }
 
+    /**
+     * Gets the range at which items can range bypassing flags
+     * @return
+     */
+    public int getRange() { return 0; }
+
     public List<FlagType> getFlagTypeForTile(TileEntity te) { return getFlagTypeForTile(te.getClass()); }
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) { return null; }
 

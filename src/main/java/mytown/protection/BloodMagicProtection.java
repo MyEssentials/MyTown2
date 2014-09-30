@@ -171,6 +171,11 @@ public class BloodMagicProtection extends Protection {
         return false;
     }
 
+    @Override
+    public int getRange() {
+        return 5;
+    }
+
     protected void deactivateSigil(ItemStack itemStack) {
         NBTTagCompound tag = itemStack.stackTagCompound;
         tag.setBoolean("isActive", false);

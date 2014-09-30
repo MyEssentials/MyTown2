@@ -632,7 +632,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
         NBTTagList lore = new NBTTagList();
         lore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST));
-        lore.appendTag(new NBTTagString(inPlot ? Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT : Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Flag: " + flagType.toString()));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Town: " + townName));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));

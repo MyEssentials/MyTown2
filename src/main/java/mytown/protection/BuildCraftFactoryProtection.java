@@ -27,8 +27,6 @@ public class BuildCraftFactoryProtection extends Protection {
     Class<? extends TileEntity> clsTileAbstractBuilder;
     Class<? extends TileEntity> clsTilePump;
 
-
-
     public BuildCraftFactoryProtection() {
         // We need reflection only for loading the mod
         clsTileAbstractBuilder = TileAbstractBuilder.class;

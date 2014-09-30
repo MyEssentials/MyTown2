@@ -70,7 +70,7 @@ public class Utils {
     public static String getFlagNameFromLore(EntityPlayer player) {
         ItemStack currentStack = player.inventory.getCurrentItem();
         NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-        String flagLore = lore.getStringTagAt(2); // Second in line
+        String flagLore = lore.getStringTagAt(1);
         return flagLore.substring(8); // We use hacks in here
     }
 
@@ -83,7 +83,7 @@ public class Utils {
     public static String getTownNameFromLore(EntityPlayer player) {
         ItemStack currentStack = player.inventory.getCurrentItem();
         NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-        String flagLore = lore.getStringTagAt(3);
+        String flagLore = lore.getStringTagAt(2);
         return flagLore.substring(8);
     }
 

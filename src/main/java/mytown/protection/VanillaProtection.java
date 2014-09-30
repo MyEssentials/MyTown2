@@ -3,6 +3,7 @@ package mytown.protection;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mytown.MyTown;
+import mytown.api.events.TownEvent;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -26,6 +27,7 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -97,6 +99,43 @@ public class VanillaProtection extends Protection {
     public boolean checkEntity(Entity entity) {
         //TODO: Implement wilderness
         Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+
+        if(entity instanceof EntityPlayer) {
+            Resident res = getDatasource().getOrMakeResident(entity);
+            ChunkCoordinates playerPos = res.getPlayer().getPlayerCoordinates();
+
+            if(town == null) {
+                if(Protections.instance.maximalRange != 0) {
+                    // Just firing event if there is such a case
+
+                    List<Town> towns = Utils.getTownsInRange(res.getPlayer().dimension, playerPos.posX, playerPos.posZ, Protections.instance.maximalRange, Protections.instance.maximalRange);
+                    for (Town t : towns) {
+                        TownEvent.fire(new TownEvent.TownEnterInRangeEvent(t, res));
+                    }
+                }
+            } else {
+                Flag<Boolean> enterFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.enter);
+                Plot plot = town.getPlotAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ);
+
+                TownEvent.fire(new TownEvent.TownEnterEvent(town, res));
+
+                if (!enterFlag.getValue()) {
+                    if (!town.hasResident(res)) {
+                        res.respawnPlayer();
+                        res.sendMessage("§cYou have been moved because you can't access this place!");
+                        return true;
+                    } else if (plot != null && !(plot.getResidents().contains(res) || plot.getOwners().contains(res))) {
+                        res.respawnPlayer();
+                        res.sendMessage("§cYou have been moved because you can't access this place!");
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        // Town only checks here
+
         if(town == null)
             return false;
 
@@ -108,23 +147,7 @@ public class VanillaProtection extends Protection {
             return false;
         }
 
-        if(entity instanceof EntityPlayer) {
-            Flag<Boolean> enterFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, FlagType.enter);
-            Plot plot = town.getPlotAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ);
-            if(!enterFlag.getValue()) {
-                Resident res = getDatasource().getOrMakeResident(entity);
-                if(!town.hasResident(res)) {
-                    res.respawnPlayer();
-                    res.sendMessage("§cYou have been moved because you can't access this place!");
-                    return true;
-                } else if(plot != null && !(plot.getResidents().contains(res) || plot.getOwners().contains(res))) {
-                    res.respawnPlayer();
-                    res.sendMessage("§cYou have been moved because you can't access this place!");
-                    return true;
-                }
-            }
-            return false;
-        }
+
 
         return super.checkEntity(entity);
     }

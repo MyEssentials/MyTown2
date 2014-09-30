@@ -105,35 +105,16 @@ public class PlayerTracker {
 
         if((ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) && ev.entityPlayer.isSneaking()) {
             if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
-                // On shift right-click change MODE of the selector tool
-                NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-                String description = lore.getStringTagAt(0);
-                if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
-                    String mode = lore.getStringTagAt(1);
-                    if (mode.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT))
-                        mode = Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN;
-                    else {
-                        // TODO: check for permission
-                        mode = Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT;
-                    }
-                    NBTTagList newLore = new NBTTagList();
-                    newLore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST));
-                    newLore.appendTag(new NBTTagString(mode));
-                    newLore.appendTag(new NBTTagString(lore.getStringTagAt(2)));
-                    newLore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
-                    currentStack.getTagCompound().getCompoundTag("display").setTag("Lore", newLore);
-
-                }
+                // For shift right clicking the selector, we may need it
             }
         }
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-            Town town = res.getSelectedTown();
+            Town town;
             //TODO: Verify permission
 
             NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
             String description = lore.getStringTagAt(0);
-
 
             if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
                 if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {

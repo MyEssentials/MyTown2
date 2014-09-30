@@ -85,6 +85,7 @@ public class MyTown {
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
         registerCommands();
+        Commands.populateCompletionMap();
         // This needs to be after registerCommands... might want to move both methods...
         ranksConfig = new RanksConfig(new File(Constants.CONFIG_FOLDER, "DefaultRanks.json"));
         registerPermissionHandler();
@@ -93,7 +94,7 @@ public class MyTown {
         SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
 
         CmdListTown.updateTownSortCache(); // Update cache after everything is loaded
-        Commands.populateCompletionMap();
+
     }
 
     @EventHandler

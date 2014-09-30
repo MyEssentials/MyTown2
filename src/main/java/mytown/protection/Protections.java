@@ -52,6 +52,8 @@ public class Protections {
     private int ticker2 = 600;
     private int tickStart2 = 600;
 
+    public int maximalRange = 0;
+
     public static Protections instance = new Protections();
     public Protections() {
 
@@ -70,6 +72,8 @@ public class Protections {
      */
     public void addProtection(Protection prot, String modid) {
         protections.put(modid, prot);
+        if(prot.getRange() > maximalRange)
+            maximalRange = prot.getRange();
 
         if(prot.isHandlingEvents) {
             MinecraftForge.EVENT_BUS.register(prot);
@@ -151,6 +155,7 @@ public class Protections {
     }
 
     public boolean isBlockWhitelistValid(BlockWhitelist bw) {
+        // TODO: Maybe make this better
         if(bw.getFlagType() == FlagType.activateBlocks && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z)))
             return false;
         if((bw.getFlagType() == FlagType.breakBlocks || bw.getFlagType() == FlagType.placeBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems || bw.getFlagType() == FlagType.pumps || bw.getFlagType() == FlagType.bcBuildingMining || bw.getFlagType() == FlagType.bcPipeFlow)) {
