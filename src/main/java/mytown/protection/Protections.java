@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import mytown.MyTown;
+import mytown.api.events.TownEvent;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -210,19 +211,53 @@ public class Protections {
         // Entity check
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
-            for (Protection prot : protections.values()) {
-                if(prot.hasToCheckEntity(entity)) {
-                    if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
-                        if (!(entity instanceof EntityPlayer)) {
+
+            // Player check, every tick
+            Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+
+            if(entity instanceof EntityPlayer) {
+                Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
+                ChunkCoordinates playerPos = res.getPlayer().getPlayerCoordinates();
+
+                if(Protections.instance.maximalRange != 0) {
+                    // Just firing event if there is such a case
+                    List<Town> towns = Utils.getTownsInRange(res.getPlayer().dimension, playerPos.posX, playerPos.posZ, Protections.instance.maximalRange, Protections.instance.maximalRange);
+                    for (Town t : towns) {
+                        //Comparing it to last tick position
+                        if(!Utils.getTownsInRange(res.getPlayer().dimension, (int)res.getPlayer().lastTickPosX, (int)res.getPlayer().lastTickPosZ, Protections.instance.maximalRange, Protections.instance.maximalRange).contains(t))
+                            TownEvent.fire(new TownEvent.TownEnterInRangeEvent(t, res));
+                    }
+                }
+
+                if(town != null) {
+                    Flag<Boolean> enterFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.enter);
+                    Plot plot = town.getPlotAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ);
+
+                    if (!enterFlag.getValue()) {
+                        if (!town.hasResident(res)) {
+                            res.respawnPlayer();
+                            res.sendMessage("§cYou have been moved because you can't access this place!");
+                            MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
+
+                        } else if (plot != null && !(plot.getResidents().contains(res) || plot.getOwners().contains(res))) {
+                            res.respawnPlayer();
+                            res.sendMessage("§cYou have been moved because you can't access this place!");
+                            MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
+                        }
+                    }
+                }
+            } else {
+
+                // Other entity checks
+                for (Protection prot : protections.values()) {
+                    if (prot.hasToCheckEntity(entity)) {
+                        if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
                             MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
                             checkedEntities.remove(entity);
                             entity.setDead();
                         } else {
-                            MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
-                            checkedEntities.put(entity, false);
+                            checkedEntities.put(entity, true);
                         }
-                    } else {
-                        checkedEntities.put(entity, true);
                     }
                 }
             }
@@ -509,6 +544,16 @@ public class Protections {
                 ev.setCanceled(true);
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onTownEnterRange(TownEvent.TownEnterInRangeEvent ev) {
+        ev.resident.sendMessage("You have entered a town's range -_-' ");
+    }
+
+    @SubscribeEvent
+    public void onTownEnter(TownEvent.TownEnterEvent ev) {
+        ev.resident.sendMessage("You have entered a town o_o ");
     }
 
     /*

@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import mytown.MyTown;
+import mytown.api.events.TownEvent;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
@@ -81,6 +82,12 @@ public class PlayerTracker {
 
         res.checkLocation(ev.oldChunkX, ev.oldChunkZ, ev.newChunkX, ev.newChunkZ, ev.entity.dimension);
 
+        Town lastTown = Utils.getTownAtPosition(ev.entity.dimension, ev.oldChunkX, ev.oldChunkZ);
+        Town currTown = Utils.getTownAtPosition(ev.entity.dimension, ev.newChunkX, ev.newChunkZ);
+
+        if(currTown != null && (lastTown == null || currTown != lastTown))
+            TownEvent.fire(new TownEvent.TownEnterEvent(currTown, res));
+        
         if (res.isMapOn()) {
             Formatter.sendMap(res);
         }

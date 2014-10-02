@@ -101,41 +101,7 @@ public class VanillaProtection extends Protection {
         if(super.checkEntity(entity))
             return true;
 
-        Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
 
-        if(entity instanceof EntityPlayer) {
-            Resident res = getDatasource().getOrMakeResident(entity);
-            ChunkCoordinates playerPos = res.getPlayer().getPlayerCoordinates();
-
-            if(town == null) {
-                if(Protections.instance.maximalRange != 0) {
-                    // Just firing event if there is such a case
-
-                    List<Town> towns = Utils.getTownsInRange(res.getPlayer().dimension, playerPos.posX, playerPos.posZ, Protections.instance.maximalRange, Protections.instance.maximalRange);
-                    for (Town t : towns) {
-                        TownEvent.fire(new TownEvent.TownEnterInRangeEvent(t, res));
-                    }
-                }
-            } else {
-                Flag<Boolean> enterFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.enter);
-                Plot plot = town.getPlotAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ);
-
-                TownEvent.fire(new TownEvent.TownEnterEvent(town, res));
-
-                if (!enterFlag.getValue()) {
-                    if (!town.hasResident(res)) {
-                        res.respawnPlayer();
-                        res.sendMessage("§cYou have been moved because you can't access this place!");
-                        return true;
-                    } else if (plot != null && !(plot.getResidents().contains(res) || plot.getOwners().contains(res))) {
-                        res.respawnPlayer();
-                        res.sendMessage("§cYou have been moved because you can't access this place!");
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }
 
         // Town only checks here
 
