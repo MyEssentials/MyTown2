@@ -97,7 +97,10 @@ public class VanillaProtection extends Protection {
     @SuppressWarnings("unchecked")
     @Override
     public boolean checkEntity(Entity entity) {
-        //TODO: Implement wilderness
+        // This is first since I don't want any premature return statements
+        if(super.checkEntity(entity))
+            return true;
+
         Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
 
         if(entity instanceof EntityPlayer) {
@@ -136,20 +139,7 @@ public class VanillaProtection extends Protection {
 
         // Town only checks here
 
-        if(town == null)
-            return false;
-
-        if(entity instanceof EntityTNTPrimed) {
-            Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, FlagType.explosions);
-            if(!explosionsFlag.getValue()) {
-                return true;
-            }
-            return false;
-        }
-
-
-
-        return super.checkEntity(entity);
+        return false;
     }
 
     @SuppressWarnings("unchecked")

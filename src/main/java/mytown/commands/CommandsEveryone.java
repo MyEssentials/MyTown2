@@ -140,7 +140,7 @@ public class CommandsEveryone extends Commands{
         if(!plot.hasOwner(res))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.perm.set.noPermission"));
 
-        Flag flag = getFlagFromPlot(plot, args.get(0));
+        Flag flag = getFlagFromName(plot, args.get(0));
 
         if (flag.setValueFromString(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));

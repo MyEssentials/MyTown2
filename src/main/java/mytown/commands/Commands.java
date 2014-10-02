@@ -10,6 +10,7 @@ import mytown.entities.*;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.entities.interfaces.IHasFlags;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Utils;
@@ -134,29 +135,15 @@ public abstract class Commands {
         return list;
     }
 
-    public static Flag getFlagFromPlot(Plot plot, FlagType flagType) {
-        Flag flag = plot.getFlag(flagType);
+    public static Flag getFlagFromType(IHasFlags hasFlags, FlagType flagType) {
+        Flag flag = hasFlags.getFlag(flagType);
         if(flag == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", flagType.toString()));
         return flag;
     }
 
-    public static Flag getFlagFromPlot(Plot plot, String name) {
-        Flag flag = plot.getFlag(FlagType.valueOf(name));
-        if(flag == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", name));
-        return flag;
-    }
-
-    public static Flag getFlagFromTown(Town town, FlagType flagType) {
-        Flag flag = town.getFlag(flagType);
-        if(flag == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", flagType.toString()));
-        return flag;
-    }
-
-    public static Flag getFlagFromTown(Town town, String name) {
-        Flag flag = town.getFlag(FlagType.valueOf(name));
+    public static Flag getFlagFromName(IHasFlags hasFlags, String name) {
+        Flag flag = hasFlags.getFlag(FlagType.valueOf(name));
         if(flag == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", name));
         return flag;

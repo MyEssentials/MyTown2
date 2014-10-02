@@ -1,9 +1,11 @@
 package mytown.protection;
 
+import mytown.MyTown;
 import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
@@ -92,27 +94,33 @@ public abstract class Protection {
     @SuppressWarnings("unchecked")
     public boolean checkEntity(Entity entity) {
         Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-        if(town == null)
-            return false;
-
-        Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, FlagType.mobs);
-        String value = mobFlag.getValue();
-
-        if(value.equals("all")) {
-            if(entity instanceof EntityLivingBase) {
-                return true;
-            }
-        } else if(value.equals("hostiles")) {
-            if(hostileEntities.contains(entity.getClass())) {
-                return true;
-            }
-        }
-
-        Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, FlagType.explosions);
-
-        if(!explosionsFlag.getValue()) {
+        if(town == null) {
+            //Wild explosives
             if(explosiveBlocks.contains(entity.getClass())) {
-                return true;
+                MyTown.instance.log.info("Checking entity with explosives.");
+                if (!(Boolean)Wild.getInstance().getFlag(FlagType.explosions).getValue())
+                    return true;
+            }
+        } else {
+            Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
+            String value = mobFlag.getValue();
+
+            if (value.equals("all")) {
+                if (entity instanceof EntityLivingBase) {
+                    return true;
+                }
+            } else if (value.equals("hostiles")) {
+                if (hostileEntities.contains(entity.getClass())) {
+                    return true;
+                }
+            }
+
+            Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.explosions);
+
+            if (!explosionsFlag.getValue()) {
+                if (explosiveBlocks.contains(entity.getClass())) {
+                    return true;
+                }
             }
         }
 
@@ -129,14 +137,6 @@ public abstract class Protection {
     public boolean checkTileEntity(TileEntity te) { return false; }
 
     /**
-     * Checks if the block with position is valid.
-     *
-     * @param bp
-     * @return
-     */
-    public boolean checkPlacement(BlockPos bp, Item item) { return false; }
-
-    /**
      * Checks if the resident or block with tile entity can use this item.
      * Resident can be null.
      *
@@ -147,7 +147,7 @@ public abstract class Protection {
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) { return false; }
 
     public boolean hasToCheckTileEntity(TileEntity te) { return trackedTileEntities.contains(te.getClass()); }
-    public boolean hasToCheckEntity(Entity entity) { return trackedEntities.contains(entity.getClass()); }
+    public boolean hasToCheckEntity(Entity entity) { return trackedEntities.contains(entity.getClass()) || explosiveBlocks.contains(entity.getClass()); }
 
     /**
      * Gets the range at which items can range bypassing flags

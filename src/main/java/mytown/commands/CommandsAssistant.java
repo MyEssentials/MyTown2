@@ -129,7 +129,7 @@ public class CommandsAssistant extends Commands {
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.err.perm.set.usage"));
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        Flag flag = getFlagFromTown(town, args.get(0));
+        Flag flag = getFlagFromName(town, args.get(0));
 
         if (flag.setValueFromString(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));

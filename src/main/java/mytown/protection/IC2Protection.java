@@ -77,31 +77,6 @@ public class IC2Protection extends Protection {
         }
     }
 
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public boolean checkEntity(Entity entity) {
-
-        MyTown.instance.log.info("Checking entity: " + entity.toString());
-
-        if(explosiveBlocks.contains(entity.getClass())) {
-            return true;
-        }
-
-        /*
-        if(clsEntityLaser.isInstance(entity)) {
-            MyTown.instance.log.info("Laser found!");
-            Town town = getTownFromEntity(entity);
-            Flag<Boolean> breakFlag = town.getFlagAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, "breakBlocks");
-            if(!breakFlag.getValue()) {
-                return true;
-            }
-        }
-        */
-
-        return false;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public boolean checkTileEntity(TileEntity te) {

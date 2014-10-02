@@ -156,6 +156,10 @@ public class Protections {
 
     public boolean isBlockWhitelistValid(BlockWhitelist bw) {
         // TODO: Maybe make this better
+        // Delete if the town is gone
+        if(Utils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
+            bw.delete();
+
         if(bw.getFlagType() == FlagType.activateBlocks && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z)))
             return false;
         if((bw.getFlagType() == FlagType.breakBlocks || bw.getFlagType() == FlagType.placeBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems || bw.getFlagType() == FlagType.pumps || bw.getFlagType() == FlagType.bcBuildingMining || bw.getFlagType() == FlagType.bcPipeFlow)) {
@@ -336,61 +340,89 @@ public class Protections {
 
             // In-Town specific interactions from here
             TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, ev.x >> 4, ev.z >> 4);
+            /*
             if(tblock == null) {
                 return;
             }
+            */
 
             // If player is trying to place a block
             if(currentStack != null && currentStack.getItem() instanceof ItemBlock
                     && !(((te != null && te instanceof IInventory) || checkActivatedBlocks(ev.world.getBlock(ev.x, ev.y, ev.z))) && !ev.entityPlayer.isSneaking())) {
                 // First, checking if the block on which the player right clicked is replaceable
                 if(ev.world.getBlock(ev.x, ev.y, ev.z).getMaterial().isReplaceable()) {
-                    if (!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                        res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
-                        ev.setCanceled(true);
-                        return;
-                    }
-                    if (res.hasTown(tblock.getTown()) && ((ItemBlock) currentStack.getItem()).field_150939_a instanceof ITileEntityProvider) {
-                        // Getting TileEntity TYPE by creating a tileentity from the itileentityprovider inside blockcontainer inside itemblock... lol
-                        Class<? extends TileEntity> clsTe = ((ITileEntityProvider) ((ItemBlock) currentStack.getItem()).field_150939_a).createNewTileEntity(ev.world, currentStack.getItemDamage()).getClass();
-                        addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
+                    if(tblock == null) {
+                        if(!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
+                            res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                            ev.setCanceled(true);
+                        }
+                    } else {
+                        if (!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                            res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                            ev.setCanceled(true);
+                            return;
+                        }
+                        if (res.hasTown(tblock.getTown()) && ((ItemBlock) currentStack.getItem()).field_150939_a instanceof ITileEntityProvider) {
+                            // Getting TileEntity TYPE by creating a tileentity from the itileentityprovider inside blockcontainer inside itemblock... lol
+                            Class<? extends TileEntity> clsTe = ((ITileEntityProvider) ((ItemBlock) currentStack.getItem()).field_150939_a).createNewTileEntity(ev.world, currentStack.getItemDamage()).getClass();
+                            addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
+                        }
                     }
                 } else if(ev.world.getBlock(x, y, z).getMaterial().isReplaceable()) {
-                    if (!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                        res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
-                        ev.setCanceled(true);
-                        return;
-                    }
-                    if (res.hasTown(tblock.getTown()) && ((ItemBlock) currentStack.getItem()).field_150939_a instanceof ITileEntityProvider) {
-                        // Getting TileEntity TYPE by creating a tileentity from the itileentityprovider inside blockcontainer inside itemblock... lol
-                        Class<? extends TileEntity> clsTe = ((ITileEntityProvider) ((ItemBlock) currentStack.getItem()).field_150939_a).createNewTileEntity(ev.world, currentStack.getItemDamage()).getClass();
-                        addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, x, y, z, tblock.getTown());
+                    if(tblock == null) {
+                        if(!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
+                            res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                            ev.setCanceled(true);
+                        }
+                    } else {
+                        if (!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, x, y, z)) {
+                            res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                            ev.setCanceled(true);
+                            return;
+                        }
+                        if (res.hasTown(tblock.getTown()) && ((ItemBlock) currentStack.getItem()).field_150939_a instanceof ITileEntityProvider) {
+                            // Getting TileEntity TYPE by creating a tileentity from the itileentityprovider inside blockcontainer inside itemblock... lol
+                            Class<? extends TileEntity> clsTe = ((ITileEntityProvider) ((ItemBlock) currentStack.getItem()).field_150939_a).createNewTileEntity(ev.world, currentStack.getItemDamage()).getClass();
+                            addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, x, y, z, tblock.getTown());
+                        }
                     }
                 }
             } else {
                 // If player is trying to "access"/open an inventory
                 if(te instanceof IInventory) {
-                    // If it's a town whitelist then it's for everyone
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks))
-                        return;
+                    if(tblock == null) {
+                        if(!Wild.getInstance().checkPermission(res, FlagType.accessBlocks)) {
+                            res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
+                            ev.setCanceled(true);
+                        }
+                    } else {
+                        if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks))
+                            return;
 
-                    // Checking if a player wants to access a block here
-                    if (!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                        res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
-                        ev.setCanceled(true);
+                        // Checking if a player can access the block here
+                        if (!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                            res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
+                            ev.setCanceled(true);
+                        }
                     }
                 // If player is trying to "activate" block
                 } else {
-                    // If it's a town whitelist then it's universal
-                    if(tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks))
-                        return;
+                    if(tblock == null) {
+                        if(!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
+                            res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
+                            ev.setCanceled(true);
+                        }
+                    } else {
+                        if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks))
+                            return;
 
-                    if(!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                        for(Protection prot : protections.values()) {
-                            if(prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
-                                res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
-                                ev.setCanceled(true);
-                                return;
+                        if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                            for (Protection prot : protections.values()) {
+                                if (prot.activatedBlocks.contains(ev.world.getBlock(ev.x, ev.y, ev.z))) {
+                                    res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
+                                    ev.setCanceled(true);
+                                    return;
+                                }
                             }
                         }
                     }
@@ -402,12 +434,15 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
-        // TODO: Implement wilderness perms too
         TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
-        if (block != null) {
-            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer());
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer());
+        if (block == null) {
+            if(!Wild.getInstance().checkPermission(res, FlagType.breakBlocks)) {
+                res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
+                ev.setCanceled(true);
+            }
+        } else {
             Town town = block.getTown();
-
             // TODO: Instead, check for the permission at one point
             if (!town.checkPermission(res, FlagType.breakBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
                 res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
@@ -459,7 +494,6 @@ public class Protections {
                     } else
                       counter--;
                     ev.setCanceled(true);
-                    return;
                 }
             }
         }

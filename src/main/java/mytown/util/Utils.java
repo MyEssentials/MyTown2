@@ -195,7 +195,7 @@ public class Utils {
         if(bw != null) {
             if(bw.isDeleted) {
                 getDatasource().deleteBlockWhitelist(bw, town);
-                return true;
+                return false;
             }
             return true;
         }
