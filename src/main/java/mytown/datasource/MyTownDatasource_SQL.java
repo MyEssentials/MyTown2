@@ -491,6 +491,24 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    protected boolean loadTownInvites() {
+        try {
+            PreparedStatement s = prepare("SELECT * FROM " + prefix + "TownInvites", true);
+            ResultSet rs = s.executeQuery();
+            while(rs.next()) {
+                Resident res = MyTownUniverse.getInstance().getResident(rs.getString("resident"));
+                Town town = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
+                res.addInvite(town);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to load town invites.");
+            return false;
+        }
+
+        return true;
+    }
+
     /* ----- Save ----- */
 
     @Override
@@ -888,6 +906,28 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean saveTownInvite(Resident res, Town town) {
+        try {
+            if(!res.hasInvite(town)) {
+                PreparedStatement s = prepare("INSERT INTO " + prefix + "TownInvites(resident, townName) VALUES(?, ?)", true);
+                s.setString(1, res.getUUID().toString());
+                s.setString(2, town.getName());
+                s.executeUpdate();
+
+                res.addInvite(town);
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+          log.error("Failed to load town invite: " + res.getPlayerName() + " for town " + town.getName());
+            return false;
+        }
+
+
+        return true;
+    }
+
     /* ----- Link ----- */
 
     @Override
@@ -1227,6 +1267,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 if(response)
                     saveFriendLink(res1, res2);
                 res2.verifyFriendRequest(res1, response);
+            } else {
+                return false;
             }
         } catch (SQLException e) {
             log.error("Failed to delete friend request from " + res1.getPlayerName() + " to " + res2.getPlayerName());
@@ -1235,21 +1277,37 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean deleteTownInvite(Resident res, Town town, boolean response) {
+        try {
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "TownInvites WHERE resident=? AND townName=?", true);
+            s.setString(1, res.getUUID().toString());
+            s.setString(2, town.getName());
+            s.executeUpdate();
+            if(response)
+                linkResidentToTown(res, town, town.getDefaultRank());
+        } catch (SQLException e) {
+            log.error("Failed to delete town invite for " + res.getPlayerName() + " to town " + town.getName());
+            return false;
+        }
+        return true;
+    }
+
     /*
-            @Override
-            public boolean deleteFlag(Flag flag, Town town) {
-                try {
-                    PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
-                    deleteFlagStatement.setString(1, flag.getName());
-                    deleteFlagStatement.setString(2, town.getName());
-                    deleteFlagStatement.execute();
+                @Override
+                public boolean deleteFlag(Flag flag, Town town) {
+                    try {
+                        PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
+                        deleteFlagStatement.setString(1, flag.getName());
+                        deleteFlagStatement.setString(2, town.getName());
+                        deleteFlagStatement.execute();
 
 
-                } catch (SQLException e) {
-                    log.error("Failed to delete flag %s!", e, flag.getName());
+                    } catch (SQLException e) {
+                        log.error("Failed to delete flag %s!", e, flag.getName());
+                    }
                 }
-            }
-            */
+                */
     @Override
     public boolean removeRankPermission(Rank rank, String perm) {
         try {
@@ -1449,6 +1507,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(resident, residentTarget)," +
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE," +
                 "FOREIGN KEY(residentTarget) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE)"));
+        updates.add(new DBUpdate("10.02.2014", "Add TownInvites", "CREATE TABLE IF NOT EXISTS " + prefix + "TownInvites(" +
+                "resident CHAR(36)," +
+                "townName VARCHAR(50), " +
+                "PRIMARY KEY(resident, townName)," +
+                "FOREIGN KEY(resident) REFERENCES " + prefix + "Resientds(UUID) ON DELETE CASCADE, " +
+                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
     }
 
     /**

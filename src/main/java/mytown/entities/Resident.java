@@ -387,10 +387,8 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return null;
     }
 
-
-
-    public boolean hasInvite() {
-        return !invites.isEmpty();
+    public boolean hasInvite(Town town) {
+        return invites.contains(town);
     }
 
     /* ---- Friends ---- */

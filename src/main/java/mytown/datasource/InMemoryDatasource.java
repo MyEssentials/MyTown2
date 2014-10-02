@@ -82,6 +82,11 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    protected boolean loadTownInvites() {
+        return false;
+    }
+
+    @Override
     public boolean saveTown(Town town) {
         log.debug("Saving Town %s", town.getName());
         if (MyTownUniverse.getInstance().hasTown(town)) { // Update
@@ -173,6 +178,11 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveFriendRequest(Resident res1, Resident res2) {
+        return false;
+    }
+
+    @Override
+    public boolean saveTownInvite(Resident res, Town town) {
         return false;
     }
 
@@ -321,6 +331,11 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean deleteFriendRequest(Resident res1, Resident res2, boolean response) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteTownInvite(Resident res, Town town, boolean response) {
         return false;
     }
 

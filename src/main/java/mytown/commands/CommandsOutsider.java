@@ -115,15 +115,11 @@ public class CommandsOutsider extends Commands {
         if (!invites.contains(town))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
 
-        //TODO: Database stuff...
-        res.removeInvite(town);
+        getDatasource().deleteTownInvite(res, town, true);
 
         // Notify everyone
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.accept", town.getName()));
         town.notifyResidentJoin(res);
-
-        // Link Resident to Town
-        getDatasource().linkResidentToTown(res, town, town.getDefaultRank());
     }
 
     @CommandNode(
@@ -143,10 +139,9 @@ public class CommandsOutsider extends Commands {
         if (!invites.contains(town))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
 
-        // TODO: notify resident refused invite
+        getDatasource().deleteTownInvite(res, town, false);
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.refuse", town.getName()));
-        res.removeInvite(town.getName());
     }
 
     @CommandNode(

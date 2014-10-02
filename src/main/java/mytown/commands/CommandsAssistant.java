@@ -97,7 +97,7 @@ public class CommandsAssistant extends Commands {
         if (town.hasResident(args.get(0)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.already", args.get(0), town.getName()));
 
-        target.addInvite(town);
+        getDatasource().saveTownInvite(res, town);
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.invited", town.getName()));
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.invite.sent", args.get(0)));
     }

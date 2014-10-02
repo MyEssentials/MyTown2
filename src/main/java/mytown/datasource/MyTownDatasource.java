@@ -244,7 +244,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends();
+        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites();
     }
 
     /**
@@ -330,6 +330,13 @@ public abstract class MyTownDatasource {
      * @return
      */
     protected abstract boolean loadFriendRequests();
+
+    /**
+     * Loads all town invites
+     *
+     * @return
+     */
+    protected abstract boolean loadTownInvites();
 
     /* ----- Save ----- */
 
@@ -433,6 +440,14 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean saveFriendRequest(Resident res1, Resident res2);
 
+    /**
+     * Saves a town invite for the player to the town
+     *
+     * @param res
+     * @param town
+     * @return
+     */
+    public abstract boolean saveTownInvite(Resident res, Town town);
 
     /* ----- Link ----- */
 
@@ -620,6 +635,17 @@ public abstract class MyTownDatasource {
      * @return
      */
     public abstract boolean deleteFriendRequest(Resident res1, Resident res2, boolean response);
+
+    /**
+     * Deletes a town invite with the response to whether they should be added to town or not
+     *
+     * @param res
+     * @param town
+     * @param response
+     * @return
+     */
+    public abstract boolean deleteTownInvite(Resident res, Town town, boolean response);
+
     /**
      * Removes the permission node from the Rank
      *
