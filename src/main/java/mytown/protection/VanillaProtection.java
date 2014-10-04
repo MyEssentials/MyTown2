@@ -114,8 +114,8 @@ public class VanillaProtection extends Protection {
         if(te instanceof TileEntityPiston) {
             Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
             if (town != null) {
-                Flag<Boolean> placeFlag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.placeBlocks);
-                if (!placeFlag.getValue()) {
+                boolean placeFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.placeBlocks);
+                if (!placeFlag) {
                     return true;
                 }
             } else {
@@ -143,8 +143,8 @@ public class VanillaProtection extends Protection {
                 }
                 town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
                 if (town != null) {
-                    Flag<Boolean> placeFlag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
-                    if (!placeFlag.getValue()) {
+                    boolean placeFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
+                    if (!placeFlag) {
                         //TODO: Create a flag only for this
                         town.notifyEveryone(FlagType.placeBlocks.getLocalizedProtectionDenial());
                         return true;
@@ -192,8 +192,8 @@ public class VanillaProtection extends Protection {
 
                         Town town = Utils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
                         if (town != null) {
-                            Flag<Boolean> itemUsage = town.getFlagAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
-                            if (!itemUsage.getValue() && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
+                            boolean itemUsage = (Boolean)town.getValueAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
+                            if (!itemUsage && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
                                 res.sendMessage(FlagType.useItems.getLocalizedProtectionDenial());
                                 return true;
                             }
@@ -231,8 +231,8 @@ public class VanillaProtection extends Protection {
 
                 Town town = Utils.getTownAtPosition(bp.dim, x >> 4, z >> 4);
                 if (town != null) {
-                    Flag<Boolean> itemUsage = town.getFlagAtCoords(bp.dim, x, y, z, FlagType.useItems);
-                    if (!itemUsage.getValue()) {
+                    boolean itemUsage = (Boolean)town.getValueAtCoords(bp.dim, x, y, z, FlagType.useItems);
+                    if (!itemUsage) {
                         town.notifyEveryone(FlagType.useItems.getLocalizedProtectionDenial());
                         return true;
                     }

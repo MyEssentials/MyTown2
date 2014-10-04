@@ -15,6 +15,17 @@ buildscript {
     }
 }
 
+repositories {
+		maven {
+			name = "ic2"
+			url = "http://maven.ic2.player.to/"
+		}
+		ivy {
+			name = 'ThaumCraft 4 API'
+			artifactPattern 'https://dl.dropboxusercontent.com/u/47135879/Thaumcraft-1.7.10-4.2.0.1-api.zip'
+		}
+}
+
 ext.configFile = file "build.properties"
 
 ext.configFile.withReader {
@@ -44,16 +55,15 @@ repositories {
 
 dependencies {
     testCompile "junit:junit:4.11"
-    compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
-
-    // DB Drivers
-    compile "org.xerial:sqlite-jdbc:${config.sqlite_version}"
-    compile "mysql:mysql-connector-java:${config.mysql_version}"
-
-    // Mod Deps
-    compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'
-    compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
-    compile project(":MyEssentials-Core")
+    compile "com.esotericsoftware.reflectasm:reflectasm:1.09"
+    // Include DB Drivers as deps
+    compile "org.xerial:sqlite-jdbc:3.7.15-M1"
+    compile "mysql:mysql-connector-java:5.1.31"
+	compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'
+	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
+    compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
+	compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
+	compile project(":MyEssentials-Core")
 }
 
 processResources {

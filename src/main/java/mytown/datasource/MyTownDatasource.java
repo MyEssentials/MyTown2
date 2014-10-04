@@ -580,13 +580,12 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deleteNation(Nation nation);
 
-    // TODO: Decide whether or not we want these functions
     /**
      * Deletes the Flag from the given town
      *
      * @return If it was successful
      */
-    //public abstract boolean deleteFlag(Flag flag, Town town);
+    public abstract boolean deleteFlag(Flag flag, Town town);
 
     /**
      * Deletes the Flag from the given plot
@@ -595,7 +594,7 @@ public abstract class MyTownDatasource {
      * @param plot
      * @return
      */
-    //public abstract boolean deleteFlag(Flag flag, Plot plot);
+    public abstract boolean deleteFlag(Flag flag, Plot plot);
 
 
     /**
@@ -653,6 +652,27 @@ public abstract class MyTownDatasource {
      * @return Whether it was successfully removed
      */
     public abstract boolean removeRankPermission(Rank rank, String perm);
+
+    /* ----- Checks ------ */
+
+    /**
+     * Checks all things
+     *
+     * @return
+     */
+    public boolean checkAll() {
+        //DEV
+        MyTown.instance.log.info("Started check of the Datasource.");
+        return checkFlags();
+    }
+
+    /**
+     * Checks the flags on each town and plot. Makes sure that all the desired flagtypes are in them, if not it's gonna add them.
+     * Same with having undesired ones.
+     *
+     * @return
+     */
+    protected abstract boolean checkFlags();
 
     /* ----- Has ----- */
 

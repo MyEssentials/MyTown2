@@ -301,21 +301,33 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return null;
     }
 
-    /**
-     * Gets the flag on the specified coordinates. Returns town's flag if no plot is found.
-     *
-     * @param x
-     * @param y
-     * @param z
-     * @param flagType
-     * @return
-     */
-    public Flag getFlagAtCoords(int dim, int x, int y, int z, FlagType flagType) {
+    @Override
+    public boolean removeFlag(FlagType type) {
+        for(Iterator<Flag> it = flags.iterator(); it.hasNext();) {
+            if(it.next().flagType == type) {
+                it.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Object getValue(FlagType type) {
+        for(Flag flag : flags) {
+            if(flag.flagType == type)
+                return flag.getValue();
+        }
+        return type.getDefaultValue();
+    }
+
+    @Override
+    public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
         if (plot == null) {
-            return getFlag(flagType);
+            return getValue(flagType);
         }
-        return plot.getFlag(flagType);
+        return plot.getValue(flagType);
     }
 
     /* ---- IHasBlockWhitelists ---- */
@@ -493,16 +505,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         if(flagType.getType() != Boolean.class)
             throw new RuntimeException("FlagType is not boolean!");
         Plot plot = getPlotAtCoords(dim, x, y, z);
-        Flag<Boolean> flag;
+
         if(plot == null) {
-            flag = getFlag(flagType);
-            if(!flag.getValue() && !hasResident(res) && !residentHasFriendInTown(res)) {
+            if(!(Boolean)getValueAtCoords(dim, x, y, z, flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
                 //TODO: Check for permission
                 return false;
             }
         } else {
-            flag = plot.getFlag(flagType);
-            if(!flag.getValue() && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
+            if(!(Boolean)plot.getValue(flagType) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
                 return false;
         }
         return true;

@@ -80,9 +80,9 @@ public class ThermalExpansionProtection extends Protection {
                     if (stack.getItem() instanceof ItemBlock) {
                         Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
                         if (town != null) {
-                            Flag<Boolean> flag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
+                            boolean placeFlag= (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
                             // TODO: Should there be a whitelist check here?
-                            if (!flag.getValue())
+                            if (!placeFlag)
                                 return true;
                         }
                     } else if (!Utils.isBlockWhitelisted(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.useItems)
@@ -96,15 +96,15 @@ public class ThermalExpansionProtection extends Protection {
 
             Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
             if(town != null) {
-                Flag<Boolean> flag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.breakBlocks);
-                if (!flag.getValue() && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks)) {
+                boolean breakFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.breakBlocks);
+                if (!breakFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks)) {
                     //TODO: Change this to something proper
                     town.notifyEveryone(FlagType.breakBlocks.getLocalizedProtectionDenial());
                     return true;
                 } else {
                     // The activate flag
-                    flag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.activateBlocks);
-                    if (!flag.getValue() && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.activateBlocks)) {
+                    boolean activateFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.activateBlocks);
+                    if (!activateFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.activateBlocks)) {
                         town.notifyEveryone(FlagType.activateBlocks.getLocalizedProtectionDenial());
                         return true;
                     }
@@ -138,8 +138,8 @@ public class ThermalExpansionProtection extends Protection {
 
             Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
             if(town != null) {
-                Flag<Boolean> breakFlag = town.getFlagAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.breakBlocks);
-                if(!breakFlag.getValue() && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks)) {
+                boolean breakFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.breakBlocks);
+                if(!breakFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks)) {
                     town.notifyEveryone(FlagType.breakBlocks.getLocalizedProtectionDenial());
                     return true;
                 }

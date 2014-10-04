@@ -102,9 +102,7 @@ public abstract class Protection {
                     return true;
             }
         } else {
-            Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
-            String value = mobFlag.getValue();
-
+            String value = (String)town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
             if (value.equals("all")) {
                 if (entity instanceof EntityLivingBase) {
                     return true;
@@ -115,9 +113,8 @@ public abstract class Protection {
                 }
             }
 
-            Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.explosions);
-
-            if (!explosionsFlag.getValue()) {
+            boolean explosionValue = (Boolean)town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.explosions);
+            if (!explosionValue) {
                 if (explosiveBlocks.contains(entity.getClass())) {
                     return true;
                 }

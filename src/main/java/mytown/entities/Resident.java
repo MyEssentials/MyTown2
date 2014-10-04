@@ -308,7 +308,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null) {
             TownBlock oldTownBlock, newTownBlock;
 
-            oldTownBlock = getDatasource().getBlock(lastDim, oldChunkX, oldChunkZ);
+            oldTownBlock = getDatasource().getBlock(dimension, oldChunkX, oldChunkZ);
             newTownBlock = getDatasource().getBlock(dimension, newChunkX, newChunkZ);
 
             if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {

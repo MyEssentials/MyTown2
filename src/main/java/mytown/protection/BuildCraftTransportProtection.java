@@ -48,8 +48,8 @@ public class BuildCraftTransportProtection extends Protection {
                 Town town = Utils.getTownAtPosition(bn.dim, bn.x >> 4, bn.z >> 4);
                 TileEntity nearbyTile = DimensionManager.getWorld(bn.dim).getTileEntity(bn.x, bn.y, bn.z);
                 if (nearbyTile != null && clsTileGenericPipe.isAssignableFrom(nearbyTile.getClass())) {
-                    Flag<Boolean> bcFlowFlag = town.getFlagAtCoords(bn.dim, bn.x, bn.y, bn.z, FlagType.bcPipeFlow);
-                    if (!bcFlowFlag.getValue()) {
+                    boolean bcFlowFlag = (Boolean)town.getValueAtCoords(bn.dim, bn.x, bn.y, bn.z, FlagType.bcPipeFlow);
+                    if (!bcFlowFlag) {
                         town.notifyEveryone(FlagType.bcPipeFlow.getLocalizedProtectionDenial());
                         return true;
                     }

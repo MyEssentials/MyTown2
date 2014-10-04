@@ -1,29 +1,33 @@
 package mytown.entities.flag;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.*;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * Created by AfterWind on 9/16/2014.
  * Flags enumeration. Enumerating all flags here
  */
 public enum FlagType {
-    enter(Boolean.class, null, false, null),
-    breakBlocks(Boolean.class, null, false, null),
-    accessBlocks(Boolean.class, null, false, null, true),
-    placeBlocks(Boolean.class, null, false, null),
-    pickupItems(Boolean.class, null, false, null),
-    explosions(Boolean.class, null, false, null),
+    // CONSTRUCTOR: class, value, allowedValues, wildPerm, townOnly, mod, isWhitelistable <false>
+    enter(Boolean.class, true, null, false, false, null),
+    breakBlocks(Boolean.class, false, null, true, false, null),
+    accessBlocks(Boolean.class, false, null, true, false, null, true),
+    placeBlocks(Boolean.class, false, null, true, false, null),
+    pickupItems(Boolean.class, true, null, false, false, null),
+    explosions(Boolean.class, false, null, true, false, null),
     // Only the values in the array are allowed
-    mobs(String.class, new String[] {"all", "hostiles", "none"}, false, null),
-    attackEntities(Boolean.class, null, false, null),
-    useItems(Boolean.class, null, false, null),
-    activateBlocks(Boolean.class, null, false, null, true),
-    pumps(Boolean.class, null, true, ExtraUtilitiesProxy.MOD_ID),
-    ic2EnergyFlow(Boolean.class, null, false, IC2Proxy.MOD_ID, true),
+    mobs(String.class, "all", new String[] {"all", "hostiles", "none"}, false, false, null),
+    attackEntities(Boolean.class, false, null, false, false, null),
+    useItems(Boolean.class, false, null, false, false, null),
+    activateBlocks(Boolean.class, false, null, true, false, null, true),
+    pumps(Boolean.class, true, null, false, false, ExtraUtilitiesProxy.MOD_ID),
+    ic2EnergyFlow(Boolean.class, false, null, false, true, IC2Proxy.MOD_ID, true),
     // Only allowed in towns, not in plots
-    bcBuildingMining(Boolean.class, null, true, BuildCraftFactoryProxy.MOD_ID),
-    bcPipeFlow(Boolean.class, null, true, BuildCraftTrasportationProxy.MOD_ID);
+    bcBuildingMining(Boolean.class, false, null, true, true, BuildCraftFactoryProxy.MOD_ID),
+    bcPipeFlow(Boolean.class, true, null, false, true, BuildCraftTrasportationProxy.MOD_ID);
 
 
     private Class<?> type;
@@ -31,11 +35,14 @@ public enum FlagType {
     private String protectionKey;
     private Object[] allowedValues;
     private boolean townOnly;
+    private Object defaultValue;
+    private boolean isUsableForTowns;
     // Temporary, till every flag is whitelistable
     private boolean isWhitelistable;
     private String modRequired;
+    private boolean isWildPerm;
 
-    private FlagType(Class<?> type, Object[] allowedValues, Boolean townOnly, String modRequired, Boolean isWhitelistable) {
+    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, boolean townOnly, String modRequired, boolean isWhitelistable) {
         this.type = type;
         this.descriptionKey = "mytown.flag." + this.toString();
         this.protectionKey = "mytown.protection." + this.toString();
@@ -43,10 +50,13 @@ public enum FlagType {
         this.allowedValues = allowedValues;
         this.modRequired = modRequired;
         this.isWhitelistable = isWhitelistable;
+        this.isUsableForTowns = true;
+        this.defaultValue = defaultValue;
+        this.isWildPerm = wildPerm;
     }
 
-    private FlagType(Class<?> type, Object[] allowedValues, Boolean townOnly, String modRequired) {
-        this(type, allowedValues, townOnly, modRequired, false);
+    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, boolean townOnly, String modRequired) {
+        this(type, defaultValue, allowedValues, wildPerm, townOnly, modRequired, false);
     }
 
     /**
@@ -56,6 +66,48 @@ public enum FlagType {
     public Class<?> getType() {
         return this.type;
     }
+
+    /**
+     * Returns if this flag is found in the wild >:D
+     *
+     * @return
+     */
+    public boolean isWildPerm() { return this.isWildPerm; }
+
+    /**
+     * Gets the default value
+     *
+     * @return
+     */
+    public Object getDefaultValue() { return this.defaultValue; }
+
+    /**
+     * Sets the default value and returns if the value was set
+     *
+     * @param obj
+     * @return
+     */
+    public boolean setDefaultValue(Object obj) {
+        if(type.isAssignableFrom(obj.getClass())) {
+            defaultValue = obj;
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     *  Returns if this type of flag should be in a town
+      * @return
+     */
+    public boolean isUsableForTowns() { return this.isUsableForTowns; }
+
+    /**
+     * Sets whether or not the flagtype is changable/usable in a town
+     *
+     * @param bool
+     */
+    public void setIsUsableForTowns(boolean bool) { this.isUsableForTowns = bool; }
 
     /**
      * If flag is town only then it's not gonna be found on plots
@@ -70,7 +122,7 @@ public enum FlagType {
      * @return
      */
     public boolean shouldLoad() {
-        return ( this.modRequired == null || ModProxies.isProxyLoaded(modRequired));
+        return (this.modRequired == null || ModProxies.isProxyLoaded(modRequired));
     }
 
     /**

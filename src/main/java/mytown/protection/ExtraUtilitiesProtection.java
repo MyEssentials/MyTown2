@@ -55,7 +55,7 @@ public class ExtraUtilitiesProtection extends Protection {
                 for(ChunkPos cp : chunks) {
                     Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, cp.getX(), cp.getZ());
                     if(town != null) {
-                        if(!((Flag<Boolean>)town.getFlag(FlagType.breakBlocks)).getValue()) {
+                        if(!((Boolean)town.getValue(FlagType.breakBlocks))) {
                             return true;
                         }
                     }
@@ -71,7 +71,7 @@ public class ExtraUtilitiesProtection extends Protection {
                 chunkZ.setAccessible(true);
 
                 Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunkX.getInt(te), chunkZ.getInt(te));
-                if(town != null && !((Flag<Boolean>)town.getFlag(FlagType.pumps)).getValue()) {
+                if(town != null && !((Boolean)town.getValue(FlagType.pumps))) {
                     return true;
                 }
             } catch (Exception e) {

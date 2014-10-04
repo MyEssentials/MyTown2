@@ -6,6 +6,7 @@ import mytown.entities.flag.FlagType;
 import mytown.entities.interfaces.IHasFlags;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -40,8 +41,8 @@ public class Wild implements IHasFlags {
     }
 
     @Override
-    public List<Flag> getFlags() {
-        return flagList;
+    public ImmutableList<Flag> getFlags() {
+        return ImmutableList.copyOf(flagList);
     }
 
     @Override
@@ -51,6 +52,17 @@ public class Wild implements IHasFlags {
                 return f;
         }
         return null;
+    }
+
+    @Override
+    public boolean removeFlag(FlagType type) {
+        for(Iterator<Flag> it = flagList.iterator(); it.hasNext();) {
+            if(it.next().flagType == type) {
+                it.remove();
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean checkPermission(Resident res, FlagType type) {
@@ -63,4 +75,18 @@ public class Wild implements IHasFlags {
         // TODO: Implement other types of flags
         return true;
     }
+    @Override
+    public Object getValue(FlagType type) {
+        for(Flag flag : flagList) {
+            if(flag.flagType == type)
+                return flag.getValue();
+        }
+        return null;
+    }
+
+    @Override
+    public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
+        return getValue(flagType);
+    }
+
 }
