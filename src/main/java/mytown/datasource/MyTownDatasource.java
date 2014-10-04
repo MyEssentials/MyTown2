@@ -7,6 +7,7 @@ import mytown.core.utils.Log;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -88,22 +89,25 @@ public abstract class MyTownDatasource {
             MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
 
         //Claiming first block
-        Block block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
+        TownBlock block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
         // Saving block to db and town
         saveBlock(block);
 
         // Saving and adding all flags to the database
-        saveFlag(new Flag<Boolean>("enter", false), town);
-        saveFlag(new Flag<Boolean>("breakBlocks", false), town);
-        saveFlag(new Flag<Boolean>("explosions", false), town);
-        saveFlag(new Flag<Boolean>("accessBlocks", false), town);
-        saveFlag(new Flag<Boolean>("activateBlocks", false), town);
-        saveFlag(new Flag<Boolean>("useItems", false), town);
-        saveFlag(new Flag<Boolean>("pickupItems", true), town);
-        saveFlag(new Flag<Boolean>("enter", true), town);
-        saveFlag(new Flag<String>("mobs", "all"), town);
-        saveFlag(new Flag<Boolean>("attackEntities", false), town);
-        saveFlag(new Flag<Boolean>("placeBlocks", false), town);
+        saveFlag(new Flag<Boolean>(FlagType.enter, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.breakBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.explosions, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.accessBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.activateBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.useItems, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.pickupItems, true), town);
+        saveFlag(new Flag<String>(FlagType.mobs, "all"), town);
+        saveFlag(new Flag<Boolean>(FlagType.attackEntities, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.placeBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.pumps, true), town);
+        saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.bcBuildingMining, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.bcPipeFlow, false), town);
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;
@@ -131,22 +135,28 @@ public abstract class MyTownDatasource {
 
 
         //Claiming first block
-        Block block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
+        TownBlock block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
         // Saving block to db and town
         saveBlock(block);
 
         // Saving and adding all flags to the database
-        saveFlag(new Flag<Boolean>("enter", true), town);
-        saveFlag(new Flag<Boolean>("breakBlocks", false), town);
-        saveFlag(new Flag<Boolean>("explosions", false), town);
-        saveFlag(new Flag<Boolean>("accessBlocks", false), town);
-        saveFlag(new Flag<Boolean>("activateBlocks", false), town);
-        saveFlag(new Flag<Boolean>("useItems", false), town);
-        saveFlag(new Flag<Boolean>("pickupItems", true), town);
-        saveFlag(new Flag<Boolean>("enter", true), town);
-        saveFlag(new Flag<String>("mobs", "all"), town);
-        saveFlag(new Flag<Boolean>("attackEntities", false), town);
-        saveFlag(new Flag<Boolean>("placeBlocks", false), town);
+        saveFlag(new Flag<Boolean>(FlagType.enter, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.breakBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.explosions, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.accessBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.activateBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.useItems, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.pickupItems, true), town);
+        saveFlag(new Flag<String>(FlagType.mobs, "all"), town);
+        saveFlag(new Flag<Boolean>(FlagType.attackEntities, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.placeBlocks, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.pumps, true), town);
+        // No need for checking if mod loaded FlagType and save method handles all that
+
+        saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.bcBuildingMining, false), town);
+        saveFlag(new Flag<Boolean>(FlagType.bcPipeFlow, false), town);
+
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;
@@ -158,8 +168,8 @@ public abstract class MyTownDatasource {
      *
      * @return The new Block, or null if it failed
      */
-    public final Block newBlock(int dim, int x, int z, Town town) {
-        Block block = new Block(dim, x, z, town);
+    public final TownBlock newBlock(int dim, int x, int z, Town town) {
+        TownBlock block = new TownBlock(dim, x, z, town);
         if (BlockEvent.fire(new BlockEvent.BlockCreateEvent(block)))
             return null;
         return block;
@@ -217,12 +227,11 @@ public abstract class MyTownDatasource {
     /**
      * Creates and returns a new TownFlag or null if it couldn't be created
      *
-     * @param name
      * @param value
      * @return the new TownFlag, or null if failed
      */
-    public final Flag newFlag(String name, Object value) {
-        Flag<Object> flag = new Flag<Object>(name, value);
+    public final Flag newFlag(FlagType type, Object value) {
+        Flag<Object> flag = new Flag<Object>(type, value);
         //TODO: Fire event
         return flag;
     }
@@ -235,7 +244,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns();
+        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites();
     }
 
     /**
@@ -308,6 +317,27 @@ public abstract class MyTownDatasource {
      */
     protected abstract boolean loadSelectedTowns();
 
+    /**
+     * Loads the link between to residents which represents friendship
+     *
+     * @return
+     */
+    protected abstract boolean loadFriends();
+
+    /**
+     * Loads all the friend requests
+     *
+     * @return
+     */
+    protected abstract boolean loadFriendRequests();
+
+    /**
+     * Loads all town invites
+     *
+     * @return
+     */
+    protected abstract boolean loadTownInvites();
+
     /* ----- Save ----- */
 
     /**
@@ -322,7 +352,7 @@ public abstract class MyTownDatasource {
      *
      * @return If it was successful
      */
-    public abstract boolean saveBlock(Block block);
+    public abstract boolean saveBlock(TownBlock block);
 
     /**
      * Saves the Rank
@@ -392,6 +422,32 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean saveSelectedTown(Resident res, Town town);
 
+    /**
+     * Saves a link between 2 residents which represents friendship
+     *
+     * @param res1
+     * @param res2
+     * @return
+     */
+    public abstract boolean saveFriendLink(Resident res1, Resident res2);
+
+    /**
+     * Saves a friend request to the database
+     *
+     * @param res1
+     * @param res2
+     * @return
+     */
+    public abstract boolean saveFriendRequest(Resident res1, Resident res2);
+
+    /**
+     * Saves a town invite for the player to the town
+     *
+     * @param res
+     * @param town
+     * @return
+     */
+    public abstract boolean saveTownInvite(Resident res, Town town);
 
     /* ----- Link ----- */
 
@@ -493,7 +549,7 @@ public abstract class MyTownDatasource {
      *
      * @return If it was successful
      */
-    public abstract boolean deleteBlock(Block block);
+    public abstract boolean deleteBlock(TownBlock block);
 
     /**
      * Deletes the Rank
@@ -551,7 +607,43 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deleteBlockWhitelist(BlockWhitelist bw, Town town);
 
+    /**
+     * Deletes a town that was selected previously
+     * Not extremely useful, the selected town is changed when saving another on top
+     *
+     * @param res
+     * @return
+     */
     public abstract boolean deleteSelectedTown(Resident res);
+
+    /**
+     * Deletes the friend link between 2 residents
+     * #whydidyouruinafriendshipsadface
+     *
+     * @param res1
+     * @param res2
+     * @return
+     */
+    public abstract boolean deleteFriendLink(Resident res1, Resident res2);
+
+    /**
+     * Deletes a friend request
+     *
+     * @param res1
+     * @param res2
+     * @return
+     */
+    public abstract boolean deleteFriendRequest(Resident res1, Resident res2, boolean response);
+
+    /**
+     * Deletes a town invite with the response to whether they should be added to town or not
+     *
+     * @param res
+     * @param town
+     * @param response
+     * @return
+     */
+    public abstract boolean deleteTownInvite(Resident res, Town town, boolean response);
 
     /**
      * Removes the permission node from the Rank
@@ -571,7 +663,7 @@ public abstract class MyTownDatasource {
      * @return If the name exists
      */
     public final boolean hasTown(String townName) {
-        return MyTownUniverse.getInstance().towns.containsKey(townName);
+        return MyTownUniverse.getInstance().getTown(townName) != null;
     }
 
     /**
@@ -583,7 +675,7 @@ public abstract class MyTownDatasource {
      * @return If the Block exists
      */
     public final boolean hasBlock(int dim, int x, int z) {
-        return MyTownUniverse.getInstance().blocks.containsKey(String.format(Block.keyFormat, dim, x, z));
+        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.keyFormat, dim, x, z)) != null;
     }
 
     /**
@@ -598,12 +690,12 @@ public abstract class MyTownDatasource {
     public final boolean hasBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
         String key;
         if (inChunkCoords) {
-            key = String.format(Block.keyFormat, dim, x, z);
+            key = String.format(TownBlock.keyFormat, dim, x, z);
         } else {
-            key = String.format(Block.keyFormat, dim, x >> 4, z >> 4);
+            key = String.format(TownBlock.keyFormat, dim, x >> 4, z >> 4);
         }
 
-        Block b = MyTownUniverse.getInstance().blocks.get(key);
+        TownBlock b = MyTownUniverse.getInstance().getTownBlock(key);
         if (town != null && b != null && b.getTown() == town)
             return true;
 
@@ -617,7 +709,7 @@ public abstract class MyTownDatasource {
      * @return
      */
     public final boolean hasResident(UUID uuid) {
-        return MyTownUniverse.getInstance().residents.containsKey(uuid.toString());
+        return MyTownUniverse.getInstance().getResident(uuid.toString()) != null;
     }
 
     /**
@@ -673,7 +765,7 @@ public abstract class MyTownDatasource {
      */
 
     public Resident getOrMakeResident(UUID uuid, String playerName, boolean save) {
-        Resident res = MyTownUniverse.getInstance().residents.get(uuid.toString());
+        Resident res = MyTownUniverse.getInstance().getResident(uuid.toString());
         if (res == null) {
             res = newResident(uuid.toString(), playerName);
             if (save && res != null) { // Only save if a new Resident
@@ -728,8 +820,8 @@ public abstract class MyTownDatasource {
      * @param chunkZ The chunk z to check at
      * @return The Block, or null if it doesn't exist
      */
-    public Block getBlock(int dim, int chunkX, int chunkZ) {
-        return MyTownUniverse.getInstance().blocks.get(String.format(Block.keyFormat, dim, chunkX, chunkZ));
+    public TownBlock getBlock(int dim, int chunkX, int chunkZ) {
+        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.keyFormat, dim, chunkX, chunkZ));
     }
 
     /**

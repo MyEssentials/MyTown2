@@ -13,8 +13,6 @@ import java.util.List;
 /**
  * Created by AfterWind on 7/4/2014
  * JSON Default ranks config
- * <p/>
- * TODO: STOP USING THE DAMN BOOLEANS FOR EVERYTHING AND USE PROPER JSON
  */
 public class RanksConfig {
     private Gson gson;
@@ -24,7 +22,7 @@ public class RanksConfig {
         gson = new GsonBuilder().setPrettyPrinting().create();
         this.path = file.getPath();
 
-        if (!file.exists()) {
+        if(!file.exists() || file.isDirectory()) {
             writeFile();
         } else {
             readFile();

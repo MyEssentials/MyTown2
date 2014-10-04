@@ -7,11 +7,9 @@ import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.entities.Block;
-import mytown.entities.Rank;
-import mytown.entities.Resident;
-import mytown.entities.Town;
+import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -30,7 +28,8 @@ public class CommandsAdmin extends Commands {
     @Command(
             name = "townadmin",
             permission = "mytown.adm.cmd",
-            alias = {"ta"})
+            alias = {"ta"},
+            opsOnlyAccess = true)
     public static void townAdminCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.adm.cmd");
     }
@@ -212,12 +211,20 @@ public class CommandsAdmin extends Commands {
     }
 
     @CommandNode(
+            name = "town",
+            permission = "mytown.adm.cmd.perm.town",
+            parentName = "mytown.adm.cmd.perm")
+    public static void permTownCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.perm.town");
+    }
+
+    @CommandNode(
             name = "list",
-            permission = "mytown.adm.cmd.perm.list",
-            parentName = "mytown.adm.cmd.perm",
+            permission = "mytown.adm.cmd.perm.town.list",
+            parentName = "mytown.adm.cmd.perm.town",
             completionKeys = {"townCompletion"})
-    public static void permListCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1) {
+    public static void permTownListCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1) {
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.list"));
         }
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -240,16 +247,16 @@ public class CommandsAdmin extends Commands {
 
     @CommandNode(
             name = "set",
-            permission = "mytown.adm.cmd.perm.set",
-            parentName = "mytown.adm.cmd.perm",
+            permission = "mytown.adm.cmd.perm.town.set",
+            parentName = "mytown.adm.cmd.perm.town",
             completionKeys = {"townCompletion", "flagCompletion"})
-    public static void permSetCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 3) {
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.set"));
+    public static void permTownSetCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 3) {
+            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.town.set"));
         }
 
         Town town = getTownFromName(args.get(0));
-        Flag flag = getFlagFromTown(town, args.get(1));
+        Flag flag = getFlagFromName(town, args.get(1));
 
         if (flag.setValueFromString(args.get(2))) {
             // Should be okay if it's the same :/
@@ -263,21 +270,73 @@ public class CommandsAdmin extends Commands {
 
     @CommandNode(
             name = "whitelist",
-            permission = "mytown.adm.cmd.perm.whitelist",
-            parentName = "mytown.adm.cmd.perm",
+            permission = "mytown.adm.cmd.perm.town.whitelist",
+            parentName = "mytown.adm.cmd.perm.town",
             completionKeys = {"townCompletion", "flagCompletionWhitelist"})
-    public static void permWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        if (args.size() < 2)
+    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        if(args.size() < 2)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
-        String flagName = args.get(1);
+        FlagType flagType = getFlagTypeFromName(args.get(1));
 
-        if (Flag.flagsForWhitelist.contains(flagName))
-            res.startBlockSelection(flagName, town.getName(), false);
+        if(flagType.isWhitelistable())
+            res.startBlockSelection(flagType, town.getName(), false);
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
+    }
+
+    @CommandNode(
+            name = "wild",
+            permission = "mytown.adm.cmd.perm.wild",
+            parentName = "mytown.adm.cmd.perm")
+    public static void permWildCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.perm.wild");
+    }
+
+    @CommandNode(
+            name = "list",
+            permission = "mytown.adm.cmd.perm.wild.list",
+            parentName = "mytown.adm.cmd.perm.wild",
+            completionKeys = {"flagCompletion"})
+    public static void permWildListCommand(ICommandSender sender, List<String> args) {
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+
+        String formattedFlagList = null;
+        for (Flag flag : Wild.getInstance().getFlags()) {
+            if (formattedFlagList == null) {
+                formattedFlagList = "";
+            } else {
+                formattedFlagList += '\n';
+            }
+            formattedFlagList += flag;
+        }
+        if(formattedFlagList != null)
+            res.sendMessage(formattedFlagList);
+        else
+            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
+    }
+
+    @CommandNode(
+            name = "set",
+            permission = "mytown.adm.cmd.perm.wild.set",
+            parentName = "mytown.adm.cmd.perm.wild", 
+            completionKeys = {"flagCompletion"})
+    public static void permWildSetCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2) {
+            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.wild.set"));
+        }
+        FlagType type = getFlagTypeFromName(args.get(0));
+        Flag flag = getFlagFromType(Wild.getInstance(), type);
+
+        if (flag.setValueFromString(args.get(1))) {
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.wild.perm.set.success", args.get(0), args.get(1));
+        } else
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
+        //Saving changes to file
+        MyTown.instance.wildConfig.saveChanges();
     }
 
     @CommandNode(
@@ -296,8 +355,8 @@ public class CommandsAdmin extends Commands {
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
         if (CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.farClaim.unimplemented"));
-        //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
-        Block block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+            //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+        TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
             throw new CommandException("Failed to create Block"); // TODO Localize
         getDatasource().saveBlock(block);
@@ -314,7 +373,7 @@ public class CommandsAdmin extends Commands {
 
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(pl);
-        Block block = getBlockAtResident(res);
+        TownBlock block = getBlockAtResident(res);
         Town town = block.getTown();
 
         if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {

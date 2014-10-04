@@ -1,13 +1,22 @@
 package mytown.protection;
 
+import mytown.MyTown;
+import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
+import mytown.util.BlockPos;
 import mytown.util.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
@@ -22,12 +31,7 @@ public abstract class Protection {
     /**
      * The items which there is protection against
      */
-    public List<Class<? extends Item>> itemUsageProtection;
-
-    /**
-     * The list of any entity found in each protection
-     */
-    public List<Class<? extends Entity>> anyEntity;
+    public List<Class<? extends Item>> trackedItems;
 
     /**
      * The list of the types of hostile entities which there is protection against
@@ -38,11 +42,6 @@ public abstract class Protection {
      * The list of protected types of entities
      */
     public List<Class<? extends Entity>> protectedEntities;
-
-    /**
-     * The list of TRACKED types of tile entities. This list is checked every world tick.
-     */
-    public List<Class<? extends TileEntity>> trackedTileEntities;
 
     /**
      * The list of TRACKED types of entities. This list is checked every world tick
@@ -59,23 +58,32 @@ public abstract class Protection {
      */
     public List<Class<? extends Entity>> explosiveBlocks;
 
+    /**
+     * The list of types of tile entities which need to be checked
+     */
+    public List<Class<? extends TileEntity>> trackedTileEntities;
+
+    /**
+     * List of blocks that can interact with other blocks if put near each other
+     */
+    public List<Block> interactiveBlocks;
+
     //TODO: Map for place check outside towns
     //public Map<Class<? extends Block>>
 
     public boolean isHandlingEvents;
 
     public Protection() {
-        itemUsageProtection = new ArrayList<Class<? extends Item>>();
-        anyEntity = new ArrayList<Class<? extends Entity>>();
+        trackedItems = new ArrayList<Class<? extends Item>>();
         hostileEntities = new ArrayList<Class<? extends Entity>>();
         protectedEntities = new ArrayList<Class<? extends Entity>>();
-        trackedTileEntities = new ArrayList<Class<? extends TileEntity>>();
         trackedEntities = new ArrayList<Class<? extends Entity>>();
         activatedBlocks = new ArrayList<net.minecraft.block.Block>();
         explosiveBlocks = new ArrayList<Class<? extends Entity>>();
+        trackedTileEntities = new ArrayList<Class<? extends TileEntity>>();
+        interactiveBlocks = new ArrayList<Block>();
         isHandlingEvents = false;
     }
-
     /**
      * Checks the entity and returns whether or not the entity was destroyed
      * If you override this, call super method.
@@ -83,29 +91,36 @@ public abstract class Protection {
      * @param entity
      * @return
      */
+    @SuppressWarnings("unchecked")
     public boolean checkEntity(Entity entity) {
         Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-        if (town == null)
-            return false;
-
-        Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, "mobs");
-        String value = mobFlag.getValue();
-
-        if (value.equals("all")) {
-            if (entity instanceof EntityLivingBase) {
-                return true;
+        if(town == null) {
+            //Wild explosives
+            if(explosiveBlocks.contains(entity.getClass())) {
+                MyTown.instance.log.info("Checking entity with explosives.");
+                if (!(Boolean)Wild.getInstance().getFlag(FlagType.explosions).getValue())
+                    return true;
             }
-        } else if (value.equals("hostiles")) {
-            if (hostileEntities.contains(entity.getClass())) {
-                return true;
+        } else {
+            Flag<String> mobFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
+            String value = mobFlag.getValue();
+
+            if (value.equals("all")) {
+                if (entity instanceof EntityLivingBase) {
+                    return true;
+                }
+            } else if (value.equals("hostiles")) {
+                if (hostileEntities.contains(entity.getClass())) {
+                    return true;
+                }
             }
-        }
 
-        Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, "explosions");
+            Flag<Boolean> explosionsFlag = town.getFlagAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.explosions);
 
-        if (!explosionsFlag.getValue()) {
-            if (explosiveBlocks.contains(entity.getClass())) {
-                return true;
+            if (!explosionsFlag.getValue()) {
+                if (explosiveBlocks.contains(entity.getClass())) {
+                    return true;
+                }
             }
         }
 
@@ -119,33 +134,34 @@ public abstract class Protection {
      * @param te
      * @return
      */
-    public boolean checkTileEntity(TileEntity te) {
-        return false;
-    }
+    public boolean checkTileEntity(TileEntity te) { return false; }
 
     /**
-     * Checks if the tile entity specified needs to be checked on server tick
+     * Checks if the resident or block with tile entity can use this item.
+     * Resident can be null.
      *
-     * @param te
+     * @param itemStack
+     * @param res
      * @return
      */
-    public boolean hasToCheckTileEntity(TileEntity te) {
-        return trackedTileEntities.contains(te.getClass());
-    }
+    public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) { return false; }
+
+    public boolean hasToCheckTileEntity(TileEntity te) { return trackedTileEntities.contains(te.getClass()); }
+    public boolean hasToCheckEntity(Entity entity) { return trackedEntities.contains(entity.getClass()) || explosiveBlocks.contains(entity.getClass()); }
 
     /**
-     * * Checks if the entity specified needs to be checked on server tick
-     *
-     * @param e
+     * Gets the range at which items can range bypassing flags
      * @return
      */
-    public boolean hasToCheckEntity(Entity e) {
-        return trackedEntities.contains(e.getClass()) || hostileEntities.contains(e.getClass()) || anyEntity.contains(e.getClass()) || explosiveBlocks.contains(e.getClass());
-    }
+    public int getRange() { return 0; }
+
+    public List<FlagType> getFlagTypeForTile(TileEntity te) { return getFlagTypeForTile(te.getClass()); }
+    public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) { return null; }
 
     /* ---- Helpers ---- */
     protected MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
+    protected Localization getLocal() {return LocalizationProxy.getLocalization(); }
 
 }

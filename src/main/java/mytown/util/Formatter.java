@@ -32,12 +32,12 @@ public class Formatter {
         return rs;
     }
 
-    public static String formatBlockInfo(Block block) {
+    public static String formatBlockInfo(TownBlock block) {
         return String.format(" ---------- Block ----------\nTown: %1$s\nDimension: %2$s\nLocation: %3$s", block.getTown().getName(), block.getDim(), block.getCoordString());
     }
 
     public static String formatNationInfo(Nation nation) {
-        return String.format(Config.nationInfoFormat, nation.getName());
+        return String.format(nationInfoFormat, nation.getName());
     }
 
     public static String formatPlotInfo(Plot plot) {
@@ -56,7 +56,7 @@ public class Formatter {
     }
 
     public static String formatRankInfo(Rank rank) {
-        return String.format(Config.rankInfoFormat, rank.getName(), rank.getPermissionsString());
+        return String.format(rankInfoFormat, rank.getName(), rank.getPermissionsString());
     }
 
     public static String formatResidentInfo(Resident resident) {
@@ -96,7 +96,7 @@ public class Formatter {
             ranksString = "";
 
 
-        msg = String.format(Config.townInfoFormat, town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getPlots().size(), residentsString, ranksString);
+        msg = String.format(townInfoFormat, town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getPlots().size(), residentsString, ranksString);
 
         return msg;
     }
@@ -109,7 +109,7 @@ public class Formatter {
             JsonMessageBuilder msgBuilder = new JsonMessageBuilder();
 
             for (int x = cx - widthRad; x <= cx + widthRad; x++) {
-                Block b = DatasourceProxy.getDatasource().getBlock(dim, x, z);
+                TownBlock b = DatasourceProxy.getDatasource().getBlock(dim, x, z);
                 JsonMessageBuilder extraBuilder = msgBuilder.addExtra();
 
                 boolean mid = z == cz && x == cx;
@@ -154,4 +154,17 @@ public class Formatter {
         }
         return rankNames;
     }
+
+    public static String blockInfoFormat = " ---------- Block ----------\nTown: %1$s\nDimension: %2$s\nLocation: %3$s";
+
+    public static String nationInfoFormat = " ---------- %1$s  ----------\nCapital: TODO";
+
+    public static String plotInfoFormat = " ---------- %1$s  ----------\nTown: %2$s\nDimension: %3$s\nStart: %4$s\nEnd: %5$s";
+
+    public static String rankInfoFormat = " ---------- %1$s  ----------\nPermissions: %2$s";
+
+    public static String residentInfoFormat = " ---------- %1$s  ----------";
+
+    public static String townInfoFormat = " ---------- %1$s (R: %2$s | B: %3$s | P: %4$s) ----------\nResidents: %5$s\nRanks %6$s";
+
 }

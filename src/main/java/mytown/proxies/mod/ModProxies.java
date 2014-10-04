@@ -16,6 +16,14 @@ public class ModProxies {
     public static void load() {
         MyTown.instance.log.info("Starting proxies...");
 
+        proxies.add(new IC2Proxy());
+        proxies.add(new BuildCraftFactoryProxy());
+        proxies.add(new BuildCraftTrasportationProxy());
+        proxies.add(new ForgePermsProxy());
+        proxies.add(new ExtraUtilitiesProxy());
+        proxies.add(new BloodMagicProxy());
+        proxies.add(new ThermalExpansionProxy());
+
         if (!ModProxies.loaded) {
             ModProxies.loaded = true;
             MyTown.instance.config.getCategory("modproxies").setComment("Holds the enable state of the different ModProxies.\nModProxies handle interaction with other mods.\nIf a mod interaction causes issues, just set it to false.");
@@ -23,10 +31,15 @@ public class ModProxies {
 
         // Load ModProxies
         for (ModProxy p : ModProxies.proxies) {
-            // TODO Re-add config options for proxies
-            // TODO Check for the mod's API as well?
-            if (p.getModID() != null && Loader.isModLoaded(p.getModID())) {
+            /*
+            if (p.getModID() == null || !Loader.isModLoaded(p.getName())) {// || !MyTown.instance.config.get("ModProxies", p.getName(), true).getBoolean(true)) {
+                continue;
+            }
+            */
+            if(p.getModID() != null && Loader.isModLoaded(p.getModID())) {
+                MyTown.instance.log.info("Loading proxy and protection: " + p.getName());
                 p.load();
+                p.isLoaded = true;
             }
         }
     }
@@ -55,5 +68,19 @@ public class ModProxies {
      */
     public static void removeProxy(ModProxy proxy) {
         ModProxies.proxies.remove(proxy);
+    }
+
+    /**
+     * Checks if the proxy with the give mod_id is loaded
+     *
+     * @param mod_id
+     * @return
+     */
+    public static boolean isProxyLoaded(String mod_id) {
+        for(ModProxy proxy : proxies) {
+            if(proxy.getModID().equals(mod_id))
+                return true;
+        }
+        return false;
     }
 }

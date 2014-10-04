@@ -5,10 +5,10 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
-import forgeperms.api.ForgePermsAPI;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.RanksConfig;
+import mytown.config.WildPermsConfig;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandManager;
@@ -23,6 +23,7 @@ import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
+import mytown.util.Utils;
 import net.minecraft.command.ICommandSender;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -39,6 +40,7 @@ public class MyTown {
     public Log log;
     public Configuration config;
     public RanksConfig ranksConfig;
+    public WildPermsConfig wildConfig;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
@@ -80,15 +82,14 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
-        Flag.initFlags();
         registerCommands();
+        Commands.populateCompletionMap();
         // This needs to be after registerCommands... might want to move both methods...
         ranksConfig = new RanksConfig(new File(Constants.CONFIG_FOLDER, "DefaultRanks.json"));
+        wildConfig = new WildPermsConfig(new File(Constants.CONFIG_FOLDER, "WildPerms.json"));
         registerPermissionHandler();
         DatasourceProxy.setLog(log);
         SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
-
-        Commands.populateCompletionMap();
     }
 
     @EventHandler
@@ -115,7 +116,17 @@ public class MyTown {
     }
 
     private void registerPermissionHandler() {
-        ForgePermsAPI.permManager = new PermissionManager();
+        /*
+        try {
+            Class<?> c = Class.forName("forgeperms.ForgePerms");
+            Method m = c.getMethod("getPermissionManager");
+            ForgePermsAPI.permManager = (IPermissionManager)m.invoke(null);
+        } catch (Exception e) {
+            MyTown.instance.log.error("Failed to load ForgePerms. Currently not using ANY protection for commands usage!");
+            e.printStackTrace();
+
+        }
+        */
     }
 
     /**

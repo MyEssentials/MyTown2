@@ -1,7 +1,7 @@
 package mytown.api.interfaces;
 
 import com.google.common.collect.ImmutableList;
-import mytown.entities.Block;
+import mytown.entities.TownBlock;
 
 /**
  * @author Joe Goett
@@ -12,14 +12,14 @@ public interface IHasBlocks {
      *
      * @param block
      */
-    public void addBlock(Block block);
+    public void addBlock(TownBlock block);
 
     /**
      * Remove the Block from this entity
      *
      * @param block
      */
-    public void removeBlock(Block block);
+    public void removeBlock(TownBlock block);
 
     /**
      * Checks if this entity has the Block
@@ -27,14 +27,14 @@ public interface IHasBlocks {
      * @param block
      * @return
      */
-    public boolean hasBlock(Block block);
+    public boolean hasBlock(TownBlock block);
 
     /**
      * Returns the Collection of Blocks
      *
      * @return
      */
-    public ImmutableList<Block> getBlocks();
+    public ImmutableList<TownBlock> getBlocks();
 
     /**
      * Returns the Block in the dim at the given chunk coords
@@ -44,5 +44,5 @@ public interface IHasBlocks {
      * @param z
      * @return
      */
-    public Block getBlockAtCoords(int dim, int x, int z);
+    public TownBlock getBlockAtCoords(int dim, int x, int z);
 }

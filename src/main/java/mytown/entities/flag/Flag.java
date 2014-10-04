@@ -18,25 +18,13 @@ import java.util.Map;
  */
 public class Flag<T> {
 
-    private String name;
+    public FlagType flagType;
     private T value;
 
 
-    public Flag(String name, T defaultValue) {
-        this.name = name;
+    public Flag(FlagType flagType, T defaultValue) {
+        this.flagType = flagType;
         this.value = defaultValue;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getLocalizedDescription() {
-        return LocalizationProxy.getLocalization().getLocalization(descriptionKeys.get(this.name));
-    }
-
-    public String getDescriptionKey() {
-        return descriptionKeys.get(this.name);
     }
 
     public T getValue() {
@@ -59,20 +47,6 @@ public class Flag<T> {
             // TODO: not sure if this will fully work
             return value.toString();
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public boolean isValueValid(T val) {
-        List<T> valids = (List<T>) validValues.get(name);
-        if (valids == null)
-            return true; // There are no limitations
-        else {
-            for (T t : valids) {
-                if (val.equals(t))
-                    return true;
-            }
-        }
-        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -106,75 +80,15 @@ public class Flag<T> {
         T val = getValueFromString(str);
         if (val == null)
             return false;
-        if (isValueValid(val)) {
+        if(flagType.isValueAllowed(val)) {
             value = val;
             return true;
         }
         return false;
     }
 
-    /*
-    This is so pointless it makes my eyes bleed
-    I'll still keep it though lol
-
-    public T deserializeValue(String jsonValue) {
-        Gson gson = new GsonBuilder().create();
-        Type type = new TypeToken<T>() {}.getType();
-        return gson.fromJson(jsonValue, type);
-    }
-    */
-
     @Override
     public String toString() {
-        return String.format(EnumChatFormatting.GRAY + "%s" + EnumChatFormatting.WHITE + "[" + EnumChatFormatting.GREEN + "%s" + EnumChatFormatting.WHITE + "]:" + EnumChatFormatting.GRAY + " %s", name, valueToString(), getLocalizedDescription());
-    }
-
-    /**
-     * In  this map you can add new flag types and get the type of each flag by its name.
-     * Not exactly sure if it's useful enough
-     */
-    public static Map<String, Class> flagValueTypes = new HashMap<String, Class>();
-
-    public static List<String> flagsForWhitelist = new ArrayList<String>();
-
-    /**
-     * Map for keeping description keys, since all flags have exactly the same description.
-     */
-    public static Map<String, String> descriptionKeys = new HashMap<String, String>();
-
-    /**
-     * Map for putting restricted values to the flags... If key is not found then it has no restrictions
-     */
-    public static Map<String, List<?>> validValues = new HashMap<String, List<?>>();
-
-    /**
-     * Initialize all flags
-     */
-    public static void initFlags() {
-        flagValueTypes.put("enter", Boolean.class);
-        flagValueTypes.put("breakBlocks", Boolean.class);
-        flagValueTypes.put("accessBlocks", Boolean.class);
-        flagValueTypes.put("placeBlocks", Boolean.class);
-        flagValueTypes.put("pickupItems", Boolean.class);
-        flagValueTypes.put("explosions", Boolean.class);
-        flagValueTypes.put("mobs", String.class);
-        flagValueTypes.put("attackEntities", Boolean.class);
-        flagValueTypes.put("useItems", Boolean.class);
-        flagValueTypes.put("activateBlocks", Boolean.class);
-
-        flagsForWhitelist.add("breakBlocks");
-        flagsForWhitelist.add("accessBlocks");
-        flagsForWhitelist.add("activateBlocks");
-
-        for (String s : flagValueTypes.keySet()) {
-            descriptionKeys.put(s, "mytown.flag." + s); // Because I'm lazy
-        }
-
-        List<String> mobsRestrictedValues = new ArrayList<String>();
-        mobsRestrictedValues.add("all");
-        mobsRestrictedValues.add("none");
-        mobsRestrictedValues.add("hostiles");
-
-        validValues.put("mobs", mobsRestrictedValues);
+        return String.format(EnumChatFormatting.GRAY + "%s" + EnumChatFormatting.WHITE + "[" + EnumChatFormatting.GREEN + "%s" + EnumChatFormatting.WHITE + "]:" + EnumChatFormatting.GRAY + " %s", flagType.toString(), valueToString(), flagType.getLocalizedDescription());
     }
 }

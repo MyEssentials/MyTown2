@@ -13,6 +13,8 @@ mytown.protection.vanilla.break=§cYou cannot break that block!
 mytown.protection.vanilla.place=§cYou cannot place blocks in here!
 mytown.protection.vanilla.pickup=§cYou cannot pickup blocks/items in here!
 
+mytown.protection.ic2.energy=§cYou cannot send energy from town to wilderness/wilderness to town!
+
 # /ta config [load|save]
 mytown.cmd.config.load.start=§3Loading config...
 mytown.cmd.config.load.stop=§aConfig loaded

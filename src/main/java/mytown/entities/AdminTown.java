@@ -10,8 +10,8 @@ public class AdminTown extends Town {
 
 
     @Override
-    public void addBlock(Block block) {
-        blocks.put(block.getKey(), block);
+    public void addBlock(TownBlock townBlock) {
+        blocks.put(townBlock.getKey(), townBlock);
         // TODO: To be edited when checking distance between towns.
     }
 

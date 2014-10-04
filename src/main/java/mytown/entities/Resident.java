@@ -2,13 +2,14 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
-import mytown.api.interfaces.IBlockWhitelister;
-import mytown.api.interfaces.IHasPlots;
-import mytown.api.interfaces.IHasTowns;
-import mytown.api.interfaces.IPlotSelector;
 import mytown.core.ChatUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
+import mytown.entities.flag.FlagType;
+import mytown.entities.interfaces.IBlockWhitelister;
+import mytown.entities.interfaces.IHasPlots;
+import mytown.entities.interfaces.IHasTowns;
+import mytown.entities.interfaces.IPlotSelector;
 import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -305,7 +306,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      */
     public void checkLocation(int oldChunkX, int oldChunkZ, int newChunkX, int newChunkZ, int dimension) {
         if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null) {
-            Block oldTownBlock, newTownBlock;
+            TownBlock oldTownBlock, newTownBlock;
 
             oldTownBlock = getDatasource().getBlock(lastDim, oldChunkX, oldChunkZ);
             newTownBlock = getDatasource().getBlock(dimension, newChunkX, newChunkZ);
@@ -334,7 +335,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      * @param dimension
      */
     public void checkLocationOnDimensionChanged(int newChunkX, int newChunkZ, int dimension) {
-        Block newTownBlock;
+        TownBlock newTownBlock;
 
         newTownBlock = getDatasource().getBlock(dimension, newChunkX, newChunkZ);
 
@@ -385,8 +386,45 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return null;
     }
 
-    public boolean hasInvite() {
-        return !invites.isEmpty();
+    public boolean hasInvite(Town town) {
+        return invites.contains(town);
+    }
+
+    /* ---- Friends ---- */
+
+    private List<Resident> friends = new ArrayList<Resident>();
+    private List<Resident> friendRequests = new ArrayList<Resident>();
+    public boolean addFriend(Resident res) {
+        return friends.add(res);
+    }
+
+    public boolean removeFriend(Resident res) {
+        return friends.remove(res);
+    }
+
+    public boolean hasFriend(Resident res) {
+        return friends.contains(res);
+    }
+
+    public List<Resident> getFriends() {
+        return friends;
+    }
+
+    public boolean addFriendRequest(Resident res) {
+        if(friends.contains(res) || friendRequests.contains(res)) return false;
+        return friendRequests.add(res);
+    }
+
+    public void verifyFriendRequest(Resident res, boolean response) {
+        if(response) {
+            friends.add(res);
+            res.addFriend(this);
+        }
+        friendRequests.remove(res);
+    }
+
+    public boolean hasFriendRequest(Resident res) {
+        return friendRequests.contains(res);
     }
 
     /* ----- Helpers ----- */
@@ -415,7 +453,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         }
         return null;
     }
-
 
     // //////////////////////////////////////
     // PLOT SELECTION
@@ -446,7 +483,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     @Override
     public boolean selectBlockForPlot(int dim, int x, int y, int z) {
-        Block tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
+        TownBlock tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
         if (firstSelectionActive && selectionDim != dim)
             return false;
         if (tb == null || tb.getTown() != getSelectedTown() && !firstSelectionActive || tb.getTown() != selectionTown && firstSelectionActive) {
@@ -582,18 +619,17 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     /**
      * Assists in selecting a block
      *
-     * @param flagName
+     * @param flagType
      * @return
      */
     @Override
-    public boolean startBlockSelection(String flagName, String townName, boolean inPlot) {
+    public boolean startBlockSelection(FlagType flagType, String townName, boolean inPlot) {
         //Give item to player
         ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
         selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
         NBTTagList lore = new NBTTagList();
         lore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST));
-        lore.appendTag(new NBTTagString(inPlot ? Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_PLOT : Constants.EDIT_TOOL_DESCRIPTION_BLOCK_MODE_TOWN));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Flag: " + flagName));
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Flag: " + flagType.toString()));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Town: " + townName));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
         selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);

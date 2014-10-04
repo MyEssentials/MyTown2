@@ -2,29 +2,29 @@ package mytown.api.events;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
-import mytown.entities.Block;
+import mytown.entities.TownBlock;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
  * @author Joe Goett
  */
 public class BlockEvent extends Event {
-    public Block block = null;
+    public TownBlock block = null;
 
-    public BlockEvent(Block block) {
+    public BlockEvent(TownBlock block) {
         this.block = block;
     }
 
     @Cancelable
     public static class BlockCreateEvent extends BlockEvent {
-        public BlockCreateEvent(Block block) {
+        public BlockCreateEvent(TownBlock block) {
             super(block);
         }
     }
 
     @Cancelable
     public static class BlockDeleteEvent extends BlockEvent {
-        public BlockDeleteEvent(Block block) {
+        public BlockDeleteEvent(TownBlock block) {
             super(block);
         }
     }

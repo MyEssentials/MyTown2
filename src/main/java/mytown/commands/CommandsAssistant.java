@@ -9,6 +9,7 @@ import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -51,7 +52,7 @@ public class CommandsAssistant extends Commands {
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
         if (checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             Assert.Perm(player, "mytown.cmd.assistant.claim.far");
-        Block block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+        TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
             throw new CommandException("Failed to create Block"); // TODO Localize
         getDatasource().saveBlock(block);
@@ -65,7 +66,7 @@ public class CommandsAssistant extends Commands {
     public static void unclaimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(pl);
-        Block block = getBlockAtResident(res);
+        TownBlock block = getBlockAtResident(res);
         Town town = block.getTown();
 
         if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
@@ -99,7 +100,7 @@ public class CommandsAssistant extends Commands {
         if (town.hasResident(args.get(0)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.already", args.get(0), town.getName()));
 
-        target.addInvite(town);
+        getDatasource().saveTownInvite(res, town);
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.invited", town.getName()));
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.invite.sent", args.get(0)));
     }
@@ -131,7 +132,7 @@ public class CommandsAssistant extends Commands {
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.err.perm.set.usage"));
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        Flag flag = getFlagFromTown(town, args.get(0));
+        Flag flag = getFlagFromName(town, args.get(0));
 
         if (flag.setValueFromString(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
@@ -151,10 +152,10 @@ public class CommandsAssistant extends Commands {
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        String flagName = args.get(0);
+        FlagType flagType = getFlagTypeFromName(args.get(1));
 
-        if (Flag.flagsForWhitelist.contains(flagName))
-            res.startBlockSelection(flagName, town.getName(), false);
+        if(flagType.isWhitelistable())
+            res.startBlockSelection(flagType, town.getName(), false);
         else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
 

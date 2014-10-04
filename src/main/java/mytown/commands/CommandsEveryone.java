@@ -8,6 +8,7 @@ import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
 import mytown.util.Formatter;
 import net.minecraft.command.CommandException;
@@ -94,8 +95,8 @@ public class CommandsEveryone extends Commands {
         Town town = getTownFromResident(res);
 
         String s = null;
-        for (Block block : town.getBlocks()) {
-            if (s == null)
+        for(TownBlock block : town.getBlocks()) {
+            if(s == null)
                 s = block.toString();
             else
                 s += "\n" + block.toString();
@@ -142,7 +143,7 @@ public class CommandsEveryone extends Commands {
         if (!plot.hasOwner(res))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.perm.set.noPermission"));
 
-        Flag flag = getFlagFromPlot(plot, args.get(0));
+        Flag flag = getFlagFromName(plot, args.get(0));
 
         if (flag.setValueFromString(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
@@ -195,12 +196,13 @@ public class CommandsEveryone extends Commands {
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Plot plot = getPlotAtResident(res);
-        String flagName = args.get(0);
+        FlagType flagType = getFlagTypeFromName(args.get(0));
 
-        if (Flag.flagsForWhitelist.contains(flagName)) {
+        if(flagType.isWhitelistable()) {
             res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
-            res.startBlockSelection(flagName, plot.getTown().getName(), true);
-        } else
+            res.startBlockSelection(flagType, plot.getTown().getName(), true);
+        }
+        else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
     }
 

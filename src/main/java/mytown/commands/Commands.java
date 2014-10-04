@@ -3,12 +3,14 @@ package mytown.commands;
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
 import mytown.core.Localization;
-import mytown.core.utils.command.CommandCompletion;
-import mytown.core.utils.command.CommandManager;
+import mytown.core.utils.command.*;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
+import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
+import mytown.entities.interfaces.IHasFlags;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Utils;
@@ -67,7 +69,6 @@ public abstract class Commands {
     }
 
     public static void populateCompletionMap() {
-        MyTown.instance.log.info("Populating tab completion map...");
         List<String> populator = new ArrayList<String>();
         populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
         populator.add("@a");
@@ -83,12 +84,17 @@ public abstract class Commands {
         }
         CommandCompletion.completionMap.put("residentCompletion", populator);
 
-        populator.clear();
-        populator.addAll(Flag.flagValueTypes.keySet());
+        populator = new ArrayList<String>();
+        for(FlagType flag : FlagType.values()) {
+            populator.add(flag.toString());
+        }
         CommandCompletion.completionMap.put("flagCompletion", populator);
 
-        populator.clear();
-        populator.addAll(Flag.flagsForWhitelist);
+        populator = new ArrayList<String>();
+        for(FlagType flag : FlagType.values()) {
+            if(flag.isWhitelistable())
+                populator.add(flag.toString());
+        }
         CommandCompletion.completionMap.put("flagCompletionWhitelist", populator);
 
         populator.clear();
@@ -134,23 +140,23 @@ public abstract class Commands {
         return list;
     }
 
-    public static Flag getFlagFromPlot(Plot plot, String name) {
-        Flag flag = plot.getFlag(name);
-        if (flag == null)
+    public static Flag getFlagFromType(IHasFlags hasFlags, FlagType flagType) {
+        Flag flag = hasFlags.getFlag(flagType);
+        if(flag == null)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", flagType.toString()));
+        return flag;
+    }
+
+    public static Flag getFlagFromName(IHasFlags hasFlags, String name) {
+        Flag flag = hasFlags.getFlag(FlagType.valueOf(name));
+        if(flag == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", name));
         return flag;
     }
 
-    public static Flag getFlagFromTown(Town town, String name) {
-        Flag flag = town.getFlag(name);
-        if (flag == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", name));
-        return flag;
-    }
-
-    public static Block getBlockAtResident(Resident res) {
-        Block block = getDatasource().getBlock(res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
-        if (block == null)
+    public static TownBlock getBlockAtResident(Resident res) {
+        TownBlock block = getDatasource().getBlock(res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
+        if(block == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.notexist"));
         return block;
     }
@@ -179,5 +185,13 @@ public abstract class Commands {
         if (plot == null)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.blockNotInPlot"));
         return plot;
+    }
+
+    public static FlagType getFlagTypeFromName(String name) {
+        try {
+            return FlagType.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", name));
+        }
     }
 }

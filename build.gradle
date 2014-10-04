@@ -35,11 +35,24 @@ minecraft {
     replace "@VERSION@", "${project.version}"
 }
 
+repositories {
+    maven {
+        name = "ic2"
+        url = "http://maven.ic2.player.to/"
+    }
+}
+
 dependencies {
     testCompile "junit:junit:4.11"
     compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
+
+    // DB Drivers
     compile "org.xerial:sqlite-jdbc:${config.sqlite_version}"
     compile "mysql:mysql-connector-java:${config.mysql_version}"
+
+    // Mod Deps
+    compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'
+    compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     compile project(":MyEssentials-Core")
 }
 

@@ -6,6 +6,12 @@ import com.google.common.collect.ImmutableList;
 import mytown.api.interfaces.IHasFlags;
 import mytown.api.interfaces.IHasResidents;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
+import mytown.entities.interfaces.IHasBlockWhitelists;
+import mytown.entities.interfaces.IHasFlags;
+import mytown.entities.interfaces.IHasResidents;
+import mytown.proxies.DatasourceProxy;
+import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,9 +170,9 @@ public class Plot implements IHasFlags, IHasResidents {
     }
 
     @Override
-    public boolean hasFlag(String name) {
-        for (Flag flag : flags)
-            if (flag.getName().equals(name))
+    public boolean hasFlag(FlagType type) {
+        for(Flag flag : flags)
+            if(flag.flagType.equals(type))
                 return true;
         return false;
     }
@@ -177,9 +183,9 @@ public class Plot implements IHasFlags, IHasResidents {
     }
 
     @Override
-    public Flag getFlag(String name) {
-        for (Flag flag : flags)
-            if (flag.getName().equals(name))
+    public Flag getFlag(FlagType type) {
+        for(Flag flag : flags)
+            if(flag.flagType.equals(type))
                 return flag;
         return null;
     }
@@ -200,7 +206,7 @@ public class Plot implements IHasFlags, IHasResidents {
 
     @Override
     public boolean hasResident(Resident res) {
-        return whitelist.contains(res);
+        return whitelist.contains(res) || owners.contains(res);
     }
 
     @Override
@@ -224,5 +230,12 @@ public class Plot implements IHasFlags, IHasResidents {
 
     public ImmutableList<Resident> getOwners() {
         return ImmutableList.copyOf(owners);
+    }
+
+    public boolean residentHasFriendInPlot(Resident res) {
+        for(Resident r : owners)
+            if(r.hasFriend(res))
+                return true;
+        return false;
     }
 }
