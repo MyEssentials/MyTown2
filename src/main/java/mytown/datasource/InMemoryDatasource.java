@@ -315,6 +315,16 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    public boolean deleteFlag(Flag flag, Town town) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteFlag(Flag flag, Plot plot) {
+        return false;
+    }
+
+    @Override
     public boolean deleteBlockWhitelist(BlockWhitelist bw, Town town) {
         return false;
     }
@@ -341,6 +351,11 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean removeRankPermission(Rank rank, String perm) {
+        return false;
+    }
+
+    @Override
+    protected boolean checkFlags() {
         return false;
     }
 }

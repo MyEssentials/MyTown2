@@ -47,21 +47,12 @@ public class WildPermsConfig {
     }
 
 
+    @SuppressWarnings("unchecked")
     private void writeFile() {
-        //Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.enter, false));
-        Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.breakBlocks, true));
-        Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.explosions, false));
-        Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.accessBlocks, true));
-        Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.activateBlocks, true));
-        //Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.useItems, false));
-        //Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.pickupItems, true));
-        //Wild.getInstance().addFlag(new Flag<String>(FlagType.mobs, "all"));
-        //Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.attackEntities, false));
-        Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.placeBlocks, true));
-        //Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.pumps, true));
-        //Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false));
-        Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.bcBuildingMining, true));
-        //Wild.getInstance().addFlag(new Flag<Boolean>(FlagType.bcPipeFlow, false));
+        for(FlagType type : FlagType.values()) {
+            if(type.isWildPerm())
+                Wild.getInstance().addFlag(new Flag(type, type.getDefaultValue()));
+        }
 
         try {
             Writer writer = new FileWriter(path);
@@ -73,6 +64,7 @@ public class WildPermsConfig {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void readFile() {
         List<Flag> list = null;
         try {
@@ -86,8 +78,26 @@ public class WildPermsConfig {
         }
         if(list != null) {
             for (Flag f : list) {
-                Wild.getInstance().addFlag(f);
+                if(f.flagType.isWildPerm())
+                    Wild.getInstance().addFlag(f);
+                else {
+                    MyTown.instance.log.error("A non wild perm has been found in the wild perm list. Deleting and saving: " + f.flagType.toString());
+                }
             }
+            for(FlagType type : FlagType.values()) {
+                if(type.isWildPerm()) {
+                    boolean ok = false;
+                    for (Flag f : list) {
+                        if (f.flagType == type)
+                            ok = true;
+                    }
+                    if (!ok) {
+                        MyTown.instance.log.error("A wild perm flag did not exist, adding to the list and saving: " + type.toString());
+                        Wild.getInstance().addFlag(new Flag(type, type.getDefaultValue()));
+                    }
+                }
+            }
+            saveChanges();
         } else {
             MyTown.instance.log.error("Failed to read wild perms!");
         }

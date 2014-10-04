@@ -3,6 +3,7 @@ package mytown.datasource;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.utils.config.ConfigProperty;
 import mytown.core.utils.teleport.Teleport;
@@ -1293,21 +1294,39 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
-    /*
-                @Override
-                public boolean deleteFlag(Flag flag, Town town) {
-                    try {
-                        PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
-                        deleteFlagStatement.setString(1, flag.getName());
-                        deleteFlagStatement.setString(2, town.getName());
-                        deleteFlagStatement.execute();
 
+    @Override
+    public boolean deleteFlag(Flag flag, Town town) {
+        try {
+            PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
+            deleteFlagStatement.setString(1, flag.flagType.toString());
+            deleteFlagStatement.setString(2, town.getName());
+            deleteFlagStatement.execute();
 
-                    } catch (SQLException e) {
-                        log.error("Failed to delete flag %s!", e, flag.getName());
-                    }
-                }
-                */
+            town.removeFlag(flag.flagType);
+        } catch (SQLException e) {
+            log.error("Failed to delete flag %s!", e, flag.flagType.toString());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteFlag(Flag flag, Plot plot) {
+        try {
+            PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "PlotFlags WHERE name=? AND plotID=?", true);
+            deleteFlagStatement.setString(1, flag.flagType.toString());
+            deleteFlagStatement.setInt(2, plot.getDb_ID());
+            deleteFlagStatement.execute();
+
+            plot.removeFlag(flag.flagType);
+        } catch (SQLException e) {
+            log.error("Failed to delete flag %s!", e, flag.flagType.toString());
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public boolean removeRankPermission(Rank rank, String perm) {
         try {
@@ -1319,6 +1338,41 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             log.error("Failed to add permission (%s) to Rank (%s)", e, perm, rank.getName());
             return false;
         }
+        return true;
+    }
+
+    /* ----- Checks ------ */
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected boolean checkFlags() {
+
+
+        // Checking if flag is supposed to exist and it doesn't or otherwise.
+        for(Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
+            for(FlagType type : FlagType.values()) {
+                if(!type.isUsableForTowns() && town.hasFlag(type)) {
+                    deleteFlag(town.getFlag(type), town);
+                    MyTown.instance.log.info("A flag in town " + town.getName() + " got deleted because of the settings.");
+                } else if(type.isUsableForTowns() && !town.hasFlag(type)) {
+                    saveFlag(new Flag(type, type.getDefaultValue()), town);
+                    MyTown.instance.log.info("A flag in town " + town.getName() + " got created because of the settings.");
+                }
+            }
+        }
+
+        for(Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
+            for(FlagType type : FlagType.values()) {
+                if(!type.isUsableForTowns() && plot.hasFlag(type)) {
+                    deleteFlag(plot.getFlag(type), plot);
+                    MyTown.instance.log.info("A flag in a plot in town " + plot.getTown().getName() + " got deleted because of the settings.");
+                } else if(type.isUsableForTowns() && !plot.hasFlag(type)) {
+                    saveFlag(new Flag(type, type.getDefaultValue()), plot);
+                    MyTown.instance.log.info("A flag in a plot in town " + plot.getTown().getName() + " got created because of the settings.");
+                }
+            }
+        }
+
         return true;
     }
 

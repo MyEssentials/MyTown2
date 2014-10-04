@@ -19,6 +19,10 @@ repositories {
 			name = "ic2"
 			url = "http://maven.ic2.player.to/"
 		}
+		ivy {
+			name = 'ThaumCraft 4 API'
+			artifactPattern 'https://dl.dropboxusercontent.com/u/47135879/Thaumcraft-1.7.10-4.2.0.1-api.zip'
+		}
 }
 
 ext.configFile = file "build.properties"
@@ -49,7 +53,9 @@ dependencies {
     compile "mysql:mysql-connector-java:5.1.31"
 	compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
-    compile project(":MyEssentials-Core")
+    compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
+	compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
+	compile project(":MyEssentials-Core")
 }
 
 processResources {

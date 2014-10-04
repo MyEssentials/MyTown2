@@ -87,7 +87,7 @@ public class PlayerTracker {
 
         if(currTown != null && (lastTown == null || currTown != lastTown))
             TownEvent.fire(new TownEvent.TownEnterEvent(currTown, res));
-        
+
         if (res.isMapOn()) {
             Formatter.sendMap(res);
         }
@@ -99,12 +99,16 @@ public class PlayerTracker {
         if (ev.current.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
             ev.setCanceled(true);
         }
+
     }
+
 
     @SubscribeEvent
     public void onItemUse(PlayerInteractEvent ev) {
         if (ev.entityPlayer.worldObj.isRemote)
             return;
+
+
 
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
         if (currentStack == null)

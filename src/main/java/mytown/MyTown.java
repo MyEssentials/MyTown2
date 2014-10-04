@@ -7,6 +7,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import mytown.commands.*;
 import mytown.config.Config;
+import mytown.config.FlagsConfig;
 import mytown.config.RanksConfig;
 import mytown.config.WildPermsConfig;
 import mytown.core.Localization;
@@ -42,6 +43,7 @@ public class MyTown {
     public Configuration config;
     public RanksConfig ranksConfig;
     public WildPermsConfig wildConfig;
+    public FlagsConfig flagsConfig;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
@@ -91,6 +93,7 @@ public class MyTown {
         // This needs to be after registerCommands... might want to move both methods...
         ranksConfig = new RanksConfig(new File(Constants.CONFIG_FOLDER, "DefaultRanks.json"));
         wildConfig = new WildPermsConfig(new File(Constants.CONFIG_FOLDER, "WildPerms.json"));
+        flagsConfig = new FlagsConfig(new File(Constants.CONFIG_FOLDER, "DefaultFlags.json"));
         registerPermissionHandler();
         // addDefaultPermissions();
         DatasourceProxy.setLog(log);

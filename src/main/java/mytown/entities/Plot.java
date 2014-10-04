@@ -185,6 +185,32 @@ public class Plot implements IHasFlags, IHasResidents {
         return null;
     }
 
+    @Override
+    public boolean removeFlag(FlagType type) {
+        for(Iterator<Flag> it = flags.iterator(); it.hasNext(); ) {
+            if(it.next().flagType == type) {
+                it.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Object getValue(FlagType type) {
+        for(Flag flag : flags) {
+            if(flag.flagType == type)
+                return flag.getValue();
+        }
+        return type.getDefaultValue();
+    }
+
+    @Override
+    public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
+        if(!isCoordWithin(dim, x, y, z)) return null;
+        return getValue(flagType);
+    }
+
     /* ---- IHasResidents ----- */
 
     private List<Resident> whitelist = new ArrayList<Resident>();

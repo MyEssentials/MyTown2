@@ -61,8 +61,8 @@ public class BuildCraftFactoryProtection extends Protection {
                     }
                 } else {
                     // Directly from the town, not checking per plot since it's quite the pain
-                    Flag<Boolean> bcFlag = block.getTown().getFlag(FlagType.bcBuildingMining);
-                    if(!bcFlag.getValue()) {
+                    boolean bcFlag = (Boolean)block.getTown().getValue(FlagType.bcBuildingMining);
+                    if(!bcFlag) {
                         block.getTown().notifyEveryone(FlagType.bcBuildingMining.getLocalizedProtectionDenial());
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
                         return true;
@@ -82,7 +82,7 @@ public class BuildCraftFactoryProtection extends Protection {
                         return true;
                     }
                 } else {
-                    if (!((Flag<Boolean>) town.getFlag(FlagType.pumps)).getValue()) {
+                    if (!((Boolean)town.getValue(FlagType.pumps))) {
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
                         return true;
                     }

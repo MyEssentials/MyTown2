@@ -102,8 +102,8 @@ public class IC2Protection extends Protection {
         for(TileEntity tile : nearbyTiles) {
             Town town = Utils.getTownAtPosition(tile.getWorldObj().provider.dimensionId, tile.xCoord >> 4, tile.zCoord >> 4);
             if(town != null) {
-                Flag<Boolean> energyFlag = town.getFlagAtCoords(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord, FlagType.ic2EnergyFlow);
-                if(!energyFlag.getValue()) {
+                boolean energyFlag = (Boolean)town.getValueAtCoords(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord, FlagType.ic2EnergyFlow);
+                if(!energyFlag) {
                     Town townAtEntity = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
                     if(townAtEntity != null && town == townAtEntity) {
                         Plot plot1 = town.getPlotAtCoords(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord);
@@ -180,8 +180,8 @@ public class IC2Protection extends Protection {
             }
         } else {
             // Verifying only the flag itself, not for resident
-            Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.breakBlocks);
-            if(!breakFlag.getValue()) {
+            boolean breakFlag = (Boolean)tblock.getTown().getValueAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.breakBlocks);
+            if(!breakFlag) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
             }
@@ -206,8 +206,8 @@ public class IC2Protection extends Protection {
             }
         } else {
             // Verifying only the flag itself, not for resident
-            Flag<Boolean> breakFlag = tblock.getTown().getFlagAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.breakBlocks);
-            if(!breakFlag.getValue()) {
+            boolean breakFlag = (Boolean)tblock.getTown().getValueAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.breakBlocks);
+            if(!breakFlag) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
             }

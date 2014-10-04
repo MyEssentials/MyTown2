@@ -30,7 +30,7 @@ public interface IHasFlags {
      *
      * @return
      */
-    List<Flag> getFlags();
+    ImmutableList<Flag> getFlags();
 
     /**
      * Gets the flag with the type specified
@@ -39,5 +39,33 @@ public interface IHasFlags {
      * @return
      */
     Flag getFlag(FlagType type);
+
+    /**
+     * Removes the flag
+     *
+     * @param type
+     * @return
+     */
+    boolean removeFlag(FlagType type);
+
+    /**
+     * Gets the value of the specified flag
+     *
+     * @param type
+     * @return
+     */
+    Object getValue(FlagType type);
+
+    /**
+     * Gets the value of the specified flag at the coordinates
+     *
+     * @param dim
+     * @param x
+     * @param y
+     * @param z
+     * @param type
+     * @return
+     */
+    Object getValueAtCoords(int dim, int x, int y, int z, FlagType type);
 
 }

@@ -62,6 +62,11 @@ public class DatasourceProxy {
             return false;
         }
 
+        if(!datasource.checkAll()) {
+            log.error("Failed to check the Datasource!");
+            return false;
+        }
+
         // Yay, initialized/loaded!
         return true;
     }

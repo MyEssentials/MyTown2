@@ -59,8 +59,8 @@ public class BloodMagicProtection extends Protection {
             // Range is 11x11 around the player.
             List<Town> townsNearby = Utils.getTownsInRange(bp.dim, bp.x, bp.z, 5, 5);
             for(Town town : townsNearby) {
-                Flag<Boolean> breakBlock = town.getFlag(FlagType.breakBlocks);
-                if(!breakBlock.getValue()) {
+                boolean breakBlock = (Boolean)town.getValue(FlagType.breakBlocks);
+                if(!breakBlock) {
                     // If resident is null then it's used by a block
                     if(res == null) {
                         town.notifyEveryone(FlagType.breakBlocks.getLocalizedProtectionDenial());
@@ -107,8 +107,8 @@ public class BloodMagicProtection extends Protection {
 
                     Town town = Utils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
                     if (town != null) {
-                        Flag<Boolean> itemUsage = town.getFlagAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
-                        if (!itemUsage.getValue() && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
+                        boolean itemUsage = (Boolean)town.getValueAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
+                        if (!itemUsage && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
                             res.sendMessage(FlagType.useItems.getLocalizedProtectionDenial());
                             return true;
                         }
@@ -142,8 +142,8 @@ public class BloodMagicProtection extends Protection {
 
                 Town town = Utils.getTownAtPosition(bp.dim, x >> 4, z >> 4);
                 if (town != null) {
-                    Flag<Boolean> itemUsage = town.getFlagAtCoords(bp.dim, x, y, z, FlagType.useItems);
-                    if (!itemUsage.getValue()) {
+                    boolean itemUsage = (Boolean)town.getValueAtCoords(bp.dim, x, y, z, FlagType.useItems);
+                    if (!itemUsage) {
                         // TODO: Make notifying normal
                         town.notifyEveryone(FlagType.useItems.getLocalizedProtectionDenial());
                         return true;
@@ -155,8 +155,8 @@ public class BloodMagicProtection extends Protection {
             // Range to attract items is 5 from player
             List<Town> nearbyTowns = Utils.getTownsInRange(bp.dim, bp.x, bp.z, 5, 5);
             for(Town town : nearbyTowns) {
-                Flag<Boolean> pickupFlag = town.getFlag(FlagType.pickupItems);
-                if(!pickupFlag.getValue())
+                boolean pickupFlag = (Boolean)town.getValue(FlagType.pickupItems);
+                if(!pickupFlag)
                     if(res == null) {
                         deactivateSigil(itemStack);
                         return true;
