@@ -143,7 +143,13 @@ public abstract class Protection {
      */
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) { return false; }
 
-    public boolean hasToCheckTileEntity(TileEntity te) { return trackedTileEntities.contains(te.getClass()); }
+    public boolean hasToCheckTileEntity(TileEntity te) {
+        for(Class<? extends TileEntity> cls : trackedTileEntities) {
+            if(cls.isAssignableFrom(te.getClass()))
+                return true;
+        }
+        return false;
+    }
     public boolean hasToCheckEntity(Entity entity) { return trackedEntities.contains(entity.getClass()) || explosiveBlocks.contains(entity.getClass()); }
 
     /**

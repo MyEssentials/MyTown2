@@ -25,14 +25,13 @@ public enum FlagType {
     activateBlocks(Boolean.class, false, null, true, false, null, true),
     pumps(Boolean.class, true, null, false, false, ExtraUtilitiesProxy.MOD_ID),
     ic2EnergyFlow(Boolean.class, false, null, false, true, IC2Proxy.MOD_ID, true),
-    // Only allowed in towns, not in plots
-    bcBuildingMining(Boolean.class, false, null, true, true, BuildCraftFactoryProxy.MOD_ID),
     bcPipeFlow(Boolean.class, true, null, false, true, BuildCraftTrasportationProxy.MOD_ID);
 
 
     private Class<?> type;
     private String descriptionKey;
     private String protectionKey;
+    private String notifyKey;
     private Object[] allowedValues;
     private boolean townOnly;
     private Object defaultValue;
@@ -42,10 +41,12 @@ public enum FlagType {
     private String modRequired;
     private boolean isWildPerm;
 
+
     private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, boolean townOnly, String modRequired, boolean isWhitelistable) {
         this.type = type;
         this.descriptionKey = "mytown.flag." + this.toString();
         this.protectionKey = "mytown.protection." + this.toString();
+        this.notifyKey = "mytown.protection.notify." + this.toString();
         this.townOnly = townOnly;
         this.allowedValues = allowedValues;
         this.modRequired = modRequired;
@@ -139,6 +140,15 @@ public enum FlagType {
      */
     public String getLocalizedProtectionDenial() {
         return LocalizationProxy.getLocalization().getLocalization(protectionKey);
+    }
+
+    /**
+     * Gets the localized message that is sent to all players on the town when something tried to bypass protection.
+     *
+     * @return
+     */
+    public String getLocalizedTownNotification() {
+        return LocalizationProxy.getLocalization().getLocalization(notifyKey);
     }
 
     /**

@@ -61,6 +61,7 @@ public abstract class MyTownDatasource {
      *
      * @return The new Town, or null if it failed
      */
+    @SuppressWarnings("unchecked")
     public final Town newTown(String name, Resident creator) {
         Town town = new Town(name);
 
@@ -94,20 +95,11 @@ public abstract class MyTownDatasource {
         saveBlock(block);
 
         // Saving and adding all flags to the database
-        saveFlag(new Flag<Boolean>(FlagType.enter, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.breakBlocks, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.explosions, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.accessBlocks, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.activateBlocks, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.useItems, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.pickupItems, true), town);
-        saveFlag(new Flag<String>(FlagType.mobs, "all"), town);
-        saveFlag(new Flag<Boolean>(FlagType.attackEntities, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.placeBlocks, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.pumps, true), town);
-        saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.bcBuildingMining, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.bcPipeFlow, false), town);
+        for(FlagType type : FlagType.values()) {
+            if(type.isUsableForTowns() && type.shouldLoad()) {
+                saveFlag(new Flag(type, type.getDefaultValue()), town);
+            }
+        }
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
             return null;
@@ -121,6 +113,7 @@ public abstract class MyTownDatasource {
      * @param creator
      * @return
      */
+    @SuppressWarnings("unchecked")
     public final AdminTown newAdminTown(String name, Resident creator) {
         AdminTown town = new AdminTown(name);
 
@@ -140,22 +133,11 @@ public abstract class MyTownDatasource {
         saveBlock(block);
 
         // Saving and adding all flags to the database
-        saveFlag(new Flag<Boolean>(FlagType.enter, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.breakBlocks, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.explosions, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.accessBlocks, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.activateBlocks, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.useItems, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.pickupItems, true), town);
-        saveFlag(new Flag<String>(FlagType.mobs, "all"), town);
-        saveFlag(new Flag<Boolean>(FlagType.attackEntities, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.placeBlocks, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.pumps, true), town);
-        // No need for checking if mod loaded FlagType and save method handles all that
-
-        saveFlag(new Flag<Boolean>(FlagType.ic2EnergyFlow, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.bcBuildingMining, false), town);
-        saveFlag(new Flag<Boolean>(FlagType.bcPipeFlow, false), town);
+        for(FlagType type : FlagType.values()) {
+            if(type.isUsableForTowns() && type.shouldLoad()) {
+                saveFlag(new Flag(type, type.getDefaultValue()), town);
+            }
+        }
 
 
         if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))

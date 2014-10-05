@@ -1,16 +1,15 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
-import mytown.MyTown;
+import mytown.api.interfaces.IHasFlags;
 import mytown.core.Localization;
-import mytown.core.utils.command.*;
+import mytown.core.utils.command.CommandCompletion;
+import mytown.core.utils.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
-import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.entities.interfaces.IHasFlags;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Utils;

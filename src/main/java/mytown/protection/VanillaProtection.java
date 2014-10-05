@@ -145,8 +145,7 @@ public class VanillaProtection extends Protection {
                 if (town != null) {
                     boolean placeFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
                     if (!placeFlag) {
-                        //TODO: Create a flag only for this
-                        town.notifyEveryone(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                        town.notifyEveryone(FlagType.placeBlocks.getLocalizedTownNotification());
                         return true;
                     }
                 }
@@ -233,7 +232,7 @@ public class VanillaProtection extends Protection {
                 if (town != null) {
                     boolean itemUsage = (Boolean)town.getValueAtCoords(bp.dim, x, y, z, FlagType.useItems);
                     if (!itemUsage) {
-                        town.notifyEveryone(FlagType.useItems.getLocalizedProtectionDenial());
+                        town.notifyEveryone(FlagType.useItems.getLocalizedTownNotification());
                         return true;
                     }
                 }

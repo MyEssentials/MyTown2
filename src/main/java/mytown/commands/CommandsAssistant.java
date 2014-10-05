@@ -4,7 +4,7 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandNode;
-import mytown.entities.Block;
+import mytown.entities.TownBlock;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;

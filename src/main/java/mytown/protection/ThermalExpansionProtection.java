@@ -81,9 +81,10 @@ public class ThermalExpansionProtection extends Protection {
                         Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
                         if (town != null) {
                             boolean placeFlag= (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
-                            // TODO: Should there be a whitelist check here?
-                            if (!placeFlag)
+                            if (!placeFlag) {
+                                town.notifyEveryone(FlagType.placeBlocks.getLocalizedTownNotification());
                                 return true;
+                            }
                         }
                     } else if (!Utils.isBlockWhitelisted(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.useItems)
                             && Protections.instance.checkItemUsage(stack, null, new BlockPos(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().provider.dimensionId))) {
@@ -98,14 +99,13 @@ public class ThermalExpansionProtection extends Protection {
             if(town != null) {
                 boolean breakFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.breakBlocks);
                 if (!breakFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks)) {
-                    //TODO: Change this to something proper
-                    town.notifyEveryone(FlagType.breakBlocks.getLocalizedProtectionDenial());
+                    town.notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
                     return true;
                 } else {
                     // The activate flag
                     boolean activateFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.activateBlocks);
                     if (!activateFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.activateBlocks)) {
-                        town.notifyEveryone(FlagType.activateBlocks.getLocalizedProtectionDenial());
+                        town.notifyEveryone(FlagType.activateBlocks.getLocalizedTownNotification());
                         return true;
                     }
                 }
@@ -140,7 +140,7 @@ public class ThermalExpansionProtection extends Protection {
             if(town != null) {
                 boolean breakFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.breakBlocks);
                 if(!breakFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks)) {
-                    town.notifyEveryone(FlagType.breakBlocks.getLocalizedProtectionDenial());
+                    town.notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
                     return true;
                 }
             }

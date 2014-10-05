@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.entities.interfaces.*;
+import mytown.api.interfaces.*;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 

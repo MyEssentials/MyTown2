@@ -144,8 +144,7 @@ public class BloodMagicProtection extends Protection {
                 if (town != null) {
                     boolean itemUsage = (Boolean)town.getValueAtCoords(bp.dim, x, y, z, FlagType.useItems);
                     if (!itemUsage) {
-                        // TODO: Make notifying normal
-                        town.notifyEveryone(FlagType.useItems.getLocalizedProtectionDenial());
+                        town.notifyEveryone(FlagType.useItems.getLocalizedTownNotification());
                         return true;
                     }
                 }

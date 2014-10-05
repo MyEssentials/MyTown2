@@ -56,6 +56,7 @@ public class ExtraUtilitiesProtection extends Protection {
                     Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, cp.getX(), cp.getZ());
                     if(town != null) {
                         if(!((Boolean)town.getValue(FlagType.breakBlocks))) {
+                            town.notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
                             return true;
                         }
                     }
@@ -72,6 +73,7 @@ public class ExtraUtilitiesProtection extends Protection {
 
                 Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunkX.getInt(te), chunkZ.getInt(te));
                 if(town != null && !((Boolean)town.getValue(FlagType.pumps))) {
+                    town.notifyEveryone(FlagType.pumps.getLocalizedTownNotification());
                     return true;
                 }
             } catch (Exception e) {

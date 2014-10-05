@@ -1,25 +1,20 @@
 package mytown.protection;
 
-import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import ic2.api.event.LaserEvent;
 import mytown.MyTown;
-import mytown.entities.TownBlock;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
-import mytown.entities.flag.Flag;
+import mytown.entities.Town;
+import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.util.BlockPair;
-import mytown.util.BlockPos;
 import mytown.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,13 +106,13 @@ public class IC2Protection extends Protection {
                         if(plot1 != plot2) {
                             // If 2 different plots on the same town then we invalidate
                             MyTown.instance.log.info("TileEntity " + tile + " has been disabled, because it's too close to town " + town.getName());
-                            town.notifyEveryone(getLocal().getLocalization("mytown.protection.ic2.energy"));
+                            town.notifyEveryone(FlagType.ic2EnergyFlow.getLocalizedTownNotification());
                             return true;
                         }
                     } else {
                         // If wild near town or town near other town then we invalidate
                         MyTown.instance.log.info("TileEntity " + tile + " has been disabled, because it's too close to town " + town.getName());
-                        town.notifyEveryone(getLocal().getLocalization("mytown.protection.ic2.energy"));
+                        town.notifyEveryone(FlagType.ic2EnergyFlow.getLocalizedTownNotification());
                         return true;
                     }
                 }
@@ -177,6 +172,7 @@ public class IC2Protection extends Protection {
             if (!tblock.getTown().checkPermission(res, FlagType.breakBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
+                res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
             }
         } else {
             // Verifying only the flag itself, not for resident
@@ -184,6 +180,7 @@ public class IC2Protection extends Protection {
             if(!breakFlag) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
+                tblock.getTown().notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
             }
         }
     }
@@ -201,6 +198,7 @@ public class IC2Protection extends Protection {
             if (!tblock.getTown().checkPermission(res, FlagType.breakBlocks, ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ)) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
+                res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
             }
         } else {
             // Verifying only the flag itself, not for resident
@@ -208,6 +206,7 @@ public class IC2Protection extends Protection {
             if(!breakFlag) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
+                tblock.getTown().notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
             }
         }
     }

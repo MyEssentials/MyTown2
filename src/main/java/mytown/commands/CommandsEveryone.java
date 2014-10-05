@@ -3,7 +3,7 @@ package mytown.commands;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
-import mytown.entities.Block;
+import mytown.entities.TownBlock;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;

@@ -242,7 +242,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 }
                 Plot plot = new Plot(rs.getString("name"), town, rs.getInt("dim"), rs.getInt("x1"), rs.getInt("y1"), rs.getInt("z1"), rs.getInt("x2"), rs.getInt("y2"), rs.getInt("z2"));
                 plot.setDb_ID(rs.getInt("ID"));
-                MyTownUniverse.getInstance().getPlot(plot.getDb_ID());
+                MyTownUniverse.getInstance().addPlot(plot);
                 plot.getTown().addPlot(plot);
             }
         } catch (SQLException e) {
@@ -1362,12 +1362,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
         for(Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
             for(FlagType type : FlagType.values()) {
-                if(!type.isUsableForTowns() && plot.hasFlag(type)) {
-                    deleteFlag(plot.getFlag(type), plot);
-                    MyTown.instance.log.info("A flag in a plot in town " + plot.getTown().getName() + " got deleted because of the settings.");
-                } else if(type.isUsableForTowns() && !plot.hasFlag(type)) {
-                    saveFlag(new Flag(type, type.getDefaultValue()), plot);
-                    MyTown.instance.log.info("A flag in a plot in town " + plot.getTown().getName() + " got created because of the settings.");
+                if(!type.isTownOnly()) {
+                    if (!type.isUsableForTowns() && plot.hasFlag(type)) {
+                        deleteFlag(plot.getFlag(type), plot);
+                        MyTown.instance.log.info("A flag in a plot in town " + plot.getTown().getName() + " got deleted because of the settings.");
+                    } else if (type.isUsableForTowns() && !plot.hasFlag(type)) {
+                        saveFlag(new Flag(type, type.getDefaultValue()), plot);
+                        MyTown.instance.log.info("A flag in a plot in town " + plot.getTown().getName() + " got created because of the settings.");
+                    }
                 }
             }
         }
@@ -1564,7 +1566,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "resident CHAR(36)," +
                 "townName VARCHAR(50), " +
                 "PRIMARY KEY(resident, townName)," +
-                "FOREIGN KEY(resident) REFERENCES " + prefix + "Resientds(UUID) ON DELETE CASCADE, " +
+                "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, " +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
     }
 

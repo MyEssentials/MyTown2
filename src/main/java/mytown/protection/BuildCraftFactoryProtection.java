@@ -51,19 +51,20 @@ public class BuildCraftFactoryProtection extends Protection {
                 e.printStackTrace();
                 return false;
             }
+
             List<ChunkPos> chunks = Utils.getChunksInBox(box.xMin, box.zMin, box.xMax, box.zMax);
             for(ChunkPos p : chunks) {
                 TownBlock block = MyTownUniverse.getInstance().getBlocksMap().get(String.format(TownBlock.keyFormat, te.getWorldObj().provider.dimensionId, p.getX(), p.getZ()));
                 if(block == null) {
-                    if(!(Boolean) Wild.getInstance().getFlag(FlagType.bcBuildingMining).getValue()) {
+                    if(!(Boolean) Wild.getInstance().getFlag(FlagType.breakBlocks).getValue()) {
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
                         return true;
                     }
                 } else {
                     // Directly from the town, not checking per plot since it's quite the pain
-                    boolean bcFlag = (Boolean)block.getTown().getValue(FlagType.bcBuildingMining);
+                    boolean bcFlag = (Boolean)block.getTown().getValue(FlagType.breakBlocks);
                     if(!bcFlag) {
-                        block.getTown().notifyEveryone(FlagType.bcBuildingMining.getLocalizedProtectionDenial());
+                        block.getTown().notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
                         return true;
                     }
@@ -84,6 +85,7 @@ public class BuildCraftFactoryProtection extends Protection {
                 } else {
                     if (!((Boolean)town.getValue(FlagType.pumps))) {
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
+                        town.notifyEveryone(FlagType.pumps.getLocalizedTownNotification());
                         return true;
                     }
                 }
@@ -91,7 +93,6 @@ public class BuildCraftFactoryProtection extends Protection {
                 e.printStackTrace();
             }
         }
-
         return false;
     }
 
@@ -99,9 +100,10 @@ public class BuildCraftFactoryProtection extends Protection {
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
         List<FlagType> list = new ArrayList<FlagType>();
         if(clsTileAbstractBuilder.isAssignableFrom(te)) {
-            list.add(FlagType.bcBuildingMining);
-            return list;
+            list.add(FlagType.breakBlocks);
+        } else if(clsTilePump.isAssignableFrom(te)) {
+            list.add(FlagType.pumps);
         }
-        return null;
+        return list;
     }
 }

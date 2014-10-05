@@ -7,13 +7,9 @@ import mytown.api.interfaces.IHasFlags;
 import mytown.api.interfaces.IHasResidents;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.entities.interfaces.IHasBlockWhitelists;
-import mytown.entities.interfaces.IHasFlags;
-import mytown.entities.interfaces.IHasResidents;
-import mytown.proxies.DatasourceProxy;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**

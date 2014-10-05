@@ -50,7 +50,7 @@ public class BuildCraftTransportProtection extends Protection {
                 if (nearbyTile != null && clsTileGenericPipe.isAssignableFrom(nearbyTile.getClass())) {
                     boolean bcFlowFlag = (Boolean)town.getValueAtCoords(bn.dim, bn.x, bn.y, bn.z, FlagType.bcPipeFlow);
                     if (!bcFlowFlag) {
-                        town.notifyEveryone(FlagType.bcPipeFlow.getLocalizedProtectionDenial());
+                        town.notifyEveryone(FlagType.bcPipeFlow.getLocalizedTownNotification());
                         return true;
                     }
                 }

@@ -3,7 +3,7 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.entities.interfaces.IHasFlags;
+import mytown.api.interfaces.IHasFlags;
 
 import java.util.ArrayList;
 import java.util.Iterator;
