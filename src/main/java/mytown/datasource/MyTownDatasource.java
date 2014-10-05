@@ -226,8 +226,15 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites();
+        return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites();
     }
+
+    /**
+     * Loads all worlds, and saves to db if any are missing
+     *
+     * @return
+     */
+    protected abstract boolean loadWorlds();
 
     /**
      * Loads all the Towns
@@ -431,6 +438,14 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean saveTownInvite(Resident res, Town town);
 
+    /**
+     * Saves the world with the dimension id spefied to the db
+     *
+     * @param dim
+     * @return
+     */
+    public abstract boolean saveWorld(int dim);
+
     /* ----- Link ----- */
 
     /**
@@ -627,6 +642,14 @@ public abstract class MyTownDatasource {
     public abstract boolean deleteTownInvite(Resident res, Town town, boolean response);
 
     /**
+     * Deletes the world with the dimension id specified from the db
+     *
+     * @param dim
+     * @return
+     */
+    public abstract boolean deleteWorld(int dim);
+
+    /**
      * Removes the permission node from the Rank
      *
      * @param rank The rank
@@ -643,8 +666,6 @@ public abstract class MyTownDatasource {
      * @return
      */
     public boolean checkAll() {
-        //DEV
-        MyTown.instance.log.info("Started check of the Datasource.");
         return checkFlags();
     }
 

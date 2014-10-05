@@ -23,12 +23,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.FluidEvent;
 
 import java.util.*;
@@ -152,6 +155,15 @@ public class Protections {
         return false;
     }
 
+    public boolean checkIsEntityHostile(Class<? extends Entity> ent) {
+        for(Protection prot : protections.values()) {
+            if(prot.hostileEntities.contains(ent)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isBlockWhitelistValid(BlockWhitelist bw) {
         // TODO: Maybe make this better
         // Delete if the town is gone
@@ -194,8 +206,11 @@ public class Protections {
             ticker--;
         }
 
+        // TODO: Add a command to clean up the block whitelist table periodically periodically
+
         if(ticker2 == 0) {
             // Also updating the block whitelists
+            /*
             for(Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
                 for(BlockWhitelist bw : town.getWhitelists()) {
                     if(!isBlockWhitelistValid(bw)) {
@@ -203,6 +218,22 @@ public class Protections {
                     }
                 }
             }
+            */
+
+            // Updating the worlds list
+            for(World world : MinecraftServer.getServer().worldServers) {
+                if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
+                    DatasourceProxy.getDatasource().saveWorld(world.provider.dimensionId);
+                }
+            }
+            for(int dim : MyTownUniverse.getInstance().getWorldsList()) {
+                if(DimensionManager.getWorld(dim) == null) {
+                    DatasourceProxy.getDatasource().deleteWorld(dim);
+                }
+            }
+
+
+
             ticker2 = MinecraftServer.getServer().worldServers.length * tickStart2;
         } else {
             ticker2--;
@@ -560,6 +591,27 @@ public class Protections {
     public void onTownEnter(TownEvent.TownEnterEvent ev) {
         ev.resident.sendMessage("You have entered a town o_o ");
     }
+
+    /*
+    @SuppressWarnings("unchecked")
+    @SubscribeEvent
+    public void potentialSpawns(WorldEvent.PotentialSpawns ev) {
+        Town town = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+
+        if(town != null) {
+            String value = (String) town.getValueAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.mobs);
+            if (value.equals("none")) {
+                ev.setCanceled(true);
+            } else if(value.equals("hostiles")){
+                for (Iterator<BiomeGenBase.SpawnListEntry> it = ev.list.iterator(); it.hasNext(); ) {
+                    BiomeGenBase.SpawnListEntry entry = it.next();
+                    if(checkIsEntityHostile(entry.entityClass))
+                        it.remove();
+                }
+            }
+        }
+    }
+    */
 
     /*
     @SuppressWarnings("unchecked")

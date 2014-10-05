@@ -20,4 +20,9 @@ public class Config {
     /* ----- Formatter Config ----- */
     // TODO Finish default formats (Colors, more fields, etc)
 
+    /* ----- Others ----- */
+    @ConfigProperty(category = "towns", name = "distance", comment = "Minimum distance (in chunks) between 2 towns. Checked when creating a town")
+    public static int distanceBetweenTowns = 5;
+
+
 }

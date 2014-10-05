@@ -1,10 +1,13 @@
 package mytown.datasource;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import mytown.core.utils.command.CommandCompletion;
 import mytown.entities.*;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,6 +20,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     private Map<String, TownBlock> blocks;
     private Map<Integer, Plot> plots;
     private Map<String, Rank> ranks;
+    private List<Integer> worlds;
 
     //TODO: Some stuff are stored twice, fix it
 
@@ -27,6 +31,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         blocks = new Hashtable<String, TownBlock>();
         plots = new Hashtable<Integer, Plot>();
         ranks = new Hashtable<String, Rank>();
+
+        worlds = new ArrayList<Integer>();
     }
 
     /**
@@ -83,6 +89,13 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return ImmutableMap.copyOf(ranks);
     }
 
+    /**
+     * Returns a ImmutableList of all the worlds that appear in the database
+     *
+     * @return
+     */
+    public final ImmutableList<Integer> getWorldsList() { return ImmutableList.copyOf(worlds); }
+
     private static MyTownUniverse instance = null;
 
     public final boolean addResident(Resident res) {
@@ -119,6 +132,11 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
+    public final boolean addWorld(int dim) {
+        worlds.add(dim);
+        return true;
+    }
+
     public final boolean removeResident(Resident res) {
         residents.remove(res.getUUID().toString());
         CommandCompletion.completionMap.get("residentCompletion").remove(res.getPlayerName());
@@ -151,6 +169,11 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public final boolean removePlot(Plot plot) {
         plots.remove(plot.getDb_ID());
+        return true;
+    }
+
+    public final boolean removeWorld(int dim) {
+        worlds.remove(dim);
         return true;
     }
 
@@ -194,7 +217,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public boolean hasPlot(Plot plot) {
         return plots.containsValue(plot);
     }
-
+    public boolean hasWorld(int dim) { return worlds.contains(dim); }
 
     public static MyTownUniverse getInstance() {
         if (instance == null) {

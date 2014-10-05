@@ -51,7 +51,8 @@ public class CommandsAssistant extends Commands {
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
         if (checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
-            Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.far.notAllowed"));
+            //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
             throw new CommandException("Failed to create Block"); // TODO Localize

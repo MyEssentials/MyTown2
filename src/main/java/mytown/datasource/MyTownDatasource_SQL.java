@@ -10,6 +10,10 @@ import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -119,6 +123,35 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean loadAll() {
         return super.loadAll() && loadResidentsToTowns() && loadTownsToNations() && loadResidentsToPlots();
+    }
+
+    @Override
+    protected boolean loadWorlds() {
+        try {
+            PreparedStatement s = prepare("SELECT * FROM " + prefix + "Worlds", true);
+            ResultSet rs = s.executeQuery();
+
+            while(rs.next()) {
+                MyTownUniverse.getInstance().addWorld(rs.getInt("dim"));
+            }
+
+        } catch (SQLException e) {
+            log.error("Failed to load worlds from the database!");
+            return false;
+        }
+
+        for(World world : MinecraftServer.getServer().worldServers) {
+            if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
+                saveWorld(world.provider.dimensionId);
+            }
+        }
+        for(int dim : MyTownUniverse.getInstance().getWorldsList()) {
+            if(DimensionManager.getWorld(dim) == null) {
+                deleteWorld(dim);
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -928,6 +961,21 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean saveWorld(int dim) {
+        try {
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "Worlds(dim) VALUES(?)", true);
+            s.setInt(1, dim);
+            s.executeUpdate();
+
+            MyTownUniverse.getInstance().addWorld(dim);
+        } catch (SQLException e) {
+            log.error("Failed to save world with dimension id " + dim);
+            return false;
+        }
+        return true;
+    }
+
     /* ----- Link ----- */
 
     @Override
@@ -1327,6 +1375,21 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
+    public boolean deleteWorld(int dim) {
+        try {
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "Worlds WHERE dim=?", true);
+            s.setInt(1, dim);
+            s.executeUpdate();
+
+            MyTownUniverse.getInstance().removeWorld(dim);
+        } catch (SQLException e) {
+            log.error("Failed to delete world with dimension id " + dim);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean removeRankPermission(Rank rank, String perm) {
         try {
             PreparedStatement s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE node = ? AND rank = ?", true);
@@ -1450,7 +1513,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "spawnZ FLOAT NOT NULL, " +
                 "cameraYaw FLOAT NOT NULL, " +
                 "cameraPitch FLOAT NOT NULL, " +
-                "PRIMARY KEY(name)" +
+                "PRIMARY KEY(name), " +
+                "FOREIGN KEY(spawnDim) REFERENCES " + prefix + " Worlds(dim) ON DELETE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.4", "Add Ranks Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Ranks (" +
                 "name VARCHAR(50) NOT NULL," +  // TODO Allow larger rank names?
@@ -1472,7 +1536,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "z INT NOT NULL," +
                 "townName VARCHAR(32) NOT NULL," +
                 "PRIMARY KEY(dim, x, z)," +
-                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
+                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE, " +
+                "FOREIGN KEY(dim) REFERENCES " + prefix + "Worlds(dim) ON DELETE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.7", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Plots (" +
                 "ID INTEGER NOT NULL," + // Just because it's a pain with this many primary keys
@@ -1486,7 +1551,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "z2 INT NOT NULL," +
                 "townName VARCHAR(32) NOT NULL," +
                 "PRIMARY KEY(ID)," +
-                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE" +
+                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE, " +
+                "FOREIGN KEY(dim) REFERENCES " + prefix + "Worlds(dim) ON DELETE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.8", "Add Nations Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Nations (" +
                 "name VARCHAR(32) NOT NULL," + // TODO Allow larger nation names?
@@ -1542,7 +1608,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "townName VARCHAR(50), " +
                 "flagName VARCHAR(50) NOT NULL, " +
                 "PRIMARY KEY(ID), " +
-                "FOREIGN KEY(flagName, townName) REFERENCES " + prefix + "TownFlags(name, townName) ON UPDATE CASCADE ON DELETE CASCADE)"));
+                "FOREIGN KEY(flagName, townName) REFERENCES " + prefix + "TownFlags(name, townName) ON UPDATE CASCADE ON DELETE CASCADE, " +
+                "FOREIGN KEY(dim) REFERENCES " + prefix + "Worlds(dim) ON DELETE CASCADE)"));
         updates.add(new DBUpdate("09.11.2014.1", "Add SelectedTown", "CREATE TABLE IF NOT EXISTS " + prefix +
                 "SelectedTown(" +
                 "resident CHAR(36), " +
@@ -1568,6 +1635,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(resident, townName)," +
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, " +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
+        updates.add(new DBUpdate("10.05.2014", "Add Worlds", "CREATE TABLE IF NOT EXISTS " + prefix + "Worlds(" +
+                "dim INT," +
+                "PRIMARY KEY(dim))"));
     }
 
     /**

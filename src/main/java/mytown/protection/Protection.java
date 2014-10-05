@@ -103,7 +103,7 @@ public abstract class Protection {
             }
         } else {
             String value = (String)town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
-            if (value.equals("all")) {
+            if (value.equals("none")) {
                 if (entity instanceof EntityLivingBase) {
                     return true;
                 }

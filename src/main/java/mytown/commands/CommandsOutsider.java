@@ -1,10 +1,12 @@
 package mytown.commands;
 
+import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.util.Formatter;
+import mytown.util.Utils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -68,14 +70,22 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd")
     public static void newTownCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
+        Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
+
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation"));
+
         if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.newtown"));
         if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.nameinuse", args.get(0)));
-        if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?   TODO Bit-shift the coords?
+        if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.positionError"));
-
-        Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
+        for(int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
+            for(int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
+                if(Utils.getTownAtPosition(player.dimension, x, z) != null)
+                    throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.tooClose"));
+            }
+        }
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)

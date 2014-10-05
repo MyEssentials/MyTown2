@@ -14,6 +14,11 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    protected boolean loadWorlds() {
+        return false;
+    }
+
+    @Override
     protected boolean loadTowns() {
         log.debug("Loading Towns");
         return true;
@@ -186,6 +191,11 @@ public class InMemoryDatasource extends MyTownDatasource {
         return false;
     }
 
+    @Override
+    public boolean saveWorld(int dim) {
+        return false;
+    }
+
     /*
     FIXME: This is partially borken
 
@@ -346,6 +356,11 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean deleteTownInvite(Resident res, Town town, boolean response) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteWorld(int dim) {
         return false;
     }
 
