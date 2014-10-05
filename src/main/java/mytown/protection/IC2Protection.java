@@ -10,10 +10,8 @@ import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.Utils;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
@@ -30,9 +28,6 @@ public class IC2Protection extends Protection {
     private Class<? extends TileEntity> clsTileEntityCable;
     private Class<? extends TileEntity> clsTileEntityBaseGenerator;
 
-    private Block blockCable, blockElectric, blockChargepad, blockMachine1, blockMachine2, blockMachine3, blockGenerator;
-    private Item itemCable;
-
     @SuppressWarnings("unchecked")
     public IC2Protection() {
         isHandlingEvents = true;
@@ -47,25 +42,6 @@ public class IC2Protection extends Protection {
             trackedTileEntities.add(clsTileEntityBaseGenerator);
             trackedTileEntities.add(clsTileEntityCable);
             trackedTileEntities.add(clsTileEntityElectricMachine);
-
-
-            blockCable = Block.getBlockFromName("blockCable");
-            blockElectric = Block.getBlockFromName("blockElectric");
-            blockChargepad = Block.getBlockFromName("blockChargepad");
-            blockMachine1 = Block.getBlockFromName("blockMachine");
-            blockMachine2 = Block.getBlockFromName("blockMachine2");
-            blockMachine3 = Block.getBlockFromName("blockMachine3");
-            blockGenerator = Block.getBlockFromName("blockGenerator");
-
-            itemCable = (Item)Item.itemRegistry.getObject("itemCable");
-
-            interactiveBlocks.add(blockCable);
-            interactiveBlocks.add(blockElectric);
-            interactiveBlocks.add(blockChargepad);
-            interactiveBlocks.add(blockMachine1);
-            interactiveBlocks.add(blockMachine2);
-            interactiveBlocks.add(blockMachine3);
-            interactiveBlocks.add(blockGenerator);
 
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
@@ -135,7 +111,7 @@ public class IC2Protection extends Protection {
             blockChecked = ((ItemBlock) item).field_150939_a;
         }
 
-        List<BlockPos> blocksNearby = Utils.getBlockAndPositionNearby(bp);
+        List<BlockPos> blocksNearby = Utils.getPositionNearby(bp);
         for(BlockPos bn : blocksNearby) {
             // This is never null
             Town town = Utils.getTownAtPosition(bn.dim, bn.x >> 4, bn.z >> 4);

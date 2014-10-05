@@ -3,12 +3,10 @@ package mytown.protection;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent;
 import mytown.MyTown;
 import mytown.api.events.TownEvent;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
-import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -25,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -312,12 +309,34 @@ public class Protections {
             if(!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
                 res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
+            } else {
+                // If it has permission, then check nearby
+                List<BlockPos> nearbyBlocks = Utils.getPositionNearby(new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId));
+                for(BlockPos pos : nearbyBlocks) {
+                    Town town = Utils.getTownAtPosition(pos.dim, pos.x >> 4, pos.z >> 4);
+                    if(!town.checkPermission(res, FlagType.placeBlocks, pos.dim, pos.x, pos.y, pos.z)) {
+                        res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                        ev.setCanceled(true);
+                        return;
+                    }
+                }
             }
         } else {
             if (!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
                 res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
                 return;
+            } else {
+                // If it has permission, then check nearby
+                List<BlockPos> nearbyBlocks = Utils.getPositionNearby(new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId));
+                for(BlockPos pos : nearbyBlocks) {
+                    Town town = Utils.getTownAtPosition(pos.dim, pos.x >> 4, pos.z >> 4);
+                    if(!town.checkPermission(res, FlagType.placeBlocks, pos.dim, pos.x, pos.y, pos.z)) {
+                        res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                        ev.setCanceled(true);
+                        return;
+                    }
+                }
             }
             if (res.hasTown(tblock.getTown()) && ev.block instanceof ITileEntityProvider) {
                 Class<? extends TileEntity> clsTe = ((ITileEntityProvider)ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage()).getClass();
@@ -335,12 +354,34 @@ public class Protections {
             if(!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
                 res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
+            } else {
+                // If it has permission, then check nearby
+                List<BlockPos> nearbyBlocks = Utils.getPositionNearby(new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId));
+                for(BlockPos pos : nearbyBlocks) {
+                    Town town = Utils.getTownAtPosition(pos.dim, pos.x >> 4, pos.z >> 4);
+                    if(!town.checkPermission(res, FlagType.placeBlocks, pos.dim, pos.x, pos.y, pos.z)) {
+                        res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                        ev.setCanceled(true);
+                        return;
+                    }
+                }
             }
         } else {
             if (!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
                 res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
                 return;
+            } else {
+                // If it has permission, then check nearby
+                List<BlockPos> nearbyBlocks = Utils.getPositionNearby(new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId));
+                for(BlockPos pos : nearbyBlocks) {
+                    Town town = Utils.getTownAtPosition(pos.dim, pos.x >> 4, pos.z >> 4);
+                    if(!town.checkPermission(res, FlagType.placeBlocks, pos.dim, pos.x, pos.y, pos.z)) {
+                        res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+                        ev.setCanceled(true);
+                        return;
+                    }
+                }
             }
             if (res.hasTown(tblock.getTown()) && ev.block instanceof ITileEntityProvider) {
                 Class<? extends TileEntity> clsTe = ((ITileEntityProvider)ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage()).getClass();
@@ -381,9 +422,9 @@ public class Protections {
             TileEntity te = ev.world.getTileEntity(ev.x, ev.y, ev.z);
 
             // DEV: Developement only
-            //if(te != null) {
-            //   MyTown.instance.log.info("Found tile with name " + te.toString() + " on block " + ev.world.getBlock(ev.x, ev.y, ev.z).getUnlocalizedName());
-            //}
+            if(te != null) {
+               MyTown.instance.log.info("Found tile with name " + te.toString() + " on block " + ev.world.getBlock(ev.x, ev.y, ev.z).getUnlocalizedName());
+            }
 
 
 

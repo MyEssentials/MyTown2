@@ -208,7 +208,7 @@ public class Utils {
      * @param block
      * @return
      */
-    public static List<BlockPos> getBlockAndPositionNearby(BlockPos block) {
+    public static List<BlockPos> getPositionNearby(BlockPos block) {
         List<BlockPos> list = new ArrayList<BlockPos>();
         int[] dx = {0, 1, 0, -1};
         int[] dz = {1, 0, -1, 0};
