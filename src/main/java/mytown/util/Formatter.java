@@ -139,6 +139,8 @@ public class Formatter {
         sendMap(res, res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
     }
 
+
+
     private static List<String> getResidentNameList(Collection<Resident> residents) {
         List<String> residentNames = new ArrayList<String>(residents.size());
         for (Resident res : residents) {
@@ -166,5 +168,7 @@ public class Formatter {
     public static String residentInfoFormat = " ---------- %1$s  ----------";
 
     public static String townInfoFormat = " ---------- %1$s (R: %2$s | B: %3$s | P: %4$s) ----------\nResidents: %5$s\nRanks %6$s";
+
+
 
 }

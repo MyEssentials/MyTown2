@@ -13,6 +13,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.UUID;
 
@@ -65,6 +67,18 @@ public abstract class MyTownDatasource {
     public final Town newTown(String name, Resident creator) {
         Town town = new Town(name);
 
+        // Update worlds table
+        for(World world : MinecraftServer.getServer().worldServers) {
+            if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
+                saveWorld(world.provider.dimensionId);
+            }
+        }
+        for(int dim : MyTownUniverse.getInstance().getWorldsList()) {
+            if(DimensionManager.getWorld(dim) == null) {
+                deleteWorld(dim);
+            }
+        }
+
         Rank onCreationDefaultRank = null;
 
         // Setting spawn before saving
@@ -116,6 +130,18 @@ public abstract class MyTownDatasource {
     @SuppressWarnings("unchecked")
     public final AdminTown newAdminTown(String name, Resident creator) {
         AdminTown town = new AdminTown(name);
+
+        // Update worlds table
+        for(World world : MinecraftServer.getServer().worldServers) {
+            if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
+                saveWorld(world.provider.dimensionId);
+            }
+        }
+        for(int dim : MyTownUniverse.getInstance().getWorldsList()) {
+            if(DimensionManager.getWorld(dim) == null) {
+                deleteWorld(dim);
+            }
+        }
 
         Rank onCreationDefaultRank = null;
 

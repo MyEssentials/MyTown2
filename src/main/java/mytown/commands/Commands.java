@@ -3,6 +3,7 @@ package mytown.commands;
 import com.google.common.collect.ImmutableList;
 import mytown.api.interfaces.IHasFlags;
 import mytown.core.Localization;
+import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandCompletion;
 import mytown.core.utils.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
@@ -40,17 +41,36 @@ public abstract class Commands {
         if (args.size() > 0) {
             for (String s : subCommands) {
                 String name = CommandManager.commandNames.get(s);
-                // Checking if name corresponds and if parent's corresponds
+                // Checking if name corresponds and if parent's
                 if (name.equals(args.get(0)) && CommandManager.getParentPermNode(s).equals(callersPermNode)) {
                     CommandManager.commandCall(s, sender, args.subList(1, args.size()));
                     return true;
                 }
             }
-        } else {
-            // TODO: Give help
         }
+
+        sendHelpMessage(sender, callersPermNode);
+
         return false;
     }
+
+    public static void sendHelpMessage(ICommandSender sender, String permissionBase) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+
+        List<String> scList = CommandManager.getSubCommandsList(permissionBase);
+        String command = null;
+        for(String s = permissionBase; s != null; s = CommandManager.getParentPermNode(s)) {
+            if(command == null)
+                command = CommandManager.commandNames.get(s);
+            else
+                command = new StringBuilder(command).insert(0, CommandManager.commandNames.get(s) + " ").toString();
+        }
+        res.sendMessage("/" + command + ": ");
+        for(String s : scList) {
+            res.sendMessage("   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
+        }
+    }
+
 
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
         // Since everybody should have permission to /t

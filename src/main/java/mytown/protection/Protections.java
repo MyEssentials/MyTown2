@@ -5,6 +5,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import mytown.MyTown;
 import mytown.api.events.TownEvent;
+import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
@@ -98,7 +99,6 @@ public class Protections {
                     if (!town.hasBlockWhitelist(dim, x, y, z, flagType)) {
                         BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, flagType);
                         DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
-                    } else {
                     }
                 }
         }
@@ -192,8 +192,8 @@ public class Protections {
             //MyTown.instance.log.info("Updating check maps.");
             for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
                 entry.setValue(false);
-
             }
+
             for (Iterator<Map.Entry<TileEntity, Boolean>> it = checkedTileEntities.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<TileEntity, Boolean> entry = it.next();
                 if(entry.getKey().isInvalid())
@@ -210,7 +210,7 @@ public class Protections {
 
         if(ticker2 == 0) {
             // Also updating the block whitelists
-            /*
+
             for(Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
                 for(BlockWhitelist bw : town.getWhitelists()) {
                     if(!isBlockWhitelistValid(bw)) {
@@ -218,21 +218,6 @@ public class Protections {
                     }
                 }
             }
-            */
-
-            // Updating the worlds list
-            for(World world : MinecraftServer.getServer().worldServers) {
-                if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
-                    DatasourceProxy.getDatasource().saveWorld(world.provider.dimensionId);
-                }
-            }
-            for(int dim : MyTownUniverse.getInstance().getWorldsList()) {
-                if(DimensionManager.getWorld(dim) == null) {
-                    DatasourceProxy.getDatasource().deleteWorld(dim);
-                }
-            }
-
-
 
             ticker2 = MinecraftServer.getServer().worldServers.length * tickStart2;
         } else {
@@ -331,6 +316,7 @@ public class Protections {
         }
     }
 
+
     @SubscribeEvent
     public void onBlockPlacement(BlockEvent.PlaceEvent ev) {
         TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
@@ -342,10 +328,9 @@ public class Protections {
                 ev.setCanceled(true);
             } else {
                 // If it has permission, then check nearby
-                List<BlockPos> nearbyBlocks = Utils.getPositionNearby(new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId));
-                for(BlockPos pos : nearbyBlocks) {
-                    Town town = Utils.getTownAtPosition(pos.dim, pos.x >> 4, pos.z >> 4);
-                    if(!town.checkPermission(res, FlagType.placeBlocks, pos.dim, pos.x, pos.y, pos.z)) {
+                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
+                for(Town t : nearbyTowns) {
+                    if(!t.checkPermission(res, FlagType.placeBlocks)) {
                         res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                         ev.setCanceled(true);
                         return;
@@ -359,10 +344,9 @@ public class Protections {
                 return;
             } else {
                 // If it has permission, then check nearby
-                List<BlockPos> nearbyBlocks = Utils.getPositionNearby(new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId));
-                for(BlockPos pos : nearbyBlocks) {
-                    Town town = Utils.getTownAtPosition(pos.dim, pos.x >> 4, pos.z >> 4);
-                    if(!town.checkPermission(res, FlagType.placeBlocks, pos.dim, pos.x, pos.y, pos.z)) {
+                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
+                for(Town t : nearbyTowns) {
+                    if(!t.checkPermission(res, FlagType.placeBlocks)) {
                         res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                         ev.setCanceled(true);
                         return;
@@ -387,10 +371,9 @@ public class Protections {
                 ev.setCanceled(true);
             } else {
                 // If it has permission, then check nearby
-                List<BlockPos> nearbyBlocks = Utils.getPositionNearby(new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId));
-                for(BlockPos pos : nearbyBlocks) {
-                    Town town = Utils.getTownAtPosition(pos.dim, pos.x >> 4, pos.z >> 4);
-                    if(!town.checkPermission(res, FlagType.placeBlocks, pos.dim, pos.x, pos.y, pos.z)) {
+                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
+                for(Town t : nearbyTowns) {
+                    if(!t.checkPermission(res, FlagType.placeBlocks)) {
                         res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                         ev.setCanceled(true);
                         return;
@@ -404,10 +387,9 @@ public class Protections {
                 return;
             } else {
                 // If it has permission, then check nearby
-                List<BlockPos> nearbyBlocks = Utils.getPositionNearby(new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId));
-                for(BlockPos pos : nearbyBlocks) {
-                    Town town = Utils.getTownAtPosition(pos.dim, pos.x >> 4, pos.z >> 4);
-                    if(!town.checkPermission(res, FlagType.placeBlocks, pos.dim, pos.x, pos.y, pos.z)) {
+                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
+                for(Town t : nearbyTowns) {
+                    if(!t.checkPermission(res, FlagType.placeBlocks)) {
                         res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                         ev.setCanceled(true);
                         return;
@@ -420,6 +402,8 @@ public class Protections {
             }
         }
     }
+
+
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent
@@ -453,19 +437,15 @@ public class Protections {
             TileEntity te = ev.world.getTileEntity(ev.x, ev.y, ev.z);
 
             // DEV: Developement only
-            if(te != null) {
-               MyTown.instance.log.info("Found tile with name " + te.toString() + " on block " + ev.world.getBlock(ev.x, ev.y, ev.z).getUnlocalizedName());
+            if (te != null) {
+                MyTown.instance.log.info("Found tile with name " + te.toString() + " on block " + ev.world.getBlock(ev.x, ev.y, ev.z).getUnlocalizedName());
             }
-
-
-
-            // In-Town specific interactions from here
             TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, ev.x >> 4, ev.z >> 4);
 
             // If player is trying to open an inventory
-            if(te instanceof IInventory) {
-                if(tblock == null) {
-                    if(!Wild.getInstance().checkPermission(res, FlagType.accessBlocks)) {
+            if (te instanceof IInventory) {
+                if (tblock == null) {
+                    if (!Wild.getInstance().checkPermission(res, FlagType.accessBlocks)) {
                         res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
                         ev.setCanceled(true);
                     }
@@ -481,8 +461,8 @@ public class Protections {
                 }
                 // If player is trying to "activate" block
             } else {
-                if(tblock == null) {
-                    if(checkActivatedBlocks(ev.world.getBlock(ev.x, ev.y, ev.z))) {
+                if (tblock == null) {
+                    if (checkActivatedBlocks(ev.world.getBlock(ev.x, ev.y, ev.z))) {
                         if (!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
                             res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
                             ev.setCanceled(true);
@@ -581,6 +561,7 @@ public class Protections {
             }
         }
     }
+
 
     @SubscribeEvent
     public void onTownEnterRange(TownEvent.TownEnterInRangeEvent ev) {

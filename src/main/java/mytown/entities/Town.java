@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import mytown.config.Config;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -231,6 +232,16 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     @Override
     public TownBlock getBlockAtCoords(int dim, int x, int z) {
         return blocks.get(String.format(TownBlock.keyFormat, dim, x, z));
+    }
+
+    @Override
+    public int getMaxBlocks() {
+        return Config.blocksMayor + Config.blocksResident * (residents.size() - 1);
+    }
+
+    @Override
+    public boolean hasMaxAmountOfBlocks() {
+        return blocks.size() >= getMaxBlocks();
     }
 
     /* ----- IHasPlots ----- */
@@ -507,7 +518,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
         if(plot == null) {
-            if(!(Boolean)getValueAtCoords(dim, x, y, z, flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
+            if(!(Boolean)getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
                 //TODO: Check for permission
                 return false;
             }
@@ -515,6 +526,18 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
             if(!(Boolean)plot.getValue(flagType) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
                 return false;
         }
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean checkPermission(Resident res, FlagType flagType) {
+        if(flagType.getType() != Boolean.class)
+            throw new RuntimeException("FlagType is not boolean!");
+
+            if(!(Boolean)getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
+                //TODO: Check for permission
+                return false;
+            }
         return true;
     }
 

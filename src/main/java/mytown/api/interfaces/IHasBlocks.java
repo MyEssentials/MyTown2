@@ -45,4 +45,18 @@ public interface IHasBlocks {
      * @return
      */
     public TownBlock getBlockAtCoords(int dim, int x, int z);
+
+    /**
+     * Returns the maximum amount of blocks that it can have
+     *
+     * @return
+     */
+    public int getMaxBlocks();
+
+    /**
+     * Returns if it can accept any more town blocks
+     *
+     * @return
+     */
+    public boolean hasMaxAmountOfBlocks();
 }

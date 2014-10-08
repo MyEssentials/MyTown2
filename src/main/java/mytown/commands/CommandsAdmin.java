@@ -351,6 +351,8 @@ public class CommandsAdmin extends Commands {
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromName(args.get(0));
 
+        if (town.hasMaxAmountOfBlocks())
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.maxBlocks"));
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
         if (CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far

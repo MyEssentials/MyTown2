@@ -66,7 +66,7 @@ public class PlayerTracker {
 
     @SubscribeEvent
     public void onEnterChunk(EntityEvent.EnteringChunk ev) {
-        if (!(ev.entity instanceof EntityPlayer))
+        if (ev.entity == null || !(ev.entity instanceof EntityPlayer))
             return;
         checkLocationAndSendMap(ev);
     }
@@ -145,7 +145,6 @@ public class PlayerTracker {
                 Town townAt = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
                 if(town == null || town != townAt) {
                     res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
-                    return;
                 } else {
                     // If town is found then create of delete the block whitelist
 

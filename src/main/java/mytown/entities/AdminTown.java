@@ -19,4 +19,9 @@ public class AdminTown extends Town {
     public void addResident(Resident res, Rank rank) {
         // Nothing, since admin towns shouldn't have residents
     }
+
+    @Override
+    public boolean hasMaxAmountOfBlocks() {
+        return false;
+    }
 }

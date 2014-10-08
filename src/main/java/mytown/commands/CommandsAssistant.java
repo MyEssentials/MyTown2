@@ -48,9 +48,11 @@ public class CommandsAssistant extends Commands {
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
 
+        if (town.hasMaxAmountOfBlocks())
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.maxBlocks"));
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
-        if (checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
+        if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.far.notAllowed"));
             //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);

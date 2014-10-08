@@ -136,6 +136,7 @@ public class MyTown {
      * Registers all handlers (Event, etc)
      */
     private void registerHandlers() {
+
         FMLCommonHandler.instance().bus().register(new SafemodeHandler());
         PlayerTracker playerTracker = new PlayerTracker();
 

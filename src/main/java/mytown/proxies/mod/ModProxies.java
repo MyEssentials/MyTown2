@@ -16,13 +16,6 @@ public class ModProxies {
     public static void load() {
         MyTown.instance.log.info("Starting proxies...");
 
-        proxies.add(new IC2Proxy());
-        proxies.add(new BuildCraftFactoryProxy());
-        proxies.add(new BuildCraftTrasportationProxy());
-        proxies.add(new ForgePermsProxy());
-        proxies.add(new ExtraUtilitiesProxy());
-        proxies.add(new BloodMagicProxy());
-        proxies.add(new ThermalExpansionProxy());
 
         if (!ModProxies.loaded) {
             ModProxies.loaded = true;
@@ -48,8 +41,13 @@ public class ModProxies {
      * Adds all the {@link ModProxy}'s to the list
      */
     public static void addProxies() {
-        addProxy(new IC2Proxy());
-        addProxy(new ForgePermsProxy());
+        proxies.add(new IC2Proxy());
+        proxies.add(new BuildCraftFactoryProxy());
+        proxies.add(new BuildCraftTrasportationProxy());
+        proxies.add(new ForgePermsProxy());
+        proxies.add(new ExtraUtilitiesProxy());
+        proxies.add(new BloodMagicProxy());
+        proxies.add(new ThermalExpansionProxy());
     }
 
     /**

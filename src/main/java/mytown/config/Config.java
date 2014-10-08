@@ -24,5 +24,17 @@ public class Config {
     @ConfigProperty(category = "towns", name = "distance", comment = "Minimum distance (in chunks) between 2 towns. Checked when creating a town")
     public static int distanceBetweenTowns = 5;
 
+    @ConfigProperty(category = "towns", name = "blocksMayor", comment = "The amount of maximum blocks a town gets from the mayor.")
+    public static int blocksMayor = 5;
+
+    @ConfigProperty(category = "towns", name = "blocksResidents", comment = "The amount of maximum blocks a town gets from each player.")
+    public static int blocksResident = 3;
+
+    @ConfigProperty(category = "residents", name = "maxTowns", comment = "The amount of towns a resident can be in.")
+    public static int maxTowns = 3;
+
+    @ConfigProperty(category = "towns", name = "placeProtectionRange", comment = "The amount of blocks from the town in which the place protection is applied.")
+    public static int placeProtectionRange = 1;
+
 
 }

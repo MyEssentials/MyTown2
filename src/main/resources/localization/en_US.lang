@@ -5,15 +5,43 @@ mytown.cmd.err.resident.notexist=§cThe player %s does not exist!
 mytown.cmd.err.resident.notsametown=§cThe player %s is not in the town you've selected(%s)!
 mytown.cmd.err.rank.notexist=§cThe rank %s does not exist in %s!
 
-# Protection
+# Flag based notifications
 
-mytown.protection.vanilla.activateBlock=§cYou cannot activate that block!
-mytown.protection.vanilla.access=§cYou cannot access that block!
-mytown.protection.vanilla.break=§cYou cannot break that block!
-mytown.protection.vanilla.place=§cYou cannot place blocks in here!
-mytown.protection.vanilla.pickup=§cYou cannot pickup blocks/items in here!
+ # Protection
+ mytown.protection.enter=§cYou are not allowed to enter here!
+ mytown.protection.activateBlock=§cYou cannot activate that block!
+ mytown.protection.accessBlocks=§cYou cannot access that block!
+ mytown.protection.breakBlocks=§cYou cannot break that block!
+ mytown.protection.placeBlocks=§cYou cannot place blocks in here!
+ mytown.protection.pickup=§cYou cannot pickup blocks/items in here!
+ mytown.protection.explosions=§cYou cannot use explosions in here!
+ mytown.protection.mobs=§cYou cannot spawn this type of mob in here!
+ mytown.protection.attackEntities=§cYou cannot attack this type of mob in here!
+ mytown.protection.useItems=§cYou cannot use items in here!
 
-mytown.protection.ic2.energy=§cYou cannot send energy from town to wilderness/wilderness to town!
+ mytown.protection.ic2EnergyFlow=§cYou cannot send/receive energy from wilderness!
+ mytown.protection.bcPipeFlow=§cYou cannot transport through pipes from wilderness!
+ mytown.protection.pumps=§cYou cannot pump from this area!
+
+
+ # Flag Info
+ mytown.flag.enter=§3This controls if players are allowed to enter.
+ mytown.flag.activateBlock=§3This controls if players are allowed to activate pressure plates, doors, etc.
+ mytown.flag.accessBlocks=§3This controls if players are allowed to access TileEntities/Blocks that have GUI.
+ mytown.flag.breakBlocks=§3This controls if players are allowed to break blocks.
+ mytown.flag.placeBlocks=§3This controls if players are allowed to place blocks.
+ mytown.flag.pickup=§3This controls if players are allowed to pick up items/blocks from the ground.
+ mytown.flag.explosions=§3This controls if players are allowed to use explosives.
+ mytown.flag.mobs=§3This controls what category of mobs are not allowed to be spawned in here.
+ mytown.flag.attackEntities=§3This controls if players are allowed to attack the entities in here.
+ mytown.flag.useItems=§3This controls if players are allowed to use items in here (Example: Use spawn eggs).
+ 
+ mytown.flag.ic2EnergyFlow=§3This controls if players are allowed to send/receive energy from wilderness.
+ mytown.flag.bcPipeFlow=§3This controls if players are allowed to transport through pipes from wilderness.
+ mytown.flag.pumps=§3This controls if players are allowed to pump liquids from here.
+ 
+ # Notify Town
+ mytown.protection.notify.explosions=§3An explosion happened in town %s, Dim %s (%s, %s, %s).
 
 # /ta config [load|save]
 mytown.cmd.config.load.start=§3Loading config...
@@ -26,6 +54,7 @@ mytown.cmd.err.newtown.nameinuse=§cTown name %s already in use!
 mytown.cmd.err.newtown.positionError=§cYou cannot make a new town on a claimed chunk.
 mytown.cmd.err.newtown.failed=§cThe town has failed to be created!
 mytown.cmd.usage.newtown=§3/t new <townname>
+mytown.cmd.err.resident.maxTowns=§cYou cannot create/join any more towns, you have hit the maximum amount of towns you can be in.
 
 # /t invite
 mytown.cmd.err.invite.already=§cResident %s already exists in town %s!
@@ -155,3 +184,57 @@ mytown.notification.db.purging=§3The requested data-base files have been purged
 mytown.notification.town.ranks.perm.remove=§aThe permission has been successfully §cremoved§a!
 mytown.notification.perm.whitelist.start=§3Right-Click a block to change his flag value, depending on what flag you choosed, that flag will be changed for the block you selected.\nShift § Right-Click to change the mode from §9Town§3 to §9Plot§3 or from §9Plot§3 to §9Town§3!
 
+# Help for commands
+
+mytown.cmd.assistant.blocks.help=
+mytown.cmd.assistant.claim
+mytown.cmd.assistant.invite
+mytown.cmd.assistant.perm
+mytown.cmd.assistant.perm.town
+mytown.cmd.assistant.perm.town.set
+mytown.cmd.assistant.perm.town.whitelist
+mytown.cmd.assistant.promote
+mytown.cmd.assistant.ranks.add
+mytown.cmd.assistant.ranks.perm
+mytown.cmd.assistant.ranks.perm.add
+mytown.cmd.assistant.ranks.perm.list
+mytown.cmd.assistant.ranks.perm.remove
+mytown.cmd.assistant.ranks.remove
+mytown.cmd.assistant.setspawn
+mytown.cmd.assistant.unclaim
+mytown.cmd.everyone.blocks.list
+mytown.cmd.everyone.leave
+mytown.cmd.everyone.perm.plot
+mytown.cmd.everyone.perm.plot.list
+mytown.cmd.everyone.perm.plot.set
+mytown.cmd.everyone.perm.plot.whitelist
+mytown.cmd.everyone.perm.town.list
+mytown.cmd.everyone.plot
+mytown.cmd.everyone.plot.add
+mytown.cmd.everyone.plot.add.member
+mytown.cmd.everyone.plot.add.owner
+mytown.cmd.everyone.plot.delete
+mytown.cmd.everyone.plot.info
+mytown.cmd.everyone.plot.make
+mytown.cmd.everyone.plot.rename
+mytown.cmd.everyone.plot.select
+mytown.cmd.everyone.plot.select.expand
+mytown.cmd.everyone.plot.select.reset
+mytown.cmd.everyone.plot.show
+mytown.cmd.everyone.plot.vanish
+mytown.cmd.everyone.ranks
+mytown.cmd.everyone.ranks.list
+mytown.cmd.everyone.select
+mytown.cmd.everyone.spawn
+mytown.cmd.outsider.accept
+mytown.cmd.outsider.friends
+mytown.cmd.outsider.friends.accept
+mytown.cmd.outsider.friends.add
+mytown.cmd.outsider.friends.list
+mytown.cmd.outsider.friends.refuse
+mytown.cmd.outsider.friends.remove
+mytown.cmd.outsider.info
+mytown.cmd.outsider.list
+mytown.cmd.outsider.map
+mytown.cmd.outsider.new
+mytown.cmd.outsider.refuse

@@ -236,7 +236,6 @@ public class VanillaProtection extends Protection {
                         return true;
                     }
                 }
-
             }
         }
         return false;

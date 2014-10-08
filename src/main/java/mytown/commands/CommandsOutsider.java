@@ -2,6 +2,7 @@ package mytown.commands;
 
 import mytown.config.Config;
 import mytown.core.ChatUtils;
+import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -74,6 +75,8 @@ public class CommandsOutsider extends Commands {
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation"));
 
+        if(res.getTowns().size() >= Config.maxTowns)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.maxTowns"));
         if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.newtown"));
         if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
@@ -120,6 +123,9 @@ public class CommandsOutsider extends Commands {
             town = invites.get(0);
         else
             town = getTownFromName(args.get(0));
+
+        if(res.getTowns().size() >= Config.maxTowns)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.maxTowns"));
 
         // Basically true only if player specifies a town that is not in its invites
         if (!invites.contains(town))
@@ -242,5 +248,39 @@ public class CommandsOutsider extends Commands {
 
         getDatasource().deleteFriendRequest(res, toAdd, false);
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.refused", toAdd.getPlayerName()));
+    }
+
+    @CommandNode(
+            name = "help",
+            permission = "mytown.cmd.outsider.help",
+            parentName = "mytown.cmd")
+    public static void helpCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1) {
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.help"));
+        }
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+
+        String node = CommandManager.getPermissionNodeFromArgs(args, "mytown.cmd");
+        String command = "/" + CommandManager.commandNames.get("mytown.cmd");
+        String prevNode = "mytown.cmd";
+        for(String s : args) {
+            String t = CommandManager.getSubCommandNode(s, prevNode);
+            if(t != null) {
+                command += " " + s;
+                prevNode = t;
+            } else
+                break;
+        }
+
+        res.sendMessage(command);
+        List<String> scList = CommandManager.getSubCommandsList(node);
+        if(scList == null || scList.size() == 0) {
+            res.sendMessage("   " + getLocal().getLocalization(node + ".help"));
+        } else {
+            for (String s : scList) {
+                res.sendMessage("   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
+            }
+        }
     }
 }

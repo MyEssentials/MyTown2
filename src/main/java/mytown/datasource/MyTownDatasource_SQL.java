@@ -1277,11 +1277,20 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean deleteSelectedTown(Resident res) {
         try {
-            PreparedStatement statement = prepare("DELETE FROM " + prefix + "SelectedTown WHERE resident=?", true);
-            statement.setString(1, res.getUUID().toString());
-            statement.executeUpdate();
+            if(res.getTowns().size() > 0) {
+                PreparedStatement s = prepare("UPDATE FROM " + prefix + "SelectedTown SET townName=? WHERE resdent=?", true);
+                s.setString(1, res.getTowns().get(0).getName());
+                s.setString(2, res.getUUID().toString());
+                s.executeUpdate();
 
-            res.selectedTown = null;
+                res.selectedTown = res.getTowns().get(0);
+            } else {
+                PreparedStatement statement = prepare("DELETE FROM " + prefix + "SelectedTown WHERE resident=?", true);
+                statement.setString(1, res.getUUID().toString());
+                statement.executeUpdate();
+
+                res.selectedTown = null;
+            }
         } catch (Exception e) {
             log.error("Failed to delete a town selection!");
             return false;
