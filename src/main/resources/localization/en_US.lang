@@ -186,55 +186,55 @@ mytown.notification.perm.whitelist.start=§3Right-Click a block to change his fl
 
 # Help for commands
 
-mytown.cmd.assistant.blocks.help=
-mytown.cmd.assistant.claim
-mytown.cmd.assistant.invite
-mytown.cmd.assistant.perm
-mytown.cmd.assistant.perm.town
-mytown.cmd.assistant.perm.town.set
-mytown.cmd.assistant.perm.town.whitelist
-mytown.cmd.assistant.promote
-mytown.cmd.assistant.ranks.add
-mytown.cmd.assistant.ranks.perm
-mytown.cmd.assistant.ranks.perm.add
-mytown.cmd.assistant.ranks.perm.list
-mytown.cmd.assistant.ranks.perm.remove
-mytown.cmd.assistant.ranks.remove
-mytown.cmd.assistant.setspawn
-mytown.cmd.assistant.unclaim
-mytown.cmd.everyone.blocks.list
-mytown.cmd.everyone.leave
-mytown.cmd.everyone.perm.plot
-mytown.cmd.everyone.perm.plot.list
-mytown.cmd.everyone.perm.plot.set
-mytown.cmd.everyone.perm.plot.whitelist
-mytown.cmd.everyone.perm.town.list
-mytown.cmd.everyone.plot
-mytown.cmd.everyone.plot.add
-mytown.cmd.everyone.plot.add.member
-mytown.cmd.everyone.plot.add.owner
-mytown.cmd.everyone.plot.delete
-mytown.cmd.everyone.plot.info
-mytown.cmd.everyone.plot.make
-mytown.cmd.everyone.plot.rename
-mytown.cmd.everyone.plot.select
-mytown.cmd.everyone.plot.select.expand
-mytown.cmd.everyone.plot.select.reset
-mytown.cmd.everyone.plot.show
-mytown.cmd.everyone.plot.vanish
-mytown.cmd.everyone.ranks
-mytown.cmd.everyone.ranks.list
-mytown.cmd.everyone.select
-mytown.cmd.everyone.spawn
-mytown.cmd.outsider.accept
-mytown.cmd.outsider.friends
-mytown.cmd.outsider.friends.accept
-mytown.cmd.outsider.friends.add
-mytown.cmd.outsider.friends.list
-mytown.cmd.outsider.friends.refuse
-mytown.cmd.outsider.friends.remove
-mytown.cmd.outsider.info
-mytown.cmd.outsider.list
-mytown.cmd.outsider.map
-mytown.cmd.outsider.new
-mytown.cmd.outsider.refuse
+mytown.cmd.assistant.blocks.help=§2Everything related to TownBlocks (chunks in town)
+mytown.cmd.assistant.claim.help=§2Claims the chunk you are in.
+mytown.cmd.assistant.invite.help=§2Invites a player to your town.
+mytown.cmd.assistant.perm.help=§2Everything related to protection.
+mytown.cmd.assistant.perm.town.help=§2Protections related to the town.
+mytown.cmd.assistant.perm.town.set.help=§2Sets a flag to the specified value.
+mytown.cmd.assistant.perm.town.whitelist.help=§2Makes a block/entity bypass a flag.
+mytown.cmd.assistant.promote.help=§2Promotes a resident to the specified rank.
+mytown.cmd.assistant.ranks.add.help=§2Adds a rank to the town.
+mytown.cmd.assistant.ranks.perm.help=§2Everything related to a rank's permissions.
+mytown.cmd.assistant.ranks.perm.add.help=§2Adds a permission node to the rank.
+mytown.cmd.assistant.ranks.perm.list.help=§2Lists all permission nodes of that rank.
+mytown.cmd.assistant.ranks.perm.remove.help=§2Removes a permission node from a rank.
+mytown.cmd.assistant.ranks.remove.help=§2Removes a rank.
+mytown.cmd.assistant.setspawn.help=§2Sets the spawn of the town.
+mytown.cmd.assistant.unclaim.help=§2Removes the claim of the chunk you are in.
+mytown.cmd.everyone.blocks.list.help=§2Lists all chunks that are part of the town.
+mytown.cmd.everyone.leave.help=§2Leave the town.
+mytown.cmd.everyone.perm.plot.help=§2Protections related to plots.
+mytown.cmd.everyone.perm.plot.list.help=§2Lists all flags and their values from the plot.
+mytown.cmd.everyone.perm.plot.set.help=§2Sets a plot's flag.
+mytown.cmd.everyone.perm.town.list.help=§2Lists all flags and their values from the town.
+mytown.cmd.everyone.plot.help=§2Everything related to plots.
+mytown.cmd.everyone.plot.add.help=§2Adds a player to the plot.
+mytown.cmd.everyone.plot.add.member.help=§2Adds a member to the plot.
+mytown.cmd.everyone.plot.add.owner.help=§2Adds an owner to the plot.
+mytown.cmd.everyone.plot.delete.help=§2Deletes a plot.
+mytown.cmd.everyone.plot.info.help=§2Gives info about the plot you are in.
+mytown.cmd.everyone.plot.make.help=§2Creates a plot from the selection made.
+mytown.cmd.everyone.plot.rename.help=§2Renames a plot.
+mytown.cmd.everyone.plot.select.help=§2Gives a 'selector' tool.
+mytown.cmd.everyone.plot.select.expand.help=§2Expands the selection.
+mytown.cmd.everyone.plot.select.reset.help=§2Resets the selection.
+mytown.cmd.everyone.plot.show.help=§2Shows all plots.
+mytown.cmd.everyone.plot.vanish.help=§2Hides all plots.
+mytown.cmd.everyone.ranks.help=§2Everything related to ranks.
+mytown.cmd.everyone.ranks.list.help=§2Lists all ranks from the town.
+mytown.cmd.everyone.select.help=§2Selects a town in which you are in.
+mytown.cmd.everyone.spawn.help=§2Teleports the player to spawn.
+mytown.cmd.outsider.accept.help=§2Accepts the invitation to join a town.
+mytown.cmd.outsider.friends.help=§2Everything related to friends.
+mytown.cmd.outsider.friends.accept.help=§2Accepts a friend request.
+mytown.cmd.outsider.friends.add.help=§2Sends a friend request.
+mytown.cmd.outsider.friends.list.help=§2Lists all friends.
+mytown.cmd.outsider.friends.refuse.help=§2Refuses a friend request.
+mytown.cmd.outsider.friends.remove.help=§2Removes a friend
+mytown.cmd.outsider.info.help=§2Gives info about a town.
+mytown.cmd.outsider.list.help=§2Lists all towns.
+mytown.cmd.outsider.map.help=§2Gives a map of the nearby claimed chunks.
+mytown.cmd.outsider.new.help=§2Makes a new town.
+mytown.cmd.outsider.refuse.help=§2Refuses a invitation to a town.
+mytown.cmd.outsider.help.help=§2Gives help about commands.
