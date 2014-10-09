@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.item.EntityMinecartTNT;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
@@ -88,6 +89,8 @@ public class VanillaProtection extends Protection {
         this.activatedBlocks.add(Blocks.fence_gate);
 
         this.explosiveBlocks.add(EntityTNTPrimed.class);
+        this.explosiveBlocks.add(EntityWitherSkull.class);
+        this.explosiveBlocks.add(EntityMinecartTNT.class);
 
         this.trackedTileEntities.add(TileEntityPiston.class);
 

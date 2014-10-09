@@ -93,11 +93,11 @@ public abstract class Commands {
         populator.add("@a");
         CommandCompletion.completionMap.put("townCompletionAndAll", populator);
 
-        populator.clear();
+        populator = new ArrayList<String>();
         populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
         CommandCompletion.completionMap.put("townCompletion", populator);
 
-        populator.clear();
+        populator = new ArrayList<String>();
         for (Resident res : MyTownUniverse.getInstance().getResidentsMap().values()) {
             populator.add(res.getPlayerName());
         }

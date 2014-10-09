@@ -12,6 +12,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,15 +122,14 @@ public class CommandsOutsider extends Commands {
         Town town;
         if (args.size() == 0)
             town = invites.get(0);
-        else
+        else {
             town = getTownFromName(args.get(0));
-
+            // Basically true only if player specifies a town that is not in its invites
+            if (!invites.contains(town))
+                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
+        }
         if(res.getTowns().size() >= Config.maxTowns)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.maxTowns"));
-
-        // Basically true only if player specifies a town that is not in its invites
-        if (!invites.contains(town))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
 
         getDatasource().deleteTownInvite(res, town, true);
 
@@ -213,7 +213,7 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
         if(!toAdd.removeFriend(res)) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.add"));
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.remove"));
         } else {
             res.removeFriend(toAdd);
         }
@@ -281,6 +281,26 @@ public class CommandsOutsider extends Commands {
             for (String s : scList) {
                 res.sendMessage("   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
             }
+        }
+    }
+
+    @CommandNode(
+            name="invites",
+            permission = "mytown.cmd.outsider.invites",
+            parentName = "mytown.cmd")
+    public static void invitesCommand(ICommandSender sender, List<String> args) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+        if(res.getInvites().size() == 0)
+            res.sendMessage(getLocal().getLocalization("mytown.notification.resident.noInvites"));
+        else {
+            String formattedList = null;
+            for(Town town : res.getInvites())
+                if(formattedList == null)
+                    formattedList = EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
+                else
+                    formattedList += ", " + EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
+            res.sendMessage(getLocal().getLocalization("mytown.notification.resident.invites"));
+            res.sendMessage(formattedList);
         }
     }
 }

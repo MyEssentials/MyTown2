@@ -16,6 +16,7 @@ import mytown.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -252,6 +253,12 @@ public class Protections {
                     }
                 }
             } else {
+                // DEV:
+                /*
+                if(entity instanceof EntityWither) {
+                    entity.getDataWatcher().getWatchableObjectInt(20);
+                }
+                */
                 // Other entity checks
                 for (Protection prot : protections.values()) {
                     if (prot.hasToCheckEntity(entity)) {

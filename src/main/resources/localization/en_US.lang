@@ -13,7 +13,7 @@ mytown.cmd.err.rank.notexist=§cThe rank %s does not exist in %s!
  mytown.protection.accessBlocks=§cYou cannot access that block!
  mytown.protection.breakBlocks=§cYou cannot break that block!
  mytown.protection.placeBlocks=§cYou cannot place blocks in here!
- mytown.protection.pickup=§cYou cannot pickup blocks/items in here!
+ mytown.protection.pickupItems=§cYou cannot pickup blocks/items in here!
  mytown.protection.explosions=§cYou cannot use explosions in here!
  mytown.protection.mobs=§cYou cannot spawn this type of mob in here!
  mytown.protection.attackEntities=§cYou cannot attack this type of mob in here!
@@ -26,19 +26,19 @@ mytown.cmd.err.rank.notexist=§cThe rank %s does not exist in %s!
 
  # Flag Info
  mytown.flag.enter=§3This controls if players are allowed to enter.
- mytown.flag.activateBlock=§3This controls if players are allowed to activate pressure plates, doors, etc.
- mytown.flag.accessBlocks=§3This controls if players are allowed to access TileEntities/Blocks that have GUI.
- mytown.flag.breakBlocks=§3This controls if players are allowed to break blocks.
- mytown.flag.placeBlocks=§3This controls if players are allowed to place blocks.
- mytown.flag.pickup=§3This controls if players are allowed to pick up items/blocks from the ground.
- mytown.flag.explosions=§3This controls if players are allowed to use explosives.
- mytown.flag.mobs=§3This controls what category of mobs are not allowed to be spawned in here.
- mytown.flag.attackEntities=§3This controls if players are allowed to attack the entities in here.
- mytown.flag.useItems=§3This controls if players are allowed to use items in here (Example: Use spawn eggs).
+ mytown.flag.activateBlock=§3This controls if players are allowed to §3activate pressure plates, doors, etc.
+ mytown.flag.accessBlocks=§3This controls if players are allowed to §3access TileEntities/Blocks that have GUI.
+ mytown.flag.breakBlocks=§3This controls if players are allowed to §3break blocks.
+ mytown.flag.placeBlocks=§3This controls if players are allowed to §3place blocks.
+ mytown.flag.pickupItems=§3This controls if players are allowed to pick §3up items/blocks from the ground.
+ mytown.flag.explosions=§3This controls if players are allowed to use §3explosives.
+ mytown.flag.mobs=§3This controls what category of mobs are not §3allowed to be spawned in here.
+ mytown.flag.attackEntities=§3This controls if players are allowed to §3attack the entities in here.
+ mytown.flag.useItems=§3This controls if players are allowed to use §3items in here (Example: Use spawn eggs).
  
- mytown.flag.ic2EnergyFlow=§3This controls if players are allowed to send/receive energy from wilderness.
- mytown.flag.bcPipeFlow=§3This controls if players are allowed to transport through pipes from wilderness.
- mytown.flag.pumps=§3This controls if players are allowed to pump liquids from here.
+ mytown.flag.ic2EnergyFlow=§3This controls if players are allowed to §3send/receive energy from wilderness.
+ mytown.flag.bcPipeFlow=§3This controls if players are allowed to §3transport through pipes from wilderness.
+ mytown.flag.pumps=§3This controls if players are allowed to pump §3liquids from here.
  
  # Notify Town
  mytown.protection.notify.explosions=§3An explosion happened in town %s, Dim %s (%s, %s, %s).
@@ -62,6 +62,13 @@ mytown.cmd.err.invite.noinvitations=§cYou have no invitations!
 mytown.cmd.usage.invite=§3/t invite <player-name|accept|refuse> [town-name]
 mytown.cmd.err.resident.notexist=§cThat player does not exist!
 mytown.cmd.err.invite.accept=§cYou have more invitations! §3Choose what invitation you want to accept: "/t invite accept <town-name>".
+
+# /t friends
+
+mytown.cmd.err.friends.add=§c%s is already a friend of yours or you already sent an invitation!
+mytown.cmd.err.friends.remove=§c%s is not a friend of yours!
+mytown.cmd.err.friends.accept=§cAccept invitation failed!
+mytown.cmd.err.friends.refuse=§cRefuse invitation failed!
 
 # /t claim
 mytown.cmd.err.claim.failed=§cFailed to claim block!
@@ -183,6 +190,10 @@ mytown.notification.town.ranks.add=§3Rank %s has been added to town %s!
 mytown.notification.db.purging=§3The requested data-base files have been purged!
 mytown.notification.town.ranks.perm.remove=§aThe permission has been successfully §cremoved§a!
 mytown.notification.perm.whitelist.start=§3Right-Click a block to change his flag value, depending on what flag you choosed, that flag will be changed for the block you selected.\nShift § Right-Click to change the mode from §9Town§3 to §9Plot§3 or from §9Plot§3 to §9Town§3!
+mytown.notification.friends.invitationSent=§aInvitation has been sent!
+mytown.notification.friends.removed=§aPlayer has been removed from the friends list of town!
+mytown.notification.friends.accepted=§a%s has accepted your invitation to be in the friends list of town!
+mytown.notification.friends.refused=§c%s has refused your invitation to be in the friends list of town!
 
 # Help for commands
 
@@ -207,6 +218,7 @@ mytown.cmd.everyone.leave.help=§2Leave the town.
 mytown.cmd.everyone.perm.plot.help=§2Protections related to plots.
 mytown.cmd.everyone.perm.plot.list.help=§2Lists all flags and their values from the plot.
 mytown.cmd.everyone.perm.plot.set.help=§2Sets a plot's flag.
+mytown.cmd.everyone.perm.plot.whitelist.help=§2Makes a block/entity bypass a flag of plot.
 mytown.cmd.everyone.perm.town.list.help=§2Lists all flags and their values from the town.
 mytown.cmd.everyone.plot.help=§2Everything related to plots.
 mytown.cmd.everyone.plot.add.help=§2Adds a player to the plot.

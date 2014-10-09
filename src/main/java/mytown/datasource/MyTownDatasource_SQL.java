@@ -950,13 +950,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
                 res.addInvite(town);
             } else {
+                log.error("Failed to save an invite to the datasource!");
                 return false;
             }
         } catch (SQLException e) {
           log.error("Failed to load town invite: " + res.getPlayerName() + " for town " + town.getName());
             return false;
         }
-
 
         return true;
     }
@@ -1343,6 +1343,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.executeUpdate();
             if(response)
                 linkResidentToTown(res, town, town.getDefaultRank());
+            res.removeInvite(town);
         } catch (SQLException e) {
             log.error("Failed to delete town invite for " + res.getPlayerName() + " to town " + town.getName());
             return false;

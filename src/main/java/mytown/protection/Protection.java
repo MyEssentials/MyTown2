@@ -15,6 +15,7 @@ import mytown.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -95,11 +96,17 @@ public abstract class Protection {
     public boolean checkEntity(Entity entity) {
         Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
         if(town == null) {
+
             //Wild explosives
             if(explosiveBlocks.contains(entity.getClass())) {
-                MyTown.instance.log.info("Checking entity with explosives.");
-                if (!(Boolean)Wild.getInstance().getFlag(FlagType.explosions).getValue())
+                //MyTown.instance.log.info("Checking entity with explosives.");
+                if (!(Boolean)Wild.getInstance().getFlag(FlagType.explosions).getValue()) {
+                    //Temporary
+                    if(entity instanceof EntityWitherSkull)
+                       return false;
+
                     return true;
+                }
             }
         } else {
             String value = (String)town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);

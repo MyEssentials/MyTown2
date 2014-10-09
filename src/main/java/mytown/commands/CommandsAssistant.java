@@ -103,7 +103,7 @@ public class CommandsAssistant extends Commands {
         if (town.hasResident(args.get(0)))
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.already", args.get(0), town.getName()));
 
-        getDatasource().saveTownInvite(res, town);
+        getDatasource().saveTownInvite(target, town);
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.invited", town.getName()));
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.invite.sent", args.get(0)));
     }
@@ -186,7 +186,7 @@ public class CommandsAssistant extends Commands {
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.promote.notMayor"));
         Rank rank = getRankFromTown(town, args.get(1));
         if (getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
-            resSender.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.sender"));
+            resSender.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.sender", resTarget.getPlayerName(), rank.getName()));
             resTarget.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.target", rank.getName(), town.getName()));
         }
 
