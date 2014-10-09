@@ -557,18 +557,24 @@ public class Protections {
         }
     }
 
+    /*
+
+
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void onFluidMoving(FluidEvent.FluidMotionEvent ev) {
+        MyTown.instance.log.info("Liquid event: " + ev.x + ev.y + ev.z);
         Town town = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
         if(town != null) {
             boolean placeFlag = (Boolean)town.getValue(FlagType.placeBlocks);
             if(!placeFlag) {
-                ev.setCanceled(true);
+                ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
+                town.notifyEveryone(FlagType.placeBlocks.getLocalizedTownNotification());
+                //ev.setCanceled(true);
             }
         }
     }
-
+    */
 
     @SubscribeEvent
     public void onTownEnterRange(TownEvent.TownEnterInRangeEvent ev) {

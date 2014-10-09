@@ -190,7 +190,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "purge",
             permission = "mytown.adm.cmd.db.purge",
-            parentName = "mytown.adm.cmd.db")
+            parentName = "mytown.adm.cmd.db",
+            console = true)
     public static void dbCommandPurge(ICommandSender sender, List<String> args) {
         for (Iterator<Town> it = getUniverse().getTownsMap().values().iterator(); it.hasNext(); ) {
             getDatasource().deleteTown(it.next());
@@ -384,8 +385,13 @@ public class CommandsAdmin extends Commands {
         } else {
             throw new CommandException("§cYou cannot delete the Block containing the spawn point!");
         }
-
     }
 
-
+    @CommandNode(
+            name = "help",
+            permission = "mytown.adm.cmd.help",
+            parentName = "mytown.adm.cmd")
+    public static void helpCommand(ICommandSender sender, List<String> args) {
+        sendHelpMessageWithArgs(sender, args, "mytown.adm.cmd");
+    }
 }

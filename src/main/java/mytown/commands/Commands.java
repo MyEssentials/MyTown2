@@ -71,6 +71,37 @@ public abstract class Commands {
         }
     }
 
+    public static void sendHelpMessageWithArgs(ICommandSender sender, List<String> args, String permBase) {
+        if(args.size() < 1) {
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.help"));
+        }
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+
+        String node = CommandManager.getPermissionNodeFromArgs(args, permBase);
+        String command = "/" + CommandManager.commandNames.get(permBase);
+        String prevNode = permBase;
+        for(String s : args) {
+            String t = CommandManager.getSubCommandNode(s, prevNode);
+            if(t != null) {
+                command += " " + s;
+                prevNode = t;
+            } else
+                break;
+        }
+
+        res.sendMessage(command);
+        List<String> scList = CommandManager.getSubCommandsList(node);
+        if(scList == null || scList.size() == 0) {
+            res.sendMessage("   " + getLocal().getLocalization(node + ".help"));
+        } else {
+            for (String s : scList) {
+                res.sendMessage("   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
+            }
+        }
+    }
+
+
 
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
         // Since everybody should have permission to /t

@@ -196,10 +196,13 @@ public class CommandsOutsider extends Commands {
             throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.friends.add"));
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
+        if(res == toAdd)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.add.self"));
         if(!getDatasource().saveFriendRequest(res, toAdd)) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.add"));
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.add.already"));
         }
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.invitationSent"));
+        toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotInvitation", res.getPlayerName()));
     }
 
     @CommandNode(
@@ -218,6 +221,7 @@ public class CommandsOutsider extends Commands {
             res.removeFriend(toAdd);
         }
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.removed"));
+        toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotRemoved", res.getPlayerName()));
     }
 
     @CommandNode(
@@ -233,6 +237,7 @@ public class CommandsOutsider extends Commands {
 
         getDatasource().deleteFriendRequest(res, toAdd, true);
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.accepted", toAdd.getPlayerName()));
+        toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotAccepted", res.getPlayerName()));
     }
 
     @CommandNode(
@@ -248,6 +253,7 @@ public class CommandsOutsider extends Commands {
 
         getDatasource().deleteFriendRequest(res, toAdd, false);
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.refused", toAdd.getPlayerName()));
+        toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotRefused", res.getPlayerName()));
     }
 
     @CommandNode(
@@ -255,33 +261,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.help",
             parentName = "mytown.cmd")
     public static void helpCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.help"));
-        }
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-
-        String node = CommandManager.getPermissionNodeFromArgs(args, "mytown.cmd");
-        String command = "/" + CommandManager.commandNames.get("mytown.cmd");
-        String prevNode = "mytown.cmd";
-        for(String s : args) {
-            String t = CommandManager.getSubCommandNode(s, prevNode);
-            if(t != null) {
-                command += " " + s;
-                prevNode = t;
-            } else
-                break;
-        }
-
-        res.sendMessage(command);
-        List<String> scList = CommandManager.getSubCommandsList(node);
-        if(scList == null || scList.size() == 0) {
-            res.sendMessage("   " + getLocal().getLocalization(node + ".help"));
-        } else {
-            for (String s : scList) {
-                res.sendMessage("   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
-            }
-        }
+        sendHelpMessageWithArgs(sender, args, "mytown.cmd");
     }
 
     @CommandNode(
