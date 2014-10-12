@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -28,6 +29,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -298,6 +300,62 @@ public class Utils {
         }
         Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
         return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static MovingObjectPosition tracePath(World world, float x, float y, float z, float tx, float ty, float tz, float borderSize, HashSet<Entity> excluded)
+    {
+        Vec3 startVec = Vec3.createVectorHelper(x, y, z);
+        Vec3 lookVec = Vec3.createVectorHelper(tx-x, ty-y, tz-z);
+        Vec3 endVec = Vec3.createVectorHelper(tx, ty, tz);
+        float minX = x < tx ? x : tx;
+        float minY = y < ty ? y : ty;
+        float minZ = z < tz ? z : tz;
+        float maxX = x > tx ? x : tx;
+        float maxY = y > ty ? y : ty;
+        float maxZ = z > tz ? z : tz;
+        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ).expand(borderSize, borderSize, borderSize);
+        List<Entity> allEntities = world.getEntitiesWithinAABBExcludingEntity(null, bb);
+        MovingObjectPosition blockHit = world.rayTraceBlocks(startVec, endVec);
+        startVec = Vec3.createVectorHelper(x, y, z);
+        endVec = Vec3.createVectorHelper(tx, ty, tz);
+        float maxDistance = (float) endVec.distanceTo(startVec);
+        if(blockHit!=null)
+        {
+            maxDistance = (float) blockHit.hitVec.distanceTo(startVec);
+        }
+        Entity closestHitEntity = null;
+        float closestHit = Float.POSITIVE_INFINITY;
+        float currentHit;
+        AxisAlignedBB entityBb;// = ent.getBoundingBox();
+        MovingObjectPosition intercept;
+        for(Entity ent : allEntities)
+        {
+            if(ent.canBeCollidedWith() && (excluded == null || !excluded.contains(ent)))
+            {
+                float entBorder =  ent.getCollisionBorderSize();
+                entityBb = ent.boundingBox;
+                if(entityBb!=null)
+                {
+                    entityBb = entityBb.expand(entBorder, entBorder, entBorder);
+                    intercept = entityBb.calculateIntercept(startVec, endVec);
+                    if(intercept!=null)
+                    {
+                        currentHit = (float) intercept.hitVec.distanceTo(startVec);
+                        if(currentHit < closestHit || currentHit==0)
+                        {
+                            closestHit = currentHit;
+                            closestHitEntity = ent;
+                        }
+                    }
+                }
+            }
+        }
+        if(closestHitEntity!=null)
+        {
+            blockHit = new MovingObjectPosition(closestHitEntity);
+        }
+        return blockHit;
     }
 
     /**

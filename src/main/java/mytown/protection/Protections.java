@@ -25,11 +25,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -360,8 +362,9 @@ public class Protections {
                     }
                 }
             }
-            if (res.hasTown(tblock.getTown()) && ev.block instanceof ITileEntityProvider) {
-                Class<? extends TileEntity> clsTe = ((ITileEntityProvider)ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage()).getClass();
+            TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage());
+            if (te != null) {
+                Class<? extends TileEntity> clsTe = te.getClass();
                 addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
             }
         }
@@ -404,19 +407,52 @@ public class Protections {
                 }
             }
             if (res.hasTown(tblock.getTown()) && ev.block instanceof ITileEntityProvider) {
-                Class<? extends TileEntity> clsTe = ((ITileEntityProvider)ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage()).getClass();
-                addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
+                TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage());
+                if (te != null) {
+                    Class<? extends TileEntity> clsTe = te.getClass();
+                    addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
+                }
             }
         }
     }
 
 
 
+    @SubscribeEvent
+    public void onEntityInteract(EntityInteractEvent ev) {
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        ItemStack currStack = ev.entityPlayer.getHeldItem();
+        if(currStack != null) {
+            for(Protection prot : protections.values()) {
+                if(prot.checkItemUsage(currStack, res, new BlockPos((int)ev.target.posX, (int)ev.target.posY, (int)ev.target.posZ, ev.entityPlayer.worldObj.provider.dimensionId))) {
+                    ev.setCanceled(true);
+                    return;
+                }
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent ev) {
         if (ev.entityPlayer.worldObj.isRemote)
             return;
+
+        int x = ev.x, y = ev.y, z = ev.z;
+
+        /*
+        // TODO: Maybe revise it
+        // If it's an entity then check is gonna occur on that entity's position
+        MovingObjectPosition obj = Utils.tracePath(ev.world, (float)ev.entityPlayer.posX, (float)ev.entityPlayer.posY + ev.entityPlayer.eyeHeight, (float)ev.entityPlayer.posZ, (float)ev.entityPlayer.getLookVec().xCoord, (float)ev.entityPlayer.getLookVec().yCoord, (float)ev.entityPlayer.getLookVec().zCoord, 0.2F, null);
+        //ev.entityPlayer.getLookVec()
+        if(obj != null && obj.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
+            MyTown.instance.log.info("Found entity at: " + obj.blockX + ", " + obj.blockY + ", " + obj.blockZ);
+
+            x = obj.blockX;
+            y = obj.blockY;
+            z = obj.blockZ;
+        }
+        */
 
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
         if (res == null) {
@@ -429,9 +465,9 @@ public class Protections {
 
         // Item usage check here
         if(currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
-
+            MyTown.instance.log.info("Item usage position: " + x + ", " + y + ", " + z);
             for(Protection protection : protections.values()) {
-                if(protection.checkItemUsage(currentStack, res, new BlockPos(playerPos.posX, playerPos.posY, playerPos.posZ, ev.world.provider.dimensionId))) {
+                if(protection.checkItemUsage(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId))) {
                     ev.setCanceled(true);
                     return;
                 }
@@ -441,13 +477,13 @@ public class Protections {
         // Activate and access check here
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
 
-            TileEntity te = ev.world.getTileEntity(ev.x, ev.y, ev.z);
+            TileEntity te = ev.world.getTileEntity(x, y, z);
 
             // DEV: Developement only
             if (te != null) {
-                MyTown.instance.log.info("Found tile with name " + te.toString() + " on block " + ev.world.getBlock(ev.x, ev.y, ev.z).getUnlocalizedName());
+                MyTown.instance.log.info("Found tile with name " + te.toString() + " on block " + ev.world.getBlock(x, y, z).getUnlocalizedName());
             }
-            TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, ev.x >> 4, ev.z >> 4);
+            TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, x >> 4, z >> 4);
 
             // If player is trying to open an inventory
             if (te instanceof IInventory) {
@@ -457,11 +493,11 @@ public class Protections {
                         ev.setCanceled(true);
                     }
                 } else {
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.accessBlocks))
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.accessBlocks))
                         return;
 
                     // Checking if a player can access the block here
-                    if (!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                    if (!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, x, y, z)) {
                         res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
                         ev.setCanceled(true);
                     }
@@ -469,18 +505,18 @@ public class Protections {
                 // If player is trying to "activate" block
             } else {
                 if (tblock == null) {
-                    if (checkActivatedBlocks(ev.world.getBlock(ev.x, ev.y, ev.z))) {
+                    if (checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
                         if (!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
                             res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
                             ev.setCanceled(true);
                         }
                     }
                 } else {
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, FlagType.activateBlocks))
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.activateBlocks))
                         return;
 
-                    if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                        if (checkActivatedBlocks(ev.world.getBlock(ev.x, ev.y, ev.z))) {
+                    if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
+                        if (checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
                             res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
                             ev.setCanceled(true);
                         }

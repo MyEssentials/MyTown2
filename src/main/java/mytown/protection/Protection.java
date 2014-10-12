@@ -52,7 +52,7 @@ public abstract class Protection {
     /**
      * The list of types of protected blocks that can be actuvated by a right click.
      */
-    public List<net.minecraft.block.Block> activatedBlocks;
+    public List<Block> activatedBlocks;
 
     /**
      * The list of types of blocks that are affected by the "explosions" flag

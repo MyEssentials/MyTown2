@@ -32,6 +32,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
 import java.util.ArrayList;
@@ -258,5 +259,17 @@ public class VanillaProtection extends Protection {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerOpenContainer(PlayerOpenContainerEvent ev) {
         //TODO: To be implemented... maybe
+    }
+
+    @SubscribeEvent
+    public void onBucketFill(FillBucketEvent ev) {
+        Resident res = getDatasource().getOrMakeResident(ev.entityPlayer);
+        Town town = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
+        if(town != null) {
+            boolean itemFlag = (Boolean)town.getValueAtCoords(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ, FlagType.useItems);
+            if(!itemFlag && !town.checkPermission(res, FlagType.useItems)) {
+                ev.setCanceled(true);
+            }
+        }
     }
 }
