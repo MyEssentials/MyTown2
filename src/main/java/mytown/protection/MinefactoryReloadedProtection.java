@@ -27,7 +27,7 @@ public class MinefactoryReloadedProtection extends Protection {
 
     private Class<? extends TileEntity> clsTileEntityFactory;
     private Item safariNet, safariNetR, safariNetJ, portaSpawner;
-    Class<? extends Item> clsSafariNet;
+    private Class<? extends Item> clsSafariNet;
 
     private FieldAccess fAccessArea;
     private MethodAccess mAccessArea, mAccessTile;
@@ -97,7 +97,7 @@ public class MinefactoryReloadedProtection extends Protection {
 
     @Override
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
-        if(clsSafariNet.isAssignableFrom(itemStack.getItem().getClass()) || itemStack.getItem() == safariNet || itemStack.getItem() == safariNetR || itemStack.getItem() == safariNetJ || itemStack.getItem() == portaSpawner) {
+        if(itemStack.getItem() == safariNet || itemStack.getItem() == safariNetR || itemStack.getItem() == safariNetJ || itemStack.getItem() == portaSpawner) {
             MyTown.instance.log.info("Found safari net usage!");
             Town town = Utils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
             if(town != null) {

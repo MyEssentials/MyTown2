@@ -362,10 +362,12 @@ public class Protections {
                     }
                 }
             }
-            TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage());
-            if (te != null) {
-                Class<? extends TileEntity> clsTe = te.getClass();
-                addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
+            if (res.hasTown(tblock.getTown()) && ev.block instanceof ITileEntityProvider) {
+                TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage());
+                if (te != null) {
+                    Class<? extends TileEntity> clsTe = te.getClass();
+                    addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
+                }
             }
         }
     }

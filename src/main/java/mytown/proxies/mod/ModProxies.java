@@ -48,6 +48,7 @@ public class ModProxies {
         proxies.add(new BloodMagicProxy());
         proxies.add(new ThermalExpansionProxy());
         proxies.add(new MinefactoryReloadedProxy());
+        proxies.add(new BotaniaProxy());
     }
 
     /**
