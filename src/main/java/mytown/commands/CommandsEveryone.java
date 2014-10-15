@@ -66,11 +66,11 @@ public class CommandsEveryone extends Commands {
         }
     }
 
-
-        @CommandNode(
-            name = "pass",
-            permission = "mytown.cmd.mayor.pass",
-            parentName = "mytown.cmd")
+    @CommandNode(
+        name = "pass",
+        permission = "mytown.cmd.mayor.pass",
+        parentName = "mytown.cmd",
+        completionKeys = {"residentCompletion"})
     public static void passCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.leave.pass"));
@@ -88,7 +88,6 @@ public class CommandsEveryone extends Commands {
             //...
         }
     }
-
 
     @CommandNode(
             name = "spawn",

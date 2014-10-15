@@ -2,12 +2,14 @@ package mytown.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import mytown.MyTown;
 import mytown.core.utils.command.CommandManager;
 import mytown.entities.Rank;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -102,9 +104,14 @@ public class RanksConfig {
             Wrapper[] wrappedObjects = gson.fromJson(reader, Wrapper[].class);
 
             for (Wrapper w : wrappedObjects) {
-                for (String s : w.permissions) {
-                    if (!CommandManager.commandList.containsKey(s))
-                        throw new RuntimeException("Permission node " + s + " does not exist!");
+                for (Iterator<String> it = w.permissions.iterator(); it.hasNext(); ) {
+                    String s = it.next();
+                    if (!CommandManager.commandList.containsKey(s)) {
+                        // Omitting permissions that don't exist
+                        //throw new RuntimeException("Permission node " + s + " does not exist!");
+                        MyTown.instance.log.error("Permission node " + s + " does not exist!");
+                        it.remove();
+                    }
                 }
                 if (w.type != RankType.Outsider)
                     Rank.defaultRanks.put(w.name, w.permissions);

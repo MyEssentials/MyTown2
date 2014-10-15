@@ -1,7 +1,9 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
+import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.api.interfaces.IHasFlags;
+import mytown.config.Config;
 import mytown.core.Localization;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandCompletion;
@@ -16,6 +18,8 @@ import mytown.proxies.LocalizationProxy;
 import mytown.util.Utils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -243,5 +247,24 @@ public abstract class Commands {
         } catch (IllegalArgumentException e) {
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", name));
         }
+    }
+
+    public static int getPaymentStack(ICommandSender sender, int minAmount) {
+        if(!(sender instanceof EntityPlayer))
+            throw new CommandException("The sender is not a player!");
+        EntityPlayer player = (EntityPlayer)sender;
+        int stackNumber = -1;
+        for(int i = 0; i < player.inventory.mainInventory.length; i++) {
+            ItemStack itemStack = player.inventory.mainInventory[i];
+            if(itemStack == null)
+                continue;
+            if(GameRegistry.findUniqueIdentifierFor(itemStack.getItem()).name.equals(Config.costItemName) && itemStack.stackSize >= minAmount) {
+                stackNumber = i;
+                break;
+            }
+        }
+        if(stackNumber == -1)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.cost", minAmount, Config.costItemName));
+        return stackNumber;
     }
 }

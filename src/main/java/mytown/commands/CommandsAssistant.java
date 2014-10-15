@@ -1,5 +1,6 @@
 package mytown.commands;
 
+import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.CommandManager;
@@ -14,6 +15,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
@@ -55,9 +57,13 @@ public class CommandsAssistant extends Commands {
         if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.far.notAllowed"));
             //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+        int stackNumber = getPaymentStack(sender, Config.costAmountClaim);
+        player.inventory.decrStackSize(stackNumber, Config.costAmountClaim);
+
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
             throw new CommandException("Failed to create Block"); // TODO Localize
+
         getDatasource().saveBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
     }
@@ -192,51 +198,105 @@ public class CommandsAssistant extends Commands {
 
     }
 
-    @CommandNode(
-            name = "add",
-            permission = "mytown.cmd.assistant.ranks.add",
-            parentName = "mytown.cmd.everyone.ranks",
-            completionKeys = {"-", "ranksCompletion"})
-    public static void ranksAddCommand(ICommandSender sender, List<String> args) {
+    public static class ModifyRanks {
 
-        if (args.size() < 2)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks"));
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
+        @CommandNode(
+                name = "add",
+                permission = "mytown.cmd.assistant.ranks.add",
+                parentName = "mytown.cmd.everyone.ranks",
+                completionKeys = {"-", "ranksCompletion"})
+        public static void ranksAddCommand(ICommandSender sender, List<String> args) {
 
-        if (town.hasRankName(args.get(0)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.add.already", args.get(0)));
-        if (!town.hasRankName(args.get(1)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.add.notexist", args.get(1)));
+            if (args.size() < 2)
+                throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks"));
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+
+            if (town.hasRankName(args.get(0)))
+                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.add.already", args.get(0)));
+            if (!town.hasRankName(args.get(1)))
+                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.add.notexist", args.get(1)));
 
 
-        Rank rank = new Rank(args.get(0), town.getRank(args.get(1)).getPermissions(), town);
-        getDatasource().saveRank(rank, false); // TODO: Set default properly?
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(0), town.getName()));
-    }
+            Rank rank = new Rank(args.get(0), town.getRank(args.get(1)).getPermissions(), town);
+            getDatasource().saveRank(rank, false); // TODO: Set default properly?
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(0), town.getName()));
+        }
 
-    @CommandNode(
-            name = "remove",
-            permission = "mytown.cmd.assistant.ranks.remove",
-            parentName = "mytown.cmd.everyone.ranks",
-            completionKeys = {"rankCompletion"})
-    public static void ranksRemoveCommand(ICommandSender sender, List<String> args) {
+        @CommandNode(
+                name = "remove",
+                permission = "mytown.cmd.assistant.ranks.remove",
+                parentName = "mytown.cmd.everyone.ranks",
+                completionKeys = {"rankCompletion"})
+        public static void ranksRemoveCommand(ICommandSender sender, List<String> args) {
 
-        if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks"));
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = res.getSelectedTown();
-        Rank rank = getRankFromTown(town, args.get(0));
+            if (args.size() < 1)
+                throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks"));
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = res.getSelectedTown();
+            Rank rank = getRankFromTown(town, args.get(0));
 
-        if (town.getDefaultRank().equals(rank) || Rank.theMayorDefaultRank.equals(rank.getName()))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.cantDelete"));
+            if (town.getDefaultRank().equals(rank) || Rank.theMayorDefaultRank.equals(rank.getName()))
+                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.cantDelete"));
 
-        if (getDatasource().deleteRank(rank)) {
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
-        } else {
-            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notallowed", args.get(0)));
+            if (getDatasource().deleteRank(rank)) {
+                res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
+            } else {
+                res.sendMessage(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notallowed", args.get(0)));
+            }
+        }
+
+
+        @CommandNode(
+                name = "add",
+                permission = "mytown.cmd.assistant.ranks.perm.add",
+                parentName = "mytown.cmd.assistant.ranks.perm")
+        public static void ranksPermAddCommand(ICommandSender sender, List<String> args) {
+
+            if (args.size() < 2)
+                throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
+
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+            Rank rank = getRankFromTown(town, args.get(0));
+
+            if (!CommandManager.commandList.keySet().contains(args.get(1)))
+                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));
+
+            // Adding permission if everything is alright
+            if (rank.addPermission(args.get(1))) {
+                getDatasource().saveRank(rank, rank.getTown().getDefaultRank().equals(rank));
+                res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
+            } else
+                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.add.failed", args.get(1)));
+        }
+
+        @CommandNode(
+                name = "remove",
+                permission = "mytown.cmd.assistant.ranks.perm.remove",
+                parentName = "mytown.cmd.assistant.ranks.perm")
+        public static void ranksPermRemoveCommand(ICommandSender sender, List<String> args) {
+
+            if (args.size() < 2)
+                throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
+
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+
+            Rank rank = getRankFromTown(town, args.get(0));
+
+            if (!CommandManager.commandList.keySet().contains(args.get(1)))
+                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));
+
+            // Removing permission if everything is alright
+            if (rank.removePermission(args.get(1))) {
+                getDatasource().saveRank(rank, rank.getTown().getDefaultRank().equals(rank));
+                res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
+            } else
+                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.remove.failed", args.get(1)));
         }
     }
+
 
     @CommandNode(
             name = "perm",
@@ -267,56 +327,6 @@ public class CommandsAssistant extends Commands {
         }
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), rank.getTown().getName(), msg));
-
-    }
-
-    @CommandNode(
-            name = "add",
-            permission = "mytown.cmd.assistant.ranks.perm.add",
-            parentName = "mytown.cmd.assistant.ranks.perm")
-    public static void ranksPermAddCommand(ICommandSender sender, List<String> args) {
-
-        if (args.size() < 2)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
-        Rank rank = getRankFromTown(town, args.get(0));
-
-        if (!CommandManager.commandList.keySet().contains(args.get(1)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));
-
-        // Adding permission if everything is alright
-        if (rank.addPermission(args.get(1))) {
-            getDatasource().saveRank(rank, rank.getTown().getDefaultRank().equals(rank));
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
-        } else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.add.failed", args.get(1)));
-    }
-
-    @CommandNode(
-            name = "remove",
-            permission = "mytown.cmd.assistant.ranks.perm.remove",
-            parentName = "mytown.cmd.assistant.ranks.perm")
-    public static void ranksPermRemoveCommand(ICommandSender sender, List<String> args) {
-
-        if (args.size() < 2)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
-
-        Rank rank = getRankFromTown(town, args.get(0));
-
-        if (!CommandManager.commandList.keySet().contains(args.get(1)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));
-
-        // Removing permission if everything is alright
-        if (rank.removePermission(args.get(1))) {
-            getDatasource().saveRank(rank, rank.getTown().getDefaultRank().equals(rank));
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
-        } else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.remove.failed", args.get(1)));
     }
 
     // Temporary here, might integrate in the methods

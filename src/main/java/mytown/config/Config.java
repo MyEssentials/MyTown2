@@ -1,6 +1,8 @@
 package mytown.config;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.core.utils.config.ConfigProperty;
+import net.minecraft.init.Items;
 
 // TODO More config!
 public class Config {
@@ -36,5 +38,15 @@ public class Config {
     @ConfigProperty(category = "towns", name = "placeProtectionRange", comment = "The amount of blocks from the town in which the place protection is applied.")
     public static int placeProtectionRange = 1;
 
+    @ConfigProperty(category = "towns", name = "modifiableRanks", comment = "If true residents with permission can modify the ranks of their towns. This feature hasn't been fully tested yet and it might cause problems!")
+    public static boolean modifiableRanks = false;
 
+    @ConfigProperty(category = "towns", name = "costItem", comment = "The item which is used for paying for claims and making new towns.")
+    public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).name;
+
+    @ConfigProperty(category = "towns", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town.")
+    public static int costAmountMakeTown = 5;
+
+    @ConfigProperty(category = "towns", name = "costAmountClaim", comment = "The amount of the cost item you need to create a town.")
+    public static int costAmountClaim = 3;
 }

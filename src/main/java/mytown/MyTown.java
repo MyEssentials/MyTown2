@@ -56,6 +56,7 @@ public class MyTown {
 
         ConfigProcessor.load(config, Config.class);
         LocalizationProxy.load();
+
         registerHandlers();
 
         // Add all the ModProxys
@@ -114,6 +115,9 @@ public class MyTown {
         }
         CommandManager.registerCommands(CommandsEveryone.class, m);
         CommandManager.registerCommands(CommandsAssistant.class, m);
+        if(Config.modifiableRanks)
+            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, m);
+
         CommandManager.registerCommands(CommandsAdmin.class);
         CommandManager.registerCommands(CommandsOutsider.class, m);
     }

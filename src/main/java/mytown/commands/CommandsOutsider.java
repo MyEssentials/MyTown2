@@ -1,5 +1,6 @@
 package mytown.commands;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandManager;
@@ -12,6 +13,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
@@ -90,6 +92,8 @@ public class CommandsOutsider extends Commands {
                     throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.tooClose"));
             }
         }
+        int stackNumber = getPaymentStack(sender, Config.costAmountMakeTown);
+        player.inventory.decrStackSize(stackNumber, Config.costAmountMakeTown);
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
