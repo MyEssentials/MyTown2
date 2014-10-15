@@ -74,7 +74,7 @@ public class CommandsOutsider extends Commands {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation"));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
 
         if(res.getTowns().size() >= Config.maxTowns)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.maxTowns"));

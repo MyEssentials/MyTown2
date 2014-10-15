@@ -228,8 +228,8 @@ public class CommandsAssistant extends Commands {
         Town town = res.getSelectedTown();
         Rank rank = getRankFromTown(town, args.get(0));
 
-        if (town.getDefaultRank().equals(rank))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.rank.defaultDeletion"));
+        if (town.getDefaultRank().equals(rank) || Rank.theMayorDefaultRank.equals(rank.getName()))
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.cantDelete"));
 
         if (getDatasource().deleteRank(rank)) {
             res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));

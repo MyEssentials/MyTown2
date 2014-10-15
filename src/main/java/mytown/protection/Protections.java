@@ -19,6 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -26,8 +27,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -37,7 +41,9 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.FluidEvent;
+import net.minecraftforge.fluids.IFluidBlock;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -209,7 +215,7 @@ public class Protections {
             ticker--;
         }
 
-        // TODO: Add a command to clean up the block whitelist table periodically periodically
+        // TODO: Add a command to clean up the block whitelist table periodically
 
         if(ticker2 == 0) {
             // Also updating the block whitelists
@@ -296,7 +302,36 @@ public class Protections {
                 }
             }
         }
+
+        if(!errored) {
+            try {
+                //MyTown.instance.log.info("Checking...");
+                for (TownBlock tb : MyTownUniverse.getInstance().getBlocksMap().values()) {
+                    //Chunk chunk = ev.world.getChunkFromChunkCoords(tb.getX(), tb.getZ());
+
+                    Field field = WorldServer.class.getDeclaredField("pendingTickListEntriesThisTick");
+                    field.setAccessible(true);
+
+                    List<NextTickListEntry> list = (List<NextTickListEntry>) field.get(ev.world);
+                    if (list != null) {
+                        for (Iterator<NextTickListEntry> it = list.iterator(); it.hasNext(); ) {
+                            NextTickListEntry entry = it.next();
+                            if (entry.func_151351_a() instanceof IFluidBlock) {
+                                it.remove();
+                            }
+                            MyTown.instance.log.info(entry.func_151351_a().getUnlocalizedName() + " at (" + entry.xCoord + ", " + entry.xCoord + ", " + entry.xCoord + ")");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                MyTown.instance.log.error("An error occurred when checking tick updates.");
+                e.printStackTrace();
+                errored = true;
+            }
+        }
+
     }
+    private boolean errored = false;
 
     /*
     @SubscribeEvent

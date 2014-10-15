@@ -1,21 +1,22 @@
 package mytown.protection;
 
-import com.esotericsoftware.reflectasm.MethodAccess;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.mod.BotaniaProxy;
 import mytown.util.Utils;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.NextTickListEntry;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class BotaniaProtection extends Protection {
 
-    private Class<? extends Item> clsTerraPick ;
+    private Class<? extends Item> clsTerraPick;
 
     @SuppressWarnings("unchecked")
     public BotaniaProtection() {
@@ -36,6 +37,7 @@ public class BotaniaProtection extends Protection {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void onPlayerBreaks(PlayerInteractEvent ev) {
         try {

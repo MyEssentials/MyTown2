@@ -3,10 +3,7 @@ package mytown.commands;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
-import mytown.entities.TownBlock;
-import mytown.entities.Plot;
-import mytown.entities.Resident;
-import mytown.entities.Town;
+import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
@@ -15,6 +12,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,16 +33,59 @@ public class CommandsEveryone extends Commands {
             name = "leave",
             permission = "mytown.cmd.everyone.leave",
             parentName = "mytown.cmd")
-    public static void leaveCommand(ICommandSender sender, List<String> args) {
+    public static void leaveCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        if(args.size() > 0)
+            callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.leave");
+        else {
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+
+            if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
+                res.sendMessage(getLocal().getLocalization("mytown.notification.town.left.asMayor"));
+                return;
+            }
+
+            getDatasource().unlinkResidentFromTown(res, town);
+
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.left.self", town.getName()));
+            town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.left", res.getPlayerName(), town.getName()));
+        }
+    }
+
+    @CommandNode(
+            name = "delete",
+            permission = "mytown.cmd.mayor.leave.delete",
+            parentName = "mytown.cmd.everyone.leave")
+    public static void leaveDeleteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        getDatasource().unlinkResidentFromTown(res, town);
+        if(town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
+            town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
+            getDatasource().deleteTown(town);
+        }
+    }
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.left.self", town.getName()));
 
-        for (Resident r : town.getResidents()) {
-            r.sendMessage(getLocal().getLocalization("mytown.notification.town.left", res.getPlayerName(), town.getName()));
+        @CommandNode(
+            name = "pass",
+            permission = "mytown.cmd.mayor.pass",
+            parentName = "mytown.cmd")
+    public static void passCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.leave.pass"));
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident target = getResidentFromName(args.get(0));
+        Town town = getTownFromResident(res);
+
+        if(town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
+            getDatasource().updateResidentToTownLink(target, town, town.getRank(Rank.theMayorDefaultRank));
+            target.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.passed"));
+            getDatasource().updateResidentToTownLink(res, town, town.getDefaultRank());
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.taken"));
+        } else {
+            //...
         }
     }
 
