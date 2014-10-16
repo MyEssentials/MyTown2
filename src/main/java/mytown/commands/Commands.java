@@ -20,6 +20,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +60,6 @@ public abstract class Commands {
     }
 
     public static void sendHelpMessage(ICommandSender sender, String permissionBase) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-
         List<String> scList = CommandManager.getSubCommandsList(permissionBase);
         String command = null;
         for(String s = permissionBase; s != null; s = CommandManager.getParentPermNode(s)) {
@@ -69,20 +68,22 @@ public abstract class Commands {
             else
                 command = new StringBuilder(command).insert(0, CommandManager.commandNames.get(s) + " ").toString();
         }
-        res.sendMessage("/" + command + ": ");
+        sendMessageBackToSender(sender, "/" + command + ": ");
         for(String s : scList) {
-            res.sendMessage("   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
+            sendMessageBackToSender(sender, "   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
         }
     }
 
     public static void sendHelpMessageWithArgs(ICommandSender sender, List<String> args, String permBase) {
+        String node;
         if(args.size() < 1) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.help"));
+            //If no arguments are provided then we check for the base permission
+            node = permBase;
+        } else {
+            node = CommandManager.getPermissionNodeFromArgs(args, permBase);
         }
 
-        Resident res = getDatasource().getOrMakeResident(sender);
 
-        String node = CommandManager.getPermissionNodeFromArgs(args, permBase);
         String command = "/" + CommandManager.commandNames.get(permBase);
         String prevNode = permBase;
         for(String s : args) {
@@ -94,13 +95,13 @@ public abstract class Commands {
                 break;
         }
 
-        res.sendMessage(command);
+        sendMessageBackToSender(sender, command);
         List<String> scList = CommandManager.getSubCommandsList(node);
         if(scList == null || scList.size() == 0) {
-            res.sendMessage("   " + getLocal().getLocalization(node + ".help"));
+            sendMessageBackToSender(sender, "   " + getLocal().getLocalization(node + ".help"));
         } else {
             for (String s : scList) {
-                res.sendMessage("   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
+                sendMessageBackToSender(sender, "   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
             }
         }
     }
@@ -110,6 +111,9 @@ public abstract class Commands {
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
         // Since everybody should have permission to /t
         if (permission.equals("mytown.cmd"))
+            return true;
+
+        if(!(sender instanceof EntityPlayer))
             return true;
 
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -266,5 +270,15 @@ public abstract class Commands {
         if(stackNumber == -1)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.cost", minAmount, Config.costItemName));
         return stackNumber;
+    }
+
+    public static void sendMessageBackToSender(ICommandSender sender, String message) {
+        if(sender instanceof EntityPlayer) {
+            Resident res = getDatasource().getOrMakeResident(sender);
+            res.sendMessage(message);
+        } else {
+            sender.addChatMessage(new ChatComponentText(message));
+        }
+
     }
 }

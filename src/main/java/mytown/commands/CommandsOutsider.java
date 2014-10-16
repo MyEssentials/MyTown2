@@ -28,13 +28,18 @@ public class CommandsOutsider extends Commands {
             name = "info",
             permission = "mytown.cmd.outsider.info",
             parentName = "mytown.cmd",
+            nonPlayers = true,
             completionKeys = {"townCompletionAndAll"})
     public static void infoCommand(ICommandSender sender, List<String> args) {
         List<Town> towns = new ArrayList<Town>();
 
-        Resident res = getDatasource().getOrMakeResident(sender);
-        if (args.size() < 1) {
-            towns.add(getTownFromResident(res));
+        if(args.size() < 1) {
+            if(sender instanceof EntityPlayer) {
+                Resident res = getDatasource().getOrMakeResident(sender);
+                towns.add(getTownFromResident(res));
+            } else {
+                throw new CommandException("You are not a player!");
+            }
         } else {
             if (args.get(0).equals("@a")) {
                 towns = new ArrayList<Town>(getUniverse().getTownsMap().values());
@@ -45,17 +50,17 @@ public class CommandsOutsider extends Commands {
         }
 
         for (Town town : towns) {
-            res.sendMessage(Formatter.formatTownInfo(town));
+            sendMessageBackToSender(sender, Formatter.formatTownInfo(town));
         }
     }
 
     @CommandNode(
             name = "list",
             permission = "mytown.cmd.outsider.list",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            nonPlayers = true)
     public static void listCommand(ICommandSender sender, List<String> args) {
         //TODO: check if this works
-        Resident res = getDatasource().getOrMakeResident(sender);
 
         String formattedTownList = null;
         for (Town town : getUniverse().getTownsMap().values()) {
@@ -65,7 +70,7 @@ public class CommandsOutsider extends Commands {
                 formattedTownList += "\n" + town.toString();
         }
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.list", formattedTownList));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", formattedTownList));
     }
 
     @CommandNode(
@@ -168,7 +173,7 @@ public class CommandsOutsider extends Commands {
             name = "friends",
             permission = "mytown.cmd.outsider.friends",
             parentName = "mytown.cmd")
-         public static void friendsCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+    public static void friendsCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.cmd.outsider.friends");
     }
 
@@ -263,7 +268,8 @@ public class CommandsOutsider extends Commands {
     @CommandNode(
             name = "help",
             permission = "mytown.cmd.outsider.help",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
         sendHelpMessageWithArgs(sender, args, "mytown.cmd");
     }

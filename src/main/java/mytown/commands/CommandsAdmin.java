@@ -15,6 +15,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +38,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "config",
             permission = "mytown.adm.cmd.config",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            nonPlayers = true)
     public static void configCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.config");
     }
@@ -45,34 +47,36 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "load",
             permission = "mytown.adm.cmd.config.load",
-            parentName = "mytown.adm.cmd.config")
+            parentName = "mytown.adm.cmd.config",
+            nonPlayers = true)
     public static void configLoadCommand(ICommandSender sender, List<String> args) {
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.cmd.config.load.start");
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.start"));
         ConfigProcessor.load(MyTown.instance.config, Config.class);
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.cmd.config.load.stop");
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.stop"));
     }
 
     @CommandNode(
             name = "save",
             permission = "mytown.adm.cmd.config.save",
-            parentName = "mytown.adm.cmd.config")
+            parentName = "mytown.adm.cmd.config",
+            nonPlayers = true)
     public static void configSaveCommand(ICommandSender sender, List<String> args) {
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.cmd.config.save.start");
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.save.start"));
         ConfigProcessor.save(MyTown.instance.config, Config.class);
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.cmd.config.save.stop");
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.save.stop"));
     }
 
     @CommandNode(
             name = "add",
             permission = "mytown.adm.cmd.add",
             parentName = "mytown.adm.cmd",
+            nonPlayers = true,
             completionKeys = {"residentCompletion", "townCompletion"})
     public static void addCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.add"));
 
         Resident target = getResidentFromName(args.get(0));
-        Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(1));
 
         if (town.hasResident(target))
@@ -89,7 +93,7 @@ public class CommandsAdmin extends Commands {
         getDatasource().linkResidentToTown(target, town, rank);
         // TODO: add failed message ... too lazy right now :P
         // TODO: maybe too much info here
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.resident.add", args.get(0), args.get(1), args.size() > 2 ? args.get(2) : town.getDefaultRank().getName()));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.resident.add", args.get(0), args.get(1), args.size() > 2 ? args.get(2) : town.getDefaultRank().getName()));
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.added", town.getName()));
     }
 
@@ -97,12 +101,11 @@ public class CommandsAdmin extends Commands {
             name = "delete",
             permission = "mytown.adm.cmd.delete",
             parentName = "mytown.adm.cmd",
+            nonPlayers = true,
             completionKeys = {"townCompletion"})
     public static void deleteCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.delete.usage"));
-
-        Resident res = getDatasource().getOrMakeResident(sender);
 
         for (String s : args) {
             if (!getDatasource().hasTown(s))
@@ -110,7 +113,7 @@ public class CommandsAdmin extends Commands {
         }
         for (String s : args) {
             if (getDatasource().deleteTown(getUniverse().getTownsMap().get(s))) {
-                res.sendMessage(getLocal().getLocalization("mytown.notification.town.deleted", s));
+                sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.deleted", s));
             }
         }
     }
@@ -146,13 +149,13 @@ public class CommandsAdmin extends Commands {
             name = "rem",
             permission = "mytown.adm.cmd.rem",
             parentName = "mytown.adm.cmd",
+            nonPlayers = true,
             completionKeys = {"residentCompletion", "townCompletion"})
     public static void remCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.rem"));
 
-        Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromName(args.get(1));
 
@@ -160,13 +163,14 @@ public class CommandsAdmin extends Commands {
             throw new CommandException(getLocal().getLocalization("mytown.adm.cmd.err.rem.resident", args.get(0), args.get(1)));
 
         getDatasource().unlinkResidentFromTown(target, town);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.resident.remove", args.get(0), args.get(1)));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.resident.remove", args.get(0), args.get(1)));
     }
 
     @CommandNode(
             name = "safemode",
             permission = "mytown.adm.cmd.safemode",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            nonPlayers = true)
     public static void safemodeCommand(ICommandSender sender, List<String> args) {
         boolean safemode;
         if (args.size() < 1) { // Toggle safemode
@@ -182,7 +186,9 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "db",
             permission = "mytown.adm.cmd.db",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            nonPlayers = true,
+            players = false)
     public static void dbCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.db");
     }
@@ -191,22 +197,24 @@ public class CommandsAdmin extends Commands {
             name = "purge",
             permission = "mytown.adm.cmd.db.purge",
             parentName = "mytown.adm.cmd.db",
-            console = true)
+            nonPlayers = true,
+            players = false)
     public static void dbCommandPurge(ICommandSender sender, List<String> args) {
-        for (Iterator<Town> it = getUniverse().getTownsMap().values().iterator(); it.hasNext(); ) {
-            getDatasource().deleteTown(it.next());
+        for (Town town : getUniverse().getTownsMap().values()) {
+            getDatasource().deleteTown(town);
         }
-        for (Iterator<Resident> it = getUniverse().getResidentsMap().values().iterator(); it.hasNext(); ) {
-            getDatasource().deleteResident(it.next());
+        for (Resident resident : getUniverse().getResidentsMap().values()) {
+            getDatasource().deleteResident(resident);
         }
-        Resident res = getDatasource().getOrMakeResident(sender);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.db.purging"));
+
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.db.purging"));
     }
 
     @CommandNode(
             name = "perm",
             permission = "mytown.adm.cmd.perm",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            nonPlayers = true)
     public static void permCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.perm");
     }
@@ -214,7 +222,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "town",
             permission = "mytown.adm.cmd.perm.town",
-            parentName = "mytown.adm.cmd.perm")
+            parentName = "mytown.adm.cmd.perm",
+            nonPlayers = true)
     public static void permTownCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.perm.town");
     }
@@ -223,12 +232,13 @@ public class CommandsAdmin extends Commands {
             name = "list",
             permission = "mytown.adm.cmd.perm.town.list",
             parentName = "mytown.adm.cmd.perm.town",
+            nonPlayers = true,
             completionKeys = {"townCompletion"})
     public static void permTownListCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1) {
             throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.list"));
         }
-        Resident res = getDatasource().getOrMakeResident(sender);
+
         Town town = getTownFromName(args.get(0));
 
         String formattedFlagList = null;
@@ -241,15 +251,16 @@ public class CommandsAdmin extends Commands {
             formattedFlagList += flag;
         }
         if (formattedFlagList != null)
-            res.sendMessage(formattedFlagList);
+            sendMessageBackToSender(sender, formattedFlagList);
         else
-            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.err.flag.list"));
     }
 
     @CommandNode(
             name = "set",
             permission = "mytown.adm.cmd.perm.town.set",
             parentName = "mytown.adm.cmd.perm.town",
+            nonPlayers = true,
             completionKeys = {"townCompletion", "flagCompletion"})
     public static void permTownSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 3) {
@@ -260,8 +271,7 @@ public class CommandsAdmin extends Commands {
         Flag flag = getFlagFromName(town, args.get(1));
 
         if (flag.setValueFromString(args.get(2))) {
-            // Should be okay if it's the same :/
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(1), args.get(2));
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.perm.set.success", args.get(1), args.get(2)));
         } else
             // Same here
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(2)));
@@ -291,7 +301,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "wild",
             permission = "mytown.adm.cmd.perm.wild",
-            parentName = "mytown.adm.cmd.perm")
+            parentName = "mytown.adm.cmd.perm",
+            nonPlayers = true)
     public static void permWildCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.perm.wild");
     }
@@ -300,11 +311,9 @@ public class CommandsAdmin extends Commands {
             name = "list",
             permission = "mytown.adm.cmd.perm.wild.list",
             parentName = "mytown.adm.cmd.perm.wild",
+            nonPlayers = true,
             completionKeys = {"flagCompletion"})
     public static void permWildListCommand(ICommandSender sender, List<String> args) {
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-
         String formattedFlagList = null;
         for (Flag flag : Wild.getInstance().getFlags()) {
             if (formattedFlagList == null) {
@@ -315,15 +324,16 @@ public class CommandsAdmin extends Commands {
             formattedFlagList += flag;
         }
         if(formattedFlagList != null)
-            res.sendMessage(formattedFlagList);
+            sendMessageBackToSender(sender, formattedFlagList);
         else
-            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.err.flag.list"));
     }
 
     @CommandNode(
             name = "set",
             permission = "mytown.adm.cmd.perm.wild.set",
-            parentName = "mytown.adm.cmd.perm.wild", 
+            parentName = "mytown.adm.cmd.perm.wild",
+            nonPlayers = true,
             completionKeys = {"flagCompletion"})
     public static void permWildSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2) {
@@ -333,7 +343,7 @@ public class CommandsAdmin extends Commands {
         Flag flag = getFlagFromType(Wild.getInstance(), type);
 
         if (flag.setValueFromString(args.get(1))) {
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.wild.perm.set.success", args.get(0), args.get(1));
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.wild.perm.set.success", args.get(0), args.get(1)));
         } else
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
         //Saving changes to file
@@ -390,7 +400,8 @@ public class CommandsAdmin extends Commands {
     @CommandNode(
             name = "help",
             permission = "mytown.adm.cmd.help",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
         sendHelpMessageWithArgs(sender, args, "mytown.adm.cmd");
     }
