@@ -67,17 +67,10 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      * @param joinDate
      * @param lastOnline
      */
-    public Resident(String uuid, String playerName, String joinDate, String lastOnline) {
+    public Resident(String uuid, String playerName, long joinDate, long lastOnline) {
         setUUID(uuid);
-
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS", Locale.ENGLISH);
-
-        try {
-            this.joinDate = format.parse(joinDate);
-            setLastOnline(format.parse(lastOnline));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        this.joinDate = new Date((long)joinDate * 1000L);
+        this.lastOnline = new Date((long)lastOnline * 1000L);
         this.playerName = playerName;
     }
 

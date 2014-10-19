@@ -3,6 +3,7 @@ package mytown.datasource;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mysql.jdbc.ConnectionProperties;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.utils.config.ConfigProperty;
@@ -12,6 +13,7 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 import java.sql.*;
@@ -68,7 +70,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             setupUpdates();
             doUpdates();
         } catch (SQLException e) {
-            log.error("Failed to update database!", e);
             return false;
         }
 
@@ -250,7 +251,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             ResultSet rs = loadResidentsStatement.executeQuery();
 
             while (rs.next()) {
-                Resident res = new Resident(rs.getString("uuid"), rs.getString("name"), rs.getString("joined"), rs.getString("lastOnline"));
+                Resident res = new Resident(rs.getString("uuid"), rs.getString("name"), rs.getLong("joined"), rs.getLong("lastOnline"));
                 MyTownUniverse.getInstance().addResident(res);
             }
         } catch (SQLException e) {
@@ -693,13 +694,15 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             if (MyTownUniverse.getInstance().hasResident(resident)) { // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=? WHERE uuid=?", true);
                 updateStatement.setString(1, resident.getPlayerName());
-                updateStatement.setTimestamp(2, (Timestamp) resident.getLastOnline()); // Stupid hack...
+                updateStatement.setLong(2, resident.getLastOnline().getTime()/1000L); // Stupid hack...
                 updateStatement.setString(3, resident.getUUID().toString());
                 updateStatement.executeUpdate();
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Residents (uuid, name) VALUES(?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Residents (uuid, name, joined, lastOnline) VALUES(?, ?, ?, ?)", true);
                 insertStatement.setString(1, resident.getUUID().toString());
                 insertStatement.setString(2, resident.getPlayerName());
+                insertStatement.setLong(3, resident.getJoinDate().getTime()/1000L); // Stupid hack...
+                insertStatement.setLong(4, resident.getLastOnline().getTime()/1000L); // Stupid hack...
                 insertStatement.executeUpdate();
 
                 // Put the Resident in the Map
@@ -1511,8 +1514,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         updates.add(new DBUpdate("07.25.2014.2", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Residents (" +
                 "uuid CHAR(36) NOT NULL," +
                 "name VARCHAR(240) NOT NULL," +
-                "joined DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL," +
-                "lastOnline DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL," +
+                "joined BIGINT NOT NULL," +
+                "lastOnline BIGINT NOT NULL," +
                 "PRIMARY KEY(uuid)" +
                 ");"));
         updates.add(new DBUpdate("10.05.2014", "Add Worlds", "CREATE TABLE IF NOT EXISTS " + prefix + "Worlds(" +
@@ -1650,7 +1653,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, " +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
 
-        updates.add(new DBUpdate("10.18.2014.1", "Add 'extraBlocks' to towns", "ALTER TABLE " + prefix + "Towns ADD extraBlocks INTEGER DEFAULT 0;"));
+        updates.add(new DBUpdate("10.18.2014.1", "Add 'extraBlocks' to towns", "ALTER TABLE " + prefix + "Towns ADD extraBlocks INTEGER DEFAULT 0"));
     }
 
     /**
@@ -1678,7 +1681,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 }
 
                 conn.setAutoCommit(false); // Disable auto-commit to allow us to wrap updates in transactions
-
                 log.debug(" **** Auto-Commit: " + conn.getAutoCommit());
 
                 try {
@@ -1701,11 +1703,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     } catch (SQLException e2) {
                         log.error("Rollback failed!", e2);
                     }
+
+                    throw e; // Throws back up to force safemode
                 }
             }
-        } catch (SQLException e) {
-            log.error("Updates failed to apply!", e);
-            // TODO Do I need to do conn.rollback() here? I don't think so since I am doing that for each update above
         } finally {
             log.debug("(Re)Enabling auto-commit");
             conn.setAutoCommit(true); // Restore auto-commit
