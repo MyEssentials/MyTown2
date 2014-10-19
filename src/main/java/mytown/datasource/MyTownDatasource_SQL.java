@@ -12,7 +12,6 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 import java.sql.*;
@@ -1516,6 +1515,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "lastOnline DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL," +
                 "PRIMARY KEY(uuid)" +
                 ");"));
+        updates.add(new DBUpdate("10.05.2014", "Add Worlds", "CREATE TABLE IF NOT EXISTS " + prefix + "Worlds(" +
+                "dim INT," +
+                "PRIMARY KEY(dim))"));
         updates.add(new DBUpdate("07.25.2014.3", "Add Towns Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Towns (" +
                 "name VARCHAR(32) NOT NULL," + // TODO Allow larger town names?
                 "isAdminTown BOOLEAN, " +
@@ -1647,11 +1649,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "PRIMARY KEY(resident, townName)," +
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, " +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
-        updates.add(new DBUpdate("10.05.2014", "Add Worlds", "CREATE TABLE IF NOT EXISTS " + prefix + "Worlds(" +
-                "dim INT," +
-                "PRIMARY KEY(dim))"));
 
-        updates.add(new DBUpdate("10.18.2014.1", "Add 'extraBlocks' to towns", "ALTER TABLE " + prefix + "Towns ADD extraBlocks DEFAULT 0"));
+        updates.add(new DBUpdate("10.18.2014.1", "Add 'extraBlocks' to towns", "ALTER TABLE " + prefix + "Towns ADD extraBlocks INTEGER DEFAULT 0;"));
     }
 
     /**
@@ -1663,22 +1662,24 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         List<String> ids = Lists.newArrayList();
         PreparedStatement statement;
         try {
-            statement = prepare("SELECT Id FROM " + prefix + "Updates", false);
+            statement = prepare("SELECT id FROM " + prefix + "Updates", false);
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                ids.add(rs.getString("Id"));
+                ids.add(rs.getString("id"));
             }
         } catch (Exception e) {
         } // Ignore. Just missing the updates table for now
 
         try {
-            conn.setAutoCommit(false); // Disable auto-commit to allow us to wrap updates in transactions
-
             for (DBUpdate update : updates) {
                 if (ids.contains(update.id)) {
                     continue; // Skip if update is already done
                 }
+
+                conn.setAutoCommit(false); // Disable auto-commit to allow us to wrap updates in transactions
+
+                log.debug(" **** Auto-Commit: " + conn.getAutoCommit());
 
                 try {
                     // Update!
@@ -1698,7 +1699,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     try {
                         conn.rollback();
                     } catch (SQLException e2) {
-                        log.error("Rollback failed!", e);
+                        log.error("Rollback failed!", e2);
                     }
                 }
             }
@@ -1706,6 +1707,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             log.error("Updates failed to apply!", e);
             // TODO Do I need to do conn.rollback() here? I don't think so since I am doing that for each update above
         } finally {
+            log.debug("(Re)Enabling auto-commit");
             conn.setAutoCommit(true); // Restore auto-commit
         }
     }

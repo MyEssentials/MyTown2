@@ -28,6 +28,7 @@ public class MySQLDatasource extends MyTownDatasource_SQL {
         dbProperties.put("autoReconnect", "true");
         dbProperties.put("user", username);
         dbProperties.put("password", password);
+        dbProperties.put("relaxAutoCommit", "true");
     }
 
     @Override
