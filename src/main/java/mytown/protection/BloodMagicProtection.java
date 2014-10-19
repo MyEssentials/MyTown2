@@ -53,7 +53,7 @@ public class BloodMagicProtection extends Protection {
     @SuppressWarnings("unchecked")
     @Override
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
-        MyTown.instance.log.info("Got item: " + itemStack.getDisplayName());
+        //MyTown.instance.log.info("Got item: " + itemStack.getDisplayName());
         if(clsBoundPickaxe == itemStack.getItem().getClass()) {
             // Range is 11x11 around the player.
             List<Town> townsNearby = Utils.getTownsInRange(bp.dim, bp.x, bp.z, 5, 5);

@@ -80,8 +80,8 @@ public class FlagsConfig {
                     MyTown.instance.log.error("The default value provided is not the proper one (for flag " + w.flagType.toString() + ")!");
                 }
             }
-            MyTown.instance.log.info("Loaded flags successfully!");
-
+            //MyTown.instance.log.info("Loaded flags successfully!");
+            writeFile();
         } catch (IOException ex) {
             ex.printStackTrace();
             MyTown.instance.log.error("Failed to read from json flag config.");
