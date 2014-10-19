@@ -1506,7 +1506,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     protected void setupUpdates() { // TODO Move these into a XML/JSON file?
         updates.add(new DBUpdate("07.25.2014.1", "Add Updates Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Updates (" +
                 "id VARCHAR(20) NOT NULL," +
-                "desc VARCHAR(50) NOT NULL," +
+                "description VARCHAR(50) NOT NULL," +
                 "PRIMARY KEY(id)" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.2", "Add Residents Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Residents (" +
@@ -1687,7 +1687,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     statement.execute();
 
                     // Insert the update key so as to not run the update again
-                    statement = prepare("INSERT INTO " + prefix + "Updates (Id,Desc) VALUES(?,?)", true);
+                    statement = prepare("INSERT INTO " + prefix + "Updates (id,description) VALUES(?,?)", true);
                     statement.setString(1, update.id);
                     statement.setString(2, update.desc);
                     statement.executeUpdate();
