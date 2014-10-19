@@ -303,12 +303,10 @@ public class Protections {
             }
         }
 
+        /*
         if(!errored) {
             try {
                 //MyTown.instance.log.info("Checking...");
-                for (TownBlock tb : MyTownUniverse.getInstance().getBlocksMap().values()) {
-                    //Chunk chunk = ev.world.getChunkFromChunkCoords(tb.getX(), tb.getZ());
-
                     Field field = WorldServer.class.getDeclaredField("pendingTickListEntriesThisTick");
                     field.setAccessible(true);
 
@@ -316,22 +314,26 @@ public class Protections {
                     if (list != null) {
                         for (Iterator<NextTickListEntry> it = list.iterator(); it.hasNext(); ) {
                             NextTickListEntry entry = it.next();
-                            if (entry.func_151351_a() instanceof IFluidBlock) {
-                                it.remove();
+                            Town town = Utils.getTownAtPosition(ev.world.provider.dimensionId, entry.xCoord >> 4, entry.zCoord >> 4);
+                            if(town != null) {
+                                boolean placeFlag = (Boolean)town.getValueAtCoords(ev.world.provider.dimensionId, entry.xCoord, entry.yCoord, entry.zCoord, FlagType.placeBlocks);
+                                if (!placeFlag && entry.func_151351_a() instanceof IFluidBlock) {
+                                    it.remove();
+                                }
                             }
                             MyTown.instance.log.info(entry.func_151351_a().getUnlocalizedName() + " at (" + entry.xCoord + ", " + entry.xCoord + ", " + entry.xCoord + ")");
                         }
+                    } else {
+                        MyTown.instance.log.info("List is null!");
                     }
-                }
             } catch (Exception e) {
                 MyTown.instance.log.error("An error occurred when checking tick updates.");
                 e.printStackTrace();
                 errored = true;
             }
         }
-
+        */
     }
-    private boolean errored = false;
 
     /*
     @SubscribeEvent
