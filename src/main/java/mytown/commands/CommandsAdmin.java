@@ -167,6 +167,21 @@ public class CommandsAdmin extends Commands {
     }
 
     @CommandNode(
+            name = "setExtra",
+            permission = "mytown.adm.cmd.setextra",
+            parentName = "mytown.adm.cmd",
+            nonPlayers = true)
+    public static void setExtraCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 2)
+            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.setExtra"));
+        Town town = getUniverse().getTown(args.get(0));
+        if (town == null) {
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist"));
+        }
+        town.setExtraBlocks(Integer.parseInt(args.get(1)));
+    }
+
+    @CommandNode(
             name = "safemode",
             permission = "mytown.adm.cmd.safemode",
             parentName = "mytown.adm.cmd",

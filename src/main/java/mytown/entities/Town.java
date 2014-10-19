@@ -208,6 +208,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     /* ----- IHasBlocks ----- */
 
     protected Map<String, TownBlock> blocks = new Hashtable<String, TownBlock>();
+    protected int extraBlocks = 0;
 
     @Override
     public void addBlock(TownBlock block) {
@@ -235,8 +236,18 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
+    public int getExtraBlocks() {
+        return extraBlocks;
+    }
+
+    @Override
+    public void setExtraBlocks(int extra) {
+        extraBlocks = extra;
+    }
+
+    @Override
     public int getMaxBlocks() {
-        return Config.blocksMayor + Config.blocksResident * (residents.size() - 1);
+        return Config.blocksMayor + (Config.blocksResident * (residents.size() - 1)) + extraBlocks;
     }
 
     @Override

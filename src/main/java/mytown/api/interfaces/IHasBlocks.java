@@ -47,6 +47,19 @@ public interface IHasBlocks {
     public TownBlock getBlockAtCoords(int dim, int x, int z);
 
     /**
+     * Returns the number of extra blocks that it can have. Default should be 0.
+     *
+     * @return
+     */
+    public int getExtraBlocks();
+
+    /**
+     * Sets the number of extra blocks it can have.
+     * @param extra
+     */
+    public void setExtraBlocks(int extra);
+
+    /**
      * Returns the maximum amount of blocks that it can have
      *
      * @return
