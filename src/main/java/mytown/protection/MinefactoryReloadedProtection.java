@@ -7,6 +7,7 @@ import mytown.MyTown;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
+import mytown.proxies.mod.ModProxies;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
 import mytown.util.Utils;
@@ -47,10 +48,10 @@ public class MinefactoryReloadedProtection extends Protection {
 
             clsSafariNet = (Class<? extends Item>) Class.forName("powercrystals.minefactoryreloaded.item.ItemSafariNet");
 
-            safariNet = GameRegistry.findItem(MinefactoryReloadedProxy.MOD_ID, "mfr.safarinet.singleuse");
-            safariNetR = GameRegistry.findItem(MinefactoryReloadedProxy.MOD_ID, "mfr.safarinet.reusable");
-            safariNetJ = GameRegistry.findItem(MinefactoryReloadedProxy.MOD_ID, "mfr.safarinet.jailer");
-            portaSpawner = GameRegistry.findItem(MinefactoryReloadedProxy.MOD_ID, "mfr.portaspawner");
+            safariNet = GameRegistry.findItem(ModProxies.MFR_MOD_ID, "mfr.safarinet.singleuse");
+            safariNetR = GameRegistry.findItem(ModProxies.MFR_MOD_ID, "mfr.safarinet.reusable");
+            safariNetJ = GameRegistry.findItem(ModProxies.MFR_MOD_ID, "mfr.safarinet.jailer");
+            portaSpawner = GameRegistry.findItem(ModProxies.MFR_MOD_ID, "mfr.portaspawner");
 
             trackedItems.add(clsSafariNet);
             explosiveBlocks.add(clsFishingRod);

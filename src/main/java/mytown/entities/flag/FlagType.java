@@ -55,7 +55,7 @@ public enum FlagType {
     }
 
     private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, boolean townOnly, String modRequired) {
-        this(type, defaultValue, allowedValues, wildPerm, defaultValue, townOnly, modRequired, false);
+        this(type, defaultValue, allowedValues, wildPerm, defaultWildPerm, townOnly, modRequired, false);
     }
 
     /**

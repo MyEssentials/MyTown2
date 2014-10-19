@@ -5,6 +5,7 @@ import mytown.MyTown;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
+import mytown.proxies.mod.ModProxies;
 import mytown.util.BlockPos;
 import mytown.util.Utils;
 import net.minecraft.item.Item;
@@ -37,10 +38,10 @@ public class BloodMagicProtection extends Protection {
             MyTown.instance.log.error("Failed to load BloodMagic classes!");
         }
 
-        activatedBlocks.add(GameRegistry.findBlock(BloodMagicProxy.MOD_ID, "armourForge"));
-        activatedBlocks.add(GameRegistry.findBlock(BloodMagicProxy.MOD_ID, "bloodAltar"));
-        activatedBlocks.add(GameRegistry.findBlock(BloodMagicProxy.MOD_ID, "blockMasterStone"));
-        activatedBlocks.add(GameRegistry.findBlock(BloodMagicProxy.MOD_ID, "bloodPedestal"));
+        activatedBlocks.add(GameRegistry.findBlock(ModProxies.BLOOD_MAGIC_MOD_ID, "armourForge"));
+        activatedBlocks.add(GameRegistry.findBlock(ModProxies.BLOOD_MAGIC_MOD_ID, "bloodAltar"));
+        activatedBlocks.add(GameRegistry.findBlock(ModProxies.BLOOD_MAGIC_MOD_ID, "blockMasterStone"));
+        activatedBlocks.add(GameRegistry.findBlock(ModProxies.BLOOD_MAGIC_MOD_ID, "bloodPedestal"));
 
         trackedItems.add(clsBoundPickaxe);
         trackedItems.add(clsSigilWater);
