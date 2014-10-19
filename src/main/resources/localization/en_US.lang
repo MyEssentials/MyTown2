@@ -263,6 +263,8 @@ mytown.cmd.outsider.map.help=§2Gives a map of the nearby claimed chunks.
 mytown.cmd.outsider.new.help=§2Makes a new town.
 mytown.cmd.outsider.refuse.help=§2Refuses a invitation to a town.
 mytown.cmd.outsider.help.help=§2Gives help about commands.
+mytown.cmd.outsider.invites.help=§2Shows all the invites.
+mytown.cmd.mayor.pass.help=§2Passes mayorship to someone else in the town.
 
 mytown.adm.cmd.config.help=§9Everything about the configs.
 mytown.adm.cmd.config.load.help=§9Reloads the config.

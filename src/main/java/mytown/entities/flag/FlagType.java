@@ -11,22 +11,19 @@ import net.minecraft.tileentity.TileEntity;
  * Flags enumeration. Enumerating all flags here
  */
 public enum FlagType {
-    // CONSTRUCTOR: class, value, allowedValues, wildPerm, townOnly, mod, isWhitelistable <false>
-    enter(Boolean.class, true, null, false, false, null),
-    breakBlocks(Boolean.class, false, null, true, false, null),
-    accessBlocks(Boolean.class, false, null, true, false, null, true),
-    placeBlocks(Boolean.class, false, null, true, false, null),
-    pickupItems(Boolean.class, true, null, false, false, null),
-    explosions(Boolean.class, false, null, true, false, null),
+    // CONSTRUCTOR: class, value, allowedValues, wildPerm, defaultWildPerm, townOnly, mod, isWhitelistable <false>
+    enter(Boolean.class, true, null, false, true, false, null),
+    breakBlocks(Boolean.class, false, null, true, true, false, null),
+    accessBlocks(Boolean.class, false, null, true, true, false, null, true),
+    placeBlocks(Boolean.class, false, null, true, true, false, null),
+    pickupItems(Boolean.class, true, null, false, true, false, null),
+    explosions(Boolean.class, false, null, true, false, false, null),
     // Only the values in the array are allowed
-    mobs(String.class, "all", new String[] {"all", "hostiles", "none"}, false, false, null),
-    attackEntities(Boolean.class, false, null, false, false, null),
-    useItems(Boolean.class, false, null, false, false, null),
-    activateBlocks(Boolean.class, false, null, true, false, null, true),
-    pumps(Boolean.class, true, null, false, false, ExtraUtilitiesProxy.MOD_ID),
-    ic2EnergyFlow(Boolean.class, false, null, false, true, IC2Proxy.MOD_ID, true),
-    bcPipeFlow(Boolean.class, true, null, false, true, BuildCraftTrasportationProxy.MOD_ID);
-
+    mobs(String.class, "all", new String[] {"all", "hostiles", "none"}, false, "all", false, null),
+    attackEntities(Boolean.class, false, null, false, true, false, null),
+    useItems(Boolean.class, false, null, false, true, false, null),
+    activateBlocks(Boolean.class, false, null, true, true, false, null, true),
+    pumps(Boolean.class, true, null, false, true, false, ModProxies.EXTRA_UTILITIES_MOD_ID);
 
     private Class<?> type;
     private String descriptionKey;
@@ -40,9 +37,9 @@ public enum FlagType {
     private boolean isWhitelistable;
     private String modRequired;
     private boolean isWildPerm;
+    private Object defaultWildPerm;
 
-
-    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, boolean townOnly, String modRequired, boolean isWhitelistable) {
+    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, boolean townOnly, String modRequired, boolean isWhitelistable) {
         this.type = type;
         this.descriptionKey = "mytown.flag." + this.toString();
         this.protectionKey = "mytown.protection." + this.toString();
@@ -54,10 +51,11 @@ public enum FlagType {
         this.isUsableForTowns = true;
         this.defaultValue = defaultValue;
         this.isWildPerm = wildPerm;
+        this.defaultWildPerm = defaultWildPerm;
     }
 
-    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, boolean townOnly, String modRequired) {
-        this(type, defaultValue, allowedValues, wildPerm, townOnly, modRequired, false);
+    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, boolean townOnly, String modRequired) {
+        this(type, defaultValue, allowedValues, wildPerm, defaultValue, townOnly, modRequired, false);
     }
 
     /**
@@ -74,6 +72,13 @@ public enum FlagType {
      * @return
      */
     public boolean isWildPerm() { return this.isWildPerm; }
+
+    /**
+     * Gets the default wild perm.
+     *
+     * @return
+     */
+    public Object getDefaultWildPerm() { return this.defaultWildPerm; }
 
     /**
      * Gets the default value

@@ -5,7 +5,6 @@ import mytown.MyTown;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.mod.BuildCraftTrasportationProxy;
 import mytown.util.BlockPos;
 import mytown.util.Utils;
 import net.minecraft.tileentity.TileEntity;

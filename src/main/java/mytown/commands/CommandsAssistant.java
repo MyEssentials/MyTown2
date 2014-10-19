@@ -56,7 +56,7 @@ public class CommandsAssistant extends Commands {
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
         if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.far.notAllowed"));
-            //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+        //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         int stackNumber = getPaymentStack(sender, Config.costAmountClaim);
         player.inventory.decrStackSize(stackNumber, Config.costAmountClaim);
 
@@ -327,6 +327,32 @@ public class CommandsAssistant extends Commands {
         }
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), rank.getTown().getName(), msg));
+    }
+
+    @CommandNode(
+            name = "pass",
+            permission = "mytown.cmd.mayor.pass",
+            parentName = "mytown.cmd",
+            completionKeys = {"residentCompletion"})
+    public static void passCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.leave.pass"));
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident target = getResidentFromName(args.get(0));
+        Town town = getTownFromResident(res);
+
+        if(!town.hasResident(target))
+            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.resident.notsametown", target.getPlayerName()));
+
+        if(town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
+            getDatasource().updateResidentToTownLink(target, town, town.getRank(Rank.theMayorDefaultRank));
+            target.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.passed"));
+            getDatasource().updateResidentToTownLink(res, town, town.getDefaultRank());
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.taken"));
+        } else {
+            //...
+        }
     }
 
     // Temporary here, might integrate in the methods

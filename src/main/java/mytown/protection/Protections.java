@@ -16,22 +16,14 @@ import mytown.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.NextTickListEntry;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -39,11 +31,7 @@ import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fluids.FluidEvent;
-import net.minecraftforge.fluids.IFluidBlock;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -362,7 +350,7 @@ public class Protections {
         }
     }
 
-/*
+
     @SubscribeEvent
     public void onBlockPlacement(BlockEvent.PlaceEvent ev) {
         TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
@@ -454,7 +442,7 @@ public class Protections {
             }
         }
     }
-*/
+
 
 
     @SubscribeEvent
@@ -514,136 +502,60 @@ public class Protections {
         }
 
 
-            // Activate and access check here
-            if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+        // Activate and access check here
+        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
 
-                TileEntity te = ev.world.getTileEntity(x, y, z);
+            TileEntity te = ev.world.getTileEntity(x, y, z);
 
-                // DEV: Developement only
+            // DEV: Developement only
                 /*
                 if (te != null) {
                     MyTown.instance.log.info("Found tile with name " + te.toString() + " on block " + ev.world.getBlock(x, y, z).getUnlocalizedName());
                 }
                 */
-                TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, x >> 4, z >> 4);
+            TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, x >> 4, z >> 4);
 
-                int ox = ev.x, oy = ev.y, oz = ev.z;
+            // If player is trying to open an inventory
+            if (te instanceof IInventory) {
+                if (tblock == null) {
+                    if (!Wild.getInstance().checkPermission(res, FlagType.accessBlocks)) {
+                        res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
+                        ev.setCanceled(true);
+                    }
+                } else {
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.accessBlocks))
+                        return;
 
-                switch(ev.face)
-                {
-                    case 0:
-                        oy--;
-                        break;
-                    case 1:
-                        oy++;
-                        break;
-                    case 2:
-                        oz--;
-                        break;
-                    case 3:
-                        oz++;
-                        break;
-                    case 4:
-                        ox--;
-                        break;
-                    case 5:
-                        ox++;
-                        break;
+                    // Checking if a player can access the block here
+                    if (!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, x, y, z)) {
+                        res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
+                        ev.setCanceled(true);
+                    }
                 }
-
-                // If player is trying to place a block
-                if(currentStack != null //&& currentStack.getItem() instanceof ItemBlock
-                        && !(((te != null && te instanceof IInventory) || checkActivatedBlocks(ev.world.getBlock(ev.x, ev.y, ev.z))) && !ev.entityPlayer.isSneaking())) {
-                    // First, checking if the block on which the player right clicked is replaceable
-                    if (ev.world.getBlock(ev.x, ev.y, ev.z).getMaterial().isReplaceable()) {
-                        ox = ev.x;
-                        oy = ev.y;
-                        oz = ev.y;
-                    }
-                    if (ev.world.getBlock(ox, oy, oz).getMaterial().isReplaceable()) {
-                        if (tblock == null) {
-                            if (!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
-                                res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
-                                ev.setCanceled(true);
-                            } else {
-                                // If it has permission, then check nearby
-                                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
-                                for (Town t : nearbyTowns) {
-                                    if (!t.checkPermission(res, FlagType.placeBlocks)) {
-                                        res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
-                                        ev.setCanceled(true);
-                                        return;
-                                    }
-                                }
-                            }
-                        } else {
-                            if (!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, ox, oy, oz)) {
-                                res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
-                                ev.setCanceled(true);
-                                return;
-                            } else {
-                                // If it has permission, then check nearby
-                                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
-                                for(Town t : nearbyTowns) {
-                                    if(!t.checkPermission(res, FlagType.placeBlocks)) {
-                                        res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
-                                        ev.setCanceled(true);
-                                        return;
-                                    }
-                                }
-                            }
-                            if (res.hasTown(tblock.getTown()) && ((ItemBlock) currentStack.getItem()).field_150939_a instanceof ITileEntityProvider) {
-                                // Getting TileEntity TYPE by creating a tileentity from the itileentityprovider inside blockcontainer inside itemblock... lol
-                                Class<? extends TileEntity> clsTe = ((ITileEntityProvider) ((ItemBlock) currentStack.getItem()).field_150939_a).createNewTileEntity(ev.world, currentStack.getItemDamage()).getClass();
-                                addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
-                            }
-                        }
-                    }
-
-
-                } else {
-
-                // If player is trying to open an inventory
-                if (te instanceof IInventory) {
-                    if (tblock == null) {
-                        if (!Wild.getInstance().checkPermission(res, FlagType.accessBlocks)) {
-                            res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
-                            ev.setCanceled(true);
-                        }
-                    } else {
-                        if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.accessBlocks))
-                            return;
-
-                        // Checking if a player can access the block here
-                        if (!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                            res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
+                // If player is trying to "activate" block
+            } else {
+                if (tblock == null) {
+                    if (checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
+                        if (!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
+                            res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
                             ev.setCanceled(true);
                         }
                     }
-                    // If player is trying to "activate" block
                 } else {
-                    if (tblock == null) {
+                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.activateBlocks))
+                        return;
+
+                    if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
                         if (checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
-                            if (!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
-                                res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
-                                ev.setCanceled(true);
-                            }
-                        }
-                    } else {
-                        if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.activateBlocks))
-                            return;
-
-                        if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                            if (checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
-                                res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
-                                ev.setCanceled(true);
-                            }
+                            res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
+                            ev.setCanceled(true);
                         }
                     }
                 }
             }
         }
     }
+
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.HIGHEST)

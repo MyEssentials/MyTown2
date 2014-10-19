@@ -51,7 +51,7 @@ public class WildPermsConfig {
     private void writeFile() {
         for(FlagType type : FlagType.values()) {
             if(type.isWildPerm())
-                Wild.getInstance().addFlag(new Flag(type, type.getDefaultValue()));
+                Wild.getInstance().addFlag(new Flag(type, type.getDefaultWildPerm()));
         }
 
         try {

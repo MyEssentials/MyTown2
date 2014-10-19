@@ -34,6 +34,8 @@ public class IC2Protection extends Protection {
         try {
             this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityNuke"));
             this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityItnt"));
+            this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityDynamite"));
+            this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityStickyDynamite"));
 
             clsTileEntityBaseGenerator = (Class<? extends TileEntity>)Class.forName("ic2.core.block.generator.tileentity.TileEntityBaseGenerator");
             clsTileEntityElectricMachine = (Class<? extends TileEntity>)Class.forName("ic2.core.block.machine.tileentity.TileEntityElectricMachine");

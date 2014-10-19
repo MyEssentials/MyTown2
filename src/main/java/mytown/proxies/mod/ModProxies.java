@@ -2,11 +2,23 @@ package mytown.proxies.mod;
 
 import cpw.mods.fml.common.Loader;
 import mytown.MyTown;
+import mytown.protection.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModProxies {
+    public static final String BLOOD_MAGIC_MOD_ID = "AWWayofTime";
+    public static final String BOTANIA_MOD_ID = "Botania";
+    public static final String BC_FACTORY_MOD_ID = "BuildCraft|Factory";
+    public static final String BC_TRANSPORT_MOD_ID = "BuildCraft|Transport";
+    public static final String EXTRA_UTILITIES_MOD_ID = "ExtraUtilities";
+    public static final String FORGE_PERMS_MOD_ID = "ForgePerms";
+    public static final String IC2_MOD_ID = "IC2";
+    public static final String MFR_MOD_ID = "MineFactoryReloaded";
+    public static final String THERMAL_EXPANSION_MOD_ID = "ThermalExpansion";
+    public static final String MEKANISM_MOD_ID = "Mekanism";
+
     private static List<ModProxy> proxies = new ArrayList<ModProxy>();
     private static boolean loaded = false;
 
@@ -40,15 +52,15 @@ public class ModProxies {
      * Adds all the {@link ModProxy}'s to the list
      */
     public static void addProxies() {
-        proxies.add(new IC2Proxy());
-        proxies.add(new BuildCraftFactoryProxy());
-        proxies.add(new BuildCraftTrasportationProxy());
-        proxies.add(new ForgePermsProxy());
-        proxies.add(new ExtraUtilitiesProxy());
-        proxies.add(new BloodMagicProxy());
-        proxies.add(new ThermalExpansionProxy());
-        proxies.add(new MinefactoryReloadedProxy());
-        proxies.add(new BotaniaProxy());
+        proxies.add(new ModProxy("Blood Magic", BLOOD_MAGIC_MOD_ID, new BloodMagicProtection()));
+        proxies.add(new ModProxy("Botania", BOTANIA_MOD_ID, new BotaniaProtection()));
+        proxies.add(new ModProxy("Buildcraft|Factory", BC_FACTORY_MOD_ID, new BuildCraftFactoryProtection()));
+        proxies.add(new ModProxy("Buildcraft|Transport", BC_TRANSPORT_MOD_ID, new BuildCraftTransportProtection()));
+        proxies.add(new ModProxy("Extra Utilities", EXTRA_UTILITIES_MOD_ID, new ExtraUtilitiesProtection()));
+        proxies.add(new ModProxy("Industrial Craft 2", IC2_MOD_ID, new IC2Protection()));
+        proxies.add(new ModProxy("Minefactory Reloaded", MFR_MOD_ID, new MinefactoryReloadedProtection()));
+        proxies.add(new ModProxy("Thermal Expansion", THERMAL_EXPANSION_MOD_ID, new ThermalExpansionProtection()));
+        proxies.add(new ModProxy("Mekanism", MEKANISM_MOD_ID, new MekanismProtection()));
     }
 
     /**

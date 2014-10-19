@@ -67,29 +67,6 @@ public class CommandsEveryone extends Commands {
     }
 
     @CommandNode(
-        name = "pass",
-        permission = "mytown.cmd.mayor.pass",
-        parentName = "mytown.cmd",
-        completionKeys = {"residentCompletion"})
-    public static void passCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.leave.pass"));
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Resident target = getResidentFromName(args.get(0));
-        Town town = getTownFromResident(res);
-
-        if(town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
-            getDatasource().updateResidentToTownLink(target, town, town.getRank(Rank.theMayorDefaultRank));
-            target.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.passed"));
-            getDatasource().updateResidentToTownLink(res, town, town.getDefaultRank());
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.taken"));
-        } else {
-            //...
-        }
-    }
-
-    @CommandNode(
             name = "spawn",
             permission = "mytown.cmd.everyone.spawn",
             parentName = "mytown.cmd",

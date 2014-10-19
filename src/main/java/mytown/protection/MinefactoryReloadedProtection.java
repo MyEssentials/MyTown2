@@ -7,7 +7,6 @@ import mytown.MyTown;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.mod.MinefactoryReloadedProxy;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
 import mytown.util.Utils;
