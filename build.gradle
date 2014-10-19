@@ -16,14 +16,14 @@ buildscript {
 }
 
 repositories {
-		maven {
-			name = "ic2"
-			url = "http://maven.ic2.player.to/"
-		}
-		ivy {
-			name = 'ThaumCraft 4 API'
-			artifactPattern 'https://dl.dropboxusercontent.com/u/47135879/Thaumcraft-1.7.10-4.2.0.1-api.zip'
-		}
+    maven {
+        name = "ic2"
+        url = "http://maven.ic2.player.to/"
+    }
+    ivy {
+        name = 'ThaumCraft 4 API'
+        artifactPattern 'https://dl.dropboxusercontent.com/u/47135879/Thaumcraft-1.7.10-4.2.0.1-api.zip'
+    }
 }
 
 ext.configFile = file "build.properties"
@@ -35,6 +35,7 @@ ext.configFile.withReader {
 }
 
 apply plugin: "forge"
+apply plugin: "curseforge"
 
 version = "${config.minecraft_version}-${config.mod_version}.${config.build_number}"
 group = config.group
@@ -46,24 +47,27 @@ minecraft {
     replace "@VERSION@", "${project.version}"
 }
 
-repositories {
-    maven {
-        name = "ic2"
-        url = "http://maven.ic2.player.to/"
-    }
+curse { // TODO Need to do this conditionally
+    apiKey = System.env.CURSEFORGEKEY
+    projectId = "224242"
+    changelog = "" // TODO Add changelog support
+    releaseType = "alpha" // TODO Add support for setting release type
 }
 
 dependencies {
     testCompile "junit:junit:4.11"
     compile "com.esotericsoftware.reflectasm:reflectasm:1.09"
+    compile project(":MyEssentials-Core")
+
     // Include DB Drivers as deps
     compile "org.xerial:sqlite-jdbc:3.7.15-M1"
     compile "mysql:mysql-connector-java:5.1.31"
+
+    // Mod Deps
 	compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     //compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
 	//compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
-	compile project(":MyEssentials-Core")
 }
 
 processResources {
