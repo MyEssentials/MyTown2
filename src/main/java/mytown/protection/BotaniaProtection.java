@@ -42,7 +42,7 @@ public class BotaniaProtection extends Protection {
     public void onPlayerBreaks(PlayerInteractEvent ev) {
         try {
             if (ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
-                if (clsTerraPick.isAssignableFrom(ev.entityPlayer.getHeldItem().getItem().getClass())) {
+                if (ev.entityPlayer.getHeldItem() != null && clsTerraPick.isAssignableFrom(ev.entityPlayer.getHeldItem().getItem().getClass())) {
 
                     boolean isEnabled = ev.entityPlayer.getHeldItem().getTagCompound().getBoolean("enabled");
 
