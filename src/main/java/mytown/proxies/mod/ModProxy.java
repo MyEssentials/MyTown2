@@ -8,6 +8,7 @@ import mytown.protection.Protections;
  * @author Joe Goett
  */
 public class ModProxy {
+
     private String name, modid;
     private Class<? extends Protection> protClass;
     private Protection prot;
@@ -19,7 +20,6 @@ public class ModProxy {
     }
 
     public boolean isLoaded = false;
-
     /**
      * Returns the name of the ModProxy
      *
@@ -45,9 +45,9 @@ public class ModProxy {
         try {
             prot = protClass.newInstance();
             Protections.instance.addProtection(prot, modid);
-        } catch (InstantiationException e) { // TODO Log the exception
+        } catch (InstantiationException e) { // TODO Log Exception
             e.printStackTrace();
-        } catch (IllegalAccessException e) { // TODO Log the exception
+        } catch (IllegalAccessException e) { // TODO Log Exception
             e.printStackTrace();
         }
     }

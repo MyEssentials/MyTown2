@@ -9,7 +9,10 @@ import mytown.entities.flag.FlagType;
  */
 public class BlockWhitelist {
 
-    public int dim, x, y, z;
+    public final int dim;
+    public final int x;
+    public final int y;
+    public final int z;
     public boolean isDeleted;
 
     private int db_id;
