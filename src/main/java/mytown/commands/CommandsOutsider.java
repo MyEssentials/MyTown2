@@ -78,6 +78,9 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.new",
             parentName = "mytown.cmd")
     public static void newTownCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 1)
+            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.newtown"));
+
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
 
@@ -85,8 +88,6 @@ public class CommandsOutsider extends Commands {
 
         if(res.getTowns().size() >= Config.maxTowns)
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.maxTowns"));
-        if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.newtown"));
         if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
             throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.nameinuse", args.get(0)));
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?

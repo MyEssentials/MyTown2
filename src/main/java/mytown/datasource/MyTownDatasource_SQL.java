@@ -218,7 +218,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                         log.error("Failed to load Rank (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
                         continue; // TODO Should I just return out?
                     }
+
                     Rank rank = new Rank(rs.getString("name"), town);
+
+                    // Adding it before
+                    if (rs.getBoolean("isDefault")) {
+                        town.setDefaultRank(rank);
+                    }
+                    
                     PreparedStatement loadRankPermsStatement = prepare("SELECT * FROM " + prefix + "RankPermissions WHERE rank=?", true);
                     loadRankPermsStatement.setString(1, rank.getName());
                     ResultSet rs2 = loadRankPermsStatement.executeQuery();
@@ -227,9 +234,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     }
                     MyTownUniverse.getInstance().addRank(rank);
                     rank.getTown().addRank(rank);
-                    if (rs.getBoolean("isDefault")) {
-                        town.setDefaultRank(rank);
-                    }
                 }
             } catch (SQLException e) {
                 log.error("Failed to load a rank!", e);

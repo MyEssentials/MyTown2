@@ -8,18 +8,17 @@ import mytown.protection.Protections;
  * @author Joe Goett
  */
 public class ModProxy {
+
     private String name, modid;
-    private Class<? extends Protection> protClass;
     private Protection prot;
 
-    public ModProxy(String name, String modid, Class<? extends Protection> protClass) {
+    public ModProxy(String name, String modid, Protection prot) {
         this.name = name;
         this.modid = modid;
-        this.protClass = protClass;
+        this.prot = prot;
     }
 
     public boolean isLoaded = false;
-
     /**
      * Returns the name of the ModProxy
      *
@@ -42,13 +41,6 @@ public class ModProxy {
      * Loads this {@link ModProxy}, its run during {@link FMLPostInitializationEvent}.
      */
     public void load() {
-        try {
-            prot = protClass.newInstance();
-            Protections.instance.addProtection(prot, modid);
-        } catch (InstantiationException e) { // TODO Log the exception
-            e.printStackTrace();
-        } catch (IllegalAccessException e) { // TODO Log the exception
-            e.printStackTrace();
-        }
+        Protections.instance.addProtection(prot, modid);
     }
 }
