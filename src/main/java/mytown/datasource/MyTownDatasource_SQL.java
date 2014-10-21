@@ -225,7 +225,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     if (rs.getBoolean("isDefault")) {
                         town.setDefaultRank(rank);
                     }
-                    
+
                     PreparedStatement loadRankPermsStatement = prepare("SELECT * FROM " + prefix + "RankPermissions WHERE rank=?", true);
                     loadRankPermsStatement.setString(1, rank.getName());
                     ResultSet rs2 = loadRankPermsStatement.executeQuery();

@@ -10,12 +10,12 @@ import mytown.protection.Protections;
 public class ModProxy {
 
     private String name, modid;
-    private Protection prot;
+    private Class<? extends Protection> protClass;
 
-    public ModProxy(String name, String modid, Protection prot) {
+    public ModProxy(String name, String modid, Class<? extends Protection> protClass) {
         this.name = name;
         this.modid = modid;
-        this.prot = prot;
+        this.protClass = protClass;
     }
 
     public boolean isLoaded = false;
@@ -41,6 +41,13 @@ public class ModProxy {
      * Loads this {@link ModProxy}, its run during {@link FMLPostInitializationEvent}.
      */
     public void load() {
-        Protections.instance.addProtection(prot, modid);
+        try {
+            Protection prot = protClass.newInstance();
+            Protections.instance.addProtection(prot, modid);
+        } catch (InstantiationException e) { // TODO Log the exception
+            e.printStackTrace();
+        } catch (IllegalAccessException e) { // TODO Log the exception
+            e.printStackTrace();
+        }
     }
 }

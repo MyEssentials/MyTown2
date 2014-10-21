@@ -52,15 +52,15 @@ public class ModProxies {
      * Adds all the {@link ModProxy}'s to the list
      */
     public static void addProxies() {
-        proxies.add(new ModProxy("Blood Magic", BLOOD_MAGIC_MOD_ID, new BloodMagicProtection()));
-        proxies.add(new ModProxy("Botania", BOTANIA_MOD_ID, new BotaniaProtection()));
-        proxies.add(new ModProxy("Buildcraft|Factory", BC_FACTORY_MOD_ID, new BuildCraftFactoryProtection()));
-        proxies.add(new ModProxy("Buildcraft|Transport", BC_TRANSPORT_MOD_ID, new BuildCraftTransportProtection()));
-        proxies.add(new ModProxy("Extra Utilities", EXTRA_UTILITIES_MOD_ID, new ExtraUtilitiesProtection()));
-        proxies.add(new ModProxy("Industrial Craft 2", IC2_MOD_ID, new IC2Protection()));
-        proxies.add(new ModProxy("Minefactory Reloaded", MFR_MOD_ID, new MinefactoryReloadedProtection()));
-        proxies.add(new ModProxy("Thermal Expansion", THERMAL_EXPANSION_MOD_ID, new ThermalExpansionProtection()));
-        proxies.add(new ModProxy("Mekanism", MEKANISM_MOD_ID, new MekanismProtection()));
+        proxies.add(new ModProxy("Blood Magic", BLOOD_MAGIC_MOD_ID, BloodMagicProtection.class));
+        proxies.add(new ModProxy("Botania", BOTANIA_MOD_ID, BotaniaProtection.class));
+        proxies.add(new ModProxy("Buildcraft|Factory", BC_FACTORY_MOD_ID, BuildCraftFactoryProtection.class));
+        proxies.add(new ModProxy("Buildcraft|Transport", BC_TRANSPORT_MOD_ID, BuildCraftTransportProtection.class));
+        proxies.add(new ModProxy("Extra Utilities", EXTRA_UTILITIES_MOD_ID, ExtraUtilitiesProtection.class));
+        proxies.add(new ModProxy("Industrial Craft 2", IC2_MOD_ID, IC2Protection.class));
+        proxies.add(new ModProxy("Minefactory Reloaded", MFR_MOD_ID, MinefactoryReloadedProtection.class));
+        proxies.add(new ModProxy("Thermal Expansion", THERMAL_EXPANSION_MOD_ID, ThermalExpansionProtection.class));
+        proxies.add(new ModProxy("Mekanism", MEKANISM_MOD_ID, MekanismProtection.class));
     }
 
     /**
