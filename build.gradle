@@ -26,6 +26,11 @@ repositories {
     }
 }
 
+apply plugin: "curseforge"
+apply plugin: "forge"
+
+// Load Configs
+
 ext.configFile = file "build.properties"
 
 ext.configFile.withReader {
@@ -34,42 +39,43 @@ ext.configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
-apply plugin: "forge"
-apply plugin: "curseforge"
+if (System.env.TRAVIS_TAG != null) {
+    ext.config.build_number = System.env.TRAVIS_TAG.substring(0, System.env.TRAVIS_TAG.length()-1)
+    ext.config.build_type = System.env.TRAVIS_TAG.substring(System.env.TRAVIS_TAG.length()-1)
+} else {
+    ext.config.build_number = "0000"
+    ext.config.build_type = "r"
+}
 
-version = "${config.minecraft_version}-${config.mod_version}.${config.build_number}"
+// Configure Everything
+
+version = "${config.minecraft_version}-${config.build_number}${config.build_type}"
 group = config.group
 archivesBaseName = config.archivesBaseName
 
 minecraft {
     version = "${config.minecraft_version}-${config.forge_version}"
-
     replace "@VERSION@", "${project.version}"
 }
 
-curse { // TODO Need to do this conditionally
-    apiKey = System.env.CURSEFORGEKEY
-    projectId = "224242"
-    changelog = "" // TODO Add changelog support
-    releaseType = "alpha" // TODO Add support for setting release type
-}
-
+// Setup Deps
 dependencies {
     testCompile "junit:junit:4.11"
-    compile "com.esotericsoftware.reflectasm:reflectasm:1.09"
-    compile project(":MyEssentials-Core")
+    compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
 
     // Include DB Drivers as deps
-    compile "org.xerial:sqlite-jdbc:3.7.15-M1"
-    compile "mysql:mysql-connector-java:5.1.31"
+    compile "org.xerial:sqlite-jdbc:${config.sqlite_version}"
+    compile "mysql:mysql-connector-java:${config.mysql_version}"
 
     // Mod Deps
+    compile project(":MyEssentials-Core")
 	compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     //compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
 	//compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
 }
 
+// Process Resources, injecting version numbers in
 processResources {
     inputs.property "mod_version", project.version
     inputs.property "minecraft_version", project.minecraft.version
@@ -84,4 +90,18 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude '*.info'
     }
+}
+
+// Setup Curse Upload task
+
+curse {
+    apiKey = System.env.CURSEFORGEKEY
+    projectId = config.project_id
+    changelog = "" // TODO Add changelog support
+    releaseType = config.build_type.equals('a') ? "alpha" : (config.build_type.equals('b') ? "beta" : "release")
+}
+
+// Only allow if built by Travis-CI
+if (System.env.CURSEFORGEKEY != null && System.env.TRAVIS == "true" && System.env.TRAVIS_PULL_REQUEST == "false" && (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty())) {
+    tasks.build.dependsOn("curse")
 }
