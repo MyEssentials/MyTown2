@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class Plot implements IHasFlags, IHasResidents {
     private int db_ID;
-    private int dim, x1, y1, z1, x2, y2, z2;
+    private final int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
     private String key, name;
 

@@ -10,7 +10,8 @@ import net.minecraft.block.Block;
  */
 public class BlockPair {
 
-    public Block b1, b2;
+    public final Block b1;
+    public final Block b2;
 
     public BlockPair(Block b1, Block b2) {
         this.b1 = b1;

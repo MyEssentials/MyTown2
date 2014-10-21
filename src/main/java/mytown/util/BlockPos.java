@@ -7,7 +7,10 @@ import net.minecraft.block.Block;
  * Helper class for storing position of a block
  */
 public class BlockPos {
-    public int x, y, z, dim;
+    public final int dim;
+    public final int x;
+    public final int y;
+    public final int z;
     public BlockPos(int x, int y, int z, int dim) {
         this.x = x;
         this.y = y;
