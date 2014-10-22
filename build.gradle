@@ -37,7 +37,9 @@ ext.configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
+println " ****"
 println System.env.TRAVIS_TAG
+println " ****"
 
 if (System.env.TRAVIS_TAG != null) {
     ext.config.build_number = System.env.TRAVIS_TAG.substring(0, System.env.TRAVIS_TAG.length()-1)
