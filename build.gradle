@@ -93,7 +93,7 @@ processResources {
 }
 
 // Setup Curse Upload task
-
+/*
 curse {
     apiKey = System.env.CURSEFORGEKEY
     projectId = config.project_id
@@ -105,3 +105,4 @@ curse {
 if (System.env.CURSEFORGEKEY != null && System.env.TRAVIS == "true" && System.env.TRAVIS_PULL_REQUEST == "false" && (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty())) {
     tasks.build.dependsOn("curse")
 }
+*/
