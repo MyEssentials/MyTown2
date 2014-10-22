@@ -1179,6 +1179,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             deleteBlockStatement.setInt(3, block.getZ());
             deleteBlockStatement.execute();
 
+            // Delete Block from Town
+            block.getTown().removeBlock(block);
+
             // Delete Plots contained in the Block
             for (Plot p : block.getPlots()) {
                 deletePlot(p);
