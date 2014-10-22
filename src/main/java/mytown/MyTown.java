@@ -29,6 +29,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
+import javax.naming.NoPermissionException;
 import java.io.File;
 import java.lang.reflect.Method;
 

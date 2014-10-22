@@ -24,6 +24,10 @@ repositories {
         name = 'ThaumCraft 4 API'
         artifactPattern 'https://dl.dropboxusercontent.com/u/47135879/Thaumcraft-1.7.10-4.2.0.1-api.zip'
     }
+	maven {
+		name = "pex-repo"
+		url = "http://pex-repo.zachsthings.com"
+	}
 }
 
 ext.configFile = file "build.properties"
@@ -68,6 +72,7 @@ dependencies {
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     //compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
 	//compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
+	compile 'ru.tehkode:PermissionsEx:1.22'
 }
 
 processResources {
