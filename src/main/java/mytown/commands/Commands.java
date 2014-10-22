@@ -5,7 +5,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.api.interfaces.IHasFlags;
 import mytown.config.Config;
 import mytown.core.Localization;
-import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandCompletion;
 import mytown.core.utils.command.CommandManager;
 import mytown.datasource.MyTownDatasource;

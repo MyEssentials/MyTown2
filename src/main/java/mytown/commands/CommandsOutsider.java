@@ -1,19 +1,16 @@
 package mytown.commands;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
-import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.util.Formatter;
 import mytown.util.Utils;
-import net.minecraft.command.CommandException;
+import mytown.util.exceptions.MyTownCommandException;
+import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ public class CommandsOutsider extends Commands {
                 Resident res = getDatasource().getOrMakeResident(sender);
                 towns.add(getTownFromResident(res));
             } else {
-                throw new CommandException("You are not a player!");
+                throw new MyTownCommandException("You are not a player!");
             }
         } else {
             if (args.get(0).equals("@a")) {
@@ -79,7 +76,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd")
     public static void newTownCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.newtown"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.newtown");
 
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
@@ -87,15 +84,15 @@ public class CommandsOutsider extends Commands {
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
 
         if(res.getTowns().size() >= Config.maxTowns)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.maxTowns"));
+            throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
         if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.nameinuse", args.get(0)));
+            throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.positionError"));
+            throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
         for(int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
             for(int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
                 if(Utils.getTownAtPosition(player.dimension, x, z) != null)
-                    throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.tooClose"));
+                    throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose");
             }
         }
         int stackNumber = getPaymentStack(sender, Config.costAmountMakeTown);
@@ -103,7 +100,7 @@ public class CommandsOutsider extends Commands {
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.failed"));
+            throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
     }
@@ -136,10 +133,10 @@ public class CommandsOutsider extends Commands {
             town = getTownFromName(args.get(0));
             // Basically true only if player specifies a town that is not in its invites
             if (!invites.contains(town))
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
+                throw new MyTownCommandException("mytown.cmd.err.invite.town.noinvitations");
         }
         if(res.getTowns().size() >= Config.maxTowns)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.maxTowns"));
+            throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
 
         getDatasource().deleteTownInvite(res, town, true);
 
@@ -163,7 +160,7 @@ public class CommandsOutsider extends Commands {
         else
             town = getTownFromName(args.get(0));
         if (!invites.contains(town))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.town.noinvitations"));
+            throw new MyTownCommandException("mytown.cmd.err.invite.town.noinvitations");
 
         getDatasource().deleteTownInvite(res, town, false);
 
@@ -203,13 +200,13 @@ public class CommandsOutsider extends Commands {
             completionKeys = {"residentCompletion"})
     public static void friendsAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.friends.add"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.friends.add");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
         if(res == toAdd)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.add.self"));
+            throw new MyTownCommandException("mytown.cmd.err.friends.add.self");
         if(!getDatasource().saveFriendRequest(res, toAdd)) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.add.already"));
+            throw new MyTownCommandException("mytown.cmd.err.friends.add.already");
         }
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.invitationSent"));
         toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotInvitation", res.getPlayerName()));
@@ -222,11 +219,11 @@ public class CommandsOutsider extends Commands {
             completionKeys = {"residentCompletion"})
     public static void friendsRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.friends.remove"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.friends.remove");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
         if(!toAdd.removeFriend(res)) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.remove"));
+            throw new MyTownCommandException("mytown.cmd.err.friends.remove");
         } else {
             res.removeFriend(toAdd);
         }
@@ -241,7 +238,7 @@ public class CommandsOutsider extends Commands {
             completionKeys = {"residentCompletion"})
     public static void friendsAcceptCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.accept"));
+            throw new MyTownCommandException("mytown.cmd.err.friends.accept");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
 
@@ -257,7 +254,7 @@ public class CommandsOutsider extends Commands {
             completionKeys = {"residentCompletion"})
     public static void friendsRefuseCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.friends.refuse"));
+            throw new MyTownCommandException("mytown.cmd.err.friends.refuse");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
 

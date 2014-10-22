@@ -2,7 +2,6 @@ package mytown.commands;
 
 import mytown.config.Config;
 import mytown.core.ChatUtils;
-import mytown.core.utils.Assert;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.TownBlock;
@@ -11,11 +10,10 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import net.minecraft.command.CommandException;
+import mytown.util.exceptions.MyTownCommandException;
+import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
@@ -51,18 +49,18 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
 
         if (town.hasMaxAmountOfBlocks())
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.maxBlocks"));
+            throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
+            throw new MyTownCommandException("mytown.cmd.err.claim.already");
         if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.far.notAllowed"));
+            throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         int stackNumber = getPaymentStack(sender, Config.costAmountClaim);
         player.inventory.decrStackSize(stackNumber, Config.costAmountClaim);
 
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
-            throw new CommandException("Failed to create Block"); // TODO Localize
+            throw new MyTownCommandException("Failed to create Block"); // TODO Localize
 
         getDatasource().saveBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
@@ -79,7 +77,7 @@ public class CommandsAssistant extends Commands {
         Town town = block.getTown();
 
         if (!res.hasTown(town)) {
-            throw new CommandException("You are not part of that town!"); // TODO Localize
+            throw new MyTownCommandException("You are not part of that town!"); // TODO Localize
         }
 
         // TODO Run other checks?
@@ -88,7 +86,7 @@ public class CommandsAssistant extends Commands {
             getDatasource().deleteBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
         } else {
-            throw new CommandException("§cYou cannot delete the Block containing the spawn point!");
+            throw new MyTownCommandException("§cYou cannot delete the Block containing the spawn point!");
         }
 
     }
@@ -110,10 +108,10 @@ public class CommandsAssistant extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.invite"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.invite");
         Resident target = getResidentFromName(args.get(0));
         if (town.hasResident(args.get(0)))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.already", args.get(0), town.getName()));
+            throw new MyTownCommandException("mytown.cmd.err.invite.already", args.get(0), town.getName());
 
         getDatasource().saveTownInvite(target, town);
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.invited", town.getName()));
@@ -144,7 +142,7 @@ public class CommandsAssistant extends Commands {
     public static void permSetTownCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.err.perm.set.usage"));
+            throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         Flag flag = getFlagFromName(town, args.get(0));
@@ -152,7 +150,7 @@ public class CommandsAssistant extends Commands {
         if (flag.setValueFromString(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
         } else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
+            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
         getDatasource().saveFlag(flag, town);
     }
 
@@ -163,7 +161,7 @@ public class CommandsAssistant extends Commands {
             completionKeys = {"flagCompletionWhitelist"})
     public static void permTownWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if (args.size() == 0)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
+            throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
@@ -172,7 +170,7 @@ public class CommandsAssistant extends Commands {
         if(flagType.isWhitelistable())
             res.startBlockSelection(flagType, town.getName(), false);
         else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
+            throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
 
     }
 
@@ -185,17 +183,17 @@ public class CommandsAssistant extends Commands {
 
         // /t promote <user> <rank>
         if (args.size() < 2)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.promote"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.promote");
         Resident resSender = getDatasource().getOrMakeResident(sender);
         Resident resTarget = getResidentFromName(args.get(0));
         Town town = getTownFromResident(resSender);
 
         if (!resTarget.getTowns().contains(town))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.notsametown", args.get(0), town.getName()));
+            throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", args.get(0), town.getName());
 
         //TODO: implement this properly
         if (args.get(1).equalsIgnoreCase("mayor"))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.promote.notMayor"));
+            throw new MyTownCommandException("mytown.cmd.err.promote.notMayor");
         Rank rank = getRankFromTown(town, args.get(1));
         if (getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
             resSender.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.sender", resTarget.getPlayerName(), rank.getName()));
@@ -214,14 +212,14 @@ public class CommandsAssistant extends Commands {
         public static void ranksAddCommand(ICommandSender sender, List<String> args) {
 
             if (args.size() < 2)
-                throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks"));
+                throw new MyTownWrongUsageException("mytown.cmd.usage.ranks");
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
             if (town.hasRankName(args.get(0)))
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.add.already", args.get(0)));
+                throw new MyTownCommandException("mytown.cmd.err.ranks.add.already", args.get(0));
             if (!town.hasRankName(args.get(1)))
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.add.notexist", args.get(1)));
+                throw new MyTownCommandException("mytown.cmd.err.ranks.add.notexist", args.get(1));
 
 
             Rank rank = new Rank(args.get(0), town.getRank(args.get(1)).getPermissions(), town);
@@ -237,13 +235,13 @@ public class CommandsAssistant extends Commands {
         public static void ranksRemoveCommand(ICommandSender sender, List<String> args) {
 
             if (args.size() < 1)
-                throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks"));
+                throw new MyTownWrongUsageException("mytown.cmd.usage.ranks");
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = res.getSelectedTown();
             Rank rank = getRankFromTown(town, args.get(0));
 
             if (town.getDefaultRank().equals(rank) || Rank.theMayorDefaultRank.equals(rank.getName()))
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.cantDelete"));
+                throw new MyTownCommandException("mytown.cmd.err.ranks.cantDelete");
 
             if (getDatasource().deleteRank(rank)) {
                 res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
@@ -260,21 +258,21 @@ public class CommandsAssistant extends Commands {
         public static void ranksPermAddCommand(ICommandSender sender, List<String> args) {
 
             if (args.size() < 2)
-                throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
+                throw new MyTownWrongUsageException("mytown.cmd.usage.ranks.perm");
 
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
 
             if (!CommandManager.commandList.keySet().contains(args.get(1)))
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));
+                throw new MyTownCommandException("mytown.cmd.err.ranks.perm.notexist", args.get(1));
 
             // Adding permission if everything is alright
             if (rank.addPermission(args.get(1))) {
                 getDatasource().saveRank(rank, rank.getTown().getDefaultRank().equals(rank));
                 res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
             } else
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.add.failed", args.get(1)));
+                throw new MyTownCommandException("mytown.cmd.err.ranks.perm.add.failed", args.get(1));
         }
 
         @CommandNode(
@@ -284,7 +282,7 @@ public class CommandsAssistant extends Commands {
         public static void ranksPermRemoveCommand(ICommandSender sender, List<String> args) {
 
             if (args.size() < 2)
-                throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.ranks.perm"));
+                throw new MyTownWrongUsageException("mytown.cmd.usage.ranks.perm");
 
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
@@ -292,14 +290,14 @@ public class CommandsAssistant extends Commands {
             Rank rank = getRankFromTown(town, args.get(0));
 
             if (!CommandManager.commandList.keySet().contains(args.get(1)))
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.notexist", args.get(1)));
+                throw new MyTownCommandException("mytown.cmd.err.ranks.perm.notexist", args.get(1));
 
             // Removing permission if everything is alright
             if (rank.removePermission(args.get(1))) {
                 getDatasource().saveRank(rank, rank.getTown().getDefaultRank().equals(rank));
                 res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
             } else
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.ranks.perm.remove.failed", args.get(1)));
+                throw new MyTownCommandException("mytown.cmd.err.ranks.perm.remove.failed", args.get(1));
         }
     }
 
@@ -342,7 +340,7 @@ public class CommandsAssistant extends Commands {
             completionKeys = {"residentCompletion"})
     public static void passCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.leave.pass"));
+            throw new MyTownCommandException("mytown.cmd.usage.leave.pass");
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
