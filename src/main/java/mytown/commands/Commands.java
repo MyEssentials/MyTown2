@@ -15,7 +15,7 @@ import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Utils;
-import net.minecraft.command.CommandException;
+import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -164,21 +164,21 @@ public abstract class Commands {
     public static Town getTownFromResident(Resident res) {
         Town town = res.getSelectedTown();
         if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+            throw new MyTownCommandException("mytown.cmd.err.partOfTown");
         return town;
     }
 
     public static Town getTownFromName(String name) {
         Town town = MyTownUniverse.getInstance().getTownsMap().get(name);
         if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist"), name);
+            throw new MyTownCommandException("mytown.cmd.err.town.notexist", name);
         return town;
     }
 
     public static Resident getResidentFromName(String playerName) {
         Resident res = getDatasource().getOrMakeResident(playerName);
         if (res == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.resident.notexist", playerName));
+            throw new MyTownCommandException("mytown.cmd.err.resident.notexist", playerName);
         return res;
     }
 
@@ -186,42 +186,42 @@ public abstract class Commands {
         Town town = getTownFromResident(res);
         Plot plot = town.getPlotAtResident(res);
         if (plot == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.notInPlot"));
+            throw new MyTownCommandException("mytown.cmd.err.plot.notInPlot");
         return plot;
     }
 
     public static ImmutableList<Town> getInvitesFromResident(Resident res) {
         ImmutableList<Town> list = res.getInvites();
         if (list == null || list.isEmpty())
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.invite.noinvitations"));
+            throw new MyTownCommandException("mytown.cmd.err.invite.noinvitations");
         return list;
     }
 
     public static Flag getFlagFromType(IHasFlags hasFlags, FlagType flagType) {
         Flag flag = hasFlags.getFlag(flagType);
         if(flag == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", flagType.toString()));
+            throw new MyTownCommandException("mytown.cmd.err.flagNotExists", flagType.toString());
         return flag;
     }
 
     public static Flag getFlagFromName(IHasFlags hasFlags, String name) {
         Flag flag = hasFlags.getFlag(FlagType.valueOf(name));
         if(flag == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", name));
+            throw new MyTownCommandException("mytown.cmd.err.flagNotExists", name);
         return flag;
     }
 
     public static TownBlock getBlockAtResident(Resident res) {
         TownBlock block = getDatasource().getBlock(res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
         if(block == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.notexist"));
+            throw new MyTownCommandException("mytown.cmd.err.claim.notexist", res.getSelectedTown());
         return block;
     }
 
     public static Rank getRankFromTown(Town town, String rankName) {
         Rank rank = town.getRank(rankName);
         if (rank == null) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.rank.notexist", rankName, town.getName()));
+            throw new MyTownCommandException("mytown.cmd.err.rank.notexist", rankName, town.getName());
         }
         return rank;
     }
@@ -229,7 +229,7 @@ public abstract class Commands {
     public static Rank getRankFromResident(Resident res) {
         Rank rank = res.getTownRank();
         if (rank == null) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.partOfTown"));
+            throw new MyTownCommandException("mytown.cmd.err.partOfTown");
         }
         return rank;
     }
@@ -237,10 +237,10 @@ public abstract class Commands {
     public static Plot getPlotAtPosition(int dim, int x, int y, int z) {
         Town town = Utils.getTownAtPosition(dim, x >> 4, z >> 4);
         if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.blockNotInPlot"));
+            throw new MyTownCommandException("mytown.cmd.err.blockNotInPlot");
         Plot plot = town.getPlotAtCoords(dim, x, y, z);
         if (plot == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.blockNotInPlot"));
+            throw new MyTownCommandException("mytown.cmd.err.blockNotInPlot");
         return plot;
     }
 
@@ -248,13 +248,13 @@ public abstract class Commands {
         try {
             return FlagType.valueOf(name);
         } catch (IllegalArgumentException e) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flagNotExists", name));
+            throw new MyTownCommandException("mytown.cmd.err.flagNotExists", name);
         }
     }
 
     public static int getPaymentStack(ICommandSender sender, int minAmount) {
         if(!(sender instanceof EntityPlayer))
-            throw new CommandException("The sender is not a player!");
+            throw new MyTownCommandException("The sender is not a player!");
         EntityPlayer player = (EntityPlayer)sender;
         int stackNumber = -1;
         for(int i = 0; i < player.inventory.mainInventory.length; i++) {
@@ -267,7 +267,7 @@ public abstract class Commands {
             }
         }
         if(stackNumber == -1)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.cost", minAmount, Config.costItemName));
+            throw new MyTownCommandException("mytown.cmd.err.cost", minAmount, Config.costItemName);
         return stackNumber;
     }
 
