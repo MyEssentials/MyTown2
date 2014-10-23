@@ -79,6 +79,7 @@ public class CommandsAssistant extends Commands {
         if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
             getDatasource().deleteBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
+            returnPaymentStack(sender, Config.costAmountClaim);
         } else {
             throw new MyTownCommandException("§cYou cannot delete the Block containing the spawn point!");
         }
@@ -410,6 +411,23 @@ public class CommandsAssistant extends Commands {
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.kicked", town.getName()));
         town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.left", target.getPlayerName(), town.getName()));
     }
+
+    @CommandNode(
+            name = "delete",
+            permission = "mytown.cmd.mayor.leave.delete",
+            parentName = "mytown.cmd.everyone.leave")
+    public static void leaveDeleteCommand(ICommandSender sender, List<String> args) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+
+        if(town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
+            town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
+            returnPaymentStack(sender, Config.costAmountClaim * town.getBlocks().size());
+            getDatasource().deleteTown(town);
+        }
+    }
+
+
 
     // Temporary here, might integrate in the methods
     protected static boolean checkNearby(int dim, int x, int z, Town town) {

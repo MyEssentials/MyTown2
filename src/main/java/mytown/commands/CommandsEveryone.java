@@ -52,20 +52,6 @@ public class CommandsEveryone extends Commands {
     }
 
     @CommandNode(
-            name = "delete",
-            permission = "mytown.cmd.mayor.leave.delete",
-            parentName = "mytown.cmd.everyone.leave")
-    public static void leaveDeleteCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
-
-        if(town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
-            town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
-            getDatasource().deleteTown(town);
-        }
-    }
-
-    @CommandNode(
             name = "spawn",
             permission = "mytown.cmd.everyone.spawn",
             parentName = "mytown.cmd",
