@@ -1085,7 +1085,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean linkResidentToPlot(Resident res, Plot plot, boolean isOwner) {
         try {
-            PreparedStatement s = prepare("INSERT INTO " + prefix + " ResidentsToPlots(resident, plotID, isOwner) VALUES(?, ?, ?)", true);
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "ResidentsToPlots(resident, plotID, isOwner) VALUES(?, ?, ?)", true);
             s.setString(1, res.getUUID().toString());
             s.setInt(2, plot.getDb_ID());
             s.setBoolean(3, isOwner);
@@ -1106,7 +1106,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean unlinkResidentFromPlot(Resident res, Plot plot) {
         try {
-            PreparedStatement s = prepare("DELETE FROM" + prefix + " ResidentsToPlots WHERE resident=? AND plotID=?", true);
+            PreparedStatement s = prepare("DELETE FROM" + prefix + "ResidentsToPlots WHERE resident=? AND plotID=?", true);
             s.setString(1, res.getUUID().toString());
             s.setInt(2, plot.getDb_ID());
             s.executeUpdate();
@@ -1121,7 +1121,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner) {
         try {
-            PreparedStatement s = prepare("UPDATE" + prefix + " ResidentsToPlots SET isOwner=? WHERE resident=? AND plotID=?", true);
+            PreparedStatement s = prepare("UPDATE" + prefix + "ResidentsToPlots SET isOwner=? WHERE resident=? AND plotID=?", true);
             s.setBoolean(1, isOwner);
             s.setString(2, res.getUUID().toString());
             s.setInt(3, plot.getDb_ID());
@@ -1626,7 +1626,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
         updates.add(new DBUpdate("09.04.2014.1", "Add BlockWhitelists", "CREATE TABLE IF NOT EXISTS " + prefix +
                 "BlockWhitelists(" +
-                "ID INTEGER NOT NULL, " +
+                "ID INTEGER NOT NULL" + AUTO_INCREMENT + ", " +
                 "dim INT NOT NULL, " +
                 "x INT NOT NULL, " +
                 "y INT NOT NULL, " +
