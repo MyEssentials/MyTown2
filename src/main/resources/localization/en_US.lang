@@ -106,6 +106,9 @@ mytown.cmd.err.plot.selectionFailed=§cYou cannot make a plot outside the town!
 mytown.cmd.err.plot.notSelected=§cYou need to select 2 corners first!
 mytown.cmd.err.plot.notInPlot=§cYou are not standing in a plot!
 mytown.cmd.err.plot.notOwner=§cYou do not have permission for this plot, only owners can set flags, rename or delete this plot!
+mytown.cmd.err.plot.limit=§cYou cannot make more plots than %s!
+mytown.cmd.err.plot.limit.toPlayer=§cPlayer %s can't be owner to any more plots!
+mytown.cmd.usage.plot.limit.set=§3/t plot limit set <limitNumber>
 
 # /t perm
 mytown.cmd.err.perm.set.usage=§3/t perm <town/plot> set <flag-name> <value>

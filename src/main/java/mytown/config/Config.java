@@ -49,4 +49,7 @@ public class Config {
 
     @ConfigProperty(category = "towns", name = "costAmountClaim", comment = "The amount of the cost item you need to create a town.")
     public static int costAmountClaim = 3;
+
+    @ConfigProperty(category = "towns", name = "defaultMaxPlotsPerPlayer", comment = "The maximum amount of plots a player can make in a town as a default.")
+    public static int defaultMaxPlots = 1;
 }

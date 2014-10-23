@@ -257,6 +257,56 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /* ----- IHasPlots ----- */
 
+    private int maxPlots;
+
+    public void setMaxPlots(int maxPlots) {
+        this.maxPlots = maxPlots;
+    }
+
+    public int getMaxPlots() {
+        return maxPlots;
+    }
+
+    /**
+     * Returns plots owned by the player
+     *
+     * @param res
+     * @return
+     */
+    public List<Plot> getPlotsOwned(Resident res) {
+        List<Plot> list = new ArrayList<Plot>();
+        for(Plot plot : plots) {
+            if(plot.hasOwner(res))
+                list.add(plot);
+        }
+        return list;
+    }
+
+    /**
+     * Gets how many plots this resident is owner in
+     *
+     * @param res
+     * @return
+     */
+    public int getAmountPlotsOwned(Resident res) {
+        int x = 0;
+        for(Plot plot : plots) {
+            if(plot.hasOwner(res))
+                x++;
+        }
+        return x;
+    }
+
+    /**
+     * Returns if resident can make any more plots
+     *
+     * @param res
+     * @return
+     */
+    public boolean canResidentMakePlot(Resident res) {
+        return getAmountPlotsOwned(res) >= maxPlots && !residents.get(res).hasPermission("mytown.plot.unlimited");
+    }
+
     private List<Plot> plots = new ArrayList<Plot>();
 
     @Override

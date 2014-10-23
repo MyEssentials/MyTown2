@@ -237,8 +237,13 @@ public class CommandsEveryone extends Commands {
             parentName = "mytown.cmd.everyone.plot")
     public static void plotMakeCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        String plotName = "NoName";
 
+        Town town = getTownFromResident(res);
+        if(!town.canResidentMakePlot(res)) {
+            throw new MyTownCommandException("mytown.cmd.err.plot.limit", town.getMaxPlots());
+        }
+
+        String plotName = "NoName";
         if (args.size() > 0) {
             plotName = args.get(0);
         }
@@ -358,6 +363,12 @@ public class CommandsEveryone extends Commands {
             throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
+
+        Town town = getTownFromResident(res);
+        if(!town.canResidentMakePlot(target)) {
+            throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
+        }
+
         Plot plot = getPlotAtResident(res);
 
         getDatasource().linkResidentToPlot(target, plot, true);

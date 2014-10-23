@@ -172,6 +172,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 // TODO: Maybe spawn is not needed when town is an admintown?
                 town.setSpawn(new Teleport(rs.getInt("spawnDim"), rs.getFloat("spawnX"), rs.getFloat("spawnY"), rs.getFloat("spawnZ"), rs.getFloat("cameraYaw"), rs.getFloat("cameraPitch")));
                 town.setExtraBlocks(rs.getInt("extraBlocks"));
+                town.setMaxPlots(rs.getInt("maxPlots"));
 
                 MyTownUniverse.getInstance().addTown(town);
             }
@@ -556,7 +557,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean saveTown(Town town) {
         try {
             if (MyTownUniverse.getInstance().hasTown(town)) { // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=?, spawnDim=?, spawnX=?, spawnY=?, spawnZ=?, cameraYaw=?, cameraPitch=?, extraBlocks=? WHERE name=?", true);
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=?, spawnDim=?, spawnX=?, spawnY=?, spawnZ=?, cameraYaw=?, cameraPitch=?, extraBlocks=?, maxPlots=? WHERE name=?", true);
                 updateStatement.setString(1, town.getName());
                 updateStatement.setInt(2, town.getSpawn().getDim());
                 updateStatement.setFloat(3, town.getSpawn().getX());
@@ -565,11 +566,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 updateStatement.setFloat(6, town.getSpawn().getYaw());
                 updateStatement.setFloat(7, town.getSpawn().getPitch());
                 updateStatement.setInt(8, town.getExtraBlocks());
+                updateStatement.setInt(9, town.getMaxPlots());
 
                 if (town.getOldName() == null)
-                    updateStatement.setString(8, town.getName());
+                    updateStatement.setString(10, town.getName());
                 else
-                    updateStatement.setString(8, town.getOldName());
+                    updateStatement.setString(10, town.getOldName());
 
                 updateStatement.executeUpdate();
 
@@ -581,7 +583,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 }
                 town.resetOldName();
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name, spawnDim, spawnX, spawnY, spawnZ, cameraYaw, cameraPitch, isAdminTown) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name, spawnDim, spawnX, spawnY, spawnZ, cameraYaw, cameraPitch, isAdminTown, extraBlocks, maxPlots) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, town.getName());
                 insertStatement.setInt(2, town.getSpawn().getDim());
                 insertStatement.setFloat(3, town.getSpawn().getX());
@@ -590,6 +592,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.setFloat(6, town.getSpawn().getYaw());
                 insertStatement.setFloat(7, town.getSpawn().getPitch());
                 insertStatement.setBoolean(8, town instanceof AdminTown);
+                insertStatement.setInt(9, town.getExtraBlocks());
+                insertStatement.setInt(10, town.getMaxPlots());
+
                 insertStatement.executeUpdate();
 
                 // Put the Town in the Map
@@ -1663,6 +1668,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
 
         updates.add(new DBUpdate("10.18.2014.1", "Add 'extraBlocks' to towns", "ALTER TABLE " + prefix + "Towns ADD extraBlocks INTEGER DEFAULT 0"));
+        updates.add(new DBUpdate("10.23.2014.1", "Add 'maxPlots' to towns", "ALTER TABLE " + prefix + "Towns ADD maxPlots INTEGER DEFAULT "+ Config.defaultMaxPlots+""));
     }
 
     /**

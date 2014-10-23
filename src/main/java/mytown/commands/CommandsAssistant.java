@@ -353,6 +353,40 @@ public class CommandsAssistant extends Commands {
         }
     }
 
+    @CommandNode(
+            name="limit",
+            permission = "mytown.cmd.assistant.plot.limit",
+            parentName = "mytown.cmd.everyone.plot")
+    public static void plotLimitCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        if(args.size() < 1) {
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.limit", town.getMaxPlots()));
+        } else {
+            callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.plot.limit");
+        }
+    }
+
+    @CommandNode(
+            name="set",
+            permission = "mytown.cmd.assistant.plot.limit.set",
+            parentName = "mytown.cmd.assistant.plot.limit")
+    public static void plotLimitSetCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1) {
+            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
+        }
+        try {
+            int limit = Integer.parseInt(args.get(0));
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+            town.setMaxPlots(limit);
+            getDatasource().saveTown(town);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.limit", town.getMaxPlots()));
+        } catch (NumberFormatException ex) {
+            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
+        }
+    }
+
     // Temporary here, might integrate in the methods
     protected static boolean checkNearby(int dim, int x, int z, Town town) {
         int[] dx = {1, 0, -1, 0};
