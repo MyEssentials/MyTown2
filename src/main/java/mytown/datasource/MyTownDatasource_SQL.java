@@ -35,6 +35,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @ConfigProperty(category = "datasource.sql", comment = "User defined properties to be passed to the connection.\nFormat: key=value;key=value...")
     protected String[] userProperties = {};
 
+    protected String AUTO_INCREMENT = ""; // Only becasuse SQLite and MySQL are different >.>
+
     protected Properties dbProperties = new Properties();
     protected String dsn = "";
     protected Connection conn = null;
@@ -1564,7 +1566,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(dim) REFERENCES " + prefix + "Worlds(dim) ON DELETE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.7", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Plots (" +
-                "ID INTEGER NOT NULL," + // Just because it's a pain with this many primary keys
+                "ID INTEGER NOT NULL " + AUTO_INCREMENT + "," + // Just because it's a pain with this many primary keys
                 "name VARCHAR(50) NOT NULL," + // TODO Allow larger Plot names?
                 "dim INT NOT NULL," +
                 "x1 INT NOT NULL," +

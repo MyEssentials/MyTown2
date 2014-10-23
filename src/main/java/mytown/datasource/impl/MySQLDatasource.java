@@ -24,6 +24,8 @@ public class MySQLDatasource extends MyTownDatasource_SQL {
     protected void setup() {
         this.dsn = "jdbc:mysql://" + host + "/" + database;
 
+        this.AUTO_INCREMENT = "AUTO_INCREMENT";
+
         // Setup Properties
         dbProperties.put("autoReconnect", "true");
         dbProperties.put("user", username);
