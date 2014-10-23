@@ -134,6 +134,10 @@ mytown.cmd.err.setspawn.notintown=§cThe position that you're in is not inside t
 # /t spawn
 mytown.cmd.err.spawn.notexist=§cThe TownBlock that the spawn of %s was on got deleted or the spawn wasn't set! §3Please use "/t setspawn" to set another one.
 
+# /t kick
+mytown.cmd.usage.kick=§3/t kick <resident>
+mytown.cmd.err.kick.self=§cNo, you can't kick yourself :<
+
 # /ta delete
 mytown.adm.cmd.delete.usage=§3/ta delete <townname> [townname2 townname3...]
 mytown.adm.cmd.delete.success=§cDeleted town with name %s!

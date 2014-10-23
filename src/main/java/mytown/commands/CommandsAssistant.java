@@ -387,6 +387,30 @@ public class CommandsAssistant extends Commands {
         }
     }
 
+    @CommandNode(
+            name="kick",
+            permission = "mytown.cmd.assistant.kick",
+            parentName = "mytown.cmd",
+            completionKeys = {"residentCompletion"})
+    public static void kickCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1) {
+            throw new MyTownWrongUsageException("mytown.cmd.usage.kick");
+        }
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident target = getResidentFromName(args.get(0));
+        Town town = getTownFromResident(res);
+        if(!target.getTowns().contains(town)) {
+            throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", args.get(0), town.getName());
+        }
+        if(target == res) {
+            throw new MyTownCommandException("mytown.cmd.err.kick.self");
+        }
+
+        getDatasource().unlinkResidentFromTown(target, town);
+        target.sendMessage(getLocal().getLocalization("mytown.notification.town.kicked", town.getName()));
+        town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.left", target.getPlayerName(), town.getName()));
+    }
+
     // Temporary here, might integrate in the methods
     protected static boolean checkNearby(int dim, int x, int z, Town town) {
         int[] dx = {1, 0, -1, 0};
