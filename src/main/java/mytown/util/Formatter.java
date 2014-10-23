@@ -168,6 +168,35 @@ public class Formatter {
         return color + rank.getName();
     }
 
+    /**
+     * Formats a list of owners of a plot or town
+     * TODO: Generalize this
+     *
+     * @param residentList
+     * @return
+     */
+    public static String formatOwnersToString(List<Resident> residentList) {
+        String formattedList = null;
+        for(Resident res : residentList) {
+            if(res != null) {
+                if (formattedList == null)
+                    formattedList = "§6Owners: " + res.getPlayerName();
+                else
+                    formattedList = ", " + res.getPlayerName();
+            } else {
+                formattedList = "§6Owners: SERVER ADMINS";
+                break;
+            }
+        }
+        return formattedList;
+    }
+
+    public static String formatOwnerToString(Resident res) {
+        List<Resident> list = new ArrayList<Resident>();
+        list.add(res);
+        return formatOwnersToString(list);
+    }
+
 
 
     public static String blockInfoFormat = " ---------- Block ----------\nTown: %1$s\nDimension: %2$s\nLocation: %3$s";

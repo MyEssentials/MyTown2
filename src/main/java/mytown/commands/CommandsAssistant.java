@@ -341,9 +341,9 @@ public class CommandsAssistant extends Commands {
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromResident(res);
 
-        if(!town.hasResident(target))
-            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.resident.notsametown", target.getPlayerName()));
-
+        if(!town.hasResident(target)) {
+            throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", target.getPlayerName(), town.getName());
+        }
         if(town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
             getDatasource().updateResidentToTownLink(target, town, town.getRank(Rank.theMayorDefaultRank));
             target.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.passed"));

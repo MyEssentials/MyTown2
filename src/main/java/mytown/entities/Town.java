@@ -602,6 +602,43 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return true;
     }
 
+    /**
+     * Used to get the owners of a plot (or a town) at the position given
+     * Returns null if position is not in town
+     *
+     * @return
+     */
+    public List<Resident> getOwnersAtPosition(int dim, int x, int y, int z) {
+        List<Resident> list = new ArrayList<Resident>();
+        Plot plot = getPlotAtCoords(dim, x, y, z);
+        if(plot == null) {
+            if(isPointInTown(dim, x, z)) {
+                list.add(getMayor());
+            } else {
+                return null;
+            }
+        } else {
+            for(Resident res : plot.getOwners()) {
+                list.add(res);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Gets the resident with the rank of 'Mayor' (or whatever it's named)
+     *
+     * @return
+     */
+    public Resident getMayor() {
+        for(Resident res : residents.keySet()) {
+            if(residents.get(res).getName().equals(Rank.theMayorDefaultRank))
+                return res;
+        }
+        return null;
+    }
+
+
 
     /* ----- Comparable ----- */
 

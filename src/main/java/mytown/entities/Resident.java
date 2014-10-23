@@ -427,6 +427,13 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
             ChatUtils.sendChat(getPlayer(), msg);
     }
 
+    public void protectionDenial(String message, String owner) {
+        if(getPlayer() != null) {
+            ChatUtils.sendChat(getPlayer(), message);
+            ChatUtils.sendChat(getPlayer(), owner);
+        }
+    }
+
     public void respawnPlayer() {
 
         if (getSelectedTown() != null) {
