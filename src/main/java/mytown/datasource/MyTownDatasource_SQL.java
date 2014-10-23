@@ -35,6 +35,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @ConfigProperty(category = "datasource.sql", comment = "User defined properties to be passed to the connection.\nFormat: key=value;key=value...")
     protected String[] userProperties = {};
 
+    protected String AUTO_INCREMENT = ""; // Only becasuse SQLite and MySQL are different >.>
+
     protected Properties dbProperties = new Properties();
     protected String dsn = "";
     protected Connection conn = null;
@@ -1083,7 +1085,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean linkResidentToPlot(Resident res, Plot plot, boolean isOwner) {
         try {
-            PreparedStatement s = prepare("INSERT INTO " + prefix + " ResidentsToPlots(resident, plotID, isOwner) VALUES(?, ?, ?)", true);
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "ResidentsToPlots(resident, plotID, isOwner) VALUES(?, ?, ?)", true);
             s.setString(1, res.getUUID().toString());
             s.setInt(2, plot.getDb_ID());
             s.setBoolean(3, isOwner);
@@ -1104,7 +1106,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean unlinkResidentFromPlot(Resident res, Plot plot) {
         try {
-            PreparedStatement s = prepare("DELETE FROM" + prefix + " ResidentsToPlots WHERE resident=? AND plotID=?", true);
+            PreparedStatement s = prepare("DELETE FROM" + prefix + "ResidentsToPlots WHERE resident=? AND plotID=?", true);
             s.setString(1, res.getUUID().toString());
             s.setInt(2, plot.getDb_ID());
             s.executeUpdate();
@@ -1119,7 +1121,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner) {
         try {
-            PreparedStatement s = prepare("UPDATE" + prefix + " ResidentsToPlots SET isOwner=? WHERE resident=? AND plotID=?", true);
+            PreparedStatement s = prepare("UPDATE" + prefix + "ResidentsToPlots SET isOwner=? WHERE resident=? AND plotID=?", true);
             s.setBoolean(1, isOwner);
             s.setString(2, res.getUUID().toString());
             s.setInt(3, plot.getDb_ID());
@@ -1178,6 +1180,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             deleteBlockStatement.setInt(2, block.getX());
             deleteBlockStatement.setInt(3, block.getZ());
             deleteBlockStatement.execute();
+
+            // Delete Block from Town
+            block.getTown().removeBlock(block);
 
             // Delete Plots contained in the Block
             for (Plot p : block.getPlots()) {
@@ -1561,7 +1566,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(dim) REFERENCES " + prefix + "Worlds(dim) ON DELETE CASCADE" +
                 ");"));
         updates.add(new DBUpdate("07.25.2014.7", "Add Plots Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Plots (" +
-                "ID INTEGER NOT NULL," + // Just because it's a pain with this many primary keys
+                "ID INTEGER NOT NULL " + AUTO_INCREMENT + "," + // Just because it's a pain with this many primary keys
                 "name VARCHAR(50) NOT NULL," + // TODO Allow larger Plot names?
                 "dim INT NOT NULL," +
                 "x1 INT NOT NULL," +
@@ -1621,7 +1626,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
         updates.add(new DBUpdate("09.04.2014.1", "Add BlockWhitelists", "CREATE TABLE IF NOT EXISTS " + prefix +
                 "BlockWhitelists(" +
-                "ID INTEGER NOT NULL, " +
+                "ID INTEGER NOT NULL" + AUTO_INCREMENT + ", " +
                 "dim INT NOT NULL, " +
                 "x INT NOT NULL, " +
                 "y INT NOT NULL, " +

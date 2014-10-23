@@ -30,8 +30,6 @@ repositories {
 	}
 }
 
-apply plugin: "curseforge"
-apply plugin: "forge"
 
 // Load Configs
 
@@ -43,13 +41,16 @@ ext.configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
-if (System.env.TRAVIS_TAG != null) {
+if (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty()) {
     ext.config.build_number = System.env.TRAVIS_TAG.substring(0, System.env.TRAVIS_TAG.length()-1)
     ext.config.build_type = System.env.TRAVIS_TAG.substring(System.env.TRAVIS_TAG.length()-1)
 } else {
     ext.config.build_number = "0000"
     ext.config.build_type = "r"
 }
+
+apply plugin: "curseforge"
+apply plugin: "forge"
 
 // Configure Everything
 
@@ -98,7 +99,6 @@ processResources {
 }
 
 // Setup Curse Upload task
-
 curse {
     apiKey = System.env.CURSEFORGEKEY
     projectId = config.project_id

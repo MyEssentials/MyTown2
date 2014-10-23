@@ -11,13 +11,11 @@ import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
-import net.minecraft.command.CommandException;
+import mytown.util.exceptions.MyTownCommandException;
+import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -74,13 +72,13 @@ public class CommandsAdmin extends Commands {
             completionKeys = {"residentCompletion", "townCompletion"})
     public static void addCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.add"));
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.add");
 
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromName(args.get(1));
 
         if (town.hasResident(target))
-            throw new CommandException(getLocal().getLocalization("mytown.adm.cmd.err.add.already", args.get(0), args.get(1)));
+            throw new MyTownCommandException("mytown.adm.cmd.err.add.already", args.get(0), args.get(1));
 
         Rank rank;
 
@@ -105,11 +103,11 @@ public class CommandsAdmin extends Commands {
             completionKeys = {"townCompletion"})
     public static void deleteCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.delete.usage"));
+            throw new MyTownWrongUsageException("mytown.adm.cmd.delete.usage");
 
         for (String s : args) {
             if (!getDatasource().hasTown(s))
-                throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist"), s);
+                throw new MyTownCommandException("mytown.cmd.err.town.notexist", s);
         }
         for (String s : args) {
             if (getDatasource().deleteTown(getUniverse().getTownsMap().get(s))) {
@@ -128,19 +126,19 @@ public class CommandsAdmin extends Commands {
 
         EntityPlayer player = (EntityPlayer) sender;
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.newtown"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.newtown");
         if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.nameinuse", args.get(0)));
+            throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?   TODO Bit-shift the coords?
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.positionError"));
+            throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getDatasource().newAdminTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.newtown.failed"));
+            throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
 
         if (!getDatasource().saveTown(town))
-            throw new CommandException("Failed to save Town"); // TODO Localize!
+            throw new MyTownCommandException("Failed to save Town"); // TODO Localize!
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
     }
@@ -154,13 +152,13 @@ public class CommandsAdmin extends Commands {
     public static void remCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.rem"));
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.rem");
 
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromName(args.get(1));
 
         if (!town.hasResident(target))
-            throw new CommandException(getLocal().getLocalization("mytown.adm.cmd.err.rem.resident", args.get(0), args.get(1)));
+            throw new MyTownCommandException("mytown.adm.cmd.err.rem.resident", args.get(0), args.get(1));
 
         getDatasource().unlinkResidentFromTown(target, town);
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.resident.remove", args.get(0), args.get(1)));
@@ -173,10 +171,10 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true)
     public static void setExtraCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.setExtra"));
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.setExtra");
         Town town = getUniverse().getTown(args.get(0));
         if (town == null) {
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.notexist"));
+            throw new MyTownCommandException("mytown.cmd.err.town.notexist");
         }
         town.setExtraBlocks(Integer.parseInt(args.get(1)));
     }
@@ -251,7 +249,7 @@ public class CommandsAdmin extends Commands {
             completionKeys = {"townCompletion"})
     public static void permTownListCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1) {
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.list"));
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.list");
         }
 
         Town town = getTownFromName(args.get(0));
@@ -279,7 +277,7 @@ public class CommandsAdmin extends Commands {
             completionKeys = {"townCompletion", "flagCompletion"})
     public static void permTownSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 3) {
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.town.set"));
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.town.set");
         }
 
         Town town = getTownFromName(args.get(0));
@@ -289,7 +287,7 @@ public class CommandsAdmin extends Commands {
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.perm.set.success", args.get(1), args.get(2)));
         } else
             // Same here
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(2)));
+            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(2));
         getDatasource().saveFlag(flag, town);
 
     }
@@ -301,7 +299,7 @@ public class CommandsAdmin extends Commands {
             completionKeys = {"townCompletion", "flagCompletionWhitelist"})
     public static void permTownWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if(args.size() < 2)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
+            throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
@@ -310,7 +308,7 @@ public class CommandsAdmin extends Commands {
         if(flagType.isWhitelistable())
             res.startBlockSelection(flagType, town.getName(), false);
         else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
+            throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
     }
 
     @CommandNode(
@@ -352,7 +350,7 @@ public class CommandsAdmin extends Commands {
             completionKeys = {"flagCompletion"})
     public static void permWildSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2) {
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.perm.wild.set"));
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.wild.set");
         }
         FlagType type = getFlagTypeFromName(args.get(0));
         Flag flag = getFlagFromType(Wild.getInstance(), type);
@@ -360,7 +358,7 @@ public class CommandsAdmin extends Commands {
         if (flag.setValueFromString(args.get(1))) {
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.wild.perm.set.success", args.get(0), args.get(1)));
         } else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
+            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
         //Saving changes to file
         MyTown.instance.wildConfig.saveChanges();
     }
@@ -372,21 +370,21 @@ public class CommandsAdmin extends Commands {
             completionKeys = {"townCompletion"})
     public static void claimCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.claim"));
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.claim");
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromName(args.get(0));
 
         if (town.hasMaxAmountOfBlocks())
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.town.maxBlocks"));
+            throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.claim.already"));
+            throw new MyTownCommandException("mytown.cmd.err.claim.already");
         if (CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.farClaim.unimplemented"));
+            throw new MyTownCommandException("mytown.cmd.err.farClaim.unimplemented");
             //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
-            throw new CommandException("Failed to create Block"); // TODO Localize
+            throw new MyTownCommandException("Failed to create Block"); // TODO Localize
         getDatasource().saveBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
     }
@@ -397,7 +395,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd")
     public static void unclaimCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.adm.cmd.usage.claim"));
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.claim");
 
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(pl);
@@ -408,7 +406,7 @@ public class CommandsAdmin extends Commands {
             getDatasource().deleteBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
         } else {
-            throw new CommandException("§cYou cannot delete the Block containing the spawn point!");
+            throw new MyTownCommandException("§cYou cannot delete the Block containing the spawn point!");
         }
     }
 

@@ -8,11 +8,10 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
 import mytown.util.Formatter;
-import net.minecraft.command.CommandException;
+import mytown.util.exceptions.MyTownCommandException;
+import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -83,7 +82,7 @@ public class CommandsEveryone extends Commands {
 
         // TODO Check if the Resident is allowed to go to spawn
         if (!town.hasSpawn())
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.spawn.notexist", town.getName()));
+            throw new MyTownCommandException("mytown.cmd.err.spawn.notexist", town.getName());
         town.sendToSpawn(res);
     }
 
@@ -94,11 +93,11 @@ public class CommandsEveryone extends Commands {
             completionKeys = {"townCompletion"})
     public static void selectCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.select"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.select");
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
         if (!town.hasResident(res))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.select.notpart", args.get(0)));
+            throw new MyTownCommandException("mytown.cmd.err.select.notpart", args.get(0));
         getDatasource().saveSelectedTown(res, town);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.select", args.get(0)));
     }
@@ -154,18 +153,18 @@ public class CommandsEveryone extends Commands {
     public static void permSetPlotCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.err.perm.set.usage"));
+            throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
         Resident res = getDatasource().getOrMakeResident(sender);
         Plot plot = getPlotAtResident(res);
         if (!plot.hasOwner(res))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.perm.set.noPermission"));
+            throw new MyTownCommandException("mytown.cmd.err.plot.perm.set.noPermission");
 
         Flag flag = getFlagFromName(plot, args.get(0));
 
         if (flag.setValueFromString(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
         } else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.perm.valueNotValid", args.get(1)));
+            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
 
         getDatasource().saveFlag(flag, plot);
     }
@@ -209,7 +208,7 @@ public class CommandsEveryone extends Commands {
             completionKeys = {"flagCompletionWhitelist"})
     public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args) {
         if (args.size() == 0)
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.usage.plot.whitelist.add"));
+            throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Plot plot = getPlotAtResident(res);
@@ -220,7 +219,7 @@ public class CommandsEveryone extends Commands {
             res.startBlockSelection(flagType, plot.getTown().getName(), true);
         }
         else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.flag.notForWhitelist"));
+            throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
     }
 
     @CommandNode(
@@ -253,7 +252,7 @@ public class CommandsEveryone extends Commands {
 
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.plot.created");
         } else
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.failed"));
+            throw new MyTownCommandException("mytown.cmd.err.plot.failed");
 
     }
 
@@ -263,7 +262,7 @@ public class CommandsEveryone extends Commands {
             parentName = "mytown.cmd.everyone.plot")
     public static void plotRenameCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.plot.rename"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.rename");
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Plot plot = getPlotAtResident(res);
@@ -296,7 +295,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
 
         if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.notSelected"));
+            throw new MyTownCommandException("mytown.cmd.err.plot.notSelected");
 
         res.expandSelectionVert();
 
@@ -356,7 +355,7 @@ public class CommandsEveryone extends Commands {
             completionKeys = {"residentCompletion"})
     public static void plotAddOwnerCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.plot.add"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
         Plot plot = getPlotAtResident(res);
@@ -374,7 +373,7 @@ public class CommandsEveryone extends Commands {
             completionKeys = {"residentCompletion"})
     public static void plotAddMemberCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         if (args.size() < 1)
-            throw new WrongUsageException(getLocal().getLocalization("mytown.cmd.usage.plot.add"));
+            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
         Plot plot = getPlotAtResident(res);
@@ -404,7 +403,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Plot plot = getPlotAtResident(res);
         if (!plot.hasOwner(res))
-            throw new CommandException(getLocal().getLocalization("mytown.cmd.err.plot.notOwner"));
+            throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
 
         getDatasource().deletePlot(plot);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.deleted"));

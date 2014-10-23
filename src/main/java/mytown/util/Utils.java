@@ -14,22 +14,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -86,55 +76,6 @@ public class Utils {
         NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
         String flagLore = lore.getStringTagAt(2);
         return flagLore.substring(8);
-    }
-
-    /**
-     * Saves the file from the url to the specified path
-     *
-     * @param filename
-     * @param urlString
-     * @throws IOException
-     */
-    public static void saveUrl(final String filename, final String urlString)
-            throws IOException {
-        BufferedInputStream in = null;
-        FileOutputStream fout = null;
-        try {
-            in = new BufferedInputStream(new URL(urlString).openStream());
-            fout = new FileOutputStream(filename);
-
-            final byte data[] = new byte[1024];
-            int count;
-            while ((count = in.read(data, 0, 1024)) != -1) {
-                fout.write(data, 0, count);
-            }
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-            if (fout != null) {
-                fout.close();
-            }
-        }
-    }
-
-    /**
-     * Adds the file specified to the classpath, on runtime anytime
-     *
-     * @param file
-     */
-    public static void addFile(File file) {
-        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Class<?> sysclass = URLClassLoader.class;
-
-        try {
-            URL u = file.toURL();
-            Method method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
-            method.setAccessible(true);
-            method.invoke(sysloader, u);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
     }
 
     /**
