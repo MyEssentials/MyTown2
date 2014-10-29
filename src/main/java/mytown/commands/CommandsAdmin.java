@@ -121,24 +121,22 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.new",
             parentName = "mytown.adm.cmd")
     public static void newCommand(ICommandSender sender, List<String> args) {
-
-        //TODO: make adminTown work properly
-
-        EntityPlayer player = (EntityPlayer) sender;
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.newtown");
+
+        //TODO: make adminTown work properly
+        Resident res = getDatasource().getOrMakeResident(sender);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
+
+        EntityPlayer player = (EntityPlayer) sender;
         if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
             throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
-        if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?   TODO Bit-shift the coords?
+        if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
 
-        Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getDatasource().newAdminTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
-
-        if (!getDatasource().saveTown(town))
-            throw new MyTownCommandException("Failed to save Town"); // TODO Localize!
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
     }

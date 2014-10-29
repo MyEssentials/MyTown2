@@ -173,7 +173,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public final boolean removeWorld(int dim) {
-        worlds.remove(dim);
+        worlds.remove((Integer)dim);
         return true;
     }
 
