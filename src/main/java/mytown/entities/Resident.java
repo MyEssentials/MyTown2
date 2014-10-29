@@ -2,7 +2,9 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
+import mytown.config.Config;
 import mytown.core.ChatUtils;
+import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
@@ -528,7 +530,8 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     public Plot makePlotFromSelection(String plotName) {
         // TODO: Check everything separately or throw exceptions?
 
-        if (!secondSelectionActive || !firstSelectionActive || (Math.abs(selectionX1 - selectionX2) < Plot.minX || Math.abs(selectionY1 - selectionY2) < Plot.minY || Math.abs(selectionZ1 - selectionZ2) < Plot.minZ) && !(selectedTown instanceof AdminTown)) {
+        if (!secondSelectionActive || !firstSelectionActive || ((Math.abs(selectionX1 - selectionX2) + 1) * (Math.abs(selectionZ1 - selectionZ2) + 1) < Config.minPlotsArea || Math.abs(selectionY1 - selectionY2) + 1 < Config.minPlotsHeight) && !(selectedTown instanceof AdminTown)) {
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.tooSmall", Config.minPlotsArea, Config.minPlotsHeight));
             resetSelection();
             return null;
         }
@@ -558,15 +561,18 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
                     lastX = i >> 4;
                     lastZ = j >> 4;
                     if (!getDatasource().hasBlock(selectionDim, lastX, lastZ, true, selectionTown)) {
-                        System.out.println("Outside town boundaries");
+                        //System.out.println("Outside town boundaries");
+                        sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.outside"));
                         resetSelection();
                         return null;
                     }
                 }
                 for (int k = y1; k <= y2; k++) {
-                    if (selectionTown.getPlotAtCoords(selectionDim, i, k, j) != null) {
-                        System.out.println("Inside another plot" + selectionTown.getPlotAtCoords(selectionDim, i, k, j) + "\n" + i + " " + k + " " + j);
-                        System.out.println("For selection: " + x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2);
+                    Plot plot = selectionTown.getPlotAtCoords(selectionDim, i, k, j);
+                    if (plot != null) {
+                        //System.out.println("Inside another plot" + selectionTown.getPlotAtCoords(selectionDim, i, k, j) + "\n" + i + " " + k + " " + j);
+                        //System.out.println("For selection: " + x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2);
+                        sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.insideOther", plot.getName()));
                         resetSelection();
                         return null;
                     }

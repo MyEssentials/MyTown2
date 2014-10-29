@@ -108,6 +108,9 @@ mytown.cmd.err.plot.notInPlot=§cYou are not standing in a plot!
 mytown.cmd.err.plot.notOwner=§cYou do not have permission for this plot, only owners can set flags, rename or delete this plot!
 mytown.cmd.err.plot.limit=§cYou cannot make more plots than %s!
 mytown.cmd.err.plot.limit.toPlayer=§cPlayer %s can't be owner to any more plots!
+mytown.cmd.err.plot.tooSmall=§cSelection too small! Minimum area: %s. Minimum height: %s.
+mytown.cmd.err.plot.outside=§cSelection is outside of town!
+mytown.cmd.err.plot.insideOther=§cSelection is inside plot %s!
 mytown.cmd.usage.plot.limit.set=§3/t plot limit set <limitNumber>
 
 # /t perm

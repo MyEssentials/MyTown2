@@ -21,10 +21,6 @@ public class Plot implements IHasFlags, IHasResidents {
     private Town town;
     private String key, name;
 
-    public static int minX = 5;
-    public static int minY = 4;
-    public static int minZ = 5;
-
     public Plot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         if (x1 > x2) {
             int aux = x2;
