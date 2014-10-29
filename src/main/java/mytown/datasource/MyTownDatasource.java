@@ -63,60 +63,9 @@ public abstract class MyTownDatasource {
      *
      * @return The new Town, or null if it failed
      */
-    @SuppressWarnings("unchecked")
     public final Town newTown(String name, Resident creator) {
         Town town = new Town(name);
-
-        // Update worlds table
-        for(World world : MinecraftServer.getServer().worldServers) {
-            if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
-                saveWorld(world.provider.dimensionId);
-            }
-        }
-        for(int dim : MyTownUniverse.getInstance().getWorldsList()) {
-            if(DimensionManager.getWorld(dim) == null) {
-                deleteWorld(dim);
-            }
-        }
-
-        Rank onCreationDefaultRank = null;
-
-        // Setting spawn before saving
-        town.setSpawn(new Teleport(creator.getPlayer().dimension, (float) creator.getPlayer().posX, (float) creator.getPlayer().posY, (float) creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
-
-        // Saving town to database
-        if (!saveTown(town))
-            throw new CommandException("Failed to save Town"); // TODO Localize!
-
-        // Saving all ranks to database and town
-        for (String rankName : Rank.defaultRanks.keySet()) {
-            Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);
-
-            saveRank(rank, rankName.equals(Rank.theDefaultRank));
-
-            if (rankName.equals(Rank.theMayorDefaultRank)) {
-                onCreationDefaultRank = rank;
-            }
-        }
-
-        // Linking resident to town
-        if (!linkResidentToTown(creator, town, onCreationDefaultRank))
-            MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
-
-        //Claiming first block
-        TownBlock block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
-        // Saving block to db and town
-        saveBlock(block);
-
-        // Saving and adding all flags to the database
-        for(FlagType type : FlagType.values()) {
-            if(type.isUsableForTowns() && type.shouldLoad()) {
-                saveFlag(new Flag(type, type.getDefaultValue()), town);
-            }
-        }
-
-        if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
-            return null;
+        configureTown(town, creator);
         return town;
     }
 
@@ -127,11 +76,21 @@ public abstract class MyTownDatasource {
      * @param creator
      * @return
      */
-    @SuppressWarnings("unchecked")
     public final AdminTown newAdminTown(String name, Resident creator) {
         AdminTown town = new AdminTown(name);
+        configureTown(town, creator);
+        return town;
+    }
 
-        // Update worlds table
+    /**
+     * Common method for creating any type of town
+     *
+     * @param town
+     * @param creator
+     */
+    @SuppressWarnings("unchecked")
+    private void configureTown(Town town, Resident creator) {
+
         for(World world : MinecraftServer.getServer().worldServers) {
             if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
                 saveWorld(world.provider.dimensionId);
@@ -165,11 +124,25 @@ public abstract class MyTownDatasource {
             }
         }
 
+        if(!(town instanceof AdminTown)) {
+            // Saving all ranks to database and town
+            for (String rankName : Rank.defaultRanks.keySet()) {
+                Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);
 
-        if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
-            return null;
-        return town;
+                saveRank(rank, rankName.equals(Rank.theDefaultRank));
+
+                if (rankName.equals(Rank.theMayorDefaultRank)) {
+                    onCreationDefaultRank = rank;
+                }
+            }
+            // Linking resident to town
+            if (!linkResidentToTown(creator, town, onCreationDefaultRank))
+                MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
+        }
+
+        TownEvent.fire(new TownEvent.TownCreateEvent(town));
     }
+
 
     /**
      * Creates and returns a new Block, or null if it couldn't be created
