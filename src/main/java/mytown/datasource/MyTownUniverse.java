@@ -128,6 +128,15 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public final boolean addPlot(Plot plot) {
+        for (int x = plot.getStartChunkX(); x < plot.getEndChunkX(); x++) {
+            for (int z = plot.getStartChunkZ(); z < plot.getEndChunkZ(); z++) {
+                TownBlock b = getTownBlock(plot.getDim(), x, z);
+                if (b != null) {
+                    b.addPlot(plot);
+                }
+            }
+        }
+
         plots.put(plot.getDb_ID(), plot);
         return true;
     }
@@ -168,6 +177,15 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public final boolean removePlot(Plot plot) {
+        for (int x = plot.getStartChunkX(); x < plot.getEndChunkX(); x++) {
+            for (int z = plot.getStartChunkZ(); z < plot.getEndChunkZ(); z++) {
+                TownBlock b = getTownBlock(plot.getDim(), x, z);
+                if (b != null) {
+                    b.removePlot(plot);
+                }
+            }
+        }
+
         plots.remove(plot.getDb_ID());
         return true;
     }
@@ -180,18 +198,27 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public Resident getResident(String key) {
         return residents.get(key);
     }
+
     public Town getTown(String key) {
         return towns.get(key);
     }
+
     public Nation getNation(String key) {
         return nations.get(key);
     }
+
+    public TownBlock getTownBlock(int dim, int x, int z) {
+        return getTownBlock(String.format(TownBlock.keyFormat, dim, x, z));
+    }
+
     public TownBlock getTownBlock(String key) {
         return blocks.get(key);
     }
+
     public Rank getRank(String key) {
         return ranks.get(key);
     }
+
     public Plot getPlot(int key) {
         return plots.get(key);
     }
@@ -199,9 +226,11 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public boolean hasResident(Resident res) {
         return residents.containsValue(res);
     }
+
     public boolean hasTown(Town town) {
         return towns.containsValue(town);
     }
+
     public boolean hasNation(Nation nation) {
         return nations.containsValue(nation);
     }
@@ -217,6 +246,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public boolean hasPlot(Plot plot) {
         return plots.containsValue(plot);
     }
+
     public boolean hasWorld(int dim) { return worlds.contains(dim); }
 
     public static MyTownUniverse getInstance() {
