@@ -35,7 +35,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @ConfigProperty(category = "datasource.sql", comment = "User defined properties to be passed to the connection.\nFormat: key=value;key=value...")
     protected String[] userProperties = {};
 
-    protected String AUTO_INCREMENT = ""; // Only becasuse SQLite and MySQL are different >.>
+    protected String AUTO_INCREMENT = ""; // Only because SQLite and MySQL are different >.>
 
     protected Properties dbProperties = new Properties();
     protected String dsn = "";
