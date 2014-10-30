@@ -19,6 +19,10 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -241,6 +245,17 @@ public class Utils {
         }
         Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
         return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
+    }
+
+
+    public static void addSoftwareLibrary(File file) {
+        try {
+            Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+            method.setAccessible(true);
+            method.invoke(ClassLoader.getSystemClassLoader(), file.toURI().toURL());
+        } catch (Exception e) {
+            MyTown.instance.log.error("Failed adding file " + file.getAbsolutePath() + " to classpath!");
+        }
     }
 
     /**

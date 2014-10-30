@@ -1,10 +1,13 @@
 package mytown;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.relauncher.Side;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.FlagsConfig;
@@ -26,6 +29,7 @@ import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
 import mytown.util.Utils;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -44,6 +48,7 @@ public class MyTown {
     public RanksConfig ranksConfig;
     public WildPermsConfig wildConfig;
     public FlagsConfig flagsConfig;
+    public boolean isCauldron = false;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
@@ -65,6 +70,11 @@ public class MyTown {
 
         // Register ICrashCallable's
         FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());
+
+        if(ev.getSide() == Side.SERVER) {
+            isCauldron = MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc");
+            //MyTown.instance.log.info("Server is using cauldron or some implementation between forge and bukkit/spigot.");
+        }
     }
 
     @EventHandler
@@ -114,6 +124,7 @@ public class MyTown {
             log.info("Failed to get first permission breach method.");
             e.printStackTrace();
         }
+
         CommandManager.registerCommands(CommandsEveryone.class, m);
         CommandManager.registerCommands(CommandsAssistant.class, m);
         if(Config.modifiableRanks)
@@ -121,6 +132,12 @@ public class MyTown {
 
         CommandManager.registerCommands(CommandsAdmin.class);
         CommandManager.registerCommands(CommandsOutsider.class, m);
+
+        /*
+        if(isCauldron) {
+            BukkitCompat.getInstance();
+        }
+        */
     }
 
     private void registerPermissionHandler() {

@@ -22,11 +22,19 @@ repositories {
     }
     ivy {
         name = 'ThaumCraft 4 API'
-        artifactPattern 'https://dl.dropboxusercontent.com/u/47135879/Thaumcraft-1.7.10-4.2.0.1-api.zip'
+        artifactPattern 'https://dl.dropboxusercontent.com/u/47135879/Thaumcraft-1.7.10-4.2.1.4-api.zip'
     }
 	maven {
 		name = "pex-repo"
 		url = "http://pex-repo.zachsthings.com"
+	}
+	maven {
+		name = "bukkit-repo"
+		url = "http://repo.bukkit.org/content/groups/public/"
+	}
+	maven {
+		name = "gravity-repo"
+		url = "http://repo.gravitydevelopment.net"
 	}
 }
 
@@ -78,6 +86,11 @@ dependencies {
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     //compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
 	//compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
+
+	// For PEX
+	compile 'net.gravitydevelopment.updater:updater:2.3'
+	compile 'org.bukkit:bukkit:1.7.9-R0.1'
+	
 	compile 'ru.tehkode:PermissionsEx:1.22'
 }
 
