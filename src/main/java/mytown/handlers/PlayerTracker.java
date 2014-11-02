@@ -19,6 +19,7 @@ import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.Formatter;
 import mytown.util.Utils;
+import net.minecraft.entity.player.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -74,6 +75,9 @@ public class PlayerTracker {
     private void checkLocationAndSendMap(EntityEvent.EnteringChunk ev) {
         if (ev.entity instanceof FakePlayer || ev.entity.worldObj.isRemote)
             return;
+
+        if (isOp((EntityPlayer) ev.entity)) return;
+
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entity);
         if (res == null) return; // TODO Log?
         // TODO Check Resident location
@@ -105,6 +109,8 @@ public class PlayerTracker {
     public void onItemUse(PlayerInteractEvent ev) {
         if (ev.entityPlayer.worldObj.isRemote)
             return;
+
+        if (isOp(ev.entityPlayer)) return;
 
 
 
@@ -168,9 +174,16 @@ public class PlayerTracker {
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
+      if (isOp(ev.getPlayer())) return;
+
         if (VisualsTickHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
             // Cancel event if it's a border that has been broken
             ev.setCanceled(true);
         }
+    }
+
+    public boolean isOp (EntityPlayer player)
+    {
+    return MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile());
     }
 }
