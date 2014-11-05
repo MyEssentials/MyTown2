@@ -258,7 +258,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             ResultSet rs = loadResidentsStatement.executeQuery();
 
             while (rs.next()) {
-                Resident res = new Resident(rs.getString("uuid"), rs.getString("name"), rs.getLong("joined"), rs.getLong("lastOnline"));
+                Resident res = new Resident(rs.getString("uuid"), rs.getString("name"), rs.getLong("joined"), rs.getLong("lastOnline"), rs.getInt("extraBlocks"));
                 MyTownUniverse.getInstance().addResident(res);
             }
         } catch (SQLException e) {
@@ -703,17 +703,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     public boolean saveResident(Resident resident) {
         try {
             if (MyTownUniverse.getInstance().hasResident(resident)) { // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=? WHERE uuid=?", true);
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=?, extraBlocks=? WHERE uuid=?", true);
                 updateStatement.setString(1, resident.getPlayerName());
                 updateStatement.setLong(2, resident.getLastOnline().getTime()/1000L); // Stupid hack...
-                updateStatement.setString(3, resident.getUUID().toString());
+                updateStatement.setInt(3, resident.getExtraBlocks());
+                updateStatement.setString(4, resident.getUUID().toString());
                 updateStatement.executeUpdate();
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Residents (uuid, name, joined, lastOnline) VALUES(?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Residents (uuid, name, joined, lastOnline, extraBlocks) VALUES(?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, resident.getUUID().toString());
                 insertStatement.setString(2, resident.getPlayerName());
                 insertStatement.setLong(3, resident.getJoinDate().getTime()/1000L); // Stupid hack...
                 insertStatement.setLong(4, resident.getLastOnline().getTime()/1000L); // Stupid hack...
+                insertStatement.setInt(5, resident.getExtraBlocks());
                 insertStatement.executeUpdate();
 
                 // Put the Resident in the Map
@@ -1667,8 +1669,14 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, " +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
 
-        updates.add(new DBUpdate("10.18.2014.1", "Add 'extraBlocks' to towns", "ALTER TABLE " + prefix + "Towns ADD extraBlocks INTEGER DEFAULT 0"));
-        updates.add(new DBUpdate("10.23.2014.1", "Add 'maxPlots' to towns", "ALTER TABLE " + prefix + "Towns ADD maxPlots INTEGER DEFAULT "+ Config.defaultMaxPlots+""));
+        updates.add(new DBUpdate("10.18.2014.1", "Add 'extraBlocks' to towns", "ALTER TABLE " + prefix +
+                "Towns ADD extraBlocks INTEGER DEFAULT 0"));
+
+        updates.add(new DBUpdate("10.23.2014.1", "Add 'maxPlots' to towns", "ALTER TABLE " + prefix +
+                "Towns ADD maxPlots INTEGER DEFAULT "+ Config.defaultMaxPlots+""));
+
+        updates.add(new DBUpdate("11.4.2014.1", "Add 'extraBlocks to residents", "ALTER TABLE " + prefix +
+                "Residents ADD extraBlocks INTEGER DEFAULT 0;"));
     }
 
     /**

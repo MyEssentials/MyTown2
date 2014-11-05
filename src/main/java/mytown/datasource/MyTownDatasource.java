@@ -808,7 +808,7 @@ public abstract class MyTownDatasource {
     }
 
     public Resident getOrMakeResident(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username); // TODO I have no idea if this will actually work. xD
+        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
         return profile == null ? null : getOrMakeResident(profile.getId(), profile.getName());
     }
 

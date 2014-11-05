@@ -2,8 +2,10 @@ package mytown.datasource;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.authlib.GameProfile;
 import mytown.core.utils.command.CommandCompletion;
 import mytown.entities.*;
+import net.minecraft.server.MinecraftServer;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -197,6 +199,11 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public Resident getResident(String key) {
         return residents.get(key);
+    }
+
+    public Resident getResidentByName(String username) {
+        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
+        return getResident(profile.getId().toString());
     }
 
     public Town getTown(String key) {

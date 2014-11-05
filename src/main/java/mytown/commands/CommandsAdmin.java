@@ -167,14 +167,38 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.setextra",
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
-    public static void setExtraCommand(ICommandSender sender, List<String> args) {
+    public static void setExtraCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.setextra");
+    }
+
+    @CommandNode(
+            name = "town",
+            permission = "mytown.adm.cmd.setextra.town",
+            parentName = "mytown.adm.cmd.setextra",
+            nonPlayers = true)
+    public static void setExtraTownCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.setExtra");
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.setExtra.town");
         Town town = getUniverse().getTown(args.get(0));
-        if (town == null) {
-            throw new MyTownCommandException("mytown.cmd.err.town.notexist");
-        }
+        if (town == null)
+            throw new MyTownCommandException("mytown.cmd.err.town.notexist", args.get(0));
         town.setExtraBlocks(Integer.parseInt(args.get(1)));
+        getDatasource().saveTown(town);
+    }
+
+    @CommandNode(
+            name = "res",
+            permission = "mytown.adm.cmd.setextra.res",
+            parentName = "mytown.adm.cmd.setextra",
+            nonPlayers = true)
+    public static void setExtraResCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.setExtra.res");
+        Resident res = getUniverse().getResidentByName(args.get(0));
+        if (res == null)
+            throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
+        res.setExtraBlocks(Integer.parseInt(args.get(1)));
+        getDatasource().saveResident(res);
     }
 
     @CommandNode(

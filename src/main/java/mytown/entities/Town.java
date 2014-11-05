@@ -246,8 +246,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public int getMaxBlocks() {
-        return Config.blocksMayor + (Config.blocksResident * (residents.size() - 1)) + extraBlocks;
+    public int getMaxBlocks() { // TODO Cache this stuff?
+        int tmpCount = Config.blocksMayor + (Config.blocksResident * (residents.size() - 1)) + extraBlocks;
+
+        for (Resident res : getResidents()) {
+            tmpCount += res.getExtraBlocks();
+        }
+
+        return tmpCount;
     }
 
     @Override
