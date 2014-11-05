@@ -134,7 +134,7 @@ public abstract class MyTownDatasource {
      */
     public final TownBlock newBlock(int dim, int x, int z, Town town) {
         TownBlock block = new TownBlock(dim, x, z, town);
-        if (BlockEvent.fire(new BlockEvent.BlockCreateEvent(block)))
+        if (TownBlockEvent.fire(new TownBlockEvent.BlockCreateEvent(block)))
             return null;
         return block;
     }

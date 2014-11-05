@@ -8,28 +8,28 @@ import net.minecraftforge.common.MinecraftForge;
 /**
  * @author Joe Goett
  */
-public class BlockEvent extends Event {
+public class TownBlockEvent extends Event {
     public TownBlock block = null;
 
-    public BlockEvent(TownBlock block) {
+    public TownBlockEvent(TownBlock block) {
         this.block = block;
     }
 
     @Cancelable
-    public static class BlockCreateEvent extends BlockEvent {
+    public static class BlockCreateEvent extends TownBlockEvent {
         public BlockCreateEvent(TownBlock block) {
             super(block);
         }
     }
 
     @Cancelable
-    public static class BlockDeleteEvent extends BlockEvent {
+    public static class BlockDeleteEvent extends TownBlockEvent {
         public BlockDeleteEvent(TownBlock block) {
             super(block);
         }
     }
 
-    public static boolean fire(BlockEvent ev) {
+    public static boolean fire(TownBlockEvent ev) {
         return MinecraftForge.EVENT_BUS.post(ev);
     }
 }
