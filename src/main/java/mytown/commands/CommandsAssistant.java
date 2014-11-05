@@ -56,7 +56,9 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         int stackNumber = getPaymentStack(sender, Config.costAmountClaim);
-        player.inventory.decrStackSize(stackNumber, Config.costAmountClaim);
+        if (stackNumber == 0) {
+            player.inventory.decrStackSize(stackNumber, Config.costAmountClaim);
+        }
 
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
