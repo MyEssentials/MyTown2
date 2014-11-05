@@ -37,6 +37,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     private UUID playerUUID;
     private String playerName; // This is only for display purposes when the player is offline
     private Date joinDate, lastOnline;
+    private int extraBlocks = 0;
 
     // Plot selection variables
     private int selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim;
@@ -69,11 +70,12 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      * @param joinDate
      * @param lastOnline
      */
-    public Resident(String uuid, String playerName, long joinDate, long lastOnline) {
+    public Resident(String uuid, String playerName, long joinDate, long lastOnline, int extraBlocks) {
         setUUID(uuid);
         this.joinDate = new Date((long)joinDate * 1000L);
         this.lastOnline = new Date((long)lastOnline * 1000L);
         this.playerName = playerName;
+        this.extraBlocks = extraBlocks;
     }
 
     /**
@@ -161,6 +163,14 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      */
     public void setLastOnline(Date date) {
         this.lastOnline = date;
+    }
+
+    public int getExtraBlocks() {
+        return extraBlocks;
+    }
+
+    public void setExtraBlocks(int extraBlocks) {
+        this.extraBlocks = extraBlocks;
     }
 
     @Override
@@ -456,10 +466,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return null;
     }
 
-    // //////////////////////////////////////
-    // PLOT SELECTION
-    // //////////////////////////////////////
-
+    /* ----- Plot Selection ----- */
     // Mostly a workaround, might be changed
 
     @Override
@@ -617,10 +624,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         }
     }
 
-
-    // //////////////////////////////////////
-    // BLOCK WHITELISTER
-    // //////////////////////////////////////
+    /* ----- Block Whitelister ----- */
 
     /**
      * Assists in selecting a block

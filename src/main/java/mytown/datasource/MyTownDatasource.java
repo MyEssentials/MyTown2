@@ -43,21 +43,6 @@ public abstract class MyTownDatasource {
 
     /* ----- Create ----- */
 
-    // TODO: Delete this at one point
-    /**
-     * Creates and returns a new Town, or null if it couldn't be created
-     *
-     * @return The new Town, or null if it failed
-     */
-    /*
-    public final Town newTown(String name) {
-        Town town = new Town(name);
-        if (TownEvent.fire(new TownEvent.TownCreateEvent(town)))
-            return null;
-        return town;
-    }
-    */
-
     /**
      * Creates and returns a new Town with basic entities saved to db, or null if it couldn't be created
      *
@@ -90,7 +75,6 @@ public abstract class MyTownDatasource {
      */
     @SuppressWarnings("unchecked")
     private void configureTown(Town town, Resident creator) {
-
         for(World world : MinecraftServer.getServer().worldServers) {
             if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
                 saveWorld(world.provider.dimensionId);
@@ -142,7 +126,6 @@ public abstract class MyTownDatasource {
 
         TownEvent.fire(new TownEvent.TownCreateEvent(town));
     }
-
 
     /**
      * Creates and returns a new Block, or null if it couldn't be created
@@ -568,7 +551,6 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deletePlot(Plot plot);
 
-
     /**
      * Deletes the Nation
      *
@@ -591,7 +573,6 @@ public abstract class MyTownDatasource {
      * @return
      */
     public abstract boolean deleteFlag(Flag flag, Plot plot);
-
 
     /**
      * Deletes the BlockWhitelist from the given town
@@ -785,7 +766,6 @@ public abstract class MyTownDatasource {
      * @param save Whether to save the newly created Resident
      * @return The new Resident, or null if it failed
      */
-
     public Resident getOrMakeResident(UUID uuid, String playerName, boolean save) {
         Resident res = MyTownUniverse.getInstance().getResident(uuid.toString());
         if (res == null) {
@@ -799,14 +779,12 @@ public abstract class MyTownDatasource {
         return res;
     }
 
-
     /**
      * Gets or makes a new Resident. Does save, and CAN return null!
      *
      * @param uuid The UUID of the Resident (EntityPlayer#getPersistentID())
      * @return The new Resident, or null if it failed
      */
-
     public Resident getOrMakeResident(UUID uuid, String playerName) {
         return getOrMakeResident(uuid, playerName, true);
     }
@@ -830,7 +808,7 @@ public abstract class MyTownDatasource {
     }
 
     public Resident getOrMakeResident(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username); // TODO I have no idea if this will actually work. xD
+        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
         return profile == null ? null : getOrMakeResident(profile.getId(), profile.getName());
     }
 

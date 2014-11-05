@@ -96,7 +96,9 @@ public class CommandsOutsider extends Commands {
             }
         }
         int stackNumber = getPaymentStack(sender, Config.costAmountMakeTown);
-        player.inventory.decrStackSize(stackNumber, Config.costAmountMakeTown);
+        if (stackNumber == 0) {
+            player.inventory.decrStackSize(stackNumber, Config.costAmountMakeTown);
+        }
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)

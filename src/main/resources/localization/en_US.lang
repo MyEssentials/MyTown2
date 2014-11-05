@@ -153,8 +153,11 @@ mytown.adm.cmd.err.rem.resident=§cPlayer %s is not part of the town %s
 mytown.adm.cmd.usage.add=§3/ta add <resident> <toTown> [rankName]
 mytown.adm.cmd.err.add.already=§cPlayer %s is already a resident of the town %s
 
-# /ta setExtra [townname] [NumberOfExtraBlocks]
-mytown.adm.cmd.usage.setExtra=§3/ta setExtra <town> <number>
+# /ta setExtra town [townname] [number]
+mytown.adm.cmd.usage.setExtra.town=§3/ta setExtra town <town> <number>
+
+# /ta setExtra res [resident] [number]
+mytown.adm.cmd.usage.setExtra.res=§3/ta setExtra res <resident> <number>
 
 # Notifications
 mytown.notification.town.created=§aTown %s created!
