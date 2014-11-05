@@ -1633,7 +1633,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
         updates.add(new DBUpdate("09.04.2014.1", "Add BlockWhitelists", "CREATE TABLE IF NOT EXISTS " + prefix +
                 "BlockWhitelists(" +
-                "ID INTEGER NOT NULL" + AUTO_INCREMENT + ", " +
+                "ID INTEGER NOT NULL " + AUTO_INCREMENT + ", " +
                 "dim INT NOT NULL, " +
                 "x INT NOT NULL, " +
                 "y INT NOT NULL, " +
