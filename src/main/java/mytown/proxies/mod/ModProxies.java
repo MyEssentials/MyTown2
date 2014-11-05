@@ -19,6 +19,7 @@ public class ModProxies {
     public static final String MFR_MOD_ID = "MineFactoryReloaded";
     public static final String THERMAL_EXPANSION_MOD_ID = "ThermalExpansion";
     public static final String MEKANISM_MOD_ID = "Mekanism";
+    public static final String QUARRY_PLUS_MOD_ID = "QuarryPlus";
 
     private static List<ModProxy> proxies = new ArrayList<ModProxy>();
     private static boolean loaded = false;
@@ -66,6 +67,7 @@ public class ModProxies {
         proxies.add(new ModProxy("Minefactory Reloaded", MFR_MOD_ID, MinefactoryReloadedProtection.class));
         proxies.add(new ModProxy("Thermal Expansion", THERMAL_EXPANSION_MOD_ID, ThermalExpansionProtection.class));
         proxies.add(new ModProxy("Mekanism", MEKANISM_MOD_ID, MekanismProtection.class));
+        proxies.add(new ModProxy("QuarryPlus", QUARRY_PLUS_MOD_ID, QuarryPlusProtection.class));
     }
 
     /**
