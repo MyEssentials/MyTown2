@@ -84,10 +84,9 @@ dependencies {
 
     // Mod Deps
     compile project(":MyEssentials-Core")
-	compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'
+	compile 'com.mod-buildcraft:buildcraft:6.1.5:dev'
 	
-	//TEMP: IC2 MAVEN IS DOWN
-	//compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
+	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     
 	//compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
 	//compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
