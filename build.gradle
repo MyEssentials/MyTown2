@@ -90,7 +90,6 @@ dependencies {
 	// For PEX
 	compile 'net.gravitydevelopment.updater:updater:2.3'
 	compile 'org.bukkit:bukkit:1.7.9-R0.1'
-	
 	compile 'ru.tehkode:PermissionsEx:1.22'
 }
 
