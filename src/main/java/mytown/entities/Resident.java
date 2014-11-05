@@ -456,10 +456,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return null;
     }
 
-    // //////////////////////////////////////
-    // PLOT SELECTION
-    // //////////////////////////////////////
-
+    /* ----- Plot Selection ----- */
     // Mostly a workaround, might be changed
 
     @Override
@@ -617,10 +614,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         }
     }
 
-
-    // //////////////////////////////////////
-    // BLOCK WHITELISTER
-    // //////////////////////////////////////
+    /* ----- Block Whitelister ----- */
 
     /**
      * Assists in selecting a block

@@ -217,7 +217,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public void removeBlock(TownBlock block) {
-        blocks.remove(block);
+        blocks.remove(block.getKey());
     }
 
     @Override
@@ -331,11 +331,11 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public Plot getPlotAtCoords(int dim, int x, int y, int z) {
-        for (Plot plot : plots) {
-            if (plot.isCoordWithin(dim, x, y, z)) {
-                return plot;
-            }
+        TownBlock b = getBlockAtCoords(dim, x >> 4, z >> 4);
+        if (b != null) {
+            return b.getPlotAtCoords(dim, x, y, z);
         }
+
         return null;
     }
 
@@ -637,8 +637,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         }
         return null;
     }
-
-
 
     /* ----- Comparable ----- */
 
