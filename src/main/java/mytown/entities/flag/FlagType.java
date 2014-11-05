@@ -29,6 +29,7 @@ public enum FlagType {
     private String descriptionKey;
     private String protectionKey;
     private String notifyKey;
+    private String bypassPerm;
     private Object[] allowedValues;
     private boolean townOnly;
     private Object defaultValue;
@@ -44,6 +45,7 @@ public enum FlagType {
         this.descriptionKey = "mytown.flag." + this.toString();
         this.protectionKey = "mytown.protection." + this.toString();
         this.notifyKey = "mytown.protection.notify." + this.toString();
+        this.bypassPerm = "mytown.protection.bypass." + this.toString();
         this.townOnly = townOnly;
         this.allowedValues = allowedValues;
         this.modRequired = modRequired;
@@ -72,6 +74,13 @@ public enum FlagType {
      * @return
      */
     public boolean isWildPerm() { return this.isWildPerm; }
+
+    /**
+     * Returns the permission needed to bypass the protection.
+     *
+     * @return
+     */
+    public String getBypassPermission() { return this.bypassPerm; }
 
     /**
      * Gets the default wild perm.

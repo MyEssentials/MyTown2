@@ -9,14 +9,21 @@ import mytown.protection.Protections;
  */
 public class ModProxy {
 
-    private String name, modid;
+    private String name, modid, version;
     private Class<? extends Protection> protClass;
 
-    public ModProxy(String name, String modid, Class<? extends Protection> protClass) {
+    public ModProxy(String name, String modid, String version, Class<? extends Protection> protClass) {
         this.name = name;
         this.modid = modid;
         this.protClass = protClass;
+        this.version = version;
     }
+
+    public ModProxy(String name, String modid, Class<? extends Protection> protClass) {
+        this(name, modid, "", protClass);
+    }
+
+
 
     public boolean isLoaded = false;
     /**
@@ -36,6 +43,14 @@ public class ModProxy {
     public String getModID() {
         return this.modid;
     }
+
+
+    /**
+     * Gets the version the protection given works for
+     *
+     * @return
+     */
+    public String getModVersion() { return this.version; }
 
     /**
      * Loads this {@link ModProxy}, its run during {@link FMLPostInitializationEvent}.

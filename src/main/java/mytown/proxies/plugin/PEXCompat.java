@@ -1,7 +1,9 @@
-package mytown.commands;
+package mytown.proxies.plugin;
 
 import mytown.MyTown;
-import mytown.core.utils.command.CommandManager;
+import mytown.entities.Rank;
+import mytown.entities.Resident;
+import mytown.proxies.DatasourceProxy;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.rcon.RConConsoleSource;
@@ -14,22 +16,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-import ru.tehkode.permissions.commands.Command;
-import ru.tehkode.permissions.commands.CommandListener;
-import ru.tehkode.permissions.commands.CommandsManager;
+import ru.tehkode.permissions.PermissionUser;
+//import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by AfterWind on 10/29/2014.
  * PermissionsEX implementation goes here.
  */
-public class PEXCompat implements CommandListener {
+public class PEXCompat {
 
-    private CommandsManager manager;
     private static PEXCompat instance;
     public static PEXCompat getInstance() {
         if(instance == null) {
@@ -38,40 +36,53 @@ public class PEXCompat implements CommandListener {
         return instance;
     }
 
+    public static boolean firstPermissionBreachPEX(String permission, ICommandSender sender) {
+        if(!(sender instanceof EntityPlayer))
+            return true;
+
+
+
+        PermissionUser user =  null; //ru.tehkode.permissions.bukkit.PermissionsEx.getUser(Bukkit.getPlayer(((EntityPlayer) sender).getUniqueID()));
+
+        try {
+            Class c = Class.forName("ru.tehkode.permissions.bukkit.PermissionsEx");
+            MyTown.instance.log.info("Found class!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        if(user == null)
+            return false;
+
+        MyTown.instance.log.info("Got user: " + user.getName());
+
+        if (!user.has(permission)) {
+            return false;
+        }
+
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(sender);
+        // Get its rank with the permissions
+        Rank rank = res.getTownRank(res.getSelectedTown());
+
+        if (rank == null) {
+            return Rank.outsiderPermCheck(permission);
+        }
+        return rank.hasPermissionOrSuperPermission(permission);
+    }
+
     public PEXCompat() {
         MyTown.instance.log.info("Did NOT fail registering PEX compatibility. W00t");
     }
 
-    @Command(
-            name = "t",
-            description = "Town command for all your towny needs.",
-            permission = "mytown.cmd",
-            syntax = " <command>")
-    public void townCommand(PermissionsEx plugin, CommandSender sender, Map<String, String> args) {
-        ICommandSender iCommandSender = convertToForge(sender);
-        if(iCommandSender != null) {
-            List<String> arguments = new ArrayList<String>(args.values());
-            CommandManager.commandCall("mytown.cmd", iCommandSender, arguments);
-        }
-    }
+    public boolean checkPermission(Resident res, String permission) {
+        PermissionUser user = null;//PermissionsEx.getUser(Bukkit.getPlayer(res.getUUID()));
+        if(user == null)
+            return false;
 
-    @Command(
-            name = "ta",
-            description = "Town command for all your towny needs.",
-            permission = "mytown.adm.cmd",
-            syntax = " <command>")
-    public void townAdminCommand(PermissionsEx plugin, CommandSender sender, Map<String, String> args) {
-        ICommandSender iCommandSender = convertToForge(sender);
-        if(iCommandSender != null) {
-            List<String> arguments = new ArrayList<String>(args.values());
-            CommandManager.commandCall("mytown.adm.cmd", iCommandSender, arguments);
-        }
-    }
+        MyTown.instance.log.info("Got user: " + user.getName());
 
-
-    @Override
-    public void onRegistered(CommandsManager commandsManager) {
-        manager = commandsManager;
+        return user.has(permission);
     }
 
     @SuppressWarnings("unchecked")
@@ -103,6 +114,4 @@ public class PEXCompat implements CommandListener {
                 return world;
         return null;
     }
-
-
 }
