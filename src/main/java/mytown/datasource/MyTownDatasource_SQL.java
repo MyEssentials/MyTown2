@@ -3,7 +3,6 @@ package mytown.datasource;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mysql.jdbc.ConnectionProperties;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.utils.config.ConfigProperty;
@@ -13,13 +12,10 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 // TODO Check connection for each command and error out if connection doesn't check out
 // TODO Run DB writes (and maybe reads?) on a separate thread
@@ -1669,6 +1665,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE, " +
                 "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
 
+        // Table Modifications
         updates.add(new DBUpdate("10.18.2014.1", "Add 'extraBlocks' to towns", "ALTER TABLE " + prefix +
                 "Towns ADD extraBlocks INTEGER DEFAULT 0"));
 
