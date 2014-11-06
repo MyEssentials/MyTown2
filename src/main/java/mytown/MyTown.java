@@ -1,11 +1,9 @@
 package mytown;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.relauncher.Side;
 import mytown.commands.*;
@@ -18,7 +16,6 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
-import mytown.entities.flag.Flag;
 import mytown.handlers.PlayerTracker;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
@@ -26,14 +23,14 @@ import mytown.protection.Protections;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
+import mytown.proxies.plugin.BukkitCompat;
+import mytown.proxies.plugin.PEXCompat;
 import mytown.util.Constants;
-import mytown.util.Utils;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
-import javax.naming.NoPermissionException;
 import java.io.File;
 import java.lang.reflect.Method;
 
@@ -73,6 +70,8 @@ public class MyTown {
 
         if(ev.getSide() == Side.SERVER) {
             isCauldron = MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc");
+            if(isCauldron)
+                BukkitCompat.getInstance().loadPEX(ev.getSourceFile());
             //MyTown.instance.log.info("Server is using cauldron or some implementation between forge and bukkit/spigot.");
         }
     }
@@ -119,7 +118,11 @@ public class MyTown {
     private void registerCommands() {
         Method m = null;
         try {
-            m = Commands.class.getMethod("firstPermissionBreach", String.class, ICommandSender.class);
+            if(isCauldron && BukkitCompat.getInstance().hasPlugin("PermissionsEx")) {
+                m = PEXCompat.class.getMethod("firstPermissionBreachPEX", String.class, ICommandSender.class);
+            } else {
+                m = Commands.class.getMethod("firstPermissionBreach", String.class, ICommandSender.class);
+            }
         } catch (Exception e) {
             log.info("Failed to get first permission breach method.");
             e.printStackTrace();

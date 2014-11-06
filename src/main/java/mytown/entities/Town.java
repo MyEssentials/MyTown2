@@ -1,12 +1,16 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.api.interfaces.*;
 import mytown.proxies.LocalizationProxy;
+import mytown.proxies.plugin.BukkitCompat;
+import mytown.proxies.plugin.PEXCompat;
+import mytown.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 
 
@@ -597,8 +601,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
         if(plot == null) {
             if(!(Boolean)getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
-                //TODO: Check for permission
-                return false;
+                if(MyTown.instance.isCauldron && BukkitCompat.getInstance().hasPEX())
+                    // Check if PEX has a permission bypass
+                    return PEXCompat.getInstance().checkPermission(res, flagType.getBypassPermission()) || Utils.isOp(res);
+                else
+                    // Check, when PEX is not present, if player is OP
+                    return Utils.isOp(res);
             }
         } else {
             if(!(Boolean)plot.getValue(flagType) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))

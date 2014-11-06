@@ -144,14 +144,14 @@ public abstract class Commands {
         CommandCompletion.completionMap.put("residentCompletion", populator);
 
         populator = new ArrayList<String>();
-        for(FlagType flag : FlagType.values()) {
+        for (FlagType flag : FlagType.values()) {
             populator.add(flag.toString());
         }
         CommandCompletion.completionMap.put("flagCompletion", populator);
 
         populator = new ArrayList<String>();
-        for(FlagType flag : FlagType.values()) {
-            if(flag.isWhitelistable())
+        for (FlagType flag : FlagType.values()) {
+            if (flag.isWhitelistable())
                 populator.add(flag.toString());
         }
         CommandCompletion.completionMap.put("flagCompletionWhitelist", populator);

@@ -2,6 +2,7 @@ package mytown.util;
 
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -20,11 +22,15 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Created by AfterWind on 9/9/2014.
@@ -256,6 +262,59 @@ public class Utils {
         } catch (Exception e) {
             MyTown.instance.log.error("Failed adding file " + file.getAbsolutePath() + " to classpath!");
         }
+    }
+
+    public static void injectBukkitBridge(File self, File pluginFolder) {
+        MyTown.instance.log.info("Injecting PermissionsEx!");
+        MyTown.instance.log.info("Trying to inject from " + pluginFolder.getAbsolutePath() + " to " + self.getAbsolutePath());
+        try {
+            ZipFile zip = new ZipFile(self);
+            ZipEntry entry = zip.getEntry("PermissionsEx.jar");
+            if (entry == null) {
+                MyTown.instance.log.error("Mod doesn't contain PermissionsEx! If using MCPC, you need this!");
+                zip.close();
+                return;
+            }
+            InputStream stream = zip.getInputStream(entry);
+            FileOutputStream outStream = new FileOutputStream(new File(pluginFolder, entry.getName()));
+            byte[] tmp = new byte[4*1024];
+            int size = 0;
+            while ((size = stream.read(tmp)) != -1) {
+                outStream.write(tmp, 0, size);
+            }
+            outStream.close();
+            zip.close();
+        } catch (Exception e) {
+            MyTown.instance.log.error("Failed to inject PermissionsEx! ", e);
+        }
+        MyTown.instance.log.info("Injected PermissionsEx successfully!");
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void addURL(File file) {
+
+        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Class sysclass = URLClassLoader.class;
+
+        try {
+            Method method = sysclass.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            method.invoke(sysloader, file.toURI().toURL());
+            ClassLoader.getSystemClassLoader().loadClass("ru.tehkode.permissions.bukkit.PermissionsEx");
+            MyTown.instance.log.info("Added PEX to the classpath. ("+ file.toURI().toURL().toString() +")");
+
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    public static void loadPEXClass() {
+
+    }
+
+
+    public static boolean isOp(Resident res) {
+        return MinecraftServer.getServer().getConfigurationManager().func_152607_e(res.getPlayer().getGameProfile());
     }
 
     /**
