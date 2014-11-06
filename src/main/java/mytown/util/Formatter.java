@@ -63,7 +63,7 @@ public class Formatter {
         String residentsString = formatResidentsToString(town.getResidents(), town);
         String ranksString = formatRanksToString(town.getRanks());
 
-        msg = String.format(townInfoFormat, town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getPlots().size(), residentsString, ranksString);
+        msg = String.format(townInfoFormat, town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getMaxBlocks(), town.getPlots().size(), residentsString, ranksString);
 
         return msg;
     }
@@ -210,9 +210,9 @@ public class Formatter {
     public static String residentInfoFormat = " ---------- %1$s  ----------";
 
     public static String townInfoFormat =
-            EnumChatFormatting.GRAY + " ---------- " + EnumChatFormatting.GREEN+" %1$s "+EnumChatFormatting.GREEN+" ("+EnumChatFormatting.WHITE+"R:%2$s"+EnumChatFormatting.GREEN+" |"+EnumChatFormatting.WHITE+" B:%3$s "+EnumChatFormatting.GREEN+"| "+EnumChatFormatting.WHITE+"P:%4$s"+EnumChatFormatting.GREEN+")"+EnumChatFormatting.GRAY+" ----------" +
-            "\n"+EnumChatFormatting.GRAY+"Residents: %5$s" +
-            "\n"+EnumChatFormatting.GRAY+"Ranks: %6$s";
+            EnumChatFormatting.GRAY + " -------- " + EnumChatFormatting.GREEN+" %1$s "+EnumChatFormatting.GREEN+" ("+EnumChatFormatting.WHITE+"R:%2$s"+EnumChatFormatting.GREEN+" |"+EnumChatFormatting.WHITE+" C:%3$s/%4$s "+EnumChatFormatting.GREEN+"| "+EnumChatFormatting.WHITE+"P:%5$s"+EnumChatFormatting.GREEN+")"+EnumChatFormatting.GRAY+" --------" +
+            "\n"+EnumChatFormatting.GRAY+"Residents: %6$s" +
+            "\n"+EnumChatFormatting.GRAY+"Ranks: %7$s";
 
 
 
