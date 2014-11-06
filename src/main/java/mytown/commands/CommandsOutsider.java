@@ -3,6 +3,7 @@ package mytown.commands;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandNode;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.util.Formatter;
@@ -49,6 +50,22 @@ public class CommandsOutsider extends Commands {
         for (Town town : towns) {
             sendMessageBackToSender(sender, Formatter.formatTownInfo(town));
         }
+    }
+
+    @CommandNode(
+            name = "res",
+            permission = "mytown.cmd.outsider.res",
+            parentName = "mytown.cmd",
+            nonPlayers = true)
+    public static void resCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 1) {
+            throw new MyTownWrongUsageException("mytown.cmd.usage.res");
+        }
+        Resident res = MyTownUniverse.getInstance().getResidentByName(args.get(0));
+        if (res == null) {
+            throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
+        }
+        sendMessageBackToSender(sender, Formatter.formatResidentInfo(res));
     }
 
     @CommandNode(

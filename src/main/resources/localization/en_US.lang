@@ -80,6 +80,9 @@ mytown.cmd.err.claim.notexist=§cThis block is not claimed by town %s!
 mytown.cmd.usage.info=§3/t info <townname>
 mytown.cmd.err.info.notpart=§cYou are not part of a town. §3Alternative usage: "/t info <townname>".
 
+# /t res
+mytown.cmd.usage.res=§3/t res <playername>
+
 # /t select
 mytown.cmd.usage.select=§3/t select <townname>
 mytown.cmd.err.select.notpart=§cYou are not part of town %s. §3Please choose a town that you're a member of.
