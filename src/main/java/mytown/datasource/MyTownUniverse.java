@@ -98,14 +98,24 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
      */
     public final ImmutableList<Integer> getWorldsList() { return ImmutableList.copyOf(worlds); }
 
-    private static MyTownUniverse instance = null;
+    /* ----- Add Entity ----- */
 
+    /**
+     * Adds a Resident to the universe
+     * @param res Resident to add
+     * @return If successful
+     */
     public final boolean addResident(Resident res) {
         residents.put(res.getUUID().toString(), res);
         CommandCompletion.completionMap.get("residentCompletion").add(res.getPlayerName());
         return true;
     }
 
+    /**
+     * Adds a Town to the universe
+     * @param town Town to add
+     * @return If successful
+     */
     public final boolean addTown(Town town) {
         towns.put(town.getName(), town);
         CommandCompletion.completionMap.get("townCompletionAndAll").add(town.getName());
@@ -113,25 +123,45 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
+    /**
+     * Adds a Nation to the universe
+     * @param nation Nation to add
+     * @return If successful
+     */
     public final boolean addNation(Nation nation) {
         nations.put(nation.getName(), nation);
         return true;
     }
 
+    /**
+     * Adds a TownBlock to the universe
+     * @param block TownBlock to add
+     * @return If successful
+     */
     public final boolean addTownBlock(TownBlock block) {
         blocks.put(block.getKey(), block);
         return true;
     }
 
+    /**
+     * Adds a Rank to the universe
+     * @param rank Rank to add
+     * @return If successful
+     */
     public final boolean addRank(Rank rank) {
         ranks.put(rank.getKey(), rank);
         CommandCompletion.completionMap.get("rankCompletion").add(rank.getName());
         return true;
     }
 
+    /**
+     * Adds a Plot to the universe
+     * @param plot Plot to add
+     * @return If successful
+     */
     public final boolean addPlot(Plot plot) {
-        for (int x = plot.getStartChunkX(); x < plot.getEndChunkX(); x++) {
-            for (int z = plot.getStartChunkZ(); z < plot.getEndChunkZ(); z++) {
+        for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++) {
+            for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++) {
                 TownBlock b = getTownBlock(plot.getDim(), x, z);
                 if (b != null) {
                     b.addPlot(plot);
@@ -143,10 +173,17 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
+    /**
+     * Adds a world/dim to the universe
+     * @param dim Dimension ID of world to add
+     * @return If successful
+     */
     public final boolean addWorld(int dim) {
         worlds.add(dim);
         return true;
     }
+
+    /* ----- Remove Entity ----- */
 
     public final boolean removeResident(Resident res) {
         residents.remove(res.getUUID().toString());
@@ -197,6 +234,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
+    /* ----- Get Entity ----- */
+
     public Resident getResident(String key) {
         return residents.get(key);
     }
@@ -230,6 +269,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return plots.get(key);
     }
 
+    /* ----- Has Entity ----- */
+
     public boolean hasResident(Resident res) {
         return residents.containsValue(res);
     }
@@ -255,6 +296,10 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public boolean hasWorld(int dim) { return worlds.contains(dim); }
+
+    /* ----- Singleton ----- */
+
+    private static MyTownUniverse instance = null;
 
     public static MyTownUniverse getInstance() {
         if (instance == null) {
