@@ -70,6 +70,17 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return String.format("Town: {Name: %s}", name);
     }
 
+    /**
+     * Returns the name that is currently used in the DB
+     * @return
+     */
+    public String getDBName() {
+        if (getOldName() == null)
+            return getName();
+        else
+            return getOldName();
+    }
+
     /* ----- IHasResidents ----- */
 
     private Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
