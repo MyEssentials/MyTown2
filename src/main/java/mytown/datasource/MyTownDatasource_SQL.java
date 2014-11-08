@@ -219,6 +219,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     }
 
                     Rank rank = new Rank(rs.getString("name"), town);
+                    log.debug("Loading Rank %s for Town %s", rank.getName(), town.getName());
 
                     // Adding it before
                     if (rs.getBoolean("isDefault")) {
@@ -231,6 +232,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     ResultSet rs2 = loadRankPermsStatement.executeQuery();
                     while (rs2.next()) {
                         rank.addPermission(rs2.getString("node"));
+                        log.debug(" - Added node: ", rs2.getString("node"));
                     }
                     MyTownUniverse.getInstance().addRank(rank);
                     rank.getTown().addRank(rank);
@@ -552,6 +554,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveTown(Town town) {
+        log.debug("Saving Town %s", town.getName());
         try {
             if (MyTownUniverse.getInstance().hasTown(town)) { // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=?, spawnDim=?, spawnX=?, spawnY=?, spawnZ=?, cameraYaw=?, cameraPitch=?, extraBlocks=?, maxPlots=? WHERE name=?", true);
@@ -607,6 +610,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveBlock(TownBlock block) {
+        log.debug("Saving TownBlock %s", block.getKey());
         try {
             if (MyTownUniverse.getInstance().hasTownBlock(block)) { // Update
                 // TODO Update Block (If needed?)
@@ -633,6 +637,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveRank(Rank rank, boolean isDefault) { // TODO Insert any new permissions to the RankPermission table
+        log.debug("Saving Rank %s", rank.getKey());
         try {
             if (MyTownUniverse.getInstance().hasRank(rank)) { // Update
                 // TODO Update
@@ -684,6 +689,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean addRankPermission(Rank rank, String perm) {
+        log.debug("Saving RankPermission %s for Rank %s", perm, rank.getKey());
         try {
             PreparedStatement s = prepare("INSERT INTO " + prefix + "RankPermissions (node, rank) VALUES(?, ?)", true);
             s.setString(1, perm);
@@ -698,6 +704,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveResident(Resident resident) {
+        log.debug("Saving Resident %s (%s)", resident.getUUID(), resident.getPlayerName());
         try {
             if (MyTownUniverse.getInstance().hasResident(resident)) { // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=?, extraBlocks=? WHERE uuid=?", true);
@@ -729,6 +736,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @SuppressWarnings("unchecked")
     @Override
     public boolean savePlot(Plot plot) {
+        log.debug("Saving Plot %s for Town %s", plot.getKey(), plot.getTown().getName());
         try {
             if (MyTownUniverse.getInstance().hasPlot(plot)) { // Update
                 PreparedStatement statement = prepare("UPDATE " + prefix + "Plots SET name=?, dim=?, x1=?, y1=?, z1=?, x2=?, y2=?, z2=? WHERE ID=?", true);
@@ -778,6 +786,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveNation(Nation nation) { // TODO Link any new Towns to the given Nation
+        log.debug("Saving Nation %s", nation.getName());
         try {
             if (MyTownUniverse.getInstance().hasNation(nation)) { // Update
                 // TODO Update Nation (If needed?)
@@ -801,6 +810,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveFlag(Flag flag, Plot plot) {
         if(!flag.flagType.shouldLoad()) return false;
+        log.debug("Saving Flag %s for Plot %s", flag.flagType.name(), plot.getKey());
         try {
             if(plot.hasFlag(flag.flagType)) {
                 // Update
@@ -832,6 +842,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveFlag(Flag flag, Town town) {
         if(!flag.flagType.shouldLoad()) return false;
+        log.debug("Saving Flag %s for Town %s", flag.flagType.name(), town.getName());
         try {
             if(town.hasFlag(flag.flagType)) {
                 // Update
@@ -977,6 +988,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveWorld(int dim) {
+        log.debug("Saving World %s", dim);
         try {
             PreparedStatement s = prepare("INSERT INTO " + prefix + "Worlds(dim) VALUES(?)", true);
             s.setInt(1, dim);
@@ -1695,42 +1707,26 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         } catch (Exception e) {
         } // Ignore. Just missing the updates table for now
 
-        try {
-            for (DBUpdate update : updates) {
-                if (ids.contains(update.id)) {
-                    continue; // Skip if update is already done
-                }
-
-                conn.setAutoCommit(false); // Disable auto-commit to allow us to wrap updates in transactions
-                log.debug(" **** Auto-Commit: " + conn.getAutoCommit());
-
-                try {
-                    // Update!
-                    log.info("Running update %s - %s", update.id, update.desc);
-                    statement = prepare(update.sql, false);
-                    statement.execute();
-
-                    // Insert the update key so as to not run the update again
-                    statement = prepare("INSERT INTO " + prefix + "Updates (id,description) VALUES(?,?)", true);
-                    statement.setString(1, update.id);
-                    statement.setString(2, update.desc);
-                    statement.executeUpdate();
-
-                    conn.commit(); // Commit the transaction
-                } catch (SQLException e) {
-                    log.error("Update (%s - %s) failed to apply!", e, update.id, update.desc);
-                    try {
-                        conn.rollback();
-                    } catch (SQLException e2) {
-                        log.error("Rollback failed!", e2);
-                    }
-
-                    throw e; // Throws back up to force safemode
-                }
+        for (DBUpdate update : updates) {
+            if (ids.contains(update.id)) {
+                continue; // Skip if update is already done
             }
-        } finally {
-            log.debug("(Re)Enabling auto-commit");
-            conn.setAutoCommit(true); // Restore auto-commit
+
+            try {
+                // Update!
+                log.info("Running update %s - %s", update.id, update.desc);
+                statement = prepare(update.sql, false);
+                statement.execute();
+
+                // Insert the update key so as to not run the update again
+                statement = prepare("INSERT INTO " + prefix + "Updates (id,description) VALUES(?,?)", true);
+                statement.setString(1, update.id);
+                statement.setString(2, update.desc);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                log.error("Update (%s - %s) failed to apply!", e, update.id, update.desc);
+                throw e; // Throws back up to force safemode
+            }
         }
     }
 }
