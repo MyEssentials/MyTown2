@@ -122,7 +122,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean loadAll() {
-        return super.loadAll() && loadResidentsToTowns() && loadTownsToNations() && loadResidentsToPlots();
+        return super.loadAll() && loadRankPermissions() && loadResidentsToTowns() && loadTownsToNations() && loadResidentsToPlots();
     }
 
     @Override
@@ -209,44 +209,50 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     protected boolean loadRanks() {
         try {
-            try {
-                getConnection().setAutoCommit(false);
-                PreparedStatement loadRanksStatement = prepare("SELECT * FROM " + prefix + "Ranks", true);
-                ResultSet rs = loadRanksStatement.executeQuery();
-                while (rs.next()) {
-                    Town town = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
-                    if (town == null) {
-                        log.error("Failed to load Rank (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
-                        continue; // TODO Should I just return out?
-                    }
-
-                    Rank rank = new Rank(rs.getString("name"), town);
-                    log.debug("Loading Rank %s for Town %s", rank.getName(), town.getName());
-
-                    // Adding it before
-                    if (rs.getBoolean("isDefault")) {
-                        town.setDefaultRank(rank);
-                    }
-
-                    PreparedStatement loadRankPermsStatement = prepare("SELECT * FROM " + prefix + "RankPermissions WHERE rank=? AND townName=?", true);
-                    loadRankPermsStatement.setString(1, rank.getName());
-                    loadRankPermsStatement.setString(2, town.getDBName());
-                    ResultSet rs2 = loadRankPermsStatement.executeQuery();
-                    while (rs2.next()) {
-                        rank.addPermission(rs2.getString("node"));
-                        log.debug(" - Added node: ", rs2.getString("node"));
-                    }
-                    MyTownUniverse.getInstance().addRank(rank);
-                    rank.getTown().addRank(rank);
+            PreparedStatement loadRanksStatement = prepare("SELECT * FROM " + prefix + "Ranks", true);
+            ResultSet rs = loadRanksStatement.executeQuery();
+            while (rs.next()) {
+                Town town = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
+                if (town == null) {
+                    log.error("Failed to load Rank (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
+                    continue; // TODO Should I just return out?
                 }
-            } catch (SQLException e) {
-                log.error("Failed to load a rank!", e);
-                getConnection().rollback();
-            } finally {
-                getConnection().setAutoCommit(true);
+
+                Rank rank = new Rank(rs.getString("name"), town);
+                log.debug("Loading Rank %s for Town %s", rank.getName(), town.getName());
+
+                // Adding it before
+                if (rs.getBoolean("isDefault")) {
+                    town.setDefaultRank(rank);
+                }
+
+                MyTownUniverse.getInstance().addRank(rank);
+                rank.getTown().addRank(rank);
             }
         } catch (SQLException e) {
-            log.error("Failed to load Ranks!", e);
+            log.error("Failed to load a rank!", e);
+        }
+        return true;
+    }
+
+    protected boolean loadRankPermissions() {
+        try {
+            PreparedStatement loadRankPermsStatement = prepare("SELECT * FROM " + prefix + "RankPermissions", true);
+            ResultSet rs = loadRankPermsStatement.executeQuery();
+            while(rs.next()) {
+                Town t = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
+                if (t == null) {
+                    log.error("Failed to load RankPermission due to missing Town %s!", rs.getString("townName"));
+                    return false;
+                }
+                Rank rank = getRank(rs.getString("rank"), t);
+                if (rank == null) {
+                    log.error("Failed to load RankPermission due to missing Rank %s!", rs.getString("rank"));
+                }
+                rank.addPermission(rs.getString("node"));
+            }
+        } catch (SQLException e) {
+            log.error("Failed to load RankPermissions!", e);
             return false;
         }
         return true;
