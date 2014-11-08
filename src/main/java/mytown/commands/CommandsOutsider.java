@@ -56,7 +56,8 @@ public class CommandsOutsider extends Commands {
             name = "res",
             permission = "mytown.cmd.outsider.res",
             parentName = "mytown.cmd",
-            nonPlayers = true)
+            nonPlayers = true,
+            completionKeys = {"residentCompletion"})
     public static void resCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.res");
