@@ -174,7 +174,7 @@ public abstract class Protection {
         return 0;
     }
 
-    public final List<FlagType> getFlagTypeForTile(TileEntity te) {
+    public List<FlagType> getFlagTypeForTile(TileEntity te) {
         return getFlagTypeForTile(te.getClass());
     }
 
