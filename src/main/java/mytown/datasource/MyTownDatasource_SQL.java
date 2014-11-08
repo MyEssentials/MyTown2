@@ -1645,7 +1645,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "townName VARCHAR(50)," +
                 "PRIMARY KEY(resident), " +
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE," +
-                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name))"));
+                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
         updates.add(new DBUpdate("09.19.2014.1", "Add Friends", "CREATE TABLE IF NOT EXISTS " + prefix + "Friends(" +
                 "resident1 CHAR(36)," +
                 "resident2 CHAR(36)," +
