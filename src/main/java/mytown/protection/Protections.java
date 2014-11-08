@@ -33,11 +33,7 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Created by AfterWind on 9/2/2014.
@@ -76,7 +72,7 @@ public class Protections {
      */
     public void addProtection(Protection prot, String modid) {
         protections.put(modid, prot);
-        if(prot.getRange() > maximalRange)
+        if (prot.getRange() > maximalRange)
             maximalRange = prot.getRange();
 
         if (prot.isHandlingEvents) {
@@ -95,9 +91,9 @@ public class Protections {
      * @param town
      */
     private void addToBlockWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for(Protection prot : protections.values()) {
-            if(prot.trackedTileEntities.contains(te))
-                for(FlagType flagType : prot.getFlagTypeForTile(te)) {
+        for (Protection prot : protections.values()) {
+            if (prot.trackedTileEntities.contains(te))
+                for (FlagType flagType : prot.getFlagTypeForTile(te)) {
                     if (!town.hasBlockWhitelist(dim, x, y, z, flagType)) {
                         BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, flagType);
                         DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
@@ -127,39 +123,40 @@ public class Protections {
                 }
         }
     }
+
     public List<FlagType> getFlagTypesForTile(TileEntity te) {
         List<FlagType> list = new ArrayList<FlagType>();
-        for(Protection prot : protections.values())
-            if(prot.hasToCheckTileEntity(te))
+        for (Protection prot : protections.values())
+            if (prot.hasToCheckTileEntity(te))
                 list.addAll(prot.getFlagTypeForTile(te.getClass()));
         return list;
     }
 
     public boolean checkTileEntity(TileEntity te) {
-        for(Protection prot : protections.values())
-            if(prot.checkTileEntity(te))
+        for (Protection prot : protections.values())
+            if (prot.checkTileEntity(te))
                 return true;
         return false;
     }
 
     public boolean checkItemUsage(ItemStack stack, Resident res, BlockPos bp) {
-        for(Protection prot : protections.values())
-            if(prot.checkItemUsage(stack, res, bp))
+        for (Protection prot : protections.values())
+            if (prot.checkItemUsage(stack, res, bp))
                 return true;
         return false;
     }
 
     public boolean checkActivatedBlocks(Block block) {
-        for(Protection prot : protections.values()) {
-            if(prot.activatedBlocks.contains(block))
+        for (Protection prot : protections.values()) {
+            if (prot.activatedBlocks.contains(block))
                 return true;
         }
         return false;
     }
 
     public boolean checkIsEntityHostile(Class<? extends Entity> ent) {
-        for(Protection prot : protections.values()) {
-            if(prot.hostileEntities.contains(ent)) {
+        for (Protection prot : protections.values()) {
+            if (prot.hostileEntities.contains(ent)) {
                 return true;
             }
         }
@@ -169,14 +166,14 @@ public class Protections {
     public boolean isBlockWhitelistValid(BlockWhitelist bw) {
         // TODO: Maybe make this better
         // Delete if the town is gone
-        if(Utils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
+        if (Utils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
             bw.delete();
 
-        if(bw.getFlagType() == FlagType.activateBlocks && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z)))
+        if (bw.getFlagType() == FlagType.activateBlocks && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z)))
             return false;
-        if((bw.getFlagType() == FlagType.breakBlocks || bw.getFlagType() == FlagType.placeBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems || bw.getFlagType() == FlagType.pumps)) {
+        if ((bw.getFlagType() == FlagType.breakBlocks || bw.getFlagType() == FlagType.placeBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems || bw.getFlagType() == FlagType.pumps)) {
             TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(bw.x, bw.y, bw.z);
-            if(te == null) return false;
+            if (te == null) return false;
             return getFlagTypesForTile(te).contains(bw.getFlagType());
         }
         return true;
@@ -186,11 +183,11 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent ev) {
-        if(ev.world.isRemote)
+        if (ev.world.isRemote)
             return;
 
         // Ticker for updating the map
-        if(ticker == 0) {
+        if (ticker == 0) {
             //MyTown.instance.log.info("Updating check maps.");
             for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
                 entry.setValue(false);
@@ -198,7 +195,7 @@ public class Protections {
 
             for (Iterator<Map.Entry<TileEntity, Boolean>> it = checkedTileEntities.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<TileEntity, Boolean> entry = it.next();
-                if(entry.getKey().isInvalid())
+                if (entry.getKey().isInvalid())
                     it.remove();
                 else
                     entry.setValue(false);
@@ -210,12 +207,12 @@ public class Protections {
 
         // TODO: Add a command to clean up the block whitelist table periodically
 
-        if(ticker2 == 0) {
+        if (ticker2 == 0) {
             // Also updating the block whitelists
 
-            for(Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
-                for(BlockWhitelist bw : town.getWhitelists()) {
-                    if(!isBlockWhitelistValid(bw)) {
+            for (Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
+                for (BlockWhitelist bw : town.getWhitelists()) {
+                    if (!isBlockWhitelistValid(bw)) {
                         bw.delete();
                     }
                 }
@@ -233,7 +230,7 @@ public class Protections {
             // Player check, every tick
             Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
 
-            if(entity instanceof EntityPlayer) {
+            if (entity instanceof EntityPlayer) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
                 ChunkCoordinates playerPos = res.getPlayer().getPlayerCoordinates();
 
@@ -248,7 +245,7 @@ public class Protections {
                     }
                 }
                 */
-                if(town != null) {
+                if (town != null) {
                     if (!town.checkPermission(res, FlagType.enter, entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)) {
                         res.respawnPlayer();
                         res.protectionDenial("§cYou have been moved because you can't access this place!", Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)));
@@ -285,7 +282,7 @@ public class Protections {
                 // Prechecks go here
                 if (prot.hasToCheckTileEntity(te)) {
                     // Checks go here
-                    if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
+                    if ((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
                         Utils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
                         //te.getBlockType().breakBlock(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, te.blockType, te.blockMetadata);
                         te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
@@ -343,14 +340,14 @@ public class Protections {
     public void onPlayerAttackEntityEvent(AttackEntityEvent ev) {
         // TODO: More wilderness goes here
         TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.target.dimension, ev.target.chunkCoordX, ev.target.chunkCoordZ);
-        if(block != null) {
+        if (block != null) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             Town town = block.getTown();
-            if(!town.checkPermission(res, FlagType.attackEntities, ev.target.dimension, (int)ev.target.posX, (int)ev.target.posY, (int)ev.target.posZ)) {
+            if (!town.checkPermission(res, FlagType.attackEntities, ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)) {
                 for (Protection prot : protections.values()) {
                     if (prot.protectedEntities.contains(ev.target.getClass())) {
                         ev.setCanceled(true);
-                        res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.target.dimension, (int)ev.target.posX, (int)ev.target.posY, (int)ev.target.posZ)));
+                        res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)));
                     }
                 }
             }
@@ -363,15 +360,15 @@ public class Protections {
         TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
 
-        if(tblock == null) {
-            if(!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
+        if (tblock == null) {
+            if (!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
                 res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
             } else {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
-                for(Town t : nearbyTowns) {
-                    if(!t.checkPermission(res, FlagType.placeBlocks)) {
+                for (Town t : nearbyTowns) {
+                    if (!t.checkPermission(res, FlagType.placeBlocks)) {
                         res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         ev.setCanceled(true);
                         return;
@@ -386,8 +383,8 @@ public class Protections {
             } else {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
-                for(Town t : nearbyTowns) {
-                    if(!t.checkPermission(res, FlagType.placeBlocks)) {
+                for (Town t : nearbyTowns) {
+                    if (!t.checkPermission(res, FlagType.placeBlocks)) {
                         res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         ev.setCanceled(true);
                         return;
@@ -409,15 +406,15 @@ public class Protections {
         TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
 
-        if(tblock == null) {
-            if(!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
+        if (tblock == null) {
+            if (!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
                 res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
             } else {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
-                for(Town t : nearbyTowns) {
-                    if(!t.checkPermission(res, FlagType.placeBlocks)) {
+                for (Town t : nearbyTowns) {
+                    if (!t.checkPermission(res, FlagType.placeBlocks)) {
                         res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         ev.setCanceled(true);
                         return;
@@ -432,8 +429,8 @@ public class Protections {
             } else {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
-                for(Town t : nearbyTowns) {
-                    if(!t.checkPermission(res, FlagType.placeBlocks)) {
+                for (Town t : nearbyTowns) {
+                    if (!t.checkPermission(res, FlagType.placeBlocks)) {
                         res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         ev.setCanceled(true);
                         return;
@@ -451,14 +448,13 @@ public class Protections {
     }
 
 
-
     @SubscribeEvent
     public void onEntityInteract(EntityInteractEvent ev) {
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
         ItemStack currStack = ev.entityPlayer.getHeldItem();
-        if(currStack != null) {
-            for(Protection prot : protections.values()) {
-                if(prot.checkItemUsage(currStack, res, new BlockPos((int)ev.target.posX, (int)ev.target.posY, (int)ev.target.posZ, ev.entityPlayer.worldObj.provider.dimensionId))) {
+        if (currStack != null) {
+            for (Protection prot : protections.values()) {
+                if (prot.checkItemUsage(currStack, res, new BlockPos((int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ, ev.entityPlayer.worldObj.provider.dimensionId))) {
                     ev.setCanceled(true);
                     return;
                 }
@@ -498,10 +494,10 @@ public class Protections {
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
 
         // Item usage check here
-        if(currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
+        if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
             //MyTown.instance.log.info("Item usage position: " + x + ", " + y + ", " + z);
-            for(Protection protection : protections.values()) {
-                if(protection.checkItemUsage(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId))) {
+            for (Protection protection : protections.values()) {
+                if (protection.checkItemUsage(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId))) {
                     ev.setCanceled(true);
                     return;
                 }
@@ -570,7 +566,7 @@ public class Protections {
         TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer());
         if (block == null) {
-            if(!Wild.getInstance().checkPermission(res, FlagType.breakBlocks)) {
+            if (!Wild.getInstance().checkPermission(res, FlagType.breakBlocks)) {
                 res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
             }
@@ -582,7 +578,7 @@ public class Protections {
                 return;
             }
 
-            if(ev.block instanceof ITileEntityProvider)
+            if (ev.block instanceof ITileEntityProvider)
                 removeFromWhitelist(((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata).getClass(), ev.world.provider.dimensionId, ev.x, ev.y, ev.z, town);
         }
     }
@@ -605,7 +601,6 @@ public class Protections {
         }
     }
     */
-
 
 
     private int counter = 0;

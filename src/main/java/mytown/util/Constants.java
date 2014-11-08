@@ -1,10 +1,6 @@
 package mytown.util;
 
-import net.minecraft.item.Item;
 import net.minecraft.util.EnumChatFormatting;
-
-import java.util.List;
-import java.util.Map;
 
 public class Constants {
     public static final String VERSION = "@VERSION@";

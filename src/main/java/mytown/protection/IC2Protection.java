@@ -1,14 +1,8 @@
 package mytown.protection;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-//import ic2.api.event.LaserEvent;
-import mytown.MyTown;
-import mytown.entities.Resident;
-import mytown.entities.TownBlock;
-import mytown.entities.flag.FlagType;
-import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+
+//import ic2.api.event.LaserEvent;
 
 /**
  * Created by AfterWind on 7/8/2014.
@@ -22,10 +16,10 @@ public class IC2Protection extends Protection {
         isHandlingEvents = true;
         try {
 
-            this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityNuke"));
-            this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityItnt"));
-            this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityDynamite"));
-            this.explosiveBlocks.add((Class<? extends Entity>)Class.forName("ic2.core.block.EntityStickyDynamite"));
+            this.explosiveBlocks.add((Class<? extends Entity>) Class.forName("ic2.core.block.EntityNuke"));
+            this.explosiveBlocks.add((Class<? extends Entity>) Class.forName("ic2.core.block.EntityItnt"));
+            this.explosiveBlocks.add((Class<? extends Entity>) Class.forName("ic2.core.block.EntityDynamite"));
+            this.explosiveBlocks.add((Class<? extends Entity>) Class.forName("ic2.core.block.EntityStickyDynamite"));
 
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();

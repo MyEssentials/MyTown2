@@ -1,12 +1,10 @@
 package mytown.protection;
 
-import mytown.MyTown;
 import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.Wild;
-import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -85,6 +83,7 @@ public abstract class Protection {
         interactiveBlocks = new ArrayList<Block>();
         isHandlingEvents = false;
     }
+
     /**
      * Checks the entity and returns whether or not the entity was destroyed
      * If you override this, call super method.
@@ -95,21 +94,21 @@ public abstract class Protection {
     @SuppressWarnings("unchecked")
     public boolean checkEntity(Entity entity) {
         Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-        if(town == null) {
+        if (town == null) {
 
             //Wild explosives
-            if(explosiveBlocks.contains(entity.getClass())) {
+            if (explosiveBlocks.contains(entity.getClass())) {
                 //MyTown.instance.log.info("Checking entity with explosives.");
-                if (!(Boolean)Wild.getInstance().getFlag(FlagType.explosions).getValue()) {
+                if (!(Boolean) Wild.getInstance().getFlag(FlagType.explosions).getValue()) {
                     //Temporary
-                    if(entity instanceof EntityWitherSkull)
-                       return false;
+                    if (entity instanceof EntityWitherSkull)
+                        return false;
 
                     return true;
                 }
             }
         } else {
-            String value = (String)town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
+            String value = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
             if (value.equals("none")) {
                 if (entity instanceof EntityLivingBase) {
                     return true;
@@ -120,7 +119,7 @@ public abstract class Protection {
                 }
             }
 
-            boolean explosionValue = (Boolean)town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.explosions);
+            boolean explosionValue = (Boolean) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.explosions);
             if (!explosionValue) {
                 if (explosiveBlocks.contains(entity.getClass())) {
                     return true;
@@ -138,7 +137,9 @@ public abstract class Protection {
      * @param te
      * @return
      */
-    public boolean checkTileEntity(TileEntity te) { return false; }
+    public boolean checkTileEntity(TileEntity te) {
+        return false;
+    }
 
     /**
      * Checks if the resident or block with tile entity can use this item.
@@ -148,30 +149,46 @@ public abstract class Protection {
      * @param res
      * @return
      */
-    public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) { return false; }
+    public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
+        return false;
+    }
 
     public boolean hasToCheckTileEntity(TileEntity te) {
-        for(Class<? extends TileEntity> cls : trackedTileEntities) {
-            if(cls.isAssignableFrom(te.getClass()))
+        for (Class<? extends TileEntity> cls : trackedTileEntities) {
+            if (cls.isAssignableFrom(te.getClass()))
                 return true;
         }
         return false;
     }
-    public boolean hasToCheckEntity(Entity entity) { return trackedEntities.contains(entity.getClass()) || explosiveBlocks.contains(entity.getClass()); }
+
+    public boolean hasToCheckEntity(Entity entity) {
+        return trackedEntities.contains(entity.getClass()) || explosiveBlocks.contains(entity.getClass());
+    }
 
     /**
      * Gets the range at which items can range bypassing flags
+     *
      * @return
      */
-    public int getRange() { return 0; }
+    public int getRange() {
+        return 0;
+    }
 
-    public final List<FlagType> getFlagTypeForTile(TileEntity te) { return getFlagTypeForTile(te.getClass()); }
-    public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) { return null; }
+    public final List<FlagType> getFlagTypeForTile(TileEntity te) {
+        return getFlagTypeForTile(te.getClass());
+    }
+
+    public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
+        return null;
+    }
 
     /* ---- Helpers ---- */
     protected MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
-    protected Localization getLocal() {return LocalizationProxy.getLocalization(); }
+
+    protected Localization getLocal() {
+        return LocalizationProxy.getLocalization();
+    }
 
 }

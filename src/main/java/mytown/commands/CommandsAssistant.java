@@ -4,10 +4,10 @@ import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandNode;
-import mytown.entities.TownBlock;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.util.exceptions.MyTownCommandException;
@@ -164,7 +164,7 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
         FlagType flagType = getFlagTypeFromName(args.get(1));
 
-        if(flagType.isWhitelistable())
+        if (flagType.isWhitelistable())
             res.startBlockSelection(flagType, town.getName(), false);
         else
             throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
@@ -336,17 +336,17 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion"})
     public static void passCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
+        if (args.size() < 1)
             throw new MyTownCommandException("mytown.cmd.usage.leave.pass");
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromResident(res);
 
-        if(!town.hasResident(target)) {
+        if (!town.hasResident(target)) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", target.getPlayerName(), town.getName());
         }
-        if(town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
+        if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
             getDatasource().updateResidentToTownLink(target, town, town.getRank(Rank.theMayorDefaultRank));
             target.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.passed"));
             getDatasource().updateResidentToTownLink(res, town, town.getDefaultRank());
@@ -357,11 +357,11 @@ public class CommandsAssistant extends Commands {
     }
 
     @CommandNode(
-            name="limit",
+            name = "limit",
             permission = "mytown.cmd.assistant.plot.limit",
             parentName = "mytown.cmd.everyone.plot")
     public static void plotLimitCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        if(args.size() < 1) {
+        if (args.size() < 1) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.limit", town.getMaxPlots()));
@@ -371,11 +371,11 @@ public class CommandsAssistant extends Commands {
     }
 
     @CommandNode(
-            name="set",
+            name = "set",
             permission = "mytown.cmd.assistant.plot.limit.set",
             parentName = "mytown.cmd.assistant.plot.limit")
     public static void plotLimitSetCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1) {
+        if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
         }
         try {
@@ -391,21 +391,21 @@ public class CommandsAssistant extends Commands {
     }
 
     @CommandNode(
-            name="kick",
+            name = "kick",
             permission = "mytown.cmd.assistant.kick",
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion"})
     public static void kickCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1) {
+        if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.kick");
         }
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromResident(res);
-        if(!target.getTowns().contains(town)) {
+        if (!target.getTowns().contains(town)) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", args.get(0), town.getName());
         }
-        if(target == res) {
+        if (target == res) {
             throw new MyTownCommandException("mytown.cmd.err.kick.self");
         }
 
@@ -422,13 +422,12 @@ public class CommandsAssistant extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        if(town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
+        if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
             returnPaymentStack(sender, Config.costAmountClaim * town.getBlocks().size());
             getDatasource().deleteTown(town);
         }
     }
-
 
 
     // Temporary here, might integrate in the methods

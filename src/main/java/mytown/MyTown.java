@@ -68,9 +68,9 @@ public class MyTown {
         // Register ICrashCallable's
         FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());
 
-        if(ev.getSide() == Side.SERVER) {
+        if (ev.getSide() == Side.SERVER) {
             isCauldron = MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc");
-            if(isCauldron)
+            if (isCauldron)
                 BukkitCompat.getInstance().loadPEX(ev.getSourceFile());
             //MyTown.instance.log.info("Server is using cauldron or some implementation between forge and bukkit/spigot.");
         }
@@ -118,7 +118,7 @@ public class MyTown {
     private void registerCommands() {
         Method m = null;
         try {
-            if(isCauldron && BukkitCompat.getInstance().hasPlugin("PermissionsEx")) {
+            if (isCauldron && BukkitCompat.getInstance().hasPlugin("PermissionsEx")) {
                 m = PEXCompat.class.getMethod("firstPermissionBreachPEX", String.class, ICommandSender.class);
             } else {
                 m = Commands.class.getMethod("firstPermissionBreach", String.class, ICommandSender.class);
@@ -130,7 +130,7 @@ public class MyTown {
 
         CommandManager.registerCommands(CommandsEveryone.class, m);
         CommandManager.registerCommands(CommandsAssistant.class, m);
-        if(Config.modifiableRanks)
+        if (Config.modifiableRanks)
             CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, m);
 
         CommandManager.registerCommands(CommandsAdmin.class);

@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 
-import java.util.List;
-
 /**
  * Created by AfterWind on 8/26/2014.
  * Why do we need interfaces for this?

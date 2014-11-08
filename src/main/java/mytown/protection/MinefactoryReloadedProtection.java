@@ -35,10 +35,10 @@ public class MinefactoryReloadedProtection extends Protection {
     @SuppressWarnings("unchecked")
     public MinefactoryReloadedProtection() {
         try {
-            Class<? extends Entity> clsFishingRod = (Class<? extends Entity>)Class.forName("powercrystals.minefactoryreloaded.entity.EntityFishingRod");
-            Class<? extends Entity> clsRocket = (Class<? extends Entity>)Class.forName("powercrystals.minefactoryreloaded.entity.EntityRocket");
+            Class<? extends Entity> clsFishingRod = (Class<? extends Entity>) Class.forName("powercrystals.minefactoryreloaded.entity.EntityFishingRod");
+            Class<? extends Entity> clsRocket = (Class<? extends Entity>) Class.forName("powercrystals.minefactoryreloaded.entity.EntityRocket");
 
-            clsTileEntityFactory = (Class<? extends TileEntity>)Class.forName("powercrystals.minefactoryreloaded.tile.base.TileEntityFactory");
+            clsTileEntityFactory = (Class<? extends TileEntity>) Class.forName("powercrystals.minefactoryreloaded.tile.base.TileEntityFactory");
             Class<?> clsAreaManager = Class.forName("powercrystals.minefactoryreloaded.core.HarvestAreaManager");
             Class<?> clsArea = Class.forName("cofh.lib.util.position.Area");
 
@@ -65,17 +65,17 @@ public class MinefactoryReloadedProtection extends Protection {
     @SuppressWarnings("unchecked")
     @Override
     public boolean checkTileEntity(TileEntity te) {
-        if(clsTileEntityFactory.isAssignableFrom(te.getClass())) {
+        if (clsTileEntityFactory.isAssignableFrom(te.getClass())) {
             MyTown.instance.log.info("Checking machine in mfr.");
 
             // Getting harvest area manager
             Object areaManager = mAccessTile.invoke(te, "getHAM");
-            if(areaManager == null)
+            if (areaManager == null)
                 return false;
 
             // Getting area
             Object areaObj = mAccessArea.invoke(areaManager, "getHarvestArea");
-            if(areaObj == null)
+            if (areaObj == null)
                 return false;
 
             List<ChunkPos> chunkPos = Utils.getChunksInBox(fAccessArea.getInt(areaObj, fAccessArea.getIndex("xMin")), fAccessArea.getInt(areaObj, fAccessArea.getIndex("zMin")), fAccessArea.getInt(areaObj, fAccessArea.getIndex("xMax")), fAccessArea.getInt(areaObj, fAccessArea.getIndex("zMax")));
@@ -84,7 +84,7 @@ public class MinefactoryReloadedProtection extends Protection {
                 if (town != null) {
                     //DEV
                     MyTown.instance.log.info("Found town for mfr protection: " + town.getName());
-                    boolean breakFlag = (Boolean)town.getValue(FlagType.breakBlocks);
+                    boolean breakFlag = (Boolean) town.getValue(FlagType.breakBlocks);
                     if (!breakFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks)) {
                         town.notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
                         return true;
@@ -97,13 +97,13 @@ public class MinefactoryReloadedProtection extends Protection {
 
     @Override
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
-        if(itemStack.getItem() == safariNet || itemStack.getItem() == safariNetR || itemStack.getItem() == safariNetJ || itemStack.getItem() == portaSpawner) {
+        if (itemStack.getItem() == safariNet || itemStack.getItem() == safariNetR || itemStack.getItem() == safariNetJ || itemStack.getItem() == portaSpawner) {
             MyTown.instance.log.info("Found safari net usage!");
             Town town = Utils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
-            if(town != null) {
-                boolean entityFlag = (Boolean)town.getValueAtCoords(bp.dim, bp.x, bp.y, bp.z, FlagType.attackEntities);
-                if(!entityFlag && (res == null || !town.checkPermission(res, FlagType.attackEntities))) {
-                    if(res != null)
+            if (town != null) {
+                boolean entityFlag = (Boolean) town.getValueAtCoords(bp.dim, bp.x, bp.y, bp.z, FlagType.attackEntities);
+                if (!entityFlag && (res == null || !town.checkPermission(res, FlagType.attackEntities))) {
+                    if (res != null)
                         res.sendMessage(FlagType.attackEntities.getLocalizedProtectionDenial());
                     else
                         town.notifyEveryone(FlagType.attackEntities.getLocalizedTownNotification());
@@ -117,7 +117,7 @@ public class MinefactoryReloadedProtection extends Protection {
     @Override
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
         List<FlagType> list = new ArrayList<FlagType>();
-        if(te.isAssignableFrom(clsTileEntityFactory))
+        if (te.isAssignableFrom(clsTileEntityFactory))
             list.add(FlagType.breakBlocks);
         return list;
     }

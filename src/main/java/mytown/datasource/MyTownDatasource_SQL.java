@@ -15,7 +15,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 // TODO Check connection for each command and error out if connection doesn't check out
 // TODO Run DB writes (and maybe reads?) on a separate thread
@@ -129,7 +131,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             PreparedStatement s = prepare("SELECT * FROM " + prefix + "Worlds", true);
             ResultSet rs = s.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 MyTownUniverse.getInstance().addWorld(rs.getInt("dim"));
             }
 
@@ -138,13 +140,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             return false;
         }
 
-        for(World world : MinecraftServer.getServer().worldServers) {
-            if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
+        for (World world : MinecraftServer.getServer().worldServers) {
+            if (!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
                 saveWorld(world.provider.dimensionId);
             }
         }
-        for(int dim : MyTownUniverse.getInstance().getWorldsList()) {
-            if(DimensionManager.getWorld(dim) == null) {
+        for (int dim : MyTownUniverse.getInstance().getWorldsList()) {
+            if (DimensionManager.getWorld(dim) == null) {
                 deleteWorld(dim);
             }
         }
@@ -326,8 +328,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 Flag flag = new Flag(FlagType.valueOf(flagName), gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
 
                 Town town = MyTownUniverse.getInstance().getTownsMap().get(townName);
-                if(town != null) {
-                    if(flag.flagType.shouldLoad())
+                if (town != null) {
+                    if (flag.flagType.shouldLoad())
                         town.addFlag(flag);
                 } else {
                     log.error("Failed to load flag " + flagName + " because the town given was invalid!");
@@ -356,8 +358,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 Flag flag = new Flag(FlagType.valueOf(flagName), gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
 
                 Plot plot = MyTownUniverse.getInstance().getPlot(plotID);
-                if(plot != null) {
-                    if(flag.flagType.shouldLoad())
+                if (plot != null) {
+                    if (flag.flagType.shouldLoad())
                         plot.addFlag(flag);
                 } else {
                     log.error("Failed to load flag " + flagName + " because the town given was invalid!");
@@ -500,7 +502,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         try {
             PreparedStatement s = prepare("SELECT * FROM " + prefix + "Friends", true);
             ResultSet rs = s.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 Resident res1 = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident1"));
                 Resident res2 = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident2"));
 
@@ -519,7 +521,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         try {
             PreparedStatement s = prepare("SELECT * FROM " + prefix + "FriendRequests", true);
             ResultSet rs = s.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 Resident res1 = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("resident"));
                 Resident res2 = MyTownUniverse.getInstance().getResidentsMap().get(rs.getString("residentTarget"));
 
@@ -537,7 +539,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         try {
             PreparedStatement s = prepare("SELECT * FROM " + prefix + "TownInvites", true);
             ResultSet rs = s.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 Resident res = MyTownUniverse.getInstance().getResident(rs.getString("resident"));
                 Town town = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
                 res.addInvite(town);
@@ -576,7 +578,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 updateStatement.executeUpdate();
 
                 // Need to move the Town in the map from the old name to the new
-                if(town.getOldName() != null) {
+                if (town.getOldName() != null) {
                     MyTownUniverse.getInstance().removeTown(town);
                     // This updates the name
                     MyTownUniverse.getInstance().addTown(town);
@@ -709,7 +711,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             if (MyTownUniverse.getInstance().hasResident(resident)) { // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=?, extraBlocks=? WHERE uuid=?", true);
                 updateStatement.setString(1, resident.getPlayerName());
-                updateStatement.setLong(2, resident.getLastOnline().getTime()/1000L); // Stupid hack...
+                updateStatement.setLong(2, resident.getLastOnline().getTime() / 1000L); // Stupid hack...
                 updateStatement.setInt(3, resident.getExtraBlocks());
                 updateStatement.setString(4, resident.getUUID().toString());
                 updateStatement.executeUpdate();
@@ -717,8 +719,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Residents (uuid, name, joined, lastOnline, extraBlocks) VALUES(?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, resident.getUUID().toString());
                 insertStatement.setString(2, resident.getPlayerName());
-                insertStatement.setLong(3, resident.getJoinDate().getTime()/1000L); // Stupid hack...
-                insertStatement.setLong(4, resident.getLastOnline().getTime()/1000L); // Stupid hack...
+                insertStatement.setLong(3, resident.getJoinDate().getTime() / 1000L); // Stupid hack...
+                insertStatement.setLong(4, resident.getLastOnline().getTime() / 1000L); // Stupid hack...
                 insertStatement.setInt(5, resident.getExtraBlocks());
                 insertStatement.executeUpdate();
 
@@ -767,8 +769,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 if (generatedKeys.next())
                     plot.setDb_ID(generatedKeys.getInt(1));
                 log.info("Saved plot with ID " + generatedKeys.getInt(1));
-                for(Flag flag : plot.getTown().getFlags()) {
-                    if(!flag.flagType.isTownOnly())
+                for (Flag flag : plot.getTown().getFlags()) {
+                    if (!flag.flagType.isTownOnly())
                         saveFlag(new Flag(flag.flagType, flag.getValue()), plot);
                 }
 
@@ -809,10 +811,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Plot plot) {
-        if(!flag.flagType.shouldLoad()) return false;
+        if (!flag.flagType.shouldLoad()) return false;
         log.debug("Saving Flag %s for Plot %s", flag.flagType.name(), plot.getKey());
         try {
-            if(plot.hasFlag(flag.flagType)) {
+            if (plot.hasFlag(flag.flagType)) {
                 // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE plotID=? AND name=?", true);
                 updateStatement.setString(1, flag.serializeValue());
@@ -841,10 +843,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Town town) {
-        if(!flag.flagType.shouldLoad()) return false;
+        if (!flag.flagType.shouldLoad()) return false;
         log.debug("Saving Flag %s for Town %s", flag.flagType.name(), town.getName());
         try {
-            if(town.hasFlag(flag.flagType)) {
+            if (town.hasFlag(flag.flagType)) {
                 // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "TownFlags SET serializedValue=? WHERE townName=? AND name=?", true);
                 updateStatement.setString(1, flag.serializeValue());
@@ -875,7 +877,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {
         try {
-            if(!town.hasBlockWhitelist(bw)) {
+            if (!town.hasBlockWhitelist(bw)) {
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "BlockWhitelists(dim, x, y, z, flagName, townName) VALUES(?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setInt(1, bw.dim);
                 insertStatement.setInt(2, bw.x);
@@ -949,7 +951,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveFriendRequest(Resident res1, Resident res2) {
         try {
-            if(res2.addFriendRequest(res1)) {
+            if (res2.addFriendRequest(res1)) {
                 PreparedStatement s = prepare("INSERT INTO " + prefix + "FriendRequests(resident, residentTarget) VALUES(?, ?)", true);
                 s.setString(1, res1.getUUID().toString());
                 s.setString(2, res2.getUUID().toString());
@@ -967,7 +969,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean saveTownInvite(Resident res, Town town) {
         try {
-            if(!res.hasInvite(town)) {
+            if (!res.hasInvite(town)) {
                 PreparedStatement s = prepare("INSERT INTO " + prefix + "TownInvites(resident, townName) VALUES(?, ?)", true);
                 s.setString(1, res.getUUID().toString());
                 s.setString(2, town.getName());
@@ -979,7 +981,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 return false;
             }
         } catch (SQLException e) {
-          log.error("Failed to load town invite: " + res.getPlayerName() + " for town " + town.getName());
+            log.error("Failed to load town invite: " + res.getPlayerName() + " for town " + town.getName());
             return false;
         }
 
@@ -1306,7 +1308,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean deleteSelectedTown(Resident res) {
         try {
-            if(res.getTowns().size() > 0) {
+            if (res.getTowns().size() > 0) {
                 PreparedStatement s = prepare("UPDATE FROM " + prefix + "SelectedTown SET townName=? WHERE resdent=?", true);
                 s.setString(1, res.getTowns().get(0).getName());
                 s.setString(2, res.getUUID().toString());
@@ -1344,13 +1346,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean deleteFriendRequest(Resident res1, Resident res2, boolean response) {
         try {
-            if(res2.hasFriendRequest(res1)) {
+            if (res2.hasFriendRequest(res1)) {
                 PreparedStatement s = prepare("DELETE FROM " + prefix + "FriendRequests WHERE resident=? AND residentTarget=?", true);
                 s.setString(1, res1.getUUID().toString());
                 s.setString(2, res2.getUUID().toString());
                 s.executeUpdate();
 
-                if(response)
+                if (response)
                     saveFriendLink(res1, res2);
                 res2.verifyFriendRequest(res1, response);
             } else {
@@ -1370,7 +1372,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.setString(1, res.getUUID().toString());
             s.setString(2, town.getName());
             s.executeUpdate();
-            if(response)
+            if (response)
                 linkResidentToTown(res, town, town.getDefaultRank());
             res.removeInvite(town);
         } catch (SQLException e) {
@@ -1450,21 +1452,21 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
 
         // Checking if flag is supposed to exist and it doesn't or otherwise.
-        for(Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
-            for(FlagType type : FlagType.values()) {
-                if(!type.isUsableForTowns() && town.hasFlag(type)) {
+        for (Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
+            for (FlagType type : FlagType.values()) {
+                if (!type.isUsableForTowns() && town.hasFlag(type)) {
                     deleteFlag(town.getFlag(type), town);
                     MyTown.instance.log.info("A flag in town " + town.getName() + " got deleted because of the settings.");
-                } else if(type.isUsableForTowns() && !town.hasFlag(type)) {
+                } else if (type.isUsableForTowns() && !town.hasFlag(type)) {
                     saveFlag(new Flag(type, type.getDefaultValue()), town);
                     MyTown.instance.log.info("A flag in town " + town.getName() + " got created because of the settings.");
                 }
             }
         }
 
-        for(Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
-            for(FlagType type : FlagType.values()) {
-                if(!type.isTownOnly()) {
+        for (Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
+            for (FlagType type : FlagType.values()) {
+                if (!type.isTownOnly()) {
                     if (!type.isUsableForTowns() && plot.hasFlag(type)) {
                         deleteFlag(plot.getFlag(type), plot);
                         MyTown.instance.log.info("A flag in a plot in town " + plot.getTown().getName() + " got deleted because of the settings.");
@@ -1683,7 +1685,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "Towns ADD extraBlocks INTEGER DEFAULT 0"));
 
         updates.add(new DBUpdate("10.23.2014.1", "Add 'maxPlots' to towns", "ALTER TABLE " + prefix +
-                "Towns ADD maxPlots INTEGER DEFAULT "+ Config.defaultMaxPlots+""));
+                "Towns ADD maxPlots INTEGER DEFAULT " + Config.defaultMaxPlots + ""));
 
         updates.add(new DBUpdate("11.4.2014.1", "Add 'extraBlocks to residents", "ALTER TABLE " + prefix +
                 "Residents ADD extraBlocks INTEGER DEFAULT 0;"));

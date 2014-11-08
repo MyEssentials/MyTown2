@@ -18,7 +18,6 @@ import mytown.util.Utils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
@@ -63,21 +62,21 @@ public abstract class Commands {
     public static void sendHelpMessage(ICommandSender sender, String permissionBase) {
         List<String> scList = CommandManager.getSubCommandsList(permissionBase);
         String command = null;
-        for(String s = permissionBase; s != null; s = CommandManager.getParentPermNode(s)) {
-            if(command == null)
+        for (String s = permissionBase; s != null; s = CommandManager.getParentPermNode(s)) {
+            if (command == null)
                 command = CommandManager.commandNames.get(s);
             else
                 command = new StringBuilder(command).insert(0, CommandManager.commandNames.get(s) + " ").toString();
         }
         sendMessageBackToSender(sender, "/" + command + ": ");
-        for(String s : scList) {
+        for (String s : scList) {
             sendMessageBackToSender(sender, "   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
         }
     }
 
     public static void sendHelpMessageWithArgs(ICommandSender sender, List<String> args, String permBase) {
         String node;
-        if(args.size() < 1) {
+        if (args.size() < 1) {
             //If no arguments are provided then we check for the base permission
             node = permBase;
         } else {
@@ -87,9 +86,9 @@ public abstract class Commands {
 
         String command = "/" + CommandManager.commandNames.get(permBase);
         String prevNode = permBase;
-        for(String s : args) {
+        for (String s : args) {
             String t = CommandManager.getSubCommandNode(s, prevNode);
-            if(t != null) {
+            if (t != null) {
                 command += " " + s;
                 prevNode = t;
             } else
@@ -98,7 +97,7 @@ public abstract class Commands {
 
         sendMessageBackToSender(sender, command);
         List<String> scList = CommandManager.getSubCommandsList(node);
-        if(scList == null || scList.size() == 0) {
+        if (scList == null || scList.size() == 0) {
             sendMessageBackToSender(sender, "   " + getLocal().getLocalization(node + ".help"));
         } else {
             for (String s : scList) {
@@ -108,13 +107,12 @@ public abstract class Commands {
     }
 
 
-
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
         // Since everybody should have permission to /t
         if (permission.equals("mytown.cmd"))
             return true;
 
-        if(!(sender instanceof EntityPlayer))
+        if (!(sender instanceof EntityPlayer))
             return true;
 
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -201,21 +199,21 @@ public abstract class Commands {
 
     public static Flag getFlagFromType(IHasFlags hasFlags, FlagType flagType) {
         Flag flag = hasFlags.getFlag(flagType);
-        if(flag == null)
+        if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", flagType.toString());
         return flag;
     }
 
     public static Flag getFlagFromName(IHasFlags hasFlags, String name) {
         Flag flag = hasFlags.getFlag(FlagType.valueOf(name));
-        if(flag == null)
+        if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", name);
         return flag;
     }
 
     public static TownBlock getBlockAtResident(Resident res) {
         TownBlock block = getDatasource().getBlock(res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
-        if(block == null)
+        if (block == null)
             throw new MyTownCommandException("mytown.cmd.err.claim.notexist", res.getSelectedTown());
         return block;
     }
@@ -255,28 +253,28 @@ public abstract class Commands {
     }
 
     public static int getPaymentStack(ICommandSender sender, int minAmount) {
-        if(!(sender instanceof EntityPlayer))
+        if (!(sender instanceof EntityPlayer))
             throw new MyTownCommandException("The sender is not a player!");
-        if(minAmount == 0)
+        if (minAmount == 0)
             return 0;
-        EntityPlayer player = (EntityPlayer)sender;
+        EntityPlayer player = (EntityPlayer) sender;
         int stackNumber = -1;
-        for(int i = 0; i < player.inventory.mainInventory.length; i++) {
+        for (int i = 0; i < player.inventory.mainInventory.length; i++) {
             ItemStack itemStack = player.inventory.mainInventory[i];
-            if(itemStack == null)
+            if (itemStack == null)
                 continue;
-            if(GameRegistry.findUniqueIdentifierFor(itemStack.getItem()).name.equals(Config.costItemName) && itemStack.stackSize >= minAmount) {
+            if (GameRegistry.findUniqueIdentifierFor(itemStack.getItem()).name.equals(Config.costItemName) && itemStack.stackSize >= minAmount) {
                 stackNumber = i;
                 break;
             }
         }
-        if(stackNumber == -1)
+        if (stackNumber == -1)
             throw new MyTownCommandException("mytown.cmd.err.cost", minAmount, Config.costItemName);
         return stackNumber;
     }
 
     public static void sendMessageBackToSender(ICommandSender sender, String message) {
-        if(sender instanceof EntityPlayer) {
+        if (sender instanceof EntityPlayer) {
             Resident res = getDatasource().getOrMakeResident(sender);
             res.sendMessage(message);
         } else {
@@ -285,16 +283,16 @@ public abstract class Commands {
     }
 
     public static void returnPaymentStack(ICommandSender sender, int amount) {
-        if(sender instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer)sender;
+        if (sender instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) sender;
             String[] itemName = Config.costItemName.split(":");
             Item item;
-            if(itemName.length > 1) {
+            if (itemName.length > 1) {
                 item = GameRegistry.findItem(itemName[0], itemName[1]);
             } else {
-                item = (Item)Item.itemRegistry.getObject(Config.costItemName);
+                item = (Item) Item.itemRegistry.getObject(Config.costItemName);
             }
-            for(int left = amount; left > 0; left -= 64) {
+            for (int left = amount; left > 0; left -= 64) {
                 ItemStack stack = new ItemStack(item, left > 64 ? 64 : left);
                 //stack = addToInventory(player.inventory, stack);
                 if (!player.inventory.addItemStackToInventory(stack)) {

@@ -1,6 +1,5 @@
 package mytown.entities;
 
-import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
 
 /**
@@ -19,7 +18,6 @@ public class BlockWhitelist {
     private FlagType flagType;
 
 
-
     public BlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
         this.dim = dim;
         this.x = x;
@@ -32,7 +30,9 @@ public class BlockWhitelist {
         return this.flagType;
     }
 
-    public void delete() { this.isDeleted = true; }
+    public void delete() {
+        this.isDeleted = true;
+    }
 
     public void setDb_ID(int id) {
         this.db_id = id;

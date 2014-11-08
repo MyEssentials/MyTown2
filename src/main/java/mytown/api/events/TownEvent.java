@@ -33,6 +33,7 @@ public class TownEvent extends Event {
     // TODO: Make them cancelable?
     public static class TownEnterEvent extends TownEvent {
         public Resident resident = null;
+
         public TownEnterEvent(Town town, Resident resident) {
             super(town);
             this.resident = resident;
@@ -41,6 +42,7 @@ public class TownEvent extends Event {
 
     public static class TownEnterInRangeEvent extends TownEvent {
         public Resident resident = null;
+
         public TownEnterInRangeEvent(Town town, Resident resident) {
             super(town);
             this.resident = resident;

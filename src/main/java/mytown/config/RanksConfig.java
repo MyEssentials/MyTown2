@@ -24,7 +24,7 @@ public class RanksConfig {
         gson = new GsonBuilder().setPrettyPrinting().create();
         this.path = file.getPath();
 
-        if(!file.exists() || file.isDirectory()) {
+        if (!file.exists() || file.isDirectory()) {
             writeFile();
         } else {
             readFile();

@@ -55,6 +55,7 @@ public interface IHasBlocks {
 
     /**
      * Sets the number of extra blocks it can have.
+     *
      * @param extra
      */
     public void setExtraBlocks(int extra);

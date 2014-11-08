@@ -2,9 +2,9 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
+import mytown.api.interfaces.IHasFlags;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.api.interfaces.IHasFlags;
 import mytown.proxies.plugin.BukkitCompat;
 import mytown.proxies.plugin.PEXCompat;
 import mytown.util.Utils;
@@ -21,7 +21,7 @@ public class Wild implements IHasFlags {
     private static Wild instance;
 
     public static Wild getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new Wild();
         }
         return instance;
@@ -37,8 +37,8 @@ public class Wild implements IHasFlags {
 
     @Override
     public boolean hasFlag(FlagType type) {
-        for(Flag f : flagList) {
-            if(f.flagType == type)
+        for (Flag f : flagList) {
+            if (f.flagType == type)
                 return true;
         }
         return false;
@@ -51,8 +51,8 @@ public class Wild implements IHasFlags {
 
     @Override
     public Flag getFlag(FlagType type) {
-        for(Flag f : flagList) {
-            if(f.flagType == type)
+        for (Flag f : flagList) {
+            if (f.flagType == type)
                 return f;
         }
         return null;
@@ -60,8 +60,8 @@ public class Wild implements IHasFlags {
 
     @Override
     public boolean removeFlag(FlagType type) {
-        for(Iterator<Flag> it = flagList.iterator(); it.hasNext();) {
-            if(it.next().flagType == type) {
+        for (Iterator<Flag> it = flagList.iterator(); it.hasNext(); ) {
+            if (it.next().flagType == type) {
                 it.remove();
                 return true;
             }
@@ -70,9 +70,9 @@ public class Wild implements IHasFlags {
     }
 
     public boolean checkPermission(Resident res, FlagType type) {
-        if(getFlag(type).getValue() instanceof Boolean) {
-            if(!(Boolean)getFlag(type).getValue()) {
-                if(MyTown.instance.isCauldron && BukkitCompat.getInstance().hasPEX())
+        if (getFlag(type).getValue() instanceof Boolean) {
+            if (!(Boolean) getFlag(type).getValue()) {
+                if (MyTown.instance.isCauldron && BukkitCompat.getInstance().hasPEX())
                     return PEXCompat.getInstance().checkPermission(res, type.getBypassPermission()) || Utils.isOp(res);
                 else
                     return Utils.isOp(res);
@@ -81,10 +81,11 @@ public class Wild implements IHasFlags {
         // TODO: Implement other types of flags
         return true;
     }
+
     @Override
     public Object getValue(FlagType type) {
-        for(Flag flag : flagList) {
-            if(flag.flagType == type)
+        for (Flag flag : flagList) {
+            if (flag.flagType == type)
                 return flag.getValue();
         }
         return null;

@@ -31,8 +31,8 @@ public class CommandsOutsider extends Commands {
     public static void infoCommand(ICommandSender sender, List<String> args) {
         List<Town> towns = new ArrayList<Town>();
 
-        if(args.size() < 1) {
-            if(sender instanceof EntityPlayer) {
+        if (args.size() < 1) {
+            if (sender instanceof EntityPlayer) {
                 Resident res = getDatasource().getOrMakeResident(sender);
                 towns.add(getTownFromResident(res));
             } else {
@@ -100,15 +100,15 @@ public class CommandsOutsider extends Commands {
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
 
-        if(res.getTowns().size() >= Config.maxTowns)
+        if (res.getTowns().size() >= Config.maxTowns)
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
         if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
             throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
-        for(int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
-            for(int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
-                if(Utils.getTownAtPosition(player.dimension, x, z) != null)
+        for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
+            for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
+                if (Utils.getTownAtPosition(player.dimension, x, z) != null)
                     throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose");
             }
         }
@@ -154,7 +154,7 @@ public class CommandsOutsider extends Commands {
             if (!invites.contains(town))
                 throw new MyTownCommandException("mytown.cmd.err.invite.town.noinvitations");
         }
-        if(res.getTowns().size() >= Config.maxTowns)
+        if (res.getTowns().size() >= Config.maxTowns)
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
 
         getDatasource().deleteTownInvite(res, town, true);
@@ -202,8 +202,8 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
 
         String friends = null;
-        for(Resident friend : res.getFriends()) {
-            if(friends == null)
+        for (Resident friend : res.getFriends()) {
+            if (friends == null)
                 friends = friend.getPlayerName();
             else
                 friends += ", " + friend.getPlayerName();
@@ -218,13 +218,13 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
     public static void friendsAddCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
+        if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.friends.add");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
-        if(res == toAdd)
+        if (res == toAdd)
             throw new MyTownCommandException("mytown.cmd.err.friends.add.self");
-        if(!getDatasource().saveFriendRequest(res, toAdd)) {
+        if (!getDatasource().saveFriendRequest(res, toAdd)) {
             throw new MyTownCommandException("mytown.cmd.err.friends.add.already");
         }
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.invitationSent"));
@@ -237,11 +237,11 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
     public static void friendsRemoveCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
+        if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.friends.remove");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
-        if(!toAdd.removeFriend(res)) {
+        if (!toAdd.removeFriend(res)) {
             throw new MyTownCommandException("mytown.cmd.err.friends.remove");
         } else {
             res.removeFriend(toAdd);
@@ -256,7 +256,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
     public static void friendsAcceptCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
+        if (args.size() < 1)
             throw new MyTownCommandException("mytown.cmd.err.friends.accept");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
@@ -272,7 +272,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
     public static void friendsRefuseCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
+        if (args.size() < 1)
             throw new MyTownCommandException("mytown.cmd.err.friends.refuse");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
@@ -292,17 +292,17 @@ public class CommandsOutsider extends Commands {
     }
 
     @CommandNode(
-            name="invites",
+            name = "invites",
             permission = "mytown.cmd.outsider.invites",
             parentName = "mytown.cmd")
     public static void invitesCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        if(res.getInvites().size() == 0)
+        if (res.getInvites().size() == 0)
             res.sendMessage(getLocal().getLocalization("mytown.notification.resident.noInvites"));
         else {
             String formattedList = null;
-            for(Town town : res.getInvites())
-                if(formattedList == null)
+            for (Town town : res.getInvites())
+                if (formattedList == null)
                     formattedList = EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
                 else
                     formattedList += ", " + EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;

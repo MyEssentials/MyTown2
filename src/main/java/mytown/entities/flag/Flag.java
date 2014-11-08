@@ -3,14 +3,9 @@ package mytown.entities.flag;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import mytown.proxies.LocalizationProxy;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by AfterWind on 8/26/2014.
@@ -80,7 +75,7 @@ public class Flag<T> {
         T val = getValueFromString(str);
         if (val == null)
             return false;
-        if(flagType.isValueAllowed(val)) {
+        if (flagType.isValueAllowed(val)) {
             value = val;
             return true;
         }

@@ -9,11 +9,10 @@ import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
-import mytown.entities.*;
-import mytown.entities.flag.Flag;
+import mytown.entities.BlockWhitelist;
+import mytown.entities.Resident;
+import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
-import mytown.protection.Protection;
-import mytown.protection.Protections;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
@@ -23,8 +22,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -83,7 +80,7 @@ public class PlayerTracker {
         Town lastTown = Utils.getTownAtPosition(ev.entity.dimension, ev.oldChunkX, ev.oldChunkZ);
         Town currTown = Utils.getTownAtPosition(ev.entity.dimension, ev.newChunkX, ev.newChunkZ);
 
-        if(currTown != null && (lastTown == null || currTown != lastTown))
+        if (currTown != null && (lastTown == null || currTown != lastTown))
             TownEvent.fire(new TownEvent.TownEnterEvent(currTown, res));
 
         if (res.isMapOn()) {
@@ -107,12 +104,11 @@ public class PlayerTracker {
             return;
 
 
-
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
         if (currentStack == null)
             return;
-        if((ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) && ev.entityPlayer.isSneaking()) {
-            if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+        if ((ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) && ev.entityPlayer.isSneaking()) {
+            if (currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
                 // For shift right clicking the selector, we may need it
             }
         }
@@ -124,7 +120,7 @@ public class PlayerTracker {
             NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
             String description = lore.getStringTagAt(0);
 
-            if(description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
+            if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
                 if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
                     ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
                 } else {
@@ -143,7 +139,7 @@ public class PlayerTracker {
             } else if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
                 town = MyTownUniverse.getInstance().getTownsMap().get(Utils.getTownNameFromLore(ev.entityPlayer));
                 Town townAt = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
-                if(town == null || town != townAt) {
+                if (town == null || town != townAt) {
                     res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
                 } else {
                     // If town is found then create of delete the block whitelist
@@ -151,7 +147,7 @@ public class PlayerTracker {
                     FlagType flagType = FlagType.valueOf(Utils.getFlagNameFromLore(ev.entityPlayer));
                     ev.entityPlayer.setCurrentItemOrArmor(0, null);
                     BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
-                    if(bw == null) {
+                    if (bw == null) {
                         bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
                         DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);

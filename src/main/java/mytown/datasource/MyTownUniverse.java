@@ -96,12 +96,15 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
      *
      * @return
      */
-    public final ImmutableList<Integer> getWorldsList() { return ImmutableList.copyOf(worlds); }
+    public final ImmutableList<Integer> getWorldsList() {
+        return ImmutableList.copyOf(worlds);
+    }
 
     /* ----- Add Entity ----- */
 
     /**
      * Adds a Resident to the universe
+     *
      * @param res Resident to add
      * @return If successful
      */
@@ -113,6 +116,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     /**
      * Adds a Town to the universe
+     *
      * @param town Town to add
      * @return If successful
      */
@@ -125,6 +129,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     /**
      * Adds a Nation to the universe
+     *
      * @param nation Nation to add
      * @return If successful
      */
@@ -135,6 +140,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     /**
      * Adds a TownBlock to the universe
+     *
      * @param block TownBlock to add
      * @return If successful
      */
@@ -145,6 +151,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     /**
      * Adds a Rank to the universe
+     *
      * @param rank Rank to add
      * @return If successful
      */
@@ -156,6 +163,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     /**
      * Adds a Plot to the universe
+     *
      * @param plot Plot to add
      * @return If successful
      */
@@ -175,6 +183,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     /**
      * Adds a world/dim to the universe
+     *
      * @param dim Dimension ID of world to add
      * @return If successful
      */
@@ -230,7 +239,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public final boolean removeWorld(int dim) {
-        worlds.remove((Integer)dim);
+        worlds.remove((Integer) dim);
         return true;
     }
 
@@ -295,7 +304,9 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return plots.containsValue(plot);
     }
 
-    public boolean hasWorld(int dim) { return worlds.contains(dim); }
+    public boolean hasWorld(int dim) {
+        return worlds.contains(dim);
+    }
 
     /* ----- Singleton ----- */
 

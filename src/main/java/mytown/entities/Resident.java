@@ -2,16 +2,15 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
-import mytown.config.Config;
-import mytown.core.ChatUtils;
-import mytown.core.Localization;
-import mytown.datasource.MyTownDatasource;
-import mytown.datasource.MyTownUniverse;
-import mytown.entities.flag.FlagType;
 import mytown.api.interfaces.IBlockWhitelister;
 import mytown.api.interfaces.IHasPlots;
 import mytown.api.interfaces.IHasTowns;
 import mytown.api.interfaces.IPlotSelector;
+import mytown.config.Config;
+import mytown.core.ChatUtils;
+import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
+import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -25,9 +24,10 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Joe Goett
@@ -72,8 +72,8 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      */
     public Resident(String uuid, String playerName, long joinDate, long lastOnline, int extraBlocks) {
         setUUID(uuid);
-        this.joinDate = new Date((long)joinDate * 1000L);
-        this.lastOnline = new Date((long)lastOnline * 1000L);
+        this.joinDate = new Date((long) joinDate * 1000L);
+        this.lastOnline = new Date((long) lastOnline * 1000L);
         this.playerName = playerName;
         this.extraBlocks = extraBlocks;
     }
@@ -399,6 +399,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     private List<Resident> friends = new ArrayList<Resident>();
     private List<Resident> friendRequests = new ArrayList<Resident>();
+
     public boolean addFriend(Resident res) {
         return friends.add(res);
     }
@@ -416,12 +417,12 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     public boolean addFriendRequest(Resident res) {
-        if(friends.contains(res) || friendRequests.contains(res)) return false;
+        if (friends.contains(res) || friendRequests.contains(res)) return false;
         return friendRequests.add(res);
     }
 
     public void verifyFriendRequest(Resident res, boolean response) {
-        if(response) {
+        if (response) {
             friends.add(res);
             res.addFriend(this);
         }
@@ -440,7 +441,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     public void protectionDenial(String message, String owner) {
-        if(getPlayer() != null) {
+        if (getPlayer() != null) {
             ChatUtils.sendChat(getPlayer(), message);
             ChatUtils.sendChat(getPlayer(), owner);
         }

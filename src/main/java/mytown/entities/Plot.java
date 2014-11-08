@@ -163,8 +163,8 @@ public class Plot implements IHasFlags, IHasResidents {
 
     @Override
     public boolean hasFlag(FlagType type) {
-        for(Flag flag : flags)
-            if(flag.flagType.equals(type))
+        for (Flag flag : flags)
+            if (flag.flagType.equals(type))
                 return true;
         return false;
     }
@@ -176,16 +176,16 @@ public class Plot implements IHasFlags, IHasResidents {
 
     @Override
     public Flag getFlag(FlagType type) {
-        for(Flag flag : flags)
-            if(flag.flagType.equals(type))
+        for (Flag flag : flags)
+            if (flag.flagType.equals(type))
                 return flag;
         return null;
     }
 
     @Override
     public boolean removeFlag(FlagType type) {
-        for(Iterator<Flag> it = flags.iterator(); it.hasNext(); ) {
-            if(it.next().flagType == type) {
+        for (Iterator<Flag> it = flags.iterator(); it.hasNext(); ) {
+            if (it.next().flagType == type) {
                 it.remove();
                 return true;
             }
@@ -195,8 +195,8 @@ public class Plot implements IHasFlags, IHasResidents {
 
     @Override
     public Object getValue(FlagType type) {
-        for(Flag flag : flags) {
-            if(flag.flagType == type)
+        for (Flag flag : flags) {
+            if (flag.flagType == type)
                 return flag.getValue();
         }
         return type.getDefaultValue();
@@ -204,7 +204,7 @@ public class Plot implements IHasFlags, IHasResidents {
 
     @Override
     public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
-        if(!isCoordWithin(dim, x, y, z)) return null;
+        if (!isCoordWithin(dim, x, y, z)) return null;
         return getValue(flagType);
     }
 
@@ -251,8 +251,8 @@ public class Plot implements IHasFlags, IHasResidents {
     }
 
     public boolean residentHasFriendInPlot(Resident res) {
-        for(Resident r : owners)
-            if(r.hasFriend(res))
+        for (Resident r : owners)
+            if (r.hasFriend(res))
                 return true;
         return false;
     }

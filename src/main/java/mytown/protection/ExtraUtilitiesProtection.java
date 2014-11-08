@@ -2,9 +2,7 @@ package mytown.protection;
 
 import mytown.MyTown;
 import mytown.entities.Town;
-import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.protection.Protection;
 import mytown.util.ChunkPos;
 import mytown.util.Utils;
 import net.minecraft.tileentity.TileEntity;
@@ -25,8 +23,8 @@ public class ExtraUtilitiesProtection extends Protection {
     @SuppressWarnings("unchecked")
     public ExtraUtilitiesProtection() {
         try {
-            clsTileEnderQuarry = (Class<? extends TileEntity>)Class.forName("com.rwtema.extrautils.tileentity.enderquarry.TileEntityEnderQuarry");
-            clsTileEnderPump = (Class<? extends TileEntity>)Class.forName("com.rwtema.extrautils.tileentity.TileEntityEnderThermicLavaPump");
+            clsTileEnderQuarry = (Class<? extends TileEntity>) Class.forName("com.rwtema.extrautils.tileentity.enderquarry.TileEntityEnderQuarry");
+            clsTileEnderPump = (Class<? extends TileEntity>) Class.forName("com.rwtema.extrautils.tileentity.TileEntityEnderThermicLavaPump");
 
             trackedTileEntities.add(clsTileEnderPump);
             trackedTileEntities.add(clsTileEnderQuarry);
@@ -39,7 +37,7 @@ public class ExtraUtilitiesProtection extends Protection {
     @SuppressWarnings("unchecked")
     @Override
     public boolean checkTileEntity(TileEntity te) {
-        if(clsTileEnderQuarry.isAssignableFrom(te.getClass())) {
+        if (clsTileEnderQuarry.isAssignableFrom(te.getClass())) {
             // Ender Quarry
             try {
                 Field minX = clsTileEnderQuarry.getDeclaredField("min_x");
@@ -52,10 +50,10 @@ public class ExtraUtilitiesProtection extends Protection {
                 maxZ.setAccessible(true);
 
                 List<ChunkPos> chunks = Utils.getChunksInBox(minX.getInt(te), minZ.getInt(te), maxX.getInt(te), maxZ.getInt(te));
-                for(ChunkPos cp : chunks) {
+                for (ChunkPos cp : chunks) {
                     Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, cp.getX(), cp.getZ());
-                    if(town != null) {
-                        if(!((Boolean)town.getValue(FlagType.breakBlocks))) {
+                    if (town != null) {
+                        if (!((Boolean) town.getValue(FlagType.breakBlocks))) {
                             town.notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
                             return true;
                         }
@@ -64,7 +62,7 @@ public class ExtraUtilitiesProtection extends Protection {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if(clsTileEnderPump.isAssignableFrom(te.getClass())) {
+        } else if (clsTileEnderPump.isAssignableFrom(te.getClass())) {
             try {
                 Field chunkX = clsTileEnderPump.getDeclaredField("chunk_x");
                 chunkX.setAccessible(true);
@@ -72,7 +70,7 @@ public class ExtraUtilitiesProtection extends Protection {
                 chunkZ.setAccessible(true);
 
                 Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunkX.getInt(te), chunkZ.getInt(te));
-                if(town != null && !((Boolean)town.getValue(FlagType.pumps))) {
+                if (town != null && !((Boolean) town.getValue(FlagType.pumps))) {
                     town.notifyEveryone(FlagType.pumps.getLocalizedTownNotification());
                     return true;
                 }
@@ -86,9 +84,9 @@ public class ExtraUtilitiesProtection extends Protection {
     @Override
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
         List<FlagType> list = new ArrayList<FlagType>();
-        if(clsTileEnderQuarry.isAssignableFrom(te))
+        if (clsTileEnderQuarry.isAssignableFrom(te))
             list.add(FlagType.breakBlocks);
-        else if(clsTileEnderPump.isAssignableFrom(te))
+        else if (clsTileEnderPump.isAssignableFrom(te))
             list.add(FlagType.pumps);
         return list;
     }

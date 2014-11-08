@@ -17,7 +17,8 @@ import java.util.List;
  */
 public class FlagsConfig {
 
-    private Type type = new TypeToken<List<Wrapper>>() {} .getType();
+    private Type type = new TypeToken<List<Wrapper>>() {
+    }.getType();
     private String path;
     private Gson gson;
 
@@ -25,7 +26,7 @@ public class FlagsConfig {
         path = file.getAbsolutePath();
         gson = new GsonBuilder().setPrettyPrinting().create();
 
-        if(!file.exists() || file.isDirectory())
+        if (!file.exists() || file.isDirectory())
             writeFile();
         else
             readFile();
@@ -34,7 +35,7 @@ public class FlagsConfig {
     private void writeFile() {
         List<Wrapper> wrappers = new ArrayList<Wrapper>();
 
-        for(FlagType type : FlagType.values()) {
+        for (FlagType type : FlagType.values()) {
             wrappers.add(new Wrapper(type, type.getDefaultValue(), type.isUsableForTowns()));
         }
         try {
@@ -59,20 +60,20 @@ public class FlagsConfig {
 
             // Checking
             boolean ok;
-            for(Wrapper w : wrappers) {
+            for (Wrapper w : wrappers) {
                 ok = false;
-                for(FlagType type : FlagType.values()) {
-                    if(type == w.flagType)
+                for (FlagType type : FlagType.values()) {
+                    if (type == w.flagType)
                         ok = true;
                 }
-                if(!ok) {
+                if (!ok) {
                     MyTown.instance.log.error("Flag config is missing a flagType! Make sure you add them all. If you have trouble you can delete the file to get a new one.");
                     return;
                 }
             }
 
-            for(Wrapper w : wrappers) {
-                if(w.flagType.getType().isAssignableFrom(w.defaultState.getClass())) {
+            for (Wrapper w : wrappers) {
+                if (w.flagType.getType().isAssignableFrom(w.defaultState.getClass())) {
                     w.flagType.setDefaultValue(w.defaultState);
                     w.flagType.setIsUsableForTowns(w.isAllowedInTowns);
                     //MyTown.instance.log.info("Added flag: " + w.flagType.toString() + " with default " + w.defaultState.toString() + " and allowed in towns: " + w.isAllowedInTowns );

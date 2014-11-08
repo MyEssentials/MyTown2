@@ -59,7 +59,7 @@ public class Formatter {
             else
                 towns += ", " + added;
         }
-        String format = EnumChatFormatting.WHITE + "Resident: %s" +EnumChatFormatting.WHITE +
+        String format = EnumChatFormatting.WHITE + "Resident: %s" + EnumChatFormatting.WHITE +
                 "\nTowns: %s" + EnumChatFormatting.WHITE +
                 "\nJoined: %s" + EnumChatFormatting.WHITE +
                 "\nLast Online: %s" + EnumChatFormatting.WHITE;
@@ -186,8 +186,8 @@ public class Formatter {
      */
     public static String formatOwnersToString(List<Resident> residentList) {
         String formattedList = null;
-        for(Resident res : residentList) {
-            if(res != null) {
+        for (Resident res : residentList) {
+            if (res != null) {
                 if (formattedList == null)
                     formattedList = "§6Owners: " + res.getPlayerName();
                 else
@@ -207,7 +207,6 @@ public class Formatter {
     }
 
 
-
     public static String blockInfoFormat = " ---------- Block ----------\nTown: %1$s\nDimension: %2$s\nLocation: %3$s";
 
     public static String nationInfoFormat = " ---------- %1$s  ----------\nCapital: TODO";
@@ -219,10 +218,9 @@ public class Formatter {
     public static String residentInfoFormat = " ---------- %1$s  ----------";
 
     public static String townInfoFormat =
-            EnumChatFormatting.GRAY + " -------- " + EnumChatFormatting.GREEN+" %1$s "+EnumChatFormatting.GREEN+" ("+EnumChatFormatting.WHITE+"R:%2$s"+EnumChatFormatting.GREEN+" |"+EnumChatFormatting.WHITE+" C:%3$s/%4$s "+EnumChatFormatting.GREEN+"| "+EnumChatFormatting.WHITE+"P:%5$s"+EnumChatFormatting.GREEN+")"+EnumChatFormatting.GRAY+" --------" +
-            "\n"+EnumChatFormatting.GRAY+"Residents: %6$s" +
-            "\n"+EnumChatFormatting.GRAY+"Ranks: %7$s";
-
+            EnumChatFormatting.GRAY + " -------- " + EnumChatFormatting.GREEN + " %1$s " + EnumChatFormatting.GREEN + " (" + EnumChatFormatting.WHITE + "R:%2$s" + EnumChatFormatting.GREEN + " |" + EnumChatFormatting.WHITE + " C:%3$s/%4$s " + EnumChatFormatting.GREEN + "| " + EnumChatFormatting.WHITE + "P:%5$s" + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.GRAY + " --------" +
+                    "\n" + EnumChatFormatting.GRAY + "Residents: %6$s" +
+                    "\n" + EnumChatFormatting.GRAY + "Ranks: %7$s";
 
 
 }

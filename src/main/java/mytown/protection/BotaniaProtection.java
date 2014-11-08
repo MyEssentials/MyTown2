@@ -2,18 +2,13 @@ package mytown.protection;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mytown.MyTown;
-import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.Utils;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.NextTickListEntry;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -31,7 +26,7 @@ public class BotaniaProtection extends Protection {
     public BotaniaProtection() {
         isHandlingEvents = true;
         try {
-            clsTerraPick = (Class<? extends Item>)Class.forName("vazkii.botania.common.item.equipment.tool.ItemTerraPick");
+            clsTerraPick = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.equipment.tool.ItemTerraPick");
         } catch (Exception e) {
             MyTown.instance.log.error("Failed to load Botania classes!");
         }
@@ -78,19 +73,18 @@ public class BotaniaProtection extends Protection {
     }
 
     /**
-     * @author Vazkii
-     *
      * @param stack
      * @return
+     * @author Vazkii
      */
     public int getLevel(ItemStack stack) {
-        int[] LEVELS = new int[] {
+        int[] LEVELS = new int[]{
                 0, 10000, 1000000, 10000000, 100000000, 1000000000
         };
 
         int mana = stack.getTagCompound().getInteger("mana");
-        for(int i = LEVELS.length - 1; i > 0; i--)
-            if(mana >= LEVELS[i])
+        for (int i = LEVELS.length - 1; i > 0; i--)
+            if (mana >= LEVELS[i])
                 return i;
         return 0;
     }

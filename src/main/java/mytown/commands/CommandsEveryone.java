@@ -33,7 +33,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.leave",
             parentName = "mytown.cmd")
     public static void leaveCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        if(args.size() > 0)
+        if (args.size() > 0)
             callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.leave");
         else {
             Resident res = getDatasource().getOrMakeResident(sender);
@@ -97,8 +97,8 @@ public class CommandsEveryone extends Commands {
         Town town = getTownFromResident(res);
 
         String s = null;
-        for(TownBlock block : town.getBlocks()) {
-            if(s == null)
+        for (TownBlock block : town.getBlocks()) {
+            if (s == null)
                 s = block.toString();
             else
                 s += "\n" + block.toString();
@@ -200,11 +200,10 @@ public class CommandsEveryone extends Commands {
         Plot plot = getPlotAtResident(res);
         FlagType flagType = getFlagTypeFromName(args.get(0));
 
-        if(flagType.isWhitelistable()) {
+        if (flagType.isWhitelistable()) {
             res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
             res.startBlockSelection(flagType, plot.getTown().getName(), true);
-        }
-        else
+        } else
             throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
     }
 
@@ -225,7 +224,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
 
         Town town = getTownFromResident(res);
-        if(!town.canResidentMakePlot(res)) {
+        if (!town.canResidentMakePlot(res)) {
             throw new MyTownCommandException("mytown.cmd.err.plot.limit", town.getMaxPlots());
         }
 
@@ -351,7 +350,7 @@ public class CommandsEveryone extends Commands {
         Resident target = getResidentFromName(args.get(0));
 
         Town town = getTownFromResident(res);
-        if(!town.canResidentMakePlot(target)) {
+        if (!town.canResidentMakePlot(target)) {
             throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
         }
 

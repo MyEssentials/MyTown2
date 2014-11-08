@@ -75,13 +75,13 @@ public abstract class MyTownDatasource {
      */
     @SuppressWarnings("unchecked")
     private void configureTown(Town town, Resident creator) {
-        for(World world : MinecraftServer.getServer().worldServers) {
-            if(!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
+        for (World world : MinecraftServer.getServer().worldServers) {
+            if (!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
                 saveWorld(world.provider.dimensionId);
             }
         }
-        for(int dim : MyTownUniverse.getInstance().getWorldsList()) {
-            if(DimensionManager.getWorld(dim) == null) {
+        for (int dim : MyTownUniverse.getInstance().getWorldsList()) {
+            if (DimensionManager.getWorld(dim) == null) {
                 deleteWorld(dim);
             }
         }
@@ -102,13 +102,13 @@ public abstract class MyTownDatasource {
         saveBlock(block);
 
         // Saving and adding all flags to the database
-        for(FlagType type : FlagType.values()) {
-            if(type.isUsableForTowns() && type.shouldLoad()) {
+        for (FlagType type : FlagType.values()) {
+            if (type.isUsableForTowns() && type.shouldLoad()) {
                 saveFlag(new Flag(type, type.getDefaultValue()), town);
             }
         }
 
-        if(!(town instanceof AdminTown)) {
+        if (!(town instanceof AdminTown)) {
             // Saving all ranks to database and town
             for (String rankName : Rank.defaultRanks.keySet()) {
                 Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);

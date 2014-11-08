@@ -42,7 +42,7 @@ public class ModProxies {
                 continue;
             }
             */
-            if(p.getModID() != null) {
+            if (p.getModID() != null) {
                 for (ModContainer mc : Loader.instance().getModList()) {
                     if (mc.getModId().equals(p.getModID()) && (p.getModVersion() == null || mc.getVersion().startsWith(p.getModVersion()))) {
                         MyTown.instance.log.info("Loading proxy and protection: " + p.getName() + (p.getModVersion() != null ? p.getModVersion() : ""));
@@ -95,8 +95,8 @@ public class ModProxies {
      * @return
      */
     public static boolean isProxyLoaded(String mod_id) {
-        for(ModProxy proxy : proxies) {
-            if(proxy.getModID().equals(mod_id))
+        for (ModProxy proxy : proxies) {
+            if (proxy.getModID().equals(mod_id))
                 return true;
         }
         return false;

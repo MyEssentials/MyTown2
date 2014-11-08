@@ -2,17 +2,12 @@ package mytown.protection;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mytown.MyTown;
-import mytown.api.events.TownEvent;
-import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.util.BlockPos;
 import mytown.util.Utils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityMinecartTNT;
@@ -23,15 +18,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
@@ -102,9 +94,8 @@ public class VanillaProtection extends Protection {
     @Override
     public boolean checkEntity(Entity entity) {
         // This is first since I don't want any premature return statements
-        if(super.checkEntity(entity))
+        if (super.checkEntity(entity))
             return true;
-
 
 
         // Town only checks here
@@ -115,10 +106,10 @@ public class VanillaProtection extends Protection {
     @SuppressWarnings("unchecked")
     @Override
     public boolean checkTileEntity(TileEntity te) {
-        if(te instanceof TileEntityPiston) {
+        if (te instanceof TileEntityPiston) {
             Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
             if (town != null) {
-                boolean placeFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.placeBlocks);
+                boolean placeFlag = (Boolean) town.getValueAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.placeBlocks);
                 if (!placeFlag) {
                     return true;
                 }
@@ -147,7 +138,7 @@ public class VanillaProtection extends Protection {
                 }
                 town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
                 if (town != null) {
-                    boolean placeFlag = (Boolean)town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
+                    boolean placeFlag = (Boolean) town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
                     if (!placeFlag) {
                         town.notifyEveryone(FlagType.placeBlocks.getLocalizedTownNotification());
                         return true;
@@ -162,10 +153,10 @@ public class VanillaProtection extends Protection {
     @SuppressWarnings("unchecked")
     @Override
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
-        if(itemStack.getItem() instanceof ItemBucket) {
-            if(res != null) {
+        if (itemStack.getItem() instanceof ItemBucket) {
+            if (res != null) {
                 MovingObjectPosition pos = Utils.getMovingObjectPositionFromPlayer(res.getPlayer().worldObj, res.getPlayer(), false);
-                if(pos != null) {
+                if (pos != null) {
                     //TODO: Properly check for fluid pickup
                     if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
                         int x = pos.blockX;
@@ -195,7 +186,7 @@ public class VanillaProtection extends Protection {
 
                         Town town = Utils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
                         if (town != null) {
-                            boolean itemUsage = (Boolean)town.getValueAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
+                            boolean itemUsage = (Boolean) town.getValueAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
                             if (!itemUsage && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
                                 res.sendMessage(FlagType.useItems.getLocalizedProtectionDenial());
                                 return true;
@@ -234,7 +225,7 @@ public class VanillaProtection extends Protection {
 
                 Town town = Utils.getTownAtPosition(bp.dim, x >> 4, z >> 4);
                 if (town != null) {
-                    boolean itemUsage = (Boolean)town.getValueAtCoords(bp.dim, x, y, z, FlagType.useItems);
+                    boolean itemUsage = (Boolean) town.getValueAtCoords(bp.dim, x, y, z, FlagType.useItems);
                     if (!itemUsage) {
                         town.notifyEveryone(FlagType.useItems.getLocalizedTownNotification());
                         return true;
@@ -265,9 +256,9 @@ public class VanillaProtection extends Protection {
     public void onBucketFill(FillBucketEvent ev) {
         Resident res = getDatasource().getOrMakeResident(ev.entityPlayer);
         Town town = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
-        if(town != null) {
-            boolean itemFlag = (Boolean)town.getValueAtCoords(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ, FlagType.useItems);
-            if(!itemFlag && !town.checkPermission(res, FlagType.useItems)) {
+        if (town != null) {
+            boolean itemFlag = (Boolean) town.getValueAtCoords(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ, FlagType.useItems);
+            if (!itemFlag && !town.checkPermission(res, FlagType.useItems)) {
                 ev.setCanceled(true);
             }
         }

@@ -270,7 +270,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true,
             completionKeys = {"townCompletion"})
     public static void permTownListCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1) {
+        if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.list");
         }
 
@@ -298,7 +298,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true,
             completionKeys = {"townCompletion", "flagCompletion"})
     public static void permTownSetCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 3) {
+        if (args.size() < 3) {
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.town.set");
         }
 
@@ -320,14 +320,14 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.perm.town",
             completionKeys = {"townCompletion", "flagCompletionWhitelist"})
     public static void permTownWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        if(args.size() < 2)
+        if (args.size() < 2)
             throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
         FlagType flagType = getFlagTypeFromName(args.get(1));
 
-        if(flagType.isWhitelistable())
+        if (flagType.isWhitelistable())
             res.startBlockSelection(flagType, town.getName(), false);
         else
             throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
@@ -358,7 +358,7 @@ public class CommandsAdmin extends Commands {
             }
             formattedFlagList += flag;
         }
-        if(formattedFlagList != null)
+        if (formattedFlagList != null)
             sendMessageBackToSender(sender, formattedFlagList);
         else
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.err.flag.list"));
@@ -371,7 +371,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true,
             completionKeys = {"flagCompletion"})
     public static void permWildSetCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 2) {
+        if (args.size() < 2) {
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.wild.set");
         }
         FlagType type = getFlagTypeFromName(args.get(0));
@@ -403,7 +403,7 @@ public class CommandsAdmin extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.claim.already");
         if (CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new MyTownCommandException("mytown.cmd.err.farClaim.unimplemented");
-            //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+        //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
             throw new MyTownCommandException("Failed to create Block"); // TODO Localize

@@ -1,7 +1,5 @@
 package mytown.api.interfaces;
 
-import mytown.entities.Plot;
-import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 
 /**

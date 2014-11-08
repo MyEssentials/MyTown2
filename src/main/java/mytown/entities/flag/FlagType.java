@@ -1,10 +1,7 @@
 package mytown.entities.flag;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.proxies.LocalizationProxy;
-import mytown.proxies.mod.*;
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
+import mytown.proxies.mod.ModProxies;
 
 /**
  * Created by AfterWind on 9/16/2014.
@@ -19,7 +16,7 @@ public enum FlagType {
     pickupItems(Boolean.class, true, null, false, true, false, null),
     explosions(Boolean.class, false, null, true, false, false, null),
     // Only the values in the array are allowed
-    mobs(String.class, "all", new String[] {"all", "hostiles", "none"}, false, "all", false, null),
+    mobs(String.class, "all", new String[]{"all", "hostiles", "none"}, false, "all", false, null),
     attackEntities(Boolean.class, false, null, false, true, false, null),
     useItems(Boolean.class, false, null, false, true, false, null),
     activateBlocks(Boolean.class, false, null, true, true, false, null, true),
@@ -62,6 +59,7 @@ public enum FlagType {
 
     /**
      * Type that is used by the flag
+     *
      * @return
      */
     public Class<?> getType() {
@@ -73,28 +71,36 @@ public enum FlagType {
      *
      * @return
      */
-    public boolean isWildPerm() { return this.isWildPerm; }
+    public boolean isWildPerm() {
+        return this.isWildPerm;
+    }
 
     /**
      * Returns the permission needed to bypass the protection.
      *
      * @return
      */
-    public String getBypassPermission() { return this.bypassPerm; }
+    public String getBypassPermission() {
+        return this.bypassPerm;
+    }
 
     /**
      * Gets the default wild perm.
      *
      * @return
      */
-    public Object getDefaultWildPerm() { return this.defaultWildPerm; }
+    public Object getDefaultWildPerm() {
+        return this.defaultWildPerm;
+    }
 
     /**
      * Gets the default value
      *
      * @return
      */
-    public Object getDefaultValue() { return this.defaultValue; }
+    public Object getDefaultValue() {
+        return this.defaultValue;
+    }
 
     /**
      * Sets the default value and returns if the value was set
@@ -103,7 +109,7 @@ public enum FlagType {
      * @return
      */
     public boolean setDefaultValue(Object obj) {
-        if(type.isAssignableFrom(obj.getClass())) {
+        if (type.isAssignableFrom(obj.getClass())) {
             defaultValue = obj;
             return true;
         }
@@ -112,20 +118,26 @@ public enum FlagType {
 
 
     /**
-     *  Returns if this type of flag should be in a town
-      * @return
+     * Returns if this type of flag should be in a town
+     *
+     * @return
      */
-    public boolean isUsableForTowns() { return this.isUsableForTowns; }
+    public boolean isUsableForTowns() {
+        return this.isUsableForTowns;
+    }
 
     /**
      * Sets whether or not the flagtype is changable/usable in a town
      *
      * @param bool
      */
-    public void setIsUsableForTowns(boolean bool) { this.isUsableForTowns = bool; }
+    public void setIsUsableForTowns(boolean bool) {
+        this.isUsableForTowns = bool;
+    }
 
     /**
      * If flag is town only then it's not gonna be found on plots
+     *
      * @return
      */
     public boolean isTownOnly() {
@@ -134,6 +146,7 @@ public enum FlagType {
 
     /**
      * Checks to see if this type of flag has the mod needed to load
+     *
      * @return
      */
     public boolean shouldLoad() {
@@ -142,6 +155,7 @@ public enum FlagType {
 
     /**
      * Gets the localized description
+     *
      * @return
      */
     public String getLocalizedDescription() {
@@ -150,6 +164,7 @@ public enum FlagType {
 
     /**
      * Gets the localized message of when the flag denies an action of a player
+     *
      * @return
      */
     public String getLocalizedProtectionDenial() {
@@ -167,6 +182,7 @@ public enum FlagType {
 
     /**
      * If it's a flag that allows whitelists
+     *
      * @return
      */
     public boolean isWhitelistable() {
@@ -175,14 +191,15 @@ public enum FlagType {
 
     /**
      * Checks to see if the value is allowed
+     *
      * @param value
      * @return
      */
     public boolean isValueAllowed(Object value) {
-        if(allowedValues == null) return true;
+        if (allowedValues == null) return true;
         else {
-            for(Object s : allowedValues) {
-                if(s.equals(value))
+            for (Object s : allowedValues) {
+                if (s.equals(value))
                     return true;
             }
         }

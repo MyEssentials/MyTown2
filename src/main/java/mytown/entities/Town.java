@@ -2,17 +2,16 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
+import mytown.api.interfaces.*;
 import mytown.config.Config;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.api.interfaces.*;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.plugin.BukkitCompat;
 import mytown.proxies.plugin.PEXCompat;
 import mytown.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
-
 
 import java.util.*;
 
@@ -76,6 +75,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /**
      * Returns the name that is currently used in the DB
+     *
      * @return
      */
     public String getDBName() {
@@ -296,8 +296,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      */
     public List<Plot> getPlotsOwned(Resident res) {
         List<Plot> list = new ArrayList<Plot>();
-        for(Plot plot : plots) {
-            if(plot.hasOwner(res))
+        for (Plot plot : plots) {
+            if (plot.hasOwner(res))
                 list.add(plot);
         }
         return list;
@@ -311,8 +311,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      */
     public int getAmountPlotsOwned(Resident res) {
         int x = 0;
-        for(Plot plot : plots) {
-            if(plot.hasOwner(res))
+        for (Plot plot : plots) {
+            if (plot.hasOwner(res))
                 x++;
         }
         return x;
@@ -375,8 +375,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public boolean hasFlag(FlagType type) {
-        for(Flag flag : flags)
-            if(flag.flagType == type)
+        for (Flag flag : flags)
+            if (flag.flagType == type)
                 return true;
         return false;
     }
@@ -388,16 +388,16 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public Flag getFlag(FlagType type) {
-        for(Flag flag : flags)
-            if(flag.flagType == type)
+        for (Flag flag : flags)
+            if (flag.flagType == type)
                 return flag;
         return null;
     }
 
     @Override
     public boolean removeFlag(FlagType type) {
-        for(Iterator<Flag> it = flags.iterator(); it.hasNext();) {
-            if(it.next().flagType == type) {
+        for (Iterator<Flag> it = flags.iterator(); it.hasNext(); ) {
+            if (it.next().flagType == type) {
                 it.remove();
                 return true;
             }
@@ -407,8 +407,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public Object getValue(FlagType type) {
-        for(Flag flag : flags) {
-            if(flag.flagType == type)
+        for (Flag flag : flags) {
+            if (flag.flagType == type)
                 return flag.getValue();
         }
         return type.getDefaultValue();
@@ -434,8 +434,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public boolean hasBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
-        for(BlockWhitelist bw : blockWhitelists) {
-            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
+        for (BlockWhitelist bw : blockWhitelists) {
+            if (bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
                 return true;
             }
         }
@@ -454,9 +454,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public void removeBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
-        for(Iterator<BlockWhitelist> it = blockWhitelists.iterator(); it.hasNext();) {
+        for (Iterator<BlockWhitelist> it = blockWhitelists.iterator(); it.hasNext(); ) {
             BlockWhitelist bw = it.next();
-            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
+            if (bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
                 it.remove();
             }
         }
@@ -464,8 +464,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public BlockWhitelist getBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
-        for(BlockWhitelist bw : blockWhitelists) {
-            if(bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
+        for (BlockWhitelist bw : blockWhitelists) {
+            if (bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
                 return bw;
             }
         }
@@ -578,16 +578,16 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     public void notifyEveryone(String message) {
         // TODO: Check permission for if it should receive message
-        for(Resident r : residents.keySet()) {
+        for (Resident r : residents.keySet()) {
             r.sendMessage(message);
         }
     }
 
     public boolean residentHasFriendInTown(Resident res) {
-        if(res.hasTown(this))
+        if (res.hasTown(this))
             return true;
-        for(Resident r : residents.keySet()) {
-            if(r.hasFriend(res))
+        for (Resident r : residents.keySet()) {
+            if (r.hasFriend(res))
                 return true;
         }
         return false;
@@ -595,13 +595,13 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, int dim, int x, int y, int z) {
-        if(flagType.getType() != Boolean.class)
+        if (flagType.getType() != Boolean.class)
             throw new RuntimeException("FlagType is not boolean!");
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
-        if(plot == null) {
-            if(!(Boolean)getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
-                if(MyTown.instance.isCauldron && BukkitCompat.getInstance().hasPEX())
+        if (plot == null) {
+            if (!(Boolean) getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
+                if (MyTown.instance.isCauldron && BukkitCompat.getInstance().hasPEX())
                     // Check if PEX has a permission bypass
                     return PEXCompat.getInstance().checkPermission(res, flagType.getBypassPermission()) || Utils.isOp(res);
                 else
@@ -609,7 +609,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
                     return Utils.isOp(res);
             }
         } else {
-            if(!(Boolean)plot.getValue(flagType) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
+            if (!(Boolean) plot.getValue(flagType) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
                 return false;
         }
         return true;
@@ -617,13 +617,13 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType) {
-        if(flagType.getType() != Boolean.class)
+        if (flagType.getType() != Boolean.class)
             throw new RuntimeException("FlagType is not boolean!");
 
-            if(!(Boolean)getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
-                //TODO: Check for permission
-                return false;
-            }
+        if (!(Boolean) getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
+            //TODO: Check for permission
+            return false;
+        }
         return true;
     }
 
@@ -636,14 +636,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public List<Resident> getOwnersAtPosition(int dim, int x, int y, int z) {
         List<Resident> list = new ArrayList<Resident>();
         Plot plot = getPlotAtCoords(dim, x, y, z);
-        if(plot == null) {
-            if(isPointInTown(dim, x, z)) {
+        if (plot == null) {
+            if (isPointInTown(dim, x, z)) {
                 list.add(getMayor());
             } else {
                 return null;
             }
         } else {
-            for(Resident res : plot.getOwners()) {
+            for (Resident res : plot.getOwners()) {
                 list.add(res);
             }
         }
@@ -656,8 +656,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * @return
      */
     public Resident getMayor() {
-        for(Resident res : residents.keySet()) {
-            if(residents.get(res).getName().equals(Rank.theMayorDefaultRank))
+        for (Resident res : residents.keySet()) {
+            if (residents.get(res).getName().equals(Rank.theMayorDefaultRank))
                 return res;
         }
         return null;

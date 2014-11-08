@@ -24,8 +24,8 @@ public class ModProxy {
     }
 
 
-
     public boolean isLoaded = false;
+
     /**
      * Returns the name of the ModProxy
      *
@@ -50,7 +50,9 @@ public class ModProxy {
      *
      * @return
      */
-    public String getModVersion() { return this.version; }
+    public String getModVersion() {
+        return this.version;
+    }
 
     /**
      * Loads this {@link ModProxy}, its run during {@link FMLPostInitializationEvent}.

@@ -2,10 +2,10 @@ package mytown.util;
 
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
-import mytown.entities.Resident;
-import mytown.entities.TownBlock;
 import mytown.entities.BlockWhitelist;
+import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.Entity;
@@ -47,7 +47,7 @@ public class Utils {
      */
     public static Town getTownAtPosition(int dim, int x, int z) {
         TownBlock block = getDatasource().getBlock(dim, x, z);
-        if(block == null)
+        if (block == null)
             return null;
         return block.getTown();
     }
@@ -101,9 +101,9 @@ public class Utils {
         int[] dy = {1, 0, -1, 0, 0, 0};
         int[] dz = {0, 0, 0, 0, 1, -1};
 
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             TileEntity found = te.getWorldObj().getTileEntity(te.xCoord + dx[i], te.yCoord + dy[i], te.zCoord + dz[i]);
-            if(found != null && type.isAssignableFrom(found.getClass())) {
+            if (found != null && type.isAssignableFrom(found.getClass())) {
                 MyTown.instance.log.info("Found tile entity " + found + " for class " + type.getName());
                 result.add(found);
             }
@@ -122,8 +122,8 @@ public class Utils {
      */
     public static List<ChunkPos> getChunksInBox(int minX, int minZ, int maxX, int maxZ) {
         List<ChunkPos> list = new ArrayList<ChunkPos>();
-        for(int i = minX >> 4; i <= maxX >> 4; i++) {
-            for(int j = minZ >> 4; j <= maxZ >> 4; j++) {
+        for (int i = minX >> 4; i <= maxX >> 4; i++) {
+            for (int j = minZ >> 4; j <= maxZ >> 4; j++) {
                 list.add(new ChunkPos(i, j));
             }
         }
@@ -142,10 +142,10 @@ public class Utils {
      */
     public static boolean isBlockWhitelisted(int dim, int x, int y, int z, FlagType flagType) {
         Town town = getTownAtPosition(dim, x >> 4, z >> 4);
-        if(town == null) return false;
+        if (town == null) return false;
         BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
-        if(bw != null) {
-            if(bw.isDeleted) {
+        if (bw != null) {
+            if (bw.isDeleted) {
                 getDatasource().deleteBlockWhitelist(bw, town);
                 return false;
             }
@@ -166,9 +166,9 @@ public class Utils {
         int[] dx = {0, 1, 0, -1};
         int[] dz = {1, 0, -1, 0};
 
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             Town town = getTownAtPosition(block.dim, (block.x + dx[i]) >> 4, (block.z + dz[i]) >> 4);
-            if(town != null) {
+            if (town != null) {
                 list.add(new BlockPos(block.x + dx[i], block.y, block.z + dz[i], block.dim));
             }
         }
@@ -187,10 +187,10 @@ public class Utils {
      */
     public static List<Town> getTownsInRange(int dim, int x, int z, int rangeX, int rangeZ) {
         List<Town> list = new ArrayList<Town>();
-        for(int i = x - rangeX; i <= x + rangeX; i++) {
-            for(int j = z - rangeZ; j <= z + rangeZ; j++) {
+        for (int i = x - rangeX; i <= x + rangeX; i++) {
+            for (int j = z - rangeZ; j <= z + rangeZ; j++) {
                 Town town = getTownAtPosition(dim, i >> 4, j >> 4);
-                if(town != null)
+                if (town != null)
                     list.add(town);
             }
         }
@@ -206,8 +206,7 @@ public class Utils {
      * @param z
      * @param itemStack
      */
-    public static void dropAsEntity(World world, int x, int y, int z, ItemStack itemStack)
-    {
+    public static void dropAsEntity(World world, int x, int y, int z, ItemStack itemStack) {
         if (itemStack == null) {
             return;
         }
@@ -229,27 +228,25 @@ public class Utils {
      * @param p_77621_3_
      * @return
      */
-    public static MovingObjectPosition getMovingObjectPositionFromPlayer(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-    {
+    public static MovingObjectPosition getMovingObjectPositionFromPlayer(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_) {
         float f = 1.0F;
         float f1 = p_77621_2_.prevRotationPitch + (p_77621_2_.rotationPitch - p_77621_2_.prevRotationPitch) * f;
         float f2 = p_77621_2_.prevRotationYaw + (p_77621_2_.rotationYaw - p_77621_2_.prevRotationYaw) * f;
-        double d0 = p_77621_2_.prevPosX + (p_77621_2_.posX - p_77621_2_.prevPosX) * (double)f;
-        double d1 = p_77621_2_.prevPosY + (p_77621_2_.posY - p_77621_2_.prevPosY) * (double)f + (double)(p_77621_1_.isRemote ? p_77621_2_.getEyeHeight() - p_77621_2_.getDefaultEyeHeight() : p_77621_2_.getEyeHeight()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
-        double d2 = p_77621_2_.prevPosZ + (p_77621_2_.posZ - p_77621_2_.prevPosZ) * (double)f;
+        double d0 = p_77621_2_.prevPosX + (p_77621_2_.posX - p_77621_2_.prevPosX) * (double) f;
+        double d1 = p_77621_2_.prevPosY + (p_77621_2_.posY - p_77621_2_.prevPosY) * (double) f + (double) (p_77621_1_.isRemote ? p_77621_2_.getEyeHeight() - p_77621_2_.getDefaultEyeHeight() : p_77621_2_.getEyeHeight()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
+        double d2 = p_77621_2_.prevPosZ + (p_77621_2_.posZ - p_77621_2_.prevPosZ) * (double) f;
         Vec3 vec3 = Vec3.createVectorHelper(d0, d1, d2);
         float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
-        float f4 = MathHelper.sin(-f2 * 0.017453292F - (float)Math.PI);
+        float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
         float f5 = -MathHelper.cos(-f1 * 0.017453292F);
         float f6 = MathHelper.sin(-f1 * 0.017453292F);
         float f7 = f4 * f5;
         float f8 = f3 * f5;
         double d3 = 5.0D;
-        if (p_77621_2_ instanceof EntityPlayerMP)
-        {
-            d3 = ((EntityPlayerMP)p_77621_2_).theItemInWorldManager.getBlockReachDistance();
+        if (p_77621_2_ instanceof EntityPlayerMP) {
+            d3 = ((EntityPlayerMP) p_77621_2_).theItemInWorldManager.getBlockReachDistance();
         }
-        Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
+        Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
         return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
     }
 
@@ -277,7 +274,7 @@ public class Utils {
             }
             InputStream stream = zip.getInputStream(entry);
             FileOutputStream outStream = new FileOutputStream(new File(pluginFolder, entry.getName()));
-            byte[] tmp = new byte[4*1024];
+            byte[] tmp = new byte[4 * 1024];
             int size = 0;
             while ((size = stream.read(tmp)) != -1) {
                 outStream.write(tmp, 0, size);
@@ -301,7 +298,7 @@ public class Utils {
             method.setAccessible(true);
             method.invoke(sysloader, file.toURI().toURL());
             ClassLoader.getSystemClassLoader().loadClass("ru.tehkode.permissions.bukkit.PermissionsEx");
-            MyTown.instance.log.info("Added PEX to the classpath. ("+ file.toURI().toURL().toString() +")");
+            MyTown.instance.log.info("Added PEX to the classpath. (" + file.toURI().toURL().toString() + ")");
 
         } catch (Throwable t) {
             t.printStackTrace();

@@ -10,7 +10,6 @@ import mytown.entities.flag.FlagType;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +18,8 @@ import java.util.List;
  */
 public class WildPermsConfig {
 
-    private Type type = new TypeToken<List<Flag>>() {}.getType();
+    private Type type = new TypeToken<List<Flag>>() {
+    }.getType();
     private Gson gson;
     private String path;
 
@@ -27,7 +27,7 @@ public class WildPermsConfig {
         gson = new GsonBuilder().setPrettyPrinting().create();
         this.path = file.getPath();
 
-        if(!file.exists() || file.isDirectory()) {
+        if (!file.exists() || file.isDirectory()) {
             MyTown.instance.log.info("Creating WildPerms config file!");
             writeFile();
         } else {
@@ -49,8 +49,8 @@ public class WildPermsConfig {
 
     @SuppressWarnings("unchecked")
     private void writeFile() {
-        for(FlagType type : FlagType.values()) {
-            if(type.isWildPerm())
+        for (FlagType type : FlagType.values()) {
+            if (type.isWildPerm())
                 Wild.getInstance().addFlag(new Flag(type, type.getDefaultWildPerm()));
         }
 
@@ -76,16 +76,16 @@ public class WildPermsConfig {
             e.printStackTrace();
             MyTown.instance.log.error("An error occurred when trying to load wild perms.");
         }
-        if(list != null) {
+        if (list != null) {
             for (Flag f : list) {
-                if(f.flagType.isWildPerm())
+                if (f.flagType.isWildPerm())
                     Wild.getInstance().addFlag(f);
                 else {
                     MyTown.instance.log.error("A non wild perm has been found in the wild perm list. Deleting and saving: " + f.flagType.toString());
                 }
             }
-            for(FlagType type : FlagType.values()) {
-                if(type.isWildPerm()) {
+            for (FlagType type : FlagType.values()) {
+                if (type.isWildPerm()) {
                     boolean ok = false;
                     for (Flag f : list) {
                         if (f.flagType == type)

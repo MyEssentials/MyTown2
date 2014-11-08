@@ -62,7 +62,7 @@ public class DatasourceProxy {
             return false;
         }
 
-        if(!datasource.checkAll()) {
+        if (!datasource.checkAll()) {
             log.error("Failed to check the Datasource!");
             return false;
         }

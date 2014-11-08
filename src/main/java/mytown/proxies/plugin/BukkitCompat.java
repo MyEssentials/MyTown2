@@ -3,7 +3,6 @@ package mytown.proxies.plugin;
 import mytown.MyTown;
 import mytown.util.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 
@@ -14,8 +13,9 @@ import java.io.File;
 public class BukkitCompat {
 
     private static BukkitCompat instance;
+
     public static BukkitCompat getInstance() {
-        if(instance == null)
+        if (instance == null)
             instance = new BukkitCompat();
         return instance;
     }
@@ -26,7 +26,7 @@ public class BukkitCompat {
 
     public void loadPEX(File sourceFile) {
         File pluginsFolder = new File("plugins/PermissionsEx.jar");
-        if(pluginsFolder.exists())
+        if (pluginsFolder.exists())
             Utils.addURL(pluginsFolder);
             //Utils.injectBukkitBridge(sourceFile, pluginsFolder);
         else
@@ -34,5 +34,7 @@ public class BukkitCompat {
     }
 
 
-    public boolean hasPEX() { return hasPlugin("PermissionEx"); }
+    public boolean hasPEX() {
+        return hasPlugin("PermissionEx");
+    }
 }
