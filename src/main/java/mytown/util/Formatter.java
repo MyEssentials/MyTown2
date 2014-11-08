@@ -1,20 +1,26 @@
 package mytown.util;
 
-import mytown.config.Config;
 import mytown.core.utils.chat.JsonMessageBuilder;
 import mytown.entities.*;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.util.EnumChatFormatting;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
  * @author Joe Goett
  */
 public class Formatter {
+    private static final DateFormat dateFormatter = DateFormat.getDateTimeInstance(0, 0);
+
     private Formatter() {
+    }
+
+    public static String formatDate(Date date) {
+        return dateFormatter.format(date);
     }
 
     public static String formatBlockInfo(TownBlock block) {
@@ -53,8 +59,11 @@ public class Formatter {
             else
                 towns += ", " + added;
         }
-        String format = EnumChatFormatting.WHITE + "Resident: %s" + EnumChatFormatting.WHITE + "\nTowns: %s" + EnumChatFormatting.WHITE;
-        return String.format(format, resident.getPlayerName(), towns);
+        String format = EnumChatFormatting.WHITE + "Resident: %s" +EnumChatFormatting.WHITE +
+                "\nTowns: %s" + EnumChatFormatting.WHITE +
+                "\nJoined: %s" + EnumChatFormatting.WHITE +
+                "\nLast Online: %s" + EnumChatFormatting.WHITE;
+        return String.format(format, resident.getPlayerName(), towns, formatDate(resident.getJoinDate()), formatDate(resident.getLastOnline()));
     }
 
     public static String formatTownInfo(Town town) { // TODO Show spawn/home-block location?
