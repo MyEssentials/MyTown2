@@ -16,12 +16,10 @@ buildscript {
 }
 
 repositories {
-/*
     maven {
         name = "ic2"
         url = "http://maven.ic2.player.to/"
     }
-*/
     ivy {
         name = 'ThaumCraft 4 API'
         artifactPattern 'https://dl.dropboxusercontent.com/u/47135879/Thaumcraft-1.7.10-4.2.1.4-api.zip'
@@ -84,7 +82,7 @@ dependencies {
 
     // Mod Deps
     compile project(":MyEssentials-Core")
-	compile 'com.mod-buildcraft:buildcraft:6.1.5:dev'
+	compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'
 	
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     
