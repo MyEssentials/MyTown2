@@ -65,7 +65,6 @@ mytown.cmd.err.resident.notexist=§cThat player does not exist!
 mytown.cmd.err.invite.accept=§cYou have more invitations! §3Choose what invitation you want to accept: "/t invite accept <town-name>".
 
 # /t friends
-
 mytown.cmd.err.friends.add=§c%s is already a friend of yours or you already sent an invitation!
 mytown.cmd.err.friends.remove=§c%s is not a friend of yours!
 mytown.cmd.err.friends.accept=§cAccept invitation failed!
@@ -234,7 +233,6 @@ mytown.notification.friends.refused=§c%s has refused your invitation to be in t
 mytown.notification.friends.gotRefused=§cYou have refused %s's friend invitation!
 
 # Help for commands
-
 mytown.cmd.assistant.blocks.help=§2Everything related to TownBlocks (chunks in town)
 mytown.cmd.assistant.claim.help=§2Claims the chunk you are in.
 mytown.cmd.assistant.invite.help=§2Invites a player to your town.
