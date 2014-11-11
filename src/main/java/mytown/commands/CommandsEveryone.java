@@ -215,7 +215,6 @@ public class CommandsEveryone extends Commands {
         callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot");
     }
 
-
     @CommandNode(
             name = "make",
             permission = "mytown.cmd.everyone.plot.make",
