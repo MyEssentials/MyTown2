@@ -58,9 +58,9 @@ mytown.cmd.usage.newtown=§3/t new <townname>
 mytown.cmd.err.resident.maxTowns=§cYou cannot create/join any more towns, you have hit the maximum amount of towns you can be in.
 
 # /t invite
+mytown.cmd.usage.invite=§3/t invite <player-name|accept|refuse> [town-name]
 mytown.cmd.err.invite.already=§cResident %s already exists in town %s!
 mytown.cmd.err.invite.noinvitations=§cYou have no invitations!
-mytown.cmd.usage.invite=§3/t invite <player-name|accept|refuse> [town-name]
 mytown.cmd.err.resident.notexist=§cThat player does not exist!
 mytown.cmd.err.invite.accept=§cYou have more invitations! §3Choose what invitation you want to accept: "/t invite accept <town-name>".
 
@@ -72,9 +72,11 @@ mytown.cmd.err.friends.accept=§cAccept invitation failed!
 mytown.cmd.err.friends.refuse=§cRefuse invitation failed!
 
 # /t claim
-mytown.cmd.err.claim.failed=§cFailed to claim block!
-mytown.cmd.err.claim.already=§cThis block has already been claimed!
+mytown.cmd.err.claim.failed=§cFailed to claim chunk!
+mytown.cmd.err.claim.already=§cThis chunk has already been claimed!
 mytown.cmd.err.claim.notexist=§cThis block is not claimed by town %s!
+mytown.cmd.err.claim.far.notAllowed=§cYou can not claim chunks away from your town!
+mytown.cmd.err.town.maxBlocks=§cYou have already claimed all your chunks!
 
 # /t info
 mytown.cmd.usage.info=§3/t info <townname>
@@ -102,6 +104,7 @@ mytown.cmd.err.ranks.perm.remove.failed=§cFailed to remove permission!
 # /t plot
 mytown.cmd.usage.plot.rename=§3/t plot rename <name>
 mytown.cmd.usage.plot.add=§3/t plot add <owner|member> <resident>
+mytown.cmd.usage.plot.limit.set=§3/t plot limit set <limitNumber>
 mytown.cmd.err.plot.start.failed=§cYour inventory is full!
 mytown.cmd.err.plot.failed=§cCreating plot failed!
 mytown.cmd.err.plot.alreadySelected=§cYou already selected!
@@ -114,9 +117,12 @@ mytown.cmd.err.plot.limit.toPlayer=§cPlayer %s can't be owner to any more plots
 mytown.cmd.err.plot.tooSmall=§cSelection too small! Minimum area: %s. Minimum height: %s.
 mytown.cmd.err.plot.outside=§cSelection is outside of town!
 mytown.cmd.err.plot.insideOther=§cSelection is inside plot %s!
-mytown.cmd.usage.plot.limit.set=§3/t plot limit set <limitNumber>
+mytown.cmd.err.plot.perm.set.noPermission=§cYou are not the plot owner!
 
 # /t perm
+mytown.adm.cmd.usage.perm.list=§3/ta perm list <townname>
+mytown.adm.cmd.usage.perm.set=§3/ta perm set <townname> <flag> <value>
+mytown.cmd.usage.plot.whitelist.add=§3/t perm plot whitelist add <flag>
 mytown.cmd.err.perm.set.usage=§3/t perm <town/plot> set <flag-name> <value>
 mytown.cmd.err.flagNotExists=§cThat flag does not exist!
 mytown.cmd.err.perm.valueNotValid=§cInvalid value!
@@ -124,9 +130,6 @@ mytown.cmd.err.flag.notForWhitelist=§cThe flag you selected is not allowed on b
 mytown.cmd.err.flag.list=§cThere's no flag in town!
 mytown.adm.cmd.err.perm.valueNotValid=§cInvalid value!
 mytown.cmd.err.perm.valueNotValid=§cInvalid value!
-mytown.adm.cmd.usage.perm.list=§3/ta perm list <townname>
-mytown.adm.cmd.usage.perm.set=§3/ta perm set <townname> <flag> <value>
-mytown.cmd.usage.plot.whitelist.add=§3/t perm plot whitelist add <flag>
 
 # /t promote
 mytown.cmd.usage.promote=§3/t promote <resident> <rank>
@@ -143,6 +146,10 @@ mytown.cmd.err.spawn.notexist=§cThe TownBlock that the spawn of %s was on got d
 # /t kick
 mytown.cmd.usage.kick=§3/t kick <resident>
 mytown.cmd.err.kick.self=§cNo, you can't kick yourself :<
+mytown.notification.town.kicked=§cYou have been kicked from %s!
+
+# /t pass
+mytown.cmd.usage.leave.pass=§3/t pass <resident>
 
 # /ta delete
 mytown.adm.cmd.delete.usage=§3/ta delete <townname> [townname2 townname3...]
@@ -188,6 +195,7 @@ mytown.notification.town.plot.expanded=§aThe plot has been successfully expande
 mytown.notification.town.plot.selectionReset=§aSelection has successfully reset!
 mytown.notification.town.plot.created=§aNew plot created!
 mytown.notification.town.plot.deleted=§cPlot has been deleted!
+mytown.notification.town.plot.limit=Plot Limit: %s
 mytown.notification.town.plots=Plots in town %s:%s
 mytown.notification.town.left=§3%s has §cleft§3 the town %s!
 mytown.notification.town.left.self=§aYou have §cleft§a the town %s!
