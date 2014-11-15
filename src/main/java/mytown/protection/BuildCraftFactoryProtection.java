@@ -1,8 +1,7 @@
 package mytown.protection;
 
-import buildcraft.core.BlockIndex;
-import buildcraft.core.Box;
-import buildcraft.factory.TilePump;
+import com.esotericsoftware.reflectasm.FieldAccess;
+import com.esotericsoftware.reflectasm.MethodAccess;
 import mytown.MyTown;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Town;
@@ -26,13 +25,29 @@ public class BuildCraftFactoryProtection extends Protection {
     Class<? extends TileEntity> clsTileAbstractBuilder;
     Class<? extends TileEntity> clsTilePump;
 
+    MethodAccess mAccessPump, mAccessBuilder;
+    FieldAccess fAccessBlockIndex, fAccessBox;
+
+    @SuppressWarnings("unchecked")
     public BuildCraftFactoryProtection() {
         // We need reflection only for loading the mod
-        clsTileAbstractBuilder =
-                clsTilePump = TilePump.class;
+        try {
+            clsTilePump = (Class<? extends TileEntity>)Class.forName("buildcraft.factory.TilePump");
+            clsTileAbstractBuilder= (Class<? extends TileEntity>)Class.forName("buildcraft.core.builders.TileAbstractBuilder");
+            Class clsBlockIndex = Class.forName("buildcraft.api.core.BlockIndex");
+            Class clsBox = Class.forName("buildcraft.core.Box");
 
-        trackedTileEntities.add(clsTilePump);
-        trackedTileEntities.add(clsTileAbstractBuilder);
+            mAccessPump = MethodAccess.get(clsTilePump);
+            mAccessBuilder = MethodAccess.get(clsTileAbstractBuilder);
+
+            fAccessBlockIndex = FieldAccess.get(clsBlockIndex);
+            fAccessBox = FieldAccess.get(clsBox);
+
+            trackedTileEntities.add(clsTilePump);
+            trackedTileEntities.add(clsTileAbstractBuilder);
+        } catch (Exception e) {
+            MyTown.instance.log.error("Failed to get BuildCraft|Factory classes!");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -41,16 +56,16 @@ public class BuildCraftFactoryProtection extends Protection {
 
         if (clsTileAbstractBuilder.isAssignableFrom(te.getClass())) {
             // In case we add more tile entities to check
-            Box box = null;
+            Object box = null;
             try {
-                box = (Box) clsTileAbstractBuilder.getMethod("getBox").invoke(te);
+                box = clsTileAbstractBuilder.getMethod("getBox").invoke(te);
             } catch (Exception e) {
                 MyTown.instance.log.info("Failed to get methods for a Buildcraft tile entity!");
                 e.printStackTrace();
                 return false;
             }
 
-            List<ChunkPos> chunks = Utils.getChunksInBox(box.xMin, box.zMin, box.xMax, box.zMax);
+            List<ChunkPos> chunks = Utils.getChunksInBox(fAccessBox.getInt(box, fAccessBox.getIndex("xMin")), fAccessBox.getInt(box, fAccessBox.getIndex("zMin")), fAccessBox.getInt(box, fAccessBox.getIndex("xMax")), fAccessBox.getInt(box, fAccessBox.getIndex("zMax")));
             for (ChunkPos p : chunks) {
                 TownBlock block = MyTownUniverse.getInstance().getBlocksMap().get(String.format(TownBlock.keyFormat, te.getWorldObj().provider.dimensionId, p.getX(), p.getZ()));
                 if (block == null) {
@@ -73,8 +88,8 @@ public class BuildCraftFactoryProtection extends Protection {
                 Method method = clsTilePump.getMethod("getNextIndexToPump", Boolean.class);
                 method.setAccessible(true);
                 // Invoke method: getting the next block to pump, but not removing it
-                BlockIndex blockIndex = (BlockIndex) method.invoke(te, false);
-                Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, blockIndex.x >> 4, blockIndex.z >> 4);
+                Object blockIndex = method.invoke(te, false);
+                Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, fAccessBlockIndex.getInt(blockIndex, fAccessBlockIndex.getIndex("x")) >> 4, fAccessBlockIndex.getInt(blockIndex, fAccessBlockIndex.getIndex("z")) >> 4);
                 if (town == null) {
                     if (!(Boolean) Wild.getInstance().getFlag(FlagType.pumps).getValue()) {
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
