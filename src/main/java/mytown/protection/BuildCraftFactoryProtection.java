@@ -30,7 +30,6 @@ public class BuildCraftFactoryProtection extends Protection {
 
     @SuppressWarnings("unchecked")
     public BuildCraftFactoryProtection() {
-        // We need reflection only for loading the mod
         try {
             clsTilePump = (Class<? extends TileEntity>)Class.forName("buildcraft.factory.TilePump");
             clsTileAbstractBuilder= (Class<? extends TileEntity>)Class.forName("buildcraft.core.builders.TileAbstractBuilder");

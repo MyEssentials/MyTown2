@@ -66,7 +66,6 @@ public class MinefactoryReloadedProtection extends Protection {
     @Override
     public boolean checkTileEntity(TileEntity te) {
         if (clsTileEntityFactory.isAssignableFrom(te.getClass())) {
-            MyTown.instance.log.info("Checking machine in mfr.");
 
             // Getting harvest area manager
             Object areaManager = mAccessTile.invoke(te, "getHAM");
