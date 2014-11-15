@@ -252,26 +252,7 @@ public abstract class Commands {
         }
     }
 
-    public static int getPaymentStack(ICommandSender sender, int minAmount) {
-        if (!(sender instanceof EntityPlayer))
-            throw new MyTownCommandException("The sender is not a player!");
-        if (minAmount == 0)
-            return 0;
-        EntityPlayer player = (EntityPlayer) sender;
-        int stackNumber = -1;
-        for (int i = 0; i < player.inventory.mainInventory.length; i++) {
-            ItemStack itemStack = player.inventory.mainInventory[i];
-            if (itemStack == null)
-                continue;
-            if (GameRegistry.findUniqueIdentifierFor(itemStack.getItem()).name.equals(Config.costItemName) && itemStack.stackSize >= minAmount) {
-                stackNumber = i;
-                break;
-            }
-        }
-        if (stackNumber == -1)
-            throw new MyTownCommandException("mytown.cmd.err.cost", minAmount, Config.costItemName);
-        return stackNumber;
-    }
+
 
     public static void sendMessageBackToSender(ICommandSender sender, String message) {
         if (sender instanceof EntityPlayer) {
@@ -300,7 +281,7 @@ public abstract class Commands {
                     Utils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, stack);
                 }
             }
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.payReturn", amount, Config.costItemName));
+
         }
     }
 }

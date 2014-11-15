@@ -10,6 +10,7 @@ import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.util.Utils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
@@ -55,10 +56,8 @@ public class CommandsAssistant extends Commands {
         if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
-        int stackNumber = getPaymentStack(sender, Config.costAmountClaim);
-        if (stackNumber == 0) {
-            player.inventory.decrStackSize(stackNumber, Config.costAmountClaim);
-        }
+        if(!Utils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountClaim))
+            throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, Config.costItemName);
 
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
@@ -81,7 +80,8 @@ public class CommandsAssistant extends Commands {
         if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
             getDatasource().deleteBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
-            returnPaymentStack(sender, Config.costAmountClaim);
+            Utils.giveItemToPlayer(pl, Config.costItemName, Config.costAmountClaim);
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.payReturn", Config.costAmountClaim, Config.costItemName));
         } else {
             throw new MyTownCommandException("§cYou cannot delete the Block containing the spawn point!");
         }
@@ -421,10 +421,11 @@ public class CommandsAssistant extends Commands {
     public static void leaveDeleteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
+        EntityPlayer player = (EntityPlayer)sender;
 
         if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
-            returnPaymentStack(sender, Config.costAmountClaim * town.getBlocks().size());
+            Utils.giveItemToPlayer(player, Config.costItemName, Config.costAmountClaim * town.getBlocks().size());
             getDatasource().deleteTown(town);
         }
     }

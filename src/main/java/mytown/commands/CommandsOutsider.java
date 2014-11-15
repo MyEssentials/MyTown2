@@ -103,6 +103,8 @@ public class CommandsOutsider extends Commands {
 
         if (res.getTowns().size() >= Config.maxTowns)
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
+        if(!Utils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountMakeTown))
+            throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, Config.costItemName);
         if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
             throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?
@@ -113,10 +115,7 @@ public class CommandsOutsider extends Commands {
                     throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose");
             }
         }
-        int stackNumber = getPaymentStack(sender, Config.costAmountMakeTown);
-        if (stackNumber == 0) {
-            player.inventory.decrStackSize(stackNumber, Config.costAmountMakeTown);
-        }
+
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)

@@ -118,11 +118,11 @@ public class MyTown {
     private void registerCommands() {
         Method m = null;
         try {
-            if (isCauldron && BukkitCompat.getInstance().hasPlugin("PermissionsEx")) {
-                m = PEXCompat.class.getMethod("firstPermissionBreachPEX", String.class, ICommandSender.class);
-            } else {
+            //if (isCauldron && BukkitCompat.getInstance().hasPlugin("PermissionsEx")) {
+            //    m = PEXCompat.class.getMethod("firstPermissionBreachPEX", String.class, ICommandSender.class);
+            //} else {
                 m = Commands.class.getMethod("firstPermissionBreach", String.class, ICommandSender.class);
-            }
+            //}
         } catch (Exception e) {
             log.info("Failed to get first permission breach method.");
             e.printStackTrace();
