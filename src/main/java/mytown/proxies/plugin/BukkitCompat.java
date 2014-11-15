@@ -25,9 +25,17 @@ public class BukkitCompat {
     }
 
     public void loadPEX(File sourceFile) {
-        File pluginsFolder = new File("plugins/PermissionsEx.jar");
+
+        File pluginsFolder = new File(sourceFile.getParentFile().getParentFile(), "plugins/PermissionsEx.jar");
+        MyTown.instance.log.info("Trying to load: " + pluginsFolder.toURI().toString());
         if (pluginsFolder.exists())
-            Utils.addURL(pluginsFolder);
+            try {
+              //  Bukkit.
+            } catch (Exception e) {
+                MyTown.instance.log.error("Failed to load PEX!");
+                MyTown.instance.log.error(e.toString());
+            }
+            //Utils.addURL(pluginsFolder);
             //Utils.injectBukkitBridge(sourceFile, pluginsFolder);
         else
             MyTown.instance.log.error("Plugins folder does not exist, therefore not checking for PEX.");

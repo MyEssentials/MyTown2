@@ -1,5 +1,6 @@
 package mytown.util;
 
+import com.esotericsoftware.reflectasm.MethodAccess;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
 import mytown.config.Config;
@@ -18,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.UserList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -416,7 +418,17 @@ public class Utils {
      * @return
      */
     public static boolean isOp(Resident res) {
-        return MinecraftServer.getServer().getConfigurationManager().func_152607_e(res.getPlayer().getGameProfile());
+        /*
+        try {
+            Method m = UserList.class.getMethod("func_152692_d", Object.class);
+            m.setAccessible(true);
+            return (Boolean)m.invoke(MinecraftServer.getServer().getConfigurationManager().func_152603_m(), res.getPlayer().getGameProfile());
+        } catch (Exception e) {
+            MyTown.instance.log.error("Failed to check if player is OP");
+            return false;
+        }
+        */
+        return MinecraftServer.getServer().getConfigurationManager().func_152596_g(res.getPlayer().getGameProfile());
     }
 
     /**

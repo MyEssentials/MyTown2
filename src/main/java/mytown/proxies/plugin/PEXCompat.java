@@ -10,12 +10,15 @@ import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.world.World;
+import org.bukkit.Bukkit;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginLoader;
 import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.List;
 
@@ -41,7 +44,7 @@ public class PEXCompat {
             return true;
 
 
-        PermissionUser user = null; //ru.tehkode.permissions.bukkit.PermissionsEx.getUser(Bukkit.getPlayer(((EntityPlayer) sender).getUniqueID()));
+        PermissionUser user = PermissionsEx.getUser(Bukkit.getPlayer(((EntityPlayer) sender).getUniqueID()));
 
         try {
             Class c = Class.forName("ru.tehkode.permissions.bukkit.PermissionsEx");
@@ -71,6 +74,7 @@ public class PEXCompat {
     }
 
     public PEXCompat() {
+
         MyTown.instance.log.info("Did NOT fail registering PEX compatibility. W00t");
     }
 
