@@ -29,6 +29,7 @@ Its the "unlicense"
 Requesting Features
 ===================
 When requesting a new feature, be clear with what your requesting, and mark it as enhancement.
+If it is a feature that requires protection for a specific mod please, please, please, tell me what exactly to protect from in said mod as some of us may not know much about the mod.
 
 Contacting
 ==========
