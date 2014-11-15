@@ -20,7 +20,7 @@ public class ModProxy {
     }
 
     public ModProxy(String name, String modid, Class<? extends Protection> protClass) {
-        this(name, modid, "", protClass);
+        this(name, modid, null, protClass);
     }
 
 
