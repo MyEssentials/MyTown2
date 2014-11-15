@@ -610,7 +610,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
             }
         } else {
             if (!(Boolean) plot.getValue(flagType) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
-                return false;
+                return Utils.isOp(res);
         }
         return true;
     }
