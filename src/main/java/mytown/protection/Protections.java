@@ -384,7 +384,7 @@ public class Protections {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
-                    if (!t.checkPermission(res, FlagType.placeBlocks)) {
+                    if (tblock.getTown() != t && !t.checkPermission(res, FlagType.placeBlocks)) {
                         res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         ev.setCanceled(true);
                         return;

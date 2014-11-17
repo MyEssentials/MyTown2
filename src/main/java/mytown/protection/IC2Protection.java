@@ -1,8 +1,15 @@
 package mytown.protection;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import mytown.MyTown;
+import mytown.entities.Resident;
+import mytown.entities.TownBlock;
+import mytown.entities.flag.FlagType;
+import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.Entity;
 
-//import ic2.api.event.LaserEvent;
+import ic2.api.event.LaserEvent;
+import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Created by AfterWind on 7/8/2014.
@@ -25,7 +32,7 @@ public class IC2Protection extends Protection {
             ex.printStackTrace();
         }
     }
-/*
+
     // EVENTS
     @SuppressWarnings("unchecked")
     @SubscribeEvent
@@ -79,7 +86,7 @@ public class IC2Protection extends Protection {
         }
     }
 
-    */
+
 }
 
 

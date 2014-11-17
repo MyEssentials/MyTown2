@@ -20,7 +20,7 @@ public enum FlagType {
     attackEntities(Boolean.class, false, null, false, true, false, null),
     useItems(Boolean.class, false, null, false, true, false, null),
     activateBlocks(Boolean.class, false, null, true, true, false, null, true),
-    pumps(Boolean.class, true, null, false, true, false, ModProxies.EXTRA_UTILITIES_MOD_ID);
+    pumps(Boolean.class, true, null, false, true, false, ModProxies.EXTRA_UTILITIES_MOD_ID), ;
 
     private Class<?> type;
     private String descriptionKey;

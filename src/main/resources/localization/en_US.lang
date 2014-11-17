@@ -67,8 +67,8 @@ mytown.cmd.err.invite.accept=§cYou have more invitations! §3Choose what invita
 # /t friends
 mytown.cmd.err.friends.add=§c%s is already a friend of yours or you already sent an invitation!
 mytown.cmd.err.friends.remove=§c%s is not a friend of yours!
-mytown.cmd.err.friends.accept=§cAccept invitation failed!
-mytown.cmd.err.friends.refuse=§cRefuse invitation failed!
+mytown.cmd.err.friends.accept=§cYou need to specify a player name!
+mytown.cmd.err.friends.refuse=§cYou need to specify a player name!
 
 # /t claim
 mytown.cmd.err.claim.failed=§cFailed to claim chunk!
