@@ -139,7 +139,7 @@ mytown.cmd.promote.success.sender=§3%s has been §apromoted§3 to rank §f%s!
 mytown.cmd.promote.success.target=§aYou have been promoted to rank %s!
 
 # /t setspawn
-mytown.cmd.err.setspawn.notintown=§cThe position that you're in is not inside the town %s!
+mytown.cmd.err.setspawn.notintown=§cThe position that you're at is not inside the town %s!
 
 # /t spawn
 mytown.cmd.err.spawn.notexist=§cThe TownBlock that the spawn of %s was on got deleted or the spawn wasn't set! §3Please use "/t setspawn" to set another one.
