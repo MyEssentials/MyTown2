@@ -7,6 +7,7 @@ import net.minecraft.util.EnumChatFormatting;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -123,7 +124,7 @@ public class Formatter {
      * @param t
      * @return
      */
-    public static String formatResidentsToString(List<Resident> residents, Town t) {
+    public static String formatResidentsToString(Collection<Resident> residents, Town t) {
         String res = null;
         for (Resident r : residents)
             if (res == null) {
@@ -143,7 +144,7 @@ public class Formatter {
      * @param ranks
      * @return
      */
-    public static String formatRanksToString(List<Rank> ranks) {
+    public static String formatRanksToString(Collection<Rank> ranks) {
 
         String res = null;
         for (Rank r : ranks) {
@@ -178,13 +179,49 @@ public class Formatter {
     }
 
     /**
+     * Return a formatted string from a list of town blocks
+     *
+     * @param blocks
+     * @return
+     */
+    public static String formatTownBlocksToString(Collection<TownBlock> blocks) {
+        String formattedList = null;
+        for(TownBlock block : blocks) {
+            String toAdd = "{"+ EnumChatFormatting.BLUE + (block.getX() << 4) + EnumChatFormatting.GRAY + "," + EnumChatFormatting.BLUE + (block.getZ() << 4) + EnumChatFormatting.GRAY + "}";
+            if(formattedList == null)
+                formattedList = toAdd;
+            else
+                formattedList += EnumChatFormatting.RED + "; " + EnumChatFormatting.GRAY + toAdd;
+        }
+        return formattedList;
+    }
+
+    /**
+     * Returns a formatted string from a list of towns
+     *
+     * @param towns
+     * @return
+     */
+    public static String formatTownsToString(Collection<Town> towns) {
+        String formattedList = null;
+        for(Town town : towns) {
+            String toAdd = "\n" + EnumChatFormatting.GREEN + town.getName() + ":" + EnumChatFormatting.GRAY + " { " + EnumChatFormatting.RED + "Mayor: " + EnumChatFormatting.WHITE + (town.getMayor() != null ? town.getMayor().getPlayerName() : EnumChatFormatting.RED + "SERVER ADMINS") + EnumChatFormatting.GRAY + "}";
+            if(formattedList == null)
+                formattedList = toAdd;
+            else
+                formattedList = "\n" + toAdd;
+        }
+        return formattedList;
+    }
+
+    /**
      * Formats a list of owners of a plot or town
      * TODO: Generalize this
      *
      * @param residentList
      * @return
      */
-    public static String formatOwnersToString(List<Resident> residentList) {
+    public static String formatOwnersToString(Collection<Resident> residentList) {
         String formattedList = null;
         for (Resident res : residentList) {
             if (res != null) {

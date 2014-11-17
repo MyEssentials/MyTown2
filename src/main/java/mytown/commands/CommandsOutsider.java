@@ -75,17 +75,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             nonPlayers = true)
     public static void listCommand(ICommandSender sender, List<String> args) {
-        //TODO: check if this works
-
-        String formattedTownList = null;
-        for (Town town : getUniverse().getTownsMap().values()) {
-            if (formattedTownList == null)
-                formattedTownList = town.toString();
-            else
-                formattedTownList += "\n" + town.toString();
-        }
-
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", formattedTownList));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", Formatter.formatTownsToString(MyTownUniverse.getInstance().getTownsMap().values())));
     }
 
     @CommandNode(

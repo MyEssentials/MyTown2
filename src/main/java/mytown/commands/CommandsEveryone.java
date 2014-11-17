@@ -96,15 +96,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        String s = null;
-        for (TownBlock block : town.getBlocks()) {
-            if (s == null)
-                s = block.toString();
-            else
-                s += "\n" + block.toString();
-        }
-
-        res.sendMessage(getLocal().getLocalization("mytown.notification.block.list", town.getName(), "\n" + s));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.block.list", town.getName(), "\n" + Formatter.formatTownBlocksToString(town.getBlocks())));
     }
 
     @CommandNode(
