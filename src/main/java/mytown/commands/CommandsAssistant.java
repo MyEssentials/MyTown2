@@ -361,16 +361,21 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.plot.limit",
             parentName = "mytown.cmd.everyone.plot")
     public static void plotLimitCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        if (args.size() < 1) {
-            Resident res = getDatasource().getOrMakeResident(sender);
-            Town town = getTownFromResident(res);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.limit", town.getMaxPlots()));
-        } else {
-            callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.plot.limit");
-        }
+        callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.plot.limit");
     }
 
     @CommandNode(
+            name = "show",
+            permission = "mytown.cmd.assistant.plot.limit.show",
+            parentName = "mytown.cmd.everyone.plot.limit")
+    public static void plotLimitShowCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.limit", town.getMaxPlots()));
+    }
+
+
+        @CommandNode(
             name = "set",
             permission = "mytown.cmd.assistant.plot.limit.set",
             parentName = "mytown.cmd.assistant.plot.limit")

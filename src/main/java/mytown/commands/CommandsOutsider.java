@@ -257,7 +257,7 @@ public class CommandsOutsider extends Commands {
             completionKeys = {"residentCompletion"})
     public static void friendsAcceptCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownCommandException("mytown.cmd.err.friends.accept");
+            throw new MyTownCommandException("mytown.cmd.usage.friends.accept");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
 
@@ -273,7 +273,7 @@ public class CommandsOutsider extends Commands {
             completionKeys = {"residentCompletion"})
     public static void friendsRefuseCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownCommandException("mytown.cmd.err.friends.refuse");
+            throw new MyTownCommandException("mytown.cmd.usage.friends.refuse");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
 

@@ -58,7 +58,7 @@ mytown.cmd.usage.newtown=§3/t new <townname>
 mytown.cmd.err.resident.maxTowns=§cYou cannot create/join any more towns, you have hit the maximum amount of towns you can be in.
 
 # /t invite
-mytown.cmd.usage.invite=§3/t invite <player-name|accept|refuse> [town-name]
+mytown.cmd.usage.invite=§3/t invite <resident|accept|refuse> [town-name]
 mytown.cmd.err.invite.already=§cResident %s already exists in town %s!
 mytown.cmd.err.invite.noinvitations=§cYou have no invitations!
 mytown.cmd.err.resident.notexist=§cThat player does not exist!
@@ -67,8 +67,10 @@ mytown.cmd.err.invite.accept=§cYou have more invitations! §3Choose what invita
 # /t friends
 mytown.cmd.err.friends.add=§c%s is already a friend of yours or you already sent an invitation!
 mytown.cmd.err.friends.remove=§c%s is not a friend of yours!
-mytown.cmd.err.friends.accept=§cYou need to specify a player name!
-mytown.cmd.err.friends.refuse=§cYou need to specify a player name!
+mytown.cmd.usage.friends.accept=§c/t friends accept <resident>
+mytown.cmd.usage.friends.refuse=§c/t friends refuse <resident>
+mytown.cmd.usage.friends.add=§c/t friends add <resident>
+mytown.cmd.usage.friends.remove=§c/t friends add <resident>
 
 # /t claim
 mytown.cmd.err.claim.failed=§cFailed to claim chunk!
@@ -82,7 +84,7 @@ mytown.cmd.usage.info=§3/t info <townname>
 mytown.cmd.err.info.notpart=§cYou are not part of a town. §3Alternative usage: "/t info <townname>".
 
 # /t res
-mytown.cmd.usage.res=§3/t res <playername>
+mytown.cmd.usage.res=§3/t res <resident>
 
 # /t select
 mytown.cmd.usage.select=§3/t select <townname>
@@ -168,6 +170,16 @@ mytown.adm.cmd.usage.setExtra.town=§3/ta setExtra town <town> <number>
 # /ta setExtra res [resident] [number]
 mytown.adm.cmd.usage.setExtra.res=§3/ta setExtra res <resident> <number>
 
+# /ta perm
+mytown.adm.cmd.usage.perm.town.set=§3/ta perm town set <townName> <flag> <value>
+mytown.adm.cmd.usage.perm.wild.set=§3/ta perm wild set <flag> <value>
+
+# /ta claim
+mytown.adm.cmd.usage.claim=§3/ta claim <townName>
+
+# /ta unclaim
+mytown.adm.cmd.usage.unclaim=§3/ta unclaim <townName>
+
 # Notifications
 mytown.notification.town.created=§aTown %s created!
 mytown.notification.admtown.created=§aAdmin town %s created!
@@ -205,7 +217,7 @@ mytown.notification.town.joined=§3%s has §ajoined§3 the town %s!
 mytown.notification.town.invited=§cYou have been invited to town %s!
 mytown.notification.town.invite.sent=§aThe invitation was successfully sent!
 mytown.notification.town.setspawn=§aSpawn has been set!
-mytown.notification.town.left.asMayor=Before being able to leave you need to choose between deleting the town or passing mayorship to other resident: /t pass <name> or /t leave delete
+mytown.notification.town.left.asMayor=Before you leave you need to choose between deleting the town or passing mayorship to other resident: /t pass <resident> or /t leave delete
 mytown.notification.town.mayorShip.passed=You have been promoted to Mayor by the old Mayor.
 mytown.notification.town.mayorShip.taken=Your mayorship has been taken, you've been demoted to the default rank.
 mytown.notification.town.delete=§cTown %s has been deleted by the Mayor (%s)!
@@ -231,6 +243,9 @@ mytown.notification.friends.accepted=§a%s has accepted your invitation to be in
 mytown.notification.friends.gotAccepted=§aYou have accepted %s's friend invitation!
 mytown.notification.friends.refused=§c%s has refused your invitation to be in the friends list of town!
 mytown.notification.friends.gotRefused=§cYou have refused %s's friend invitation!
+mytown.notification.resident.noInvites=§cYou don't have any invitations!
+mytown.notification.resident.friends.list=§3Friends: %s
+
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=§2Everything related to TownBlocks (chunks in town)
@@ -272,7 +287,7 @@ mytown.cmd.everyone.plot.vanish.help=§2Hides all plots.
 mytown.cmd.everyone.ranks.help=§2Everything related to ranks.
 mytown.cmd.everyone.ranks.list.help=§2Lists all ranks from the town.
 mytown.cmd.everyone.select.help=§2Selects a town in which you are in.
-mytown.cmd.everyone.spawn.help=§2Teleports the player to spawn.
+mytown.cmd.everyone.spawn.help=§2Teleports the player to town's spawn.
 mytown.cmd.outsider.accept.help=§2Accepts the invitation to join a town.
 mytown.cmd.outsider.friends.help=§2Everything related to friends.
 mytown.cmd.outsider.friends.accept.help=§2Accepts a friend request.
@@ -289,6 +304,10 @@ mytown.cmd.outsider.help.help=§2Gives help about commands.
 mytown.cmd.outsider.invites.help=§2Shows all the invites.
 mytown.cmd.mayor.pass.help=§2Passes mayorship to someone else in the town.
 mytown.cmd.assistant.kick.help=§2Removes the resident from the town.
+mytown.cmd.assistant.plot.limit.help=§2Limit of how many plots a player can be owner of.
+mytown.cmd.assistant.plot.limit.set.help=§2Sets how many plots can a player be owner of.
+mytown.cmd.assistant.plot.limit.show.help=§2Shows how many plots can a player be owner of.
+mytown.cmd.outsider.res.help=§2Shows information about residents.
 
 mytown.adm.cmd.config.help=§9Everything about the configs.
 mytown.adm.cmd.config.load.help=§9Reloads the config.
@@ -311,3 +330,5 @@ mytown.adm.cmd.perm.wild.set.help=§9Sets a flag's value.
 mytown.adm.cmd.claim.help=§9Claims a chunk for a town.
 mytown.adm.cmd.unclaim.help=§9Removes a chunked claim from a town.
 mytown.adm.cmd.help.help=§9Gives all help about the admin commands.
+mytown.adm.cmd.setExtra.res.help=§9Gives player extra blocks with which can claim more chunks.
+mytown.adm.cmd.setExtra.town.help=§9Gives town extra blocks with which can claim more chunks.

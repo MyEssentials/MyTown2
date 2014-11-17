@@ -636,6 +636,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public List<Resident> getOwnersAtPosition(int dim, int x, int y, int z) {
         List<Resident> list = new ArrayList<Resident>();
         Plot plot = getPlotAtCoords(dim, x, y, z);
+        MyTown.instance.log.info("Checking for position: " + x + ", " + y + ", " + z);
         if (plot == null) {
             if (isPointInTown(dim, x, z)) {
                 list.add(getMayor());

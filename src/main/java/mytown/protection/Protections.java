@@ -228,7 +228,7 @@ public class Protections {
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
             // Player check, every tick
-            Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+            Town town = Utils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
 
             if (entity instanceof EntityPlayer) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
@@ -247,8 +247,8 @@ public class Protections {
                 */
                 if (town != null) {
                     if (!town.checkPermission(res, FlagType.enter, entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)) {
-                        res.respawnPlayer();
                         res.protectionDenial("§cYou have been moved because you can't access this place!", Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)));
+                        res.respawnPlayer();
                         MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
                     }
                 }
