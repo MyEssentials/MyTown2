@@ -10,9 +10,8 @@ import mytown.proxies.mod.ModProxies;
 public enum FlagType {
     // CONSTRUCTOR: class, value, allowedValues, wildPerm, defaultWildPerm, townOnly, mod, isWhitelistable <false>
     enter(Boolean.class, true, null, false, true, false, null),
-    breakBlocks(Boolean.class, false, null, true, true, false, null),
+    modifyBlocks(Boolean.class, false, null, true, true, false, null),
     accessBlocks(Boolean.class, false, null, true, true, false, null, true),
-    placeBlocks(Boolean.class, false, null, true, true, false, null),
     pickupItems(Boolean.class, true, null, false, true, false, null),
     explosions(Boolean.class, false, null, true, false, false, null),
     // Only the values in the array are allowed

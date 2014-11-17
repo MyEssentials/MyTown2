@@ -46,8 +46,8 @@ public class QuarryPlusProtection extends Protection {
             for (ChunkPos chunk : chunks) {
                 Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
                 if (town != null) {
-                    if ((Boolean) town.getValue(FlagType.breakBlocks) && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks)) {
-                        town.notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
+                    if ((Boolean) town.getValue(FlagType.modifyBlocks) && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
+                        town.notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
                         return true;
                     }
                 }
@@ -60,7 +60,7 @@ public class QuarryPlusProtection extends Protection {
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
         List<FlagType> flags = new ArrayList<FlagType>();
         if (clsQuarry.isAssignableFrom(te))
-            flags.add(FlagType.breakBlocks);
+            flags.add(FlagType.modifyBlocks);
         return flags;
     }
 }

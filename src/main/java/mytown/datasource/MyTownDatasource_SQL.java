@@ -331,16 +331,26 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 String flagName = rs.getString("name");
 
                 Gson gson = new GsonBuilder().create();
-                Flag flag = new Flag(FlagType.valueOf(flagName), gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
+                try {
+                    FlagType type = FlagType.valueOf(flagName);
+                    Flag flag = new Flag(type, gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
 
-                Town town = MyTownUniverse.getInstance().getTownsMap().get(townName);
-                if (town != null) {
-                    if (flag.flagType.shouldLoad())
-                        town.addFlag(flag);
-                } else {
-                    log.error("Failed to load flag " + flagName + " because the town given was invalid!");
-                    return false;
+                    Town town = MyTownUniverse.getInstance().getTownsMap().get(townName);
+                    if (town != null) {
+                        if (flag.flagType.shouldLoad())
+                            town.addFlag(flag);
+                    } else {
+                        log.error("Failed to load flag " + flagName + " because the town given was invalid!");
+                        return false;
+                    }
+                } catch (IllegalArgumentException ex) {
+                    log.error("Flag " + flagName + " does no longer exist... will be deleted shortly from the database.");
+                    PreparedStatement removeFlag = prepare("DELETE FROM " + prefix + "TownFlags WHERE townName=? AND name=?", true);
+                    removeFlag.setString(1, townName);
+                    removeFlag.setString(2, flagName);
+                    removeFlag.executeUpdate();
                 }
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -361,15 +371,24 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 String flagName = rs.getString("name");
 
                 Gson gson = new GsonBuilder().create();
-                Flag flag = new Flag(FlagType.valueOf(flagName), gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
+                try {
+                    FlagType type = FlagType.valueOf(flagName);
+                    Flag flag = new Flag(type, gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
 
-                Plot plot = MyTownUniverse.getInstance().getPlot(plotID);
-                if (plot != null) {
-                    if (flag.flagType.shouldLoad())
-                        plot.addFlag(flag);
-                } else {
-                    log.error("Failed to load flag " + flagName + " because the town given was invalid!");
-                    return false;
+                    Plot plot = MyTownUniverse.getInstance().getPlot(plotID);
+                    if (plot != null) {
+                        if (flag.flagType.shouldLoad())
+                            plot.addFlag(flag);
+                    } else {
+                        log.error("Failed to load flag " + flagName + " because the town given was invalid!");
+                        return false;
+                    }
+                } catch (IllegalArgumentException ex) {
+                    log.error("Flag " + flagName + " does no longer exist. Deleting from database.");
+                    PreparedStatement removeFlag = prepare("DELETE FROM " + prefix + "PlotFlags WHERE plotID=? AND name=?", true);
+                    removeFlag.setInt(1, plotID);
+                    removeFlag.setString(2, flagName);
+                    removeFlag.executeUpdate();
                 }
             }
         } catch (SQLException e) {

@@ -74,15 +74,15 @@ public class BuildCraftFactoryProtection extends Protection {
             for (ChunkPos p : chunks) {
                 TownBlock block = MyTownUniverse.getInstance().getBlocksMap().get(String.format(TownBlock.keyFormat, te.getWorldObj().provider.dimensionId, p.getX(), p.getZ()));
                 if (block == null) {
-                    if (!(Boolean) Wild.getInstance().getFlag(FlagType.breakBlocks).getValue()) {
+                    if (!(Boolean) Wild.getInstance().getFlag(FlagType.modifyBlocks).getValue()) {
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
                         return true;
                     }
                 } else {
                     // Directly from the town, not checking per plot since it's quite the pain
-                    boolean bcFlag = (Boolean) block.getTown().getValue(FlagType.breakBlocks);
+                    boolean bcFlag = (Boolean) block.getTown().getValue(FlagType.modifyBlocks);
                     if (!bcFlag) {
-                        block.getTown().notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
+                        block.getTown().notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
                         MyTown.instance.log.info("A buildcraft machine at coordonates " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " in dimension " + te.getWorldObj().provider.dimensionId + " tried to bypass protection!");
                         return true;
                     }
@@ -118,7 +118,7 @@ public class BuildCraftFactoryProtection extends Protection {
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
         List<FlagType> list = new ArrayList<FlagType>();
         if (clsTileAbstractBuilder.isAssignableFrom(te)) {
-            list.add(FlagType.breakBlocks);
+            list.add(FlagType.modifyBlocks);
         } else if (clsTilePump.isAssignableFrom(te)) {
             list.add(FlagType.pumps);
         }

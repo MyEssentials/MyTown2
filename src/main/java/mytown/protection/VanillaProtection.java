@@ -109,7 +109,7 @@ public class VanillaProtection extends Protection {
         if (te instanceof TileEntityPiston) {
             Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
             if (town != null) {
-                boolean placeFlag = (Boolean) town.getValueAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.placeBlocks);
+                boolean placeFlag = (Boolean) town.getValueAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks);
                 if (!placeFlag) {
                     return true;
                 }
@@ -138,9 +138,9 @@ public class VanillaProtection extends Protection {
                 }
                 town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
                 if (town != null) {
-                    boolean placeFlag = (Boolean) town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.placeBlocks);
+                    boolean placeFlag = (Boolean) town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.modifyBlocks);
                     if (!placeFlag) {
-                        town.notifyEveryone(FlagType.placeBlocks.getLocalizedTownNotification());
+                        town.notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
                         return true;
                     }
                 }

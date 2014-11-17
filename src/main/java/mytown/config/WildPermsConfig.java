@@ -78,6 +78,10 @@ public class WildPermsConfig {
         }
         if (list != null) {
             for (Flag f : list) {
+                if(f.flagType == null) {
+                    MyTown.instance.log.error("An unrecognized perm has been found in WildPerms.cfg, if you have issues you can always delete it and it will regenerate a newer file.");
+                    continue;
+                }
                 if (f.flagType.isWildPerm())
                     Wild.getInstance().addFlag(f);
                 else {

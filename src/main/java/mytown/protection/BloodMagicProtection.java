@@ -58,14 +58,14 @@ public class BloodMagicProtection extends Protection {
             // Range is 11x11 around the player.
             List<Town> townsNearby = Utils.getTownsInRange(bp.dim, bp.x, bp.z, 5, 5);
             for (Town town : townsNearby) {
-                boolean breakBlock = (Boolean) town.getValue(FlagType.breakBlocks);
+                boolean breakBlock = (Boolean) town.getValue(FlagType.modifyBlocks);
                 if (!breakBlock) {
                     // If resident is null then it's used by a block
                     if (res == null) {
-                        town.notifyEveryone(FlagType.breakBlocks.getLocalizedProtectionDenial());
+                        town.notifyEveryone(FlagType.modifyBlocks.getLocalizedProtectionDenial());
                         return true;
-                    } else if (!town.checkPermission(res, FlagType.breakBlocks, res.getPlayer().dimension, (int) res.getPlayer().posX, (int) res.getPlayer().posY, (int) res.getPlayer().posZ)) {
-                        res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
+                    } else if (!town.checkPermission(res, FlagType.modifyBlocks, res.getPlayer().dimension, (int) res.getPlayer().posX, (int) res.getPlayer().posY, (int) res.getPlayer().posZ)) {
+                        res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
                         return true;
                     }
                 }

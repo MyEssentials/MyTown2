@@ -57,10 +57,10 @@ public class BotaniaProtection extends Protection {
                         List<Town> towns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, doX ? range : 0, doZ ? range : 0);
 
                         for (Town town : towns) {
-                            boolean breakFlag = (Boolean) town.getValue(FlagType.breakBlocks);
-                            if (!breakFlag && town.checkPermission(res, FlagType.breakBlocks)) {
+                            boolean breakFlag = (Boolean) town.getValue(FlagType.modifyBlocks);
+                            if (!breakFlag && town.checkPermission(res, FlagType.modifyBlocks)) {
                                 ev.setCanceled(true);
-                                res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
+                                res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
                                 return;
                             }
                         }

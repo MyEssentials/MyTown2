@@ -83,9 +83,9 @@ public class MinefactoryReloadedProtection extends Protection {
                 if (town != null) {
                     //DEV
                     MyTown.instance.log.info("Found town for mfr protection: " + town.getName());
-                    boolean breakFlag = (Boolean) town.getValue(FlagType.breakBlocks);
-                    if (!breakFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.breakBlocks)) {
-                        town.notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
+                    boolean breakFlag = (Boolean) town.getValue(FlagType.modifyBlocks);
+                    if (!breakFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
+                        town.notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
                         return true;
                     }
                 }
@@ -117,7 +117,7 @@ public class MinefactoryReloadedProtection extends Protection {
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
         List<FlagType> list = new ArrayList<FlagType>();
         if (te.isAssignableFrom(clsTileEntityFactory))
-            list.add(FlagType.breakBlocks);
+            list.add(FlagType.modifyBlocks);
         return list;
     }
 }

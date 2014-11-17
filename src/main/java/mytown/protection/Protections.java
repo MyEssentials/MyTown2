@@ -171,7 +171,7 @@ public class Protections {
 
         if (bw.getFlagType() == FlagType.activateBlocks && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z)))
             return false;
-        if ((bw.getFlagType() == FlagType.breakBlocks || bw.getFlagType() == FlagType.placeBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems || bw.getFlagType() == FlagType.pumps)) {
+        if ((bw.getFlagType() == FlagType.modifyBlocks || bw.getFlagType() == FlagType.modifyBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems || bw.getFlagType() == FlagType.pumps)) {
             TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(bw.x, bw.y, bw.z);
             if (te == null) return false;
             return getFlagTypesForTile(te).contains(bw.getFlagType());
@@ -361,31 +361,31 @@ public class Protections {
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
 
         if (tblock == null) {
-            if (!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
-                res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+            if (!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
+                res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
             } else {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
-                    if (!t.checkPermission(res, FlagType.placeBlocks)) {
-                        res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
+                    if (!t.checkPermission(res, FlagType.modifyBlocks)) {
+                        res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         ev.setCanceled(true);
                         return;
                     }
                 }
             }
         } else {
-            if (!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
+            if (!tblock.getTown().checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
                 ev.setCanceled(true);
                 return;
             } else {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
-                    if (tblock.getTown() != t && !t.checkPermission(res, FlagType.placeBlocks)) {
-                        res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
+                    if (tblock.getTown() != t && !t.checkPermission(res, FlagType.modifyBlocks)) {
+                        res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         ev.setCanceled(true);
                         return;
                     }
@@ -407,31 +407,31 @@ public class Protections {
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
 
         if (tblock == null) {
-            if (!Wild.getInstance().checkPermission(res, FlagType.placeBlocks)) {
-                res.sendMessage(FlagType.placeBlocks.getLocalizedProtectionDenial());
+            if (!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
+                res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
             } else {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
-                    if (!t.checkPermission(res, FlagType.placeBlocks)) {
-                        res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
+                    if (!t.checkPermission(res, FlagType.modifyBlocks)) {
+                        res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         ev.setCanceled(true);
                         return;
                     }
                 }
             }
         } else {
-            if (!tblock.getTown().checkPermission(res, FlagType.placeBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
+            if (!tblock.getTown().checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
                 ev.setCanceled(true);
                 return;
             } else {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
-                    if (!t.checkPermission(res, FlagType.placeBlocks)) {
-                        res.protectionDenial(FlagType.placeBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
+                    if (!t.checkPermission(res, FlagType.modifyBlocks)) {
+                        res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         ev.setCanceled(true);
                         return;
                     }
@@ -566,14 +566,14 @@ public class Protections {
         TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer());
         if (block == null) {
-            if (!Wild.getInstance().checkPermission(res, FlagType.breakBlocks)) {
-                res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
+            if (!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
+                res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
             }
         } else {
             Town town = block.getTown();
-            if (!town.checkPermission(res, FlagType.breakBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                res.protectionDenial(FlagType.breakBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
+            if (!town.checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
                 ev.setCanceled(true);
                 return;
             }

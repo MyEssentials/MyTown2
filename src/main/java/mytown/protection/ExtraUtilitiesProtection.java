@@ -53,8 +53,8 @@ public class ExtraUtilitiesProtection extends Protection {
                 for (ChunkPos cp : chunks) {
                     Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, cp.getX(), cp.getZ());
                     if (town != null) {
-                        if (!((Boolean) town.getValue(FlagType.breakBlocks))) {
-                            town.notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
+                        if (!((Boolean) town.getValue(FlagType.modifyBlocks))) {
+                            town.notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
                             return true;
                         }
                     }
@@ -85,7 +85,7 @@ public class ExtraUtilitiesProtection extends Protection {
     public List<FlagType> getFlagTypeForTile(Class<? extends TileEntity> te) {
         List<FlagType> list = new ArrayList<FlagType>();
         if (clsTileEnderQuarry.isAssignableFrom(te))
-            list.add(FlagType.breakBlocks);
+            list.add(FlagType.modifyBlocks);
         else if (clsTileEnderPump.isAssignableFrom(te))
             list.add(FlagType.pumps);
         return list;

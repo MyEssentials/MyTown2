@@ -44,18 +44,18 @@ public class IC2Protection extends Protection {
         if(ev.owner instanceof EntityPlayer) {
             Resident res = getDatasource().getOrMakeResident(ev.owner);
             //TODO: Check for permission node
-            if (!tblock.getTown().checkPermission(res, FlagType.breakBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+            if (!tblock.getTown().checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
-                res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
+                res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
             }
         } else {
             // Verifying only the flag itself, not for resident
-            boolean breakFlag = (Boolean)tblock.getTown().getValueAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.breakBlocks);
+            boolean breakFlag = (Boolean)tblock.getTown().getValueAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.modifyBlocks);
             if(!breakFlag) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
-                tblock.getTown().notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
+                tblock.getTown().notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
             }
         }
     }
@@ -70,18 +70,18 @@ public class IC2Protection extends Protection {
         if(ev.owner instanceof EntityPlayer) {
             Resident res = getDatasource().getOrMakeResident(ev.owner);
             //TODO: Check for permission node
-            if (!tblock.getTown().checkPermission(res, FlagType.breakBlocks, ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ)) {
+            if (!tblock.getTown().checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ)) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
-                res.sendMessage(FlagType.breakBlocks.getLocalizedProtectionDenial());
+                res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
             }
         } else {
             // Verifying only the flag itself, not for resident
-            boolean breakFlag = (Boolean)tblock.getTown().getValueAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.breakBlocks);
+            boolean breakFlag = (Boolean)tblock.getTown().getValueAtCoords(ev.world.provider.dimensionId, (int)ev.lasershot.posX, (int)ev.lasershot.posY, (int)ev.lasershot.posZ, FlagType.modifyBlocks);
             if(!breakFlag) {
                 ev.setCanceled(true);
                 ev.lasershot.setDead();
-                tblock.getTown().notifyEveryone(FlagType.breakBlocks.getLocalizedTownNotification());
+                tblock.getTown().notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
             }
         }
     }
