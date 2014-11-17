@@ -26,20 +26,18 @@ mytown.cmd.err.cost=§cYou need to have %s %ss in your inventory in order to pay
 
 
  # Flag Info
- mytown.flag.enter=§3This controls if players are allowed to enter.
- mytown.flag.activateBlock=§3This controls if players are allowed to §3activate pressure plates, doors, etc.
- mytown.flag.accessBlocks=§3This controls if players are allowed to §3access TileEntities/Blocks that have GUI.
- mytown.flag.breakBlocks=§3This controls if players are allowed to §3break blocks.
- mytown.flag.placeBlocks=§3This controls if players are allowed to §3place blocks.
- mytown.flag.pickupItems=§3This controls if players are allowed to pick §3up items/blocks from the ground.
- mytown.flag.explosions=§3This controls if players are allowed to use §3explosives.
- mytown.flag.mobs=§3This controls what category of mobs are not §3allowed to be spawned in here.
- mytown.flag.attackEntities=§3This controls if players are allowed to §3attack the entities in here.
- mytown.flag.useItems=§3This controls if players are allowed to use §3items in here (Example: Use spawn eggs).
- 
- mytown.flag.ic2EnergyFlow=§3This controls if players are allowed to §3send/receive energy from wilderness.
- mytown.flag.bcPipeFlow=§3This controls if players are allowed to §3transport through pipes from wilderness.
- mytown.flag.pumps=§3This controls if players are allowed to pump §3liquids from here.
+ mytown.flag.enter=§3Allows outsiders to enter.
+ mytown.flag.activateBlock=§3Usage of doors/buttons/etc.
+ mytown.flag.accessBlocks=§3Access to blocks with GUIs.
+ mytown.flag.breakBlocks=§3Allows block breaking by outsiders.
+ mytown.flag.placeBlocks=§3Allows block placing by outsiders.
+ mytown.flag.pickupItems=§3Allows item pickup by outsiders.
+ mytown.flag.explosions=§3Allows DA-BOOM-BOOM!
+ mytown.flag.mobs=§3Controls mob spawning.
+ mytown.flag.attackEntities=§3Allows attacking passive mobs by outsiders.
+ mytown.flag.useItems=§3Allows usage of items (eggs, buckets etc.)
+
+ mytown.flag.pumps=§3Allows outsiders to pump liquids.
  
  # Notify Town
  mytown.protection.notify.explosions=§3An explosion happened in town %s, Dim %s (%s, %s, %s).
