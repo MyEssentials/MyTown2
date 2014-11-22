@@ -46,7 +46,7 @@ public class ModProxies {
                 for (ModContainer mc : Loader.instance().getModList()) {
                     // DEV:
                     if (mc.getModId().equals(p.getModID()) && (p.getModVersion() == null || mc.getVersion().startsWith(p.getModVersion()))) {
-                        MyTown.instance.log.info("Loading protectionfor : " + p.getName() + " " + (p.getModVersion() != null ? mc.getVersion() : ""));
+                        MyTown.instance.log.info("Loading protection for : " + p.getName() + " " + (p.getModVersion() != null ? mc.getVersion() : ""));
                         p.load();
                         p.isLoaded = true;
                     }

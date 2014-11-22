@@ -1,17 +1,21 @@
 package mytown.protection;
 
+import com.esotericsoftware.reflectasm.FieldAccess;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mytown.MyTown;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
+import mytown.util.BlockPos;
+import mytown.util.ChunkPos;
 import mytown.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -21,12 +25,14 @@ import java.util.List;
 public class BotaniaProtection extends Protection {
 
     private Class<? extends Item> clsTerraPick;
+    private Class<? extends Item> clsShardLaputa;
 
     @SuppressWarnings("unchecked")
     public BotaniaProtection() {
         isHandlingEvents = true;
         try {
             clsTerraPick = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.equipment.tool.ItemTerraPick");
+            clsShardLaputa = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.ItemLaputaShard");
         } catch (Exception e) {
             MyTown.instance.log.error("Failed to load Botania classes!");
         }
@@ -70,6 +76,26 @@ public class BotaniaProtection extends Protection {
         } catch (Exception e) {
             MyTown.instance.log.error("Failed to call methods or some other nasty error!");
         }
+    }
+
+    @Override
+    public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
+        if(clsShardLaputa.isAssignableFrom(itemStack.getItem().getClass())) {
+            int range = 14 + itemStack.getItemDamage();
+            //MyTown.instance.log.info("Got range: " + range);
+            List<ChunkPos> chunks = Utils.getChunksInBox(bp.x - range, bp.z - range, bp.x + range, bp.z + range);
+            for (ChunkPos chunk : chunks) {
+                Town town = Utils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
+                if (town != null) {
+                    if (!town.checkPermission(res, FlagType.modifyBlocks)) {
+                        res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
