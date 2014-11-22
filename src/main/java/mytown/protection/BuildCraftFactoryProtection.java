@@ -63,14 +63,14 @@ public class BuildCraftFactoryProtection extends Protection {
                 e.printStackTrace();
                 return false;
             }
-            MyTown.instance.log.info("Checking builder...");
+            //MyTown.instance.log.info("Checking builder...");
             int xMin = fAccessBox.getInt(box, fAccessBox.getIndex("xMin"));
             int zMin = fAccessBox.getInt(box, fAccessBox.getIndex("zMin"));
             int xMax = fAccessBox.getInt(box, fAccessBox.getIndex("xMax"));
             int zMax = fAccessBox.getInt(box, fAccessBox.getIndex("zMax"));
 
             List<ChunkPos> chunks = Utils.getChunksInBox(xMin, zMin, xMax, zMax);
-            MyTown.instance.log.info("Got box: " + xMin + ", " + zMin + " : " + xMax + ", " + zMax);
+            //MyTown.instance.log.info("Got box: " + xMin + ", " + zMin + " : " + xMax + ", " + zMax);
             for (ChunkPos p : chunks) {
                 TownBlock block = MyTownUniverse.getInstance().getBlocksMap().get(String.format(TownBlock.keyFormat, te.getWorldObj().provider.dimensionId, p.getX(), p.getZ()));
                 if (block == null) {
