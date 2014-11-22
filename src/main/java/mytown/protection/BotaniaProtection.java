@@ -120,11 +120,11 @@ public class BotaniaProtection extends Protection {
             AxisAlignedBB boundingBox = AxisAlignedBB.getBoundingBox(posX, posY, posZ, posX, posY, posZ).expand(radius, radius, radius);
             List<EntityLivingBase> entities = res.getPlayer().getEntityWorld().getEntitiesWithinAABB(EntityLivingBase.class, boundingBox);
             for(EntityLivingBase entity : entities) {
-                MyTown.instance.log.info("Got entity: " + entity.toString());
+                //MyTown.instance.log.info("Got entity: " + entity.toString());
                 Town town = Utils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
                 if(town != null) {
                     if (!town.checkPermission(res, FlagType.attackEntities, entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ)) {
-                        MyTown.instance.log.info("Checking entity.");
+                        //MyTown.instance.log.info("Checking entity.");
                         for (Protection prot : Protections.instance.protections.values()) {
                             if (prot.protectedEntities.contains(entity.getClass())) {
                                 res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ)));
