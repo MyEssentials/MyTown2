@@ -35,18 +35,19 @@ public class QuarryPlusProtection extends Protection {
     @Override
     public boolean checkTileEntity(TileEntity te) {
         if (clsQuarry.isAssignableFrom(te.getClass())) {
+
             int xMin, xMax, zMin, zMax;
             xMin = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("xMin"));
             xMax = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("xMax"));
             zMin = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("zMin"));
             zMax = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("zMax"));
-
+            MyTown.instance.log.info("Got quarry! With box: " + xMin + ", " + zMin + " : " + xMax + ", " + zMax);
             List<ChunkPos> chunks = Utils.getChunksInBox(xMin, zMin, xMax, zMax);
 
             for (ChunkPos chunk : chunks) {
                 Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
                 if (town != null) {
-                    if ((Boolean) town.getValue(FlagType.modifyBlocks) && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
+                    if (!(Boolean) town.getValue(FlagType.modifyBlocks) && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
                         town.notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
                         return true;
                     }
