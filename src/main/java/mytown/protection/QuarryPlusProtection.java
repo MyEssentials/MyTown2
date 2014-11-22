@@ -41,7 +41,6 @@ public class QuarryPlusProtection extends Protection {
             xMax = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("xMax"));
             zMin = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("zMin"));
             zMax = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("zMax"));
-            MyTown.instance.log.info("Got quarry! With box: " + xMin + ", " + zMin + " : " + xMax + ", " + zMax);
             List<ChunkPos> chunks = Utils.getChunksInBox(xMin, zMin, xMax, zMax);
 
             for (ChunkPos chunk : chunks) {
