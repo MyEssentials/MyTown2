@@ -26,6 +26,7 @@ public class BotaniaProtection extends Protection {
 
     private Class<? extends Item> clsTerraPick;
     private Class<? extends Item> clsShardLaputa;
+    private Class<? extends Item> clsTerraFirmaRod;
 
     @SuppressWarnings("unchecked")
     public BotaniaProtection() {
@@ -33,6 +34,7 @@ public class BotaniaProtection extends Protection {
         try {
             clsTerraPick = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.equipment.tool.ItemTerraPick");
             clsShardLaputa = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.ItemLaputaShard");
+            clsTerraFirmaRod = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.ItemTerraformRod");
         } catch (Exception e) {
             MyTown.instance.log.error("Failed to load Botania classes!");
         }
@@ -88,6 +90,18 @@ public class BotaniaProtection extends Protection {
                 Town town = Utils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
                 if (town != null) {
                     if (!town.checkPermission(res, FlagType.modifyBlocks)) {
+                        res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
+                        return true;
+                    }
+                }
+            }
+        } else if(clsTerraFirmaRod.isAssignableFrom(itemStack.getItem().getClass())) {
+            int range = 16;
+            List<ChunkPos> chunks = Utils.getChunksInBox((int)res.getPlayer().posX - range, (int)res.getPlayer().posZ - range, (int)res.getPlayer().posX + range, (int)res.getPlayer().posZ + range);
+            for(ChunkPos chunk : chunks) {
+                Town town = Utils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
+                if(town != null) {
+                    if(!town.checkPermission(res, FlagType.modifyBlocks)) {
                         res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
                         return true;
                     }

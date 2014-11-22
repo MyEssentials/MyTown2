@@ -468,7 +468,8 @@ public class Protections {
         if (ev.entityPlayer.worldObj.isRemote)
             return;
 
-        int x = ev.x, y = ev.y, z = ev.z;
+
+
 
         /*
         // TODO: Maybe revise it
@@ -490,6 +491,14 @@ public class Protections {
         }
         // Use this to find position if a mod is using fake players
         ChunkCoordinates playerPos = ev.entityPlayer.getPlayerCoordinates();
+
+        int x = ev.x, y = ev.y, z = ev.z;
+        if(ev.world.getBlock(x, y, z) == Blocks.air) {
+            x = playerPos.posX;
+            y = playerPos.posY;
+            z = playerPos.posZ;
+            MyTown.instance.log.info("Position changed to : " + x + ", " + y + ", " + z);
+        }
 
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
 
