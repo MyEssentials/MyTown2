@@ -4,10 +4,12 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
 import mytown.util.BlockPos;
 import mytown.util.Utils;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityMinecartTNT;
@@ -94,11 +96,39 @@ public class VanillaProtection extends Protection {
     @Override
     public boolean checkEntity(Entity entity) {
         // This is first since I don't want any premature return statements
-        if (super.checkEntity(entity))
-            return true;
+        Town town = Utils.getTownAtPosition(entity.dimension, (int) entity.posX >> 4, (int) entity.posZ >> 4);
+        if (town == null) {
 
+            //Wild explosives
+            if (explosiveBlocks.contains(entity.getClass())) {
+                //MyTown.instance.log.info("Checking entity with explosives.");
+                if (!(Boolean) Wild.getInstance().getFlag(FlagType.explosions).getValue()) {
+                    //Temporary
+                    if (entity instanceof EntityWitherSkull)
+                        return false;
 
-        // Town only checks here
+                    return true;
+                }
+            }
+        } else {
+            String value = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
+            if (value.equals("none")) {
+                if (entity instanceof EntityLivingBase) {
+                    return true;
+                }
+            } else if (value.equals("hostiles")) {
+                if (hostileEntities.contains(entity.getClass())) {
+                    return true;
+                }
+            }
+
+            boolean explosionValue = (Boolean) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.explosions);
+            if (!explosionValue) {
+                if (explosiveBlocks.contains(entity.getClass())) {
+                    return true;
+                }
+            }
+        }
 
         return false;
     }
@@ -246,6 +276,10 @@ public class VanillaProtection extends Protection {
 
     /* ---- EventHandlers ---- */
 
+    @Override
+    public boolean hasToCheckEntity(Entity entity) {
+        return true;
+    }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerOpenContainer(PlayerOpenContainerEvent ev) {

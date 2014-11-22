@@ -93,41 +93,6 @@ public abstract class Protection {
      */
     @SuppressWarnings("unchecked")
     public boolean checkEntity(Entity entity) {
-        Town town = Utils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-        if (town == null) {
-
-            //Wild explosives
-            if (explosiveBlocks.contains(entity.getClass())) {
-                //MyTown.instance.log.info("Checking entity with explosives.");
-                if (!(Boolean) Wild.getInstance().getFlag(FlagType.explosions).getValue()) {
-                    //Temporary
-                    if (entity instanceof EntityWitherSkull)
-                        return false;
-
-                    return true;
-                }
-            }
-        } else {
-            String value = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
-            if (value.equals("none")) {
-                if (entity instanceof EntityLivingBase) {
-                    return true;
-                }
-            } else if (value.equals("hostiles")) {
-                if (hostileEntities.contains(entity.getClass())) {
-                    return true;
-                }
-            }
-
-            boolean explosionValue = (Boolean) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.explosions);
-            if (!explosionValue) {
-                if (explosiveBlocks.contains(entity.getClass())) {
-                    return true;
-                }
-            }
-        }
-
-
         return false;
     }
 
