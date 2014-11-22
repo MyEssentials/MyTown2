@@ -7,11 +7,15 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
+import mytown.util.Formatter;
 import mytown.util.Utils;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -27,6 +31,7 @@ public class BotaniaProtection extends Protection {
     private Class<? extends Item> clsTerraPick;
     private Class<? extends Item> clsShardLaputa;
     private Class<? extends Item> clsTerraFirmaRod;
+    private Class<? extends Item> clsHellsRod;
 
     @SuppressWarnings("unchecked")
     public BotaniaProtection() {
@@ -35,6 +40,7 @@ public class BotaniaProtection extends Protection {
             clsTerraPick = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.equipment.tool.ItemTerraPick");
             clsShardLaputa = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.ItemLaputaShard");
             clsTerraFirmaRod = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.ItemTerraformRod");
+            clsHellsRod = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.ItemFireRod");
         } catch (Exception e) {
             MyTown.instance.log.error("Failed to load Botania classes!");
         }
@@ -80,6 +86,7 @@ public class BotaniaProtection extends Protection {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
         if(clsShardLaputa.isAssignableFrom(itemStack.getItem().getClass())) {
@@ -90,7 +97,7 @@ public class BotaniaProtection extends Protection {
                 Town town = Utils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
                 if (town != null) {
                     if (!town.checkPermission(res, FlagType.modifyBlocks)) {
-                        res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
+                        res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(town.getMayor()));
                         return true;
                     }
                 }
@@ -102,8 +109,28 @@ public class BotaniaProtection extends Protection {
                 Town town = Utils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
                 if(town != null) {
                     if(!town.checkPermission(res, FlagType.modifyBlocks)) {
-                        res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
+                        res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(town.getMayor()));
                         return true;
+                    }
+                }
+            }
+        } else if(clsHellsRod.isAssignableFrom(itemStack.getItem().getClass())) {
+            int radius = 5;
+            float posX = bp.x + 0.5F, posY = bp.y + 1.0F, posZ = bp.z + 0.5F;
+            AxisAlignedBB boundingBox = AxisAlignedBB.getBoundingBox(posX, posY, posZ, posX, posY, posZ).expand(radius, radius, radius);
+            List<EntityLivingBase> entities = res.getPlayer().getEntityWorld().getEntitiesWithinAABB(EntityLivingBase.class, boundingBox);
+            for(EntityLivingBase entity : entities) {
+                MyTown.instance.log.info("Got entity: " + entity.toString());
+                Town town = Utils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
+                if(town != null) {
+                    if (!town.checkPermission(res, FlagType.attackEntities, entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ)) {
+                        MyTown.instance.log.info("Checking entity.");
+                        for (Protection prot : Protections.instance.protections.values()) {
+                            if (prot.protectedEntities.contains(entity.getClass())) {
+                                res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ)));
+                                return true;
+                            }
+                        }
                     }
                 }
             }
