@@ -587,8 +587,11 @@ public class Protections {
                 return;
             }
 
-            if (ev.block instanceof ITileEntityProvider)
-                removeFromWhitelist(((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata).getClass(), ev.world.provider.dimensionId, ev.x, ev.y, ev.z, town);
+            if (ev.block instanceof ITileEntityProvider) {
+                TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata);
+                if(te != null)
+                    removeFromWhitelist(te.getClass(), ev.world.provider.dimensionId, ev.x, ev.y, ev.z, town);
+            }
         }
     }
 

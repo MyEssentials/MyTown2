@@ -334,13 +334,16 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.plot.add.owner",
             parentName = "mytown.cmd.everyone.plot.add",
             completionKeys = {"residentCompletion"})
-    public static void plotAddOwnerCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+    public static void plotAddOwnerCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
 
         Town town = getTownFromResident(res);
+        if(!res.hasTown(town))
+            throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", res.getPlayerName(), town.getName());
+
         if (!town.canResidentMakePlot(target)) {
             throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
         }
@@ -358,7 +361,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.plot.add.member",
             parentName = "mytown.cmd.everyone.plot.add",
             completionKeys = {"residentCompletion"})
-    public static void plotAddMemberCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+    public static void plotAddMemberCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
         Resident res = getDatasource().getOrMakeResident(sender);
