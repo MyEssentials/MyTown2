@@ -39,7 +39,7 @@ public class BotaniaProtection extends Protection {
         try {
             clsTerraPick = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.equipment.tool.ItemTerraPick");
             clsShardLaputa = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.ItemLaputaShard");
-            clsTerraFirmaRod = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.ItemTerraformRod");
+            clsTerraFirmaRod = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.rod.ItemTerraformRod");
             clsHellsRod = (Class<? extends Item>) Class.forName("vazkii.botania.common.item.ItemFireRod");
         } catch (Exception e) {
             MyTown.instance.log.error("Failed to load Botania classes!");
