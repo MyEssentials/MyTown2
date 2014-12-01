@@ -34,7 +34,7 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
 
         if(town.isPointInTown(player.dimension, (int)player.posX, (int)player.posZ))
-            throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown"));
+            throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()));
 
         town.getSpawn().setDim(player.dimension).setPosition((float) player.posX, (float) player.posY, (float) player.posZ).setRotation(player.cameraYaw, player.cameraPitch);
 
