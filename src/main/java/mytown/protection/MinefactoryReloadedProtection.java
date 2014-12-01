@@ -82,7 +82,7 @@ public class MinefactoryReloadedProtection extends Protection {
                 Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, pos.getX(), pos.getZ());
                 if (town != null) {
                     //DEV
-                    MyTown.instance.log.info("Found town for mfr protection: " + town.getName());
+                    //MyTown.instance.log.info("Found town for mfr protection: " + town.getName());
                     boolean breakFlag = (Boolean) town.getValue(FlagType.modifyBlocks);
                     if (!breakFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
                         town.notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
