@@ -66,9 +66,6 @@ public class Protections {
 
     /**
      * Adds a protection with the specified mod id.
-     *
-     * @param prot
-     * @param modid
      */
     public void addProtection(Protection prot, String modid) {
         protections.put(modid, prot);
@@ -78,105 +75,6 @@ public class Protections {
         if (prot.isHandlingEvents) {
             MinecraftForge.EVENT_BUS.register(prot);
         }
-    }
-
-    /**
-     * Adds to the whitelist of the specified town. Used when placing blocks.
-     *
-     * @param te
-     * @param dim
-     * @param x
-     * @param y
-     * @param z
-     * @param town
-     */
-    private void addToBlockWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for (Protection prot : protections.values()) {
-            if (prot.trackedTileEntities.contains(te))
-                for (FlagType flagType : prot.getFlagTypeForTile(te)) {
-                    if (!town.hasBlockWhitelist(dim, x, y, z, flagType)) {
-                        BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, flagType);
-                        DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
-                    }
-                }
-        }
-    }
-
-    /**
-     * Removes from the whitelist. Used when breaking blocks.
-     *
-     * @param te
-     * @param dim
-     * @param x
-     * @param y
-     * @param z
-     * @param town
-     */
-    private void removeFromWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for (Protection prot : protections.values()) {
-            if (prot.trackedTileEntities.contains(te))
-                for (FlagType flagType : prot.getFlagTypeForTile(te)) {
-                    BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
-                    if (bw != null) {
-                        bw.delete();
-                    }
-                }
-        }
-    }
-
-    public List<FlagType> getFlagTypesForTile(TileEntity te) {
-        List<FlagType> list = new ArrayList<FlagType>();
-        for (Protection prot : protections.values())
-            if (prot.hasToCheckTileEntity(te))
-                list.addAll(prot.getFlagTypeForTile(te.getClass()));
-        return list;
-    }
-
-    public boolean checkTileEntity(TileEntity te) {
-        for (Protection prot : protections.values())
-            if (prot.checkTileEntity(te))
-                return true;
-        return false;
-    }
-
-    public boolean checkItemUsage(ItemStack stack, Resident res, BlockPos bp) {
-        for (Protection prot : protections.values())
-            if (prot.checkItemUsage(stack, res, bp))
-                return true;
-        return false;
-    }
-
-    public boolean checkActivatedBlocks(Block block) {
-        for (Protection prot : protections.values()) {
-            if (prot.activatedBlocks.contains(block))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean checkIsEntityHostile(Class<? extends Entity> ent) {
-        for (Protection prot : protections.values()) {
-            if (prot.hostileEntities.contains(ent)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isBlockWhitelistValid(BlockWhitelist bw) {
-        // TODO: Maybe make this better
-        // Delete if the town is gone
-        if (Utils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
-            bw.delete();
-
-        if (bw.getFlagType() == FlagType.activateBlocks && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z)))
-            return false;
-        if ((bw.getFlagType() == FlagType.modifyBlocks || bw.getFlagType() == FlagType.modifyBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems || bw.getFlagType() == FlagType.pumps)) {
-            TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(bw.x, bw.y, bw.z);
-            if (te == null) return false;
-            return getFlagTypesForTile(te).contains(bw.getFlagType());
-        }
-        return true;
     }
 
 
@@ -212,7 +110,7 @@ public class Protections {
 
             for (Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
                 for (BlockWhitelist bw : town.getWhitelists()) {
-                    if (!isBlockWhitelistValid(bw)) {
+                    if (!ProtectionUtils.isBlockWhitelistValid(bw)) {
                         bw.delete();
                     }
                 }
@@ -395,7 +293,7 @@ public class Protections {
                 TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage());
                 if (te != null) {
                     Class<? extends TileEntity> clsTe = te.getClass();
-                    addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
+                    ProtectionUtils.addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
                 }
             }
         }
@@ -441,7 +339,7 @@ public class Protections {
                 TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.itemInHand.getItemDamage());
                 if (te != null) {
                     Class<? extends TileEntity> clsTe = te.getClass();
-                    addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
+                    ProtectionUtils.addToBlockWhitelist(clsTe, ev.world.provider.dimensionId, ev.x, ev.y, ev.z, tblock.getTown());
                 }
             }
         }
@@ -547,7 +445,7 @@ public class Protections {
                 // If player is trying to "activate" block
             } else {
                 if (tblock == null) {
-                    if (checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
+                    if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
                         if (!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
                             res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
                             ev.setCanceled(true);
@@ -558,7 +456,7 @@ public class Protections {
                         return;
 
                     if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                        if (checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
+                        if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
                             res.protectionDenial(FlagType.activateBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z)));
                             ev.setCanceled(true);
                         }
@@ -590,30 +488,10 @@ public class Protections {
             if (ev.block instanceof ITileEntityProvider) {
                 TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata);
                 if(te != null)
-                    removeFromWhitelist(te.getClass(), ev.world.provider.dimensionId, ev.x, ev.y, ev.z, town);
+                    ProtectionUtils.removeFromWhitelist(te.getClass(), ev.world.provider.dimensionId, ev.x, ev.y, ev.z, town);
             }
         }
     }
-
-
-
-
-
-    /*
-    For now checking in player interact event, and autonomous activator-like blocks will be checked somewhere else
-
-    @SuppressWarnings("unchecked")
-    @SubscribeEvent
-    public void onItemUse(PlayerUseItemEvent.Start ev) {
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-        for(Protection protection : protections.values()) {
-            if(protection.checkItemUsage(ev.item, res)) {
-                ev.setCanceled(true);
-            }
-        }
-    }
-    */
-
 
     private int counter = 0;
 
@@ -636,16 +514,6 @@ public class Protections {
                 }
             }
         }
-    }
-
-    @SubscribeEvent
-    public void onTownEnterRange(TownEvent.TownEnterInRangeEvent ev) {
-        //ev.resident.sendMessage("You have entered a town's range -_-' ");
-    }
-
-    @SubscribeEvent
-    public void onTownEnter(TownEvent.TownEnterEvent ev) {
-        //ev.resident.sendMessage("You have entered a town o_o ");
     }
 
     /*
