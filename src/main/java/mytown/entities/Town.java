@@ -554,8 +554,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * @param z
      * @return
      */
-    public boolean isPointInTown(int dim, float x, float z) {
-        return isChunkInTown(dim, (int) x >> 4, (int) z >> 4);
+    public boolean isPointInTown(int dim, int x, int z) {
+        return isChunkInTown(dim, x >> 4, z >> 4);
     }
 
     /**
@@ -641,7 +641,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
             if (isPointInTown(dim, x, z)) {
                 list.add(getMayor());
             } else {
-                return null;
+                return list;
             }
         } else {
             for (Resident res : plot.getOwners()) {
