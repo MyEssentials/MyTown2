@@ -89,8 +89,9 @@ public class BuildCraftFactoryProtection extends Protection {
                 }
             }
         } else if (clsTilePump.isAssignableFrom(te.getClass())) {
+            /*
             try {
-                Method method = clsTilePump.getMethod("getNextIndexToPump", Boolean.class);
+                Method method = clsTilePump.getDeclaredMethod("getNextIndexToPump", Boolean.class);
                 method.setAccessible(true);
                 // Invoke method: getting the next block to pump, but not removing it
                 Object blockIndex = method.invoke(te, false);
@@ -108,8 +109,10 @@ public class BuildCraftFactoryProtection extends Protection {
                     }
                 }
             } catch (Exception e) {
+
                 e.printStackTrace();
             }
+            */
         }
         return false;
     }
