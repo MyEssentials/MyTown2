@@ -497,7 +497,7 @@ public class Protections {
             x = playerPos.posX;
             y = playerPos.posY;
             z = playerPos.posZ;
-            MyTown.instance.log.info("Position changed to : " + x + ", " + y + ", " + z);
+            //MyTown.instance.log.info("Position changed to : " + x + ", " + y + ", " + z);
         }
 
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
