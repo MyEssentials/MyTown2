@@ -85,7 +85,7 @@ public class ThermalExpansionProtection extends Protection {
                             }
                         }
                     } else if (!Utils.isBlockWhitelisted(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.useItems)
-                            && Protections.instance.checkItemUsage(stack, null, new BlockPos(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().provider.dimensionId))) {
+                            && ProtectionUtils.checkItemUsage(stack, null, new BlockPos(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().provider.dimensionId))) {
                         return true;
                     }
                 }
