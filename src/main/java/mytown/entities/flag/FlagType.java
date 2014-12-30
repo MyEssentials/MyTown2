@@ -14,6 +14,8 @@ public enum FlagType {
     accessBlocks(Boolean.class, false, null, true, true, false, null, true),
     pickupItems(Boolean.class, true, null, false, true, false, null),
     explosions(Boolean.class, false, null, true, false, false, null),
+    pvp(Boolean.class, false, null, false, false, false, null),
+
     // Only the values in the array are allowed
     mobs(String.class, "all", new String[]{"all", "hostiles", "none"}, false, "all", false, null),
     attackEntities(Boolean.class, false, null, false, true, false, null),
@@ -30,7 +32,6 @@ public enum FlagType {
     private boolean townOnly;
     private Object defaultValue;
     private boolean isUsableForTowns;
-    // Temporary, till every flag is whitelistable
     private boolean isWhitelistable;
     private String modRequired;
     private boolean isWildPerm;
