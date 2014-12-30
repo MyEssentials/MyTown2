@@ -224,16 +224,13 @@ public class Formatter {
     public static String formatOwnersToString(Collection<Resident> residentList) {
         String formattedList = null;
         for (Resident res : residentList) {
-            if (res != null) {
-                if (formattedList == null)
-                    formattedList = "§6Owners: " + res.getPlayerName();
-                else
-                    formattedList = ", " + res.getPlayerName();
-            } else {
-                formattedList = "§6Owners: SERVER ADMINS";
-                break;
-            }
+            if (formattedList == null)
+                formattedList = "§6Owners: " + res.getPlayerName();
+            else
+                formattedList = ", " + res.getPlayerName();
         }
+        if(formattedList == null)
+            formattedList = "§6Owners: SERVER ADMINS";
         return formattedList;
     }
 
