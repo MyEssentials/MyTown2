@@ -23,8 +23,6 @@ import mytown.protection.Protections;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
-import mytown.proxies.plugin.BukkitCompat;
-import mytown.proxies.plugin.PEXCompat;
 import mytown.util.Constants;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -67,13 +65,6 @@ public class MyTown {
 
         // Register ICrashCallable's
         FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());
-
-        if (ev.getSide() == Side.SERVER) {
-            isCauldron = MinecraftServer.getServer().getServerModName().contains("cauldron") || MinecraftServer.getServer().getServerModName().contains("mcpc");
-            if (isCauldron)
-                BukkitCompat.getInstance().loadPEX(ev.getSourceFile());
-            //MyTown.instance.log.info("Server is using cauldron or some implementation between forge and bukkit/spigot.");
-        }
     }
 
     @EventHandler
