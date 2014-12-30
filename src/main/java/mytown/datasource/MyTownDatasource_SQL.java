@@ -191,8 +191,17 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             while (rs.next()) {
                 Town town = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
                 if (town == null) {
+                    // Deleting row if town no longer exists.
                     log.error("Failed to load Block (%s, %s, %s) due to missing Town (%s)", rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), rs.getString("townName"));
-                    continue; // TODO Should I just return out?
+                    /*
+                    PreparedStatement deleteStatement = prepare("DELETE FROM Blocks WHERE dim=? AND x=? AND z=?", false);
+                    deleteStatement.setInt(1, rs.getInt("dim"));
+                    deleteStatement.setInt(2, rs.getInt("x"));
+                    deleteStatement.setInt(3, rs.getInt("z"));
+                    deleteStatement.executeUpdate();
+                    log.info("Block deleted.");
+                    */
+                    continue;
                 }
                 TownBlock block = new TownBlock(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), town);
                 MyTownUniverse.getInstance().addTownBlock(block);
@@ -214,8 +223,17 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             while (rs.next()) {
                 Town town = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
                 if (town == null) {
+                    // Deleting row if town no longer exists.
+
                     log.error("Failed to load Rank (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
-                    continue; // TODO Should I just return out?
+                    /*
+                    PreparedStatement deleteStatement = prepare("DELETE FROM Ranks WHERE name=? AND townName=?", false);
+                    deleteStatement.setString(1, rs.getString("name"));
+                    deleteStatement.setString(2, rs.getString("townName"));
+                    deleteStatement.executeUpdate();
+                    log.info("Rank deleted.");
+                    */
+                    continue;
                 }
 
                 Rank rank = new Rank(rs.getString("name"), town);
@@ -243,11 +261,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 Town t = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
                 if (t == null) {
                     log.error("Failed to load RankPermission due to missing Town %s!", rs.getString("townName"));
-                    return false;
+                    continue;
                 }
                 Rank rank = getRank(rs.getString("rank"), t);
                 if (rank == null) {
                     log.error("Failed to load RankPermission due to missing Rank %s!", rs.getString("rank"));
+                    continue;
                 }
                 rank.addPermission(rs.getString("node"));
             }
@@ -341,7 +360,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                             town.addFlag(flag);
                     } else {
                         log.error("Failed to load flag " + flagName + " because the town given was invalid!");
-                        return false;
                     }
                 } catch (IllegalArgumentException ex) {
                     log.error("Flag " + flagName + " does no longer exist... will be deleted shortly from the database.");
@@ -381,7 +399,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                             plot.addFlag(flag);
                     } else {
                         log.error("Failed to load flag " + flagName + " because the town given was invalid!");
-                        return false;
                     }
                 } catch (IllegalArgumentException ex) {
                     log.error("Flag " + flagName + " does no longer exist. Deleting from database.");
