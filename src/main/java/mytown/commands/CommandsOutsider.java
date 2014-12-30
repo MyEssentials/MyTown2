@@ -100,7 +100,7 @@ public class CommandsOutsider extends Commands {
         for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
             for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
                 if (Utils.getTownAtPosition(player.dimension, x, z) != null)
-                    throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose");
+                    throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", Config.distanceBetweenTowns);
             }
         }
 

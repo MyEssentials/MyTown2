@@ -50,8 +50,10 @@ mytown.cmd.config.save.stop=§aConfig saved
 mytown.cmd.err.newtown.nameinuse=§cTown name %s already in use!
 mytown.cmd.err.newtown.positionError=§cYou cannot make a new town on a claimed chunk.
 mytown.cmd.err.newtown.failed=§cThe town has failed to be created!
+mytown.cmd.err.newtown.tooClose=§cThe town is too close to another town. Please leave at least %s chunks in between each town.
 mytown.cmd.usage.newtown=§3/t new <townname>
 mytown.cmd.err.resident.maxTowns=§cYou cannot create/join any more towns, you have hit the maximum amount of towns you can be in.
+
 
 # /t invite
 mytown.cmd.usage.invite=§3/t invite <resident|accept|refuse> [town-name]

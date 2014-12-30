@@ -445,7 +445,7 @@ public class CommandsAssistant extends Commands {
         int[] dz = {0, 1, 0, -1};
 
         for (int i = 0; i < 4; i++)
-            if (getDatasource().hasBlock(dim, x + dx[i], z + dz[i], true, town))
+            if (getDatasource().hasBlock(dim, x + dx[i], z + dz[i], town))
                 return true;
         return false;
     }

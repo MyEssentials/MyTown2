@@ -687,22 +687,15 @@ public abstract class MyTownDatasource {
      * @param dim           The dimension to check in
      * @param x             The x coord to check at
      * @param z             The z coord to check at
-     * @param inChunkCoords true if x and z are in chunk coordinates, false otherwise
      * @return If the Block exists
      */
-    public final boolean hasBlock(int dim, int x, int z, boolean inChunkCoords, Town town) {
-        String key;
-        if (inChunkCoords) {
-            key = String.format(TownBlock.keyFormat, dim, x, z);
-        } else {
-            key = String.format(TownBlock.keyFormat, dim, x >> 4, z >> 4);
-        }
-
+    public final boolean hasBlock(int dim, int x, int z, Town town) {
+        String key = String.format(TownBlock.keyFormat, dim, x, z);
         TownBlock b = MyTownUniverse.getInstance().getTownBlock(key);
         if (town != null && b != null && b.getTown() == town)
             return true;
 
-        return hasBlock(dim, x, z);
+        return false;
     }
 
     /**
