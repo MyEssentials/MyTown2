@@ -7,6 +7,7 @@ import mytown.entities.Town;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
 import mytown.util.BlockPos;
+import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -180,92 +181,6 @@ public class VanillaProtection extends Protection {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
-        if (itemStack.getItem() instanceof ItemBucket) {
-            if (res != null) {
-                MovingObjectPosition pos = MyTownUtils.getMovingObjectPositionFromPlayer(res.getPlayer().worldObj, res.getPlayer(), false);
-                if (pos != null) {
-                    //TODO: Properly check for fluid pickup
-                    if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-                        int x = pos.blockX;
-                        int y = pos.blockY;
-                        int z = pos.blockZ;
-
-                        switch (pos.sideHit) {
-                            case 0:
-                                y--;
-                                break;
-                            case 1:
-                                y++;
-                                break;
-                            case 2:
-                                z--;
-                                break;
-                            case 3:
-                                z++;
-                                break;
-                            case 4:
-                                x--;
-                                break;
-                            case 5:
-                                x++;
-                                break;
-                        }
-
-                        Town town = MyTownUtils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
-                        if (town != null) {
-                            boolean itemUsage = (Boolean) town.getValueAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
-                            if (!itemUsage && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
-                                res.sendMessage(FlagType.useItems.getLocalizedProtectionDenial());
-                                return true;
-                            }
-                        }
-                    } else if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.MISS) {
-                        //MyTown.instance.log.info("It missed! Not checking!");
-                    }
-                }
-            } else {
-                int x = bp.x;
-                int y = bp.y;
-                int z = bp.z;
-
-                // TODO: Chenge to global protections instead of te only
-                switch (ThermalExpansionProtection.getFacing(DimensionManager.getWorld(bp.dim).getTileEntity(bp.x, bp.y, bp.z))) {
-                    case 0:
-                        y--;
-                        break;
-                    case 1:
-                        y++;
-                        break;
-                    case 2:
-                        z--;
-                        break;
-                    case 3:
-                        z++;
-                        break;
-                    case 4:
-                        x--;
-                        break;
-                    case 5:
-                        x++;
-                        break;
-                }
-
-                Town town = MyTownUtils.getTownAtPosition(bp.dim, x >> 4, z >> 4);
-                if (town != null) {
-                    boolean itemUsage = (Boolean) town.getValueAtCoords(bp.dim, x, y, z, FlagType.useItems);
-                    if (!itemUsage) {
-                        town.notifyEveryone(FlagType.useItems.getLocalizedTownNotification());
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     @Override
     public List<FlagType> getFlagTypeForTile(TileEntity te) {
         List<FlagType> list = new ArrayList<FlagType>();
@@ -293,6 +208,7 @@ public class VanillaProtection extends Protection {
             boolean itemFlag = (Boolean) town.getValueAtCoords(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ, FlagType.useItems);
             if (!itemFlag && !town.checkPermission(res, FlagType.useItems)) {
                 ev.setCanceled(true);
+                res.protectionDenial(FlagType.useItems.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)));
             }
         }
     }

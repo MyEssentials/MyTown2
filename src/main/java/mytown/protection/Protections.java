@@ -523,7 +523,7 @@ public class Protections {
                 if(!pvpValue) {
                     ev.setCanceled(true);
                     Resident res = DatasourceProxy.getDatasource().getOrMakeResident((EntityPlayer)ev.source.getSourceOfDamage());
-                    res.sendMessage(FlagType.pvp.getLocalizedProtectionDenial());
+                    res.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown().getOwnersAtPosition(ev.entityLiving.dimension, (int)ev.entityLiving.posX, (int)ev.entityLiving.posY, (int)ev.entityLiving.posZ)));
                 }
             }
         }
