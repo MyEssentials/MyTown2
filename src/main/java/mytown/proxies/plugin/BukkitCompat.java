@@ -1,7 +1,6 @@
 package mytown.proxies.plugin;
 
 import mytown.MyTown;
-import mytown.util.Utils;
 import org.bukkit.Bukkit;
 
 import java.io.File;

@@ -4,15 +4,13 @@ import com.esotericsoftware.reflectasm.FieldAccess;
 import com.esotericsoftware.reflectasm.MethodAccess;
 import mytown.MyTown;
 import mytown.datasource.MyTownUniverse;
-import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
 import mytown.util.ChunkPos;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.tileentity.TileEntity;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +67,7 @@ public class BuildCraftFactoryProtection extends Protection {
             int xMax = fAccessBox.getInt(box, fAccessBox.getIndex("xMax"));
             int zMax = fAccessBox.getInt(box, fAccessBox.getIndex("zMax"));
 
-            List<ChunkPos> chunks = Utils.getChunksInBox(xMin, zMin, xMax, zMax);
+            List<ChunkPos> chunks = MyTownUtils.getChunksInBox(xMin, zMin, xMax, zMax);
             //MyTown.instance.log.info("Got box: " + xMin + ", " + zMin + " : " + xMax + ", " + zMax);
             for (ChunkPos p : chunks) {
                 TownBlock block = MyTownUniverse.getInstance().getBlocksMap().get(String.format(TownBlock.keyFormat, te.getWorldObj().provider.dimensionId, p.getX(), p.getZ()));

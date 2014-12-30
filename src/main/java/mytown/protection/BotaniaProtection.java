@@ -1,6 +1,5 @@
 package mytown.protection;
 
-import com.esotericsoftware.reflectasm.FieldAccess;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mytown.MyTown;
 import mytown.entities.Resident;
@@ -11,7 +10,7 @@ import mytown.proxies.LocalizationProxy;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
 import mytown.util.Formatter;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,7 +18,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -68,7 +66,7 @@ public class BotaniaProtection extends Protection {
                         // DEV:
                         //MyTown.instance.log.info("Got range: " + range);
 
-                        List<Town> towns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, doX ? range : 0, doZ ? range : 0);
+                        List<Town> towns = MyTownUtils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, doX ? range : 0, doZ ? range : 0);
 
                         for (Town town : towns) {
                             boolean breakFlag = (Boolean) town.getValue(FlagType.modifyBlocks);
@@ -92,9 +90,9 @@ public class BotaniaProtection extends Protection {
         if(clsShardLaputa.isAssignableFrom(itemStack.getItem().getClass())) {
             int range = 14 + itemStack.getItemDamage();
             //MyTown.instance.log.info("Got range: " + range);
-            List<ChunkPos> chunks = Utils.getChunksInBox(bp.x - range, bp.z - range, bp.x + range, bp.z + range);
+            List<ChunkPos> chunks = MyTownUtils.getChunksInBox(bp.x - range, bp.z - range, bp.x + range, bp.z + range);
             for (ChunkPos chunk : chunks) {
-                Town town = Utils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
+                Town town = MyTownUtils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
                 if (town != null) {
                     if (!town.checkPermission(res, FlagType.modifyBlocks)) {
                         res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(town.getMayor()));
@@ -104,9 +102,9 @@ public class BotaniaProtection extends Protection {
             }
         } else if(clsTerraFirmaRod.isAssignableFrom(itemStack.getItem().getClass())) {
             int range = 16;
-            List<ChunkPos> chunks = Utils.getChunksInBox((int)res.getPlayer().posX - range, (int)res.getPlayer().posZ - range, (int)res.getPlayer().posX + range, (int)res.getPlayer().posZ + range);
+            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) res.getPlayer().posX - range, (int) res.getPlayer().posZ - range, (int) res.getPlayer().posX + range, (int) res.getPlayer().posZ + range);
             for(ChunkPos chunk : chunks) {
-                Town town = Utils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
+                Town town = MyTownUtils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
                 if(town != null) {
                     if(!town.checkPermission(res, FlagType.modifyBlocks)) {
                         res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(town.getMayor()));
@@ -121,7 +119,7 @@ public class BotaniaProtection extends Protection {
             List<EntityLivingBase> entities = res.getPlayer().getEntityWorld().getEntitiesWithinAABB(EntityLivingBase.class, boundingBox);
             for(EntityLivingBase entity : entities) {
                 //MyTown.instance.log.info("Got entity: " + entity.toString());
-                Town town = Utils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
+                Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) entity.posX >> 4, (int) entity.posZ >> 4);
                 if(town != null) {
                     if (!town.checkPermission(res, FlagType.attackEntities, entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ)) {
                         //MyTown.instance.log.info("Checking entity.");

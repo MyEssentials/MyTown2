@@ -3,11 +3,12 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
 import mytown.api.interfaces.IHasFlags;
+import mytown.core.Utils;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.plugin.BukkitCompat;
 import mytown.proxies.plugin.PEXCompat;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -73,9 +74,9 @@ public class Wild implements IHasFlags {
         if (getFlag(type).getValue() instanceof Boolean) {
             if (!(Boolean) getFlag(type).getValue()) {
                 if (MyTown.instance.isCauldron && BukkitCompat.getInstance().hasPEX())
-                    return PEXCompat.getInstance().checkPermission(res, type.getBypassPermission()) || Utils.isOp(res);
+                    return PEXCompat.getInstance().checkPermission(res, type.getBypassPermission()) || Utils.isOp(res.getPlayer());
                 else
-                    return Utils.isOp(res);
+                    return Utils.isOp(res.getPlayer());
             }
         }
         // TODO: Implement other types of flags

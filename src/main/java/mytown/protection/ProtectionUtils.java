@@ -6,7 +6,7 @@ import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.BlockPos;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -113,7 +113,7 @@ public class ProtectionUtils {
     public static boolean isBlockWhitelistValid(BlockWhitelist bw) {
         // TODO: Maybe make this better
         // Delete if the town is gone
-        if (Utils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
+        if (MyTownUtils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
             return false;
 
         if (bw.getFlagType() == FlagType.activateBlocks && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z)))

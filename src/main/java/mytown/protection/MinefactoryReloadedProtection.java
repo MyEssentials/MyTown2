@@ -10,7 +10,7 @@ import mytown.entities.flag.FlagType;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -77,9 +77,9 @@ public class MinefactoryReloadedProtection extends Protection {
             if (areaObj == null)
                 return false;
 
-            List<ChunkPos> chunkPos = Utils.getChunksInBox(fAccessArea.getInt(areaObj, fAccessArea.getIndex("xMin")), fAccessArea.getInt(areaObj, fAccessArea.getIndex("zMin")), fAccessArea.getInt(areaObj, fAccessArea.getIndex("xMax")), fAccessArea.getInt(areaObj, fAccessArea.getIndex("zMax")));
+            List<ChunkPos> chunkPos = MyTownUtils.getChunksInBox(fAccessArea.getInt(areaObj, fAccessArea.getIndex("xMin")), fAccessArea.getInt(areaObj, fAccessArea.getIndex("zMin")), fAccessArea.getInt(areaObj, fAccessArea.getIndex("xMax")), fAccessArea.getInt(areaObj, fAccessArea.getIndex("zMax")));
             for (ChunkPos pos : chunkPos) {
-                Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, pos.getX(), pos.getZ());
+                Town town = MyTownUtils.getTownAtPosition(te.getWorldObj().provider.dimensionId, pos.getX(), pos.getZ());
                 if (town != null) {
                     //DEV
                     //MyTown.instance.log.info("Found town for mfr protection: " + town.getName());
@@ -98,7 +98,7 @@ public class MinefactoryReloadedProtection extends Protection {
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
         if (itemStack.getItem() == safariNet || itemStack.getItem() == safariNetR || itemStack.getItem() == safariNetJ || itemStack.getItem() == portaSpawner) {
             MyTown.instance.log.info("Found safari net usage!");
-            Town town = Utils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
+            Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
             if (town != null) {
                 boolean entityFlag = (Boolean) town.getValueAtCoords(bp.dim, bp.x, bp.y, bp.z, FlagType.attackEntities);
                 if (!entityFlag && (res == null || !town.checkPermission(res, FlagType.attackEntities))) {

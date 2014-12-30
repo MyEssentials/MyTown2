@@ -5,7 +5,7 @@ import mytown.MyTown;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.util.ChunkPos;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
@@ -41,10 +41,10 @@ public class QuarryPlusProtection extends Protection {
             xMax = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("xMax"));
             zMin = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("zMin"));
             zMax = fAccessQuarry.getInt(te, fAccessQuarry.getIndex("zMax"));
-            List<ChunkPos> chunks = Utils.getChunksInBox(xMin, zMin, xMax, zMax);
+            List<ChunkPos> chunks = MyTownUtils.getChunksInBox(xMin, zMin, xMax, zMax);
 
             for (ChunkPos chunk : chunks) {
-                Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
+                Town town = MyTownUtils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
                 if (town != null) {
                     if (!(Boolean) town.getValue(FlagType.modifyBlocks) && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
                         town.notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());

@@ -7,7 +7,7 @@ import mytown.entities.Town;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
 import mytown.util.BlockPos;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
@@ -96,7 +96,7 @@ public class VanillaProtection extends Protection {
     @Override
     public boolean checkEntity(Entity entity) {
         // This is first since I don't want any premature return statements
-        Town town = Utils.getTownAtPosition(entity.dimension, (int) entity.posX >> 4, (int) entity.posZ >> 4);
+        Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) entity.posX >> 4, (int) entity.posZ >> 4);
         if (town == null) {
 
             //Wild explosives
@@ -137,7 +137,7 @@ public class VanillaProtection extends Protection {
     @Override
     public boolean checkTileEntity(TileEntity te) {
         if (te instanceof TileEntityPiston) {
-            Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
+            Town town = MyTownUtils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
             if (town != null) {
                 boolean placeFlag = (Boolean) town.getValueAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks);
                 if (!placeFlag) {
@@ -166,7 +166,7 @@ public class VanillaProtection extends Protection {
                         x++;
                         break;
                 }
-                town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
+                town = MyTownUtils.getTownAtPosition(te.getWorldObj().provider.dimensionId, x >> 4, z >> 4);
                 if (town != null) {
                     boolean placeFlag = (Boolean) town.getValueAtCoords(te.getWorldObj().provider.dimensionId, x, y, z, FlagType.modifyBlocks);
                     if (!placeFlag) {
@@ -185,7 +185,7 @@ public class VanillaProtection extends Protection {
     public boolean checkItemUsage(ItemStack itemStack, Resident res, BlockPos bp) {
         if (itemStack.getItem() instanceof ItemBucket) {
             if (res != null) {
-                MovingObjectPosition pos = Utils.getMovingObjectPositionFromPlayer(res.getPlayer().worldObj, res.getPlayer(), false);
+                MovingObjectPosition pos = MyTownUtils.getMovingObjectPositionFromPlayer(res.getPlayer().worldObj, res.getPlayer(), false);
                 if (pos != null) {
                     //TODO: Properly check for fluid pickup
                     if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
@@ -214,7 +214,7 @@ public class VanillaProtection extends Protection {
                                 break;
                         }
 
-                        Town town = Utils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
+                        Town town = MyTownUtils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
                         if (town != null) {
                             boolean itemUsage = (Boolean) town.getValueAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
                             if (!itemUsage && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
@@ -253,7 +253,7 @@ public class VanillaProtection extends Protection {
                         break;
                 }
 
-                Town town = Utils.getTownAtPosition(bp.dim, x >> 4, z >> 4);
+                Town town = MyTownUtils.getTownAtPosition(bp.dim, x >> 4, z >> 4);
                 if (town != null) {
                     boolean itemUsage = (Boolean) town.getValueAtCoords(bp.dim, x, y, z, FlagType.useItems);
                     if (!itemUsage) {
@@ -289,7 +289,7 @@ public class VanillaProtection extends Protection {
     @SubscribeEvent
     public void onBucketFill(FillBucketEvent ev) {
         Resident res = getDatasource().getOrMakeResident(ev.entityPlayer);
-        Town town = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
+        Town town = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
         if (town != null) {
             boolean itemFlag = (Boolean) town.getValueAtCoords(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ, FlagType.useItems);
             if (!itemFlag && !town.checkPermission(res, FlagType.useItems)) {

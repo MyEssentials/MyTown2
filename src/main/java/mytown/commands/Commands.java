@@ -14,7 +14,7 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -235,7 +235,7 @@ public abstract class Commands {
     }
 
     public static Plot getPlotAtPosition(int dim, int x, int y, int z) {
-        Town town = Utils.getTownAtPosition(dim, x >> 4, z >> 4);
+        Town town = MyTownUtils.getTownAtPosition(dim, x >> 4, z >> 4);
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.blockNotInPlot");
         Plot plot = town.getPlotAtCoords(dim, x, y, z);
@@ -278,7 +278,7 @@ public abstract class Commands {
                 //stack = addToInventory(player.inventory, stack);
                 if (!player.inventory.addItemStackToInventory(stack)) {
                     // Drop it on the ground if it fails to add to the inventory
-                    Utils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, stack);
+                    MyTownUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, stack);
                 }
             }
 

@@ -4,7 +4,6 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import mytown.MyTown;
-import mytown.api.events.TownEvent;
 import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
@@ -13,8 +12,7 @@ import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.BlockPos;
 import mytown.util.Formatter;
-import mytown.util.Utils;
-import net.minecraft.block.Block;
+import mytown.util.MyTownUtils;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
@@ -126,7 +123,7 @@ public class Protections {
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
             // Player check, every tick
-            Town town = Utils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
+            Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) entity.posX >> 4, (int) entity.posZ >> 4);
 
             if (entity instanceof EntityPlayer) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
@@ -181,7 +178,7 @@ public class Protections {
                 if (prot.hasToCheckTileEntity(te)) {
                     // Checks go here
                     if ((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
-                        Utils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
+                        MyTownUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
                         //te.getBlockType().breakBlock(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, te.blockType, te.blockMetadata);
                         te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
                         checkedTileEntities.put(te, true);
@@ -264,7 +261,7 @@ public class Protections {
                 ev.setCanceled(true);
             } else {
                 // If it has permission, then check nearby
-                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
+                List<Town> nearbyTowns = MyTownUtils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
                     if (!t.checkPermission(res, FlagType.modifyBlocks)) {
                         res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
@@ -280,7 +277,7 @@ public class Protections {
                 return;
             } else {
                 // If it has permission, then check nearby
-                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
+                List<Town> nearbyTowns = MyTownUtils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
                     if (tblock.getTown() != t && !t.checkPermission(res, FlagType.modifyBlocks)) {
                         res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
@@ -310,7 +307,7 @@ public class Protections {
                 ev.setCanceled(true);
             } else {
                 // If it has permission, then check nearby
-                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
+                List<Town> nearbyTowns = MyTownUtils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
                     if (!t.checkPermission(res, FlagType.modifyBlocks)) {
                         res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
@@ -326,7 +323,7 @@ public class Protections {
                 return;
             } else {
                 // If it has permission, then check nearby
-                List<Town> nearbyTowns = Utils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
+                List<Town> nearbyTowns = MyTownUtils.getTownsInRange(ev.world.provider.dimensionId, ev.x, ev.z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
                     if (!t.checkPermission(res, FlagType.modifyBlocks)) {
                         res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));

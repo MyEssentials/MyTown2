@@ -180,7 +180,7 @@ mytown.adm.cmd.usage.perm.wild.set=§3/ta perm wild set <flag> <value>
 mytown.adm.cmd.usage.claim=§3/ta claim <townName>
 
 # /ta unclaim
-mytown.adm.cmd.usage.unclaim=§3/ta unclaim <townName>
+mytown.adm.cmd.usage.unclaim=§3/ta unclaim
 
 # Notifications
 mytown.notification.town.created=§aTown %s created!

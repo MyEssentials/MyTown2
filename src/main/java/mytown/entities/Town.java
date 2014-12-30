@@ -4,13 +4,12 @@ import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
 import mytown.api.interfaces.*;
 import mytown.config.Config;
+import mytown.core.Utils;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.LocalizationProxy;
-import mytown.proxies.plugin.BukkitCompat;
-import mytown.proxies.plugin.PEXCompat;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.*;
@@ -606,11 +605,11 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
                 //    return PEXCompat.getInstance().checkPermission(res, flagType.getBypassPermission()) || Utils.isOp(res);
                 //else
                     // Check, when PEX is not present, if player is OP
-                    return Utils.isOp(res);
+                    return Utils.isOp(res.getPlayer());
             }
         } else {
             if (!(Boolean) plot.getValue(flagType) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
-                return Utils.isOp(res);
+                return Utils.isOp(res.getPlayer());
         }
         return true;
     }
@@ -622,7 +621,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
         if (!(Boolean) getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
             //TODO: Check for permission
-            return Utils.isOp(res);
+            return Utils.isOp(res.getPlayer());
         }
         return true;
     }

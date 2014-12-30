@@ -7,7 +7,7 @@ import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.util.Formatter;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
@@ -99,7 +99,7 @@ public class CommandsOutsider extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
         for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
             for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
-                if (Utils.getTownAtPosition(player.dimension, x, z) != null)
+                if (MyTownUtils.getTownAtPosition(player.dimension, x, z) != null)
                     throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", Config.distanceBetweenTowns);
             }
         }
@@ -108,7 +108,7 @@ public class CommandsOutsider extends Commands {
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
 
-        if(!Utils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountMakeTown))
+        if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountMakeTown))
             throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, Config.costItemName);
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));

@@ -416,20 +416,16 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.unclaim",
             parentName = "mytown.adm.cmd")
     public static void unclaimCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.claim");
-
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(pl);
         TownBlock block = getBlockAtResident(res);
         Town town = block.getTown();
 
-        if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
-            getDatasource().deleteBlock(block);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
-        } else {
-            throw new MyTownCommandException("§cYou cannot delete the Block containing the spawn point!");
-        }
+        if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ()))
+            throw new MyTownCommandException("mytown.cmd.err.unclaim.spawnPoint");
+
+        getDatasource().deleteBlock(block);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
     }
 
     @CommandNode(

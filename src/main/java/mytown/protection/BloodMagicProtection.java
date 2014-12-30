@@ -7,7 +7,7 @@ import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.BlockPos;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -56,7 +56,7 @@ public class BloodMagicProtection extends Protection {
         //MyTown.instance.log.info("Got item: " + itemStack.getDisplayName());
         if (clsBoundPickaxe == itemStack.getItem().getClass()) {
             // Range is 11x11 around the player.
-            List<Town> townsNearby = Utils.getTownsInRange(bp.dim, bp.x, bp.z, 5, 5);
+            List<Town> townsNearby = MyTownUtils.getTownsInRange(bp.dim, bp.x, bp.z, 5, 5);
             for (Town town : townsNearby) {
                 boolean breakBlock = (Boolean) town.getValue(FlagType.modifyBlocks);
                 if (!breakBlock) {
@@ -75,7 +75,7 @@ public class BloodMagicProtection extends Protection {
 
             if (res != null) {
                 MovingObjectPosition pos;
-                pos = Utils.getMovingObjectPositionFromPlayer(res.getPlayer().getEntityWorld(), res.getPlayer(), false);
+                pos = MyTownUtils.getMovingObjectPositionFromPlayer(res.getPlayer().getEntityWorld(), res.getPlayer(), false);
 
                 // Only if it's a block is gonna be activated
                 if (pos.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
@@ -104,7 +104,7 @@ public class BloodMagicProtection extends Protection {
                             break;
                     }
 
-                    Town town = Utils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
+                    Town town = MyTownUtils.getTownAtPosition(res.getPlayer().dimension, x >> 4, z >> 4);
                     if (town != null) {
                         boolean itemUsage = (Boolean) town.getValueAtCoords(res.getPlayer().dimension, x, y, z, FlagType.useItems);
                         if (!itemUsage && !town.checkPermission(res, FlagType.useItems, res.getPlayer().dimension, x, y, z)) {
@@ -139,7 +139,7 @@ public class BloodMagicProtection extends Protection {
                         break;
                 }
 
-                Town town = Utils.getTownAtPosition(bp.dim, x >> 4, z >> 4);
+                Town town = MyTownUtils.getTownAtPosition(bp.dim, x >> 4, z >> 4);
                 if (town != null) {
                     boolean itemUsage = (Boolean) town.getValueAtCoords(bp.dim, x, y, z, FlagType.useItems);
                     if (!itemUsage) {
@@ -151,7 +151,7 @@ public class BloodMagicProtection extends Protection {
             }
         } else if (clsSigilMagnetism == itemStack.getItem().getClass()) {
             // Range to attract items is 5 from player
-            List<Town> nearbyTowns = Utils.getTownsInRange(bp.dim, bp.x, bp.z, 5, 5);
+            List<Town> nearbyTowns = MyTownUtils.getTownsInRange(bp.dim, bp.x, bp.z, 5, 5);
             for (Town town : nearbyTowns) {
                 boolean pickupFlag = (Boolean) town.getValue(FlagType.pickupItems);
                 if (!pickupFlag)

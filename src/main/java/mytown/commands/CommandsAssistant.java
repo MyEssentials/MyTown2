@@ -10,7 +10,7 @@ import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
@@ -59,7 +59,7 @@ public class CommandsAssistant extends Commands {
         if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
-        if(!Utils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountClaim))
+        if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountClaim))
             throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, Config.costItemName);
 
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
@@ -87,7 +87,7 @@ public class CommandsAssistant extends Commands {
 
         getDatasource().deleteBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
-        Utils.giveItemToPlayer(pl, Config.costItemName, Config.costAmountClaim);
+        MyTownUtils.giveItemToPlayer(pl, Config.costItemName, Config.costAmountClaim);
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.payReturn", Config.costAmountClaim, Config.costItemName));
     }
 
@@ -433,7 +433,7 @@ public class CommandsAssistant extends Commands {
 
         if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
-            Utils.giveItemToPlayer(player, Config.costItemName, Config.costAmountClaim * town.getBlocks().size());
+            MyTownUtils.giveItemToPlayer(player, Config.costItemName, Config.costAmountClaim * town.getBlocks().size());
             getDatasource().deleteTown(town);
         }
     }

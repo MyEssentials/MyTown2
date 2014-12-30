@@ -4,7 +4,7 @@ import mytown.MyTown;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.util.ChunkPos;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.tileentity.TileEntity;
 
 import java.lang.reflect.Field;
@@ -49,9 +49,9 @@ public class ExtraUtilitiesProtection extends Protection {
                 Field maxZ = clsTileEnderQuarry.getDeclaredField("max_z");
                 maxZ.setAccessible(true);
 
-                List<ChunkPos> chunks = Utils.getChunksInBox(minX.getInt(te), minZ.getInt(te), maxX.getInt(te), maxZ.getInt(te));
+                List<ChunkPos> chunks = MyTownUtils.getChunksInBox(minX.getInt(te), minZ.getInt(te), maxX.getInt(te), maxZ.getInt(te));
                 for (ChunkPos cp : chunks) {
-                    Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, cp.getX(), cp.getZ());
+                    Town town = MyTownUtils.getTownAtPosition(te.getWorldObj().provider.dimensionId, cp.getX(), cp.getZ());
                     if (town != null) {
                         if (!((Boolean) town.getValue(FlagType.modifyBlocks))) {
                             town.notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
@@ -69,7 +69,7 @@ public class ExtraUtilitiesProtection extends Protection {
                 Field chunkZ = clsTileEnderPump.getDeclaredField("chunk_z");
                 chunkZ.setAccessible(true);
 
-                Town town = Utils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunkX.getInt(te), chunkZ.getInt(te));
+                Town town = MyTownUtils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunkX.getInt(te), chunkZ.getInt(te));
                 if (town != null && !((Boolean) town.getValue(FlagType.pumps))) {
                     town.notifyEveryone(FlagType.pumps.getLocalizedTownNotification());
                     return true;

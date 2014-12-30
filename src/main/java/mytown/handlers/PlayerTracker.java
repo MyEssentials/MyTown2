@@ -17,7 +17,7 @@ import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.Formatter;
-import mytown.util.Utils;
+import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -77,8 +77,8 @@ public class PlayerTracker {
 
         res.checkLocation(ev.oldChunkX, ev.oldChunkZ, ev.newChunkX, ev.newChunkZ, ev.entity.dimension);
 
-        Town lastTown = Utils.getTownAtPosition(ev.entity.dimension, ev.oldChunkX, ev.oldChunkZ);
-        Town currTown = Utils.getTownAtPosition(ev.entity.dimension, ev.newChunkX, ev.newChunkZ);
+        Town lastTown = MyTownUtils.getTownAtPosition(ev.entity.dimension, ev.oldChunkX, ev.oldChunkZ);
+        Town currTown = MyTownUtils.getTownAtPosition(ev.entity.dimension, ev.newChunkX, ev.newChunkZ);
 
         if (currTown != null && (lastTown == null || currTown != lastTown))
             TownEvent.fire(new TownEvent.TownEnterEvent(currTown, res));
@@ -137,14 +137,14 @@ public class PlayerTracker {
                 }
                 System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
             } else if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
-                town = MyTownUniverse.getInstance().getTownsMap().get(Utils.getTownNameFromLore(ev.entityPlayer));
-                Town townAt = Utils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+                town = MyTownUniverse.getInstance().getTownsMap().get(MyTownUtils.getTownNameFromLore(ev.entityPlayer));
+                Town townAt = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
                 if (town == null || town != townAt) {
                     res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
                 } else {
                     // If town is found then create of delete the block whitelist
 
-                    FlagType flagType = FlagType.valueOf(Utils.getFlagNameFromLore(ev.entityPlayer));
+                    FlagType flagType = FlagType.valueOf(MyTownUtils.getFlagNameFromLore(ev.entityPlayer));
                     ev.entityPlayer.setCurrentItemOrArmor(0, null);
                     BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
                     if (bw == null) {
