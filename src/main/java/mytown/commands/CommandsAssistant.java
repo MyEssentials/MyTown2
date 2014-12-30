@@ -76,19 +76,19 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd")
     public static void unclaimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer pl = (EntityPlayer) sender;
-        Resident res = getDatasource().getOrMakeResident(pl);
+        Resident res = getDatasource().getOrMakeResident(sender);
         TownBlock block = getBlockAtResident(res);
-        Town town = block.getTown();
+        Town town = res.getSelectedTown();
 
-        if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
-            getDatasource().deleteBlock(block);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
-            Utils.giveItemToPlayer(pl, Config.costItemName, Config.costAmountClaim);
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.payReturn", Config.costAmountClaim, Config.costItemName));
-        } else {
-            throw new MyTownCommandException("§cYou cannot delete the Block containing the spawn point!");
-        }
+        if(town != block.getTown())
+            throw new MyTownCommandException("mytown.cmd.err.unclaim.notInTown");
+        if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ()))
+            throw new MyTownCommandException("mytown.cmd.err.unclaim.spawnPoint");
 
+        getDatasource().deleteBlock(block);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
+        Utils.giveItemToPlayer(pl, Config.costItemName, Config.costAmountClaim);
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.payReturn", Config.costAmountClaim, Config.costItemName));
     }
 
     @CommandNode(

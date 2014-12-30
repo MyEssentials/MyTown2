@@ -26,9 +26,9 @@ mytown.cmd.err.cost=§cYou need to have %s %ss in your inventory in order to pay
 
  # Flag Info
  mytown.flag.enter=§3Allows outsiders to enter.
- mytown.flag.activateBlock=§3Usage of doors/buttons/etc.
+ mytown.flag.activateBlocks=§3Usage of doors/buttons/etc.
  mytown.flag.accessBlocks=§3Access to blocks with GUIs.
- mytown.flag.breakBlocks=§3Allows modifying land by outsiders.
+ mytown.flag.modifyBlocks=§3Allows modifying land by outsiders.
  mytown.flag.pickupItems=§3Allows item pickup by outsiders.
  mytown.flag.explosions=§3Allows DA-BOOM-BOOM!
  mytown.flag.mobs=§3Controls mob spawning.
@@ -77,6 +77,10 @@ mytown.cmd.err.claim.notexist=§cThis block is not claimed by town %s!
 mytown.cmd.err.claim.far.notAllowed=§cYou can not claim chunks away from your town!
 mytown.cmd.err.town.maxBlocks=§cYou have already claimed all your chunks!
 
+# /t unclaim
+mytown.cmd.err.unclaim.notInTown=§cThe block you want to unclaim is not in the town you've selected!
+mytown.cmd.err.unclaim.spawnPoint=§cYou cannot delete the Block containing the spawn point!
+
 # /t info
 mytown.cmd.usage.info=§3/t info <townname>
 mytown.cmd.err.info.notpart=§cYou are not part of a town. §3Alternative usage: "/t info <townname>".
@@ -86,7 +90,7 @@ mytown.cmd.usage.res=§3/t res <resident>
 
 # /t select
 mytown.cmd.usage.select=§3/t select <townname>
-mytown.cmd.err.select.notpart=§cYou are not part of town %s. §3Please choose a town that you're a member of.
+mytown.cmd.err.select.notpart=§cYou are not part of town %s. Please choose a town that you're a member of.
 
 # /t ranks
 mytown.cmd.usage.ranks=§3/t ranks <add|remove|perm>

@@ -568,7 +568,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
                 if (i >> 4 != lastX || j >> 4 != lastZ) {
                     lastX = i >> 4;
                     lastZ = j >> 4;
-                    if (!getDatasource().hasBlock(selectionDim, lastX, lastZ, true, selectionTown)) {
+                    if (!getDatasource().hasBlock(selectionDim, lastX, lastZ, selectionTown)) {
                         //System.out.println("Outside town boundaries");
                         sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.outside"));
                         resetSelection();

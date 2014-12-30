@@ -401,7 +401,7 @@ public class CommandsAdmin extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
             throw new MyTownCommandException("mytown.cmd.err.claim.already");
-        if (CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
+        if (!CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new MyTownCommandException("mytown.cmd.err.farClaim.unimplemented");
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
