@@ -140,7 +140,7 @@ public class VanillaProtection extends Protection {
             Town town = MyTownUtils.getTownAtPosition(te.getWorldObj().provider.dimensionId, te.xCoord >> 4, te.zCoord >> 4);
             if (town != null) {
                 boolean placeFlag = (Boolean) town.getValueAtCoords(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks);
-                if (!placeFlag) {
+                if (!placeFlag && !town.hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
                     return true;
                 }
             } else {
@@ -269,8 +269,7 @@ public class VanillaProtection extends Protection {
     @Override
     public List<FlagType> getFlagTypeForTile(TileEntity te) {
         List<FlagType> list = new ArrayList<FlagType>();
-        list.add(FlagType.accessBlocks);
-        list.add(FlagType.activateBlocks);
+        list.add(FlagType.modifyBlocks);
         return list;
     }
 
