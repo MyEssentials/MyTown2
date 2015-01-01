@@ -49,7 +49,7 @@ public class Protections {
         List<Segment> segments = new ArrayList<Segment>();
         segments.add(new SegmentTileEntity(TileQuarry.class, getters, IBlockModifier.Shape.rectangular));
         protections = new ArrayList<Protection>();
-        protections.add(new Protection("BuildCraft|Factory", segments));
+        //protections.add(new Protection("BuildCraft|Factory", segments));
 
     }
 

@@ -28,7 +28,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
         out.name("segments").beginArray();
         for(Segment segment : value.segments) {
             out.beginObject();
-            out.name("class").value(segment.theClass.toString());
+            out.name("class").value(segment.theClass.getName());
             if(segment instanceof SegmentEntity) {
                 out.name("type").value("entity");
             } else if(segment instanceof SegmentTileEntity) {
@@ -82,7 +82,10 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             if(nextName.equals("segments")) {
                 in.beginArray();
                 while (in.hasNext()) {
+
                     in.beginObject();
+                    Segment segment = null;
+
                     String clazz = null, type = null;
 
                     nextName = in.nextName();
@@ -96,10 +99,8 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     if(type == null)
                         throw new IOException("The segment for class " + clazz + " does not have a type!");
 
-
-
                     if(type.equals("tileEntity")) {
-                        SegmentTileEntity segment;
+
                         List<Getter>[] getters = new ArrayList[4];
                         nextName = in.nextName();
                         if(nextName.equals("x1")) {
@@ -133,9 +134,11 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
 
 
                     in.endObject();
+                    if(segment == null)
+                        throw new IOException("Segment with class " + clazz + " was not properly initialized!");
+                    segments.add(segment);
                 }
                 in.endArray();
-
             }
             in.endObject();
         }

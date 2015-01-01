@@ -56,7 +56,7 @@ public class MyTown {
         ConfigProcessor.load(config, Config.class);
         LocalizationProxy.load();
 
-        JSONParser.start(ev.getModConfigurationDirectory().getAbsolutePath() + "/MyTown/protections");
+        JSONParser.folderPath = ev.getModConfigurationDirectory() + "/MyTown/protections";
         registerHandlers();
 
         // Add all the ModProxies
@@ -85,6 +85,8 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
+        mytown.new_protection.Protections.testingOnly_init();
+        JSONParser.start();
         registerCommands();
         Commands.populateCompletionMap();
         // This needs to be after registerCommands... might want to move both methods...
@@ -161,7 +163,7 @@ public class MyTown {
         FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
         //MinecraftForge.EVENT_BUS.register(Protections.instance);
         //FMLCommonHandler.instance().bus().register(Protections.instance);
-        mytown.new_protection.Protections.testingOnly_init();
+
         FMLCommonHandler.instance().bus().register(new mytown.new_protection.Protections());
     }
 

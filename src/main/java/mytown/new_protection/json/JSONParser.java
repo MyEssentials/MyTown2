@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mytown.MyTown;
 import mytown.new_protection.Protection;
+import mytown.new_protection.Protections;
 import mytown.new_protection.segment.Getter;
 import mytown.new_protection.segment.IBlockModifier;
 import mytown.new_protection.segment.Segment;
@@ -14,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,29 +25,39 @@ import java.util.List;
  */
 public class JSONParser {
 
-    private static String folderPath;
+    public static String folderPath;
     private static Gson gson;
     private static FileWriter writer;
     private static FileReader reader;
 
-    public static boolean start(String folderPath) {
+    public static boolean start() {
 
-        JSONParser.folderPath = folderPath;
         initJSON();
         File folder = new File(folderPath);
         if(!folder.exists()) {
             if(!folder.mkdir())
                 return false;
             createModel();
-        } else {
 
-            String[] extensions = new String[1];
-            extensions[0] = ".json";
-
-            for (File file : FileUtils.listFiles(folder, extensions, true)) {
-
-            }
         }
+
+        // DEV:
+        try {
+            reader = new FileReader(folderPath + "/BuildCraft-Factory.json");
+            Protections.protections.add(gson.fromJson(reader, Protection.class));
+            reader.close();
+        } catch (IOException ex) {
+            MyTown.instance.log.error("Encountered error when parsing a JSON protection.");
+            ex.printStackTrace();
+        }
+
+        String[] extensions = new String[1];
+        extensions[0] = ".json";
+
+        for (File file : FileUtils.listFiles(folder, extensions, true)) {
+
+        }
+
         return true;
     }
 
@@ -77,7 +89,7 @@ public class JSONParser {
 
         Protection protection = new Protection("BuildCraft|Factory", segments);
         try {
-            writer = new FileWriter(folderPath + "/BuildCraft|Factory.json");
+            writer = new FileWriter(folderPath + "/BuildCraft-Factory.json");
             gson.toJson(protection, Protection.class, writer);
             writer.close();
 
