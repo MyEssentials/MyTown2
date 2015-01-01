@@ -51,7 +51,6 @@ public class Protection {
                             }
                         }
                     }
-
                 } catch (Exception ex) {
                     MyTown.instance.log.error("Failed to check tile entity: " + te.toString());
                     MyTown.instance.log.error("Skipping...");
@@ -66,5 +65,8 @@ public class Protection {
     public static MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
+
+
+
 
 }

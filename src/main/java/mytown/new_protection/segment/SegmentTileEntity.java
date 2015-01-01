@@ -14,11 +14,12 @@ import java.util.List;
  */
 public class SegmentTileEntity extends Segment implements IBlockModifier {
 
-    private List<Getter>[] getters;
-    private Shape shape;
+    public List<Getter>[] getters;
+    public Shape shape;
 
-    public SegmentTileEntity(List<Getter>[] getters, Shape shape) {
+    public SegmentTileEntity(Class<?> theClass, List<Getter>[] getters, Shape shape) {
         // List 0 = x1, List 1 = y1 etc...
+        super(theClass);
         this.getters = getters;
         this.shape = shape;
     }
@@ -44,11 +45,11 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
                         fieldObject.setAccessible(true);
                         lastInstance = fieldObject.get(lastInstance);
                         break;
-                    case functionInt:
+                    case methodInt:
                         Method methodInt = lastInstance.getClass().getDeclaredMethod(getter.element);
                         methodInt.setAccessible(true);
                         return (Integer)methodInt.invoke(lastInstance);
-                    case functionObject:
+                    case methodObject:
                         Method methodObject = lastInstance.getClass().getDeclaredMethod(getter.element);
                         methodObject.setAccessible(true);
                         lastInstance = methodObject.invoke(lastInstance);
@@ -56,16 +57,16 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
                 }
             }
         } catch(NoSuchFieldException nfex) {
-            MyTown.instance.log.error("[Segment:"+ this.theClass.toString() +"]Encountered a problem when getting a field from " + lastInstance.toString());
+            MyTown.instance.log.error("[Segment:"+ this.theClass.toString() +"] Encountered a problem when getting a field from " + theObject.toString());
             nfex.printStackTrace();
         } catch (IllegalAccessException iaex) {
-            MyTown.instance.log.error("[Segment:"+ this.theClass.toString() +"]This type of thing should not happen.");
+            MyTown.instance.log.error("[Segment:"+ this.theClass.toString() +"] This type of thing should not happen.");
             iaex.printStackTrace();
         } catch (NoSuchMethodException nmex) {
-            MyTown.instance.log.error("[Segment:"+ this.theClass.toString() +"]Encountered a problem when getting a method from " + lastInstance.toString());
+            MyTown.instance.log.error("[Segment:"+ this.theClass.toString() +"] Encountered a problem when getting a method from " + theObject.toString());
             nmex.printStackTrace();
         } catch (InvocationTargetException itex) {
-            MyTown.instance.log.error("[Segment:"+ this.theClass.toString() +"]The returned object was not of the expected type!");
+            MyTown.instance.log.error("[Segment:"+ this.theClass.toString() +"] The returned object was not of the expected type!");
             itex.printStackTrace();
         }
         throw new RuntimeException("Failed to get integer for object " + theObject.toString());
@@ -82,27 +83,18 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
     }
 
     @Override
-    public int getY1(TileEntity te) {
+    public int getZ1(TileEntity te) {
         return getIntFromGetters(getters[1], te);
     }
 
     @Override
-    public int getZ1(TileEntity te) {
+    public int getX2(TileEntity te) {
         return getIntFromGetters(getters[2], te);
     }
 
-    @Override
-    public int getX2(TileEntity te) {
-        return getIntFromGetters(getters[3], te);
-    }
-
-    @Override
-    public int getY2(TileEntity te) {
-        return getIntFromGetters(getters[4], te);
-    }
 
     @Override
     public int getZ2(TileEntity te) {
-        return getIntFromGetters(getters[5], te);
+        return getIntFromGetters(getters[3], te);
     }
 }

@@ -5,4 +5,7 @@ package mytown.new_protection.segment;
  * Segment that protects against an Item
  */
 public class SegmentItem extends Segment {
+    public SegmentItem(Class<?> theClass) {
+        super(theClass);
+    }
 }

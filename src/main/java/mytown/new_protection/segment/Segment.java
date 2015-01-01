@@ -7,4 +7,7 @@ package mytown.new_protection.segment;
 public class Segment {
     public Class<?> theClass;
 
+    public Segment(Class<?> theClass) {
+        this.theClass = theClass;
+    }
 }

@@ -5,4 +5,7 @@ package mytown.new_protection.segment;
  * Segment that protects against an Entity
  */
 public class SegmentEntity extends Segment {
+    public SegmentEntity(Class<?> theClass) {
+        super(theClass);
+    }
 }

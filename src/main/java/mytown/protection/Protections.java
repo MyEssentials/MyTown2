@@ -51,7 +51,7 @@ public class Protections {
 
     public int maximalRange = 0;
 
-    public static Protections instance = new Protections();
+    public static Protections instance;// = new Protections();
 
     public Protections() {
 

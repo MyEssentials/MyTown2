@@ -7,10 +7,16 @@ package mytown.new_protection.segment;
 public class Getter {
     public String element;
     public GetterType type;
+
+    public Getter(String element, GetterType type) {
+        this.element = element;
+        this.type = type;
+    }
+
     public enum GetterType {
-        functionInt,
+        methodInt,
         fieldInt,
-        functionObject,
+        methodObject,
         fieldObject
     }
 }

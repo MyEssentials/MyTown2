@@ -5,7 +5,6 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.relauncher.Side;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.FlagsConfig;
@@ -19,13 +18,12 @@ import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.PlayerTracker;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
-import mytown.protection.Protections;
+import mytown.new_protection.json.JSONParser;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -58,9 +56,10 @@ public class MyTown {
         ConfigProcessor.load(config, Config.class);
         LocalizationProxy.load();
 
+        JSONParser.start(ev.getModConfigurationDirectory().getAbsolutePath() + "/MyTown/protections");
         registerHandlers();
 
-        // Add all the ModProxys
+        // Add all the ModProxies
         ModProxies.addProxies();
 
         // Register ICrashCallable's
@@ -160,8 +159,10 @@ public class MyTown {
         MinecraftForge.EVENT_BUS.register(playerTracker);
 
         FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
-        MinecraftForge.EVENT_BUS.register(Protections.instance);
-        FMLCommonHandler.instance().bus().register(Protections.instance);
+        //MinecraftForge.EVENT_BUS.register(Protections.instance);
+        //FMLCommonHandler.instance().bus().register(Protections.instance);
+        mytown.new_protection.Protections.testingOnly_init();
+        FMLCommonHandler.instance().bus().register(new mytown.new_protection.Protections());
     }
 
     // ////////////////////////////

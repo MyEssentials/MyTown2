@@ -11,11 +11,9 @@ public interface IBlockModifier {
     Shape getShape();
 
     int getX1(TileEntity te);
-    int getY1(TileEntity te);
     int getZ1(TileEntity te);
 
     int getX2(TileEntity te);
-    int getY2(TileEntity te);
     int getZ2(TileEntity te);
 
     public enum Shape {
