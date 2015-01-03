@@ -81,7 +81,6 @@ public abstract class Protection {
 
     /**
      * Checks the entity and returns whether or not the entity was destroyed
-     * If you override this, call super method.
      *
      * @param entity
      * @return

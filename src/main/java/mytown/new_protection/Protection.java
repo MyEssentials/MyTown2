@@ -2,15 +2,17 @@ package mytown.new_protection;
 
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.segment.Segment;
-import mytown.new_protection.segment.SegmentTileEntity;
+import mytown.new_protection.segment.*;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.ChunkPos;
 import mytown.util.MyTownUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,25 +22,39 @@ import java.util.List;
 public class Protection {
 
     public String modid;
-    public List<Segment> segments;
+    public List<SegmentTileEntity> segmentsTiles;
+    public List<SegmentEntity> segmentsEntities;
+    public List<SegmentItem> segmentsItems;
 
     public Protection(String modid, List<Segment> segments) {
-        this.segments = segments;
+
+        segmentsTiles = new ArrayList<SegmentTileEntity>();
+        segmentsEntities = new ArrayList<SegmentEntity>();
+        segmentsItems = new ArrayList<SegmentItem>();
+
+        for(Segment segment : segments) {
+            if(segment instanceof SegmentTileEntity)
+                segmentsTiles.add((SegmentTileEntity)segment);
+            else if(segment instanceof SegmentEntity)
+                segmentsEntities.add((SegmentEntity)segment);
+            else if(segment instanceof SegmentItem)
+                segmentsItems.add((SegmentItem)segment);
+        }
+
         this.modid = modid;
     }
 
     public boolean checkTileEntity(TileEntity te) {
-        for(Segment segment : segments) {
-            if(segment instanceof SegmentTileEntity && segment.theClass == te.getClass()) {
-                SegmentTileEntity segmentTE = (SegmentTileEntity)segment;
+        for(SegmentTileEntity segment : segmentsTiles) {
+            if(segment.theClass == te.getClass()) {
 
                 try {
-                    int x1 = segmentTE.getX1(te);
+                    int x1 = segment.getX1(te);
                     //int y1 = segmentTE.getY1(te);
-                    int z1 = segmentTE.getZ1(te);
-                    int x2 = segmentTE.getX2(te);
+                    int z1 = segment.getZ1(te);
+                    int x2 = segment.getX2(te);
                     //int y2 = segmentTE.getY2(te);
-                    int z2 = segmentTE.getZ2(te);
+                    int z2 = segment.getZ2(te);
 
                     List<ChunkPos> chunks = MyTownUtils.getChunksInBox(x1, z1, x2, z2);
                     for(ChunkPos chunk : chunks) {
@@ -57,6 +73,20 @@ public class Protection {
                     // TODO: Leave it completely unprotected or completely unusable?
                 }
                 return false;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkEntity(Entity entity) {
+        for(SegmentEntity segment : segmentsEntities) {
+            if(segment.theClass.isAssignableFrom(entity.getClass()) && segment.type == EntityType.hostile) {
+                Town town = MyTownUtils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+                if (town != null) {
+                    String mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
+                    if (mobsValue.equals("hostiles"))
+                        return true;
+                }
             }
         }
         return false;

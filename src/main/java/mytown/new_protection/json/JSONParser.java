@@ -38,24 +38,22 @@ public class JSONParser {
             if(!folder.mkdir())
                 return false;
             createModel();
-
-        }
-
-        // DEV:
-        try {
-            reader = new FileReader(folderPath + "/BuildCraft-Factory.json");
-            Protections.protections.add(gson.fromJson(reader, Protection.class));
-            reader.close();
-        } catch (IOException ex) {
-            MyTown.instance.log.error("Encountered error when parsing a JSON protection.");
-            ex.printStackTrace();
         }
 
         String[] extensions = new String[1];
-        extensions[0] = ".json";
+        extensions[0] = "json";
 
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
+            try {
+                reader = new FileReader(file);
+                MyTown.instance.log.info("Loading protection file: " + file.getName());
+                Protections.protections.add(gson.fromJson(reader, Protection.class));
+                reader.close();
 
+            } catch (IOException ex) {
+                MyTown.instance.log.error("Encountered error when parsing a JSON protection.");
+                ex.printStackTrace();
+            }
         }
 
         return true;

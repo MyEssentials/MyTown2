@@ -68,80 +68,75 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
     public Protection read(JsonReader in) throws IOException {
         String modid = null;
         List<Segment> segments = new ArrayList<Segment>();
-
-        if(in.peek().equals(JsonToken.BEGIN_OBJECT)) {
-            in.beginObject();
-            String nextName = in.nextName();
-            if(nextName.equals("modid")) {
-                modid = in.nextString();
-            }
-            if(modid == null)
-                throw new IOException("Modid does not exist!");
-
+        List<Getter>[] getters = new ArrayList[4];
+        EntityType entityType;
+        String nextName;
+        in.beginObject();
+        while(!in.peek().equals(JsonToken.END_OBJECT)) {
             nextName = in.nextName();
-            if(nextName.equals("segments")) {
+            if (nextName.equals("modid")) {
+                modid = in.nextString();
+                if (modid == null)
+                    throw new IOException("You haven't introduced a modid!");
+            } else if (nextName.equals("segments")) {
                 in.beginArray();
                 while (in.hasNext()) {
-
                     in.beginObject();
                     Segment segment = null;
-
                     String clazz = null, type = null;
-
-                    nextName = in.nextName();
-                    if(nextName.equals("class"))
-                        clazz = in.nextString();
-
-                    nextName = in.nextName();
-                    if(nextName.equals("type"))
-                        type = in.nextString();
-
-                    if(type == null)
-                        throw new IOException("The segment for class " + clazz + " does not have a type!");
-
-                    if(type.equals("tileEntity")) {
-
-                        List<Getter>[] getters = new ArrayList[4];
+                    while(!in.peek().equals(JsonToken.END_OBJECT)) {
                         nextName = in.nextName();
-                        if(nextName.equals("x1")) {
-                            getters[0] = parseGetters(in, clazz);
-                        }
+                        if (nextName.equals("class")) {
+                            clazz = in.nextString();
+                        } else if (nextName.equals("type")) {
+                            type = in.nextString();
+                            if (type == null)
+                                throw new IOException("The segment for class " + clazz + " does not have a type!");
+                            if(type.equals("tileEntity"))
+                                getters = new ArrayList[4];
+                        // If type is null and it gets here then an error is tossed
+                        } else if (type != null) {
+                            if(type.equals("tileEntity")) {
 
-                        nextName = in.nextName();
-                        if(nextName.equals("z1")) {
-                            getters[1] = parseGetters(in, clazz);
-                        }
+                                if (nextName.equals("x1")) {
+                                    getters[0] = parseGetters(in, clazz);
+                                } else if (nextName.equals("z1")) {
+                                    getters[1] = parseGetters(in, clazz);
+                                } else if (nextName.equals("x2")) {
+                                    getters[2] = parseGetters(in, clazz);
+                                } else if (nextName.equals("z2")) {
+                                    getters[3] = parseGetters(in, clazz);
+                                }
+                                if(checks(getters)) {
+                                    try {
+                                        segment = new SegmentTileEntity(Class.forName(clazz), getters, IBlockModifier.Shape.rectangular);
+                                    } catch (ClassNotFoundException ex) {
+                                        throw new IOException("Class " + clazz + " is invalid!");
+                                    }
+                                }
+                            } else if (type.equals("entity")) {
+                                if(nextName.equals("entityType")) {
+                                    entityType = EntityType.valueOf(in.nextString());
+                                    if(entityType == null)
+                                        throw new IOException("Invalid entity type for class " + clazz + ". Please choose hostile, passive or tracked.");
+                                }
+                            } else if (type.equals("item")) {
 
-                        nextName = in.nextName();
-                        if(nextName.equals("x2")) {
-                            getters[2] = parseGetters(in, clazz);
+                            }
+                        } else {
+                            throw new IOException("Protection for class " + clazz + " failed to load completely because the type is specified after the type-specific data. Please change the order!");
                         }
-
-                        nextName = in.nextName();
-                        if(nextName.equals("z2")) {
-                            getters[3] = parseGetters(in, clazz);
-                        }
-                        try {
-                            segment = new SegmentTileEntity(Class.forName(clazz), getters, IBlockModifier.Shape.rectangular);
-                        } catch (ClassNotFoundException ex) {
-                            throw new IOException("Class " + clazz + " is invalid!");
-                        }
-                    } else if(type.equals("entity")) {
-
-                    } else if(type.equals("item")) {
-
                     }
 
-
                     in.endObject();
-                    if(segment == null)
+                    if (segment == null)
                         throw new IOException("Segment with class " + clazz + " was not properly initialized!");
                     segments.add(segment);
                 }
                 in.endArray();
             }
-            in.endObject();
         }
+        in.endObject();
         return new Protection(modid, segments);
     }
 
@@ -166,11 +161,14 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             in.endObject();
             getters.add(new Getter(element, getterType));
         }
-
         in.endArray();
         return getters;
     }
 
-
-
+    private boolean checks(List<Getter>[] getters) {
+        if(getters[0] == null || getters[1] == null || getters[2] == null || getters[3] == null) {
+            return false;
+        }
+        return true;
+    }
 }
