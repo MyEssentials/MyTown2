@@ -1,5 +1,8 @@
 package mytown.new_protection.segment;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by AfterWind on 1/1/2015.
  * Segment that protects against an Entity
@@ -8,8 +11,8 @@ public class SegmentEntity extends Segment {
 
     public EntityType type;
 
-    public SegmentEntity(Class<?> theClass, EntityType type) {
-        super(theClass);
+    public SegmentEntity(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, EntityType type) {
+        super(theClass, extraGettersMap);
         this.type = type;
     }
 }

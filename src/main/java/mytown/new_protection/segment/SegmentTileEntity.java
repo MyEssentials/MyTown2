@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by AfterWind on 1/1/2015.
@@ -17,9 +18,9 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
     public List<Getter>[] getters;
     public Shape shape;
 
-    public SegmentTileEntity(Class<?> theClass, List<Getter>[] getters, Shape shape) {
+    public SegmentTileEntity(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, List<Getter>[] getters, Shape shape) {
         // List 0 = x1, List 1 = y1 etc...
-        super(theClass);
+        super(theClass, extraGettersMap);
         this.getters = getters;
         this.shape = shape;
     }

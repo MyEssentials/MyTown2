@@ -2,14 +2,17 @@ package mytown.new_protection;
 
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.segment.*;
 import mytown.proxies.DatasourceProxy;
+import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import java.util.List;
 public class Protection {
 
     public String modid;
+
     public List<SegmentTileEntity> segmentsTiles;
     public List<SegmentEntity> segmentsEntities;
     public List<SegmentItem> segmentsItems;
@@ -91,6 +95,18 @@ public class Protection {
         }
         return false;
     }
+
+    public boolean checkItemUsage(ItemStack item, Resident res, BlockPos bp) {
+
+        for(SegmentItem segment : segmentsItems) {
+            if(segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+
+            }
+        }
+
+        return false;
+    }
+
 
     public static MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
