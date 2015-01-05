@@ -14,11 +14,7 @@ public class Getter {
     }
 
     public enum GetterType {
-        methodInt,
-        fieldInt,
-        methodString,
-        fieldString,
-        methodObject,
-        fieldObject
+        method,
+        field
     }
 }

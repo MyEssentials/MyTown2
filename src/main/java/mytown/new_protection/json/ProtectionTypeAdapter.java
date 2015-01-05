@@ -6,9 +6,9 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import mytown.new_protection.Protection;
 import mytown.new_protection.segment.*;
+import mytown.new_protection.segment.enums.EntityType;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +50,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             break;
                     }
 
-                    for (Getter getter : ((SegmentTileEntity) segment).getters[i]) {
+                    for (Getter getter : ((SegmentTileEntity) segment).coordGetters[i]) {
                         out.beginObject();
                         out.name("element").value(getter.element);
                         out.name("type").value(getter.type.toString());

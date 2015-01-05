@@ -1,5 +1,7 @@
 package mytown.new_protection.segment;
 
+import mytown.new_protection.segment.enums.ItemType;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +10,11 @@ import java.util.Map;
  * Segment that protects against an Item
  */
 public class SegmentItem extends Segment {
-    public SegmentItem(Class<?> theClass, Map<String, List<Getter>> extraGettersMap) {
+
+    public ItemType type;
+
+    public SegmentItem(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, ItemType type) {
         super(theClass, extraGettersMap);
+        this.type = type;
     }
 }

@@ -7,6 +7,7 @@ import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.segment.*;
+import mytown.new_protection.segment.enums.EntityType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;

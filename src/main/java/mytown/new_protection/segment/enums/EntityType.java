@@ -1,4 +1,4 @@
-package mytown.new_protection.segment;
+package mytown.new_protection.segment.enums;
 
 /**
  * Created by AfterWind on 1/3/2015.

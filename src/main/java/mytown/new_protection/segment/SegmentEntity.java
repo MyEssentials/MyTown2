@@ -1,5 +1,7 @@
 package mytown.new_protection.segment;
 
+import mytown.new_protection.segment.enums.EntityType;
+
 import java.util.List;
 import java.util.Map;
 
