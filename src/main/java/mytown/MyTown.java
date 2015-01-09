@@ -85,7 +85,6 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
-        mytown.new_protection.Protections.testingOnly_init();
         JSONParser.start();
         registerCommands();
         Commands.populateCompletionMap();

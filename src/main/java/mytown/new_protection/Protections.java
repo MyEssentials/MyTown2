@@ -3,6 +3,7 @@ package mytown.new_protection;
 import buildcraft.factory.TileQuarry;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.new_protection.segment.Getter;
 import mytown.new_protection.segment.IBlockModifier;
@@ -33,7 +34,7 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void testingOnly_tick(TickEvent.WorldTickEvent ev) {
-        if(ev.world.isRemote)
+        if(ev.side == Side.CLIENT)
             return;
         for(TileEntity te : (List<TileEntity>)ev.world.loadedTileEntityList) {
             for(Protection protection : protections) {
