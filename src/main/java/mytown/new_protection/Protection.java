@@ -52,27 +52,30 @@ public class Protection {
     public boolean checkTileEntity(TileEntity te) {
         for(SegmentTileEntity segment : segmentsTiles) {
             if(segment.theClass == te.getClass()) {
-
                 try {
-                    int x1 = segment.getX1(te);
-                    //int y1 = segmentTE.getY1(te);
-                    int z1 = segment.getZ1(te);
-                    int x2 = segment.getX2(te);
-                    //int y2 = segmentTE.getY2(te);
-                    int z2 = segment.getZ2(te);
+                    if(segment.conditionString == null || segment.checkCondition(te)) {
 
-                    List<ChunkPos> chunks = MyTownUtils.getChunksInBox(x1, z1, x2, z2);
-                    for(ChunkPos chunk : chunks) {
-                        TownBlock tblock =  getDatasource().getBlock(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
-                        if(tblock != null) {
-                            boolean modifyValue = (Boolean)tblock.getTown().getValue(FlagType.modifyBlocks);
-                            if(!modifyValue && !tblock.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
-                                tblock.getTown().notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
-                                return true;
+                        int x1 = segment.getX1(te);
+                        //int y1 = segmentTE.getY1(te);
+                        int z1 = segment.getZ1(te);
+                        int x2 = segment.getX2(te);
+                        //int y2 = segmentTE.getY2(te);
+                        int z2 = segment.getZ2(te);
+
+                        List<ChunkPos> chunks = MyTownUtils.getChunksInBox(x1, z1, x2, z2);
+                        for (ChunkPos chunk : chunks) {
+                            TownBlock tblock = getDatasource().getBlock(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
+                            if (tblock != null) {
+                                boolean modifyValue = (Boolean) tblock.getTown().getValue(FlagType.modifyBlocks);
+                                if (!modifyValue && !tblock.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
+                                    tblock.getTown().notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
+                                    return true;
+                                }
                             }
                         }
                     }
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     MyTown.instance.log.error("Failed to check tile entity: " + te.toString());
                     MyTown.instance.log.error("Skipping...");
                     // TODO: Leave it completely unprotected or completely unusable?

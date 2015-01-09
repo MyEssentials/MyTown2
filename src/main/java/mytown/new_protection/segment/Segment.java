@@ -2,6 +2,8 @@ package mytown.new_protection.segment;
 
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
+import mytown.util.MyTownUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -17,51 +19,68 @@ public class Segment {
     public Class<?> theClass;
     public FlagType flag;
     public Map<String, List<Getter>> extraGettersMap;
+    public String[] conditionString;
 
-    public Segment(Class<?> theClass, Map<String, List<Getter>> extraGettersMap) {
+    public Segment(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, String conditionString) {
         this.theClass = theClass;
         this.extraGettersMap = extraGettersMap;
+        if(conditionString != null)
+            this.conditionString = conditionString.split(" ");
     }
 
-    /**
-     * From a list of Getters it tries to get an integer from the specified object
-     *
-     * @param getterList
-     * @return
-     */
-    public Object getInfoFromGetters(List<Getter> getterList, Object object, Class<?> type) {
-        Object lastInstance = object;
-        try {
-            for (Getter getter : getterList) {
-                switch (getter.type) {
-                    case field:
-                        Field fieldObject = lastInstance.getClass().getField(getter.element);
-                        fieldObject.setAccessible(true);
-                        lastInstance = fieldObject.get(lastInstance);
-                        break;
-                    case method:
-                        Method methodObject = lastInstance.getClass().getDeclaredMethod(getter.element);
-                        methodObject.setAccessible(true);
-                        lastInstance = methodObject.invoke(lastInstance);
-                        break;
+    public boolean checkCondition(Object object) {
+
+        MyTown.instance.log.info("Checking condition: " + StringUtils.join(conditionString, " "));
+
+        boolean current;
+        for(int i = 0; i < conditionString.length; i += 4) {
+
+            // Get the boolean value of each part of the condition.
+            if(MyTownUtils.tryParseBoolean(conditionString[i + 2])) {
+                boolean value = (Boolean) MyTownUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), object, Boolean.class, this.theClass.getName());
+                if (conditionString[i + 1].equals("==")) {
+                    current = value == Boolean.parseBoolean(conditionString[i + 2]);
+                } else if(conditionString[i + 1].equals("!=")) {
+                    current = value != Boolean.parseBoolean(conditionString[i + 2]);
+                } else {
+                    throw new RuntimeException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
+            } else if(MyTownUtils.tryParseInt(conditionString[i+2])) {
+                int value = (Integer)MyTownUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), object, Integer.class, this.theClass.getName());
+                if(conditionString[i+1].equals("==")) {
+                    current = value == Integer.parseInt(conditionString[i+2]);
+                } else if(conditionString[i + 1].equals("!=")) {
+                    current = value != Integer.parseInt(conditionString[i + 2]);
+                } else if(conditionString[i+1].equals("<")) {
+                    current = value < Integer.parseInt(conditionString[i+2]);
+                } else if(conditionString[i+1].equals(">")) {
+                    current = value > Integer.parseInt(conditionString[i+2]);
+                } else {
+                    throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] The element number " + (i/4)+1 + " has an invalid condition!");
+                }
+            } else if(MyTownUtils.tryParseFloat(conditionString[i+2])) {
+                float value = (Integer)MyTownUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), object, Float.class, this.theClass.getName());
+                if(conditionString[i+1].equals("==")) {
+                    current = value == Float.parseFloat(conditionString[i+2]);
+                } else if(conditionString[i + 1].equals("!=")) {
+                    current = value != Float.parseFloat(conditionString[i + 2]);
+                } else if(conditionString[i+1].equals("<")) {
+                    current = value < Float.parseFloat(conditionString[i+2]);
+                } else if(conditionString[i+1].equals(">")) {
+                    current = value > Float.parseFloat(conditionString[i+2]);
+                } else {
+                    throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
+                }
+            } else {
+                throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] The element with number " + ((i/4)+1) + " has an invalid type to be checked against!");
             }
-            if(!type.isAssignableFrom(lastInstance.getClass()))
-                throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] Got wrong type of class at a getter! Expected: " + type.getName());
-            return lastInstance;
-        } catch(NoSuchFieldException nfex) {
-            MyTown.instance.log.error("[Segment:"+ this.theClass.getName() +"] Encountered a problem when getting a field from " + object.toString());
-            nfex.printStackTrace();
-        } catch (IllegalAccessException iaex) {
-            MyTown.instance.log.error("[Segment:"+ this.theClass.getName() +"] This type of thing should not happen.");
-            iaex.printStackTrace();
-        } catch (NoSuchMethodException nmex) {
-            MyTown.instance.log.error("[Segment:"+ this.theClass.getName() +"] Encountered a problem when getting a method from " + object.toString());
-            nmex.printStackTrace();
-        } catch (InvocationTargetException itex) {
-            MyTown.instance.log.error("[Segment:"+ this.theClass.getName() +"] The returned object was not of the expected type!");
-            itex.printStackTrace();
+
+            if(conditionString.length <= i+3 || current && conditionString[i+3].equals("OR") || !current && conditionString[i+3].equals("AND"))
+                return current;
         }
-        return null;
+
+
+        return false;
     }
+
 }

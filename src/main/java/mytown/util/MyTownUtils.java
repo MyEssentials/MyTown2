@@ -7,6 +7,7 @@ import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
+import mytown.new_protection.segment.Getter;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -24,6 +25,8 @@ import net.minecraft.world.World;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -404,6 +407,88 @@ public class MyTownUtils {
                 MyTownUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, stack);
             }
         }
+    }
+
+    /**
+     * From a list of Getters it tries to get an integer from the specified object
+     *
+     * @param getterList
+     * @return
+     */
+    public static Object getInfoFromGetters(List<Getter> getterList, Object object, Class<?> type, String segment) {
+        Object lastInstance = object;
+        try {
+            for (Getter getter : getterList) {
+                switch (getter.type) {
+                    case field:
+                        Field fieldObject = lastInstance.getClass().getField(getter.element);
+                        fieldObject.setAccessible(true);
+                        lastInstance = fieldObject.get(lastInstance);
+                        break;
+                    case method:
+                        Method methodObject = lastInstance.getClass().getDeclaredMethod(getter.element);
+                        methodObject.setAccessible(true);
+                        lastInstance = methodObject.invoke(lastInstance);
+                        break;
+                }
+            }
+            if(!type.isAssignableFrom(lastInstance.getClass()))
+                throw new RuntimeException("[Segment: "+ segment +"] Got wrong type of class at a getter! Expected: " + type.getName());
+            return lastInstance;
+        } catch(NoSuchFieldException nfex) {
+            MyTown.instance.log.error("[Segment:"+ segment +"] Encountered a problem when getting a field from " + object.toString());
+            nfex.printStackTrace();
+        } catch (IllegalAccessException iaex) {
+            MyTown.instance.log.error("[Segment:"+ segment +"] This type of thing should not happen.");
+            iaex.printStackTrace();
+        } catch (NoSuchMethodException nmex) {
+            MyTown.instance.log.error("[Segment:"+ segment +"] Encountered a problem when getting a method from " + object.toString());
+            nmex.printStackTrace();
+        } catch (InvocationTargetException itex) {
+            MyTown.instance.log.error("[Segment:"+ segment +"] The returned object was not of the expected type!");
+            itex.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Returns whether or not the String can be parsed as an Integer
+     *
+     * @param value
+     * @return
+     */
+    public static boolean tryParseInt(String value) {
+        try {
+            Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns whether or not the String can be parsed as an Float
+     *
+     * @param value
+     * @return
+     */
+    public static boolean tryParseFloat(String value) {
+        try {
+            Float.parseFloat(value);
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns whether or not the String can be parsed as an Boolean
+     *
+     * @param value
+     * @return
+     */
+    public static boolean tryParseBoolean(String value) {
+        return value.equals("true") || value.equals("false");
     }
 
     /**

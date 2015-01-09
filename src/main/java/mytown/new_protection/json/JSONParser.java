@@ -17,7 +17,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by AfterWind on 1/1/2015.
@@ -65,25 +67,34 @@ public class JSONParser {
 
     @SuppressWarnings("unchecked")
     private static void createModel() {
-        List<Getter>[] getters = new ArrayList[6];
-        getters[0] = new ArrayList<Getter>();
-        getters[0].add(new Getter("getBox", Getter.GetterType.methodObject));
-        getters[0].add(new Getter("xMin", Getter.GetterType.fieldInt));
+        Map<String, List<Getter>> gettersMap = new HashMap<String, List<Getter>>();
+        List<Getter> getters = new ArrayList<Getter>();
+        getters.add(new Getter("getBox", Getter.GetterType.method));
+        getters.add(new Getter("xMin", Getter.GetterType.field));
+        gettersMap.put("X1", getters);
 
-        getters[1] = new ArrayList<Getter>();
-        getters[1].add(new Getter("getBox", Getter.GetterType.methodObject));
-        getters[1].add(new Getter("zMin", Getter.GetterType.fieldInt));
+        getters = new ArrayList<Getter>();
+        getters.add(new Getter("getBox", Getter.GetterType.method));
+        getters.add(new Getter("zMin", Getter.GetterType.field));
+        gettersMap.put("Z1", getters);
 
-        getters[2] = new ArrayList<Getter>();
-        getters[2].add(new Getter("getBox", Getter.GetterType.methodObject));
-        getters[2].add(new Getter("xMax", Getter.GetterType.fieldInt));
+        getters = new ArrayList<Getter>();
+        getters.add(new Getter("getBox", Getter.GetterType.method));
+        getters.add(new Getter("xMax", Getter.GetterType.field));
+        gettersMap.put("X2", getters);
 
-        getters[3] = new ArrayList<Getter>();
-        getters[3].add(new Getter("getBox", Getter.GetterType.methodObject));
-        getters[3].add(new Getter("zMax", Getter.GetterType.fieldInt));
+        getters = new ArrayList<Getter>();
+        getters.add(new Getter("getBox", Getter.GetterType.method));
+        getters.add(new Getter("zMax", Getter.GetterType.field));
+        gettersMap.put("Z2", getters);
+
+        getters = new ArrayList<Getter>();
+        getters.add(new Getter("blockMetadata", Getter.GetterType.field));
+        gettersMap.put("meta", getters);
+
 
         List<Segment> segments = new ArrayList<Segment>();
-        segments.add(new SegmentTileEntity(TileQuarry.class, getters, IBlockModifier.Shape.rectangular));
+        segments.add(new SegmentTileEntity(TileQuarry.class, gettersMap, "meta != -1", IBlockModifier.Shape.rectangular));
 
         Protection protection = new Protection("BuildCraft|Factory", segments);
         try {

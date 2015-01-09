@@ -13,8 +13,8 @@ public class SegmentItem extends Segment {
 
     public ItemType type;
 
-    public SegmentItem(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, ItemType type) {
-        super(theClass, extraGettersMap);
+    public SegmentItem(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, String conditionString, ItemType type) {
+        super(theClass, extraGettersMap, conditionString);
         this.type = type;
     }
 }

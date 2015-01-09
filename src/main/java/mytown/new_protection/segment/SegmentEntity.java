@@ -13,8 +13,8 @@ public class SegmentEntity extends Segment {
 
     public EntityType type;
 
-    public SegmentEntity(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, EntityType type) {
-        super(theClass, extraGettersMap);
+    public SegmentEntity(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, String conditionString, EntityType type) {
+        super(theClass, extraGettersMap, conditionString);
         this.type = type;
     }
 }

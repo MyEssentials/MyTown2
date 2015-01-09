@@ -7,12 +7,11 @@ import com.google.gson.stream.JsonWriter;
 import mytown.new_protection.Protection;
 import mytown.new_protection.segment.*;
 import mytown.new_protection.segment.enums.EntityType;
+import mytown.new_protection.segment.enums.ItemType;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by AfterWind on 1/1/2015.
@@ -31,34 +30,18 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
         for(Segment segment : value.segmentsTiles) {
             out.beginObject();
             out.name("class").value(segment.theClass.getName());
-
-                out.name("type").value("tileEntity");
-
-                for(int i = 0; i < 4; i++) {
-                    switch (i) {
-                        case 0:
-                            out.name("x1").beginArray();
-                            break;
-                        case 1:
-                            out.name("z1").beginArray();
-                            break;
-                        case 2:
-                            out.name("x2").beginArray();
-                            break;
-                        case 3:
-                            out.name("z2").beginArray();
-                            break;
-                    }
-
-                    for (Getter getter : ((SegmentTileEntity) segment).coordGetters[i]) {
-                        out.beginObject();
-                        out.name("element").value(getter.element);
-                        out.name("type").value(getter.type.toString());
-                        out.endObject();
-                    }
-
-                    out.endArray();
+            out.name("type").value("tileEntity");
+            out.name("condition").value(StringUtils.join(segment.conditionString, " "));
+            for (Map.Entry<String, List<Getter>> entry : segment.extraGettersMap.entrySet()) {
+                out.name(entry.getKey()).beginArray();
+                for(Getter getter : entry.getValue()) {
+                    out.beginObject();
+                    out.name("element").value(getter.element);
+                    out.name("type").value(getter.type.toString());
+                    out.endObject();
                 }
+                out.endArray();
+            }
             out.endObject();
         }
         out.endArray();
@@ -88,7 +71,8 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     Segment segment = null;
                     String clazz = null, type = null;
                     EntityType entityType = null;
-                    List<Getter>[] getters = new ArrayList[4];
+                    ItemType itemType = null;
+                    String condition = null;
                     Map<String, List<Getter>> extraGettersMap = new HashMap<String, List<Getter>>();
 
                     in.beginObject();
@@ -100,21 +84,13 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             type = in.nextString();
                             if (type == null)
                                 throw new IOException("The segment for class " + clazz + " does not have a type!");
-                            if (type.equals("tileEntity"))
-                                getters = new ArrayList[4];
+                        } else if (nextName.equals("condition")) {
+                            condition = in.nextString();
                         } else if (clazz == null) {
                             // Checking if clazz and type is not null before anything else.
                             throw new IOException("Class is not being specified in the protection with modid " + modid + ".");
                         } else if (type == null) {
                             throw new IOException("Type is specified after the type-specific data for segment with class " + clazz + ".");
-                        } else if (type.equals("tileEntity") && nextName.equals("x1")) {
-                            getters[0] = parseGetters(in, clazz, nextName);
-                        } else if (type.equals("tileEntity") && nextName.equals("z1")) {
-                            getters[1] = parseGetters(in, clazz, nextName);
-                        } else if (type.equals("tileEntity") && nextName.equals("x2")) {
-                            getters[2] = parseGetters(in, clazz, nextName);
-                        } else if (type.equals("tileEntity") && nextName.equals("z2")) {
-                            getters[3] = parseGetters(in, clazz, nextName);
                         } else if (type.equals("entity")) {
                             if (nextName.equals("entityType")) {
                                 entityType = EntityType.valueOf(in.nextString());
@@ -122,7 +98,11 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     throw new IOException("Invalid entity type for segment with class " + clazz + ". Please choose hostile, passive or tracked.");
                             }
                         } else if (type.equals("item")) {
-
+                            if(nextName.equals("itemType")) {
+                                itemType = ItemType.valueOf(in.nextString());
+                                if(itemType == null)
+                                    throw new IOException("Invalid item type for segment with class " + clazz + ". Please choose breakBlock or use.");
+                            }
                         } else {
                             // If it gets that means that it should be some extra data that will be used in checking something
                             extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
@@ -130,9 +110,9 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
 
                     }
                     if (type != null) {
-                        if (type.equals("tileEntity") && checks(getters)) {
+                        if (type.equals("tileEntity")) {
                             try {
-                                segment = new SegmentTileEntity(Class.forName(clazz), extraGettersMap, getters, IBlockModifier.Shape.rectangular);
+                                segment = new SegmentTileEntity(Class.forName(clazz), extraGettersMap, condition, IBlockModifier.Shape.rectangular);
                             } catch (ClassNotFoundException ex) {
                                 throw new IOException("Class " + clazz + " is invalid!");
                             }
@@ -140,13 +120,13 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             if(entityType == null)
                                 throw new IOException("EntityType is null for segment with class " + clazz);
                             try {
-                                segment = new SegmentEntity(Class.forName(clazz), extraGettersMap, entityType);
+                                segment = new SegmentEntity(Class.forName(clazz), extraGettersMap, condition, entityType);
                             } catch (ClassNotFoundException ex) {
                                 throw new IOException("Class " + clazz + " is invalid!");
                             }
                         } else if(type.equals("item")) {
                             try {
-                                segment = new SegmentItem(Class.forName(clazz), extraGettersMap);
+                                segment = new SegmentItem(Class.forName(clazz), extraGettersMap, condition, itemType);
                             } catch (ClassNotFoundException ex) {
                                 throw new IOException("Class " + clazz + " is invalid!");
                             }
