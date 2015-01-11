@@ -55,6 +55,9 @@ public class JSONParser {
                 if(Loader.isModLoaded(protection.modid)) {
                     MyTown.instance.log.info("Adding protection for mod: " + protection.modid);
                     Protections.getInstance().addProtection(protection);
+                } else if(protection.modid.equals("Vanilla")) {
+                    MyTown.instance.log.info("Adding vanilla protection.");
+                    Protections.getInstance().addProtection(protection);
                 } else {
                     MyTown.instance.log.info("Skipped protection because mod wasn't loaded for: " + protection.modid);
                 }
@@ -65,7 +68,6 @@ public class JSONParser {
                 ex.printStackTrace();
             }
         }
-
         return true;
     }
 

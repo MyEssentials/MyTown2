@@ -146,13 +146,13 @@ public class Protections {
                 */
                 // Other entity checks
                 for (Protection prot : protections) {
-                        if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
-                            MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
-                            checkedEntities.remove(entity);
-                            entity.setDead();
-                        } else {
-                            checkedEntities.put(entity, true);
-                        }
+                    if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
+                        MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
+                        checkedEntities.remove(entity);
+                        entity.setDead();
+                    } else {
+                        checkedEntities.put(entity, true);
+                    }
 
                 }
             }
@@ -372,8 +372,8 @@ public class Protections {
                         ev.setCanceled(true);
                     }
                 }
-                // If player is trying to "activate" block
             } else {
+                // If player is trying to "activate" block
                 if (tblock == null) {
                     if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z), ev.world.getBlockMetadata(x, y, z))) {
                         if (!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
@@ -385,8 +385,8 @@ public class Protections {
                     if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.activateBlocks))
                         return;
 
-                    if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                        if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z), ev.world.getBlockMetadata(x, y, z))) {
+                    if(ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z), ev.world.getBlockMetadata(x, y, z))) {
+                        if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
                             res.protectionDenial(FlagType.activateBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z)));
                             ev.setCanceled(true);
                         }

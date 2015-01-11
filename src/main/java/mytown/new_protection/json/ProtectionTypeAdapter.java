@@ -76,7 +76,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     ItemType itemType = null;
                     String condition = null;
                     FlagType flag = null;
-                    Integer meta = null;
+                    int meta = -1;
                     Map<String, List<Getter>> extraGettersMap = new HashMap<String, List<Getter>>();
 
                     in.beginObject();
@@ -119,11 +119,11 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                         }
 
                     }
-                    if(flag == null)
-                        throw new IOException("The segment for class " + clazz + " does not have a valid flag!");
 
                     if (type != null) {
                         if (type.equals("tileEntity")) {
+                            if(flag == null)
+                                throw new IOException("The segment for class " + clazz + " does not have a valid flag!");
                             try {
                                 segment = new SegmentTileEntity(Class.forName(clazz), extraGettersMap, condition, IBlockModifier.Shape.rectangular);
                             } catch (ClassNotFoundException ex) {
@@ -138,14 +138,16 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 throw new IOException("Class " + clazz + " is invalid!");
                             }
                         } else if(type.equals("item")) {
+                            if(flag == null)
+                                throw new IOException("The segment for class " + clazz + " does not have a valid flag!");
                             try {
                                 segment = new SegmentItem(Class.forName(clazz), extraGettersMap, condition, itemType);
                             } catch (ClassNotFoundException ex) {
                                 throw new IOException("Class " + clazz + " is invalid!");
                             }
                         } else if(type.equals("block")) {
-                            if(meta == null)
-                                meta = 0;
+                            if(flag == null)
+                                throw new IOException("The segment for class " + clazz + " does not have a valid flag!");
                             try {
                                 segment = new SegmentBlock(Class.forName(clazz), extraGettersMap, condition, meta);
                             } catch (ClassNotFoundException ex) {

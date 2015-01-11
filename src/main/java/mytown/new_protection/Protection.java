@@ -94,7 +94,7 @@ public class Protection {
     public boolean checkEntity(Entity entity) {
         for(SegmentEntity segment : segmentsEntities) {
             if(segment.type == EntityType.hostile && segment.theClass.isAssignableFrom(entity.getClass())) {
-                Town town = MyTownUtils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+                Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
                 if (town != null) {
                     String mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
                     if (mobsValue.equals("hostiles"))
@@ -106,7 +106,6 @@ public class Protection {
     }
 
     public boolean checkItemUsage(ItemStack item, Resident res, BlockPos bp) {
-
         for(SegmentItem segment : segmentsItems) {
             if(segment.theClass.isAssignableFrom(item.getItem().getClass())) {
                 if(segment.checkCondition(item)) {
@@ -162,7 +161,7 @@ public class Protection {
 
     public boolean isBlockTracked(Class<? extends Block> block, int meta) {
         for(SegmentBlock segment : segmentsBlocks) {
-            if(segment.theClass.isAssignableFrom(block) && segment.meta == meta)
+            if(segment.theClass.isAssignableFrom(block) &&( segment.meta == -1 || segment.meta == meta))
                 return true;
         }
         return false;
