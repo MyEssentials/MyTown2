@@ -31,6 +31,7 @@ import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
 
 import java.util.*;
 
@@ -214,7 +215,7 @@ public class Protections {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             if (!town.checkPermission(res, FlagType.attackEntities, ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)) {
                 for (Protection prot : protections) {
-                    if (prot.isEntityProtected(ev.target)) {
+                    if (prot.isEntityProtected(ev.target.getClass())) {
                         ev.setCanceled(true);
                         res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)));
                     }
@@ -374,7 +375,7 @@ public class Protections {
                 // If player is trying to "activate" block
             } else {
                 if (tblock == null) {
-                    if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
+                    if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z), ev.world.getBlockMetadata(x, y, z))) {
                         if (!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
                             res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
                             ev.setCanceled(true);
@@ -385,7 +386,7 @@ public class Protections {
                         return;
 
                     if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                        if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
+                        if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z), ev.world.getBlockMetadata(x, y, z))) {
                             res.protectionDenial(FlagType.activateBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z)));
                             ev.setCanceled(true);
                         }
@@ -452,6 +453,22 @@ public class Protections {
                     ev.setCanceled(true);
                     Resident res = DatasourceProxy.getDatasource().getOrMakeResident((EntityPlayer)ev.source.getSourceOfDamage());
                     res.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown().getOwnersAtPosition(ev.entityLiving.dimension, (int)ev.entityLiving.posX, (int)ev.entityLiving.posY, (int)ev.entityLiving.posZ)));
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onExplosion(ExplosionEvent.Start ev) {
+        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.explosionX - ev.explosion.explosionSize), (int)(ev.explosion.explosionZ - ev.explosion.explosionSize), (int)(ev.explosion.explosionX + ev.explosion.explosionSize), (int)(ev.explosion.explosionZ + ev.explosion.explosionSize));
+        for(ChunkPos chunk : chunks) {
+            Town town = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
+            if(town != null) {
+                boolean explosionValue = (Boolean) town.getValue(FlagType.explosions);
+                if (!explosionValue) {
+                    ev.setCanceled(true);
+                    town.notifyEveryone(FlagType.explosions.getLocalizedTownNotification());
+                    return;
                 }
             }
         }

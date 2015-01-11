@@ -80,26 +80,32 @@ public class ProtectionUtils {
     /**
      * Checks the block if it can be activated by a right-click
      */
-    /*
-    public static boolean checkActivatedBlocks(Block block) {
+    public static boolean checkActivatedBlocks(Block block, int meta) {
         for (Protection prot : Protections.getInstance().protections) {
-            if (prot.activatedBlocks.contains(block))
+            if (prot.isBlockTracked(block.getClass(), meta))
                 return true;
         }
         return false;
     }
-    */
     /**
      * Checks if an entity is hostile
      */
     public static boolean isEntityHostile(Class<? extends Entity> ent) {
         for (Protection prot : Protections.getInstance().protections) {
-            EntityType type = prot.getEntityType(ent);
-            if (type != null && type == EntityType.hostile) {
+            if (prot.isEntityHostile(ent)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static List<FlagType> getFlagsForTile(Class<? extends TileEntity> te) {
+        List<FlagType> flags = new ArrayList<FlagType>();
+        for(Protection protection : Protections.getInstance().protections) {
+            if(protection.isTileTracked(te))
+                flags.addAll(protection.getFlagsForTile(te));
+        }
+        return flags;
     }
 
     /**
@@ -111,12 +117,13 @@ public class ProtectionUtils {
         if (MyTownUtils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
             return false;
 
-        if (bw.getFlagType() == FlagType.activateBlocks && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z)))
+        if (bw.getFlagType() == FlagType.activateBlocks
+                && !(checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z), DimensionManager.getWorld(bw.dim).getBlockMetadata(bw.x, bw.y, bw.z))))
             return false;
         if ((bw.getFlagType() == FlagType.modifyBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems || bw.getFlagType() == FlagType.pumps)) {
             TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(bw.x, bw.y, bw.z);
             if (te == null) return false;
-            return getFlagTypesForTile(te).contains(bw.getFlagType());
+            return getFlagsForTile(te.getClass()).contains(bw.getFlagType());
         }
         return true;
     }

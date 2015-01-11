@@ -12,6 +12,7 @@ import mytown.proxies.DatasourceProxy;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
 import mytown.util.MyTownUtils;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -30,12 +31,14 @@ public class Protection {
     public List<SegmentTileEntity> segmentsTiles;
     public List<SegmentEntity> segmentsEntities;
     public List<SegmentItem> segmentsItems;
+    public List<SegmentBlock> segmentsBlocks;
 
     public Protection(String modid, List<Segment> segments) {
 
         segmentsTiles = new ArrayList<SegmentTileEntity>();
         segmentsEntities = new ArrayList<SegmentEntity>();
         segmentsItems = new ArrayList<SegmentItem>();
+        segmentsBlocks = new ArrayList<SegmentBlock>();
 
         for(Segment segment : segments) {
             if(segment instanceof SegmentTileEntity)
@@ -44,6 +47,8 @@ public class Protection {
                 segmentsEntities.add((SegmentEntity)segment);
             else if(segment instanceof SegmentItem)
                 segmentsItems.add((SegmentItem)segment);
+            else if(segment instanceof SegmentBlock)
+                segmentsBlocks.add((SegmentBlock)segment);
         }
 
         this.modid = modid;
@@ -133,9 +138,31 @@ public class Protection {
         return null;
     }
 
+    public boolean isEntityProtected(Class<? extends Entity> entity) {
+        EntityType type = getEntityType(entity);
+        if(type != null && type == EntityType.passive)
+            return true;
+        return false;
+    }
+
+    public boolean isEntityHostile(Class<? extends Entity> entity) {
+        EntityType type = getEntityType(entity);
+        if(type != null && type == EntityType.hostile)
+            return true;
+        return false;
+    }
+
     public boolean isTileTracked(Class<? extends TileEntity> te) {
         for(SegmentTileEntity segment : segmentsTiles) {
             if(segment.theClass.isAssignableFrom(te))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isBlockTracked(Class<? extends Block> block, int meta) {
+        for(SegmentBlock segment : segmentsBlocks) {
+            if(segment.theClass.isAssignableFrom(block) && segment.meta == meta)
                 return true;
         }
         return false;

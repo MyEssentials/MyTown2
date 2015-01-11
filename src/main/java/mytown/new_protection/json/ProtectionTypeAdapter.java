@@ -76,6 +76,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     ItemType itemType = null;
                     String condition = null;
                     FlagType flag = null;
+                    Integer meta = null;
                     Map<String, List<Getter>> extraGettersMap = new HashMap<String, List<Getter>>();
 
                     in.beginObject();
@@ -103,10 +104,14 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     throw new IOException("Invalid entity type for segment with class " + clazz + ". Please choose hostile, passive or tracked.");
                             }
                         } else if (type.equals("item")) {
-                            if(nextName.equals("itemType")) {
+                            if (nextName.equals("itemType")) {
                                 itemType = ItemType.valueOf(in.nextString());
-                                if(itemType == null)
+                                if (itemType == null)
                                     throw new IOException("Invalid item type for segment with class " + clazz + ". Please choose breakBlock or use.");
+                            }
+                        } else if(type.equals("block")) {
+                            if(nextName.equals("meta")) {
+                                meta = in.nextInt();
                             }
                         } else {
                             // If it gets that means that it should be some extra data that will be used in checking something
@@ -138,9 +143,16 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             } catch (ClassNotFoundException ex) {
                                 throw new IOException("Class " + clazz + " is invalid!");
                             }
+                        } else if(type.equals("block")) {
+                            if(meta == null)
+                                meta = 0;
+                            try {
+                                segment = new SegmentBlock(Class.forName(clazz), extraGettersMap, condition, meta);
+                            } catch (ClassNotFoundException ex) {
+                                throw new IOException("Class " + clazz + " in invalid!");
+                            }
                         }
                     }
-
 
                     in.endObject();
                     if (segment == null)
