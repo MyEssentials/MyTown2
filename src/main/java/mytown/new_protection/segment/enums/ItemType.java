@@ -6,5 +6,7 @@ package mytown.new_protection.segment.enums;
  * */
 public enum ItemType {
     breakBlock,
-    use
+    rightClickBlock,
+    rightClickAir,
+    rightClickEntity
 }

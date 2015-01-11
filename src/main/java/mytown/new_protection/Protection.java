@@ -51,7 +51,7 @@ public class Protection {
 
     public boolean checkTileEntity(TileEntity te) {
         for(SegmentTileEntity segment : segmentsTiles) {
-            if(segment.theClass == te.getClass()) {
+            if(segment.theClass.isAssignableFrom(te.getClass())) {
                 try {
                     if(segment.conditionString == null || segment.checkCondition(te)) {
 
@@ -88,7 +88,7 @@ public class Protection {
 
     public boolean checkEntity(Entity entity) {
         for(SegmentEntity segment : segmentsEntities) {
-            if(segment.theClass.isAssignableFrom(entity.getClass()) && segment.type == EntityType.hostile) {
+            if(segment.type == EntityType.hostile && segment.theClass.isAssignableFrom(entity.getClass())) {
                 Town town = MyTownUtils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                 if (town != null) {
                     String mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
@@ -104,12 +104,44 @@ public class Protection {
 
         for(SegmentItem segment : segmentsItems) {
             if(segment.theClass.isAssignableFrom(item.getItem().getClass())) {
-
+                if(segment.checkCondition(item)) {
+                    Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x, bp.z);
+                    if(town != null && town.checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
+                        return true;
+                    }
+                }
             }
         }
-
         return false;
     }
+
+    public List<FlagType> getFlagsForTile(Class<? extends TileEntity> te) {
+        List<FlagType> flags = new ArrayList<FlagType>();
+        for(SegmentTileEntity segment : segmentsTiles) {
+            if(segment.theClass.isAssignableFrom(te))
+                flags.add(segment.flag);
+        }
+        return flags;
+    }
+
+    public EntityType getEntityType(Class<? extends Entity> entity) {
+        for(SegmentEntity segment : segmentsEntities) {
+            if (segment.theClass.isAssignableFrom(entity)) {
+                return segment.type;
+            }
+        }
+        return null;
+    }
+
+    public boolean isTileTracked(Class<? extends TileEntity> te) {
+        for(SegmentTileEntity segment : segmentsTiles) {
+            if(segment.theClass.isAssignableFrom(te))
+                return true;
+        }
+        return false;
+    }
+
+
 
 
     public static MyTownDatasource getDatasource() {

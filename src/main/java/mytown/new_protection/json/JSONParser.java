@@ -3,6 +3,7 @@ package mytown.new_protection.json;
 import buildcraft.factory.TileQuarry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import cpw.mods.fml.common.Loader;
 import mytown.MyTown;
 import mytown.new_protection.Protection;
 import mytown.new_protection.Protections;
@@ -10,6 +11,7 @@ import mytown.new_protection.segment.Getter;
 import mytown.new_protection.segment.IBlockModifier;
 import mytown.new_protection.segment.Segment;
 import mytown.new_protection.segment.SegmentTileEntity;
+import mytown.proxies.mod.ModProxies;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -45,12 +47,17 @@ public class JSONParser {
         String[] extensions = new String[1];
         extensions[0] = "json";
 
-        Protections.protections = new ArrayList<Protection>();
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
             try {
                 reader = new FileReader(file);
                 MyTown.instance.log.info("Loading protection file: " + file.getName());
-                Protections.protections.add(gson.fromJson(reader, Protection.class));
+                Protection protection = gson.fromJson(reader, Protection.class);
+                if(Loader.isModLoaded(protection.modid)) {
+                    MyTown.instance.log.info("Adding protection for mod: " + protection.modid);
+                    Protections.getInstance().addProtection(protection);
+                } else {
+                    MyTown.instance.log.info("Skipped protection because mod wasn't loaded for: " + protection.modid);
+                }
                 reader.close();
 
             } catch (IOException ex) {

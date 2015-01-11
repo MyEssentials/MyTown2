@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
 import mytown.new_protection.segment.*;
 import mytown.new_protection.segment.enums.EntityType;
@@ -32,6 +33,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.name("class").value(segment.theClass.getName());
             out.name("type").value("tileEntity");
             out.name("condition").value(StringUtils.join(segment.conditionString, " "));
+            out.name("flag").value(FlagType.modifyBlocks.toString());
             for (Map.Entry<String, List<Getter>> entry : segment.extraGettersMap.entrySet()) {
                 out.name(entry.getKey()).beginArray();
                 for(Getter getter : entry.getValue()) {
@@ -73,6 +75,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     EntityType entityType = null;
                     ItemType itemType = null;
                     String condition = null;
+                    FlagType flag = null;
                     Map<String, List<Getter>> extraGettersMap = new HashMap<String, List<Getter>>();
 
                     in.beginObject();
@@ -86,6 +89,8 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 throw new IOException("The segment for class " + clazz + " does not have a type!");
                         } else if (nextName.equals("condition")) {
                             condition = in.nextString();
+                        } else if(nextName.equals("flag")) {
+                            flag = FlagType.valueOf(in.nextString());
                         } else if (clazz == null) {
                             // Checking if clazz and type is not null before anything else.
                             throw new IOException("Class is not being specified in the protection with modid " + modid + ".");
@@ -109,6 +114,9 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                         }
 
                     }
+                    if(flag == null)
+                        throw new IOException("The segment for class " + clazz + " does not have a valid flag!");
+
                     if (type != null) {
                         if (type.equals("tileEntity")) {
                             try {

@@ -31,7 +31,7 @@ mytown.cmd.err.cost=§cYou need to have %s %ss in your inventory in order to pay
  mytown.flag.pickupItems=§3Allows item pickup by outsiders.
  mytown.flag.explosions=§3Allows DA-BOOM-BOOM!
  mytown.flag.mobs=§3Controls mob spawning.
- mytown.flag.attackEntities=§3Allows attacking passive mobs by outsiders.
+ mytown.flag.attackEntities=§3Allows attacking passive mobs.
  mytown.flag.useItems=§3Allows usage of items (eggs, buckets etc.)
  mytown.flag.pvp=§3PVP - Player vs. Player
 
