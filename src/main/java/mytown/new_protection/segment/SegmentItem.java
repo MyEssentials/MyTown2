@@ -1,5 +1,6 @@
 package mytown.new_protection.segment;
 
+import mytown.entities.flag.FlagType;
 import mytown.new_protection.segment.enums.ItemType;
 
 import java.util.List;
@@ -12,9 +13,12 @@ import java.util.Map;
 public class SegmentItem extends Segment {
 
     public ItemType type;
+    public boolean onAdjacent = false;
 
-    public SegmentItem(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, String conditionString, ItemType type) {
+    public SegmentItem(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, FlagType flag, String conditionString, ItemType type, boolean onAdjacent) {
         super(theClass, extraGettersMap, conditionString);
+        this.flag = flag;
         this.type = type;
+        this.onAdjacent = onAdjacent;
     }
 }

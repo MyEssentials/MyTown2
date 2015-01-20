@@ -30,6 +30,8 @@ public class Segment {
 
     public boolean checkCondition(Object object) {
 
+        if(conditionString == null)
+            return true;
         MyTown.instance.log.info("Checking condition: " + StringUtils.join(conditionString, " "));
 
         boolean current;

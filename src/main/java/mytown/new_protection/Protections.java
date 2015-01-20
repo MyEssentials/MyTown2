@@ -279,7 +279,7 @@ public class Protections {
         ItemStack currStack = ev.entityPlayer.getHeldItem();
         if (currStack != null) {
             for (Protection prot : protections) {
-                if (prot.checkItemUsage(currStack, res, new BlockPos((int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ, ev.entityPlayer.worldObj.provider.dimensionId))) {
+                if (prot.checkItemUsage(currStack, res, new BlockPos((int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ, ev.entityPlayer.worldObj.provider.dimensionId), 0)) {
                     ev.setCanceled(true);
                     return;
                 }
@@ -328,7 +328,7 @@ public class Protections {
         if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
             //MyTown.instance.log.info("Item usage position: " + x + ", " + y + ", " + z);
             for (Protection protection : protections) {
-                if (protection.checkItemUsage(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId))) {
+                if (protection.checkItemUsage(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face)) {
                     ev.setCanceled(true);
                     return;
                 }

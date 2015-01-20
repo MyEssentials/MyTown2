@@ -1,5 +1,6 @@
 package mytown.new_protection.segment;
 
+import mytown.entities.flag.FlagType;
 import mytown.util.MyTownUtils;
 import net.minecraft.tileentity.TileEntity;
 
@@ -14,10 +15,11 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
 
     public Shape shape;
 
-    public SegmentTileEntity(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, String conditionString, Shape shape) {
+    public SegmentTileEntity(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, FlagType flag, String conditionString, Shape shape) {
         // List 0 = x1, List 1 = y1 etc...
         super(theClass, extraGettersMap, conditionString);
         this.shape = shape;
+        this.flag = flag;
     }
 
     @Override

@@ -11,11 +11,13 @@ import mytown.new_protection.segment.enums.EntityType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
+import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,12 +109,19 @@ public class Protection {
         return false;
     }
 
-    public boolean checkItemUsage(ItemStack item, Resident res, BlockPos bp) {
+    public boolean checkItemUsage(ItemStack item, Resident res, BlockPos bp, int face) {
         for(SegmentItem segment : segmentsItems) {
             if(segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+                MyTown.instance.log.info("Checking item: " + item.getDisplayName());
+                if(segment.onAdjacent) {
+                    ForgeDirection dir = ForgeDirection.getOrientation(face);
+                    bp = new BlockPos(bp.x + dir.offsetX, bp.y + dir.offsetY, bp.z + dir.offsetZ, bp.dim);
+                }
+
                 if(segment.checkCondition(item)) {
-                    Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x, bp.z);
-                    if(town != null && town.checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
+                    Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
+                    if(town != null && !town.checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
+                        res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z)));
                         return true;
                     }
                 }

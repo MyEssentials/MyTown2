@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import cpw.mods.fml.common.Loader;
 import mytown.MyTown;
+import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
 import mytown.new_protection.Protections;
 import mytown.new_protection.segment.Getter;
@@ -104,7 +105,7 @@ public class JSONParser {
 
 
         List<Segment> segments = new ArrayList<Segment>();
-        segments.add(new SegmentTileEntity(TileQuarry.class, gettersMap, "meta != -1", IBlockModifier.Shape.rectangular));
+        segments.add(new SegmentTileEntity(TileQuarry.class, gettersMap, FlagType.modifyBlocks, "meta != -1", IBlockModifier.Shape.rectangular));
 
         Protection protection = new Protection("BuildCraft|Factory", segments);
         try {
