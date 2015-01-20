@@ -636,7 +636,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         List<Resident> list = new ArrayList<Resident>();
         Plot plot = getPlotAtCoords(dim, x, y, z);
         if (plot == null) {
-            if (isPointInTown(dim, x, z)) {
+            if (isPointInTown(dim, x, z) && !(this instanceof AdminTown)) {
                 list.add(getMayor());
             } else {
                 return list;

@@ -56,7 +56,7 @@ public class Protections {
 
     public int maximalRange = 0;
 
-    private static Protections instance;// = new Protections();
+    private static Protections instance;
     public static Protections getInstance() {
         if(instance == null)
             instance = new Protections();
@@ -81,8 +81,9 @@ public class Protections {
             return;
 
         if (tickerMap == 0) {
+
             for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
-                entry.setValue(false);
+                checkedEntities.put(entry.getKey(), false);
             }
             for (Iterator<Map.Entry<TileEntity, Boolean>> it = checkedTileEntities.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<TileEntity, Boolean> entry = it.next();
@@ -138,22 +139,19 @@ public class Protections {
                     }
                 }
             } else {
-                // DEV:
-                /*
-                if(entity instanceof EntityWither) {
-                    entity.getDataWatcher().getWatchableObjectInt(20);
-                }
-                */
                 // Other entity checks
                 for (Protection prot : protections) {
-                    if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
-                        MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
-                        checkedEntities.remove(entity);
-                        entity.setDead();
-                    } else {
+                    if(prot.isEntityHostile(entity.getClass())) {
+                        //MyTown.instance.log.info("It's hostile for : " + prot.modid);
+                        if(checkedEntities.get(entity) == null || !checkedEntities.get(entity)) {
+                            if(prot.checkEntity(entity)) {
+                                MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
+                                checkedEntities.remove(entity);
+                                entity.setDead();
+                            }
+                        }
                         checkedEntities.put(entity, true);
                     }
-
                 }
             }
         }
@@ -217,7 +215,7 @@ public class Protections {
                 for (Protection prot : protections) {
                     if (prot.isEntityProtected(ev.target.getClass())) {
                         ev.setCanceled(true);
-                        res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)));
+                        res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.animalCruelty"), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)));
                     }
                 }
             }

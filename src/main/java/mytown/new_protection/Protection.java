@@ -93,12 +93,14 @@ public class Protection {
 
     public boolean checkEntity(Entity entity) {
         for(SegmentEntity segment : segmentsEntities) {
-            if(segment.type == EntityType.hostile && segment.theClass.isAssignableFrom(entity.getClass())) {
-                Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
-                if (town != null) {
-                    String mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
-                    if (mobsValue.equals("hostiles"))
-                        return true;
+            if (segment.type == EntityType.hostile) {
+                if (segment.theClass.isAssignableFrom(entity.getClass())) {
+                    Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
+                    if (town != null) {
+                        String mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
+                        if (mobsValue.equals("hostiles"))
+                            return true;
+                    }
                 }
             }
         }

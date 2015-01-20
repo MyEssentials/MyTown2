@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
 import mytown.new_protection.segment.*;
@@ -159,6 +160,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     in.endObject();
                     if (segment == null)
                         throw new IOException("Segment with class " + clazz + " was not properly initialized!");
+                    MyTown.instance.log.info("Added segment for class: " + segment.theClass.getName());
                     segments.add(segment);
                 }
                 in.endArray();
