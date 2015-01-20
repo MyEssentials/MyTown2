@@ -26,10 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.EntityInteractEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 
@@ -142,7 +139,6 @@ public class Protections {
                 // Other entity checks
                 for (Protection prot : protections) {
                     if(prot.isEntityHostile(entity.getClass())) {
-                        //MyTown.instance.log.info("It's hostile for : " + prot.modid);
                         if(checkedEntities.get(entity) == null || !checkedEntities.get(entity)) {
                             if(prot.checkEntity(entity)) {
                                 MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
@@ -468,6 +464,18 @@ public class Protections {
                     town.notifyEveryone(FlagType.explosions.getLocalizedTownNotification());
                     return;
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onBucketFill(FillBucketEvent ev) {
+        Town town = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
+        if(town != null) {
+            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+            if(!town.checkPermission(res, FlagType.useItems, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
+                res.protectionDenial(FlagType.useItems.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)));
+                ev.setCanceled(true);
             }
         }
     }
