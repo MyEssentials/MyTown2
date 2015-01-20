@@ -59,11 +59,13 @@ public class Protections {
             instance = new Protections();
         return instance;
     }
-
-    public Protections() {
+    public void init() {
         protections = new ArrayList<Protection>();
         checkedTileEntities = new HashMap<TileEntity, Boolean>();
         checkedEntities = new HashMap<Entity, Boolean>();
+    }
+    public Protections() {
+        init();
     }
 
     public void addProtection(Protection prot) {
@@ -279,7 +281,7 @@ public class Protections {
         ItemStack currStack = ev.entityPlayer.getHeldItem();
         if (currStack != null) {
             for (Protection prot : protections) {
-                if (prot.checkItemUsage(currStack, res, new BlockPos((int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ, ev.entityPlayer.worldObj.provider.dimensionId), 0)) {
+                if (prot.checkItem(currStack, res, ev.target)) {
                     ev.setCanceled(true);
                     return;
                 }
@@ -328,7 +330,8 @@ public class Protections {
         if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
             //MyTown.instance.log.info("Item usage position: " + x + ", " + y + ", " + z);
             for (Protection protection : protections) {
-                if (protection.checkItemUsage(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face)) {
+                if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
+                        ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && protection.checkItem(currentStack, res)) {
                     ev.setCanceled(true);
                     return;
                 }

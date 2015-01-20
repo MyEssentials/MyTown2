@@ -4,9 +4,6 @@ import mytown.entities.BlockWhitelist;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.Protection;
-import mytown.new_protection.Protections;
-import mytown.new_protection.segment.enums.EntityType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.BlockPos;
 import mytown.util.MyTownUtils;
@@ -70,7 +67,7 @@ public class ProtectionUtils {
      */
     public static boolean checkItemUsage(ItemStack stack, Resident res, BlockPos bp, int face) {
         for (Protection prot : Protections.getInstance().protections)
-            if (prot.checkItemUsage(stack, res, bp, face))
+            if (prot.checkItem(stack, res, bp, face))
                 return true;
         return false;
     }

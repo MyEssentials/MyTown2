@@ -8,6 +8,7 @@ import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.segment.*;
 import mytown.new_protection.segment.enums.EntityType;
+import mytown.new_protection.segment.enums.ItemType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
@@ -15,6 +16,7 @@ import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -109,9 +111,12 @@ public class Protection {
         return false;
     }
 
-    public boolean checkItemUsage(ItemStack item, Resident res, BlockPos bp, int face) {
+    /**
+     * Checking item usage for right click on block
+     */
+    public boolean checkItem(ItemStack item, Resident res, BlockPos bp, int face) {
         for(SegmentItem segment : segmentsItems) {
-            if(segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+            if(segment.type == ItemType.rightClickBlock && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
                 MyTown.instance.log.info("Checking item: " + item.getDisplayName());
                 if(segment.onAdjacent) {
                     ForgeDirection dir = ForgeDirection.getOrientation(face);
@@ -129,6 +134,49 @@ public class Protection {
         }
         return false;
     }
+
+    /**
+     * Checking item usage for right click on entity
+     */
+    public boolean checkItem(ItemStack item, Resident res, Entity entity) {
+        for(SegmentItem segment : segmentsItems) {
+            if(segment.type == ItemType.rightClickEntity && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+                MyTown.instance.log.info("Checking item: " + item.getDisplayName());
+
+                if(segment.checkCondition(item)) {
+                    Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int)entity.posX) >> 4, ((int)entity.posZ) >> 4);
+                    if(town != null && !town.checkPermission(res, segment.flag, entity.dimension, ((int)entity.posX), ((int)entity.posY), ((int)entity.posZ))) {
+                        res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, ((int)entity.posX), ((int)entity.posY), ((int)entity.posZ))));
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checking item usage for right click on air
+     */
+    public boolean checkItem(ItemStack item, Resident res) {
+        for(SegmentItem segment : segmentsItems) {
+            if(segment.type == ItemType.rightClickAir && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+                MyTown.instance.log.info("Checking item: " + item.getDisplayName());
+                EntityPlayer entity = res.getPlayer();
+
+                if(segment.checkCondition(item)) {
+                    Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int)entity.posX) >> 4, ((int)entity.posZ) >> 4);
+                    if(town != null && !town.checkPermission(res, segment.flag, entity.dimension, ((int)entity.posX), ((int)entity.posY), ((int)entity.posZ))) {
+                        res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, ((int)entity.posX), ((int)entity.posY), ((int)entity.posZ))));
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
 
     public List<FlagType> getFlagsForTile(Class<? extends TileEntity> te) {
         List<FlagType> flags = new ArrayList<FlagType>();
