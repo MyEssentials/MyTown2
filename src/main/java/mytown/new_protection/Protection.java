@@ -31,6 +31,7 @@ import java.util.List;
 public class Protection {
 
     public String modid;
+    public String version;
 
     public List<SegmentTileEntity> segmentsTiles;
     public List<SegmentEntity> segmentsEntities;
@@ -38,6 +39,11 @@ public class Protection {
     public List<SegmentBlock> segmentsBlocks;
 
     public Protection(String modid, List<Segment> segments) {
+        this(modid, "", segments);
+    }
+
+
+    public Protection(String modid, String version, List<Segment> segments) {
 
         segmentsTiles = new ArrayList<SegmentTileEntity>();
         segmentsEntities = new ArrayList<SegmentEntity>();
@@ -56,6 +62,7 @@ public class Protection {
         }
 
         this.modid = modid;
+        this.version = version;
     }
 
     public boolean checkTileEntity(TileEntity te) {
@@ -198,16 +205,12 @@ public class Protection {
 
     public boolean isEntityProtected(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
-        if(type != null && type == EntityType.passive)
-            return true;
-        return false;
+        return type != null && type == EntityType.passive;
     }
 
     public boolean isEntityHostile(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
-        if(type != null && type == EntityType.hostile)
-            return true;
-        return false;
+        return type != null && type == EntityType.hostile;
     }
 
     public boolean isTileTracked(Class<? extends TileEntity> te) {

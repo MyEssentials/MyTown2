@@ -5,6 +5,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.relauncher.Side;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.FlagsConfig;

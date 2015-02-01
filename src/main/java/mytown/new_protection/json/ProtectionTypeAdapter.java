@@ -4,6 +4,8 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
@@ -56,6 +58,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
     public Protection read(JsonReader in) throws IOException {
 
         String modid = null;
+        String version = null;
         List<Segment> segments = new ArrayList<Segment>();
 
         String nextName;
@@ -67,6 +70,24 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 modid = in.nextString();
                 if (modid == null)
                     throw new IOException("Missing modid for a protection!");
+                if(!Loader.isModLoaded(modid) && !modid.equals("Vanilla")) {
+                    MyTown.instance.log.info("   Skipped protection because the mod " + modid + " wasn't loaded.");
+                    return null;
+                } else if(version != null) {
+                    if(!verifyVersion(modid, version)) {
+                        MyTown.instance.log.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
+                        return null;
+                    }
+                }
+            } else if(nextName.equals("version")) {
+                version = in.nextString();
+                if(modid != null && !modid.equals("Vanilla")) {
+                    if(!verifyVersion(modid, version)) {
+                        MyTown.instance.log.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
+                        return null;
+                    }
+                }
+
             } else if (nextName.equals("segments")) {
                 in.beginArray();
                 while (in.hasNext()) {
@@ -161,14 +182,20 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     in.endObject();
                     if (segment == null)
                         throw new IOException("Segment with class " + clazz + " was not properly initialized!");
-                    MyTown.instance.log.info("Added segment for class: " + segment.theClass.getName());
+                    MyTown.instance.log.info("   Added segment for class: " + segment.theClass.getName());
                     segments.add(segment);
                 }
                 in.endArray();
             }
         }
         in.endObject();
-        return new Protection(modid, segments);
+
+        Protection protection;
+        if(version == null)
+            protection = new Protection(modid, segments);
+        else
+            protection = new Protection(modid, version, segments);
+        return protection;
     }
 
     private List<Getter> parseGetters(JsonReader in, String clazz, String getterName) throws IOException {
@@ -204,4 +231,13 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
         }
         return true;
     }
+
+    private static boolean verifyVersion(String modid, String version) {
+        for(ModContainer mod : Loader.instance().getModList()) {
+            if(mod.getModId().equals(modid) && mod.getVersion().startsWith(version))
+                return true;
+        }
+        return false;
+    }
+
 }

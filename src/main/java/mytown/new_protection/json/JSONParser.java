@@ -4,6 +4,7 @@ import buildcraft.factory.TileQuarry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
@@ -53,14 +54,13 @@ public class JSONParser {
                 reader = new FileReader(file);
                 MyTown.instance.log.info("Loading protection file: " + file.getName());
                 Protection protection = gson.fromJson(reader, Protection.class);
-                if(Loader.isModLoaded(protection.modid)) {
-                    MyTown.instance.log.info("Adding protection for mod: " + protection.modid);
+                if(protection != null) {
+                    if (protection.modid.equals("Vanilla")) {
+                        MyTown.instance.log.info("   Adding vanilla protection.");
+                    } else {
+                        MyTown.instance.log.info("   Adding protection for mod: " + protection.modid);
+                    }
                     Protections.getInstance().addProtection(protection);
-                } else if(protection.modid.equals("Vanilla")) {
-                    MyTown.instance.log.info("Adding vanilla protection.");
-                    Protections.getInstance().addProtection(protection);
-                } else {
-                    MyTown.instance.log.info("Skipped protection because mod wasn't loaded for: " + protection.modid);
                 }
                 reader.close();
 
@@ -71,6 +71,8 @@ public class JSONParser {
         }
         return true;
     }
+
+
 
     private static void initJSON() {
         gson = new GsonBuilder().registerTypeAdapter(Protection.class, new ProtectionTypeAdapter()).setPrettyPrinting().create();
