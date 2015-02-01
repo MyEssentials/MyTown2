@@ -87,7 +87,6 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                         return null;
                     }
                 }
-
             } else if (nextName.equals("segments")) {
                 in.beginArray();
                 while (in.hasNext()) {
