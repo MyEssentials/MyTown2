@@ -19,6 +19,7 @@ import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.PlayerTracker;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
+import mytown.new_protection.ProtectionUtils;
 import mytown.new_protection.Protections;
 import mytown.new_protection.json.JSONParser;
 import mytown.proxies.DatasourceProxy;

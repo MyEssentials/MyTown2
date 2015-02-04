@@ -1,7 +1,9 @@
 package mytown.new_protection.segment;
 
 import mytown.entities.flag.FlagType;
+import mytown.new_protection.ProtectionUtils;
 import mytown.new_protection.segment.enums.ItemType;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 import java.util.Map;
@@ -21,4 +23,9 @@ public class SegmentItem extends Segment {
         this.type = type;
         this.onAdjacent = onAdjacent;
     }
+
+    public int getRange(ItemStack stack) {
+        return (Integer) ProtectionUtils.getInfoFromGetters(extraGettersMap.get("range"), stack.getItem(), Integer.class, this.theClass.getName(), stack);
+    }
+
 }

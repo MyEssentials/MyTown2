@@ -16,5 +16,11 @@
 		"file": "sqlite-jdbc-${sqlite_version}.jar",
 		"dev": "sqlite-jdbc-${sqlite_version}.jar",
 		"class": "org.sqlite.JDBC"
+	},
+	{
+	    "repo": "http://central.maven.org/maven2/org/beanshell/bsh/2.0b5",
+	    "file": "beanshell.jar",
+	    "dev": "beanshell-dev.jar",
+	    "class": "bsh.Interpreter"
 	}
 ]

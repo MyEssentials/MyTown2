@@ -1,7 +1,7 @@
 package mytown.new_protection.segment;
 
 import mytown.entities.flag.FlagType;
-import mytown.util.MyTownUtils;
+import mytown.new_protection.ProtectionUtils;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.List;
@@ -29,21 +29,21 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
 
     @Override
     public int getX1(TileEntity te) {
-        return (Integer) MyTownUtils.getInfoFromGetters(extraGettersMap.get("X1"), te, Integer.class, this.theClass.getName());
+        return (Integer) ProtectionUtils.getInfoFromGetters(extraGettersMap.get("X1"), te, Integer.class, this.theClass.getName(), null);
     }
 
     @Override
     public int getZ1(TileEntity te) {
-        return (Integer)MyTownUtils.getInfoFromGetters(extraGettersMap.get("Z1"), te, Integer.class, this.theClass.getName());
+        return (Integer)ProtectionUtils.getInfoFromGetters(extraGettersMap.get("Z1"), te, Integer.class, this.theClass.getName(), null);
     }
 
     @Override
     public int getX2(TileEntity te) {
-        return (Integer)MyTownUtils.getInfoFromGetters(extraGettersMap.get("X2"), te, Integer.class, this.theClass.getName());
+        return (Integer)ProtectionUtils.getInfoFromGetters(extraGettersMap.get("X2"), te, Integer.class, this.theClass.getName(), null);
     }
 
     @Override
     public int getZ2(TileEntity te) {
-        return (Integer) MyTownUtils.getInfoFromGetters(extraGettersMap.get("Z2"), te, Integer.class, this.theClass.getName());
+        return (Integer) ProtectionUtils.getInfoFromGetters(extraGettersMap.get("Z2"), te, Integer.class, this.theClass.getName(), null);
     }
 }

@@ -75,7 +75,8 @@ minecraft {
 dependencies {
     testCompile "junit:junit:4.11"
     compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
-
+	compile "org.beanshell:bsh:2.0b5"
+	
     // Include DB Drivers as deps
     compile "org.xerial:sqlite-jdbc:${config.sqlite_version}"
     compile "mysql:mysql-connector-java:${config.mysql_version}"
@@ -88,11 +89,6 @@ dependencies {
     
 	//compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
 	//compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
-
-	// For PEX
-	compile 'net.gravitydevelopment.updater:updater:2.3'
-	//compile 'org.bukkit:bukkit:1.7.9-R0.1'
-	//compile 'ru.tehkode:PermissionsEx:1.22'
 }
 
 // Process Resources, injecting version numbers in

@@ -15,6 +15,7 @@ public class Getter {
 
     public enum GetterType {
         method,
-        field
+        field,
+        formula
     }
 }

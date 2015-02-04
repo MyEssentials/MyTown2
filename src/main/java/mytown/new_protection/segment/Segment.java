@@ -2,7 +2,9 @@ package mytown.new_protection.segment;
 
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
+import mytown.new_protection.ProtectionUtils;
 import mytown.util.MyTownUtils;
+import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
@@ -35,11 +37,25 @@ public class Segment {
         MyTown.instance.log.info("Checking condition: " + StringUtils.join(conditionString, " "));
 
         boolean current;
+
+        /*
+            This is very important when checking as the ItemStack that is passed doesn't
+            have the methods and fields needed only the Item itself does.
+
+            Block, TileEntity and Entity should be left unchanged as their classes should be mod defined
+         */
+
+        Object instance;
+        if(object instanceof ItemStack) {
+            instance = ((ItemStack) object).getItem();
+        } else {
+            instance = object;
+        }
         for(int i = 0; i < conditionString.length; i += 4) {
 
             // Get the boolean value of each part of the condition.
             if(MyTownUtils.tryParseBoolean(conditionString[i + 2])) {
-                boolean value = (Boolean) MyTownUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), object, Boolean.class, this.theClass.getName());
+                boolean value = (Boolean) ProtectionUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), instance, Boolean.class, this.theClass.getName(), object);
                 if (conditionString[i + 1].equals("==")) {
                     current = value == Boolean.parseBoolean(conditionString[i + 2]);
                 } else if(conditionString[i + 1].equals("!=")) {
@@ -48,7 +64,7 @@ public class Segment {
                     throw new RuntimeException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
             } else if(MyTownUtils.tryParseInt(conditionString[i+2])) {
-                int value = (Integer)MyTownUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), object, Integer.class, this.theClass.getName());
+                int value = (Integer)ProtectionUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), instance, Integer.class, this.theClass.getName(), object);
                 if(conditionString[i+1].equals("==")) {
                     current = value == Integer.parseInt(conditionString[i+2]);
                 } else if(conditionString[i + 1].equals("!=")) {
@@ -61,7 +77,7 @@ public class Segment {
                     throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] The element number " + (i/4)+1 + " has an invalid condition!");
                 }
             } else if(MyTownUtils.tryParseFloat(conditionString[i+2])) {
-                float value = (Integer)MyTownUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), object, Float.class, this.theClass.getName());
+                float value = (Integer)ProtectionUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), instance, Float.class, this.theClass.getName(), object);
                 if(conditionString[i+1].equals("==")) {
                     current = value == Float.parseFloat(conditionString[i+2]);
                 } else if(conditionString[i + 1].equals("!=")) {

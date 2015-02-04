@@ -1,9 +1,13 @@
 package mytown.new_protection;
 
+import bsh.EvalError;
+import bsh.Interpreter;
+import mytown.MyTown;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
+import mytown.new_protection.segment.Getter;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.BlockPos;
 import mytown.util.MyTownUtils;
@@ -13,8 +17,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.DimensionManager;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by AfterWind on 12/1/2014.
@@ -125,5 +133,92 @@ public class ProtectionUtils {
         return true;
     }
 
+    /**
+     * From a list of Getters it tries to get an integer from the specified object
+     *
+     * @param getterList
+     * @return
+     */
+    public static Object getInfoFromGetters(List<Getter> getterList, Object object, Class<?> type, String segment, Object parameter) {
+        Object lastInstance = object;
+        try {
+            for (Getter getter : getterList) {
+                switch (getter.type) {
+                    case field:
+                        Field fieldObject = lastInstance.getClass().getField(getter.element);
+                        fieldObject.setAccessible(true);
+                        lastInstance = fieldObject.get(lastInstance);
+                        break;
+                    case method:
+                        Method methodObject = lastInstance.getClass().getDeclaredMethod(getter.element);
+                        methodObject.setAccessible(true);
+                        try {
+                            lastInstance = methodObject.invoke(lastInstance);
+                        } catch (IllegalArgumentException ex) {
+                            try {
+                                lastInstance = methodObject.invoke(lastInstance, parameter);
+                            } catch (IllegalArgumentException ex2) {
+                                // Throwing the original exception.
+                                throw ex;
+                            }
+                        }
+                        break;
+                    case formula:
+                        //lastInstance = getInfoFromFormula()
+
+                        break;
+                }
+            }
+            if(!type.isAssignableFrom(lastInstance.getClass()))
+                throw new RuntimeException("[Segment: "+ segment +"] Got wrong type of class at a getter! Expected: " + type.getName());
+            return lastInstance;
+        } catch(NoSuchFieldException nfex) {
+            MyTown.instance.log.error("[Segment:"+ segment +"] Encountered a problem when getting a field from " + object.toString());
+            nfex.printStackTrace();
+        } catch (IllegalAccessException iaex) {
+            MyTown.instance.log.error("[Segment:"+ segment +"] This type of thing should not happen.");
+            iaex.printStackTrace();
+        } catch (NoSuchMethodException nmex) {
+            MyTown.instance.log.error("[Segment:"+ segment +"] Encountered a problem when getting a method from " + object.toString());
+            nmex.printStackTrace();
+        } catch (InvocationTargetException itex) {
+            MyTown.instance.log.error("[Segment:"+ segment +"] The returned object was not of the expected type!");
+            itex.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static int getInfoFromFormula(String formula, Map<String, List<Getter>> extraGettersMap, Object object, String segment, Object parameter) {
+        int result = -1;
+
+        String[] elements = formula.split(" ");
+
+        // Replace all the getters with proper numbers, assume getters that are invalid as being numbers
+        for(String element : elements) {
+            if(!element.equals("+") && !element.equals("-") && !element.equals("*") && !element.equals("/") && !element.equals("^")) {
+                if(extraGettersMap.get(element) != null) {
+                    int info = (Integer) getInfoFromGetters(extraGettersMap.get(element), object, Integer.class, segment, parameter);
+
+                    // Replace all occurrences with the value that it got.
+                    // Spaces are needed to not replace parts of other getters.
+                    formula.replace(" " + element + " ", " " + String.valueOf(info) + " ");
+                }
+            }
+        }
+
+        MyTown.instance.log.info("Got formula at the end: " + formula);
+        MyTown.instance.log.info("Trying to parse it.");
+
+        Interpreter interpreter = new Interpreter();
+        try {
+            interpreter.eval("result = " + formula);
+            result = (Integer)interpreter.get("result");
+        } catch (EvalError ex) {
+            ex.printStackTrace();
+        }
+
+        return result;
+    }
 
 }
