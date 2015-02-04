@@ -296,20 +296,6 @@ public class Protections {
         if (ev.entityPlayer.worldObj.isRemote)
             return;
 
-        /*
-        // TODO: Maybe revise it
-        // If it's an entity then check is gonna occur on that entity's position
-        MovingObjectPosition obj = Utils.tracePath(ev.world, (float)ev.entityPlayer.posX, (float)ev.entityPlayer.posY + ev.entityPlayer.eyeHeight, (float)ev.entityPlayer.posZ, (float)ev.entityPlayer.getLookVec().xCoord, (float)ev.entityPlayer.getLookVec().yCoord, (float)ev.entityPlayer.getLookVec().zCoord, 0.2F, null);
-        //ev.entityPlayer.getLookVec()
-        if(obj != null && obj.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
-            MyTown.instance.log.info("Found entity at: " + obj.blockX + ", " + obj.blockY + ", " + obj.blockZ);
-
-            x = obj.blockX;
-            y = obj.blockY;
-            z = obj.blockZ;
-        }
-        */
-
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
         if (res == null) {
             return;
@@ -322,14 +308,25 @@ public class Protections {
             x = playerPos.posX;
             y = playerPos.posY;
             z = playerPos.posZ;
-            //MyTown.instance.log.info("Position changed to : " + x + ", " + y + ", " + z);
         }
 
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
 
+        /*
+        // Testing stuff, please ignore
+        if( true) {
+             try {
+                 Thread.sleep(5000);
+             } catch (Exception e) {
+                 e.printStackTrace();
+             }
+            ev.setCanceled(true);
+            return;
+        }
+        */
+
         // Item usage check here
         if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
-            //MyTown.instance.log.info("Item usage position: " + x + ", " + y + ", " + z);
             for (Protection protection : protections) {
                 if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
                         ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && protection.checkItem(currentStack, res)) {

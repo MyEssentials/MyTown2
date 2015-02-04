@@ -17,10 +17,13 @@ import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,11 +132,14 @@ public class Protection {
                     ForgeDirection dir = ForgeDirection.getOrientation(face);
                     bp = new BlockPos(bp.x + dir.offsetX, bp.y + dir.offsetY, bp.z + dir.offsetZ, bp.dim);
                 }
-
                 if(segment.checkCondition(item)) {
                     Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
                     if(town != null && !town.checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
                         res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z)));
+                        if(segment.flag == FlagType.modifyBlocks && segment.onAdjacent) {
+                            //DimensionManager.getWorld(bp.dim).setBlock(bp.x, bp.y, bp.z, Blocks.air);
+                            //MyTown.instance.log.info("Block deleted!");
+                        }
                         return true;
                     }
                 }
