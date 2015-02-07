@@ -1,8 +1,6 @@
 package mytown.config;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.core.utils.config.ConfigProperty;
-import net.minecraft.init.Items;
 
 // TODO More config!
 public class Config {
@@ -42,10 +40,11 @@ public class Config {
     public static boolean modifiableRanks = false;
 
     @ConfigProperty(category = "towns", name = "costItem", comment = "The item which is used for paying for claims and making new towns.")
-    public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).name;
+   // public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).name;
+    public static String costItemName = "$";
 
     @ConfigProperty(category = "towns", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town.")
-    public static int costAmountMakeTown = 5;
+    public static int costAmountMakeTown = 100;
 
     @ConfigProperty(category = "towns", name = "costAmountClaim", comment = "The amount of the cost item you need to create a town.")
     public static int costAmountClaim = 3;
@@ -58,4 +57,7 @@ public class Config {
 
     @ConfigProperty(category = "plots", name = "minPlotsHeight", comment = "The minimum height required to create a plot(Y)")
     public static int minPlotsHeight = 1;
+    
+    @ConfigProperty(category = "extra", name = "debug", comment = "Enables debugging output to console, use '/ta debug' to toggle ingame")
+    public static boolean debug;
 }

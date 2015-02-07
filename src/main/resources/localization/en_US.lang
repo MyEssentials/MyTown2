@@ -5,6 +5,7 @@ mytown.cmd.err.resident.notexist=§cThe player %s does not exist!
 mytown.cmd.err.resident.notsametown=§cThe player %s is not in the town you've selected(%s)!
 mytown.cmd.err.rank.notexist=§cThe rank %s does not exist in %s!
 mytown.cmd.err.cost=§cYou need to have %s %ss in your inventory in order to pay for claiming or making a town!
+mytown.cmd.err.money=§cYou need to have %s %s in order to pay for claiming or making a town!
 
 # Flag based notifications
 

@@ -11,12 +11,15 @@ import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.util.MyTownUtils;
+import mytown.util.UtilEconomy;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
+
+import cpw.mods.fml.common.FMLCommonHandler;
 
 /**
  * Created by AfterWind on 8/29/2014.
@@ -59,6 +62,15 @@ public class CommandsAssistant extends Commands {
         if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+        if(Config.costItemName.equals("$")){        	
+        	if(FMLCommonHandler.instance().findContainerFor("ForgeEssentials") != null){
+        		if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountMakeTown)){
+                    throw new MyTownCommandException("mytown.cmd.err.money",new UtilEconomy().currency(Config.costAmountMakeTown), Config.costItemName);
+                } 
+        	} else {
+        		res.sendMessage("ForgeEssentials NOT FOUND "+FMLCommonHandler.instance().findContainerFor("ForgeEssentials"));        		
+        	}
+        } else 
         if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountClaim))
             throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, Config.costItemName);
 

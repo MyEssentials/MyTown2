@@ -43,7 +43,7 @@ public class MyTown {
     public RanksConfig ranksConfig;
     public WildPermsConfig wildConfig;
     public FlagsConfig flagsConfig;
-    public boolean isCauldron = false;
+   // public boolean isCauldron = false;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
