@@ -98,6 +98,9 @@ public class UtilEconomy implements IEconManager{
 		
 	}
 
+	/**
+	 * this is broken for some reason... i think
+	 */
 	@Override
 	public String currency(int amount) {
 		@SuppressWarnings("rawtypes")

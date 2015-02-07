@@ -64,15 +64,15 @@ public class CommandsAssistant extends Commands {
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
         if(Config.costItemName.equals("$")){        	
         	if(FMLCommonHandler.instance().findContainerFor("ForgeEssentials") != null){
-        		if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountMakeTown)){
-                    throw new MyTownCommandException("mytown.cmd.err.money",new UtilEconomy().currency(Config.costAmountMakeTown), Config.costItemName);
+        		if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountClaim)){
+                    throw new MyTownCommandException("mytown.cmd.err.money",Config.costAmountClaim, Config.costItemName);
                 } 
         	} else {
         		res.sendMessage("ForgeEssentials NOT FOUND "+FMLCommonHandler.instance().findContainerFor("ForgeEssentials"));        		
         	}
         } else 
         if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountClaim))
-            throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, Config.costItemName);
+            throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountClaim, Config.costItemName);
 
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)

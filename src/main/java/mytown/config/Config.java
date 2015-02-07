@@ -44,10 +44,10 @@ public class Config {
     public static String costItemName = "$";
 
     @ConfigProperty(category = "towns", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town.")
-    public static int costAmountMakeTown = 100;
+    public static int costAmountMakeTown = 300;
 
     @ConfigProperty(category = "towns", name = "costAmountClaim", comment = "The amount of the cost item you need to create a town.")
-    public static int costAmountClaim = 3;
+    public static int costAmountClaim = 100;
 
     @ConfigProperty(category = "towns", name = "defaultMaxPlotsPerPlayer", comment = "The maximum amount of plots a player can make in a town as a default.")
     public static int defaultMaxPlots = 1;
@@ -58,6 +58,6 @@ public class Config {
     @ConfigProperty(category = "plots", name = "minPlotsHeight", comment = "The minimum height required to create a plot(Y)")
     public static int minPlotsHeight = 1;
     
-    @ConfigProperty(category = "extra", name = "debug", comment = "Enables debugging output to console, use '/ta debug' to toggle ingame")
-    public static boolean debug;
+    //@ConfigProperty(category = "extra", name = "debug", comment = "Enables debugging output to console, use '/ta debug' to toggle ingame")
+    //public static boolean debug;
 }

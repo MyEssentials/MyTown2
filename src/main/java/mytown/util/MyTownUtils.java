@@ -329,11 +329,11 @@ public class MyTownUtils {
     }
     /**
      * Takes the amount of money specified.
-     * Returns false if player doesn't have the items necessary
+     * Returns false if player doesn't have the money necessary
      *
      * @param player
-     * @param itemName
-     * @return if succeeded
+     * @param amount
+     * @return true if succeeded else false
      */
     public static boolean takeMoneyFromPlayer(EntityPlayer player, int amount) {		
 		UtilEconomy eco = new UtilEconomy(player.getUniqueID());
