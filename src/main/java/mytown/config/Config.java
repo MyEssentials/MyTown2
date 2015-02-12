@@ -1,8 +1,8 @@
 package mytown.config;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.core.utils.config.ConfigProperty;
 import net.minecraft.init.Items;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 // TODO More config!
 public class Config {
@@ -41,8 +41,9 @@ public class Config {
     @ConfigProperty(category = "towns", name = "modifiableRanks", comment = "If true residents with permission can modify the ranks of their towns. This feature hasn't been fully tested yet and it might cause problems!")
     public static boolean modifiableRanks = false;
 
-    @ConfigProperty(category = "towns", name = "costItem", comment = "The item which is used for paying for claims and making new towns.")
+    @ConfigProperty(category = "towns", name = "costItem", comment = "The item which is used for paying for claims and making new towns. Add '$' if you want to use ForgeEssentials economy")
     public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).name;
+   // public static String costItemName = "$";
 
     @ConfigProperty(category = "towns", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town.")
     public static int costAmountMakeTown = 5;
@@ -58,4 +59,7 @@ public class Config {
 
     @ConfigProperty(category = "plots", name = "minPlotsHeight", comment = "The minimum height required to create a plot(Y)")
     public static int minPlotsHeight = 1;
+    
+    //@ConfigProperty(category = "extra", name = "debug", comment = "Enables debugging output to console, use '/ta debug' to toggle ingame")
+    //public static boolean debug;
 }

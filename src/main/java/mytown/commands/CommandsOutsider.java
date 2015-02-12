@@ -1,5 +1,8 @@
 package mytown.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandNode;
@@ -8,14 +11,13 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
+import mytown.util.UtilEconomy;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
-
-import java.util.ArrayList;
-import java.util.List;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 /**
  * Created by AfterWind on 9/9/2014.
@@ -107,10 +109,19 @@ public class CommandsOutsider extends Commands {
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
-
+       //adding economy
+        if(Config.costItemName.equals("$")){        	
+        	if(FMLCommonHandler.instance().findContainerFor("ForgeEssentials") != null){
+        		if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountMakeTown)){
+                    throw new MyTownCommandException("mytown.cmd.err.money",Config.costAmountMakeTown, Config.costItemName);
+                } 
+        	} else {
+        		res.sendMessage("ForgeEssentials NOT FOUND"+FMLCommonHandler.instance().findContainerFor("ForgeEssentials"));        		
+        	}
+        } else {
         if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountMakeTown))
             throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, Config.costItemName);
-
+        }
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
     }
 

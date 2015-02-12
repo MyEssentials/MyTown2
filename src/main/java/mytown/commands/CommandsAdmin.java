@@ -1,5 +1,7 @@
 package mytown.commands;
 
+import java.util.List;
+
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
@@ -7,7 +9,11 @@ import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.entities.*;
+import mytown.entities.Rank;
+import mytown.entities.Resident;
+import mytown.entities.Town;
+import mytown.entities.TownBlock;
+import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
@@ -15,8 +21,6 @@ import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-
-import java.util.List;
 
 /**
  * Created by AfterWind on 8/29/2014.

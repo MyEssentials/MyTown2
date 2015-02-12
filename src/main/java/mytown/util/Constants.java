@@ -6,7 +6,8 @@ public class Constants {
     public static final String VERSION = "@VERSION@";
     public static final String MODID = "MyTown2";
     public static final String MODNAME = "MyTown 2";
-    public static final String DEPENDENCIES = "after:*;required-after:Forge;required-after:MyTownCore";
+    //public static final String DEPENDENCIES = "after:*;required-after:Forge;required-after:MyTownCore";
+    public static final String DEPENDENCIES = "required-after:Forge;required-after:MyTownCore;after:WorldEdit;before:ForgeEssentials;";
     public static String CONFIG_FOLDER = "";
 
     public static final String EDIT_TOOL_NAME = EnumChatFormatting.BLUE + "Selector"; // TODO: Get localization for it, maybe?

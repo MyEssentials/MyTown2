@@ -1,7 +1,18 @@
 package mytown.util;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import mytown.MyTown;
+import mytown.config.Config;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
@@ -20,17 +31,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
  * Created by AfterWind on 9/9/2014.
@@ -325,6 +326,23 @@ public class MyTownUtils {
         } else {
             return takeItemFromPlayer(player, GameRegistry.findItem(split[0], split[1]), amount);
         }
+    }
+    /**
+     * Takes the amount of money specified.
+     * Returns false if player doesn't have the money necessary
+     *
+     * @param player
+     * @param amount
+     * @return true if succeeded else false
+     */
+    public static boolean takeMoneyFromPlayer(EntityPlayer player, int amount) {		
+		UtilEconomy eco = new UtilEconomy(player.getUniqueID());
+		int wallet = eco.getWallet();
+		if(wallet>=Config.costAmountMakeTown){
+			eco.removeFromWallet(Config.costAmountMakeTown);
+			return true;
+		}		
+		return false;
     }
 
     /**
