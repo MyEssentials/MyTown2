@@ -83,7 +83,7 @@ dependencies {
 
     // Mod Deps
     compile project(":MyEssentials-Core")
-	compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'
+	compile 'com.mod-buildcraft:buildcraft:6.1.8:dev'
 	
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     
