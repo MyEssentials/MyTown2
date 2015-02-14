@@ -133,14 +133,11 @@ public class ProtectionUtils {
         return true;
     }
 
-    /**
-     * From a list of Getters it tries to get an integer from the specified object
-     *
-     * @param getterList
-     * @return
-     */
-    public static Object getInfoFromGetters(List<Getter> getterList, Object object, Class<?> type, String segment, Object parameter) {
-        Object lastInstance = object;
+
+    /*
+    public static Object getInfoFromGetters(Map<String, List<Getter>> extraGettersMap, String getterName, Class<?> returnType, String segmentName, Object instance, Object parameter) {
+        Object lastInstance = instance;
+        List<Getter> getterList = extraGettersMap.get(getterName);
         try {
             for (Getter getter : getterList) {
                 switch (getter.type) {
@@ -169,20 +166,20 @@ public class ProtectionUtils {
                         break;
                 }
             }
-            if(!type.isAssignableFrom(lastInstance.getClass()))
-                throw new RuntimeException("[Segment: "+ segment +"] Got wrong type of class at a getter! Expected: " + type.getName());
+            if(!returnType.isAssignableFrom(lastInstance.getClass()))
+                throw new RuntimeException("[Segment: "+ segmentName +"] Got wrong type of class at a getter! Expected: " + returnType.getName());
             return lastInstance;
         } catch(NoSuchFieldException nfex) {
-            MyTown.instance.log.error("[Segment:"+ segment +"] Encountered a problem when getting a field from " + object.toString());
+            MyTown.instance.log.error("[Segment:"+ segmentName +"] Encountered a problem when getting a field from " + object.toString());
             nfex.printStackTrace();
         } catch (IllegalAccessException iaex) {
-            MyTown.instance.log.error("[Segment:"+ segment +"] This type of thing should not happen.");
+            MyTown.instance.log.error("[Segment:"+ segmentName +"] This type of thing should not happen.");
             iaex.printStackTrace();
         } catch (NoSuchMethodException nmex) {
-            MyTown.instance.log.error("[Segment:"+ segment +"] Encountered a problem when getting a method from " + object.toString());
+            MyTown.instance.log.error("[Segment:"+ segmentName +"] Encountered a problem when getting a method from " + object.toString());
             nmex.printStackTrace();
         } catch (InvocationTargetException itex) {
-            MyTown.instance.log.error("[Segment:"+ segment +"] The returned object was not of the expected type!");
+            MyTown.instance.log.error("[Segment:"+ segmentName +"] The returned object was not of the expected type!");
             itex.printStackTrace();
         }
         return null;
@@ -202,7 +199,7 @@ public class ProtectionUtils {
 
                     // Replace all occurrences with the value that it got.
                     // Spaces are needed to not replace parts of other getters.
-                    formula.replace(" " + element + " ", " " + String.valueOf(info) + " ");
+                    formula = formula.replace(" " + element + " ", " " + String.valueOf(info) + " ");
                 }
             }
         }
@@ -220,5 +217,5 @@ public class ProtectionUtils {
 
         return result;
     }
-
+    */
 }

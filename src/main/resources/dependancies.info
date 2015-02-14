@@ -19,8 +19,8 @@
 	},
 	{
 	    "repo": "http://central.maven.org/maven2/org/beanshell/bsh/2.0b5",
-	    "file": "beanshell.jar",
-	    "dev": "beanshell-dev.jar",
+	    "file": "bsh-2.0b5.jar",
+	    "dev": "bsh-2.0b5-sources.jar",
 	    "class": "bsh.Interpreter"
 	}
 ]

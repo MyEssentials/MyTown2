@@ -29,21 +29,21 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
 
     @Override
     public int getX1(TileEntity te) {
-        return (Integer) ProtectionUtils.getInfoFromGetters(extraGettersMap.get("X1"), te, Integer.class, this.theClass.getName(), null);
+        return (Integer) getInfoFromGetters("X1", Integer.class,  te, null);
     }
 
     @Override
     public int getZ1(TileEntity te) {
-        return (Integer)ProtectionUtils.getInfoFromGetters(extraGettersMap.get("Z1"), te, Integer.class, this.theClass.getName(), null);
+        return (Integer) getInfoFromGetters("Z1", Integer.class,  te, null);
     }
 
     @Override
     public int getX2(TileEntity te) {
-        return (Integer)ProtectionUtils.getInfoFromGetters(extraGettersMap.get("X2"), te, Integer.class, this.theClass.getName(), null);
+        return (Integer) getInfoFromGetters("X2", Integer.class,  te, null);
     }
 
     @Override
     public int getZ2(TileEntity te) {
-        return (Integer) ProtectionUtils.getInfoFromGetters(extraGettersMap.get("Z2"), te, Integer.class, this.theClass.getName(), null);
+        return (Integer) getInfoFromGetters("Z2", Integer.class,  te, null);
     }
 }

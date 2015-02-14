@@ -1,5 +1,7 @@
 package mytown.new_protection.segment;
 
+import bsh.EvalError;
+import bsh.Interpreter;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.ProtectionUtils;
@@ -55,7 +57,7 @@ public class Segment {
 
             // Get the boolean value of each part of the condition.
             if(MyTownUtils.tryParseBoolean(conditionString[i + 2])) {
-                boolean value = (Boolean) ProtectionUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), instance, Boolean.class, this.theClass.getName(), object);
+                boolean value = (Boolean) getInfoFromGetters(conditionString[i], Boolean.class, instance, object);
                 if (conditionString[i + 1].equals("==")) {
                     current = value == Boolean.parseBoolean(conditionString[i + 2]);
                 } else if(conditionString[i + 1].equals("!=")) {
@@ -64,7 +66,7 @@ public class Segment {
                     throw new RuntimeException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
             } else if(MyTownUtils.tryParseInt(conditionString[i+2])) {
-                int value = (Integer)ProtectionUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), instance, Integer.class, this.theClass.getName(), object);
+                int value = (Integer) getInfoFromGetters(conditionString[i], Boolean.class, instance, object);
                 if(conditionString[i+1].equals("==")) {
                     current = value == Integer.parseInt(conditionString[i+2]);
                 } else if(conditionString[i + 1].equals("!=")) {
@@ -77,7 +79,7 @@ public class Segment {
                     throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] The element number " + (i/4)+1 + " has an invalid condition!");
                 }
             } else if(MyTownUtils.tryParseFloat(conditionString[i+2])) {
-                float value = (Integer)ProtectionUtils.getInfoFromGetters(extraGettersMap.get(conditionString[i]), instance, Float.class, this.theClass.getName(), object);
+                float value = (Integer) getInfoFromGetters(conditionString[i], Boolean.class, instance, object);
                 if(conditionString[i+1].equals("==")) {
                     current = value == Float.parseFloat(conditionString[i+2]);
                 } else if(conditionString[i + 1].equals("!=")) {
@@ -96,9 +98,101 @@ public class Segment {
             if(conditionString.length <= i+3 || current && conditionString[i+3].equals("OR") || !current && conditionString[i+3].equals("AND"))
                 return current;
         }
-
-
         return false;
     }
 
+    /**
+     * From a list of Getters it tries to get a value of type with all its getters calling on the instance.
+     * If method call fails with no parameters it's gonna try to add the parameter for the call.
+     *
+     * @return
+     */
+    public Object getInfoFromGetters(String getterName, Class<?> returnType, Object instance, Object parameter) {
+        Object lastInstance = instance;
+        List<Getter> getterList = extraGettersMap.get(getterName);
+        try {
+            forLoop: for (Getter getter : getterList) {
+                switch (getter.type) {
+                    case field:
+                        Field fieldObject = lastInstance.getClass().getField(getter.element);
+                        fieldObject.setAccessible(true);
+                        lastInstance = fieldObject.get(lastInstance);
+                        break;
+                    case method:
+                        Method methodObject = lastInstance.getClass().getDeclaredMethod(getter.element);
+                        methodObject.setAccessible(true);
+                        try {
+                            lastInstance = methodObject.invoke(lastInstance);
+                        } catch (IllegalArgumentException ex) {
+                            try {
+                                lastInstance = methodObject.invoke(lastInstance, parameter);
+                            } catch (IllegalArgumentException ex2) {
+                                // Throwing the original exception.
+                                throw ex;
+                            }
+                        }
+                        break;
+                    case formula:
+                        // Return instantly since it can only be a number
+                        lastInstance = getInfoFromFormula(getter.element, instance, parameter);
+                        break forLoop;
+                }
+            }
+            if(!returnType.isAssignableFrom(lastInstance.getClass()))
+                throw new RuntimeException("[Segment: "+ theClass.getName() +"] Got wrong type of class at a getter! Expected: " + returnType.getName());
+            return lastInstance;
+        } catch(NoSuchFieldException nfex) {
+            MyTown.instance.log.error("[Segment:"+ theClass.getName() +"] Encountered a problem when getting a field from " + instance.toString());
+            nfex.printStackTrace();
+        } catch (IllegalAccessException iaex) {
+            MyTown.instance.log.error("[Segment:"+ theClass.getName() +"] This type of thing should not happen.");
+            iaex.printStackTrace();
+        } catch (NoSuchMethodException nmex) {
+            MyTown.instance.log.error("[Segment:"+ theClass.getName() +"] Encountered a problem when getting a method from " + instance.toString());
+            nmex.printStackTrace();
+        } catch (InvocationTargetException itex) {
+            MyTown.instance.log.error("[Segment:"+ theClass.getName() +"] The returned object was not of the expected type!");
+            itex.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Converts a formula that contains Getter identifiers to an (integer) value
+     *
+     * @param formula
+     * @param instance
+     * @param parameter
+     * @return
+     */
+    public int getInfoFromFormula(String formula, Object instance, Object parameter) {
+        int result = -1;
+
+        String[] elements = formula.split(" ");
+
+        // Replace all the getters with proper numbers, assume getters that are invalid as being numbers
+        for(String element : elements) {
+            if(!element.equals("+") && !element.equals("-") && !element.equals("*") && !element.equals("/") && !element.equals("^")) {
+                if(extraGettersMap.get(element) != null) {
+                    int info = (Integer) getInfoFromGetters(element, Integer.class, instance, parameter);
+                    // Replace all occurrences with the value that it got.
+                    // Spaces are needed to not replace parts of other getters.
+                    formula = formula.replace(" " + element + " ", " " + String.valueOf(info) + " ");
+                }
+            }
+        }
+
+        MyTown.instance.log.info("Got formula at the end: " + formula);
+        MyTown.instance.log.info("Trying to parse it.");
+
+        Interpreter interpreter = new Interpreter();
+        try {
+            interpreter.eval("result = " + formula);
+            result = (Integer)interpreter.get("result");
+        } catch (EvalError ex) {
+            ex.printStackTrace();
+        }
+        MyTown.instance.log.info("Returning: " + result);
+        return result;
+    }
 }

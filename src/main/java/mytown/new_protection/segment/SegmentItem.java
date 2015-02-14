@@ -25,7 +25,7 @@ public class SegmentItem extends Segment {
     }
 
     public int getRange(ItemStack stack) {
-        return (Integer) ProtectionUtils.getInfoFromGetters(extraGettersMap.get("range"), stack.getItem(), Integer.class, this.theClass.getName(), stack);
+        return (Integer) getInfoFromGetters("range", Integer.class, stack.getItem(), stack);
     }
 
 }
