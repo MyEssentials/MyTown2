@@ -3,6 +3,10 @@ package mytown.entities;
 public class AdminTown extends Town {
     public AdminTown(String name) {
         super(name);
+
+        Rank rank = new Rank(Rank.theMayorDefaultRank, Rank.defaultRanks.get(Rank.theMayorDefaultRank), this);
+        addRank(rank);
+        setDefaultRank(rank);
     }
 
     // TODO: Finish this up
@@ -13,11 +17,6 @@ public class AdminTown extends Town {
     public void addBlock(TownBlock townBlock) {
         blocks.put(townBlock.getKey(), townBlock);
         // TODO: To be edited when checking distance between towns.
-    }
-
-    @Override
-    public void addResident(Resident res, Rank rank) {
-        // Nothing, since admin towns shouldn't have residents
     }
 
     @Override

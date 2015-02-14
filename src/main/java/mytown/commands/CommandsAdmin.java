@@ -94,6 +94,7 @@ public class CommandsAdmin extends Commands {
             rank = town.getDefaultRank();
         }
 
+
         getDatasource().linkResidentToTown(target, town, rank);
         // TODO: add failed message ... too lazy right now :P
         // TODO: maybe too much info here
