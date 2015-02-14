@@ -36,8 +36,8 @@ public class Segment {
 
         if(conditionString == null)
             return true;
-        MyTown.instance.log.info("Checking condition: " + StringUtils.join(conditionString, " "));
 
+        MyTown.instance.log.info("Checking condition: " + StringUtils.join(conditionString, " "));
         boolean current;
 
         /*
@@ -66,7 +66,7 @@ public class Segment {
                     throw new RuntimeException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
             } else if(MyTownUtils.tryParseInt(conditionString[i+2])) {
-                int value = (Integer) getInfoFromGetters(conditionString[i], Boolean.class, instance, object);
+                int value = (Integer) getInfoFromGetters(conditionString[i], Integer.class, instance, object);
                 if(conditionString[i+1].equals("==")) {
                     current = value == Integer.parseInt(conditionString[i+2]);
                 } else if(conditionString[i + 1].equals("!=")) {
@@ -79,7 +79,7 @@ public class Segment {
                     throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] The element number " + (i/4)+1 + " has an invalid condition!");
                 }
             } else if(MyTownUtils.tryParseFloat(conditionString[i+2])) {
-                float value = (Integer) getInfoFromGetters(conditionString[i], Boolean.class, instance, object);
+                float value = (Integer) getInfoFromGetters(conditionString[i], Integer.class, instance, object);
                 if(conditionString[i+1].equals("==")) {
                     current = value == Float.parseFloat(conditionString[i+2]);
                 } else if(conditionString[i + 1].equals("!=")) {

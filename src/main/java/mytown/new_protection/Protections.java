@@ -60,11 +60,13 @@ public class Protections {
             instance = new Protections();
         return instance;
     }
+
     public void init() {
         protections = new ArrayList<Protection>();
         checkedTileEntities = new HashMap<TileEntity, Boolean>();
         checkedEntities = new HashMap<Entity, Boolean>();
     }
+
     public Protections() {
         init();
     }
@@ -72,7 +74,6 @@ public class Protections {
     public void addProtection(Protection prot) {
         protections.add(prot);
     }
-
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent
@@ -159,13 +160,13 @@ public class Protections {
         for (TileEntity te : (Iterable<TileEntity>) ev.world.loadedTileEntityList) {
             //MyTown.instance.log.info("Checking tile: " + te.toString());
             for (Protection prot : protections) {
-                if ((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.checkTileEntity(te)) {
-                    MyTownUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
-                    //te.getBlockType().breakBlock(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, te.blockType, te.blockMetadata);
-                    te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
-                    checkedTileEntities.put(te, true);
-                    MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
-                } else {
+                if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.isTileTracked(te.getClass())) {
+                    if (prot.checkTileEntity(te)) {
+                        MyTownUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
+                        //te.getBlockType().breakBlock(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, te.blockType, te.blockMetadata);
+                        te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
+                        MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
+                    }
                     checkedTileEntities.put(te, true);
                 }
             }
@@ -246,7 +247,7 @@ public class Protections {
                 List<Town> nearbyTowns = MyTownUtils.getTownsInRange(dimensionId, x, z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
                     if (!t.checkPermission(res, FlagType.modifyBlocks)) {
-                        res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
+                        res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(t.getOwnersAtPosition(dimensionId, x, y, z)));
                         return true;
                     }
                 }

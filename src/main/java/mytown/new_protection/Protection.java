@@ -69,10 +69,13 @@ public class Protection {
     }
 
     public boolean checkTileEntity(TileEntity te) {
+        //MyTown.instance.log.info("Protection: " + this.modid);
         for(SegmentTileEntity segment : segmentsTiles) {
+            //MyTown.instance.log.info("Segment: " + segment.theClass.getName());
             if(segment.theClass.isAssignableFrom(te.getClass())) {
                 try {
-                    if(segment.conditionString == null || segment.checkCondition(te)) {
+                    MyTown.instance.log.info("Calling condition.");
+                    if(segment.checkCondition(te)) {
 
                         int x1 = segment.getX1(te);
                         //int y1 = segmentTE.getY1(te);

@@ -48,7 +48,7 @@ public class JSONParser {
 
         String[] extensions = new String[1];
         extensions[0] = "json";
-        Protections.getInstance().init();
+        //Protections.getInstance().init();
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
             try {
                 reader = new FileReader(file);
@@ -65,7 +65,7 @@ public class JSONParser {
                 reader.close();
 
             } catch (IOException ex) {
-                MyTown.instance.log.error("Encountered error when parsing a JSON protection.");
+                MyTown.instance.log.error("Encountered error when parsing protection file: " + file.getName());
                 ex.printStackTrace();
             }
         }
