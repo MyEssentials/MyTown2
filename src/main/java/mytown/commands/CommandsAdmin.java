@@ -17,6 +17,7 @@ import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
+import mytown.new_protection.json.JSONParser;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
@@ -54,6 +55,7 @@ public class CommandsAdmin extends Commands {
     public static void configLoadCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.start"));
         ConfigProcessor.load(MyTown.instance.config, Config.class);
+        JSONParser.start();
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.stop"));
     }
 

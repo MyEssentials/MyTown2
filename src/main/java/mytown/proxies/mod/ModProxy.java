@@ -60,7 +60,7 @@ public class ModProxy {
     public void load() {
         try {
             Protection prot = protClass.newInstance();
-            Protections.instance.addProtection(prot, modid);
+            //Protections.instance.addProtection(prot, modid);
         } catch (InstantiationException e) { // TODO Log the exception
             e.printStackTrace();
         } catch (IllegalAccessException e) { // TODO Log the exception

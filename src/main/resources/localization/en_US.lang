@@ -32,14 +32,14 @@ mytown.cmd.err.money=§cYou need to have %s %s in order to pay for claiming or m
  mytown.flag.pickupItems=§3Allows item pickup by outsiders.
  mytown.flag.explosions=§3Allows DA-BOOM-BOOM!
  mytown.flag.mobs=§3Controls mob spawning.
- mytown.flag.attackEntities=§3Allows attacking passive mobs by outsiders.
+ mytown.flag.attackEntities=§3Allows attacking passive mobs.
  mytown.flag.useItems=§3Allows usage of items (eggs, buckets etc.)
  mytown.flag.pvp=§3PVP - Player vs. Player
 
  mytown.flag.pumps=§3Allows outsiders to pump liquids from town.
  
  # Notify Town
- mytown.protection.notify.explosions=§3An explosion happened in town %s, Dim %s (%s, %s, %s).
+ mytown.protection.notify.explosions=§3An explosion has been stopped!
 
 # /ta config [load|save]
 mytown.cmd.config.load.start=§3Loading config...

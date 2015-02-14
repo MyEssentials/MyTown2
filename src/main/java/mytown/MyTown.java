@@ -19,13 +19,14 @@ import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.PlayerTracker;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
-import mytown.protection.Protections;
+import mytown.new_protection.ProtectionUtils;
+import mytown.new_protection.Protections;
+import mytown.new_protection.json.JSONParser;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -58,9 +59,10 @@ public class MyTown {
         ConfigProcessor.load(config, Config.class);
         LocalizationProxy.load();
 
+        JSONParser.folderPath = ev.getModConfigurationDirectory() + "/MyTown/protections";
         registerHandlers();
 
-        // Add all the ModProxys
+        // Add all the ModProxies
         ModProxies.addProxies();
 
         // Register ICrashCallable's
@@ -69,7 +71,6 @@ public class MyTown {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent ev) {
-        ModProxies.load();
         config.save();
     }
 
@@ -86,6 +87,7 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
+        JSONParser.start();
         registerCommands();
         Commands.populateCompletionMap();
         // This needs to be after registerCommands... might want to move both methods...
@@ -160,8 +162,10 @@ public class MyTown {
         MinecraftForge.EVENT_BUS.register(playerTracker);
 
         FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
-        MinecraftForge.EVENT_BUS.register(Protections.instance);
-        FMLCommonHandler.instance().bus().register(Protections.instance);
+        MinecraftForge.EVENT_BUS.register(Protections.getInstance());
+        //FMLCommonHandler.instance().bus().register(Protections.instance);
+
+        FMLCommonHandler.instance().bus().register(Protections.getInstance());
     }
 
     // ////////////////////////////
