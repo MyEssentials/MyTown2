@@ -9,6 +9,7 @@ import mytown.entities.flag.FlagType;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -59,16 +60,24 @@ public class FlagsConfig {
             reader.close();
 
             // Checking
+
+            for(Iterator<Wrapper> it = wrappers.iterator(); it.hasNext();) {
+                Wrapper w = it.next();
+                if(w.flagType == null) {
+                    MyTown.instance.log.error("Found a type of flag that does not exist. Removing...");
+                    it.remove();
+                }
+            }
+
             boolean ok;
-            for (Wrapper w : wrappers) {
+            for(FlagType type : FlagType.values()) {
                 ok = false;
-                for (FlagType type : FlagType.values()) {
-                    if (type == w.flagType)
+                for(Wrapper w : wrappers) {
+                    if(w.flagType == type)
                         ok = true;
                 }
-                if (!ok) {
-                    MyTown.instance.log.error("Flag config is missing a flagType! Make sure you add them all. If you have trouble you can delete the file to get a new one.");
-                    return;
+                if(!ok) {
+                    MyTown.instance.log.error("Flag config is missing " + type.toString() + " flag! MyTown will use the predefined defaults of the missing flag. If you have trouble you can delete the file to get a new one.");
                 }
             }
 
@@ -81,7 +90,6 @@ public class FlagsConfig {
                     MyTown.instance.log.error("The default value provided is not the proper one (for flag " + w.flagType.toString() + ")!");
                 }
             }
-            //MyTown.instance.log.info("Loaded flags successfully!");
             writeFile();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -100,5 +108,4 @@ public class FlagsConfig {
             this.isAllowedInTowns = isAllowedInTowns;
         }
     }
-
 }

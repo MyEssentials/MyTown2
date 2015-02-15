@@ -48,7 +48,7 @@ public class JSONParser {
 
         String[] extensions = new String[1];
         extensions[0] = "json";
-        //Protections.getInstance().init();
+        Protections.getInstance().init();
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
             try {
                 reader = new FileReader(file);
