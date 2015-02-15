@@ -32,7 +32,6 @@ import net.minecraftforge.event.world.BlockEvent;
  * @author Joe Goett
  */
 public class PlayerTracker {
-    private static Log log = MyTown.instance.log.createChild("PlayerTracker");
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent ev) {
@@ -41,7 +40,7 @@ public class PlayerTracker {
         if (res != null) {
             res.setPlayer(ev.player);
         } else {
-            log.warn("Didn't create resident for player %s (%s)", ev.player.getCommandSenderName(), ev.player.getPersistentID());
+            MyTown.instance.log.error("Didn't create resident for player %s (%s)", ev.player.getCommandSenderName(), ev.player.getPersistentID());
         }
     }
 

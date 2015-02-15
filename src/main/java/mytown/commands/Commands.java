@@ -252,36 +252,12 @@ public abstract class Commands {
         }
     }
 
-
-
     public static void sendMessageBackToSender(ICommandSender sender, String message) {
         if (sender instanceof EntityPlayer) {
             Resident res = getDatasource().getOrMakeResident(sender);
             res.sendMessage(message);
         } else {
             sender.addChatMessage(new ChatComponentText(message));
-        }
-    }
-
-    public static void returnPaymentStack(ICommandSender sender, int amount) {
-        if (sender instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) sender;
-            String[] itemName = Config.costItemName.split(":");
-            Item item;
-            if (itemName.length > 1) {
-                item = GameRegistry.findItem(itemName[0], itemName[1]);
-            } else {
-                item = (Item) Item.itemRegistry.getObject(Config.costItemName);
-            }
-            for (int left = amount; left > 0; left -= 64) {
-                ItemStack stack = new ItemStack(item, left > 64 ? 64 : left);
-                //stack = addToInventory(player.inventory, stack);
-                if (!player.inventory.addItemStackToInventory(stack)) {
-                    // Drop it on the ground if it fails to add to the inventory
-                    MyTownUtils.dropAsEntity(player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ, stack);
-                }
-            }
-
         }
     }
 }

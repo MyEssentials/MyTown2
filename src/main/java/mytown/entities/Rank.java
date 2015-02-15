@@ -105,12 +105,10 @@ public class Rank {
 
     public static boolean outsiderPermCheck(String permission) {
         if (theOutsiderPerms.contains(permission)) {
-            MyTown.instance.log.info("Returning true since it has permission in the outsider list.");
             return true;
         }
         for (String p : theOutsiderPerms) {
             if (permission.contains(p)) {
-                MyTown.instance.log.info("Returning true since it has permission in the outsider list.");
                 return true;
             }
         }
