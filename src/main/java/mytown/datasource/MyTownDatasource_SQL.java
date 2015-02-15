@@ -810,7 +810,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 ResultSet generatedKeys = insertStatement.getGeneratedKeys();
                 if (generatedKeys.next())
                     plot.setDb_ID(generatedKeys.getInt(1));
-                
+
                 for (Flag flag : plot.getTown().getFlags()) {
                     if (!flag.flagType.isTownOnly())
                         saveFlag(new Flag(flag.flagType, flag.getValue()), plot);

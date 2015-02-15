@@ -336,6 +336,15 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public void removePlot(Plot plot) {
+        for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++) {
+            for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++) {
+                TownBlock b = getBlockAtCoords(plot.getDim(), x, z);
+                if (b != null) {
+                    b.removePlot(plot);
+                }
+            }
+        }
+
         plots.remove(plot);
     }
 

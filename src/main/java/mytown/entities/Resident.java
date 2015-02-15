@@ -565,21 +565,22 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         int lastX = 1000000, lastZ = 1000000;
         for (int i = x1; i <= x2; i++) {
             for (int j = z1; j <= z2; j++) {
+
+                // Verifying if it's in town
                 if (i >> 4 != lastX || j >> 4 != lastZ) {
                     lastX = i >> 4;
                     lastZ = j >> 4;
                     if (!getDatasource().hasBlock(selectionDim, lastX, lastZ, selectionTown)) {
-                        //System.out.println("Outside town boundaries");
                         sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.outside"));
                         resetSelection();
                         return null;
                     }
                 }
+
+                // Verifying if it's inside another plot
                 for (int k = y1; k <= y2; k++) {
                     Plot plot = selectionTown.getPlotAtCoords(selectionDim, i, k, j);
                     if (plot != null) {
-                        //System.out.println("Inside another plot" + selectionTown.getPlotAtCoords(selectionDim, i, k, j) + "\n" + i + " " + k + " " + j);
-                        //System.out.println("For selection: " + x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2);
                         sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.insideOther", plot.getName()));
                         resetSelection();
                         return null;
