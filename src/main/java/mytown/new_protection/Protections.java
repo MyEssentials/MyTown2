@@ -39,22 +39,19 @@ import java.util.*;
  */
 public class Protections {
 
-    public List<Protection> protections;
-
     public Map<TileEntity, Boolean> checkedTileEntities;
     public Map<Entity, Boolean> checkedEntities;
-
-    private int tickerMap = 20;
-    private int tickerMapStart = 20;
-
-    private int tickerWhitelist = 600;
-    private int tickerWhitelistStart = 600;
-
-    private int itemPickupCounter = 0;
-
     public int maximalRange = 0;
 
     private static Protections instance;
+    private List<Protection> protections;
+
+    private int tickerMap = 20;
+    private int tickerMapStart = 20;
+    private int tickerWhitelist = 600;
+    private int tickerWhitelistStart = 600;
+    private int itemPickupCounter = 0;
+
     public static Protections getInstance() {
         if(instance == null)
             instance = new Protections();
@@ -74,6 +71,7 @@ public class Protections {
     public void addProtection(Protection prot) {
         protections.add(prot);
     }
+    public void removeProtection(Protection prot) { protections.remove(prot); }
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent

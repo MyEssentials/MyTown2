@@ -6,6 +6,8 @@ import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.ProtectionUtils;
 import mytown.util.MyTownUtils;
+import mytown.util.exceptions.ConditionException;
+import mytown.util.exceptions.GetterException;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,40 +65,43 @@ public class Segment {
                 } else if(conditionString[i + 1].equals("!=")) {
                     current = value != Boolean.parseBoolean(conditionString[i + 2]);
                 } else {
-                    throw new RuntimeException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
+                    throw new ConditionException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
-            } else if(MyTownUtils.tryParseInt(conditionString[i+2])) {
+            } else if(MyTownUtils.tryParseInt(conditionString[i + 2])) {
                 int value = (Integer) getInfoFromGetters(conditionString[i], Integer.class, instance, object);
                 if(conditionString[i+1].equals("==")) {
-                    current = value == Integer.parseInt(conditionString[i+2]);
+                    current = value == Integer.parseInt(conditionString[i + 2]);
                 } else if(conditionString[i + 1].equals("!=")) {
                     current = value != Integer.parseInt(conditionString[i + 2]);
                 } else if(conditionString[i+1].equals("<")) {
-                    current = value < Integer.parseInt(conditionString[i+2]);
+                    current = value < Integer.parseInt(conditionString[i + 2]);
                 } else if(conditionString[i+1].equals(">")) {
-                    current = value > Integer.parseInt(conditionString[i+2]);
+                    current = value > Integer.parseInt(conditionString[i + 2]);
                 } else {
-                    throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] The element number " + (i/4)+1 + " has an invalid condition!");
+                    throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + (i/4)+1 + " has an invalid condition!");
                 }
-            } else if(MyTownUtils.tryParseFloat(conditionString[i+2])) {
+            } else if(MyTownUtils.tryParseFloat(conditionString[i + 2])) {
                 float value = (Integer) getInfoFromGetters(conditionString[i], Integer.class, instance, object);
                 if(conditionString[i+1].equals("==")) {
-                    current = value == Float.parseFloat(conditionString[i+2]);
+                    current = value == Float.parseFloat(conditionString[i + 2]);
                 } else if(conditionString[i + 1].equals("!=")) {
                     current = value != Float.parseFloat(conditionString[i + 2]);
                 } else if(conditionString[i+1].equals("<")) {
-                    current = value < Float.parseFloat(conditionString[i+2]);
+                    current = value < Float.parseFloat(conditionString[i + 2]);
                 } else if(conditionString[i+1].equals(">")) {
-                    current = value > Float.parseFloat(conditionString[i+2]);
+                    current = value > Float.parseFloat(conditionString[i + 2]);
                 } else {
-                    throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
+                    throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
                 }
             } else {
-                throw new RuntimeException("[Segment: "+ this.theClass.getName() +"] The element with number " + ((i/4)+1) + " has an invalid type to be checked against!");
+                throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element with number " + ((i/4)+1) + " has an invalid type to be checked against!");
             }
 
-            if(conditionString.length <= i+3 || current && conditionString[i+3].equals("OR") || !current && conditionString[i+3].equals("AND"))
+            if(conditionString.length <= i + 3 || current && conditionString[i + 3].equals("OR") || !current && conditionString[i + 3].equals("AND"))
                 return current;
+
+            if(!conditionString[i + 3].equals("OR") && !conditionString[i + 3].equals("AND"))
+                throw new ConditionException("[Segment: "+ this.theClass.getName()  +"] Invalid condition element: " + conditionString[i + 3]);
         }
         return false;
     }
@@ -139,22 +144,17 @@ public class Segment {
                 }
             }
             if(!returnType.isAssignableFrom(lastInstance.getClass()))
-                throw new RuntimeException("[Segment: "+ theClass.getName() +"] Got wrong type of class at a getter! Expected: " + returnType.getName());
+                throw new GetterException("[Segment: "+ theClass.getName() +"] Got wrong type of class at the getter: " + getterName + "! Expected: " + returnType.getName());
             return lastInstance;
         } catch(NoSuchFieldException nfex) {
-            MyTown.instance.log.error("[Segment:"+ theClass.getName() +"] Encountered a problem when getting a field from " + instance.toString());
-            nfex.printStackTrace();
+            throw new GetterException("[Segment:"+ theClass.getName() +"] Encountered a problem when getting a field from " + instance.toString(), nfex);
         } catch (IllegalAccessException iaex) {
-            MyTown.instance.log.error("[Segment:"+ theClass.getName() +"] This type of thing should not happen.");
-            iaex.printStackTrace();
+            throw new GetterException("[Segment:"+ theClass.getName() +"] This type of thing should not happen.", iaex);
         } catch (NoSuchMethodException nmex) {
-            MyTown.instance.log.error("[Segment:"+ theClass.getName() +"] Encountered a problem when getting a method from " + instance.toString());
-            nmex.printStackTrace();
+            throw new GetterException("[Segment:"+ theClass.getName() +"] Encountered a problem when getting a method from " + instance.toString(), nmex);
         } catch (InvocationTargetException itex) {
-            MyTown.instance.log.error("[Segment:"+ theClass.getName() +"] The returned object was not of the expected type!");
-            itex.printStackTrace();
+            throw new GetterException("[Segment:"+ theClass.getName() +"] The returned object was not of the expected type!", itex);
         }
-        return null;
     }
 
     /**

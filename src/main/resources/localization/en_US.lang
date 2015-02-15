@@ -132,7 +132,6 @@ mytown.cmd.err.flagNotExists=§cThat flag does not exist!
 mytown.cmd.err.perm.valueNotValid=§cInvalid value!
 mytown.cmd.err.flag.notForWhitelist=§cThe flag you selected is not allowed on block whitelist!
 mytown.cmd.err.flag.list=§cThere's no flag in town!
-mytown.adm.cmd.err.perm.valueNotValid=§cInvalid value!
 mytown.cmd.err.perm.valueNotValid=§cInvalid value!
 
 # /t promote

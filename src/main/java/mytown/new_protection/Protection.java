@@ -45,7 +45,6 @@ public class Protection {
         this(modid, "", segments);
     }
 
-
     public Protection(String modid, String version, List<Segment> segments) {
 
         segmentsTiles = new ArrayList<SegmentTileEntity>();
@@ -74,7 +73,6 @@ public class Protection {
             //MyTown.instance.log.info("Segment: " + segment.theClass.getName());
             if(segment.theClass.isAssignableFrom(te.getClass())) {
                 try {
-                    MyTown.instance.log.info("Calling condition.");
                     if(segment.checkCondition(te)) {
 
                         int x1 = segment.getX1(te);
@@ -100,7 +98,9 @@ public class Protection {
                     ex.printStackTrace();
                     MyTown.instance.log.error("Failed to check tile entity: " + te.toString());
                     MyTown.instance.log.error("Skipping...");
-                    // TODO: Leave it completely unprotected or completely unusable?
+
+                    // Disabling protection if something errors.
+                    this.disable();
                 }
                 return false;
             }
@@ -130,11 +130,12 @@ public class Protection {
     public boolean checkItem(ItemStack item, Resident res, BlockPos bp, int face) {
         for(SegmentItem segment : segmentsItems) {
             if(segment.type == ItemType.rightClickBlock && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
-                MyTown.instance.log.info("Checking item: " + item.getDisplayName());
+
                 if(segment.onAdjacent) {
                     ForgeDirection dir = ForgeDirection.getOrientation(face);
                     bp = new BlockPos(bp.x + dir.offsetX, bp.y + dir.offsetY, bp.z + dir.offsetZ, bp.dim);
                 }
+
                 if(segment.checkCondition(item)) {
                     Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
                     if(town != null && !town.checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
@@ -240,12 +241,11 @@ public class Protection {
 
 
 
+    private void disable() {
+        Protections.getInstance().removeProtection(this);
+    }
 
     public static MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
-
-
-
-
 }

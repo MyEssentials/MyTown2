@@ -96,8 +96,7 @@ public class CommandsAdmin extends Commands {
 
 
         getDatasource().linkResidentToTown(target, town, rank);
-        // TODO: add failed message ... too lazy right now :P
-        // TODO: maybe too much info here
+
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.resident.add", args.get(0), args.get(1), args.size() > 2 ? args.get(2) : town.getDefaultRank().getName()));
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.added", town.getName()));
     }
