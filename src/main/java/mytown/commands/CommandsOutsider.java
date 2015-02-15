@@ -107,23 +107,20 @@ public class CommandsOutsider extends Commands {
                     throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", Config.distanceBetweenTowns);
             }
         }
+        // Special case for ForgeEssentials
+        if(Config.costItemName.equals("$")){
+            if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountMakeTown)){
+                throw new MyTownCommandException("mytown.cmd.err.money",Config.costAmountMakeTown, Config.costItemName);
+            }
+        } else {
+            if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountMakeTown))
+                throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, Config.costItemName);
+        }
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
-       //adding economy
-        if(Config.costItemName.equals("$")){        	
-        	if(FMLCommonHandler.instance().findContainerFor("ForgeEssentials") != null){
-        		if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountMakeTown)){
-                    throw new MyTownCommandException("mytown.cmd.err.money",Config.costAmountMakeTown, Config.costItemName);
-                } 
-        	} else {
-        		res.sendMessage("ForgeEssentials NOT FOUND"+FMLCommonHandler.instance().findContainerFor("ForgeEssentials"));        		
-        	}
-        } else {
-        if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountMakeTown))
-            throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, Config.costItemName);
-        }
+
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
     }
 

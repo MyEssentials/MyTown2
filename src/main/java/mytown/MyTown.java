@@ -1,10 +1,12 @@
 package mytown;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import mytown.commands.*;
 import mytown.config.Config;
@@ -27,6 +29,7 @@ import mytown.proxies.LocalizationProxy;
 import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.init.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -87,6 +90,12 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
+
+        if(Config.costItemName.equals("$") && !Loader.isModLoaded("ForgeEssentials")) {
+            MyTown.instance.log.error("Failed to find ForgeEssentials for economy implementation. Reverting to default.");
+            Config.costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).name;
+        }
+
         JSONParser.start();
         registerCommands();
         Commands.populateCompletionMap();

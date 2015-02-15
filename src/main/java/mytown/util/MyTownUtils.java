@@ -353,10 +353,10 @@ public class MyTownUtils {
     public static boolean takeMoneyFromPlayer(EntityPlayer player, int amount) {		
 		UtilEconomy eco = new UtilEconomy(player.getUniqueID());
 		int wallet = eco.getWallet();
-		if(wallet>=amount){
-			eco.removeFromWallet(amount);
-			return true;
-		}		 
+		if(wallet >= amount) {
+            eco.removeFromWallet(amount);
+            return true;
+        }
 		return false;
     }
 
