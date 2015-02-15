@@ -134,7 +134,6 @@ public class PlayerTracker {
                         ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.selectionFailed");
 
                 }
-                System.out.println(String.format("Player has selected: %s;%s;%s", ev.x, ev.y, ev.z));
             } else if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
                 town = MyTownUniverse.getInstance().getTownsMap().get(MyTownUtils.getTownNameFromLore(ev.entityPlayer));
                 Town townAt = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
