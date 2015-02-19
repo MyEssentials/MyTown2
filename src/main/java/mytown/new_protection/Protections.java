@@ -72,6 +72,8 @@ public class Protections {
         protections.add(prot);
     }
     public void removeProtection(Protection prot) { protections.remove(prot); }
+    public List<Protection> getProtections() { return this.protections; }
+
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent
@@ -129,7 +131,7 @@ public class Protections {
                     }
                 }
                 */
-
+                //((EntityPlayer) entity).
                 if (town != null) {
                     if (!town.checkPermission(res, FlagType.enter, entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)) {
                         res.protectionDenial("§cYou have been moved because you can't access this place!", Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)));

@@ -34,7 +34,7 @@ public class ProtectionUtils {
      * Adds to the whitelist of the specified town. Used when placing blocks.
      */
     public static void addToBlockWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for (Protection prot : Protections.getInstance().protections) {
+        for (Protection prot : Protections.getInstance().getProtections()) {
             if (prot.isTileTracked(te))
                 for (FlagType flagType : prot.getFlagsForTile(te)) {
                     if (!town.hasBlockWhitelist(dim, x, y, z, flagType)) {
@@ -49,7 +49,7 @@ public class ProtectionUtils {
      * Removes from the whitelist. Used when breaking blocks.
      */
     public static void removeFromWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for (Protection prot : Protections.getInstance().protections) {
+        for (Protection prot : Protections.getInstance().getProtections()) {
             if (prot.isTileTracked(te))
                 for (FlagType flagType : prot.getFlagsForTile(te)) {
                     BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
@@ -64,7 +64,7 @@ public class ProtectionUtils {
      * Checks the tile entity with all the protections
      */
     public static boolean checkTileEntity(TileEntity te) {
-        for (Protection prot : Protections.getInstance().protections)
+        for (Protection prot : Protections.getInstance().getProtections())
             if (prot.checkTileEntity(te))
                 return true;
         return false;
@@ -74,7 +74,7 @@ public class ProtectionUtils {
      * Checks the item usage with all the protections
      */
     public static boolean checkItemUsage(ItemStack stack, Resident res, BlockPos bp, int face) {
-        for (Protection prot : Protections.getInstance().protections)
+        for (Protection prot : Protections.getInstance().getProtections())
             if (prot.checkItem(stack, res, bp, face))
                 return true;
         return false;
@@ -86,7 +86,7 @@ public class ProtectionUtils {
      * Checks the block if it can be activated by a right-click
      */
     public static boolean checkActivatedBlocks(Block block, int meta) {
-        for (Protection prot : Protections.getInstance().protections) {
+        for (Protection prot : Protections.getInstance().getProtections()) {
             if (prot.isBlockTracked(block.getClass(), meta))
                 return true;
         }
@@ -96,7 +96,7 @@ public class ProtectionUtils {
      * Checks if an entity is hostile
      */
     public static boolean isEntityHostile(Class<? extends Entity> ent) {
-        for (Protection prot : Protections.getInstance().protections) {
+        for (Protection prot : Protections.getInstance().getProtections()) {
             if (prot.isEntityHostile(ent)) {
                 return true;
             }
@@ -106,7 +106,7 @@ public class ProtectionUtils {
 
     public static List<FlagType> getFlagsForTile(Class<? extends TileEntity> te) {
         List<FlagType> flags = new ArrayList<FlagType>();
-        for(Protection protection : Protections.getInstance().protections) {
+        for(Protection protection : Protections.getInstance().getProtections()) {
             if(protection.isTileTracked(te))
                 flags.addAll(protection.getFlagsForTile(te));
         }

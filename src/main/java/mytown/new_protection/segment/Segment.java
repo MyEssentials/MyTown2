@@ -78,7 +78,7 @@ public class Segment {
                 } else if(conditionString[i+1].equals(">")) {
                     current = value > Integer.parseInt(conditionString[i + 2]);
                 } else {
-                    throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + (i/4)+1 + " has an invalid condition!");
+                    throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
             } else if(MyTownUtils.tryParseFloat(conditionString[i + 2])) {
                 float value = (Integer) getInfoFromGetters(conditionString[i], Integer.class, instance, object);
@@ -144,16 +144,16 @@ public class Segment {
                 }
             }
             if(!returnType.isAssignableFrom(lastInstance.getClass()))
-                throw new GetterException("[Segment: "+ theClass.getName() +"] Got wrong type of class at the getter: " + getterName + "! Expected: " + returnType.getName());
+                throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get " + returnType.getSimpleName() + "of value in getter: " + getterName);
             return lastInstance;
         } catch(NoSuchFieldException nfex) {
-            throw new GetterException("[Segment:"+ theClass.getName() +"] Encountered a problem when getting a field from " + instance.toString(), nfex);
+            throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get a field in getter: " + getterName, nfex);
         } catch (IllegalAccessException iaex) {
-            throw new GetterException("[Segment:"+ theClass.getName() +"] This type of thing should not happen.", iaex);
+            throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to access a field/method in getter: " + getterName, iaex);
         } catch (NoSuchMethodException nmex) {
-            throw new GetterException("[Segment:"+ theClass.getName() +"] Encountered a problem when getting a method from " + instance.toString(), nmex);
+            throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get a method in getter: " + getterName, nmex);
         } catch (InvocationTargetException itex) {
-            throw new GetterException("[Segment:"+ theClass.getName() +"] The returned object was not of the expected type!", itex);
+            throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get " + returnType.getSimpleName() + "of value in getter: " + getterName, itex);
         }
     }
 

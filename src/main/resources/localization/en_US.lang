@@ -19,7 +19,7 @@ mytown.cmd.err.money=§cYou need to have %s %s in order to pay for claiming or m
  mytown.protection.mobs=§cYou cannot spawn this type of mob in here!
  mytown.protection.attackEntities=§cYou cannot attack this type of mob in here!
  mytown.protection.useItems=§cYou cannot use items in here!
- mytown.protection.pvp=§You cannot attack this player!
+ mytown.protection.pvp=§cYou cannot attack this player!
 
  mytown.protection.pumps=§cYou cannot pump from this area!
 
