@@ -21,9 +21,9 @@ import java.util.List;
 public class CommandsEveryone extends Commands {
 
     @Command(
-            name = "town",
+            name = "mytown",
             permission = "mytown.cmd",
-            alias = {"t"})
+            alias = {"t", "town"})
     public static void townCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.cmd");
     }
@@ -291,8 +291,7 @@ public class CommandsEveryone extends Commands {
     public static void plotSelectResetCommand(ICommandSender sender, List<String> args) {
 
         Resident res = getDatasource().getOrMakeResident(sender);
-        res.resetSelection();
-
+        res.resetSelection(true);
         ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.selectionReset");
     }
 

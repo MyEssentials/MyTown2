@@ -21,6 +21,6 @@ public interface IPlotSelector {
 
     void expandSelectionVert();
 
-    void resetSelection();
+    void resetSelection(boolean resetBlocks);
 }
 

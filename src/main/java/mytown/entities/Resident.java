@@ -527,7 +527,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
         if (!secondSelectionActive || !firstSelectionActive || ((Math.abs(selectionX1 - selectionX2) + 1) * (Math.abs(selectionZ1 - selectionZ2) + 1) < Config.minPlotsArea || Math.abs(selectionY1 - selectionY2) + 1 < Config.minPlotsHeight) && !(selectedTown instanceof AdminTown)) {
             sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.tooSmall", Config.minPlotsArea, Config.minPlotsHeight));
-            resetSelection();
+            resetSelection(true);
             return null;
         }
 
@@ -559,7 +559,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
                     lastZ = j >> 4;
                     if (!getDatasource().hasBlock(selectionDim, lastX, lastZ, selectionTown)) {
                         sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.outside"));
-                        resetSelection();
+                        resetSelection(true);
                         return null;
                     }
                 }
@@ -569,7 +569,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
                     Plot plot = selectionTown.getPlotAtCoords(selectionDim, i, k, j);
                     if (plot != null) {
                         sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.insideOther", plot.getName()));
-                        resetSelection();
+                        resetSelection(true);
                         return null;
                     }
                 }
@@ -579,7 +579,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         Plot plot = DatasourceProxy.getDatasource().newPlot(plotName, selectionTown, selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2);
 
         MyTownUtils.takeSelectorToolFromPlayer(player);
-        resetSelection();
+        resetSelection(false);
         return plot;
     }
 
@@ -602,14 +602,16 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     @Override
-    public void resetSelection() {
+    public void resetSelection(boolean resetBlocks) {
         firstSelectionActive = false;
         secondSelectionActive = false;
 
-        if (selectionExpandedVert) {
-            VisualsTickHandler.instance.unmarkPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
-        } else {
-            VisualsTickHandler.instance.unmarkPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
+        if(resetBlocks) {
+            if (selectionExpandedVert) {
+                VisualsTickHandler.instance.unmarkPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
+            } else {
+                VisualsTickHandler.instance.unmarkPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
+            }
         }
     }
 

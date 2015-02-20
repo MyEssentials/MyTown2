@@ -101,6 +101,8 @@ public class RanksConfig {
         try {
             Reader reader = new FileReader(path);
 
+            // Just for showing the nodes that were omitted.
+            List<String> notExistingPermNodes = new ArrayList<String>();
             Wrapper[] wrappedObjects = gson.fromJson(reader, Wrapper[].class);
 
             for (Wrapper w : wrappedObjects) {
@@ -108,8 +110,12 @@ public class RanksConfig {
                     String s = it.next();
                     if (!CommandManager.commandList.containsKey(s)) {
                         // Omitting permissions that don't exist
-                        //throw new RuntimeException("Permission node " + s + " does not exist!");
-                        MyTown.instance.log.error("Permission node " + s + " does not exist!");
+                        boolean ok = true;
+                        for(String s1 : notExistingPermNodes)
+                            if(s1.equals(s))
+                                ok = false;
+                        if(ok)
+                            notExistingPermNodes.add(s);
                         it.remove();
                     }
                 }
@@ -121,6 +127,9 @@ public class RanksConfig {
                     Rank.theMayorDefaultRank = w.name;
                 if (w.type == RankType.Outsider)
                     Rank.theOutsiderPerms = w.permissions;
+            }
+            for(String s : notExistingPermNodes) {
+                MyTown.instance.log.error("Permission node " + s + " does not exist!");
             }
         } catch (Exception e) {
             e.printStackTrace();

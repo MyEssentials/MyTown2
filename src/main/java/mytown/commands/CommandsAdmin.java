@@ -30,9 +30,9 @@ import net.minecraft.entity.player.EntityPlayer;
 public class CommandsAdmin extends Commands {
 
     @Command(
-            name = "townadmin",
+            name = "mytownadmin",
             permission = "mytown.adm.cmd",
-            alias = {"ta"},
+            alias = {"ta", "townadmin"},
             opsOnlyAccess = true)
     public static void townAdminCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         callSubFunctions(sender, args, subCommands, "mytown.adm.cmd");
