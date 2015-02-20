@@ -115,6 +115,11 @@ public class Segment {
     public Object getInfoFromGetters(String getterName, Class<?> returnType, Object instance, Object parameter) {
         Object lastInstance = instance;
         List<Getter> getterList = extraGettersMap.get(getterName);
+
+        if(getterList == null) {
+            throw new GetterException("[Segment:"+ theClass.getName() +"] Getter with name \"" + getterName + "\" could not be found.");
+        }
+
         try {
             forLoop: for (Getter getter : getterList) {
                 switch (getter.type) {
@@ -144,7 +149,7 @@ public class Segment {
                 }
             }
             if(!returnType.isAssignableFrom(lastInstance.getClass()))
-                throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get " + returnType.getSimpleName() + "of value in getter: " + getterName);
+                throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get " + returnType.getSimpleName() + " type in getter: " + getterName);
             return lastInstance;
         } catch(NoSuchFieldException nfex) {
             throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get a field in getter: " + getterName, nfex);
@@ -153,7 +158,7 @@ public class Segment {
         } catch (NoSuchMethodException nmex) {
             throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get a method in getter: " + getterName, nmex);
         } catch (InvocationTargetException itex) {
-            throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get " + returnType.getSimpleName() + "of value in getter: " + getterName, itex);
+            throw new GetterException("[Segment:"+ theClass.getName() +"] Failed to get " + returnType.getSimpleName() + " type in getter: " + getterName, itex);
         }
     }
 

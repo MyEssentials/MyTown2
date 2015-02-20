@@ -45,10 +45,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     private boolean firstSelectionActive = false, secondSelectionActive = false;
     private boolean selectionExpandedVert = false;
 
-    // Location checking
-    private int lastChunkZ, lastChunkX;
-    private int lastDim;
-
     public Resident(EntityPlayer pl) {
         setPlayer(pl);
         this.joinDate = new Date();
@@ -72,8 +68,8 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
      */
     public Resident(String uuid, String playerName, long joinDate, long lastOnline, int extraBlocks) {
         setUUID(uuid);
-        this.joinDate = new Date((long) joinDate * 1000L);
-        this.lastOnline = new Date((long) lastOnline * 1000L);
+        this.joinDate = new Date(joinDate * 1000L);
+        this.lastOnline = new Date(lastOnline * 1000L);
         this.playerName = playerName;
         this.extraBlocks = extraBlocks;
     }
@@ -269,7 +265,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     /**
-     * Returns this Residents rank in the given Town, or null if the player is not part of the Town (TODO Maybe change?)
+     * Returns this Residents rank in the given Town, or null if the player is not part of the Town
      *
      * @param town
      * @return
@@ -325,10 +321,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
             } else if (oldTownBlock != null && newTownBlock == null) {
                 sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.wild"));
             }
-
-            lastDim = dimension;
-            lastChunkX = newChunkX;
-            lastChunkZ = newChunkZ;
         }
     }
 
@@ -351,10 +343,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         } else {
             sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
         }
-
-        lastDim = dimension;
-        lastChunkX = newChunkX;
-        lastChunkZ = newChunkZ;
     }
 
     /* ----- Invites ----- */
@@ -459,12 +447,12 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         ((EntityPlayerMP) player).playerNetServerHandler.setPlayerLocation(spawn.posX, spawn.posY, spawn.posZ, player.rotationYaw, player.rotationPitch);
     }
 
-    public Plot getPlotAtPlayerPosition() {
-        for (Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
-            if (plot.isCoordWithin(player.dimension, (int) player.posX, (int) player.posY, (int) player.posZ))
-                return plot;
+    public void knockbackPlayer() {
+
+        if(this.player != null) {
+
         }
-        return null;
+
     }
 
     /* ----- Plot Selection ----- */

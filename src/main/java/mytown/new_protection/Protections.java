@@ -129,11 +129,12 @@ public class Protections {
                     }
                 }
                 */
-                //((EntityPlayer) entity).
+
                 if (town != null) {
                     if (!town.checkPermission(res, FlagType.enter, entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)) {
                         res.protectionDenial("§cYou have been moved because you can't access this place!", Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)));
-                        res.respawnPlayer();
+                        //res.respawnPlayer();
+
                         MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
                     }
                 }
