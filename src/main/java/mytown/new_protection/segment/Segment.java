@@ -187,8 +187,8 @@ public class Segment {
             }
         }
 
-        MyTown.instance.log.info("Got formula at the end: " + formula);
-        MyTown.instance.log.info("Trying to parse it.");
+        //MyTown.instance.log.info("Got formula at the end: " + formula);
+        //MyTown.instance.log.info("Trying to parse it.");
 
         Interpreter interpreter = new Interpreter();
         try {
@@ -197,7 +197,7 @@ public class Segment {
         } catch (EvalError ex) {
             ex.printStackTrace();
         }
-        MyTown.instance.log.info("Returning: " + result);
+        //MyTown.instance.log.info("Returning: " + result);
         return result;
     }
 }

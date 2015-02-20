@@ -448,11 +448,9 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     public void knockbackPlayer() {
-
         if(this.player != null) {
-
+            player.setPositionAndUpdate(player.lastTickPosX, player.lastTickPosY, player.lastTickPosZ);
         }
-
     }
 
     /* ----- Plot Selection ----- */
