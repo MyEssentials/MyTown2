@@ -326,6 +326,24 @@ public class MyTownUtils {
     }
 
     /**
+     * Takes the amount of money specified.
+     * Returns false if player doesn't have the money necessary
+     *
+     * @param player
+     * @param amount
+     * @return true if succeeded else false
+     */
+    public static boolean takeMoneyFromPlayer(EntityPlayer player, int amount) {
+        UtilEconomy eco = new UtilEconomy(player.getUniqueID());
+        int wallet = eco.getWallet();
+        if(wallet >= amount) {
+            eco.removeFromWallet(amount);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Takes the amount of items specified.
      * Returns false if player doesn't have the items necessary
      *
@@ -341,23 +359,6 @@ public class MyTownUtils {
         } else {
             return takeItemFromPlayer(player, GameRegistry.findItem(split[0], split[1]), amount);
         }
-    }
-    /**
-     * Takes the amount of money specified.
-     * Returns false if player doesn't have the money necessary
-     *
-     * @param player
-     * @param amount
-     * @return true if succeeded else false
-     */
-    public static boolean takeMoneyFromPlayer(EntityPlayer player, int amount) {		
-		UtilEconomy eco = new UtilEconomy(player.getUniqueID());
-		int wallet = eco.getWallet();
-		if(wallet >= amount) {
-            eco.removeFromWallet(amount);
-            return true;
-        }
-		return false;
     }
 
     /**
@@ -401,6 +402,20 @@ public class MyTownUtils {
             }
         }
         return true;
+    }
+
+    /**
+     * Takes the selector tool (for plots) from the player.
+     *
+     * @param player
+     */
+    public static void takeSelectorToolFromPlayer(EntityPlayer player) {
+        for(int i = 0; i < player.inventory.mainInventory.length; i++) {
+            if (player.inventory.mainInventory[i] != null && player.inventory.mainInventory[i].getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+                player.inventory.decrStackSize(i, 1);
+                return;
+            }
+        }
     }
 
     /**

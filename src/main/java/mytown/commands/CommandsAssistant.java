@@ -386,7 +386,7 @@ public class CommandsAssistant extends Commands {
     public static void plotLimitShowCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.limit", town.getMaxPlots()));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));
     }
 
 
@@ -404,7 +404,7 @@ public class CommandsAssistant extends Commands {
             Town town = getTownFromResident(res);
             town.setMaxPlots(limit);
             getDatasource().saveTown(town);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.limit", town.getMaxPlots()));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));
         } catch (NumberFormatException ex) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
         }

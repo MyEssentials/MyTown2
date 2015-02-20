@@ -8,6 +8,7 @@ import mytown.core.Utils;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -278,6 +279,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     /* ----- IHasPlots ----- */
 
     private int maxPlots;
+    private boolean isShowingPlots = false;
 
     public void setMaxPlots(int maxPlots) {
         this.maxPlots = maxPlots;
@@ -331,6 +333,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public void addPlot(Plot plot) {
+        if(isShowingPlots)
+            VisualsTickHandler.instance.markPlotBorders(plot);
+
         plots.add(plot);
     }
 
@@ -344,7 +349,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
                 }
             }
         }
-
+        if(isShowingPlots)
+            VisualsTickHandler.instance.unmarkPlotBorders(plot);
         plots.remove(plot);
     }
 
@@ -371,6 +377,21 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public Plot getPlotAtResident(Resident res) {
         return getPlotAtCoords(res.getPlayer().dimension, (int) res.getPlayer().posX, (int) res.getPlayer().posY, (int) res.getPlayer().posZ);
     }
+
+    public void showPlots() {
+        this.isShowingPlots = true;
+        for (Plot plot : plots) {
+            VisualsTickHandler.instance.markPlotBorders(plot);
+        }
+    }
+
+    public void hidePlots() {
+        this.isShowingPlots = false;
+        for (Plot plot : plots) {
+            VisualsTickHandler.instance.unmarkPlotBorders(plot);
+        }
+    }
+
 
     /* ----- IHasFlags ------ */
 

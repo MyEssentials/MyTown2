@@ -15,6 +15,7 @@ import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
+import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -471,7 +472,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
             result = player.inventory.addItemStackToInventory(selectionTool);
         }
         if (result) {
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.plot.start"));
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.start"));
         } else if (ok) {
             sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.start.failed"));
         }
@@ -577,7 +578,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
         Plot plot = DatasourceProxy.getDatasource().newPlot(plotName, selectionTown, selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2);
 
-        player.setCurrentItemOrArmor(0, null);
+        MyTownUtils.takeSelectorToolFromPlayer(player);
         resetSelection();
         return plot;
     }

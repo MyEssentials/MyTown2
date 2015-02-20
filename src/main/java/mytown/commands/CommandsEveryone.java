@@ -231,7 +231,7 @@ public class CommandsEveryone extends Commands {
             getDatasource().savePlot(plot);
             getDatasource().linkResidentToPlot(res, plot, true);
 
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.plot.created");
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.created");
         } else
             throw new MyTownCommandException("mytown.cmd.err.plot.failed");
 
@@ -252,6 +252,7 @@ public class CommandsEveryone extends Commands {
 
         getDatasource().savePlot(plot);
 
+        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
         ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
     }
 
@@ -280,7 +281,7 @@ public class CommandsEveryone extends Commands {
 
         res.expandSelectionVert();
 
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.plot.expanded");
+        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.expanded");
     }
 
     @CommandNode(
@@ -292,7 +293,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         res.resetSelection();
 
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.plot.selectionReset");
+        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.selectionReset");
     }
 
     @CommandNode(
@@ -302,22 +303,18 @@ public class CommandsEveryone extends Commands {
     public static void plotShowCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        for (Plot plot : town.getPlots()) {
-            VisualsTickHandler.instance.markPlotBorders(plot);
-        }
+        town.showPlots();
         ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
     }
 
     @CommandNode(
-            name = "vanish",
-            permission = "mytown.cmd.everyone.plot.vanish",
+            name = "hide",
+            permission = "mytown.cmd.everyone.plot.hide",
             parentName = "mytown.cmd.everyone.plot")
-    public static void plotVanishCommand(ICommandSender sender, List<String> args) {
+    public static void plotHideCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        for (Plot plot : town.getPlots()) {
-            VisualsTickHandler.instance.unmarkPlotBorders(plot);
-        }
+        town.hidePlots();
         ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.vanished");
     }
 
@@ -396,7 +393,7 @@ public class CommandsEveryone extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
 
         getDatasource().deletePlot(plot);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.plot.deleted"));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.deleted", plot.getName()));
     }
 
     @CommandNode(
