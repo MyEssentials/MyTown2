@@ -5,6 +5,7 @@ import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.segment.*;
 import mytown.new_protection.segment.enums.EntityType;
@@ -121,8 +122,9 @@ public class Protection {
                 if (segment.type == EntityType.hostile) {
                     if (segment.theClass.isAssignableFrom(entity.getClass())) {
                         Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
+                        String mobsValue;
                         if (town != null) {
-                            String mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
+                            mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
                             if (mobsValue.equals("hostiles"))
                                 return true;
                         }
@@ -130,14 +132,19 @@ public class Protection {
                 } else if(segment.type == EntityType.explosive) {
                     int range = segment.getRange(entity);
                     List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) (entity.posX - range), (int) (entity.posZ - range), (int) (entity.posX + range), (int) (entity.posZ + range));
+                    boolean explosionValue;
                     for (ChunkPos chunk : chunks) {
                         TownBlock tblock = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
                         if (tblock != null) {
-                            boolean explosionValue = (Boolean) tblock.getTown().getValue(FlagType.explosions);
-                            if (!explosionValue)
+                            explosionValue = (Boolean) tblock.getTown().getValue(FlagType.explosions);
+                            if(!explosionValue)
                                 return true;
                         }
                     }
+
+                    explosionValue = (Boolean) Wild.getInstance().getValue(FlagType.explosions);
+                    if (!explosionValue)
+                        return true;
                 }
             }
         }

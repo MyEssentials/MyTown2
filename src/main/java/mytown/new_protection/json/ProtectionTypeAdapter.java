@@ -104,7 +104,6 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     in.beginObject();
                     while (!in.peek().equals(JsonToken.END_OBJECT)) {
                         nextName = in.nextName();
-                        MyTown.instance.log.info("Checking name: " + nextName);
                         if (nextName.equals("class")) {
                             clazz = in.nextString();
                             continue;
@@ -159,7 +158,6 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                         }
 
                         // If it gets that means that it should be some extra data that will be used in checking something
-                        MyTown.instance.log.info("Added " + nextName + " to map.");
                         extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
                     }
 
