@@ -190,7 +190,7 @@ public class Protection {
     /**
      * Checking item usage for right click on entity
      */
-    public boolean checkItem(ItemStack item, Resident res, Entity entity) {
+    public boolean checkEntityRightClick(ItemStack item, Resident res, Entity entity) {
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
             if(segment.type == ItemType.rightClickEntity && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
@@ -209,6 +209,16 @@ public class Protection {
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
                     }
+                }
+            }
+        }
+        for(Iterator<SegmentEntity> it = segmentsEntities.iterator(); it.hasNext();) {
+            SegmentEntity segment = it.next();
+            if(segment.type == EntityType.passive && segment.theClass.isAssignableFrom(entity.getClass())) {
+                Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
+                if(town != null && !town.checkPermission(res, FlagType.protectedEntities, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
+                    res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))));
+                    return true;
                 }
             }
         }

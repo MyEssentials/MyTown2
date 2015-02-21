@@ -100,12 +100,12 @@ public class MinefactoryReloadedProtection extends Protection {
             MyTown.instance.log.info("Found safari net usage!");
             Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
             if (town != null) {
-                boolean entityFlag = (Boolean) town.getValueAtCoords(bp.dim, bp.x, bp.y, bp.z, FlagType.attackEntities);
-                if (!entityFlag && (res == null || !town.checkPermission(res, FlagType.attackEntities))) {
+                boolean entityFlag = (Boolean) town.getValueAtCoords(bp.dim, bp.x, bp.y, bp.z, FlagType.protectedEntities);
+                if (!entityFlag && (res == null || !town.checkPermission(res, FlagType.protectedEntities))) {
                     if (res != null)
-                        res.sendMessage(FlagType.attackEntities.getLocalizedProtectionDenial());
+                        res.sendMessage(FlagType.protectedEntities.getLocalizedProtectionDenial());
                     else
-                        town.notifyEveryone(FlagType.attackEntities.getLocalizedTownNotification());
+                        town.notifyEveryone(FlagType.protectedEntities.getLocalizedTownNotification());
                     return true;
                 }
             }

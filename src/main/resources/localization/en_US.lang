@@ -17,7 +17,7 @@ mytown.cmd.err.money=§cYou need to have %s %s in order to pay for claiming or m
  mytown.protection.pickupItems=§cYou cannot pickup blocks/items in here!
  mytown.protection.explosions=§cYou cannot use explosions in here!
  mytown.protection.mobs=§cYou cannot spawn this type of mob in here!
- mytown.protection.attackEntities=§cYou cannot attack this type of mob in here!
+ mytown.protection.protectedEntities=§cDon't touch that!
  mytown.protection.useItems=§cYou cannot use items in here!
  mytown.protection.pvp=§cYou cannot attack this player!
 
@@ -32,7 +32,7 @@ mytown.cmd.err.money=§cYou need to have %s %s in order to pay for claiming or m
  mytown.flag.pickupItems=§3Allows item pickup by outsiders.
  mytown.flag.explosions=§3Allows DA-BOOM-BOOM!
  mytown.flag.mobs=§3Controls mob spawning.
- mytown.flag.attackEntities=§3Allows attacking passive mobs.
+ mytown.flag.protectedEntities=§3Allows right clicking on entities.
  mytown.flag.useItems=§3Allows usage of items (eggs, buckets etc.)
  mytown.flag.pvp=§3PVP - Player vs. Player
 

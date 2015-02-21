@@ -121,7 +121,7 @@ public class BotaniaProtection extends Protection {
                 //MyTown.instance.log.info("Got entity: " + entity.toString());
                 Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) entity.posX >> 4, (int) entity.posZ >> 4);
                 if(town != null) {
-                    if (!town.checkPermission(res, FlagType.attackEntities, entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ)) {
+                    if (!town.checkPermission(res, FlagType.protectedEntities, entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ)) {
                         //MyTown.instance.log.info("Checking entity.");
                         for (Protection prot : Protections.instance.protections.values()) {
                             if (prot.protectedEntities.contains(entity.getClass())) {
