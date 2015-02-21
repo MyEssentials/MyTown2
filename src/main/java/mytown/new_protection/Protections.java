@@ -140,9 +140,9 @@ public class Protections {
             } else {
                 // Other entity checks
                 for (Protection prot : protections) {
-                    if(prot.isEntityHostile(entity.getClass())) {
-                        if(checkedEntities.get(entity) == null || !checkedEntities.get(entity)) {
-                            if(prot.checkEntity(entity)) {
+                    if(prot.isEntityTracked(entity.getClass())) {
+                        if (checkedEntities.get(entity) == null || !checkedEntities.get(entity)) {
+                            if (prot.checkEntity(entity)) {
                                 MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
                                 checkedEntities.remove(entity);
                                 entity.setDead();

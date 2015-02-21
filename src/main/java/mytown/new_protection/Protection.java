@@ -117,13 +117,26 @@ public class Protection {
     // TODO: Add condition check
     public boolean checkEntity(Entity entity) {
         for(SegmentEntity segment : segmentsEntities) {
-            if (segment.type == EntityType.hostile) {
-                if (segment.theClass.isAssignableFrom(entity.getClass())) {
-                    Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
-                    if (town != null) {
-                        String mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
-                        if (mobsValue.equals("hostiles"))
-                            return true;
+            if (segment.theClass.isAssignableFrom(entity.getClass())) {
+                if (segment.type == EntityType.hostile) {
+                    if (segment.theClass.isAssignableFrom(entity.getClass())) {
+                        Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
+                        if (town != null) {
+                            String mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
+                            if (mobsValue.equals("hostiles"))
+                                return true;
+                        }
+                    }
+                } else if(segment.type == EntityType.explosive) {
+                    int range = segment.getRange(entity);
+                    List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) (entity.posX - range), (int) (entity.posZ - range), (int) (entity.posX + range), (int) (entity.posZ + range));
+                    for (ChunkPos chunk : chunks) {
+                        TownBlock tblock = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
+                        if (tblock != null) {
+                            boolean explosionValue = (Boolean) tblock.getTown().getValue(FlagType.explosions);
+                            if (!explosionValue)
+                                return true;
+                        }
                     }
                 }
             }
@@ -248,9 +261,9 @@ public class Protection {
         return type != null && type == EntityType.passive;
     }
 
-    public boolean isEntityHostile(Class<? extends Entity> entity) {
+    public boolean isEntityTracked(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
-        return type != null && type == EntityType.hostile;
+        return type != null && (type == EntityType.hostile || type == EntityType.explosive);
     }
 
     public boolean isTileTracked(Class<? extends TileEntity> te) {

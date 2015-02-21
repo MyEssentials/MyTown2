@@ -104,44 +104,63 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     in.beginObject();
                     while (!in.peek().equals(JsonToken.END_OBJECT)) {
                         nextName = in.nextName();
+                        MyTown.instance.log.info("Checking name: " + nextName);
                         if (nextName.equals("class")) {
                             clazz = in.nextString();
-                        } else if (nextName.equals("type")) {
+                            continue;
+                        }
+                        if (nextName.equals("type")) {
                             type = in.nextString();
                             if (type == null)
                                 throw new IOException("The segment for class " + clazz + " does not have a type!");
-                        } else if (nextName.equals("condition")) {
+                            continue;
+                        }
+                        if (nextName.equals("condition")) {
                             condition = in.nextString();
-                        } else if(nextName.equals("flag")) {
+                            continue;
+                        }
+                        if(nextName.equals("flag")) {
                             flag = FlagType.valueOf(in.nextString());
-                        } else if (clazz == null) {
-                            // Checking if clazz and type is not null before anything else.
+                            continue;
+                        }
+                        // Checking if clazz and type is not null before anything else.
+                        if (clazz == null)
                             throw new IOException("Class is not being specified in the protection with modid " + modid + ".");
-                        } else if (type == null) {
+                        if (type == null)
                             throw new IOException("Type is specified after the type-specific data for segment with class " + clazz + ".");
-                        } else if (type.equals("entity")) {
+
+
+                        if (type.equals("entity")) {
                             if (nextName.equals("entityType")) {
                                 entityType = EntityType.valueOf(in.nextString());
                                 if (entityType == null)
                                     throw new IOException("Invalid entity type for segment with class " + clazz + ". Please choose hostile, passive or tracked.");
+                                continue;
                             }
-                        } else if (type.equals("item")) {
+                        }
+                        if (type.equals("item")) {
                             if (nextName.equals("itemType")) {
                                 itemType = ItemType.valueOf(in.nextString());
                                 if (itemType == null)
                                     throw new IOException("Invalid item type for segment with class " + clazz + ". Please choose breakBlock or use.");
-                            } else if(nextName.equals("isAdjacent")) {
+                                continue;
+                            }
+                            if(nextName.equals("isAdjacent")) {
                                 isAdjacent = in.nextBoolean();
+                                continue;
                             }
-                        } else if(type.equals("block")) {
-                            if(nextName.equals("meta")) {
+
+                        }
+                        if(type.equals("block")) {
+                            if (nextName.equals("meta")) {
                                 meta = in.nextInt();
+                                continue;
                             }
-                        } else {
-                            // If it gets that means that it should be some extra data that will be used in checking something
-                            extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
                         }
 
+                        // If it gets that means that it should be some extra data that will be used in checking something
+                        MyTown.instance.log.info("Added " + nextName + " to map.");
+                        extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
                     }
 
                     if (type != null) {
