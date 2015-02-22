@@ -7,5 +7,5 @@ package mytown.new_protection.segment.enums;
 public enum EntityType {
     hostile,
     passive,
-    tracked
+    explosive
 }

@@ -5,6 +5,7 @@ import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.segment.*;
 import mytown.new_protection.segment.enums.EntityType;
@@ -117,14 +118,33 @@ public class Protection {
     // TODO: Add condition check
     public boolean checkEntity(Entity entity) {
         for(SegmentEntity segment : segmentsEntities) {
-            if (segment.type == EntityType.hostile) {
-                if (segment.theClass.isAssignableFrom(entity.getClass())) {
-                    Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
-                    if (town != null) {
-                        String mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
-                        if (mobsValue.equals("hostiles"))
-                            return true;
+            if (segment.theClass.isAssignableFrom(entity.getClass())) {
+                if (segment.type == EntityType.hostile) {
+                    if (segment.theClass.isAssignableFrom(entity.getClass())) {
+                        Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
+                        String mobsValue;
+                        if (town != null) {
+                            mobsValue = (String) town.getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
+                            if (mobsValue.equals("hostiles"))
+                                return true;
+                        }
                     }
+                } else if(segment.type == EntityType.explosive) {
+                    int range = segment.getRange(entity);
+                    List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) (entity.posX - range), (int) (entity.posZ - range), (int) (entity.posX + range), (int) (entity.posZ + range));
+                    boolean explosionValue;
+                    for (ChunkPos chunk : chunks) {
+                        TownBlock tblock = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
+                        if (tblock != null) {
+                            explosionValue = (Boolean) tblock.getTown().getValue(FlagType.explosions);
+                            if(!explosionValue)
+                                return true;
+                        }
+                    }
+
+                    explosionValue = (Boolean) Wild.getInstance().getValue(FlagType.explosions);
+                    if (!explosionValue)
+                        return true;
                 }
             }
         }
@@ -170,7 +190,7 @@ public class Protection {
     /**
      * Checking item usage for right click on entity
      */
-    public boolean checkItem(ItemStack item, Resident res, Entity entity) {
+    public boolean checkEntityRightClick(ItemStack item, Resident res, Entity entity) {
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
             if(segment.type == ItemType.rightClickEntity && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
@@ -189,6 +209,16 @@ public class Protection {
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
                     }
+                }
+            }
+        }
+        for(Iterator<SegmentEntity> it = segmentsEntities.iterator(); it.hasNext();) {
+            SegmentEntity segment = it.next();
+            if(segment.type == EntityType.passive && segment.theClass.isAssignableFrom(entity.getClass())) {
+                Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
+                if(town != null && !town.checkPermission(res, FlagType.protectedEntities, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
+                    res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))));
+                    return true;
                 }
             }
         }
@@ -248,9 +278,9 @@ public class Protection {
         return type != null && type == EntityType.passive;
     }
 
-    public boolean isEntityHostile(Class<? extends Entity> entity) {
+    public boolean isEntityTracked(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
-        return type != null && type == EntityType.hostile;
+        return type != null && (type == EntityType.hostile || type == EntityType.explosive);
     }
 
     public boolean isTileTracked(Class<? extends TileEntity> te) {
