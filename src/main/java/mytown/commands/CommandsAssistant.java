@@ -94,7 +94,7 @@ public class CommandsAssistant extends Commands {
 
         if(town != block.getTown())
             throw new MyTownCommandException("mytown.cmd.err.unclaim.notInTown");
-        if (!block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ()))
+        if (block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ()))
             throw new MyTownCommandException("mytown.cmd.err.unclaim.spawnPoint");
 
         getDatasource().deleteBlock(block);
