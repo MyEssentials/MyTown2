@@ -140,9 +140,9 @@ public class Protections {
             } else {
                 // Other entity checks
                 for (Protection prot : protections) {
-                    if(prot.isEntityTracked(entity.getClass())) {
-                        if (checkedEntities.get(entity) == null || !checkedEntities.get(entity)) {
-                            if (prot.checkEntity(entity)) {
+                    if(prot.isEntityHostile(entity.getClass())) {
+                        if(checkedEntities.get(entity) == null || !checkedEntities.get(entity)) {
+                            if(prot.checkEntity(entity)) {
                                 MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
                                 checkedEntities.remove(entity);
                                 entity.setDead();
@@ -209,7 +209,7 @@ public class Protections {
         Town town = MyTownUtils.getTownAtPosition(ev.target.dimension, ev.target.chunkCoordX, ev.target.chunkCoordZ);
         if (town != null) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-            if (!town.checkPermission(res, FlagType.protectedEntities, ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)) {
+            if (!town.checkPermission(res, FlagType.attackEntities, ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)) {
                 for (Protection prot : protections) {
                     if (prot.isEntityProtected(ev.target.getClass())) {
                         ev.setCanceled(true);
@@ -283,7 +283,7 @@ public class Protections {
         ItemStack currStack = ev.entityPlayer.getHeldItem();
         if (currStack != null) {
             for (Protection prot : protections) {
-                if (prot.checkEntityRightClick(currStack, res, ev.target)) {
+                if (prot.checkItem(currStack, res, ev.target)) {
                     ev.setCanceled(true);
                     return;
                 }

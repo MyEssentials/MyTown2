@@ -96,14 +96,13 @@ public class MyTown {
             Config.costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).name;
         }
 
-
+        JSONParser.start();
         registerCommands();
         Commands.populateCompletionMap();
         // This needs to be after registerCommands... might want to move both methods...
         ranksConfig = new RanksConfig(new File(Constants.CONFIG_FOLDER, "DefaultRanks.json"));
         wildConfig = new WildPermsConfig(new File(Constants.CONFIG_FOLDER, "WildPerms.json"));
         flagsConfig = new FlagsConfig(new File(Constants.CONFIG_FOLDER, "DefaultFlags.json"));
-        JSONParser.start();
         registerPermissionHandler();
         DatasourceProxy.setLog(log);
         SafemodeHandler.setSafemode(!DatasourceProxy.start(config));

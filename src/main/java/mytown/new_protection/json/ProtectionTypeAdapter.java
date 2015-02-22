@@ -106,59 +106,42 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                         nextName = in.nextName();
                         if (nextName.equals("class")) {
                             clazz = in.nextString();
-                            continue;
-                        }
-                        if (nextName.equals("type")) {
+                        } else if (nextName.equals("type")) {
                             type = in.nextString();
                             if (type == null)
                                 throw new IOException("The segment for class " + clazz + " does not have a type!");
-                            continue;
-                        }
-                        if (nextName.equals("condition")) {
+                        } else if (nextName.equals("condition")) {
                             condition = in.nextString();
-                            continue;
-                        }
-                        if(nextName.equals("flag")) {
+                        } else if(nextName.equals("flag")) {
                             flag = FlagType.valueOf(in.nextString());
-                            continue;
-                        }
-                        // Checking if clazz and type is not null before anything else.
-                        if (clazz == null)
+                        } else if (clazz == null) {
+                            // Checking if clazz and type is not null before anything else.
                             throw new IOException("Class is not being specified in the protection with modid " + modid + ".");
-                        if (type == null)
+                        } else if (type == null) {
                             throw new IOException("Type is specified after the type-specific data for segment with class " + clazz + ".");
-
-
-                        if (type.equals("entity")) {
+                        } else if (type.equals("entity")) {
                             if (nextName.equals("entityType")) {
                                 entityType = EntityType.valueOf(in.nextString());
                                 if (entityType == null)
                                     throw new IOException("Invalid entity type for segment with class " + clazz + ". Please choose hostile, passive or tracked.");
-                                continue;
                             }
-                        }
-                        if (type.equals("item")) {
+                        } else if (type.equals("item")) {
                             if (nextName.equals("itemType")) {
                                 itemType = ItemType.valueOf(in.nextString());
                                 if (itemType == null)
                                     throw new IOException("Invalid item type for segment with class " + clazz + ". Please choose breakBlock or use.");
-                                continue;
-                            }
-                            if(nextName.equals("isAdjacent")) {
+                            } else if(nextName.equals("isAdjacent")) {
                                 isAdjacent = in.nextBoolean();
-                                continue;
                             }
-
-                        }
-                        if(type.equals("block")) {
-                            if (nextName.equals("meta")) {
+                        } else if(type.equals("block")) {
+                            if(nextName.equals("meta")) {
                                 meta = in.nextInt();
-                                continue;
                             }
+                        } else {
+                            // If it gets that means that it should be some extra data that will be used in checking something
+                            extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
                         }
 
-                        // If it gets that means that it should be some extra data that will be used in checking something
-                        extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
                     }
 
                     if (type != null) {

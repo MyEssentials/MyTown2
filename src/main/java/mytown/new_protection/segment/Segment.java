@@ -146,10 +146,6 @@ public class Segment {
                         // Return instantly since it can only be a number
                         lastInstance = getInfoFromFormula(getter.element, instance, parameter);
                         break forLoop;
-                    case value:
-                        // Return instantly since it can only be a constant
-                        lastInstance = Integer.parseInt(getter.element);
-                        break forLoop;
                 }
             }
             if(!returnType.isAssignableFrom(lastInstance.getClass()))

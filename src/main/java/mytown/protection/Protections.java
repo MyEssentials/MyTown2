@@ -239,7 +239,7 @@ public class Protections {
         if (block != null) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             Town town = block.getTown();
-            if (!town.checkPermission(res, FlagType.protectedEntities, ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)) {
+            if (!town.checkPermission(res, FlagType.attackEntities, ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)) {
                 for (Protection prot : protections.values()) {
                     if (prot.protectedEntities.contains(ev.target.getClass())) {
                         ev.setCanceled(true);
