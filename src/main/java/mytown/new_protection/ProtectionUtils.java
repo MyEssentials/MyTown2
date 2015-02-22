@@ -95,9 +95,9 @@ public class ProtectionUtils {
     /**
      * Checks if an entity is hostile
      */
-    public static boolean isEntityHostile(Class<? extends Entity> ent) {
+    public static boolean isEntityTracked(Class<? extends Entity> ent) {
         for (Protection prot : Protections.getInstance().getProtections()) {
-            if (prot.isEntityHostile(ent)) {
+            if (prot.isEntityTracked(ent)) {
                 return true;
             }
         }

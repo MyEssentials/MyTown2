@@ -18,7 +18,7 @@ public enum FlagType {
 
     // Only the values in the array are allowed
     mobs(String.class, "all", new String[]{"all", "hostiles", "none"}, false, "all", false, null),
-    attackEntities(Boolean.class, false, null, false, true, false, null),
+    protectedEntities(Boolean.class, false, null, false, true, false, null),
     useItems(Boolean.class, false, null, false, true, false, null),
     activateBlocks(Boolean.class, false, null, true, true, false, null, true),
     pumps(Boolean.class, true, null, false, true, false, ModProxies.EXTRA_UTILITIES_MOD_ID), ;
