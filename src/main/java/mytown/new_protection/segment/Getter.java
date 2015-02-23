@@ -17,6 +17,7 @@ public class Getter {
         method,
         field,
         formula,
-        value
+        value,
+        nbt
     }
 }

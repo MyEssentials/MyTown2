@@ -8,7 +8,11 @@ import mytown.new_protection.ProtectionUtils;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.*;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
@@ -150,6 +154,47 @@ public class Segment {
                         // Return instantly since it can only be a constant
                         lastInstance = Integer.parseInt(getter.element);
                         break forLoop;
+                    case nbt:
+                        if(lastInstance instanceof TileEntity) {
+                            NBTTagCompound nbt = new NBTTagCompound();
+                            ((TileEntity) lastInstance).writeToNBT(nbt);
+                            lastInstance = nbt.getTag(getter.element);
+                            MyTown.instance.log.info("Got tag with name: " + getter.element);
+                        } else if(lastInstance instanceof Item) {
+                            lastInstance = ((ItemStack)parameter).getTagCompound().getTag(getter.element);
+                        } else if(lastInstance instanceof NBTTagCompound) {
+                            lastInstance = ((NBTTagCompound) lastInstance).getTag(getter.element);
+
+                            if(lastInstance instanceof NBTTagDouble) {
+                                lastInstance = ((NBTTagDouble) lastInstance).func_150286_g();
+                            } else if(lastInstance instanceof NBTTagFloat) {
+                                lastInstance = ((NBTTagFloat) lastInstance).func_150288_h();
+                            } else if(lastInstance instanceof NBTTagInt) {
+                                lastInstance = ((NBTTagInt) lastInstance).func_150287_d();
+                            } else if(lastInstance instanceof NBTTagString) {
+                                lastInstance = ((NBTTagString) lastInstance).func_150285_a_();
+                            }
+
+                            MyTown.instance.log.info("Got tag with name: " + getter.element + " and value " + lastInstance.toString());
+                        } else if(lastInstance instanceof NBTTagList) {
+
+                            // Getting the id of the list
+                            int id = -1;
+                            try {
+                                id = Integer.parseInt(getter.element);
+                            } catch (NumberFormatException ex) {
+                                // TODO: Generalise this to be put in the list down below
+                                throw new GetterException("[Segment:"+ theClass.getName() +"] Cannot parse element to Integer for NBTTagList id in getter: " + getterName);
+                            }
+
+                            // Checking if out of bounds
+                            if(id < 0 || id >= ((NBTTagList) lastInstance).tagCount())
+                                // TODO: Generalise this to be put in the list down below
+                                throw new GetterException("[Segment:"+ theClass.getName() +"] ID for NBTTagList is out of bounds ( < 0 or >= " + ((NBTTagList) lastInstance).tagCount() + " ) in getter: " + getterName);
+
+                            lastInstance = ((NBTTagList) lastInstance).getCompoundTagAt(id);
+                        }
+                        break;
                 }
             }
             if(!returnType.isAssignableFrom(lastInstance.getClass()))
