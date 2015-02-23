@@ -43,7 +43,7 @@ public class Segment {
         if(conditionString == null)
             return true;
 
-        MyTown.instance.log.info("Checking condition: " + StringUtils.join(conditionString, " "));
+        //MyTown.instance.log.info("Checking condition: " + StringUtils.join(conditionString, " "));
         boolean current;
 
         /*
@@ -94,6 +94,15 @@ public class Segment {
                     current = value < Float.parseFloat(conditionString[i + 2]);
                 } else if(conditionString[i+1].equals(">")) {
                     current = value > Float.parseFloat(conditionString[i + 2]);
+                } else {
+                    throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
+                }
+            } else if(conditionString[i + 2].startsWith("'") && conditionString[i+2].endsWith("'")){
+                String value = (String) getInfoFromGetters(conditionString[i], String.class, instance, object);
+                if(conditionString[i + 1].equals("==")) {
+                    current = value.equals(conditionString[i+2].substring(1, conditionString[i+2].length() - 1));
+                } else if(conditionString[i + 1].equals("!=")) {
+                    current = !value.equals(conditionString[i+2].substring(1, conditionString[i+2].length() - 1));
                 } else {
                     throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
                 }
@@ -159,7 +168,7 @@ public class Segment {
                             NBTTagCompound nbt = new NBTTagCompound();
                             ((TileEntity) lastInstance).writeToNBT(nbt);
                             lastInstance = nbt.getTag(getter.element);
-                            MyTown.instance.log.info("Got tag with name: " + getter.element);
+                            //MyTown.instance.log.info("Got tag with name: " + getter.element);
                         } else if(lastInstance instanceof Item) {
                             lastInstance = ((ItemStack)parameter).getTagCompound().getTag(getter.element);
                         } else if(lastInstance instanceof NBTTagCompound) {
@@ -175,7 +184,7 @@ public class Segment {
                                 lastInstance = ((NBTTagString) lastInstance).func_150285_a_();
                             }
 
-                            MyTown.instance.log.info("Got tag with name: " + getter.element + " and value " + lastInstance.toString());
+                            //MyTown.instance.log.info("Got tag with name: " + getter.element + " and value " + lastInstance.toString());
                         } else if(lastInstance instanceof NBTTagList) {
 
                             // Getting the id of the list
@@ -184,7 +193,7 @@ public class Segment {
                                 id = Integer.parseInt(getter.element);
                             } catch (NumberFormatException ex) {
                                 // TODO: Generalise this to be put in the list down below
-                                throw new GetterException("[Segment:"+ theClass.getName() +"] Cannot parse element to Integer for NBTTagList id in getter: " + getterName);
+                                throw new GetterException("[Segment:"+ theClass.getName() +"] Cannot parse element to Integer for NBTTagList id in getter: " + getterName, ex);
                             }
 
                             // Checking if out of bounds
