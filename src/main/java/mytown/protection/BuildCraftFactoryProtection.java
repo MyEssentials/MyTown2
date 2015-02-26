@@ -121,7 +121,7 @@ public class BuildCraftFactoryProtection extends Protection {
         if (clsTileAbstractBuilder.isAssignableFrom(te)) {
             list.add(FlagType.modifyBlocks);
         } else if (clsTilePump.isAssignableFrom(te)) {
-            list.add(FlagType.pumps);
+            list.add(FlagType.modifyBlocks);
         }
         return list;
     }

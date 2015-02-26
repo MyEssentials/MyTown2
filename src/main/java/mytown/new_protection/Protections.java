@@ -280,7 +280,7 @@ public class Protections {
                 }
             }
         }
-        
+
         return false;
     }
 

@@ -393,6 +393,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     FlagType type = FlagType.valueOf(flagName);
                     Flag flag = new Flag(type, gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
 
+                    // This is gonna be caught
+                    if(type.isTownOnly())
+                        throw new IllegalArgumentException("FlagType " + type + " can only be used in towns.");
+
+
                     Plot plot = MyTownUniverse.getInstance().getPlot(plotID);
                     if (plot != null) {
                         if (flag.flagType.shouldLoad())

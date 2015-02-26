@@ -9,19 +9,38 @@ import mytown.proxies.mod.ModProxies;
  */
 public enum FlagType {
     // CONSTRUCTOR: class, value, allowedValues, wildPerm, defaultWildPerm, townOnly, mod, isWhitelistable <false>
+
+    // Allows entering the area
     enter(Boolean.class, true, null, false, true, false, null),
-    modifyBlocks(Boolean.class, false, null, true, true, false, null, true),
+
+    // Allows opening GUIs and right-clicking TileEntities
     accessBlocks(Boolean.class, false, null, true, true, false, null, true),
+
+    // Allows pickup of items.
     pickupItems(Boolean.class, true, null, false, true, false, null),
-    explosions(Boolean.class, false, null, true, false, false, null),
+
+    // Allows pvp
     pvp(Boolean.class, false, null, false, false, false, null),
 
     // Only the values in the array are allowed
+    // Allows modifying which types of mods are allowed in the town.
     mobs(String.class, "all", new String[]{"all", "hostiles", "none"}, false, "all", false, null),
+
+    // Allows outsiders to hurt passive and other types of entities.
     protectedEntities(Boolean.class, false, null, false, true, false, null),
+
+    // Allows the use of some items such as: Bucket, Spawn Eggs etc.
     useItems(Boolean.class, false, null, false, true, false, null),
+
+    // Allows to activate blocks such as: Buttons, Doors etc.
     activateBlocks(Boolean.class, false, null, true, true, false, null, true),
-    pumps(Boolean.class, true, null, false, true, false, ModProxies.EXTRA_UTILITIES_MOD_ID), ;
+
+    // ---- Flags that don't go in plots. ----
+    // Allows modifying blocks.
+    modifyBlocks(Boolean.class, false, null, true, true, true, null, true),
+
+    // Allows explosions.
+    explosions(Boolean.class, false, null, true, false, true, null),;
 
     private Class<?> type;
     private String descriptionKey;

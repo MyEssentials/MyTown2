@@ -70,8 +70,8 @@ public class ExtraUtilitiesProtection extends Protection {
                 chunkZ.setAccessible(true);
 
                 Town town = MyTownUtils.getTownAtPosition(te.getWorldObj().provider.dimensionId, chunkX.getInt(te), chunkZ.getInt(te));
-                if (town != null && !((Boolean) town.getValue(FlagType.pumps))) {
-                    town.notifyEveryone(FlagType.pumps.getLocalizedTownNotification());
+                if (town != null && !((Boolean) town.getValue(FlagType.modifyBlocks))) {
+                    town.notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
                     return true;
                 }
             } catch (Exception e) {
@@ -87,7 +87,7 @@ public class ExtraUtilitiesProtection extends Protection {
         if (clsTileEnderQuarry.isAssignableFrom(te))
             list.add(FlagType.modifyBlocks);
         else if (clsTileEnderPump.isAssignableFrom(te))
-            list.add(FlagType.pumps);
+            list.add(FlagType.modifyBlocks);
         return list;
     }
 }
