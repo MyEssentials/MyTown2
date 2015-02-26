@@ -3,6 +3,7 @@ package mytown.new_protection.json;
 import buildcraft.factory.TileQuarry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
@@ -64,7 +65,7 @@ public class JSONParser {
                 }
                 reader.close();
 
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 MyTown.instance.log.error("Encountered error when parsing protection file: " + file.getName());
                 ex.printStackTrace();
             }

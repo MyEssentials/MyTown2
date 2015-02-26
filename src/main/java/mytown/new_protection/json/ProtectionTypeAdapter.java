@@ -12,6 +12,7 @@ import mytown.new_protection.Protection;
 import mytown.new_protection.segment.*;
 import mytown.new_protection.segment.enums.EntityType;
 import mytown.new_protection.segment.enums.ItemType;
+import mytown.util.exceptions.SegmentException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -89,6 +90,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 }
             } else if (nextName.equals("segments")) {
                 in.beginArray();
+                MyTown.instance.log.info("   ------------------------------------------------------------");
                 while (in.hasNext()) {
 
                     Segment segment = null;
@@ -102,117 +104,135 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     Map<String, List<Getter>> extraGettersMap = new HashMap<String, List<Getter>>();
 
                     in.beginObject();
-                    while (!in.peek().equals(JsonToken.END_OBJECT)) {
-                        nextName = in.nextName();
-                        if (nextName.equals("class")) {
-                            clazz = in.nextString();
-                            continue;
-                        }
-                        if (nextName.equals("type")) {
-                            type = in.nextString();
+                    try {
+                        while (!in.peek().equals(JsonToken.END_OBJECT)) {
+                            nextName = in.nextName();
+                            if (nextName.equals("class")) {
+                                clazz = in.nextString();
+                                continue;
+                            }
+                            if (nextName.equals("type")) {
+                                type = in.nextString();
+                                if (type == null)
+                                    throw new SegmentException("[Segment: " + clazz + "] Segment is missing type!");
+                                continue;
+                            }
+                            if (nextName.equals("condition")) {
+                                condition = in.nextString();
+                                continue;
+                            }
+                            if (nextName.equals("flag")) {
+                                flag = FlagType.valueOf(in.nextString());
+                                continue;
+                            }
+                            // Checking if clazz and type is not null before anything else.
+                            if (clazz == null)
+                                throw new SegmentException("[Protection: " + modid + "] Class is not being specified in one of the segments.");
                             if (type == null)
-                                throw new IOException("The segment for class " + clazz + " does not have a type!");
-                            continue;
-                        }
-                        if (nextName.equals("condition")) {
-                            condition = in.nextString();
-                            continue;
-                        }
-                        if(nextName.equals("flag")) {
-                            flag = FlagType.valueOf(in.nextString());
-                            continue;
-                        }
-                        // Checking if clazz and type is not null before anything else.
-                        if (clazz == null)
-                            throw new IOException("Class is not being specified in the protection with modid " + modid + ".");
-                        if (type == null)
-                            throw new IOException("Type is specified after the type-specific data for segment with class " + clazz + ".");
+                                throw new SegmentException("[Segment: " + clazz + "] Type is specified after the type-specific data.");
 
-
-                        if (type.equals("entity")) {
-                            if (nextName.equals("entityType")) {
-                                entityType = EntityType.valueOf(in.nextString());
-                                if (entityType == null)
-                                    throw new IOException("Invalid entity type for segment with class " + clazz + ". Please choose hostile, passive or tracked.");
-                                continue;
+                            if (type.equals("entity")) {
+                                if (nextName.equals("entityType")) {
+                                    entityType = EntityType.valueOf(in.nextString());
+                                    if (entityType == null)
+                                        throw new SegmentException("[Segment: " + clazz + "] Invalid entity type.");
+                                    continue;
+                                }
                             }
-                        }
-                        if (type.equals("item")) {
-                            if (nextName.equals("itemType")) {
-                                itemType = ItemType.valueOf(in.nextString());
-                                if (itemType == null)
-                                    throw new IOException("Invalid item type for segment with class " + clazz + ". Please choose breakBlock or use.");
-                                continue;
-                            }
-                            if(nextName.equals("isAdjacent")) {
-                                isAdjacent = in.nextBoolean();
-                                continue;
-                            }
-
-                        }
-                        if(type.equals("block")) {
-                            if (nextName.equals("meta")) {
-                                meta = in.nextInt();
-                                continue;
-                            }
-                        }
-
-                        // If it gets here it means that it should be some extra data that will be used in checking something
-                        extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
-                    }
-
-                    if (type != null) {
-                        if (type.equals("tileEntity")) {
-                            if(flag == null)
-                                throw new IOException("The segment for class " + clazz + " does not have a valid flag!");
-                            try {
-                                // Log if the segment is using default protection
-                                if(extraGettersMap.get("X1") == null || extraGettersMap.get("X2") == null || extraGettersMap.get("Z1") == null || extraGettersMap.get("Z2") == null) {
-                                    MyTown.instance.log.info("Could not find getter one of the getters (X1, X2, Z1 or Z2). Using default protection size for segment: " + clazz);
-
-                                    // Removing all of them since it will only create problems if left there
-                                    extraGettersMap.remove("X1");
-                                    extraGettersMap.remove("X2");
-                                    extraGettersMap.remove("Z1");
-                                    extraGettersMap.remove("Z2");
+                            if (type.equals("item")) {
+                                if (nextName.equals("itemType")) {
+                                    itemType = ItemType.valueOf(in.nextString());
+                                    if (itemType == null)
+                                        throw new SegmentException("[Segment: " + clazz + "] Invalid item type.");
+                                    continue;
+                                }
+                                if (nextName.equals("isAdjacent")) {
+                                    isAdjacent = in.nextBoolean();
+                                    continue;
                                 }
 
-                                segment = new SegmentTileEntity(Class.forName(clazz), extraGettersMap, flag, condition, IBlockModifier.Shape.rectangular);
-                            } catch (ClassNotFoundException ex) {
-                                throw new IOException("Class " + clazz + " is invalid!");
                             }
-                        } else if(type.equals("entity")){
-                            if(entityType == null)
-                                throw new IOException("EntityType is null for segment with class " + clazz);
-                            try {
+                            if (type.equals("block")) {
+                                if (nextName.equals("meta")) {
+                                    meta = in.nextInt();
+                                    continue;
+                                }
+                            }
 
+                            // If it gets here it means that it should be some extra data that will be used in checking something
+                            extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
 
-                                segment = new SegmentEntity(Class.forName(clazz), extraGettersMap, condition, entityType);
-                            } catch (ClassNotFoundException ex) {
-                                throw new IOException("Class " + clazz + " is invalid!");
-                            }
-                        } else if(type.equals("item")) {
-                            if(flag == null)
-                                throw new IOException("The segment for class " + clazz + " does not have a valid flag!");
-                            try {
-                                segment = new SegmentItem(Class.forName(clazz), extraGettersMap, flag, condition, itemType, isAdjacent);
-                            } catch (ClassNotFoundException ex) {
-                                throw new IOException("Class " + clazz + " is invalid!");
-                            }
-                        } else if(type.equals("block")) {
-                            try {
-                                segment = new SegmentBlock(Class.forName(clazz), extraGettersMap, condition, meta);
-                            } catch (ClassNotFoundException ex) {
-                                throw new IOException("Class " + clazz + " in invalid!");
-                            }
                         }
-                    }
 
-                    in.endObject();
+                        in.endObject();
+
+                        try {
+                            if (type != null) {
+                                if (type.equals("tileEntity")) {
+                                    if (flag == null)
+                                        throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
+                                    try {
+                                        // Log if the segment is using default protection
+                                        if (extraGettersMap.get("X1") == null || extraGettersMap.get("X2") == null || extraGettersMap.get("Z1") == null || extraGettersMap.get("Z2") == null) {
+                                            MyTown.instance.log.info("   [Segment: " + clazz + "] Could not find one of the getters (X1, X2, Z1 or Z2). Using default protection size.");
+
+                                            // Removing all of them since it will only create problems if left there
+                                            extraGettersMap.remove("X1");
+                                            extraGettersMap.remove("X2");
+                                            extraGettersMap.remove("Z1");
+                                            extraGettersMap.remove("Z2");
+                                        }
+
+                                        segment = new SegmentTileEntity(Class.forName(clazz), extraGettersMap, flag, condition, IBlockModifier.Shape.rectangular);
+                                    } catch (ClassNotFoundException ex) {
+                                        throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
+                                    }
+                                } else if (type.equals("entity")) {
+                                    if (entityType == null)
+                                        throw new SegmentException("[Segment: " + clazz + "] The entityType is not being specified.");
+                                    try {
+                                        segment = new SegmentEntity(Class.forName(clazz), extraGettersMap, condition, entityType);
+                                    } catch (ClassNotFoundException ex) {
+                                        throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
+                                    }
+                                } else if (type.equals("item")) {
+                                    if (flag == null)
+                                        throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
+                                    try {
+                                        segment = new SegmentItem(Class.forName(clazz), extraGettersMap, flag, condition, itemType, isAdjacent);
+                                    } catch (ClassNotFoundException ex) {
+                                        throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
+                                    }
+                                } else if (type.equals("block")) {
+                                    try {
+                                        segment = new SegmentBlock(Class.forName(clazz), extraGettersMap, condition, meta);
+                                    } catch (ClassNotFoundException ex) {
+                                        throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " in invalid!");
+                                    }
+                                }
+                            }
+                        } catch (SegmentException ex) {
+                            // This catch is for missing elements or other runtime verifiable  conditions.
+                            MyTown.instance.log.error("  " + ex.getMessage());
+                            MyTown.instance.log.error("  Segment will NOT be added, reload configs to try again.");
+                        }
+                    } catch (SegmentException ex) {
+                        // This catch is for parsing issues when reading the segment.
+
+                        MyTown.instance.log.error("  " + ex.getMessage());
+                        MyTown.instance.log.error("  Segment will NOT be added, reload configs to try again.");
+                        // Skipping everything in the segment if it errors
+                        while(!in.peek().equals(JsonToken.END_OBJECT))
+                            in.skipValue();
+                        in.endObject();
+                    }
                     if (segment == null)
-                        throw new IOException("Segment with class " + clazz + " was not properly initialized!");
-                    MyTown.instance.log.info("   Added segment for class: " + segment.theClass.getName());
-                    segments.add(segment);
+                        MyTown.instance.log.error("  [Segment: " + clazz + "] Segment was not properly initialized!");
+                    else {
+                        MyTown.instance.log.info("   Added segment for class: " + segment.theClass.getName());
+                        segments.add(segment);
+                    }
+                    MyTown.instance.log.info("   ------------------------------------------------------------");
                 }
                 in.endArray();
             }
@@ -244,9 +264,10 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 getterType = Getter.GetterType.valueOf(in.nextString());
 
             if(getterType == null)
-                throw new IOException(getterName + " getter for segment with class " + clazz + " has an invalid getter type.");
+                throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " does not have a valid type.");
             if(element == null)
-                throw new IOException(getterName + " getter for segment with class " + clazz + " does not have a value.");
+                throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " does not have a value.");
+
             in.endObject();
             getters.add(new Getter(element, getterType));
         }
