@@ -30,6 +30,8 @@ import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.init.Items;
+import net.minecraft.world.storage.MapStorage;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -96,7 +98,6 @@ public class MyTown {
             Config.costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).name;
         }
 
-
         registerCommands();
         Commands.populateCompletionMap();
         // This needs to be after registerCommands... might want to move both methods...
@@ -111,7 +112,6 @@ public class MyTown {
 
     @EventHandler
     public void serverStopping(FMLServerStoppingEvent ev) {
-        config.save();
         DatasourceProxy.stop();
     }
 

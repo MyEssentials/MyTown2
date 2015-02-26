@@ -59,7 +59,10 @@ public class Config {
 
     @ConfigProperty(category = "plots", name = "minPlotsHeight", comment = "The minimum height required to create a plot(Y)")
     public static int minPlotsHeight = 1;
-    
+
+    @ConfigProperty(category = "protection", name = "defaultProtectionSize", comment = "The range that it's going to check in if a protection's segment that has a tileentity does not provide getters for its area of influence.")
+    public static int defaultProtectionSize = 32;
+
     //@ConfigProperty(category = "extra", name = "debug", comment = "Enables debugging output to console, use '/ta debug' to toggle ingame")
     //public static boolean debug;
 }

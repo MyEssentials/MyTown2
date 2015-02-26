@@ -11,8 +11,10 @@ import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.*;
+import mytown.util.BlockPos;
+import mytown.util.Constants;
 import mytown.util.Formatter;
+import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
@@ -21,13 +23,17 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ChunkDataEvent;
 
 import java.util.*;
 
@@ -232,9 +238,9 @@ public class Protections {
             ev.setCanceled(true);
     }
 
-    public boolean onAnyBlockPlacement(EntityPlayer player, ItemStack itemInHand, Block block, int dimensionId, int x, int y, int z) {
+    public boolean onAnyBlockPlacement(final EntityPlayer player, ItemStack itemInHand, Block block, final int dimensionId, final int x, final int y, final int z) {
         TownBlock tblock = DatasourceProxy.getDatasource().getBlock(dimensionId, x >> 4, z >> 4);
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+        final Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
 
         if (tblock == null) {
             if (!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
@@ -274,6 +280,7 @@ public class Protections {
                 }
             }
         }
+        
         return false;
     }
 

@@ -1,7 +1,9 @@
 package mytown.new_protection.segment;
 
+import mytown.config.Config;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.ProtectionUtils;
+import mytown.util.exceptions.GetterException;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.List;
@@ -29,21 +31,37 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
 
     @Override
     public int getX1(TileEntity te) {
-        return (Integer) getInfoFromGetters("X1", Integer.class,  te, null);
+        try {
+            return (Integer) getInfoFromGetters("X1", Integer.class, te, null);
+        } catch (GetterException ex) {
+            return te.xCoord - Config.defaultProtectionSize;
+        }
     }
 
     @Override
     public int getZ1(TileEntity te) {
-        return (Integer) getInfoFromGetters("Z1", Integer.class,  te, null);
+        try {
+            return (Integer) getInfoFromGetters("Z1", Integer.class, te, null);
+        } catch (GetterException ex) {
+            return te.zCoord - Config.defaultProtectionSize;
+        }
     }
 
     @Override
     public int getX2(TileEntity te) {
-        return (Integer) getInfoFromGetters("X2", Integer.class,  te, null);
+        try {
+            return (Integer) getInfoFromGetters("X2", Integer.class, te, null);
+        } catch (GetterException ex) {
+            return te.xCoord + Config.defaultProtectionSize;
+        }
     }
 
     @Override
     public int getZ2(TileEntity te) {
-        return (Integer) getInfoFromGetters("Z2", Integer.class,  te, null);
+        try {
+            return (Integer) getInfoFromGetters("Z2", Integer.class, te, null);
+        } catch (GetterException ex) {
+            return te.zCoord + Config.defaultProtectionSize;
+        }
     }
 }

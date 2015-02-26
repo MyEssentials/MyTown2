@@ -157,7 +157,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             }
                         }
 
-                        // If it gets that means that it should be some extra data that will be used in checking something
+                        // If it gets here it means that it should be some extra data that will be used in checking something
                         extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
                     }
 
@@ -166,6 +166,17 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             if(flag == null)
                                 throw new IOException("The segment for class " + clazz + " does not have a valid flag!");
                             try {
+                                // Log if the segment is using default protection
+                                if(extraGettersMap.get("X1") == null || extraGettersMap.get("X2") == null || extraGettersMap.get("Z1") == null || extraGettersMap.get("Z2") == null) {
+                                    MyTown.instance.log.info("Could not find getter one of the getters (X1, X2, Z1 or Z2). Using default protection size for segment: " + clazz);
+
+                                    // Removing all of them since it will only create problems if left there
+                                    extraGettersMap.remove("X1");
+                                    extraGettersMap.remove("X2");
+                                    extraGettersMap.remove("Z1");
+                                    extraGettersMap.remove("Z2");
+                                }
+
                                 segment = new SegmentTileEntity(Class.forName(clazz), extraGettersMap, flag, condition, IBlockModifier.Shape.rectangular);
                             } catch (ClassNotFoundException ex) {
                                 throw new IOException("Class " + clazz + " is invalid!");
@@ -174,6 +185,8 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             if(entityType == null)
                                 throw new IOException("EntityType is null for segment with class " + clazz);
                             try {
+
+
                                 segment = new SegmentEntity(Class.forName(clazz), extraGettersMap, condition, entityType);
                             } catch (ClassNotFoundException ex) {
                                 throw new IOException("Class " + clazz + " is invalid!");
