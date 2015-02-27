@@ -354,10 +354,10 @@ public class MyTownUtils {
      */
     public static boolean takeItemFromPlayer(EntityPlayer player, String itemName, int amount) {
         String[] split = itemName.split(":");
-        if(split.length == 1) {
-            return takeItemFromPlayer(player, (Item)Item.itemRegistry.getObject(itemName), amount);
+        if(split[0].equals("Minecraft")) {
+            return takeItemFromPlayer(player, (Item)Item.itemRegistry.getObject(itemName), amount, split.length == 3 ? Integer.parseInt(split[2]) : -1);
         } else {
-            return takeItemFromPlayer(player, GameRegistry.findItem(split[0], split[1]), amount);
+            return takeItemFromPlayer(player, GameRegistry.findItem(split[0], split[1]), amount, split.length == 3 ? Integer.parseInt(split[2]) : -1);
         }
     }
 
@@ -370,7 +370,7 @@ public class MyTownUtils {
      * @param amount
      * @return
      */
-    public static boolean takeItemFromPlayer(EntityPlayer player, Item item, int amount) {
+    public static boolean takeItemFromPlayer(EntityPlayer player, Item item, int amount, int meta) {
         if (amount == 0)
             return true;
 
@@ -380,7 +380,7 @@ public class MyTownUtils {
             ItemStack itemStack = player.inventory.mainInventory[i];
             if (itemStack == null)
                 continue;
-            if (itemStack.getItem() == item) {
+            if (itemStack.getItem() == item && (meta == -1 || itemStack.getItemDamage() == meta)) {
                 slots.add(i);
                 itemSum += itemStack.stackSize;
                 if(itemSum >= amount)
