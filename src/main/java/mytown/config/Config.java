@@ -45,7 +45,7 @@ public class Config {
     @ConfigProperty(category = "towns", name = "modifiableRanks", comment = "If true residents with permission can modify the ranks of their towns. This feature hasn't been fully tested yet and it might cause problems!")
     public static boolean modifiableRanks = false;
 
-    @ConfigProperty(category = "towns", name = "costItem", comment = "The item which is used for paying for claims and making new towns. Add '$' if you want to use ForgeEssentials economy")
+    @ConfigProperty(category = "towns", name = "costItem", comment = "The item which is used for paying for claims and making new towns. Use '$' if you want to use ForgeEssentials economy")
     public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).toString();
    // public static String costItemName = "$";
 

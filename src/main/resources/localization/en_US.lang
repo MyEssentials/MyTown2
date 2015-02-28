@@ -183,7 +183,7 @@ mytown.adm.cmd.usage.claim=§3/ta claim <townName>
 mytown.adm.cmd.usage.unclaim=§3/ta unclaim
 
 # /ta cost
-mytown.adm.cmd.cost.itemname=§3The unique name of this item is: §c%s\n§3Add this as the costItemName in your config to set the cost §3item.
+mytown.adm.cmd.cost.itemname=§3The unique name of this item is: §c%s\n§3Add this as the costItem in your config to set the cost item.
 
 # Notifications
 mytown.notification.town.created=§aTown %s created!
