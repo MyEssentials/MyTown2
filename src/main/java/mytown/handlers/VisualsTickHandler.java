@@ -5,6 +5,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.entities.Plot;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
@@ -18,12 +19,14 @@ public class VisualsTickHandler {
         public int x, y, z, dim;
         public boolean deleted = false;
         public boolean packetSent = false;
+        public Block block;
 
-        public BlockCoords(int x, int y, int z, int dim) {
+        public BlockCoords(int x, int y, int z, int dim, Block block) {
             this.x = x;
             this.y = y;
             this.z = z;
             this.dim = dim;
+            this.block = block;
         }
     }
 
@@ -61,14 +64,14 @@ public class VisualsTickHandler {
         }
     }
 
-    public void markBlock(int x, int y, int z, int dim) {
+    public void markBlock(int x, int y, int z, int dim, Block block) {
         /*
         for (BlockCoords block : markedBlocks) {
             if (block.x == x && block.y == y && block.z == z && block.dim == dim)
                 return;
         }
         */
-        markedBlocks.add(new BlockCoords(x, y, z, dim));
+        markedBlocks.add(new BlockCoords(x, y, z, dim, block));
     }
 
 
@@ -86,27 +89,27 @@ public class VisualsTickHandler {
 
     public void markPlotCorners(int selectionX1, int selectionY1, int selectionZ1, int selectionX2, int selectionY2, int selectionZ2, int dim) {
 
-        markBlock(selectionX1, selectionY1, selectionZ1, dim);
-        markBlock(selectionX2, selectionY2, selectionZ2, dim);
+        markBlock(selectionX1, selectionY1, selectionZ1, dim, Blocks.redstone_block);
+        markBlock(selectionX2, selectionY2, selectionZ2, dim, Blocks.redstone_block);
 
         // On the X
-        markBlock(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1, dim);
-        markBlock(selectionX2 + (selectionX1 > selectionX2 ? 1 : -1), selectionY2, selectionZ2, dim);
-        markBlock(selectionX1 + (selectionX1 > selectionX2 ? -2 : 2), selectionY1, selectionZ1, dim);
-        markBlock(selectionX2 + (selectionX1 > selectionX2 ? 2 : -2), selectionY2, selectionZ2, dim);
+        markBlock(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1, dim, Blocks.redstone_block);
+        markBlock(selectionX2 + (selectionX1 > selectionX2 ? 1 : -1), selectionY2, selectionZ2, dim, Blocks.redstone_block);
+        markBlock(selectionX1 + (selectionX1 > selectionX2 ? -2 : 2), selectionY1, selectionZ1, dim, Blocks.redstone_block);
+        markBlock(selectionX2 + (selectionX1 > selectionX2 ? 2 : -2), selectionY2, selectionZ2, dim, Blocks.redstone_block);
 
         // On the Z
-        markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 1 : -1), dim);
-        markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -1 : 1), dim);
-        markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 2 : -2), dim);
-        markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -2 : 2), dim);
+        markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 1 : -1), dim, Blocks.redstone_block);
+        markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -1 : 1), dim, Blocks.redstone_block);
+        markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 2 : -2), dim, Blocks.redstone_block);
+        markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -2 : 2), dim, Blocks.redstone_block);
 
         if (selectionY1 != selectionY2) {
             // On the Y
-            markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -1 : 1), selectionZ1, dim);
-            markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 1 : -1), selectionZ2, dim);
-            markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -2 : 2), selectionZ1, dim);
-            markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2, dim);
+            markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -1 : 1), selectionZ1, dim, Blocks.redstone_block);
+            markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 1 : -1), selectionZ2, dim, Blocks.redstone_block);
+            markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -2 : 2), selectionZ1, dim, Blocks.redstone_block);
+            markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2, dim, Blocks.redstone_block);
         }
     }
 
@@ -144,22 +147,22 @@ public class VisualsTickHandler {
         // assuming x1 < x2, y1 < y2, z1 < z2
 
         for (int i = x1; i <= x2; i++) {
-            markBlock(i, y1, z1, dim);
-            markBlock(i, y2, z1, dim);
-            markBlock(i, y1, z2, dim);
-            markBlock(i, y2, z2, dim);
+            markBlock(i, y1, z1, dim, Blocks.redstone_block);
+            markBlock(i, y2, z1, dim, Blocks.redstone_block);
+            markBlock(i, y1, z2, dim, Blocks.redstone_block);
+            markBlock(i, y2, z2, dim, Blocks.redstone_block);
         }
         for (int i = y1; i <= y2; i++) {
-            markBlock(x1, i, z1, dim);
-            markBlock(x2, i, z1, dim);
-            markBlock(x1, i, z2, dim);
-            markBlock(x2, i, z2, dim);
+            markBlock(x1, i, z1, dim, Blocks.redstone_block);
+            markBlock(x2, i, z1, dim, Blocks.redstone_block);
+            markBlock(x1, i, z2, dim, Blocks.redstone_block);
+            markBlock(x2, i, z2, dim, Blocks.redstone_block);
         }
         for (int i = z1; i <= z2; i++) {
-            markBlock(x1, y1, i, dim);
-            markBlock(x2, y1, i, dim);
-            markBlock(x1, y2, i, dim);
-            markBlock(x2, y2, i, dim);
+            markBlock(x1, y1, i, dim, Blocks.redstone_block);
+            markBlock(x2, y1, i, dim, Blocks.redstone_block);
+            markBlock(x1, y2, i, dim, Blocks.redstone_block);
+            markBlock(x2, y2, i, dim, Blocks.redstone_block);
         }
     }
 

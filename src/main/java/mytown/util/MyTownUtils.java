@@ -424,11 +424,8 @@ public class MyTownUtils {
      */
     public static void giveItemToPlayer(EntityPlayer player, String itemName, int amount) {
         String[] split = itemName.split(":");
-        if(split.length == 1) {
-            giveItemToPlayer(player, (Item)Item.itemRegistry.getObject(itemName), amount);
-        } else {
-            giveItemToPlayer(player, GameRegistry.findItem(split[0], split[1]), amount);
-        }
+        giveItemToPlayer(player, GameRegistry.findItem(split[0], split[1]), amount, split.length > 2 ? Integer.parseInt(split[2]) : 0);
+
     }
 
     /**
@@ -439,9 +436,9 @@ public class MyTownUtils {
      * @param amount
      * @return
      */
-    public static void giveItemToPlayer(EntityPlayer player, Item item, int amount) {
+    public static void giveItemToPlayer(EntityPlayer player, Item item, int amount, int meta) {
         for (int left = amount; left > 0; left -= 64) {
-            ItemStack stack = new ItemStack(item, left > 64 ? 64 : left);
+            ItemStack stack = new ItemStack(item, left > 64 ? 64 : left, meta);
             //stack = addToInventory(player.inventory, stack);
             if (!player.inventory.addItemStackToInventory(stack)) {
                 // Drop it on the ground if it fails to add to the inventory

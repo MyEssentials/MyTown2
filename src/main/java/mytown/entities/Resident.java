@@ -18,6 +18,7 @@ import mytown.util.Constants;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -497,7 +498,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
             firstSelectionActive = true;
 
             // This is marked twice :P
-            VisualsTickHandler.instance.markBlock(x, y, z, dim);
+            VisualsTickHandler.instance.markBlock(x, y, z, dim, Blocks.redstone_block);
 
         } else {
 
