@@ -2,9 +2,11 @@ package mytown.commands;
 
 import java.util.List;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
+import mytown.core.Localization;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
@@ -18,10 +20,12 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
 import mytown.new_protection.json.JSONParser;
+import mytown.proxies.LocalizationProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 /**
  * Created by AfterWind on 8/29/2014.
@@ -441,5 +445,31 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
         sendHelpMessageWithArgs(sender, args, "mytown.adm.cmd");
+    }
+
+    @CommandNode(
+            name = "cost",
+            permission = "mytown.adm.cmd.cost",
+            parentName = "mytown.adm.cmd",
+            nonPlayers = true)
+    public static void costCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.cost");
+    }
+
+    @CommandNode(
+            name = "itemname",
+            permission = "mytown.adm.cmd.cost.itemname",
+            parentName = "mytown.adm.cmd.cost",
+            nonPlayers = false)
+    public static void costItemNameCommand(ICommandSender sender, List<String> args) {
+        if(sender instanceof EntityPlayer) {
+            ItemStack stack = ((EntityPlayer) sender).getHeldItem();
+            if(stack == null)
+                return;
+            String itemName = GameRegistry.findUniqueIdentifierFor(stack.getItem()).toString();
+            if(stack.getItemDamage() != 0)
+                itemName += ":" + stack.getItemDamage();
+            sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.cost.itemname", itemName));
+        }
     }
 }

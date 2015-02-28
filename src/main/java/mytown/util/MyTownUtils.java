@@ -354,11 +354,7 @@ public class MyTownUtils {
      */
     public static boolean takeItemFromPlayer(EntityPlayer player, String itemName, int amount) {
         String[] split = itemName.split(":");
-        if(split[0].equals("Minecraft")) {
-            return takeItemFromPlayer(player, (Item)Item.itemRegistry.getObject(itemName), amount, split.length == 3 ? Integer.parseInt(split[2]) : -1);
-        } else {
-            return takeItemFromPlayer(player, GameRegistry.findItem(split[0], split[1]), amount, split.length == 3 ? Integer.parseInt(split[2]) : -1);
-        }
+        return takeItemFromPlayer(player, GameRegistry.findItem(split[0], split[1]), amount, split.length == 3 ? Integer.parseInt(split[2]) : -1);
     }
 
     /**

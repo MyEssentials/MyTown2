@@ -62,6 +62,7 @@ public class MyTown {
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
 
         ConfigProcessor.load(config, Config.class);
+
         LocalizationProxy.load();
 
         JSONParser.folderPath = ev.getModConfigurationDirectory() + "/MyTown/protections";
@@ -95,7 +96,7 @@ public class MyTown {
 
         if(Config.costItemName.equals("$") && !Loader.isModLoaded("ForgeEssentials")) {
             MyTown.instance.log.error("Failed to find ForgeEssentials for economy implementation. Reverting to default.");
-            Config.costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).name;
+            Config.costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).toString();
         }
 
         registerCommands();

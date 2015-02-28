@@ -1,8 +1,12 @@
 package mytown.config;
 
+import mytown.MyTown;
+import mytown.core.utils.config.ConfigProcessor;
 import mytown.core.utils.config.ConfigProperty;
 import net.minecraft.init.Items;
 import cpw.mods.fml.common.registry.GameRegistry;
+
+import java.lang.reflect.Field;
 
 // TODO More config!
 public class Config {
@@ -42,7 +46,7 @@ public class Config {
     public static boolean modifiableRanks = false;
 
     @ConfigProperty(category = "towns", name = "costItem", comment = "The item which is used for paying for claims and making new towns. Add '$' if you want to use ForgeEssentials economy")
-    public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).name;
+    public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).toString();
    // public static String costItemName = "$";
 
     @ConfigProperty(category = "towns", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town.")
