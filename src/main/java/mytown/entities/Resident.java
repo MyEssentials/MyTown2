@@ -579,7 +579,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         Plot plot = DatasourceProxy.getDatasource().newPlot(plotName, selectionTown, selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2);
 
         MyTownUtils.takeSelectorToolFromPlayer(player);
-        resetSelection(false);
+        resetSelection(true);
         return plot;
     }
 
