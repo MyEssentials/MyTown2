@@ -425,7 +425,6 @@ public class MyTownUtils {
     public static void giveItemToPlayer(EntityPlayer player, String itemName, int amount) {
         String[] split = itemName.split(":");
         giveItemToPlayer(player, GameRegistry.findItem(split[0], split[1]), amount, split.length > 2 ? Integer.parseInt(split[2]) : 0);
-
     }
 
     /**
@@ -446,6 +445,30 @@ public class MyTownUtils {
             }
         }
     }
+
+    /**
+     * Returns the item from a String that has this pattern: (modid):(unique_name)[:meta]
+     *
+     * @param itemName
+     * @return
+     */
+    public static Item itemFromName(String itemName) {
+        String[] split = itemName.split(":");
+        return GameRegistry.findItem(split[0], split[1]);
+    }
+
+    /**
+     * Returns the item from a String that has this pattern: (modid):(unique_name)[:meta]
+     *
+     * @param itemName
+     * @return
+     */
+    public static ItemStack itemStackFromName(String itemName) {
+        String[] split = itemName.split(":");
+
+        return new ItemStack(GameRegistry.findItem(split[0], split[1]), 1, split.length > 2 ? Integer.parseInt(split[2]) : 0);
+    }
+
 
     /**
      * Returns whether or not the String can be parsed as an Integer
