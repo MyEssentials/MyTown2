@@ -458,7 +458,7 @@ public class MyTownUtils {
     }
 
     /**
-     * Returns the item from a String that has this pattern: (modid):(unique_name)[:meta]
+     * Returns the ItemStack from a String that has this pattern: (modid):(unique_name)[:meta]
      *
      * @param itemName
      * @return
@@ -508,6 +508,23 @@ public class MyTownUtils {
      */
     public static boolean tryParseBoolean(String value) {
         return value.equals("true") || value.equals("false");
+    }
+
+
+    /**
+     * Searches for the class using the path. Example: "net.minecraft.block.Block"
+     *
+     * @param classPath
+     * @return
+     */
+    public static boolean isClassLoaded(String classPath) {
+        boolean value = false;
+        try {
+            value = Class.forName(classPath) != null;
+        } catch (ClassNotFoundException ex) {
+
+        }
+        return value;
     }
 
     /**

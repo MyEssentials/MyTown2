@@ -3,6 +3,7 @@ package mytown.config;
 import mytown.MyTown;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.core.utils.config.ConfigProperty;
+import mytown.util.MyTownUtils;
 import net.minecraft.init.Items;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -66,6 +67,9 @@ public class Config {
 
     @ConfigProperty(category = "protection", name = "defaultProtectionSize", comment = "The range that it's going to check in if a protection's segment that has a tileentity does not provide getters for its area of influence.")
     public static int defaultProtectionSize = 32;
+
+    @ConfigProperty(category = "protection", name = "useExtraEvents", comment = "If you have Forge 1254 or higher you can enable this feature. It provides more accurate protection.")
+    public static boolean useExtraEvents = MyTownUtils.isClassLoaded("net.minecraftforge.event.world.ExplosionEvent");
 
     //@ConfigProperty(category = "extra", name = "debug", comment = "Enables debugging output to console, use '/ta debug' to toggle ingame")
     //public static boolean debug;

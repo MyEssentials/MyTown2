@@ -23,6 +23,7 @@ import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
 import mytown.new_protection.ProtectionUtils;
 import mytown.new_protection.Protections;
+import mytown.new_protection.eventhandlers.ExtraForgeHandlers;
 import mytown.new_protection.json.JSONParser;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -174,10 +175,12 @@ public class MyTown {
         MinecraftForge.EVENT_BUS.register(playerTracker);
 
         FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
-        MinecraftForge.EVENT_BUS.register(Protections.getInstance());
-        //FMLCommonHandler.instance().bus().register(Protections.instance);
 
         FMLCommonHandler.instance().bus().register(Protections.getInstance());
+        MinecraftForge.EVENT_BUS.register(Protections.getInstance());
+
+        if(Config.useExtraEvents)
+            MinecraftForge.EVENT_BUS.register(ExtraForgeHandlers.getInstance());
     }
 
     public void checkConfig() {
@@ -197,6 +200,15 @@ public class MyTown {
             log.error("Field costItem has an invalid metadata. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
             throw new RuntimeException();
         }
+
+        if(Config.useExtraEvents && !checkExtraEvents()) {
+            log.error("Extra events are enabled but you don't have the minimal forge version needed to load them.");
+            throw new RuntimeException();
+        }
+    }
+
+    public boolean checkExtraEvents() {
+        return MyTownUtils.isClassLoaded("net.minecraftforge.event.world.ExplosionEvent");
     }
 
     // ////////////////////////////

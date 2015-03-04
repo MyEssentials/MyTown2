@@ -30,6 +30,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
@@ -56,6 +57,8 @@ public class Protections {
     private int tickerWhitelistStart = 600;
     private int itemPickupCounter = 0;
 
+    // ---- Utility methods for accessing protections ----
+
     public static Protections getInstance() {
         if(instance == null)
             instance = new Protections();
@@ -78,6 +81,7 @@ public class Protections {
     public void removeProtection(Protection prot) { protections.remove(prot); }
     public List<Protection> getProtections() { return this.protections; }
 
+    // ---- Main ticking method ----
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent
@@ -85,6 +89,7 @@ public class Protections {
         if (ev.side == Side.CLIENT)
             return;
 
+        // Map updates
         if (tickerMap == 0) {
 
             for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
@@ -120,39 +125,21 @@ public class Protections {
             // Player check, every tick
             Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) entity.posX >> 4, (int) entity.posZ >> 4);
 
-            if (entity instanceof EntityPlayer) {
+            if (entity instanceof EntityPlayer && !(entity instanceof FakePlayer)) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
-                ChunkCoordinates playerPos = res.getPlayer().getPlayerCoordinates();
 
-                /*
-                if(Protections.instance.maximalRange != 0) {
-                    // Just firing event if there is such a case
-                    List<Town> towns = Utils.getTownsInRange(res.getPlayer().dimension, playerPos.posX, playerPos.posZ, Protections.instance.maximalRange, Protections.instance.maximalRange);
-                    for (Town t : towns) {
-                        //Comparing it to last tick position
-                        if(!Utils.getTownsInRange(res.getPlayer().dimension, (int)res.getPlayer().lastTickPosX, (int)res.getPlayer().lastTickPosZ, Protections.instance.maximalRange, Protections.instance.maximalRange).contains(t))
-                            TownEvent.fire(new TownEvent.TownEnterInRangeEvent(t, res));
-                    }
-                }
-                */
-
-                if (town != null) {
-                    if (!town.checkPermission(res, FlagType.enter, entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)) {
-                        res.protectionDenial(FlagType.enter.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)));
-                        res.knockbackPlayer();
-                        //MyTown.instance.log.info("Player " + res.getPlayerName() + " was moved!");
-                    }
+                if (town != null && !town.checkPermission(res, FlagType.enter, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
+                    res.protectionDenial(FlagType.enter.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)));
+                    res.knockbackPlayer();
                 }
             } else {
                 // Other entity checks
                 for (Protection prot : protections) {
                     if(prot.isEntityTracked(entity.getClass())) {
-                        if (checkedEntities.get(entity) == null || !checkedEntities.get(entity)) {
-                            if (prot.checkEntity(entity)) {
-                                MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
-                                checkedEntities.remove(entity);
-                                entity.setDead();
-                            }
+                        if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
+                            MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
+                            checkedEntities.remove(entity);
+                            entity.setDead();
                         }
                         checkedEntities.put(entity, true);
                     }
@@ -175,38 +162,10 @@ public class Protections {
                 }
             }
         }
-
-        /*
-        if(!errored) {
-            try {
-                //MyTown.instance.log.info("Checking...");
-                    Field field = WorldServer.class.getDeclaredField("pendingTickListEntriesThisTick");
-                    field.setAccessible(true);
-
-                    List<NextTickListEntry> list = (List<NextTickListEntry>) field.get(ev.world);
-                    if (list != null) {
-                        for (Iterator<NextTickListEntry> it = list.iterator(); it.hasNext(); ) {
-                            NextTickListEntry entry = it.next();
-                            Town town = Utils.getTownAtPosition(ev.world.provider.dimensionId, entry.xCoord >> 4, entry.zCoord >> 4);
-                            if(town != null) {
-                                boolean placeFlag = (Boolean)town.getValueAtCoords(ev.world.provider.dimensionId, entry.xCoord, entry.yCoord, entry.zCoord, FlagType.placeBlocks);
-                                if (!placeFlag && entry.func_151351_a() instanceof IFluidBlock) {
-                                    it.remove();
-                                }
-                            }
-                            MyTown.instance.log.info(entry.func_151351_a().getUnlocalizedName() + " at (" + entry.xCoord + ", " + entry.xCoord + ", " + entry.xCoord + ")");
-                        }
-                    } else {
-                        MyTown.instance.log.info("List is null!");
-                    }
-            } catch (Exception e) {
-                MyTown.instance.log.error("An error occurred when checking tick updates.");
-                e.printStackTrace();
-                errored = true;
-            }
-        }
-        */
     }
+
+
+    // ---- Forge 1236 - Events ----
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -308,17 +267,17 @@ public class Protections {
         if (res == null) {
             return;
         }
-        // Use this to find position if a mod is using fake players
-        ChunkCoordinates playerPos = ev.entityPlayer.getPlayerCoordinates();
 
         int x = ev.x, y = ev.y, z = ev.z;
+        ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
+
         if(ev.world.getBlock(x, y, z) == Blocks.air) {
-            x = playerPos.posX;
-            y = playerPos.posY;
-            z = playerPos.posZ;
+            x = (int)ev.entityPlayer.posX;
+            y = (int)ev.entityPlayer.posY;
+            z = (int)ev.entityPlayer.posZ;
         }
 
-        ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
+
 
         /*
         // Testing stuff, please ignore
@@ -462,21 +421,7 @@ public class Protections {
     }
 
     /*
-    @SubscribeEvent
-    public void onExplosion(ExplosionEvent.Start ev) {
-        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.explosionX - ev.explosion.explosionSize), (int)(ev.explosion.explosionZ - ev.explosion.explosionSize), (int)(ev.explosion.explosionX + ev.explosion.explosionSize), (int)(ev.explosion.explosionZ + ev.explosion.explosionSize));
-        for(ChunkPos chunk : chunks) {
-            Town town = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
-            if(town != null) {
-                boolean explosionValue = (Boolean) town.getValue(FlagType.explosions);
-                if (!explosionValue) {
-                    ev.setCanceled(true);
-                    town.notifyEveryone(FlagType.explosions.getLocalizedTownNotification());
-                    return;
-                }
-            }
-        }
-    }
+
     */
 
     @SubscribeEvent
