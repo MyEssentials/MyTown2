@@ -57,9 +57,9 @@ public class JSONParser {
                 Protection protection = gson.fromJson(reader, Protection.class);
                 if(protection != null) {
                     if (protection.modid.equals("Vanilla")) {
-                        MyTown.instance.log.info("   Adding vanilla protection.");
+                        MyTown.instance.log.info("Adding vanilla protection.");
                     } else {
-                        MyTown.instance.log.info("   Adding protection for mod: " + protection.modid);
+                        MyTown.instance.log.info("Adding protection for mod: " + protection.modid);
                     }
                     Protections.getInstance().addProtection(protection);
                 }

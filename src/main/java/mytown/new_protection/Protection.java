@@ -1,6 +1,7 @@
 package mytown.new_protection;
 
 import mytown.MyTown;
+import mytown.config.Config;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -61,7 +62,7 @@ public class Protection {
             if(segment instanceof SegmentTileEntity)
                 segmentsTiles.add((SegmentTileEntity)segment);
             else if(segment instanceof SegmentEntity)
-                segmentsEntities.add((SegmentEntity)segment);
+                segmentsEntities.add((SegmentEntity) segment);
             else if(segment instanceof SegmentItem)
                 segmentsItems.add((SegmentItem)segment);
             else if(segment instanceof SegmentBlock)
@@ -73,10 +74,8 @@ public class Protection {
     }
 
     public boolean checkTileEntity(TileEntity te) {
-        //MyTown.instance.log.info("Protection: " + this.modid);
         for(Iterator<SegmentTileEntity> it = segmentsTiles.iterator(); it.hasNext();) {
             SegmentTileEntity segment = it.next();
-            //MyTown.instance.log.info("Segment: " + segment.theClass.getName());
             if(segment.theClass.isAssignableFrom(te.getClass())) {
                 try {
                     if(segment.checkCondition(te)) {

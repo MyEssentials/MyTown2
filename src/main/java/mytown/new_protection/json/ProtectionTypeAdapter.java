@@ -7,6 +7,7 @@ import com.google.gson.stream.JsonWriter;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
+import mytown.config.Config;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
 import mytown.new_protection.segment.*;
@@ -229,8 +230,13 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     if (segment == null)
                         MyTown.instance.log.error("  [Segment: " + clazz + "] Segment was not properly initialized!");
                     else {
-                        MyTown.instance.log.info("   Added segment for class: " + segment.theClass.getName());
-                        segments.add(segment);
+                        // Precheck for configurations
+                        if(segment instanceof SegmentEntity && ((SegmentEntity) segment).type == EntityType.explosive && Config.useExtraEvents)
+                            MyTown.instance.log.info("  [Segment:" + segment.theClass.getName() + "] Omitting segment because use of extra events is enabled.");
+                        else {
+                            MyTown.instance.log.info("   Added segment for class: " + segment.theClass.getName());
+                            segments.add(segment);
+                        }
                     }
                     MyTown.instance.log.info("   ------------------------------------------------------------");
                 }
