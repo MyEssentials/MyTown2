@@ -73,8 +73,6 @@ public class JSONParser {
         return true;
     }
 
-
-
     private static void initJSON() {
         gson = new GsonBuilder().registerTypeAdapter(Protection.class, new ProtectionTypeAdapter()).setPrettyPrinting().create();
     }

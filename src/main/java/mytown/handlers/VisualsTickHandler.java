@@ -5,14 +5,15 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.entities.Plot;
+import mytown.entities.Town;
+import mytown.entities.TownBlock;
+import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class VisualsTickHandler {
     public class BlockCoords {
@@ -32,9 +33,11 @@ public class VisualsTickHandler {
 
     public static VisualsTickHandler instance = new VisualsTickHandler();
     private List<BlockCoords> markedBlocks;
+    public Map<Town, List<BlockCoords>> townBorders;
 
     public VisualsTickHandler() {
         markedBlocks = new ArrayList<BlockCoords>();
+        townBorders = new HashMap<Town, List<BlockCoords>>();
     }
 
     @SubscribeEvent
@@ -47,7 +50,7 @@ public class VisualsTickHandler {
                 BlockCoords coord = iterator.next();
                 if (!coord.packetSent) {
                     S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
-                    packet.field_148883_d = Blocks.redstone_block;
+                    packet.field_148883_d = coord.block;
                     FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
 
                     coord.packetSent = true;
@@ -191,6 +194,64 @@ public class VisualsTickHandler {
             unmarkBlock(x1, y2, i, dim);
             unmarkBlock(x2, y2, i, dim);
         }
+    }
+
+    public void unmarkTownBorders(Town town) {
+        List<BlockCoords> blockList = townBorders.get(town);
+        if(blockList == null) return;
+
+        for(BlockCoords blockCoord : blockList) {
+            unmarkBlock(blockCoord.x, blockCoord.y, blockCoord.z, blockCoord.dim);
+        }
+        townBorders.remove(town);
+    }
+
+    public void markTownBorders(Town town) {
+        int dx[] = {-1, -1, 0, 1, 1, 1, 0, -1};
+        int dz[] = {0, 1, 1, 1, 0, -1, -1, -1};
+
+        int x, y, z;
+
+        List<BlockCoords> blockList = new ArrayList<BlockCoords>();
+
+        for (TownBlock block : town.getBlocks()) {
+            // Showing lines in borders
+            for(int i = 0; i < 8; i+=2) {
+                if(town.getBlockAtCoords(block.getDim(), block.getX() + dx[i], block.getZ() + dz[i]) == null) {
+                    if(dx[i] == 0) {
+                        z = dz[i] == -1 ? block.getZ() << 4 : (block.getZ() << 4) + 15;
+                        x = block.getX() << 4;
+                        for(int k = x + 1; k <= x + 14; k++) {
+                            y = MyTownUtils.getMaxHeightWithSolid(block.getDim(), k, z);
+                            BlockCoords blockCoord = new BlockCoords(k, y, z, block.getDim(), Blocks.lapis_block);
+                            blockList.add(blockCoord);
+                            markedBlocks.add(blockCoord);
+                        }
+                    } else {
+                        x = dx[i] == -1 ? block.getX() << 4 : (block.getX() << 4) + 15;
+                        z = block.getZ() << 4;
+                        for(int k = z + 1; k <= z + 14; k++) {
+                            y = MyTownUtils.getMaxHeightWithSolid(block.getDim(), x, k);
+                            BlockCoords blockCoord = new BlockCoords(x, y, k, block.getDim(), Blocks.lapis_block);
+                            blockList.add(blockCoord);
+                            markedBlocks.add(blockCoord);
+                        }
+                    }
+                }
+            }
+
+            // Showing corners in borders
+            for(int i = 1; i < 8; i+=2) {
+                x = dx[i] == 1 ? block.getX() << 4 : (block.getX() << 4) + 15;
+                z = dz[i] == 1 ? block.getZ() << 4 : (block.getZ() << 4) + 15;
+                y = MyTownUtils.getMaxHeightWithSolid(block.getDim(), x, z);
+                BlockCoords blockCoord = new BlockCoords(x, y, z, block.getDim(), Blocks.lapis_block);
+                blockList.add(blockCoord);
+                markedBlocks.add(blockCoord);
+            }
+        }
+
+        townBorders.put(town, blockList);
     }
 
     public List<BlockCoords> getMarkedBlocks() {

@@ -7,6 +7,7 @@ import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
+import mytown.proxies.LocalizationProxy;
 import mytown.util.Formatter;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
@@ -337,7 +338,7 @@ public class CommandsEveryone extends Commands {
         Resident target = getResidentFromName(args.get(0));
 
         Town town = getTownFromResident(res);
-        if(!res.hasTown(town))
+        if (!res.hasTown(town))
             throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", res.getPlayerName(), town.getName());
 
         if (!town.canResidentMakePlot(target)) {
@@ -412,5 +413,37 @@ public class CommandsEveryone extends Commands {
         Town town = getTownFromResident(res);
 
         ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.ranks", Formatter.formatRanksToString(town.getRanks()));
+    }
+
+    @CommandNode(
+            name = "borders",
+            permission = "mytown.cmd.everyone.borders",
+            parentName = "mytown.cmd")
+    public static void bordersCommand(ICommandSender sender, List<String> args, List<String> subCommandsList) {
+        callSubFunctions(sender, args, subCommandsList, "mytown.cmd.everyone.borders");
+    }
+
+    @CommandNode(
+            name = "show",
+            permission = "mytown.cmd.everyone.borders.show",
+            parentName = "mytown.cmd.everyone.borders")
+    public static void bordersShowCommand(ICommandSender sender, List<String> args) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+
+        town.showBorders();
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.show", town.getName()));
+    }
+
+    @CommandNode(
+            name = "hide",
+            permission = "mytown.cmd.everyone.borders.hide",
+            parentName = "mytown.cmd.everyone.borders")
+    public static void bordersHideCommand(ICommandSender sender, List<String> args) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+
+        town.hideBorders();
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
     }
 }

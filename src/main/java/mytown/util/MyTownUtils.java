@@ -34,6 +34,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.common.DimensionManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -525,6 +526,21 @@ public class MyTownUtils {
 
         }
         return value;
+    }
+
+    /**
+     * Returns the first block from top to bottom that is considered not opaque
+     *
+     * @param x
+     * @param z
+     * @return
+     */
+    public static int getMaxHeightWithSolid(int dim, int x, int z) {
+        World world = DimensionManager.getWorld(dim);
+        int y = world.getActualHeight();
+        while(!world.getBlock(x, y, z).getMaterial().isOpaque())
+            y--;
+        return y;
     }
 
     /**

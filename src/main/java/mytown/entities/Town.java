@@ -12,6 +12,8 @@ import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.*;
 
@@ -269,6 +271,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         }
 
         return tmpCount;
+    }
+
+    public void showBorders() {
+        VisualsTickHandler.instance.markTownBorders(this);
+    }
+
+    public void hideBorders() {
+        VisualsTickHandler.instance.unmarkTownBorders(this);
     }
 
     @Override
