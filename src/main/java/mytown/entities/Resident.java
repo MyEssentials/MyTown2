@@ -498,7 +498,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
             firstSelectionActive = true;
 
             // This is marked twice :P
-            VisualsTickHandler.instance.markBlock(x, y, z, dim, Blocks.redstone_block);
+            VisualsTickHandler.instance.markBlock(x, y, z, dim, Blocks.redstone_block, this);
 
         } else {
 
@@ -506,7 +506,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
             selectionY2 = y;
             selectionZ2 = z;
             secondSelectionActive = true;
-            VisualsTickHandler.instance.markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
+            VisualsTickHandler.instance.markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, this);
         }
 
         return true;
@@ -588,7 +588,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     public void expandSelectionVert() {
         // When selection is expanded vertically we'll show it's borders... (Temporary solution)
 
-        VisualsTickHandler.instance.unmarkPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
+        VisualsTickHandler.instance.unmarkBlocks(this);
 
         selectionY1 = 1;
         try {
@@ -599,7 +599,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         }
         selectionExpandedVert = true;
 
-        VisualsTickHandler.instance.markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
+        VisualsTickHandler.instance.markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, this);
     }
 
     @Override
@@ -608,11 +608,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         secondSelectionActive = false;
 
         if(resetBlocks) {
-            if (selectionExpandedVert) {
-                VisualsTickHandler.instance.unmarkPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
-            } else {
-                VisualsTickHandler.instance.unmarkPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim);
-            }
+            VisualsTickHandler.instance.unmarkBlocks(this);
         }
     }
 

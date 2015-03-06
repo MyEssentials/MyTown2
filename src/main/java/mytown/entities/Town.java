@@ -278,7 +278,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     public void hideBorders() {
-        VisualsTickHandler.instance.unmarkTownBorders(this);
+        VisualsTickHandler.instance.unmarkBlocks(this);
     }
 
     @Override
@@ -360,7 +360,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
             }
         }
         if(isShowingPlots)
-            VisualsTickHandler.instance.unmarkPlotBorders(plot);
+            VisualsTickHandler.instance.unmarkBlocks(plot);
         plots.remove(plot);
     }
 
@@ -398,7 +398,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public void hidePlots() {
         this.isShowingPlots = false;
         for (Plot plot : plots) {
-            VisualsTickHandler.instance.unmarkPlotBorders(plot);
+            VisualsTickHandler.instance.unmarkBlocks(plot);
         }
     }
 

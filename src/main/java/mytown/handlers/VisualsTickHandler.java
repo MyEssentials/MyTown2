@@ -5,6 +5,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.entities.Plot;
+import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.util.MyTownUtils;
@@ -32,91 +33,108 @@ public class VisualsTickHandler {
     }
 
     public static VisualsTickHandler instance = new VisualsTickHandler();
-    private List<BlockCoords> markedBlocks;
-    public Map<Town, List<BlockCoords>> townBorders;
+
+    public Map<Object, List<BlockCoords>> markedBlocks;
 
     public VisualsTickHandler() {
-        markedBlocks = new ArrayList<BlockCoords>();
-        townBorders = new HashMap<Town, List<BlockCoords>>();
+        markedBlocks = new HashMap<Object, List<BlockCoords>>();
     }
 
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent ev) {
         if (ev.side != Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+
         if (markedBlocks.size() != 0) {
-            Iterator<BlockCoords> iterator = markedBlocks.iterator();
+            for(List<BlockCoords> coordsList : markedBlocks.values()) {
+                Iterator<BlockCoords> iterator = coordsList.iterator();
+                while (iterator.hasNext()) {
+                    BlockCoords coord = iterator.next();
+                    if (!coord.packetSent) {
+                        S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
+                        packet.field_148883_d = coord.block;
+                        FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
 
-            while (iterator.hasNext()) {
-                BlockCoords coord = iterator.next();
-                if (!coord.packetSent) {
-                    S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
-                    packet.field_148883_d = coord.block;
-                    FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
+                        coord.packetSent = true;
+                    }
+                    if (coord.deleted) {
+                        S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
+                        packet.field_148883_d = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlock(coord.x, coord.y, coord.z);
+                        packet.field_148884_e = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockMetadata(coord.x, coord.y, coord.z);
+                        FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
 
-                    coord.packetSent = true;
-                }
-                if (coord.deleted) {
-                    S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
-                    packet.field_148883_d = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlock(coord.x, coord.y, coord.z);
-                    packet.field_148884_e = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockMetadata(coord.x, coord.y, coord.z);
-                    FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
-
-                    iterator.remove();
+                        iterator.remove();
+                    }
                 }
             }
         }
     }
 
-    public void markBlock(int x, int y, int z, int dim, Block block) {
+    public void markBlock(int x, int y, int z, int dim, Block block, Object key) {
         /*
         for (BlockCoords block : markedBlocks) {
             if (block.x == x && block.y == y && block.z == z && block.dim == dim)
                 return;
         }
         */
-        markedBlocks.add(new BlockCoords(x, y, z, dim, block));
+        if(markedBlocks.get(key) == null) {
+            markedBlocks.put(key, new ArrayList<BlockCoords>());
+        }
+        markedBlocks.get(key).add(new BlockCoords(x, y, z, dim, block));
     }
 
 
     public boolean unmarkBlock(int x, int y, int z, int dim) {
         if (markedBlocks.size() == 0)
             return false;
-        for (BlockCoords coord : markedBlocks) {
-            if (coord.x == x && coord.y == y && coord.z == z && coord.dim == dim) {
-                coord.deleted = true;
-                return true;
+        for(List<BlockCoords> coordsList : markedBlocks.values()) {
+            for (BlockCoords coord : coordsList) {
+                if (coord.x == x && coord.y == y && coord.z == z && coord.dim == dim) {
+                    coord.deleted = true;
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    public void markPlotCorners(int selectionX1, int selectionY1, int selectionZ1, int selectionX2, int selectionY2, int selectionZ2, int dim) {
+    public boolean unmarkBlocks(Object key) {
+        if(markedBlocks.get(key) == null)
+            return false;
+        for(BlockCoords coord : markedBlocks.get(key)) {
+            coord.deleted = true;
+        }
+        return true;
+    }
 
-        markBlock(selectionX1, selectionY1, selectionZ1, dim, Blocks.redstone_block);
-        markBlock(selectionX2, selectionY2, selectionZ2, dim, Blocks.redstone_block);
+    public void markPlotCorners(int selectionX1, int selectionY1, int selectionZ1, int selectionX2, int selectionY2, int selectionZ2, int dim, Resident creator) {
+
+        markBlock(selectionX1, selectionY1, selectionZ1, dim, Blocks.redstone_block, creator);
+        markBlock(selectionX2, selectionY2, selectionZ2, dim, Blocks.redstone_block, creator);
 
         // On the X
-        markBlock(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1, dim, Blocks.redstone_block);
-        markBlock(selectionX2 + (selectionX1 > selectionX2 ? 1 : -1), selectionY2, selectionZ2, dim, Blocks.redstone_block);
-        markBlock(selectionX1 + (selectionX1 > selectionX2 ? -2 : 2), selectionY1, selectionZ1, dim, Blocks.redstone_block);
-        markBlock(selectionX2 + (selectionX1 > selectionX2 ? 2 : -2), selectionY2, selectionZ2, dim, Blocks.redstone_block);
+        markBlock(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1, dim, Blocks.redstone_block, creator);
+        markBlock(selectionX2 + (selectionX1 > selectionX2 ? 1 : -1), selectionY2, selectionZ2, dim, Blocks.redstone_block, creator);
+        markBlock(selectionX1 + (selectionX1 > selectionX2 ? -2 : 2), selectionY1, selectionZ1, dim, Blocks.redstone_block, creator);
+        markBlock(selectionX2 + (selectionX1 > selectionX2 ? 2 : -2), selectionY2, selectionZ2, dim, Blocks.redstone_block, creator);
 
         // On the Z
-        markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 1 : -1), dim, Blocks.redstone_block);
-        markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -1 : 1), dim, Blocks.redstone_block);
-        markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 2 : -2), dim, Blocks.redstone_block);
-        markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -2 : 2), dim, Blocks.redstone_block);
+        markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 1 : -1), dim, Blocks.redstone_block, creator);
+        markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -1 : 1), dim, Blocks.redstone_block, creator);
+        markBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 2 : -2), dim, Blocks.redstone_block, creator);
+        markBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -2 : 2), dim, Blocks.redstone_block, creator);
 
         if (selectionY1 != selectionY2) {
             // On the Y
-            markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -1 : 1), selectionZ1, dim, Blocks.redstone_block);
-            markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 1 : -1), selectionZ2, dim, Blocks.redstone_block);
-            markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -2 : 2), selectionZ1, dim, Blocks.redstone_block);
-            markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2, dim, Blocks.redstone_block);
+            markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -1 : 1), selectionZ1, dim, Blocks.redstone_block, creator);
+            markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 1 : -1), selectionZ2, dim, Blocks.redstone_block, creator);
+            markBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -2 : 2), selectionZ1, dim, Blocks.redstone_block, creator);
+            markBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2, dim, Blocks.redstone_block, creator);
         }
     }
 
-    public void unmarkPlotCorners(int selectionX1, int selectionY1, int selectionZ1, int selectionX2, int selectionY2, int selectionZ2, int dim) {
+    /*
+
+    public void unmarkPlotCorners(int selectionX1, int selectionY1, int selectionZ1, int selectionX2, int selectionY2, int selectionZ2, int dim, Resident creator) {
 
         unmarkBlock(selectionX1, selectionY1, selectionZ1, dim);
         unmarkBlock(selectionX2, selectionY2, selectionZ2, dim);
@@ -142,32 +160,36 @@ public class VisualsTickHandler {
         }
     }
 
+    */
+
     public void markPlotBorders(Plot plot) {
-        markPlotBorders(plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ(), plot.getDim());
+        markPlotBorders(plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ(), plot.getDim(), plot);
     }
 
-    public void markPlotBorders(int x1, int y1, int z1, int x2, int y2, int z2, int dim) {
+    public void markPlotBorders(int x1, int y1, int z1, int x2, int y2, int z2, int dim, Object key) {
         // assuming x1 < x2, y1 < y2, z1 < z2
 
         for (int i = x1; i <= x2; i++) {
-            markBlock(i, y1, z1, dim, Blocks.redstone_block);
-            markBlock(i, y2, z1, dim, Blocks.redstone_block);
-            markBlock(i, y1, z2, dim, Blocks.redstone_block);
-            markBlock(i, y2, z2, dim, Blocks.redstone_block);
+            markBlock(i, y1, z1, dim, Blocks.redstone_block, key);
+            markBlock(i, y2, z1, dim, Blocks.redstone_block, key);
+            markBlock(i, y1, z2, dim, Blocks.redstone_block, key);
+            markBlock(i, y2, z2, dim, Blocks.redstone_block, key);
         }
         for (int i = y1; i <= y2; i++) {
-            markBlock(x1, i, z1, dim, Blocks.redstone_block);
-            markBlock(x2, i, z1, dim, Blocks.redstone_block);
-            markBlock(x1, i, z2, dim, Blocks.redstone_block);
-            markBlock(x2, i, z2, dim, Blocks.redstone_block);
+            markBlock(x1, i, z1, dim, Blocks.redstone_block, key);
+            markBlock(x2, i, z1, dim, Blocks.redstone_block, key);
+            markBlock(x1, i, z2, dim, Blocks.redstone_block, key);
+            markBlock(x2, i, z2, dim, Blocks.redstone_block, key);
         }
         for (int i = z1; i <= z2; i++) {
-            markBlock(x1, y1, i, dim, Blocks.redstone_block);
-            markBlock(x2, y1, i, dim, Blocks.redstone_block);
-            markBlock(x1, y2, i, dim, Blocks.redstone_block);
-            markBlock(x2, y2, i, dim, Blocks.redstone_block);
+            markBlock(x1, y1, i, dim, Blocks.redstone_block, key);
+            markBlock(x2, y1, i, dim, Blocks.redstone_block, key);
+            markBlock(x1, y2, i, dim, Blocks.redstone_block, key);
+            markBlock(x2, y2, i, dim, Blocks.redstone_block, key);
         }
     }
+
+    /*
 
     public void unmarkPlotBorders(Plot plot) {
         unmarkPlotBorders(plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ(), plot.getDim());
@@ -205,6 +227,7 @@ public class VisualsTickHandler {
         }
         townBorders.remove(town);
     }
+    */
 
     public void markTownBorders(Town town) {
         int dx[] = {-1, -1, 0, 1, 1, 1, 0, -1};
@@ -225,7 +248,6 @@ public class VisualsTickHandler {
                             y = MyTownUtils.getMaxHeightWithSolid(block.getDim(), k, z);
                             BlockCoords blockCoord = new BlockCoords(k, y, z, block.getDim(), Blocks.lapis_block);
                             blockList.add(blockCoord);
-                            markedBlocks.add(blockCoord);
                         }
                     } else {
                         x = dx[i] == -1 ? block.getX() << 4 : (block.getX() << 4) + 15;
@@ -234,7 +256,6 @@ public class VisualsTickHandler {
                             y = MyTownUtils.getMaxHeightWithSolid(block.getDim(), x, k);
                             BlockCoords blockCoord = new BlockCoords(x, y, k, block.getDim(), Blocks.lapis_block);
                             blockList.add(blockCoord);
-                            markedBlocks.add(blockCoord);
                         }
                     }
                 }
@@ -247,22 +268,26 @@ public class VisualsTickHandler {
                 y = MyTownUtils.getMaxHeightWithSolid(block.getDim(), x, z);
                 BlockCoords blockCoord = new BlockCoords(x, y, z, block.getDim(), Blocks.lapis_block);
                 blockList.add(blockCoord);
-                markedBlocks.add(blockCoord);
             }
         }
 
-        townBorders.put(town, blockList);
+        markedBlocks.put(town, blockList);
     }
 
     public List<BlockCoords> getMarkedBlocks() {
-        return this.markedBlocks;
+        List<BlockCoords> result = new ArrayList<BlockCoords>();
+        for(List<BlockCoords> list : markedBlocks.values())
+            result.addAll(list);
+        return result;
     }
 
     public boolean isBlockMarked(int x, int y, int z, int dim) {
-        for (BlockCoords coords : markedBlocks) {
-            if (coords.x == x && coords.y == y && coords.z == z && coords.dim == dim) {
-                coords.packetSent = false;
-                return true;
+        for(List<BlockCoords> coordsList : markedBlocks.values()) {
+            for (BlockCoords coord : coordsList) {
+                if (coord.x == x && coord.y == y && coord.z == z && coord.dim == dim) {
+                    coord.packetSent = false;
+                    return true;
+                }
             }
         }
         return false;
