@@ -13,9 +13,12 @@ import mytown.new_protection.Protection;
 import mytown.new_protection.segment.*;
 import mytown.new_protection.segment.enums.EntityType;
 import mytown.new_protection.segment.enums.ItemType;
+import mytown.new_protection.segment.getter.Caller;
+import mytown.new_protection.segment.getter.Getters;
 import mytown.util.exceptions.SegmentException;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.print.DocFlavor;
 import java.io.IOException;
 import java.util.*;
 
@@ -39,12 +42,12 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.name("type").value("tileEntity");
             out.name("condition").value(StringUtils.join(segment.conditionString, " "));
             out.name("flag").value(FlagType.modifyBlocks.toString());
-            for (Map.Entry<String, List<Getter>> entry : segment.extraGettersMap.entrySet()) {
+            for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
                 out.name(entry.getKey()).beginArray();
-                for(Getter getter : entry.getValue()) {
+                for(Caller caller : entry.getValue()) {
                     out.beginObject();
-                    out.name("element").value(getter.element);
-                    out.name("type").value(getter.type.toString());
+                    out.name("element").value(caller.element);
+                    out.name("type").value(caller.type.toString());
                     out.endObject();
                 }
                 out.endArray();
@@ -102,7 +105,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     FlagType flag = null;
                     boolean isAdjacent = false;
                     int meta = -1;
-                    Map<String, List<Getter>> extraGettersMap = new HashMap<String, List<Getter>>();
+                    Getters getters = new Getters();
 
                     in.beginObject();
                     try {
@@ -110,6 +113,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             nextName = in.nextName();
                             if (nextName.equals("class")) {
                                 clazz = in.nextString();
+                                getters.setName(clazz);
                                 continue;
                             }
                             if (nextName.equals("type")) {
@@ -161,7 +165,10 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             }
 
                             // If it gets here it means that it should be some extra data that will be used in checking something
-                            extraGettersMap.put(nextName, parseGetters(in, clazz, nextName));
+                            if(in.peek() == JsonToken.BOOLEAN || in.peek() == JsonToken.NUMBER || in.peek() == JsonToken.STRING)
+                                getters.addConstant(nextName, parseConstant(in, clazz, nextName));
+                            else
+                                getters.addCallers(nextName, parseCallers(in, clazz, nextName));
 
                         }
 
@@ -174,17 +181,17 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                         throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
                                     try {
                                         // Log if the segment is using default protection
-                                        if (extraGettersMap.get("X1") == null || extraGettersMap.get("X2") == null || extraGettersMap.get("Z1") == null || extraGettersMap.get("Z2") == null) {
+                                        if (getters.getCallersMap().get("X1") == null || getters.getCallersMap().get("X2") == null || getters.getCallersMap().get("Z1") == null || getters.getCallersMap().get("Z2") == null) {
                                             MyTown.instance.log.info("   [Segment: " + clazz + "] Could not find one of the getters (X1, X2, Z1 or Z2). Using default protection size.");
 
                                             // Removing all of them since it will only create problems if left there
-                                            extraGettersMap.remove("X1");
-                                            extraGettersMap.remove("X2");
-                                            extraGettersMap.remove("Z1");
-                                            extraGettersMap.remove("Z2");
+                                            getters.removeGetter("X1");
+                                            getters.removeGetter("X2");
+                                            getters.removeGetter("Z1");
+                                            getters.removeGetter("Z2");
                                         }
 
-                                        segment = new SegmentTileEntity(Class.forName(clazz), extraGettersMap, flag, condition, IBlockModifier.Shape.rectangular);
+                                        segment = new SegmentTileEntity(Class.forName(clazz), getters, flag, condition, IBlockModifier.Shape.rectangular);
                                     } catch (ClassNotFoundException ex) {
                                         throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
                                     }
@@ -192,7 +199,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     if (entityType == null)
                                         throw new SegmentException("[Segment: " + clazz + "] The entityType is not being specified.");
                                     try {
-                                        segment = new SegmentEntity(Class.forName(clazz), extraGettersMap, condition, entityType);
+                                        segment = new SegmentEntity(Class.forName(clazz), getters, condition, entityType);
                                     } catch (ClassNotFoundException ex) {
                                         throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
                                     }
@@ -200,13 +207,13 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     if (flag == null)
                                         throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
                                     try {
-                                        segment = new SegmentItem(Class.forName(clazz), extraGettersMap, flag, condition, itemType, isAdjacent);
+                                        segment = new SegmentItem(Class.forName(clazz), getters, flag, condition, itemType, isAdjacent);
                                     } catch (ClassNotFoundException ex) {
                                         throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
                                     }
                                 } else if (type.equals("block")) {
                                     try {
-                                        segment = new SegmentBlock(Class.forName(clazz), extraGettersMap, condition, meta);
+                                        segment = new SegmentBlock(Class.forName(clazz), getters, condition, meta);
                                     } catch (ClassNotFoundException ex) {
                                         throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " in invalid!");
                                     }
@@ -253,35 +260,80 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
         return protection;
     }
 
-    private List<Getter> parseGetters(JsonReader in, String clazz, String getterName) throws IOException {
+    /**
+     * Returns the list of callers that are next in the JSON file stream.
+     *
+     * @param in
+     * @param clazz
+     * @param getterName
+     * @return
+     * @throws IOException
+     */
+    private List<Caller> parseCallers(JsonReader in, String clazz, String getterName) throws IOException {
         in.beginArray();
-        List<Getter> getters = new ArrayList<Getter>();
+        List<Caller> callers = new ArrayList<Caller>();
         String nextName;
         while(in.hasNext()) {
             in.beginObject();
             String element = null;
-            Getter.GetterType getterType = null;
+            Caller.CallerType callerType = null;
 
             nextName = in.nextName();
             if(nextName.equals("element"))
                 element = in.nextString();
             nextName = in.nextName();
             if(nextName.equals("type"))
-                getterType = Getter.GetterType.valueOf(in.nextString());
+                callerType = Caller.CallerType.valueOf(in.nextString());
 
-            if(getterType == null)
+            if(callerType == null)
                 throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " does not have a valid type.");
             if(element == null)
                 throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " does not have a value.");
 
             in.endObject();
-            getters.add(new Getter(element, getterType));
+            callers.add(new Caller(element, callerType));
         }
         in.endArray();
-        return getters;
+        return callers;
     }
 
-    private boolean checks(List<Getter>[] getters) {
+    /**
+     * Returns what value is on the next token on the JSON file stream
+     *
+     * @param in
+     * @param clazz
+     * @param getterName
+     * @return
+     * @throws IOException
+     */
+    private Object parseConstant(JsonReader in, String clazz, String getterName) throws IOException {
+        switch (in.peek()) {
+            case STRING:
+                return in.nextString();
+            case NUMBER:
+                try {
+                    return in.nextInt();
+                } catch (Exception ex) {
+                    try {
+                        return in.nextDouble();
+                    } catch (Exception ex2) {
+                        try {
+                            return in.nextLong();
+                        } catch (Exception ex3) {
+                            // just ignore, it really can't get here
+                            throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " does not have a valid type of value.");
+                        }
+                    }
+                }
+            case BOOLEAN:
+                return in.nextBoolean();
+            default:
+                throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " does not have a valid type of value.");
+        }
+
+    }
+
+    private boolean checks(List<Caller>[] getters) {
         if(getters[0] == null || getters[1] == null || getters[2] == null || getters[3] == null) {
             return false;
         }

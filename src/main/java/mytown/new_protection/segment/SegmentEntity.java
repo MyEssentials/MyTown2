@@ -1,6 +1,8 @@
 package mytown.new_protection.segment;
 
 import mytown.new_protection.segment.enums.EntityType;
+import mytown.new_protection.segment.getter.Caller;
+import mytown.new_protection.segment.getter.Getters;
 import net.minecraft.entity.Entity;
 
 import java.util.List;
@@ -14,8 +16,8 @@ public class SegmentEntity extends Segment {
 
     public EntityType type;
 
-    public SegmentEntity(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, String conditionString, EntityType type) {
-        super(theClass, extraGettersMap, conditionString);
+    public SegmentEntity(Class<?> theClass, Getters getters, String conditionString, EntityType type) {
+        super(theClass, getters, conditionString);
         this.type = type;
     }
 
@@ -25,6 +27,6 @@ public class SegmentEntity extends Segment {
      * @param entity
      * @return
      */
-    public int getRange(Entity entity) { return (Integer)getInfoFromGetters("range",  Integer.class, entity, null); }
+    public int getRange(Entity entity) { return (Integer)getters.getValue("range",  Integer.class, entity, null); }
 
 }

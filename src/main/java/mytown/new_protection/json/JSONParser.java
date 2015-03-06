@@ -3,24 +3,21 @@ package mytown.new_protection.json;
 import buildcraft.factory.TileQuarry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
 import mytown.new_protection.Protections;
-import mytown.new_protection.segment.Getter;
+import mytown.new_protection.segment.getter.Caller;
 import mytown.new_protection.segment.IBlockModifier;
 import mytown.new_protection.segment.Segment;
 import mytown.new_protection.segment.SegmentTileEntity;
-import mytown.proxies.mod.ModProxies;
+import mytown.new_protection.segment.getter.Getters;
+import net.minecraft.tileentity.TileEntityDispenser;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,34 +76,44 @@ public class JSONParser {
 
     @SuppressWarnings("unchecked")
     private static void createModel() {
-        Map<String, List<Getter>> gettersMap = new HashMap<String, List<Getter>>();
-        List<Getter> getters = new ArrayList<Getter>();
-        getters.add(new Getter("getBox", Getter.GetterType.method));
-        getters.add(new Getter("xMin", Getter.GetterType.field));
-        gettersMap.put("X1", getters);
+        Class clazz;
+        try {
+            clazz = Class.forName("buildcraft.factory.TileQuarry");
+        } catch (Exception ex) {
+            // TODO: Change to something else, or it might confusing to some people
+            clazz = TileEntityDispenser.class;
+        }
 
-        getters = new ArrayList<Getter>();
-        getters.add(new Getter("getBox", Getter.GetterType.method));
-        getters.add(new Getter("zMin", Getter.GetterType.field));
-        gettersMap.put("Z1", getters);
+        Getters getters = new Getters();
+        getters.setName(clazz.getName());
 
-        getters = new ArrayList<Getter>();
-        getters.add(new Getter("getBox", Getter.GetterType.method));
-        getters.add(new Getter("xMax", Getter.GetterType.field));
-        gettersMap.put("X2", getters);
+        List<Caller> callers = new ArrayList<Caller>();
+        callers.add(new Caller("getBox", Caller.CallerType.method));
+        callers.add(new Caller("xMin", Caller.CallerType.field));
+        getters.addCallers("X1", callers);
 
-        getters = new ArrayList<Getter>();
-        getters.add(new Getter("getBox", Getter.GetterType.method));
-        getters.add(new Getter("zMax", Getter.GetterType.field));
-        gettersMap.put("Z2", getters);
+        callers = new ArrayList<Caller>();
+        callers.add(new Caller("getBox", Caller.CallerType.method));
+        callers.add(new Caller("zMin", Caller.CallerType.field));
+        getters.addCallers("Z1", callers);
 
-        getters = new ArrayList<Getter>();
-        getters.add(new Getter("blockMetadata", Getter.GetterType.field));
-        gettersMap.put("meta", getters);
+        callers = new ArrayList<Caller>();
+        callers.add(new Caller("getBox", Caller.CallerType.method));
+        callers.add(new Caller("xMax", Caller.CallerType.field));
+        getters.addCallers("X2", callers);
+
+        callers = new ArrayList<Caller>();
+        callers.add(new Caller("getBox", Caller.CallerType.method));
+        callers.add(new Caller("zMax", Caller.CallerType.field));
+        getters.addCallers("Z2", callers);
+
+        callers = new ArrayList<Caller>();
+        callers.add(new Caller("blockMetadata", Caller.CallerType.field));
+        getters.addCallers("meta", callers);
 
 
         List<Segment> segments = new ArrayList<Segment>();
-        segments.add(new SegmentTileEntity(TileQuarry.class, gettersMap, FlagType.modifyBlocks, "meta != -1", IBlockModifier.Shape.rectangular));
+        segments.add(new SegmentTileEntity(clazz, getters, FlagType.modifyBlocks, "meta != -1", IBlockModifier.Shape.rectangular));
 
         Protection protection = new Protection("BuildCraft|Factory", segments);
         try {

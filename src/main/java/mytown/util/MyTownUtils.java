@@ -12,13 +12,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import mytown.MyTown;
-import mytown.config.Config;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.segment.Getter;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -35,19 +33,6 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.DimensionManager;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * Created by AfterWind on 9/9/2014.

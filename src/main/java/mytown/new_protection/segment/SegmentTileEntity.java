@@ -2,7 +2,8 @@ package mytown.new_protection.segment;
 
 import mytown.config.Config;
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.ProtectionUtils;
+import mytown.new_protection.segment.getter.Caller;
+import mytown.new_protection.segment.getter.Getters;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.tileentity.TileEntity;
 
@@ -17,9 +18,9 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
 
     public Shape shape;
 
-    public SegmentTileEntity(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, FlagType flag, String conditionString, Shape shape) {
+    public SegmentTileEntity(Class<?> theClass, Getters getters, FlagType flag, String conditionString, Shape shape) {
         // List 0 = x1, List 1 = y1 etc...
-        super(theClass, extraGettersMap, conditionString);
+        super(theClass, getters, conditionString);
         this.shape = shape;
         this.flag = flag;
     }
@@ -32,7 +33,7 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
     @Override
     public int getX1(TileEntity te) {
         try {
-            return (Integer) getInfoFromGetters("X1", Integer.class, te, null);
+            return (Integer) getters.getValue("X1", Integer.class, te, null);
         } catch (GetterException ex) {
             return te.xCoord - Config.defaultProtectionSize;
         }
@@ -41,7 +42,7 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
     @Override
     public int getZ1(TileEntity te) {
         try {
-            return (Integer) getInfoFromGetters("Z1", Integer.class, te, null);
+            return (Integer) getters.getValue("Z1", Integer.class, te, null);
         } catch (GetterException ex) {
             return te.zCoord - Config.defaultProtectionSize;
         }
@@ -50,7 +51,7 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
     @Override
     public int getX2(TileEntity te) {
         try {
-            return (Integer) getInfoFromGetters("X2", Integer.class, te, null);
+            return (Integer) getters.getValue("X2", Integer.class, te, null);
         } catch (GetterException ex) {
             return te.xCoord + Config.defaultProtectionSize;
         }
@@ -59,7 +60,7 @@ public class SegmentTileEntity extends Segment implements IBlockModifier {
     @Override
     public int getZ2(TileEntity te) {
         try {
-            return (Integer) getInfoFromGetters("Z2", Integer.class, te, null);
+            return (Integer) getters.getValue("Z2", Integer.class, te, null);
         } catch (GetterException ex) {
             return te.zCoord + Config.defaultProtectionSize;
         }

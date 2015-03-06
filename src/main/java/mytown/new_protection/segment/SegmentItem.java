@@ -1,8 +1,9 @@
 package mytown.new_protection.segment;
 
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.ProtectionUtils;
 import mytown.new_protection.segment.enums.ItemType;
+import mytown.new_protection.segment.getter.Caller;
+import mytown.new_protection.segment.getter.Getters;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
@@ -17,15 +18,15 @@ public class SegmentItem extends Segment {
     public ItemType type;
     public boolean onAdjacent = false;
 
-    public SegmentItem(Class<?> theClass, Map<String, List<Getter>> extraGettersMap, FlagType flag, String conditionString, ItemType type, boolean onAdjacent) {
-        super(theClass, extraGettersMap, conditionString);
+    public SegmentItem(Class<?> theClass, Getters getters, FlagType flag, String conditionString, ItemType type, boolean onAdjacent) {
+        super(theClass, getters, conditionString);
         this.flag = flag;
         this.type = type;
         this.onAdjacent = onAdjacent;
     }
 
     public int getRange(ItemStack stack) {
-        return (Integer) getInfoFromGetters("range", Integer.class, stack.getItem(), stack);
+        return (Integer) getters.getValue("range", Integer.class, stack.getItem(), stack);
     }
 
 }

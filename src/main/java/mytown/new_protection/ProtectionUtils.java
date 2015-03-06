@@ -1,13 +1,9 @@
 package mytown.new_protection;
 
-import bsh.EvalError;
-import bsh.Interpreter;
-import mytown.MyTown;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.segment.Getter;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.BlockPos;
 import mytown.util.MyTownUtils;
@@ -17,12 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.DimensionManager;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by AfterWind on 12/1/2014.
