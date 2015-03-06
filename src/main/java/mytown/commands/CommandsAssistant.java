@@ -62,17 +62,16 @@ public class CommandsAssistant extends Commands {
         if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
             throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
-        if(Config.costItemName.equals("$")){        	
-        	if(FMLCommonHandler.instance().findContainerFor("ForgeEssentials") != null){
-        		if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountClaim)){
-                    throw new MyTownCommandException("mytown.cmd.err.money",Config.costAmountClaim, Config.costItemName);
-                } 
-        	} else {
-        		res.sendMessage("ForgeEssentials NOT FOUND "+FMLCommonHandler.instance().findContainerFor("ForgeEssentials"));        		
-        	}
-        } else 
-        if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountClaim))
-            throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountClaim, Config.costItemName);
+
+        if(Config.costItemName.equals("$")){
+            if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountMakeTown)){
+                throw new MyTownCommandException("mytown.cmd.err.money",Config.costAmountClaim, Config.costItemName);
+            }
+        } else {
+            if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountClaim)) {
+                throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountClaim, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName());
+            }
+        }
 
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)

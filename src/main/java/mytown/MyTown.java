@@ -64,7 +64,6 @@ public class MyTown {
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
 
         ConfigProcessor.load(config, Config.class);
-        checkConfig();
         LocalizationProxy.load();
 
         JSONParser.folderPath = ev.getModConfigurationDirectory() + "/MyTown/protections";
@@ -95,12 +94,7 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
-
-        if(Config.costItemName.equals("$") && !Loader.isModLoaded("ForgeEssentials")) {
-            MyTown.instance.log.error("Failed to find ForgeEssentials for economy implementation. Reverting to default.");
-            Config.costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).toString();
-        }
-
+        checkConfig();
         registerCommands();
         Commands.populateCompletionMap();
         // This needs to be after registerCommands... might want to move both methods...
@@ -185,20 +179,27 @@ public class MyTown {
 
     public void checkConfig() {
         // Checking cost item
-        String[] split = Config.costItemName.split(":");
-        if(split.length < 2 || split.length > 3) {
-            log.error("Field costItem has an invalid value. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
-            throw new RuntimeException();
-        }
+        if(Config.costItemName.equals("$")) {
+            if (!Loader.isModLoaded("ForgeEssentials")) {
+                MyTown.instance.log.error("Failed to find ForgeEssentials for economy implementation. Reverting to default.");
+                throw new RuntimeException();
+            }
+        } else {
+            String[] split = Config.costItemName.split(":");
+            if (split.length < 2 || split.length > 3) {
+                log.error("Field costItem has an invalid value. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
+                throw new RuntimeException();
+            }
 
-        if(GameRegistry.findItem(split[0], split[1]) == null) {
-            log.error("Field costItem has an invalid modid or unique name of the item. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
-            throw new RuntimeException();
-        }
+            if (GameRegistry.findItem(split[0], split[1]) == null) {
+                log.error("Field costItem has an invalid modid or unique name of the item. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
+                throw new RuntimeException();
+            }
 
-        if(split.length > 2 && (!MyTownUtils.tryParseInt(split[2]) || Integer.parseInt(split[2]) < 0)) {
-            log.error("Field costItem has an invalid metadata. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
-            throw new RuntimeException();
+            if (split.length > 2 && (!MyTownUtils.tryParseInt(split[2]) || Integer.parseInt(split[2]) < 0)) {
+                log.error("Field costItem has an invalid metadata. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
+                throw new RuntimeException();
+            }
         }
 
         if(Config.useExtraEvents && !checkExtraEvents()) {
