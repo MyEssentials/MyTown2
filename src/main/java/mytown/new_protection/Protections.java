@@ -341,6 +341,7 @@ public class Protections {
                         if (!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
                             res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
                             ev.setCanceled(true);
+                            return;
                         }
                     }
                 } else {
@@ -351,9 +352,23 @@ public class Protections {
                         if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
                             res.protectionDenial(FlagType.activateBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z)));
                             ev.setCanceled(true);
+                            return;
                         }
                     }
                 }
+            }
+            // Other right click actions (placing itemFrames)
+            if(tblock == null) {
+                if(!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
+                    res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
+                    ev.setCanceled(true);
+                }
+            } else {
+                if(!tblock.getTown().checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, x, y, z)) {
+                    res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z)));
+                    ev.setCanceled(true);
+                }
+
             }
         }
     }
