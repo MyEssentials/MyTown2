@@ -260,4 +260,29 @@ public abstract class Commands {
             sender.addChatMessage(new ChatComponentText(message));
         }
     }
+
+    public static boolean makePayment(EntityPlayer player, int amount) {
+        if(amount == 0)
+            return true;
+        if(Config.costItemName.equals("$")){
+            if(!MyTownUtils.takeMoneyFromPlayer(player, amount)){
+                throw new MyTownCommandException("mytown.cmd.err.money", amount, Config.costItemName);
+            }
+        } else {
+            if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, amount)) {
+                throw new MyTownCommandException("mytown.cmd.err.cost", amount, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName());
+            }
+        }
+        return true;
+    }
+
+    public static void makeRefund(EntityPlayer player, int amount) {
+        if(amount == 0)
+            return;
+        if(Config.costItemName.equals("$")) {
+            MyTownUtils.giveMoneyToPlayer(player, amount);
+        } else {
+            MyTownUtils.giveItemToPlayer(player, Config.costItemName, amount);
+        }
+    }
 }

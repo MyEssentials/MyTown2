@@ -48,13 +48,18 @@ public class Config {
 
     @ConfigProperty(category = "cost", name = "costItem", comment = "The item which is used for paying for claims and making new towns. Use '$' if you want to use ForgeEssentials economy")
     public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).toString();
-   // public static String costItemName = "$";
 
     @ConfigProperty(category = "cost", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town.")
     public static int costAmountMakeTown = 5;
 
     @ConfigProperty(category = "cost", name = "costAmountClaim", comment = "The amount of the cost item you need to create a town.")
     public static int costAmountClaim = 3;
+
+    @ConfigProperty(category = "cost", name = "costAmountSpawn", comment = "The amount of the cost item you need to warp to the town's spawn point.")
+    public static int costAmountSpawn = 0;
+
+    @ConfigProperty(category = "cost", name = "costAmountSetSpawn", comment = "The amount of the cost item you need to create a spawn point for the town.")
+    public static int costAmountSetSpawn = 1;
 
     @ConfigProperty(category = "towns", name = "defaultMaxPlotsPerPlayer", comment = "The maximum amount of plots a player can make in a town as a default.")
     public static int defaultMaxPlots = 1;

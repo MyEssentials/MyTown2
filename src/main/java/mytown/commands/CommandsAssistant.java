@@ -11,15 +11,12 @@ import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.util.MyTownUtils;
-import mytown.util.UtilEconomy;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 
 /**
  * Created by AfterWind on 8/29/2014.
@@ -39,10 +36,10 @@ public class CommandsAssistant extends Commands {
         if(!town.isPointInTown(player.dimension, (int)player.posX, (int)player.posZ))
             throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()));
 
+        makePayment(player, Config.costAmountSetSpawn);
+
         town.getSpawn().setDim(player.dimension).setPosition((float) player.posX, (float) player.posY, (float) player.posZ).setRotation(player.cameraYaw, player.cameraPitch);
-
         getDatasource().saveTown(town);
-
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.setspawn"));
     }
 
@@ -63,15 +60,7 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
 
-        if(Config.costItemName.equals("$")){
-            if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountClaim)){
-                throw new MyTownCommandException("mytown.cmd.err.money",Config.costAmountClaim, Config.costItemName);
-            }
-        } else {
-            if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountClaim)) {
-                throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountClaim, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName());
-            }
-        }
+        makePayment(player, Config.costAmountClaim);
 
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
@@ -98,11 +87,7 @@ public class CommandsAssistant extends Commands {
 
         getDatasource().deleteBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
-        if(Config.costItemName.equals("$")) {
-            MyTownUtils.giveMoneyToPlayer(pl, Config.costAmountClaim);
-        } else {
-            MyTownUtils.giveItemToPlayer(pl, Config.costItemName, Config.costAmountClaim);
-        }
+        makeRefund(pl, Config.costAmountClaim);
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.payReturn", Config.costAmountClaim, Config.costItemName));
     }
 

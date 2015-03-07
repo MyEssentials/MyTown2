@@ -1,17 +1,18 @@
 package mytown.commands;
 
+import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Formatter;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
 
@@ -58,6 +59,7 @@ public class CommandsEveryone extends Commands {
             parentName = "mytown.cmd",
             completionKeys = {"townCompletion"})
     public static void spawnCommand(ICommandSender sender, List<String> args) {
+        EntityPlayer player = (EntityPlayer)sender;
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town;
 
@@ -70,6 +72,8 @@ public class CommandsEveryone extends Commands {
         // TODO Check if the Resident is allowed to go to spawn
         if (!town.hasSpawn())
             throw new MyTownCommandException("mytown.cmd.err.spawn.notexist", town.getName());
+
+        makePayment(player, Config.costAmountSpawn);
         town.sendToSpawn(res);
     }
 

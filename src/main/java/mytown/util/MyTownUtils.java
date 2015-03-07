@@ -353,9 +353,6 @@ public class MyTownUtils {
      * @return
      */
     public static boolean takeItemFromPlayer(EntityPlayer player, Item item, int amount, int meta) {
-        if (amount == 0)
-            return true;
-
         List<Integer> slots = new ArrayList<Integer>();
         int itemSum = 0;
         for (int i = 0; i < player.inventory.mainInventory.length; i++) {
