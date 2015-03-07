@@ -38,11 +38,9 @@ public class RanksConfig {
             String mayorRank = "Mayor";
             String assistantRank = "Assistant";
             String residentRank = "Resident";
-            String outsiderRank = "Outsider";
             List<String> pMayor = new ArrayList<String>();
             List<String> pAssistant = new ArrayList<String>();
             List<String> pResident = new ArrayList<String>();
-            List<String> pOutsider = new ArrayList<String>();
 
             // Filling arrays
 
@@ -54,9 +52,6 @@ public class RanksConfig {
                     }
                     if (s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
                         pResident.add(s);
-                    }
-                    if (s.startsWith("mytown.cmd.outsider")) {
-                        pOutsider.add(s);
                     }
                 }
             }
@@ -76,16 +71,13 @@ public class RanksConfig {
             Rank.theDefaultRank = residentRank;
             Rank.theMayorDefaultRank = mayorRank;
 
-            Rank.theOutsiderPerms = pOutsider;
-
 
             // Preparing to add them to JSON file
 
-            Wrapper[] wrappedObjects = new Wrapper[4];
+            Wrapper[] wrappedObjects = new Wrapper[3];
             wrappedObjects[0] = new Wrapper(mayorRank, pMayor, RankType.DefaultMayor);
             wrappedObjects[1] = new Wrapper(assistantRank, pAssistant, RankType.Other);
             wrappedObjects[2] = new Wrapper(residentRank, pResident, RankType.Default);
-            wrappedObjects[3] = new Wrapper(outsiderRank, pOutsider, RankType.Outsider);
 
             // Adding to JSON file
 
@@ -119,14 +111,12 @@ public class RanksConfig {
                         it.remove();
                     }
                 }
-                if (w.type != RankType.Outsider)
-                    Rank.defaultRanks.put(w.name, w.permissions);
+
+                Rank.defaultRanks.put(w.name, w.permissions);
                 if (w.type == RankType.Default)
                     Rank.theDefaultRank = w.name;
                 if (w.type == RankType.DefaultMayor)
                     Rank.theMayorDefaultRank = w.name;
-                if (w.type == RankType.Outsider)
-                    Rank.theOutsiderPerms = w.permissions;
             }
             for(String s : notExistingPermNodes) {
                 MyTown.instance.log.error("Permission node " + s + " does not exist!");
@@ -140,7 +130,6 @@ public class RanksConfig {
     private enum RankType {
         Default,
         DefaultMayor,
-        Outsider,
         Other
     }
 

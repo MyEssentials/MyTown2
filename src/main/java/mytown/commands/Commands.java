@@ -120,7 +120,8 @@ public abstract class Commands {
         Rank rank = res.getTownRank(res.getSelectedTown());
 
         if (rank == null) {
-            return Rank.outsiderPermCheck(permission);
+            return true;
+            //return Rank.outsiderPermCheck(permission);
         }
         return rank.hasPermissionOrSuperPermission(permission);
     }

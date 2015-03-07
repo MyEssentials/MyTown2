@@ -101,6 +101,7 @@ public class Rank {
     public static Map<String, List<String>> defaultRanks = new HashMap<String, List<String>>();
     public static String theDefaultRank;
     public static String theMayorDefaultRank; // ok not the best name
+   /*
     public static List<String> theOutsiderPerms = new ArrayList<String>();
 
     public static boolean outsiderPermCheck(String permission) {
@@ -114,5 +115,6 @@ public class Rank {
         }
         return false;
     }
+    */
 
 }

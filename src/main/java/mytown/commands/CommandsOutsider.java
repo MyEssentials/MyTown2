@@ -66,7 +66,7 @@ public class CommandsOutsider extends Commands {
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.res");
         }
-        Resident res = MyTownUniverse.getInstance().getResidentByName(args.get(0));
+        Resident res = getResidentFromName(args.get(0));
         if (res == null) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
         }
