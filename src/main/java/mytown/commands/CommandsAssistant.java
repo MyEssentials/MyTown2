@@ -64,7 +64,7 @@ public class CommandsAssistant extends Commands {
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
 
         if(Config.costItemName.equals("$")){
-            if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountMakeTown)){
+            if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountClaim)){
                 throw new MyTownCommandException("mytown.cmd.err.money",Config.costAmountClaim, Config.costItemName);
             }
         } else {
