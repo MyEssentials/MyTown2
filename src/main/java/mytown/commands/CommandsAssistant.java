@@ -98,7 +98,11 @@ public class CommandsAssistant extends Commands {
 
         getDatasource().deleteBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
-        MyTownUtils.giveItemToPlayer(pl, Config.costItemName, Config.costAmountClaim);
+        if(Config.costItemName.equals("$")) {
+            MyTownUtils.giveMoneyToPlayer(pl, Config.costAmountClaim);
+        } else {
+            MyTownUtils.giveItemToPlayer(pl, Config.costItemName, Config.costAmountClaim);
+        }
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.payReturn", Config.costAmountClaim, Config.costItemName));
     }
 

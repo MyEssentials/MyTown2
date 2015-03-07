@@ -433,6 +433,19 @@ public class MyTownUtils {
     }
 
     /**
+     * Takes the amount of money specified.
+     * Returns false if player doesn't have the money necessary
+     *
+     * @param player
+     * @param amount
+     * @return true if succeeded else false
+     */
+    public static void giveMoneyToPlayer(EntityPlayer player, int amount) {
+        UtilEconomy eco = new UtilEconomy(player.getUniqueID());
+        eco.addToWallet(amount);
+    }
+
+    /**
      * Returns the item from a String that has this pattern: (modid):(unique_name)[:meta]
      *
      * @param itemName
