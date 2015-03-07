@@ -264,14 +264,17 @@ public abstract class Commands {
     public static boolean makePayment(EntityPlayer player, int amount) {
         if(amount == 0)
             return true;
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
         if(Config.costItemName.equals("$")){
             if(!MyTownUtils.takeMoneyFromPlayer(player, amount)){
                 throw new MyTownCommandException("mytown.cmd.err.money", amount, Config.costItemName);
             }
+            res.sendMessage(getLocal().getLocalization("mytown.notification.payment.wallet", "$", amount));
         } else {
             if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, amount)) {
                 throw new MyTownCommandException("mytown.cmd.err.cost", amount, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName());
             }
+            res.sendMessage(getLocal().getLocalization("mytown.notification.payment.inventory", amount, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
         }
         return true;
     }
@@ -279,10 +282,13 @@ public abstract class Commands {
     public static void makeRefund(EntityPlayer player, int amount) {
         if(amount == 0)
             return;
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
         if(Config.costItemName.equals("$")) {
             MyTownUtils.giveMoneyToPlayer(player, amount);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.refund.wallet", "$", amount));
         } else {
             MyTownUtils.giveItemToPlayer(player, Config.costItemName, amount);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.refund.inventory", amount, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
         }
     }
 }

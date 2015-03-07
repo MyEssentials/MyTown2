@@ -1,5 +1,6 @@
 package mytown.commands;
 
+import java.io.File;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -21,11 +22,13 @@ import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
 import mytown.new_protection.json.JSONParser;
 import mytown.proxies.LocalizationProxy;
+import mytown.util.Constants;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.config.Configuration;
 
 /**
  * Created by AfterWind on 8/29/2014.
@@ -58,6 +61,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true)
     public static void configLoadCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.start"));
+        MyTown.instance.config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
         ConfigProcessor.load(MyTown.instance.config, Config.class);
         JSONParser.start();
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.stop"));

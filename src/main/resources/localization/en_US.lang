@@ -252,7 +252,10 @@ mytown.notification.friends.refused=§c%s has refused your invitation to be in t
 mytown.notification.friends.gotRefused=§cYou have refused %s's friend invitation!
 mytown.notification.resident.noInvites=§cYou don't have any invitations!
 mytown.notification.resident.friends.list=§3Friends: %s
-
+mytown.notification.payment.inventory=§3%s %ss have been taken from your inventory.
+mytown.notification.payment.wallet=§3%s%s have been taken from your Wallet.
+mytown.notification.refund.inventory=§3%s %ss have been added to your inventory.
+mytown.notification.refund.wallet=§3%s%s have been added to your Wallet.
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=§2Everything related to TownBlocks (chunks in town)

@@ -62,8 +62,8 @@ public class MyTown {
 
         // Read Configs
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
-
         ConfigProcessor.load(config, Config.class);
+
         LocalizationProxy.load();
 
         JSONParser.folderPath = ev.getModConfigurationDirectory() + "/MyTown/protections";

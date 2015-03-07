@@ -473,9 +473,9 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         if (ok) {
             result = player.inventory.addItemStackToInventory(selectionTool);
         }
-        if (result) {
+        if (result || !ok) {
             sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.start"));
-        } else if (ok) {
+        } else {
             sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.start.failed"));
         }
     }

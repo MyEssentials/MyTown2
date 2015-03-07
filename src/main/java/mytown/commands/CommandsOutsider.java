@@ -108,15 +108,7 @@ public class CommandsOutsider extends Commands {
             }
         }
         // Special case for ForgeEssentials
-        if(Config.costItemName.equals("$")){
-            if(!MyTownUtils.takeMoneyFromPlayer(player, Config.costAmountMakeTown)){
-                throw new MyTownCommandException("mytown.cmd.err.money",Config.costAmountMakeTown, Config.costItemName);
-            }
-        } else {
-            if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, Config.costAmountMakeTown)) {
-                throw new MyTownCommandException("mytown.cmd.err.cost", Config.costAmountMakeTown, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName());
-            }
-        }
+        makePayment(player, Config.costAmountMakeTown);
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
