@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -426,7 +427,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     /* ----- Helpers ----- */
 
     public void sendMessage(String msg) {
-        if (getPlayer() != null)
+        if (getPlayer() != null && !(getPlayer() instanceof FakePlayer))
             ChatUtils.sendChat(getPlayer(), msg);
     }
 
