@@ -20,6 +20,7 @@ mytown.cmd.err.money=§cYou need to have %s %s in order to pay for claiming or m
  mytown.protection.protectedEntities=§cDon't touch that!
  mytown.protection.useItems=§cYou cannot use items in here!
  mytown.protection.pvp=§cYou cannot attack this player!
+ mytown.protection.entityCruelty=§cYou cannot attack this!
 
  mytown.protection.pumps=§cYou cannot pump from this area!
 
