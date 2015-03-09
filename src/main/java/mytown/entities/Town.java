@@ -226,15 +226,24 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     protected Map<String, TownBlock> blocks = new Hashtable<String, TownBlock>();
     protected int extraBlocks = 0;
+    private boolean isShowingBorders = false;
 
     @Override
     public void addBlock(TownBlock block) {
         blocks.put(block.getKey(), block);
+        if(isShowingBorders) {
+            hideBorders();
+            showBorders();
+        }
     }
 
     @Override
     public void removeBlock(TownBlock block) {
         blocks.remove(block.getKey());
+        if(isShowingBorders) {
+            hideBorders();
+            showBorders();
+        }
     }
 
     @Override
@@ -274,10 +283,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     public void showBorders() {
+        isShowingBorders = true;
         VisualsTickHandler.instance.markTownBorders(this);
     }
 
     public void hideBorders() {
+        isShowingBorders = false;
         VisualsTickHandler.instance.unmarkBlocks(this);
     }
 
@@ -401,7 +412,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
             VisualsTickHandler.instance.unmarkBlocks(plot);
         }
     }
-
 
     /* ----- IHasFlags ------ */
 

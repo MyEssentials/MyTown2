@@ -4,6 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import mytown.MyTown;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -45,8 +46,8 @@ public class VisualsTickHandler {
         if (ev.side != Side.SERVER || ev.phase != TickEvent.Phase.START) return;
 
         if (markedBlocks.size() != 0) {
-            for(List<BlockCoords> coordsList : markedBlocks.values()) {
-                Iterator<BlockCoords> iterator = coordsList.iterator();
+            for(Map.Entry<Object, List<BlockCoords>> set : markedBlocks.entrySet()) {
+                Iterator<BlockCoords> iterator = set.getValue().iterator();
                 while (iterator.hasNext()) {
                     BlockCoords coord = iterator.next();
                     if (!coord.packetSent) {
@@ -65,6 +66,8 @@ public class VisualsTickHandler {
                         iterator.remove();
                     }
                 }
+                if(set.getValue().size() == 0)
+                    markedBlocks.remove(set.getKey());
             }
         }
     }
@@ -77,7 +80,7 @@ public class VisualsTickHandler {
         }
         */
         if(markedBlocks.get(key) == null) {
-            markedBlocks.put(key, new ArrayList<BlockCoords>());
+            addMarkedBlocks(key, new ArrayList<BlockCoords>());
         }
         markedBlocks.get(key).add(new BlockCoords(x, y, z, dim, block));
     }
@@ -89,7 +92,7 @@ public class VisualsTickHandler {
         for(List<BlockCoords> coordsList : markedBlocks.values()) {
             for (BlockCoords coord : coordsList) {
                 if (coord.x == x && coord.y == y && coord.z == z && coord.dim == dim) {
-                    coord.deleted = true;
+                        coord.deleted = true;
                     return true;
                 }
             }
@@ -238,6 +241,7 @@ public class VisualsTickHandler {
         List<BlockCoords> blockList = new ArrayList<BlockCoords>();
 
         for (TownBlock block : town.getBlocks()) {
+
             // Showing lines in borders
             for(int i = 0; i < 8; i+=2) {
                 if(town.getBlockAtCoords(block.getDim(), block.getX() + dx[i], block.getZ() + dz[i]) == null) {
@@ -271,7 +275,34 @@ public class VisualsTickHandler {
             }
         }
 
-        markedBlocks.put(town, blockList);
+        addMarkedBlocks(town, blockList);
+    }
+
+
+    public void addMarkedBlocks(final Object key, final List<BlockCoords> coordsList) {
+        // Waits 5 milliseconds if there are still blocks to be deleted.
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                if (markedBlocks.containsKey(key)) {
+                    boolean blocksNotDeleted = true;
+                    while (blocksNotDeleted && markedBlocks.get(key) != null) {
+                        blocksNotDeleted = false;
+                        for (BlockCoords coords : markedBlocks.get(key)) {
+                            if (coords.deleted)
+                                blocksNotDeleted = true;
+                        }
+                        try {
+                            Thread.sleep(5);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+                markedBlocks.put(key, coordsList);
+            }
+        };
+        t.start();
     }
 
     public List<BlockCoords> getMarkedBlocks() {

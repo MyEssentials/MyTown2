@@ -357,6 +357,7 @@ public class Protections {
                     }
                 }
             }
+
             // Other right click actions (placing itemFrames)
             if(tblock == null) {
                 if(!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
