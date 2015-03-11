@@ -46,6 +46,9 @@ public class Config {
     @ConfigProperty(category = "towns", name = "modifiableRanks", comment = "If true residents with permission can modify the ranks of their towns. This feature hasn't been fully tested yet and it might cause problems!")
     public static boolean modifiableRanks = false;
 
+    @ConfigProperty(category = "residents", name = "teleportCooldown", comment = "The amount of time in server ticks for how long a player needs to wait between teleports.")
+    public static int teleportCooldown = 200;
+
     @ConfigProperty(category = "cost", name = "costItem", comment = "The item which is used for paying for claims and making new towns. Use '$' if you want to use ForgeEssentials economy")
     public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).toString();
 

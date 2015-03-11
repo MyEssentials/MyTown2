@@ -559,10 +559,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * @param res
      */
     public void sendToSpawn(Resident res) {
-        if (spawn == null) return;
         EntityPlayer pl = res.getPlayer();
         if (pl != null) {
             spawn.teleport(pl);
+            res.setTeleportCooldown(Config.teleportCooldown);
         }
     }
 

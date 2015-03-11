@@ -7,7 +7,6 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.FlagsConfig;
@@ -18,10 +17,9 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
-import mytown.handlers.PlayerTracker;
+import mytown.handlers.Ticker;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
-import mytown.new_protection.ProtectionUtils;
 import mytown.new_protection.Protections;
 import mytown.new_protection.eventhandlers.ExtraForgeHandlers;
 import mytown.new_protection.json.JSONParser;
@@ -31,9 +29,6 @@ import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
 import mytown.util.MyTownUtils;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.init.Items;
-import net.minecraft.world.storage.MapStorage;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -163,7 +158,7 @@ public class MyTown {
     private void registerHandlers() {
 
         FMLCommonHandler.instance().bus().register(new SafemodeHandler());
-        PlayerTracker playerTracker = new PlayerTracker();
+        Ticker playerTracker = new Ticker();
 
         FMLCommonHandler.instance().bus().register(playerTracker);
         MinecraftForge.EVENT_BUS.register(playerTracker);

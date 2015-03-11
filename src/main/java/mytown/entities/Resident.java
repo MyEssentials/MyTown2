@@ -41,6 +41,7 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     private String playerName; // This is only for display purposes when the player is offline
     private Date joinDate, lastOnline;
     private int extraBlocks = 0;
+    private int teleportCooldown = 0;
 
     // Plot selection variables
     private int selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim;
@@ -170,6 +171,19 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     public void setExtraBlocks(int extraBlocks) {
         this.extraBlocks = extraBlocks;
+    }
+
+    public void setTeleportCooldown(int cooldownTicks) {
+        this.teleportCooldown = cooldownTicks;
+    }
+
+    public int getTeleportCooldown() {
+        return teleportCooldown;
+    }
+
+    public void tick() {
+        if(teleportCooldown > 0)
+            teleportCooldown--;
     }
 
     @Override
@@ -439,11 +453,11 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     public void respawnPlayer() {
-
         if (getSelectedTown() != null) {
             getSelectedTown().sendToSpawn(this);
             return;
         }
+
         ChunkCoordinates spawn = player.getBedLocation(player.dimension);
         if (spawn == null)
             spawn = player.worldObj.getSpawnPoint();
