@@ -433,7 +433,7 @@ public class CommandsAssistant extends Commands {
 
         if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
-            MyTownUtils.giveItemToPlayer(player, Config.costItemName, Config.costAmountClaim * town.getBlocks().size());
+            makeRefund(player, Config.costAmountClaim * town.getBlocks().size());
             getDatasource().deleteTown(town);
         }
     }
