@@ -23,6 +23,7 @@ import mytown.handlers.SafemodeHandler;
 import mytown.new_protection.json.JSONParser;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
+import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
@@ -189,6 +190,7 @@ public class CommandsAdmin extends Commands {
             name = "town",
             permission = "mytown.adm.cmd.setextra.town",
             parentName = "mytown.adm.cmd.setextra",
+            completionKeys = {"townCompletion"},
             nonPlayers = true)
     public static void setExtraTownCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
@@ -196,23 +198,30 @@ public class CommandsAdmin extends Commands {
         Town town = getUniverse().getTown(args.get(0));
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.town.notexist", args.get(0));
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
         town.setExtraBlocks(Integer.parseInt(args.get(1)));
         getDatasource().saveTown(town);
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.resident.setExtra", args.get(1)));
     }
 
     @CommandNode(
             name = "res",
             permission = "mytown.adm.cmd.setextra.res",
             parentName = "mytown.adm.cmd.setextra",
+            completionKeys = {"residentCompletion"},
             nonPlayers = true)
     public static void setExtraResCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.setExtra.res");
-        Resident res = getUniverse().getResidentByName(args.get(0));
-        if (res == null)
+        Resident target = getUniverse().getResidentByName(args.get(0));
+        if (target == null)
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
-        res.setExtraBlocks(Integer.parseInt(args.get(1)));
-        getDatasource().saveResident(res);
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+        target.setExtraBlocks(Integer.parseInt(args.get(1)));
+        getDatasource().saveResident(target);
+        target.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.resident.setExtra", args.get(1)));
     }
 
     @CommandNode(

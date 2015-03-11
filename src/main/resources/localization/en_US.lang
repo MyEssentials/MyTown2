@@ -6,6 +6,7 @@ mytown.cmd.err.resident.notsametown=§cThe player %s is not in the town you've s
 mytown.cmd.err.rank.notexist=§cThe rank %s does not exist in %s!
 mytown.cmd.err.cost=§cYou need to have %s %ss in your inventory in order to pay for claiming or making a town!
 mytown.cmd.err.money=§cYou need to have %s %s in order to pay for claiming or making a town!
+mytown.cmd.err.notPositiveInteger=§cValue '%s' needs to be a positive integer!
 
 # Flag based notifications
 
@@ -174,6 +175,7 @@ mytown.adm.cmd.usage.setExtra.town=§3/ta setExtra town <town> <number>
 # /ta setExtra res [resident] [number]
 mytown.adm.cmd.usage.setExtra.res=§3/ta setExtra res <resident> <number>
 
+
 # /ta perm
 mytown.adm.cmd.usage.perm.town.set=§3/ta perm town set <townName> <flag> <value>
 mytown.adm.cmd.usage.perm.wild.set=§3/ta perm wild set <flag> <value>
@@ -258,6 +260,8 @@ mytown.notification.payment.inventory=§3%s %ss have been taken from your invent
 mytown.notification.payment.wallet=§3%s%s have been taken from your Wallet.
 mytown.notification.refund.inventory=§3%s %ss have been added to your inventory.
 mytown.notification.refund.wallet=§3%s%s have been added to your Wallet.
+mytown.notification.town.setExtra=§3%s extra blocks have been added to the town's max claims.
+mytown.notification.resident.setExtra=§3%s extra blocks have been added to the resident's max claims.
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=§2Everything related to TownBlocks (chunks in town)
