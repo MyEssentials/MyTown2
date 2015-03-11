@@ -79,8 +79,9 @@ public class VisualsTickHandler {
                 return;
         }
         */
+
         if(markedBlocks.get(key) == null) {
-            addMarkedBlocks(key, new ArrayList<BlockCoords>());
+            markedBlocks.put(key, new ArrayList<BlockCoords>());
         }
         markedBlocks.get(key).add(new BlockCoords(x, y, z, dim, block));
     }
