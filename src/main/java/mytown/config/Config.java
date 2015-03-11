@@ -73,6 +73,9 @@ public class Config {
     @ConfigProperty(category = "plots", name = "minPlotsHeight", comment = "The minimum height required to create a plot(Y)")
     public static int minPlotsHeight = 1;
 
+    @ConfigProperty(category = "plots", name = "enablePlots", comment = "Set this to false to disable all types of plot interaction.")
+    public static boolean enablePlots = true;
+    
     @ConfigProperty(category = "protection", name = "defaultProtectionSize", comment = "The range that it's going to check in if a protection's segment that has a tileentity does not provide getters for its area of influence.")
     public static int defaultProtectionSize = 32;
 

@@ -131,276 +131,278 @@ public class CommandsEveryone extends Commands {
             res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
     }
 
-    @CommandNode(
-            name = "set",
-            permission = "mytown.cmd.everyone.perm.plot.set",
-            parentName = "mytown.cmd.everyone.perm.plot",
-            completionKeys = {"flagCompletion"})
-    public static void permSetPlotCommand(ICommandSender sender, List<String> args) {
+    public static class Plots {
+        @CommandNode(
+                name = "set",
+                permission = "mytown.cmd.everyone.perm.plot.set",
+                parentName = "mytown.cmd.everyone.perm.plot",
+                completionKeys = {"flagCompletion"})
+        public static void permSetPlotCommand(ICommandSender sender, List<String> args) {
 
-        if (args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Plot plot = getPlotAtResident(res);
-        if (!plot.hasOwner(res))
-            throw new MyTownCommandException("mytown.cmd.err.plot.perm.set.noPermission");
-
-        Flag flag = getFlagFromName(plot, args.get(0));
-
-        if (flag.setValueFromString(args.get(1))) {
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
-        } else
-            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
-
-        getDatasource().saveFlag(flag, plot);
-    }
-
-    @CommandNode(
-            name = "plot",
-            permission = "mytown.cmd.everyone.perm.plot",
-            parentName = "mytown.cmd.assistant.perm")
-    public static void permPlotCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.perm.plot");
-    }
-
-    @CommandNode(
-            name = "list",
-            permission = "mytown.cmd.everyone.perm.plot.list",
-            parentName = "mytown.cmd.everyone.perm.plot")
-    public static void permPlotListCommand(ICommandSender sender, List<String> args) {
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Plot plot = getPlotAtResident(res);
-
-        String formattedFlagList = null;
-        for (Flag flag : plot.getFlags()) {
-            if (formattedFlagList == null) {
-                formattedFlagList = "";
-            } else {
-                formattedFlagList += '\n';
-            }
-            formattedFlagList += flag;
-        }
-        if (formattedFlagList != null)
-            res.sendMessage(formattedFlagList);
-        else
-            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
-    }
-
-    @CommandNode(
-            name = "whitelist",
-            permission = "mytown.cmd.everyone.perm.plot.whitelist",
-            parentName = "mytown.cmd.everyone.perm.plot",
-            completionKeys = {"flagCompletionWhitelist"})
-    public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args) {
-        if (args.size() == 0)
-            throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Plot plot = getPlotAtResident(res);
-        FlagType flagType = getFlagTypeFromName(args.get(0));
-
-        if (flagType.isWhitelistable()) {
-            res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
-            res.startBlockSelection(flagType, plot.getTown().getName(), true);
-        } else
-            throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
-    }
-
-    @CommandNode(
-            name = "plot",
-            permission = "mytown.cmd.everyone.plot",
-            parentName = "mytown.cmd")
-    public static void plotCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot");
-    }
-
-    @CommandNode(
-            name = "make",
-            permission = "mytown.cmd.everyone.plot.make",
-            parentName = "mytown.cmd.everyone.plot")
-    public static void plotMakeCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-
-        Town town = getTownFromResident(res);
-        if (!town.canResidentMakePlot(res)) {
-            throw new MyTownCommandException("mytown.cmd.err.plot.limit", town.getMaxPlots());
-        }
-
-        String plotName = "NoName";
-        if (args.size() > 0) {
-            plotName = args.get(0);
-        }
-
-        // This handles all the db stuff... Not sure if I should change :/
-        Plot plot = res.makePlotFromSelection(plotName);
-
-        if (plot != null) {
-            getDatasource().savePlot(plot);
-            getDatasource().linkResidentToPlot(res, plot, true);
-
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.created");
-        } else
-            throw new MyTownCommandException("mytown.cmd.err.plot.failed");
-
-    }
-
-    @CommandNode(
-            name = "rename",
-            permission = "mytown.cmd.everyone.plot.rename",
-            parentName = "mytown.cmd.everyone.plot")
-    public static void plotRenameCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.rename");
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Plot plot = getPlotAtResident(res);
-
-        plot.setName(args.get(0));
-
-        getDatasource().savePlot(plot);
-
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
-    }
-
-    @CommandNode(
-            name = "select",
-            permission = "mytown.cmd.everyone.plot.select",
-            parentName = "mytown.cmd.everyone.plot")
-    public static void plotSelectCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        if (args.size() == 0) {
+            if (args.size() < 2)
+                throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
             Resident res = getDatasource().getOrMakeResident(sender);
-            res.startPlotSelection();
-        } else {
-            callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot.select");
-        }
-    }
+            Plot plot = getPlotAtResident(res);
+            if (!plot.hasOwner(res))
+                throw new MyTownCommandException("mytown.cmd.err.plot.perm.set.noPermission");
 
-    @CommandNode(
-            name = "expandVert",
-            permission = "mytown.cmd.everyone.plot.select.expand",
-            parentName = "mytown.cmd.everyone.plot.select")
-    public static void plotSelectExpandCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+            Flag flag = getFlagFromName(plot, args.get(0));
 
-        if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))
-            throw new MyTownCommandException("mytown.cmd.err.plot.notSelected");
+            if (flag.setValueFromString(args.get(1))) {
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
+            } else
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
 
-        res.expandSelectionVert();
-
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.expanded");
-    }
-
-    @CommandNode(
-            name = "reset",
-            permission = "mytown.cmd.everyone.plot.select.reset",
-            parentName = "mytown.cmd.everyone.plot.select")
-    public static void plotSelectResetCommand(ICommandSender sender, List<String> args) {
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-        res.resetSelection(true);
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.selectionReset");
-    }
-
-    @CommandNode(
-            name = "show",
-            permission = "mytown.cmd.everyone.plot.show",
-            parentName = "mytown.cmd.everyone.plot")
-    public static void plotShowCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
-        town.showPlots();
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
-    }
-
-    @CommandNode(
-            name = "hide",
-            permission = "mytown.cmd.everyone.plot.hide",
-            parentName = "mytown.cmd.everyone.plot")
-    public static void plotHideCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
-        town.hidePlots();
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.vanished");
-    }
-
-    @CommandNode(
-            name = "add",
-            permission = "mytown.cmd.everyone.plot.add",
-            parentName = "mytown.cmd.everyone.plot")
-    public static void plotAddCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot.add");
-    }
-
-    @CommandNode(
-            name = "owner",
-            permission = "mytown.cmd.everyone.plot.add.owner",
-            parentName = "mytown.cmd.everyone.plot.add",
-            completionKeys = {"residentCompletion"})
-    public static void plotAddOwnerCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Resident target = getResidentFromName(args.get(0));
-
-        Town town = getTownFromResident(res);
-        if (!res.hasTown(town))
-            throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", res.getPlayerName(), town.getName());
-
-        if (!town.canResidentMakePlot(target)) {
-            throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
+            getDatasource().saveFlag(flag, plot);
         }
 
-        Plot plot = getPlotAtResident(res);
+        @CommandNode(
+                name = "plot",
+                permission = "mytown.cmd.everyone.perm.plot",
+                parentName = "mytown.cmd.assistant.perm")
+        public static void permPlotCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+            callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.perm.plot");
+        }
 
-        getDatasource().linkResidentToPlot(target, plot, true);
+        @CommandNode(
+                name = "list",
+                permission = "mytown.cmd.everyone.perm.plot.list",
+                parentName = "mytown.cmd.everyone.perm.plot")
+        public static void permPlotListCommand(ICommandSender sender, List<String> args) {
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.owner.sender.added", target.getPlayerName(), plot.getName()));
-        target.sendMessage(getLocal().getLocalization("mytown.notification.plot.owner.target.added", plot.getName()));
-    }
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Plot plot = getPlotAtResident(res);
 
-    @CommandNode(
-            name = "member",
-            permission = "mytown.cmd.everyone.plot.add.member",
-            parentName = "mytown.cmd.everyone.plot.add",
-            completionKeys = {"residentCompletion"})
-    public static void plotAddMemberCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Resident target = getResidentFromName(args.get(0));
-        Plot plot = getPlotAtResident(res);
+            String formattedFlagList = null;
+            for (Flag flag : plot.getFlags()) {
+                if (formattedFlagList == null) {
+                    formattedFlagList = "";
+                } else {
+                    formattedFlagList += '\n';
+                }
+                formattedFlagList += flag;
+            }
+            if (formattedFlagList != null)
+                res.sendMessage(formattedFlagList);
+            else
+                res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
+        }
 
-        getDatasource().linkResidentToPlot(target, plot, false);
+        @CommandNode(
+                name = "whitelist",
+                permission = "mytown.cmd.everyone.perm.plot.whitelist",
+                parentName = "mytown.cmd.everyone.perm.plot",
+                completionKeys = {"flagCompletionWhitelist"})
+        public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args) {
+            if (args.size() == 0)
+                throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.member.sender.added", target.getPlayerName(), plot.getName()));
-        target.sendMessage(getLocal().getLocalization("mytown.notification.plot.member.target.added", plot.getName()));
-    }
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Plot plot = getPlotAtResident(res);
+            FlagType flagType = getFlagTypeFromName(args.get(0));
 
-    @CommandNode(
-            name = "info",
-            permission = "mytown.cmd.everyone.plot.info",
-            parentName = "mytown.cmd.everyone.plot")
-    public static void plotInfoCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Plot plot = getPlotAtResident(res);
+            if (flagType.isWhitelistable()) {
+                res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
+                res.startBlockSelection(flagType, plot.getTown().getName(), true);
+            } else
+                throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
+        }
 
-        res.sendMessage(Formatter.formatPlotInfo(plot));
-    }
+        @CommandNode(
+                name = "plot",
+                permission = "mytown.cmd.everyone.plot",
+                parentName = "mytown.cmd")
+        public static void plotCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+            callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot");
+        }
 
-    @CommandNode(
-            name = "delete",
-            permission = "mytown.cmd.everyone.plot.delete",
-            parentName = "mytown.cmd.everyone.plot")
-    public static void plotDeleteCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Plot plot = getPlotAtResident(res);
-        if (!plot.hasOwner(res))
-            throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
+        @CommandNode(
+                name = "make",
+                permission = "mytown.cmd.everyone.plot.make",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotMakeCommand(ICommandSender sender, List<String> args) {
+            Resident res = getDatasource().getOrMakeResident(sender);
 
-        getDatasource().deletePlot(plot);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.deleted", plot.getName()));
+            Town town = getTownFromResident(res);
+            if (!town.canResidentMakePlot(res)) {
+                throw new MyTownCommandException("mytown.cmd.err.plot.limit", town.getMaxPlots());
+            }
+
+            String plotName = "NoName";
+            if (args.size() > 0) {
+                plotName = args.get(0);
+            }
+
+            // This handles all the db stuff... Not sure if I should change :/
+            Plot plot = res.makePlotFromSelection(plotName);
+
+            if (plot != null) {
+                getDatasource().savePlot(plot);
+                getDatasource().linkResidentToPlot(res, plot, true);
+
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.created");
+            } else
+                throw new MyTownCommandException("mytown.cmd.err.plot.failed");
+
+        }
+
+        @CommandNode(
+                name = "rename",
+                permission = "mytown.cmd.everyone.plot.rename",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotRenameCommand(ICommandSender sender, List<String> args) {
+            if (args.size() < 1)
+                throw new MyTownWrongUsageException("mytown.cmd.usage.plot.rename");
+
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Plot plot = getPlotAtResident(res);
+
+            plot.setName(args.get(0));
+
+            getDatasource().savePlot(plot);
+
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
+        }
+
+        @CommandNode(
+                name = "select",
+                permission = "mytown.cmd.everyone.plot.select",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotSelectCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+            if (args.size() == 0) {
+                Resident res = getDatasource().getOrMakeResident(sender);
+                res.startPlotSelection();
+            } else {
+                callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot.select");
+            }
+        }
+
+        @CommandNode(
+                name = "expandVert",
+                permission = "mytown.cmd.everyone.plot.select.expand",
+                parentName = "mytown.cmd.everyone.plot.select")
+        public static void plotSelectExpandCommand(ICommandSender sender, List<String> args) {
+            Resident res = getDatasource().getOrMakeResident(sender);
+
+            if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))
+                throw new MyTownCommandException("mytown.cmd.err.plot.notSelected");
+
+            res.expandSelectionVert();
+
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.expanded");
+        }
+
+        @CommandNode(
+                name = "reset",
+                permission = "mytown.cmd.everyone.plot.select.reset",
+                parentName = "mytown.cmd.everyone.plot.select")
+        public static void plotSelectResetCommand(ICommandSender sender, List<String> args) {
+
+            Resident res = getDatasource().getOrMakeResident(sender);
+            res.resetSelection(true);
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.selectionReset");
+        }
+
+        @CommandNode(
+                name = "show",
+                permission = "mytown.cmd.everyone.plot.show",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotShowCommand(ICommandSender sender, List<String> args) {
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+            town.showPlots();
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
+        }
+
+        @CommandNode(
+                name = "hide",
+                permission = "mytown.cmd.everyone.plot.hide",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotHideCommand(ICommandSender sender, List<String> args) {
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+            town.hidePlots();
+            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.vanished");
+        }
+
+        @CommandNode(
+                name = "add",
+                permission = "mytown.cmd.everyone.plot.add",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotAddCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+            callSubFunctions(sender, args, subCommands, "mytown.cmd.everyone.plot.add");
+        }
+
+        @CommandNode(
+                name = "owner",
+                permission = "mytown.cmd.everyone.plot.add.owner",
+                parentName = "mytown.cmd.everyone.plot.add",
+                completionKeys = {"residentCompletion"})
+        public static void plotAddOwnerCommand(ICommandSender sender, List<String> args) {
+            if (args.size() < 1)
+                throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident target = getResidentFromName(args.get(0));
+
+            Town town = getTownFromResident(res);
+            if (!res.hasTown(town))
+                throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", res.getPlayerName(), town.getName());
+
+            if (!town.canResidentMakePlot(target)) {
+                throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
+            }
+
+            Plot plot = getPlotAtResident(res);
+
+            getDatasource().linkResidentToPlot(target, plot, true);
+
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.owner.sender.added", target.getPlayerName(), plot.getName()));
+            target.sendMessage(getLocal().getLocalization("mytown.notification.plot.owner.target.added", plot.getName()));
+        }
+
+        @CommandNode(
+                name = "member",
+                permission = "mytown.cmd.everyone.plot.add.member",
+                parentName = "mytown.cmd.everyone.plot.add",
+                completionKeys = {"residentCompletion"})
+        public static void plotAddMemberCommand(ICommandSender sender, List<String> args) {
+            if (args.size() < 1)
+                throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident target = getResidentFromName(args.get(0));
+            Plot plot = getPlotAtResident(res);
+
+            getDatasource().linkResidentToPlot(target, plot, false);
+
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.member.sender.added", target.getPlayerName(), plot.getName()));
+            target.sendMessage(getLocal().getLocalization("mytown.notification.plot.member.target.added", plot.getName()));
+        }
+
+        @CommandNode(
+                name = "info",
+                permission = "mytown.cmd.everyone.plot.info",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotInfoCommand(ICommandSender sender, List<String> args) {
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Plot plot = getPlotAtResident(res);
+
+            res.sendMessage(Formatter.formatPlotInfo(plot));
+        }
+
+        @CommandNode(
+                name = "delete",
+                permission = "mytown.cmd.everyone.plot.delete",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotDeleteCommand(ICommandSender sender, List<String> args) {
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Plot plot = getPlotAtResident(res);
+            if (!plot.hasOwner(res))
+                throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
+
+            getDatasource().deletePlot(plot);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.deleted", plot.getName()));
+        }
     }
 
     @CommandNode(
