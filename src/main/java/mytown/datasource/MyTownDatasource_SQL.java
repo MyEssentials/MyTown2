@@ -1528,6 +1528,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    protected boolean checkTowns() {
+        for(Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
+            if(town.getDefaultRank() == null) {
+                log.error("Town " + town.getName() + " does not have a default rank set.");
+                Rank rank = new Rank(Rank.theDefaultRank, Rank.defaultRanks.get(Rank.theDefaultRank), town);
+                log.info("Adding default rank for town.");
+                saveRank(rank, true);
+            }
+        }
+        return true;
+    }
+
     /* ----- Helpers ----- */
 
     /**

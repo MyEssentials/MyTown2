@@ -646,7 +646,7 @@ public abstract class MyTownDatasource {
      * @return
      */
     public boolean checkAll() {
-        return checkFlags();
+        return checkFlags() && checkTowns();
     }
 
     /**
@@ -656,6 +656,13 @@ public abstract class MyTownDatasource {
      * @return
      */
     protected abstract boolean checkFlags();
+
+    /**
+     * Checks whether or not the town has a default rank.
+     *
+     * @return
+     */
+    protected abstract boolean checkTowns();
 
     /* ----- Has ----- */
 
