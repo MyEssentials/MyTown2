@@ -70,6 +70,13 @@ public class Protections {
     public void removeProtection(Protection prot) { protections.remove(prot); }
     public List<Protection> getProtections() { return this.protections; }
 
+    public void reset() {
+        checkedEntities = new HashMap<Entity, Boolean>();
+        checkedTileEntities = new HashMap<TileEntity, Boolean>();
+        protections = new ArrayList<Protection>();
+    }
+
+
     // ---- Main ticking method ----
 
     @SuppressWarnings("unchecked")
@@ -443,4 +450,6 @@ public class Protections {
             }
         }
     }
+
+
 }

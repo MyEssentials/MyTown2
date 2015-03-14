@@ -351,7 +351,7 @@ public class CommandsAdmin extends Commands {
         FlagType flagType = getFlagTypeFromName(args.get(1));
 
         if (flagType.isWhitelistable())
-            res.startBlockSelection(flagType, town.getName(), false);
+            res.startBlockSelection(flagType, town.getName());
         else
             throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
     }
@@ -420,7 +420,7 @@ public class CommandsAdmin extends Commands {
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromName(args.get(0));
 
-        if (town.hasMaxAmountOfBlocks())
+        if (town.getBlocks().size() >= town.getMaxBlocks())
             throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
             throw new MyTownCommandException("mytown.cmd.err.claim.already");

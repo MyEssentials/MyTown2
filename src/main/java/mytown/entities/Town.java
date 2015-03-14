@@ -262,12 +262,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     public void showBorders() {
         isShowingBorders = true;
-        VisualsTickHandler.instance.markTownBorders(this);
+        VisualsTickHandler.getInstance().markTownBorders(this);
     }
 
     public void hideBorders() {
         isShowingBorders = false;
-        VisualsTickHandler.instance.unmarkBlocks(this);
+        VisualsTickHandler.getInstance().unmarkBlocks(this);
     }
 
     /* ----- IHasPlots ----- */
@@ -319,7 +319,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     @Override
     public void addPlot(Plot plot) {
         if(isShowingPlots)
-            VisualsTickHandler.instance.markPlotBorders(plot);
+            VisualsTickHandler.getInstance().markPlotBorders(plot);
 
         plots.add(plot);
     }
@@ -335,7 +335,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
             }
         }
         if(isShowingPlots)
-            VisualsTickHandler.instance.unmarkBlocks(plot);
+            VisualsTickHandler.getInstance().unmarkBlocks(plot);
         plots.remove(plot);
     }
 
@@ -366,14 +366,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public void showPlots() {
         this.isShowingPlots = true;
         for (Plot plot : plots) {
-            VisualsTickHandler.instance.markPlotBorders(plot);
+            VisualsTickHandler.getInstance().markPlotBorders(plot);
         }
     }
 
     public void hidePlots() {
         this.isShowingPlots = false;
         for (Plot plot : plots) {
-            VisualsTickHandler.instance.unmarkBlocks(plot);
+            VisualsTickHandler.getInstance().unmarkBlocks(plot);
         }
     }
 

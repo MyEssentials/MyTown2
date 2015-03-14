@@ -173,7 +173,7 @@ public class Ticker {
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
-        if (VisualsTickHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
+        if (VisualsTickHandler.getInstance().isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
             // Cancel event if it's a border that has been broken
             ev.setCanceled(true);
         }

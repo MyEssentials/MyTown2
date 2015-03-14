@@ -472,7 +472,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
             firstSelectionActive = true;
 
             // This is marked twice :P
-            VisualsTickHandler.instance.markBlock(x, y, z, dim, Blocks.redstone_block, this);
+            VisualsTickHandler.getInstance().markBlock(x, y, z, dim, Blocks.redstone_block, this);
 
         } else {
 
@@ -480,7 +480,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
             selectionY2 = y;
             selectionZ2 = z;
             secondSelectionActive = true;
-            VisualsTickHandler.instance.markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, this);
+            VisualsTickHandler.getInstance().markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, this);
         }
 
         return true;
@@ -562,7 +562,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     public void expandSelectionVert() {
         // When selection is expanded vertically we'll show it's borders... (Temporary solution)
 
-        VisualsTickHandler.instance.unmarkBlocks(this);
+        VisualsTickHandler.getInstance().unmarkBlocks(this);
 
         selectionY1 = 1;
         try {
@@ -573,7 +573,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         }
         selectionExpandedVert = true;
 
-        VisualsTickHandler.instance.markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, this);
+        VisualsTickHandler.getInstance().markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, this);
     }
 
     public void resetSelection(boolean resetBlocks) {
@@ -581,7 +581,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         secondSelectionActive = false;
 
         if(resetBlocks) {
-            VisualsTickHandler.instance.unmarkBlocks(this);
+            VisualsTickHandler.getInstance().unmarkBlocks(this);
         }
     }
 

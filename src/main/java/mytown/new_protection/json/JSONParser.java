@@ -6,7 +6,6 @@ import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
 import mytown.new_protection.Protections;
-import mytown.new_protection.segment.IBlockModifier;
 import mytown.new_protection.segment.Segment;
 import mytown.new_protection.segment.SegmentTileEntity;
 import mytown.new_protection.segment.getter.Caller;
@@ -42,7 +41,7 @@ public class JSONParser {
 
         String[] extensions = new String[1];
         extensions[0] = "json";
-        Protections.getInstance().init();
+        Protections.getInstance().reset();
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
             try {
                 reader = new FileReader(file);
@@ -109,7 +108,7 @@ public class JSONParser {
 
 
         List<Segment> segments = new ArrayList<Segment>();
-        segments.add(new SegmentTileEntity(clazz, getters, FlagType.modifyBlocks, "meta != -1", IBlockModifier.Shape.rectangular));
+        segments.add(new SegmentTileEntity(clazz, getters, FlagType.modifyBlocks, "meta != -1"));
 
         Protection protection = new Protection("BuildCraft|Factory", segments);
         try {

@@ -203,7 +203,7 @@ public class CommandsEveryone extends Commands {
 
             if (flagType.isWhitelistable()) {
                 res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
-                res.startBlockSelection(flagType, plot.getTown().getName(), true);
+                res.startBlockSelection(flagType, plot.getTown().getName());
             } else
                 throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
         }

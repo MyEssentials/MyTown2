@@ -191,7 +191,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                             getters.removeGetter("Z2");
                                         }
 
-                                        segment = new SegmentTileEntity(Class.forName(clazz), getters, flag, condition, IBlockModifier.Shape.rectangular);
+                                        segment = new SegmentTileEntity(Class.forName(clazz), getters, flag, condition);
                                     } catch (ClassNotFoundException ex) {
                                         throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
                                     }
