@@ -3,7 +3,7 @@ package mytown.datasource;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
-import mytown.core.utils.command.CommandCompletion;
+import mytown.core.utils.command.CommandManager;
 import mytown.entities.*;
 import net.minecraft.server.MinecraftServer;
 
@@ -37,136 +37,65 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         worlds = new ArrayList<Integer>();
     }
 
-    /**
-     * Returns an ImmutableMap of Residents
-     *
-     * @return ImmutableMap of Residents
-     */
     public final ImmutableMap<String, Resident> getResidentsMap() {
         return ImmutableMap.copyOf(residents);
     }
 
-    /**
-     * Returns an ImmutableMap of Towns
-     *
-     * @return ImmutableMap of Towns
-     */
     public final ImmutableMap<String, Town> getTownsMap() {
         return ImmutableMap.copyOf(towns);
     }
 
-    /**
-     * Returns an ImmutableMap of Nations
-     *
-     * @return ImmutableMap of Nations
-     */
     public final ImmutableMap<String, Nation> getNationsMap() {
         return ImmutableMap.copyOf(nations);
     }
 
-    /**
-     * Returns an ImmutableMap of Blocks
-     *
-     * @return ImmutableMap of Blocks
-     */
     public final ImmutableMap<String, TownBlock> getBlocksMap() {
         return ImmutableMap.copyOf(blocks);
     }
 
-    /**
-     * Returns an ImmutableMap of Plots
-     *
-     * @return ImmutableMap of Plots
-     */
     public final ImmutableMap<Integer, Plot> getPlotsMap() {
         return ImmutableMap.copyOf(plots);
     }
 
-    /**
-     * Returns an ImmutableMap of Ranks
-     *
-     * @return ImmutableMap of Ranks
-     */
     public final ImmutableMap<String, Rank> getRanksMap() {
         return ImmutableMap.copyOf(ranks);
     }
 
-    /**
-     * Returns a ImmutableList of all the worlds that appear in the database
-     *
-     * @return
-     */
     public final ImmutableList<Integer> getWorldsList() {
         return ImmutableList.copyOf(worlds);
     }
 
     /* ----- Add Entity ----- */
 
-    /**
-     * Adds a Resident to the universe
-     *
-     * @param res Resident to add
-     * @return If successful
-     */
     public final boolean addResident(Resident res) {
         residents.put(res.getUUID().toString(), res);
-        CommandCompletion.completionMap.get("residentCompletion").add(res.getPlayerName());
+        CommandManager.completionMap.get("residentCompletion").add(res.getPlayerName());
         return true;
     }
 
-    /**
-     * Adds a Town to the universe
-     *
-     * @param town Town to add
-     * @return If successful
-     */
     public final boolean addTown(Town town) {
         towns.put(town.getName(), town);
-        CommandCompletion.completionMap.get("townCompletionAndAll").add(town.getName());
-        CommandCompletion.completionMap.get("townCompletion").add(town.getName());
+        CommandManager.completionMap.get("townCompletionAndAll").add(town.getName());
+        CommandManager.completionMap.get("townCompletion").add(town.getName());
         return true;
     }
 
-    /**
-     * Adds a Nation to the universe
-     *
-     * @param nation Nation to add
-     * @return If successful
-     */
     public final boolean addNation(Nation nation) {
         nations.put(nation.getName(), nation);
         return true;
     }
 
-    /**
-     * Adds a TownBlock to the universe
-     *
-     * @param block TownBlock to add
-     * @return If successful
-     */
     public final boolean addTownBlock(TownBlock block) {
         blocks.put(block.getKey(), block);
         return true;
     }
 
-    /**
-     * Adds a Rank to the universe
-     *
-     * @param rank Rank to add
-     * @return If successful
-     */
     public final boolean addRank(Rank rank) {
         ranks.put(rank.getKey(), rank);
-        CommandCompletion.completionMap.get("rankCompletion").add(rank.getName());
+        CommandManager.completionMap.get("rankCompletion").add(rank.getName());
         return true;
     }
 
-    /**
-     * Adds a Plot to the universe
-     *
-     * @param plot Plot to add
-     * @return If successful
-     */
     public final boolean addPlot(Plot plot) {
         for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++) {
             for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++) {
@@ -181,12 +110,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
-    /**
-     * Adds a world/dim to the universe
-     *
-     * @param dim Dimension ID of world to add
-     * @return If successful
-     */
     public final boolean addWorld(int dim) {
         worlds.add(dim);
         return true;
@@ -196,14 +119,14 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public final boolean removeResident(Resident res) {
         residents.remove(res.getUUID().toString());
-        CommandCompletion.completionMap.get("residentCompletion").remove(res.getPlayerName());
+        CommandManager.completionMap.get("residentCompletion").remove(res.getPlayerName());
         return true;
     }
 
     public final boolean removeTown(Town town) {
         towns.remove(town.getName());
-        CommandCompletion.completionMap.get("townCompletionAndAll").remove(town.getName());
-        CommandCompletion.completionMap.get("townCompletion").remove(town.getName());
+        CommandManager.completionMap.get("townCompletionAndAll").remove(town.getName());
+        CommandManager.completionMap.get("townCompletion").remove(town.getName());
         return true;
     }
 
@@ -220,7 +143,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public final boolean removeRank(Rank rank) {
         ranks.remove(rank.getKey());
         // TODO: Check properly, although it's gonna fix itself on restart
-        //CommandCompletion.completionMap.get("rankCompletion").remove(rank.getName());
+        //CommandManager.completionMap.get("rankCompletion").remove(rank.getName());
         return true;
     }
 

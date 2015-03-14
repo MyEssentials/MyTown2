@@ -1,12 +1,15 @@
 package mytown.config;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mytown.MyTown;
 import mytown.core.utils.command.CommandManager;
 import mytown.entities.Rank;
+import mytown.entities.flag.Flag;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -17,6 +20,8 @@ import java.util.List;
  * JSON Default ranks config
  */
 public class RanksConfig {
+
+    private Type type = new TypeToken<List<Flag>>() {}.getType();
     private Gson gson;
     private String path;
 
@@ -95,7 +100,7 @@ public class RanksConfig {
 
             // Just for showing the nodes that were omitted.
             List<String> notExistingPermNodes = new ArrayList<String>();
-            Wrapper[] wrappedObjects = gson.fromJson(reader, Wrapper[].class);
+            List<Wrapper> wrappedObjects = gson.fromJson(reader, type);
 
             for (Wrapper w : wrappedObjects) {
                 for (Iterator<String> it = w.permissions.iterator(); it.hasNext(); ) {
@@ -133,6 +138,9 @@ public class RanksConfig {
         Other
     }
 
+    /**
+     * Wraps around a set of fields needed to instantiate Rank objects.
+     */
     private class Wrapper {
         public String name;
         public RankType type;

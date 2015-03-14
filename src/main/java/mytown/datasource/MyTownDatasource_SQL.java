@@ -421,11 +421,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
-    /**
-     * Loads the links between Residents and Towns
-     *
-     * @return
-     */
     protected boolean loadResidentsToTowns() {
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "ResidentsToTowns", true);
@@ -494,11 +489,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
-    /**
-     * Loads the links between Towns and Nations
-     *
-     * @return
-     */
     protected boolean loadTownsToNations() {
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "TownsToNations", true);
@@ -737,7 +727,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean addRankPermission(Rank rank, String perm) {
+    public boolean saveRankPermission(Rank rank, String perm) {
         log.debug("Saving RankPermission %s for Rank %s", perm, rank.getKey());
         try {
             PreparedStatement s = prepare("INSERT INTO " + prefix + "RankPermissions (node, rank) VALUES(?, ?)", true);
@@ -919,7 +909,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
-    //Why?
     @SuppressWarnings("SuspiciousNameCombination")
     @Override
     public boolean saveBlockWhitelist(BlockWhitelist bw, Town town) {

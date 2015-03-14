@@ -77,18 +77,14 @@ public enum FlagType {
     }
 
     /**
-     * Type that is used by the flag
-     *
-     * @return
+     * Gets the type that the Flag that uses this FlagType stores.
      */
     public Class<?> getType() {
         return this.type;
     }
 
     /**
-     * Returns if this flag is found in the wild >:D
-     *
-     * @return
+     * Returns if this flag is found in the wild.
      */
     public boolean isWildPerm() {
         return this.isWildPerm;
@@ -96,37 +92,22 @@ public enum FlagType {
 
     /**
      * Returns the permission needed to bypass the protection.
-     *
-     * @return
      */
     public String getBypassPermission() {
         return this.bypassPerm;
     }
 
     /**
-     * Gets the default wild perm.
-     *
-     * @return
+     * Returns the default value that this FlagType has as a Wild flag.
      */
     public Object getDefaultWildPerm() {
         return this.defaultWildPerm;
     }
 
-    /**
-     * Gets the default value
-     *
-     * @return
-     */
     public Object getDefaultValue() {
         return this.defaultValue;
     }
 
-    /**
-     * Sets the default value and returns if the value was set
-     *
-     * @param obj
-     * @return
-     */
     public boolean setDefaultValue(Object obj) {
         if (type.isAssignableFrom(obj.getClass())) {
             defaultValue = obj;
@@ -136,37 +117,20 @@ public enum FlagType {
     }
 
 
-    /**
-     * Returns if this type of flag should be in a town
-     *
-     * @return
-     */
     public boolean isUsableForTowns() {
         return this.isUsableForTowns;
     }
 
-    /**
-     * Sets whether or not the flagtype is changable/usable in a town
-     *
-     * @param bool
-     */
     public void setIsUsableForTowns(boolean bool) {
         this.isUsableForTowns = bool;
     }
 
-    /**
-     * If flag is town only then it's not gonna be found on plots
-     *
-     * @return
-     */
     public boolean isTownOnly() {
         return townOnly;
     }
 
     /**
      * Checks to see if this type of flag has the mod needed to load
-     *
-     * @return
      */
     public boolean shouldLoad() {
         return (this.modRequired == null || ModProxies.isProxyLoaded(modRequired));
@@ -174,8 +138,6 @@ public enum FlagType {
 
     /**
      * Gets the localized description
-     *
-     * @return
      */
     public String getLocalizedDescription() {
         return LocalizationProxy.getLocalization().getLocalization(descriptionKey);
@@ -183,8 +145,6 @@ public enum FlagType {
 
     /**
      * Gets the localized message of when the flag denies an action of a player
-     *
-     * @return
      */
     public String getLocalizedProtectionDenial() {
         return LocalizationProxy.getLocalization().getLocalization(protectionKey);
@@ -192,28 +152,15 @@ public enum FlagType {
 
     /**
      * Gets the localized message that is sent to all players on the town when something tried to bypass protection.
-     *
-     * @return
      */
     public String getLocalizedTownNotification() {
         return LocalizationProxy.getLocalization().getLocalization(notifyKey);
     }
 
-    /**
-     * If it's a flag that allows whitelists
-     *
-     * @return
-     */
     public boolean isWhitelistable() {
         return isWhitelistable;
     }
 
-    /**
-     * Checks to see if the value is allowed
-     *
-     * @param value
-     * @return
-     */
     public boolean isValueAllowed(Object value) {
         if (allowedValues == null) return true;
         else {

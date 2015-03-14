@@ -18,28 +18,15 @@ import net.minecraft.server.MinecraftServer;
 import java.util.*;
 
 public class VisualsTickHandler {
-    public class BlockCoords {
-        public int x, y, z, dim;
-        public boolean deleted = false;
-        public boolean packetSent = false;
-        public Block block;
 
-        public BlockCoords(int x, int y, int z, int dim, Block block) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.dim = dim;
-            this.block = block;
-        }
+    private static VisualsTickHandler instance = new VisualsTickHandler();
+    public static VisualsTickHandler getInstance() {
+        if(instance == null)
+            instance = new VisualsTickHandler();
+        return instance;
     }
 
-    public static VisualsTickHandler instance = new VisualsTickHandler();
-
-    public Map<Object, List<BlockCoords>> markedBlocks;
-
-    public VisualsTickHandler() {
-        markedBlocks = new HashMap<Object, List<BlockCoords>>();
-    }
+    public Map<Object, List<BlockCoords>> markedBlocks = new HashMap<Object, List<BlockCoords>>();
 
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent ev) {
@@ -73,19 +60,11 @@ public class VisualsTickHandler {
     }
 
     public void markBlock(int x, int y, int z, int dim, Block block, Object key) {
-        /*
-        for (BlockCoords block : markedBlocks) {
-            if (block.x == x && block.y == y && block.z == z && block.dim == dim)
-                return;
-        }
-        */
-
         if(markedBlocks.get(key) == null) {
             markedBlocks.put(key, new ArrayList<BlockCoords>());
         }
         markedBlocks.get(key).add(new BlockCoords(x, y, z, dim, block));
     }
-
 
     public boolean unmarkBlock(int x, int y, int z, int dim) {
         if (markedBlocks.size() == 0)
@@ -101,6 +80,9 @@ public class VisualsTickHandler {
         return false;
     }
 
+    /**
+     * Unmarks all the blocks that are linked to the object key.
+     */
     public boolean unmarkBlocks(Object key) {
         if(markedBlocks.get(key) == null)
             return false;
@@ -136,36 +118,6 @@ public class VisualsTickHandler {
         }
     }
 
-    /*
-
-    public void unmarkPlotCorners(int selectionX1, int selectionY1, int selectionZ1, int selectionX2, int selectionY2, int selectionZ2, int dim, Resident creator) {
-
-        unmarkBlock(selectionX1, selectionY1, selectionZ1, dim);
-        unmarkBlock(selectionX2, selectionY2, selectionZ2, dim);
-
-        // On the X
-        unmarkBlock(selectionX1 + (selectionX1 > selectionX2 ? -1 : 1), selectionY1, selectionZ1, dim);
-        unmarkBlock(selectionX2 + (selectionX1 > selectionX2 ? 1 : -1), selectionY2, selectionZ2, dim);
-        unmarkBlock(selectionX1 + (selectionX1 > selectionX2 ? -2 : 2), selectionY1, selectionZ1, dim);
-        unmarkBlock(selectionX2 + (selectionX1 > selectionX2 ? 2 : -2), selectionY2, selectionZ2, dim);
-
-        // On the Z
-        unmarkBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 1 : -1), dim);
-        unmarkBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -1 : 1), dim);
-        unmarkBlock(selectionX2, selectionY2, selectionZ2 + (selectionZ1 > selectionZ2 ? 2 : -2), dim);
-        unmarkBlock(selectionX1, selectionY1, selectionZ1 + (selectionZ1 > selectionZ2 ? -2 : 2), dim);
-
-        if (selectionY1 != selectionY2) {
-            // On the Y
-            unmarkBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -1 : 1), selectionZ1, dim);
-            unmarkBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 1 : -1), selectionZ2, dim);
-            unmarkBlock(selectionX1, selectionY1 + (selectionY1 > selectionY2 ? -2 : 2), selectionZ1, dim);
-            unmarkBlock(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2, dim);
-        }
-    }
-
-    */
-
     public void markPlotBorders(Plot plot) {
         markPlotBorders(plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ(), plot.getDim(), plot);
     }
@@ -192,46 +144,6 @@ public class VisualsTickHandler {
             markBlock(x2, y2, i, dim, Blocks.redstone_block, key);
         }
     }
-
-    /*
-
-    public void unmarkPlotBorders(Plot plot) {
-        unmarkPlotBorders(plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ(), plot.getDim());
-    }
-
-    public void unmarkPlotBorders(int x1, int y1, int z1, int x2, int y2, int z2, int dim) {
-        // assuming x1 < x2, y1 < y2, z1 < z2
-
-        for (int i = x1; i <= x2; i++) {
-            unmarkBlock(i, y1, z1, dim);
-            unmarkBlock(i, y2, z1, dim);
-            unmarkBlock(i, y1, z2, dim);
-            unmarkBlock(i, y2, z2, dim);
-        }
-        for (int i = y1; i <= y2; i++) {
-            unmarkBlock(x1, i, z1, dim);
-            unmarkBlock(x2, i, z1, dim);
-            unmarkBlock(x1, i, z2, dim);
-            unmarkBlock(x2, i, z2, dim);
-        }
-        for (int i = z1; i <= z2; i++) {
-            unmarkBlock(x1, y1, i, dim);
-            unmarkBlock(x2, y1, i, dim);
-            unmarkBlock(x1, y2, i, dim);
-            unmarkBlock(x2, y2, i, dim);
-        }
-    }
-
-    public void unmarkTownBorders(Town town) {
-        List<BlockCoords> blockList = townBorders.get(town);
-        if(blockList == null) return;
-
-        for(BlockCoords blockCoord : blockList) {
-            unmarkBlock(blockCoord.x, blockCoord.y, blockCoord.z, blockCoord.dim);
-        }
-        townBorders.remove(town);
-    }
-    */
 
     public void markTownBorders(Town town) {
         int dx[] = {-1, -1, 0, 1, 1, 1, 0, -1};
@@ -279,7 +191,10 @@ public class VisualsTickHandler {
         addMarkedBlocks(town, blockList);
     }
 
-
+    /**
+     * This is used only externally in case there already is a list of block coords yet to be unmarked
+     * This method is gonna wait until the tick function clears the spot.
+     */
     public void addMarkedBlocks(final Object key, final List<BlockCoords> coordsList) {
         // Waits 5 milliseconds if there are still blocks to be deleted.
         Thread t = new Thread() {
@@ -324,4 +239,26 @@ public class VisualsTickHandler {
         }
         return false;
     }
+
+    /**
+     * Class used to store all the blocks that are marked.
+     */
+    public class BlockCoords {
+        public int x, y, z, dim;
+        public boolean deleted = false;
+        public boolean packetSent = false;
+        /**
+         * The block to which the sistem should change
+         */
+        public Block block;
+
+        public BlockCoords(int x, int y, int z, int dim, Block block) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.dim = dim;
+            this.block = block;
+        }
+    }
+
 }

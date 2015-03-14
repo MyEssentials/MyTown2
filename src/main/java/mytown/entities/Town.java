@@ -31,19 +31,16 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         setName(name);
     }
 
-    /**
-     * Returns the name of the Town
-     *
-     * @return
-     */
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * Renames this current Town setting oldName to the previous name. You MUST set oldName to null after saving it in the Datasource
-     *
-     * @param newName
      */
     public void rename(String newName) {
         oldName = name;
@@ -61,14 +58,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         oldName = null;
     }
 
-    /**
-     * Sets the name of the Town
-     *
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public String toString() {
@@ -77,8 +66,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /**
      * Returns the name that is currently used in the DB
-     *
-     * @return
      */
     public String getDBName() {
         if (getOldName() == null)
@@ -91,12 +78,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     private Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
 
-    /**
-     * Adds the Resident with the given Rank
-     *
-     * @param res
-     * @param rank
-     */
     public void addResident(Resident res, Rank rank) {
         residents.put(res, rank);
     }
@@ -138,9 +119,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /**
      * Returns the Rank the Resident is assigned to.
-     *
-     * @param
-     * @return
      */
     public Rank getResidentRank(Resident res) {
         return residents.get(res);
@@ -292,11 +270,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         VisualsTickHandler.instance.unmarkBlocks(this);
     }
 
-    @Override
-    public boolean hasMaxAmountOfBlocks() {
-        return blocks.size() >= getMaxBlocks();
-    }
-
     /* ----- IHasPlots ----- */
 
     private int maxPlots;
@@ -312,9 +285,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /**
      * Returns plots owned by the player
-     *
-     * @param res
-     * @return
      */
     public List<Plot> getPlotsOwned(Resident res) {
         List<Plot> list = new ArrayList<Plot>();
@@ -327,9 +297,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /**
      * Gets how many plots this resident is owner in
-     *
-     * @param res
-     * @return
      */
     public int getAmountPlotsOwned(Resident res) {
         int x = 0;
@@ -342,9 +309,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /**
      * Returns if resident can make any more plots
-     *
-     * @param res
-     * @return
      */
     public boolean canResidentMakePlot(Resident res) {
         return getAmountPlotsOwned(res) >= maxPlots && !residents.get(res).hasPermission("mytown.plot.unlimited");
@@ -566,29 +530,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         }
     }
 
-    /**
-     * Returns if this Town has a spawn
-     *
-     * @return
-     */
     public boolean hasSpawn() {
         return spawn != null;
     }
 
-    /**
-     * Returns the spawn
-     *
-     * @return
-     */
     public Teleport getSpawn() {
         return spawn;
     }
 
-    /**
-     * Sets the spawn
-     *
-     * @param spawn
-     */
     public void setSpawn(Teleport spawn) {
         this.spawn = spawn;
     }
@@ -596,7 +545,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     /* ----- Helpers ----- */
 
     /**
-     * Checks if the given point is in this Town
+     * Checks if the given block in non-chunk coordinates is in this Town
      *
      * @param dim
      * @param x
@@ -607,14 +556,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return isChunkInTown(dim, x >> 4, z >> 4);
     }
 
-    /**
-     * Checks if the chunk is in the town
-     *
-     * @param dim
-     * @param cx
-     * @param cz
-     * @return
-     */
     public boolean isChunkInTown(int dim, int cx, int cz) {
         return blocks.containsKey(String.format(TownBlock.keyFormat, dim, cx, cz));
     }
@@ -625,6 +566,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         }
     }
 
+    /**
+     * Notifies every resident in this town sending a message.
+     */
     public void notifyEveryone(String message) {
         // TODO: Check permission for if it should receive message
         for (Resident r : residents.keySet()) {
@@ -642,6 +586,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return false;
     }
 
+    /**
+     * Checks if the Resident is allowed to do the action specified by the FlagType at the coordinates given.
+     * This method will go through all the plots and prioritize the plot's flags over town flags.
+     */
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, int dim, int x, int y, int z) {
         if (flagType.getType() != Boolean.class)
@@ -664,6 +612,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return true;
     }
 
+    /**
+     * Checks if the Resident is allowed to do the action specified by the FlagType in this town.
+     */
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType) {
         if (flagType.getType() != Boolean.class)
@@ -679,8 +630,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     /**
      * Used to get the owners of a plot (or a town) at the position given
      * Returns null if position is not in town
-     *
-     * @return
      */
     public List<Resident> getOwnersAtPosition(int dim, int x, int y, int z) {
         List<Resident> list = new ArrayList<Resident>();
@@ -701,8 +650,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /**
      * Gets the resident with the rank of 'Mayor' (or whatever it's named)
-     *
-     * @return
      */
     public Resident getMayor() {
         for (Resident res : residents.keySet()) {

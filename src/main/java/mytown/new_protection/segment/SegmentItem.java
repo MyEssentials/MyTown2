@@ -25,6 +25,9 @@ public class SegmentItem extends Segment {
         this.onAdjacent = onAdjacent;
     }
 
+    /**
+     * Returns the range in which the item, when an action is performed, can affect the town.
+     */
     public int getRange(ItemStack stack) {
         return (Integer) getters.getValue("range", Integer.class, stack.getItem(), stack);
     }

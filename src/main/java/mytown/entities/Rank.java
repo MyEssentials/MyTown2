@@ -14,7 +14,6 @@ public class Rank {
     private Town town;
 
     public Rank(String name, Town town) {
-        //#ilikeinterusageofconstructors
         this(name, new ArrayList<String>(), town);
     }
 
@@ -29,12 +28,6 @@ public class Rank {
         return name;
     }
 
-    /**
-     * Adds permission to the list
-     *
-     * @param permission
-     * @return false if permission already exists, true otherwise
-     */
     public boolean addPermission(String permission) {
         return permissions.add(permission);
     }
@@ -43,12 +36,6 @@ public class Rank {
         this.permissions.addAll(permissions);
     }
 
-    /**
-     * Removes permission from the list
-     *
-     * @param permission
-     * @return false if permission doesn't exist, true otherwise
-     */
     public boolean removePermission(String permission) {
         return permissions.remove(permission);
     }
@@ -101,20 +88,4 @@ public class Rank {
     public static Map<String, List<String>> defaultRanks = new HashMap<String, List<String>>();
     public static String theDefaultRank;
     public static String theMayorDefaultRank; // ok not the best name
-   /*
-    public static List<String> theOutsiderPerms = new ArrayList<String>();
-
-    public static boolean outsiderPermCheck(String permission) {
-        if (theOutsiderPerms.contains(permission)) {
-            return true;
-        }
-        for (String p : theOutsiderPerms) {
-            if (permission.contains(p)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    */
-
 }

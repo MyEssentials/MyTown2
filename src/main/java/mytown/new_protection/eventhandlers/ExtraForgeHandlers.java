@@ -22,6 +22,9 @@ public class ExtraForgeHandlers {
         return instance;
     }
 
+    /**
+     * Forge 1254 is needed for this
+     */
     @SubscribeEvent
     public void onExplosion(ExplosionEvent.Start ev) {
         List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.explosionX - ev.explosion.explosionSize), (int)(ev.explosion.explosionZ - ev.explosion.explosionSize), (int)(ev.explosion.explosionX + ev.explosion.explosionSize), (int)(ev.explosion.explosionZ + ev.explosion.explosionSize));

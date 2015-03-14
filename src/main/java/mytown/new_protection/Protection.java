@@ -35,7 +35,7 @@ import java.util.List;
 
 /**
  * Created by AfterWind on 1/1/2015.
- * A protection object which offers protection for a specific mod
+ * An object which offers protection for a specific mod and version
  */
 public class Protection {
 
@@ -255,6 +255,9 @@ public class Protection {
         return false;
     }
 
+    /**
+     * Gets the flags which the type of TileEntity is checked against.
+     */
     public List<FlagType> getFlagsForTile(Class<? extends TileEntity> te) {
         List<FlagType> flags = new ArrayList<FlagType>();
         for(SegmentTileEntity segment : segmentsTiles) {
@@ -278,6 +281,9 @@ public class Protection {
         return type != null && type == EntityType.passive;
     }
 
+    /**
+     * Returns whether or not the entity should be checked each tick.
+     */
     public boolean isEntityTracked(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
         return type != null && (type == EntityType.hostile || type == EntityType.explosive);

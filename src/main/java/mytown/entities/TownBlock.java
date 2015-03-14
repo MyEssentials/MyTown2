@@ -10,6 +10,9 @@ import java.util.List;
  * @author Joe Goett
  */
 public class TownBlock implements IHasPlots {
+    /**
+     * Used for storing in database
+     */
     public static String keyFormat = "%s;%s;%s";
 
     private int dim, x, z;

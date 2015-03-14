@@ -127,7 +127,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean addRankPermission(Rank rank, String perm) {
+    public boolean saveRankPermission(Rank rank, String perm) {
         return false;
     }
 
@@ -371,6 +371,11 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     protected boolean checkFlags() {
+        return false;
+    }
+
+    @Override
+    protected boolean checkTowns() {
         return false;
     }
 }

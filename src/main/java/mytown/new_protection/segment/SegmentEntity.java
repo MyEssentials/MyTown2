@@ -23,9 +23,6 @@ public class SegmentEntity extends Segment {
 
     /**
      * Returns the range in which the entity should be checked (only for explosives so far)
-     *
-     * @param entity
-     * @return
      */
     public int getRange(Entity entity) { return (Integer)getters.getValue("range",  Integer.class, entity, null); }
 

@@ -5,7 +5,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.api.interfaces.IHasFlags;
 import mytown.config.Config;
 import mytown.core.Localization;
-import mytown.core.utils.command.CommandCompletion;
+import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
@@ -30,18 +30,20 @@ import java.util.List;
  * Base class for all classes that hold command methods... Mostly for some utils
  */
 public abstract class Commands {
+
     public static MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
-
     public static MyTownUniverse getUniverse() {
         return MyTownUniverse.getInstance();
     }
-
     public static Localization getLocal() {
         return LocalizationProxy.getLocalization();
     }
 
+    /**
+     * Calls the method to which the set of arguments corresponds to.
+     */
     public static boolean callSubFunctions(ICommandSender sender, List<String> args, List<String> subCommands, String callersPermNode) {
         if (args.size() > 0) {
             for (String s : subCommands) {
@@ -59,6 +61,7 @@ public abstract class Commands {
         return false;
     }
 
+
     public static void sendHelpMessage(ICommandSender sender, String permissionBase) {
         List<String> scList = CommandManager.getSubCommandsList(permissionBase);
         String command = null;
@@ -74,6 +77,9 @@ public abstract class Commands {
         }
     }
 
+    /**
+     * Sends the help message for the permission node with the arguments.
+     */
     public static void sendHelpMessageWithArgs(ICommandSender sender, List<String> args, String permBase) {
         String node;
         if (args.size() < 1) {
@@ -106,7 +112,9 @@ public abstract class Commands {
         }
     }
 
-
+    /**
+     * Custom check for commands which require certain rank permissions.
+     */
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
         // Since everybody should have permission to /t
         if (permission.equals("mytown.cmd"))
@@ -126,38 +134,41 @@ public abstract class Commands {
         return rank.hasPermissionOrSuperPermission(permission);
     }
 
+    /**
+     * Populates the tab completion map.
+     */
     public static void populateCompletionMap() {
         List<String> populator = new ArrayList<String>();
         populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
         populator.add("@a");
-        CommandCompletion.completionMap.put("townCompletionAndAll", populator);
+        CommandManager.completionMap.put("townCompletionAndAll", populator);
 
         populator = new ArrayList<String>();
         populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
-        CommandCompletion.completionMap.put("townCompletion", populator);
+        CommandManager.completionMap.put("townCompletion", populator);
 
         populator = new ArrayList<String>();
         for (Resident res : MyTownUniverse.getInstance().getResidentsMap().values()) {
             populator.add(res.getPlayerName());
         }
-        CommandCompletion.completionMap.put("residentCompletion", populator);
+        CommandManager.completionMap.put("residentCompletion", populator);
 
         populator = new ArrayList<String>();
         for (FlagType flag : FlagType.values()) {
             populator.add(flag.toString());
         }
-        CommandCompletion.completionMap.put("flagCompletion", populator);
+        CommandManager.completionMap.put("flagCompletion", populator);
 
         populator = new ArrayList<String>();
         for (FlagType flag : FlagType.values()) {
             if (flag.isWhitelistable())
                 populator.add(flag.toString());
         }
-        CommandCompletion.completionMap.put("flagCompletionWhitelist", populator);
+        CommandManager.completionMap.put("flagCompletionWhitelist", populator);
 
         populator.clear();
         populator.addAll(Rank.defaultRanks.keySet());
-        CommandCompletion.completionMap.put("rankCompletion", populator);
+        CommandManager.completionMap.put("rankCompletion", populator);
     }
 
     /* ---- HELPERS ---- */

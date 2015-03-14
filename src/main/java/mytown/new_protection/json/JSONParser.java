@@ -1,16 +1,15 @@
 package mytown.new_protection.json;
 
-import buildcraft.factory.TileQuarry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
 import mytown.new_protection.Protections;
-import mytown.new_protection.segment.getter.Caller;
 import mytown.new_protection.segment.IBlockModifier;
 import mytown.new_protection.segment.Segment;
 import mytown.new_protection.segment.SegmentTileEntity;
+import mytown.new_protection.segment.getter.Caller;
 import mytown.new_protection.segment.getter.Getters;
 import net.minecraft.tileentity.TileEntityDispenser;
 import org.apache.commons.io.FileUtils;
@@ -19,9 +18,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by AfterWind on 1/1/2015.
@@ -35,7 +32,6 @@ public class JSONParser {
     private static FileReader reader;
 
     public static boolean start() {
-
         initJSON();
         File folder = new File(folderPath);
         if(!folder.exists()) {
@@ -117,7 +113,7 @@ public class JSONParser {
 
         Protection protection = new Protection("BuildCraft|Factory", segments);
         try {
-            writer = new FileWriter(folderPath + "/BuildCraft-Factory.json");
+            writer = new FileWriter(folderPath + "/BuildCraft-Factory.json.model");
             gson.toJson(protection, Protection.class, writer);
             writer.close();
 

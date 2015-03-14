@@ -15,8 +15,8 @@ import java.util.List;
  * Wilderness permissions
  */
 public class Wild implements IHasFlags {
-    private static Wild instance;
 
+    private static Wild instance;
     public static Wild getInstance() {
         if (instance == null) {
             instance = new Wild();
@@ -66,6 +66,9 @@ public class Wild implements IHasFlags {
         return false;
     }
 
+    /**
+     * Checks if Resident is allowed to do the action specified by the FlagType in the Wild
+     */
     public boolean checkPermission(Resident res, FlagType type) {
         if (getFlag(type).getValue() instanceof Boolean) {
             if (!(Boolean) getFlag(type).getValue()) {

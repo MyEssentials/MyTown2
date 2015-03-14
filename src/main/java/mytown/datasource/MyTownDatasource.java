@@ -24,11 +24,6 @@ import java.util.UUID;
 public abstract class MyTownDatasource {
     protected Log log = null;
 
-    /**
-     * Sets the Log the Datasource uses
-     *
-     * @param log The log...
-     */
     public final void setLog(Log log) {
         this.log = log;
     }
@@ -56,10 +51,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new AdminTown and fires event
-     *
-     * @param name
-     * @param creator
-     * @return
      */
     public final AdminTown newAdminTown(String name, Resident creator) {
         AdminTown town = new AdminTown(name);
@@ -69,9 +60,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Common method for creating any type of town
-     *
-     * @param town
-     * @param creator
      */
     @SuppressWarnings("unchecked")
     private void configureTown(Town town, Resident creator) {
@@ -191,7 +179,6 @@ public abstract class MyTownDatasource {
     /**
      * Creates and returns a new TownFlag or null if it couldn't be created
      *
-     * @param value
      * @return the new TownFlag, or null if failed
      */
     public final Flag newFlag(FlagType type, Object value) {
@@ -201,7 +188,6 @@ public abstract class MyTownDatasource {
     }
 
     /* ----- Read ----- */
-
     /**
      * Loads all the towns, ranks, blocks, residents, plots, and nations. In that order.
      *
@@ -213,374 +199,117 @@ public abstract class MyTownDatasource {
 
     /**
      * Loads all worlds, and saves to db if any are missing
-     *
-     * @return
      */
     protected abstract boolean loadWorlds();
 
-    /**
-     * Loads all the Towns
-     *
-     * @return If it was successful
-     */
     protected abstract boolean loadTowns();
 
-    /**
-     * Loads all the Blocks
-     *
-     * @return If it was successful
-     */
     protected abstract boolean loadBlocks();
 
-    /**
-     * Loads all the Ranks
-     *
-     * @return If it was successful
-     */
     protected abstract boolean loadRanks();
 
-    /**
-     * Loads all the Residents
-     *
-     * @return If it was successful
-     */
     protected abstract boolean loadResidents();
 
-    /**
-     * Loads all the Plots
-     *
-     * @return If it was successful
-     */
     protected abstract boolean loadPlots();
 
-    /**
-     * Loads all the Nations
-     *
-     * @return If it was successful
-     */
     protected abstract boolean loadNations();
 
-    /**
-     * Loads all the Flags for the Towns
-     *
-     * @return If it was successful
-     */
     protected abstract boolean loadTownFlags();
 
-    /**
-     * Loads all the Flags for the Plots
-     *
-     * @return
-     */
     protected abstract boolean loadPlotFlags();
 
-    /**
-     * Loads all the BlockWhitelists
-     *
-     * @return
-     */
     protected abstract boolean loadBlockWhitelists();
 
-    /**
-     * Loads the selected towns
-     *
-     * @return
-     */
     protected abstract boolean loadSelectedTowns();
 
-    /**
-     * Loads the link between to residents which represents friendship
-     *
-     * @return
-     */
     protected abstract boolean loadFriends();
 
-    /**
-     * Loads all the friend requests
-     *
-     * @return
-     */
     protected abstract boolean loadFriendRequests();
 
-    /**
-     * Loads all town invites
-     *
-     * @return
-     */
     protected abstract boolean loadTownInvites();
 
     /* ----- Save ----- */
 
-    /**
-     * Saves the Town
-     *
-     * @return If it was successful
-     */
     public abstract boolean saveTown(Town town);
 
-    /**
-     * Saves the Block
-     *
-     * @return If it was successful
-     */
     public abstract boolean saveBlock(TownBlock block);
 
-    /**
-     * Saves the Rank
-     *
-     * @return If it was successful
-     */
     public abstract boolean saveRank(Rank rank, boolean isDefault);
 
-    /**
-     * Adds the permission node to the Rank
-     *
-     * @param rank The rank
-     * @param perm The permission node
-     * @return Whether it was successfully added
-     */
-    public abstract boolean addRankPermission(Rank rank, String perm);
+    public abstract boolean saveRankPermission(Rank rank, String perm);
 
-    /**
-     * Saves the Resident
-     *
-     * @return If it was successful
-     */
     public abstract boolean saveResident(Resident resident);
 
-    /**
-     * Saves the Plot
-     *
-     * @return If it was successful
-     */
     public abstract boolean savePlot(Plot plot);
 
-    /**
-     * Saves the Nation
-     *
-     * @return If it was successful
-     */
     public abstract boolean saveNation(Nation nation);
 
-    /**
-     * Saves the Flag
-     *
-     * @return If it was successful
-     */
     public abstract boolean saveFlag(Flag flag, Town town);
 
-    /**
-     * Saves the Flag to the plot
-     *
-     * @return If it was successful
-     */
     public abstract boolean saveFlag(Flag flag, Plot plot);
 
-    /**
-     * Saves the BlockWhitelist to the town
-     *
-     * @param bw
-     * @param town
-     * @return
-     */
     public abstract boolean saveBlockWhitelist(BlockWhitelist bw, Town town);
 
-    /**
-     * Saves a link of the town with the resident
-     *
-     * @param res
-     * @return
-     */
     public abstract boolean saveSelectedTown(Resident res, Town town);
 
-    /**
-     * Saves a link between 2 residents which represents friendship
-     *
-     * @param res1
-     * @param res2
-     * @return
-     */
     public abstract boolean saveFriendLink(Resident res1, Resident res2);
 
-    /**
-     * Saves a friend request to the database
-     *
-     * @param res1
-     * @param res2
-     * @return
-     */
     public abstract boolean saveFriendRequest(Resident res1, Resident res2);
 
-    /**
-     * Saves a town invite for the player to the town
-     *
-     * @param res
-     * @param town
-     * @return
-     */
     public abstract boolean saveTownInvite(Resident res, Town town);
 
-    /**
-     * Saves the world with the dimension id spefied to the db
-     *
-     * @param dim
-     * @return
-     */
     public abstract boolean saveWorld(int dim);
 
     /* ----- Link ----- */
 
     /**
      * Links the Resident to the Town, setting the Rank of the Resident in the Town
-     *
-     * @param res  The Resident to Link
-     * @param town The Town to Link
-     * @param rank The Rank with which the resident is assigned to the town
-     * @return If the link was successful
      */
     public abstract boolean linkResidentToTown(Resident res, Town town, Rank rank);
 
-    /**
-     * Unlinks the Resident from the Town
-     *
-     * @param res  The Resident to Unlink
-     * @param town The Town to Unlink
-     * @return If the unlink was successful
-     */
     public abstract boolean unlinkResidentFromTown(Resident res, Town town);
 
-    /**
-     * Updates the link between the Resident and the Town
-     *
-     * @param res  The Resident
-     * @param town the Town
-     * @return If the link update was successful
-     */
     public abstract boolean updateResidentToTownLink(Resident res, Town town, Rank rank);
 
     /**
      * Links the Resident to the Town, setting the Rank of the Resident in the Town
-     *
-     * @param town   The Town to Link
-     * @param nation The Nation to Link
-     * @return If the link was successful
      */
     public abstract boolean linkTownToNation(Town town, Nation nation);
 
     /**
      * Unlinks the Resident from the Town
-     *
-     * @param town   The Town to Unlink
-     * @param nation The Nation to Unlink
-     * @return If the unlink was successful
      */
     public abstract boolean unlinkTownFromNation(Town town, Nation nation);
 
     /**
      * Updates the link between the Town and Nation
-     *
-     * @param town   The Town
-     * @param nation The Nation
-     * @return If the link update was successful
      */
     public abstract boolean updateTownToNationLink(Town town, Nation nation);
 
-    /**
-     * Links resident to plot as owner or not
-     *
-     * @param res
-     * @param plot
-     * @param isOwner
-     * @return
-     */
     public abstract boolean linkResidentToPlot(Resident res, Plot plot, boolean isOwner);
 
-    /**
-     * Unlink the Resident from the Plot
-     *
-     * @param res
-     * @param plot
-     * @return
-     */
     public abstract boolean unlinkResidentFromPlot(Resident res, Plot plot);
 
-    /**
-     * Updates the link between the Resident and the Plot
-     *
-     * @param res
-     * @param plot
-     * @param isOwner
-     * @return
-     */
     public abstract boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner);
 
     /* ----- Delete ----- */
 
-    /**
-     * Deletes the Town
-     *
-     * @return If it was successful
-     */
     public abstract boolean deleteTown(Town town);
 
-    /**
-     * Deletes the Block
-     *
-     * @return If it was successful
-     */
     public abstract boolean deleteBlock(TownBlock block);
 
-    /**
-     * Deletes the Rank
-     *
-     * @return If it was successful
-     */
     public abstract boolean deleteRank(Rank rank);
 
-    /**
-     * Deletes the Resident
-     *
-     * @return If it was successful
-     */
     public abstract boolean deleteResident(Resident resident);
 
-    /**
-     * Deletes the Plot
-     *
-     * @return If it was successful
-     */
     public abstract boolean deletePlot(Plot plot);
 
-    /**
-     * Deletes the Nation
-     *
-     * @return If it was successful
-     */
     public abstract boolean deleteNation(Nation nation);
 
-    /**
-     * Deletes the Flag from the given town
-     *
-     * @return If it was successful
-     */
     public abstract boolean deleteFlag(Flag flag, Town town);
 
-    /**
-     * Deletes the Flag from the given plot
-     *
-     * @param flag
-     * @param plot
-     * @return
-     */
     public abstract boolean deleteFlag(Flag flag, Plot plot);
 
-    /**
-     * Deletes the BlockWhitelist from the given town
-     *
-     * @param bw
-     * @param town
-     * @return
-     */
     public abstract boolean deleteBlockWhitelist(BlockWhitelist bw, Town town);
 
     /**
@@ -592,59 +321,21 @@ public abstract class MyTownDatasource {
      */
     public abstract boolean deleteSelectedTown(Resident res);
 
-    /**
-     * Deletes the friend link between 2 residents
-     * #whydidyouruinafriendshipsadface
-     *
-     * @param res1
-     * @param res2
-     * @return
-     */
     public abstract boolean deleteFriendLink(Resident res1, Resident res2);
 
-    /**
-     * Deletes a friend request
-     *
-     * @param res1
-     * @param res2
-     * @return
-     */
     public abstract boolean deleteFriendRequest(Resident res1, Resident res2, boolean response);
 
     /**
      * Deletes a town invite with the response to whether they should be added to town or not
-     *
-     * @param res
-     * @param town
-     * @param response
-     * @return
      */
     public abstract boolean deleteTownInvite(Resident res, Town town, boolean response);
 
-    /**
-     * Deletes the world with the dimension id specified from the db
-     *
-     * @param dim
-     * @return
-     */
     public abstract boolean deleteWorld(int dim);
 
-    /**
-     * Removes the permission node from the Rank
-     *
-     * @param rank The rank
-     * @param perm The permission node
-     * @return Whether it was successfully removed
-     */
     public abstract boolean removeRankPermission(Rank rank, String perm);
 
     /* ----- Checks ------ */
 
-    /**
-     * Checks all things
-     *
-     * @return
-     */
     public boolean checkAll() {
         return checkFlags() && checkTowns();
     }
@@ -666,23 +357,12 @@ public abstract class MyTownDatasource {
 
     /* ----- Has ----- */
 
-    /**
-     * Checks if the townName exists
-     *
-     * @param townName The name to check
-     * @return If the name exists
-     */
     public final boolean hasTown(String townName) {
         return MyTownUniverse.getInstance().getTown(townName) != null;
     }
 
     /**
-     * Checks if the Block exists
-     *
-     * @param dim The dimension to check in
-     * @param x   The x chunk coord to check at
-     * @param z   The z chunk coord to check at
-     * @return If the Block exists
+     * Checks if the Block exists give the chunk coordonates and dimension
      */
     public final boolean hasBlock(int dim, int x, int z) {
         return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.keyFormat, dim, x, z)) != null;
@@ -690,11 +370,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Checks if the TownBlock with the given coords and dim at the town specified exists
-     *
-     * @param dim           The dimension to check in
-     * @param x             The x coord to check at
-     * @param z             The z coord to check at
-     * @return If the Block exists
      */
     public final boolean hasBlock(int dim, int x, int z, Town town) {
         String key = String.format(TownBlock.keyFormat, dim, x, z);
@@ -705,32 +380,14 @@ public abstract class MyTownDatasource {
         return false;
     }
 
-    /**
-     * Checks if the Datasource has a Resident with the given UUID
-     *
-     * @param uuid
-     * @return
-     */
     public final boolean hasResident(UUID uuid) {
         return MyTownUniverse.getInstance().getResident(uuid.toString()) != null;
     }
 
-    /**
-     * Checks if the Resident exists
-     *
-     * @param pl
-     * @return
-     */
     public final boolean hasResident(EntityPlayer pl) {
         return hasResident(pl.getPersistentID());
     }
 
-    /**
-     * Checks if the Resident exists
-     *
-     * @param sender
-     * @return
-     */
     public final boolean hasResident(ICommandSender sender) {
         if (sender instanceof EntityPlayer) {
             return hasResident((EntityPlayer) sender);
@@ -738,23 +395,9 @@ public abstract class MyTownDatasource {
         return false;
     }
 
-    /**
-     * Checks if the Datasource has a Resident with the given username
-     *
-     * @param username
-     * @return
-     */
     public final boolean hasResident(String username) {
         GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username); // TODO I have no idea if this will actually work. xD
         return profile != null && hasResident(profile.getId());
-        /*
-        for (Resident res : residents.values()) {
-            if (res.getPlayerName().equals(username)) {
-                return true;
-            }
-        }
-        return false;
-        */
     }
 
     /* ----- Helper ----- */
@@ -812,25 +455,10 @@ public abstract class MyTownDatasource {
         return profile == null ? null : getOrMakeResident(profile.getId(), profile.getName());
     }
 
-    /**
-     * Returns the Block at the given location. Can return null if it doesn't exist!
-     *
-     * @param dim    The dimension to check in
-     * @param chunkX The chunk x to check at
-     * @param chunkZ The chunk z to check at
-     * @return The Block, or null if it doesn't exist
-     */
     public TownBlock getBlock(int dim, int chunkX, int chunkZ) {
         return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.keyFormat, dim, chunkX, chunkZ));
     }
 
-    /**
-     * Returns the rank with the name and town specified
-     *
-     * @param rankName
-     * @param town
-     * @return
-     */
     public Rank getRank(String rankName, Town town) {
         for (Rank rank : MyTownUniverse.getInstance().getRanksMap().values()) {
             if (rank.getName().equals(rankName) && rank.getTown().equals(town))

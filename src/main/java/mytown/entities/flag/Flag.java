@@ -26,6 +26,9 @@ public class Flag<T> {
         return value;
     }
 
+    /**
+     * Serializes the value in a JSON String so that it can be saved to database safely
+     */
     public String serializeValue() {
         Gson gson = new GsonBuilder().create();
         Type type = new TypeToken<T>() {
@@ -33,6 +36,9 @@ public class Flag<T> {
         return gson.toJson(value, type);
     }
 
+    /**
+     * Gets the String equivalent of the value
+     */
     public String valueToString() {
         if (value instanceof String)
             return (String) value;
@@ -44,6 +50,9 @@ public class Flag<T> {
         }
     }
 
+    /**
+     * Gets the value from a JSON String.
+     */
     @SuppressWarnings("unchecked")
     public T getValueFromString(String str) {
         try {
@@ -71,6 +80,9 @@ public class Flag<T> {
         }
     }
 
+    /**
+     * Sets the value of the flag from a String
+     */
     public boolean setValueFromString(String str) {
         T val = getValueFromString(str);
         if (val == null)

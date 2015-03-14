@@ -18,8 +18,7 @@ import java.util.List;
  */
 public class FlagsConfig {
 
-    private Type type = new TypeToken<List<Wrapper>>() {
-    }.getType();
+    private Type type = new TypeToken<List<Wrapper>>() {}.getType();
     private String path;
     private Gson gson;
 
@@ -97,6 +96,9 @@ public class FlagsConfig {
         }
     }
 
+    /**
+     * Wraps around a flagType object.
+     */
     private class Wrapper {
         public FlagType flagType;
         public Object defaultState;

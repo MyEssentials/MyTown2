@@ -18,8 +18,7 @@ import java.util.List;
  */
 public class WildPermsConfig {
 
-    private Type type = new TypeToken<List<Flag>>() {
-    }.getType();
+    private Type type = new TypeToken<List<Flag>>() {}.getType();
     private Gson gson;
     private String path;
 

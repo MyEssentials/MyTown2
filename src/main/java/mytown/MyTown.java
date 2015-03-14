@@ -42,11 +42,11 @@ public class MyTown {
     @Instance
     public static MyTown instance;
     public Log log;
+    // ---- Configuration files ----
     public Configuration config;
     public RanksConfig ranksConfig;
     public WildPermsConfig wildConfig;
     public FlagsConfig flagsConfig;
-   // public boolean isCauldron = false;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
@@ -150,7 +150,7 @@ public class MyTown {
     }
 
     /**
-     * Registers all handlers (Event, etc)
+     * Registers all handlers (Event handlers)
      */
     private void registerHandlers() {
 
@@ -160,7 +160,7 @@ public class MyTown {
         FMLCommonHandler.instance().bus().register(playerTracker);
         MinecraftForge.EVENT_BUS.register(playerTracker);
 
-        FMLCommonHandler.instance().bus().register(VisualsTickHandler.instance);
+        FMLCommonHandler.instance().bus().register(VisualsTickHandler.getInstance());
 
         FMLCommonHandler.instance().bus().register(Protections.getInstance());
         MinecraftForge.EVENT_BUS.register(Protections.getInstance());
@@ -169,37 +169,39 @@ public class MyTown {
             MinecraftForge.EVENT_BUS.register(ExtraForgeHandlers.getInstance());
     }
 
+    /**
+     * Checks the config to see if there are any wrong values.
+     * Throws an exception if there is a problem.
+     */
     public void checkConfig() {
         // Checking cost item
         if(Config.costItemName.equals("$")) {
             if (!Loader.isModLoaded("ForgeEssentials")) {
-                MyTown.instance.log.error("Failed to find ForgeEssentials for economy implementation. Reverting to default.");
-                throw new RuntimeException();
+                throw new RuntimeException("Failed to find ForgeEssentials for economy implementation. Reverting to default.");
             }
         } else {
             String[] split = Config.costItemName.split(":");
             if (split.length < 2 || split.length > 3) {
-                log.error("Field costItem has an invalid value. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
-                throw new RuntimeException();
+                throw new RuntimeException("Field costItem has an invalid value. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
             }
 
             if (GameRegistry.findItem(split[0], split[1]) == null) {
-                log.error("Field costItem has an invalid modid or unique name of the item. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
-                throw new RuntimeException();
+                throw new RuntimeException("Field costItem has an invalid modid or unique name of the item. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
             }
 
             if (split.length > 2 && (!MyTownUtils.tryParseInt(split[2]) || Integer.parseInt(split[2]) < 0)) {
-                log.error("Field costItem has an invalid metadata. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
-                throw new RuntimeException();
+                throw new RuntimeException("Field costItem has an invalid metadata. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
             }
         }
 
         if(Config.useExtraEvents && !checkExtraEvents()) {
-            log.error("Extra events are enabled but you don't have the minimal forge version needed to load them.");
-            throw new RuntimeException();
+            throw new RuntimeException("Extra events are enabled but you don't have the minimal forge version needed to load them.");
         }
     }
 
+    /**
+     * Returns whether or not ALL extra events are available.
+     */
     public boolean checkExtraEvents() {
         return MyTownUtils.isClassLoaded("net.minecraftforge.event.world.ExplosionEvent");
     }

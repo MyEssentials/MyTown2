@@ -2,14 +2,11 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
-import mytown.api.interfaces.IBlockWhitelister;
 import mytown.api.interfaces.IHasPlots;
 import mytown.api.interfaces.IHasTowns;
-import mytown.api.interfaces.IPlotSelector;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.datasource.MyTownDatasource;
-import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.DatasourceProxy;
@@ -35,7 +32,7 @@ import java.util.UUID;
 /**
  * @author Joe Goett
  */
-public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhitelister { // TODO Make Comparable
+public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     private EntityPlayer player;
     private UUID playerUUID;
     private String playerName; // This is only for display purposes when the player is offline
@@ -64,11 +61,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * Creates a new Resident with the given uuid, playerName, joinDate, and lastOnline. Used only during datasource loading!
-     *
-     * @param uuid
-     * @param playerName
-     * @param joinDate
-     * @param lastOnline
      */
     public Resident(String uuid, String playerName, long joinDate, long lastOnline, int extraBlocks) {
         setUUID(uuid);
@@ -80,8 +72,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * Returns the EntityPlayer, or null
-     *
-     * @return
      */
     public EntityPlayer getPlayer() {
         return player;
@@ -89,8 +79,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * Sets the player and the UUID
-     *
-     * @param pl
      */
     public void setPlayer(EntityPlayer pl) {
         this.player = pl;
@@ -98,29 +86,14 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         this.playerName = pl.getDisplayName();
     }
 
-    /**
-     * Returns the players UUID
-     *
-     * @return
-     */
     public UUID getUUID() {
         return playerUUID;
     }
 
-    /**
-     * Sets the UUID
-     *
-     * @param uuid
-     */
     public void setUUID(UUID uuid) {
         this.playerUUID = uuid;
     }
 
-    /**
-     * Sets the UUID from the given string
-     *
-     * @param uuid
-     */
     public void setUUID(String uuid) {
         setUUID(UUID.fromString(uuid));
     }
@@ -128,8 +101,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     /**
      * Returns the name of the player for display purposes. <br/>
      * NEVER rely on this to store info against. The player name can change at any point, use the UUID instead.
-     *
-     * @return
      */
     public String getPlayerName() {
         return playerName;
@@ -137,8 +108,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * Gets when the Resident first joined
-     *
-     * @return
      */
     public Date getJoinDate() {
         return joinDate;
@@ -146,8 +115,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * Gets when the Resident was last online
-     *
-     * @return
      */
     public Date getLastOnline() {
         if (this.player != null) {
@@ -158,17 +125,21 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * Sets when the resident was last online
-     *
-     * @param date
      */
     public void setLastOnline(Date date) {
         this.lastOnline = date;
     }
 
+    /**
+     * Gets the extra blocks the resident adds to the town's max total blocks
+     */
     public int getExtraBlocks() {
         return extraBlocks;
     }
 
+    /**
+     * Sets the extra blocks the resident adds to the town's max total blocks
+     */
     public void setExtraBlocks(int extraBlocks) {
         this.extraBlocks = extraBlocks;
     }
@@ -181,6 +152,9 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return teleportCooldown;
     }
 
+    /**
+     * Tick function called every tick
+     */
     public void tick() {
         if(teleportCooldown > 0)
             teleportCooldown--;
@@ -217,12 +191,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * This does NOT perform as well as some other methods of retrieving plots. Please use sparingly and with caution!
-     *
-     * @param dim
-     * @param x
-     * @param y
-     * @param z
-     * @return
      * @see mytown.api.interfaces.IHasPlots
      */
     @Override
@@ -272,20 +240,12 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return selectedTown;
     }
 
-    /**
-     * Selects the given Town
-     *
-     * @param town
-     */
     public void selectTown(Town town) {
         selectedTown = town;
     }
 
     /**
      * Returns this Residents rank in the given Town, or null if the player is not part of the Town
-     *
-     * @param town
-     * @return
      */
     public Rank getTownRank(Town town) {
         if (!towns.contains(town)) return null;
@@ -294,8 +254,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * Shortcut for Town#getTownRank(Resident#getSelectedTown())
-     *
-     * @return
      */
     public Rank getTownRank() {
         return getTownRank(getSelectedTown());
@@ -315,12 +273,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * Called when a player changes location from a chunk to another
-     *
-     * @param oldChunkX
-     * @param oldChunkZ
-     * @param newChunkX
-     * @param newChunkZ
-     * @param dimension
      */
     public void checkLocation(int oldChunkX, int oldChunkZ, int newChunkX, int newChunkZ, int dimension) {
         if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null) {
@@ -343,10 +295,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
 
     /**
      * More simpler version of location check, without the need to know the old chunk's coords
-     *
-     * @param newChunkX
-     * @param newChunkZ
-     * @param dimension
      */
     public void checkLocationOnDimensionChanged(int newChunkX, int newChunkZ, int dimension) {
         TownBlock newTownBlock;
@@ -445,6 +393,9 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
             ChatUtils.sendChat(getPlayer(), msg);
     }
 
+    /**
+     * Sends a localized message and a list of owners to which the protection was bypassed
+     */
     public void protectionDenial(String message, String owner) {
         if (getPlayer() != null) {
             ChatUtils.sendChat(getPlayer(), message);
@@ -452,6 +403,9 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         }
     }
 
+    /**
+     * Respawns the player at town's spawn point or, if that doesn't exist, at his own spawn point.
+     */
     public void respawnPlayer() {
         if (getSelectedTown() != null) {
             getSelectedTown().sendToSpawn(this);
@@ -464,6 +418,9 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         ((EntityPlayerMP) player).playerNetServerHandler.setPlayerLocation(spawn.posX, spawn.posY, spawn.posZ, player.rotationYaw, player.rotationPitch);
     }
 
+    /**
+     * Moves the player to the position he was last tick.
+     */
     public void knockbackPlayer() {
         if(this.player != null) {
             player.setPositionAndUpdate(player.lastTickPosX, player.lastTickPosY, player.lastTickPosZ);
@@ -471,9 +428,10 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     }
 
     /* ----- Plot Selection ----- */
-    // Mostly a workaround, might be changed
 
-    @Override
+    /**
+     * Gives the player a Selector Tool for selecting plots.
+     */
     public void startPlotSelection() {
         ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
         selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
@@ -494,13 +452,14 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         }
     }
 
-    @Override
+    /**
+     * Selects a corner of a soon to be plot returns true if the selection is valid.
+     */
     public boolean selectBlockForPlot(int dim, int x, int y, int z) {
         TownBlock tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
         if (firstSelectionActive && selectionDim != dim)
             return false;
         if (tb == null || tb.getTown() != getSelectedTown() && !firstSelectionActive || tb.getTown() != selectionTown && firstSelectionActive) {
-
             return false;
         }
         if (!firstSelectionActive) {
@@ -527,17 +486,15 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return true;
     }
 
-    @Override
+
     public boolean isFirstPlotSelectionActive() {
         return firstSelectionActive;
     }
 
-    @Override
     public boolean isSecondPlotSelectionActive() {
         return secondSelectionActive;
     }
 
-    @Override
     public Plot makePlotFromSelection(String plotName) {
         // TODO: Check everything separately or throw exceptions?
 
@@ -599,7 +556,9 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         return plot;
     }
 
-    @Override
+    /**
+     * Expands the selection vertically, from the bottom of the world (y=0) to the top (y=256 (most of the time))
+     */
     public void expandSelectionVert() {
         // When selection is expanded vertically we'll show it's borders... (Temporary solution)
 
@@ -617,7 +576,6 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
         VisualsTickHandler.instance.markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, this);
     }
 
-    @Override
     public void resetSelection(boolean resetBlocks) {
         firstSelectionActive = false;
         secondSelectionActive = false;
@@ -630,13 +588,9 @@ public class Resident implements IHasPlots, IHasTowns, IPlotSelector, IBlockWhit
     /* ----- Block Whitelister ----- */
 
     /**
-     * Assists in selecting a block
-     *
-     * @param flagType
-     * @return
+     * Starts the block selection by giving the player a Selector Tool for BlockWhitelists
      */
-    @Override
-    public boolean startBlockSelection(FlagType flagType, String townName, boolean inPlot) {
+    public boolean startBlockSelection(FlagType flagType, String townName) {
         //Give item to player
         ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
         selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);

@@ -70,10 +70,6 @@ public class Plot implements IHasFlags, IHasResidents {
         return z1;
     }
 
-    public String getStartCoordString() {
-        return String.format("%s, %s, %s", x1, y1, z1);
-    }
-
     public int getEndX() {
         return x2;
     }
@@ -84,10 +80,6 @@ public class Plot implements IHasFlags, IHasResidents {
 
     public int getEndZ() {
         return z2;
-    }
-
-    public String getEndCoordString() {
-        return String.format("%s, %s, %s", x2, y2, z2);
     }
 
     public int getStartChunkX() {
@@ -114,6 +106,9 @@ public class Plot implements IHasFlags, IHasResidents {
         return key;
     }
 
+    /**
+     * Updates the key of the plot if any changes have been made to it.
+     */
     private void updateKey() {
         key = String.format("%s;%s;%s;%s;%s;%s;%s", dim, x1, y1, z1, x2, y2, z2);
     }
@@ -134,15 +129,6 @@ public class Plot implements IHasFlags, IHasResidents {
         return this.db_ID;
     }
 
-    /**
-     * Checks if the coords are within this plot and in the same dimension
-     *
-     * @param dim
-     * @param x
-     * @param y
-     * @param z
-     * @return
-     */
     public boolean isCoordWithin(int dim, int x, int y, int z) { // TODO Is dim really needed?
         return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
     }

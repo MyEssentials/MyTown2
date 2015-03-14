@@ -44,13 +44,20 @@ import java.util.*;
  */
 public class Protections {
 
-    public Map<TileEntity, Boolean> checkedTileEntities;
-    public Map<Entity, Boolean> checkedEntities;
+    private static Protections instance;
+    public static Protections getInstance() {
+        if(instance == null)
+            instance = new Protections();
+        return instance;
+    }
+
+    public Map<TileEntity, Boolean> checkedTileEntities = new HashMap<TileEntity, Boolean>();
+    public Map<Entity, Boolean> checkedEntities = new HashMap<Entity, Boolean>();
     public int maximalRange = 0;
 
-    private static Protections instance;
-    private List<Protection> protections;
+    private List<Protection> protections = new ArrayList<Protection>();
 
+    // ---- All the counters/tickers for preventing check every tick ----
     private int tickerMap = 20;
     private int tickerMapStart = 20;
     private int tickerWhitelist = 600;
@@ -59,25 +66,7 @@ public class Protections {
 
     // ---- Utility methods for accessing protections ----
 
-    public static Protections getInstance() {
-        if(instance == null)
-            instance = new Protections();
-        return instance;
-    }
-
-    public void init() {
-        protections = new ArrayList<Protection>();
-        checkedTileEntities = new HashMap<TileEntity, Boolean>();
-        checkedEntities = new HashMap<Entity, Boolean>();
-    }
-
-    public Protections() {
-        init();
-    }
-
-    public void addProtection(Protection prot) {
-        protections.add(prot);
-    }
+    public void addProtection(Protection prot) { protections.add(prot); }
     public void removeProtection(Protection prot) { protections.remove(prot); }
     public List<Protection> getProtections() { return this.protections; }
 
@@ -197,6 +186,9 @@ public class Protections {
             ev.setCanceled(true);
     }
 
+    /**
+     * Checks against any type of block placement
+     */
     public boolean onAnyBlockPlacement(final EntityPlayer player, ItemStack itemInHand, Block block, final int dimensionId, final int x, final int y, final int z) {
         TownBlock tblock = DatasourceProxy.getDatasource().getBlock(dimensionId, x >> 4, z >> 4);
         final Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);

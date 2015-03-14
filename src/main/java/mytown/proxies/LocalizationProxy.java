@@ -42,6 +42,8 @@ public class LocalizationProxy {
     }
 
     public static Localization getLocalization() {
+        if(localization == null)
+            load();
         return LocalizationProxy.localization;
     }
 }

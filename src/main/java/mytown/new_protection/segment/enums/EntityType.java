@@ -5,7 +5,16 @@ package mytown.new_protection.segment.enums;
  * The type of entity we are protecting against
  */
 public enum EntityType {
+    /**
+     * Anything that can kill the player without him attacking it.
+     */
     hostile,
+    /**
+     * Anything that has some kind of value of having and needs to bne protected from right/left clicking or death by other players.
+     */
     passive,
+    /**
+     * Anything that explodes.
+     */
     explosive
 }

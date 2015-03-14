@@ -14,6 +14,9 @@ public class BlockWhitelist {
     public final int z;
     public boolean isDeleted;
 
+    /**
+     * Database id used to retain this object in.
+     */
     private int db_id;
     private FlagType flagType;
 

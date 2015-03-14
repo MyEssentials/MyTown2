@@ -58,8 +58,6 @@ public class Getters {
      * From a list of Callers it tries to get a value of type with all its getters calling on the instance.
      * OR It simply gets a constant available in the constantsMap.
      * If method call fails with no parameters it's gonna try to add the parameter for the call.
-     *
-     * @return
      */
     public Object getValue(String callerName, Class<?> returnType, Object instance, Object parameter) {
 
@@ -168,11 +166,6 @@ public class Getters {
 
     /**
      * Converts a formula that contains Getter identifiers to an (integer) value
-     *
-     * @param formula
-     * @param instance
-     * @param parameter
-     * @return
      */
     public int getInfoFromFormula(String formula, Object instance, Object parameter) {
         int result = -1;

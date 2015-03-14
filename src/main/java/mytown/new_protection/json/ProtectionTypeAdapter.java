@@ -262,12 +262,6 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
 
     /**
      * Returns the list of callers that are next in the JSON file stream.
-     *
-     * @param in
-     * @param clazz
-     * @param getterName
-     * @return
-     * @throws IOException
      */
     private List<Caller> parseCallers(JsonReader in, String clazz, String getterName) throws IOException {
         in.beginArray();
@@ -299,12 +293,6 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
 
     /**
      * Returns what value is on the next token on the JSON file stream
-     *
-     * @param in
-     * @param clazz
-     * @param getterName
-     * @return
-     * @throws IOException
      */
     private Object parseConstant(JsonReader in, String clazz, String getterName) throws IOException {
         switch (in.peek()) {
@@ -333,13 +321,9 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
 
     }
 
-    private boolean checks(List<Caller>[] getters) {
-        if(getters[0] == null || getters[1] == null || getters[2] == null || getters[3] == null) {
-            return false;
-        }
-        return true;
-    }
-
+    /**
+     * Returns whether or not the protection is compatible with the mod and version
+     */
     private static boolean verifyVersion(String modid, String version) {
         for(ModContainer mod : Loader.instance().getModList()) {
             if(mod.getModId().equals(modid) && mod.getVersion().startsWith(version))

@@ -1,23 +1,10 @@
 package mytown.new_protection.segment;
 
-import bsh.EvalError;
-import bsh.Interpreter;
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.segment.getter.Caller;
 import mytown.new_protection.segment.getter.Getters;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.ConditionException;
-import mytown.util.exceptions.GetterException;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
-import net.minecraft.tileentity.TileEntity;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by AfterWind on 1/1/2015.

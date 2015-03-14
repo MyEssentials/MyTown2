@@ -14,7 +14,7 @@ public class AdminTown extends Town {
     }
 
     @Override
-    public boolean hasMaxAmountOfBlocks() {
-        return false;
+    public int getMaxBlocks() {
+        return 1000;
     }
 }
