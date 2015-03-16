@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class RanksConfig {
 
-    private Type type = new TypeToken<List<Flag>>() {}.getType();
+    private Type type = new TypeToken<List<Wrapper>>() {}.getType();
     private Gson gson;
     private String path;
 
@@ -74,6 +74,7 @@ public class RanksConfig {
             Rank.defaultRanks.put(residentRank, pResident);
 
             Rank.theDefaultRank = residentRank;
+            MyTown.instance.log.info("Added mayor rank.");
             Rank.theMayorDefaultRank = mayorRank;
 
 

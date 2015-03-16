@@ -71,7 +71,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public final boolean addResident(Resident res) {
         residents.put(res.getUUID().toString(), res);
         CommandManager.completionMap.get("residentCompletion").add(res.getPlayerName());
-        MyTown.instance.log.info("Added resident " + res.getPlayerName());
         return true;
     }
 
@@ -79,7 +78,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         towns.put(town.getName(), town);
         CommandManager.completionMap.get("townCompletionAndAll").add(town.getName());
         CommandManager.completionMap.get("townCompletion").add(town.getName());
-        MyTown.instance.log.info("Added town " + town.getName());
         return true;
     }
 
@@ -96,7 +94,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public final boolean addRank(Rank rank) {
         ranks.put(rank.getKey(), rank);
         CommandManager.completionMap.get("rankCompletion").add(rank.getName());
-        MyTown.instance.log.info("Added rank " + rank.getName() + ", " + rank.getTown().getName());
         return true;
     }
 
