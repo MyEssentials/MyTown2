@@ -7,6 +7,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
+import mytown.core.Utils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;

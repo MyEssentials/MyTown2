@@ -36,12 +36,12 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
         out.beginObject();
         out.name("modid").value(value.modid);
         out.name("segments").beginArray();
-        for(Segment segment : value.segmentsTiles) {
+        for(SegmentTileEntity segment : value.segmentsTiles) {
             out.beginObject();
             out.name("class").value(segment.theClass.getName());
             out.name("type").value("tileEntity");
             out.name("condition").value(StringUtils.join(segment.conditionString, " "));
-            out.name("flag").value(FlagType.modifyBlocks.toString());
+            out.name("flag").value(segment.flag.toString());
             for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
@@ -51,6 +51,77 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     out.endObject();
                 }
                 out.endArray();
+            }
+            for(Map.Entry<String, Object> entry : segment.getters.getConstantsMap().entrySet()) {
+                out.name(entry.getKey()).value((Integer)entry.getValue());
+            }
+            out.endObject();
+        }
+        for(SegmentBlock segment : value.segmentsBlocks) {
+            out.beginObject();
+            out.name("class").value(segment.theClass.getName());
+            out.name("type").value("block");
+            out.name("flag").value(segment.flag == null ? FlagType.activateBlocks.toString() : segment.flag.toString());
+            if(segment.conditionString != null)
+                out.name("condition").value(StringUtils.join(segment.conditionString, " "));
+            for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
+                out.name(entry.getKey()).beginArray();
+                for(Caller caller : entry.getValue()) {
+                    out.beginObject();
+                    out.name("element").value(caller.element);
+                    out.name("type").value(caller.type.toString());
+                    out.endObject();
+                }
+                out.endArray();
+            }
+            for(Map.Entry<String, Object> entry : segment.getters.getConstantsMap().entrySet()) {
+                out.name(entry.getKey()).value((Integer)entry.getValue());
+            }
+            out.endObject();
+        }
+        for(SegmentEntity segment : value.segmentsEntities) {
+            out.beginObject();
+            out.name("class").value(segment.theClass.getName());
+            out.name("type").value("entity");
+            out.name("entityType").value(segment.type.toString());
+            if(segment.conditionString != null)
+                out.name("condition").value(StringUtils.join(segment.conditionString, " "));
+            for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
+                out.name(entry.getKey()).beginArray();
+                for(Caller caller : entry.getValue()) {
+                    out.beginObject();
+                    out.name("element").value(caller.element);
+                    out.name("type").value(caller.type.toString());
+                    out.endObject();
+                }
+                out.endArray();
+            }
+            for(Map.Entry<String, Object> entry : segment.getters.getConstantsMap().entrySet()) {
+                out.name(entry.getKey()).value((Integer)entry.getValue());
+            }
+            out.endObject();
+        }
+        for(SegmentItem segment : value.segmentsItems) {
+            out.beginObject();
+            out.name("class").value(segment.theClass.getName());
+            out.name("type").value("item");
+            out.name("itemType").value(segment.type.toString());
+            out.name("onAdjacent").value(segment.onAdjacent);
+            if(segment.conditionString != null)
+                out.name("condition").value(StringUtils.join(segment.conditionString, " "));
+            out.name("flag").value(segment.flag.toString());
+            for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
+                out.name(entry.getKey()).beginArray();
+                for(Caller caller : entry.getValue()) {
+                    out.beginObject();
+                    out.name("element").value(caller.element);
+                    out.name("type").value(caller.type.toString());
+                    out.endObject();
+                }
+                out.endArray();
+            }
+            for(Map.Entry<String, Object> entry : segment.getters.getConstantsMap().entrySet()) {
+                out.name(entry.getKey()).value((Integer)entry.getValue());
             }
             out.endObject();
         }
@@ -75,7 +146,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 modid = in.nextString();
                 if (modid == null)
                     throw new IOException("Missing modid for a protection!");
-                if(!Loader.isModLoaded(modid) && !modid.equals("Vanilla")) {
+                if(!Loader.isModLoaded(modid) && !modid.equals("Minecraft")) {
                     MyTown.instance.log.info("   Skipped protection because the mod " + modid + " wasn't loaded.");
                     return null;
                 } else if(version != null) {

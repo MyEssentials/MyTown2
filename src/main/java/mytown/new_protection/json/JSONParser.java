@@ -6,8 +6,9 @@ import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.Protection;
 import mytown.new_protection.Protections;
-import mytown.new_protection.segment.Segment;
-import mytown.new_protection.segment.SegmentTileEntity;
+import mytown.new_protection.segment.*;
+import mytown.new_protection.segment.enums.EntityType;
+import mytown.new_protection.segment.enums.ItemType;
 import mytown.new_protection.segment.getter.Caller;
 import mytown.new_protection.segment.getter.Getters;
 import net.minecraft.tileentity.TileEntityDispenser;
@@ -48,7 +49,7 @@ public class JSONParser {
                 MyTown.instance.log.info("Loading protection file: " + file.getName());
                 Protection protection = gson.fromJson(reader, Protection.class);
                 if(protection != null) {
-                    if (protection.modid.equals("Vanilla")) {
+                    if (protection.modid.equals("Minecraft")) {
                         MyTown.instance.log.info("Adding vanilla protection.");
                     } else {
                         MyTown.instance.log.info("Adding protection for mod: " + protection.modid);
@@ -71,48 +72,32 @@ public class JSONParser {
 
     @SuppressWarnings("unchecked")
     private static void createModel() {
-        Class clazz;
-        try {
-            clazz = Class.forName("buildcraft.factory.TileQuarry");
-        } catch (Exception ex) {
-            // TODO: Change to something else, or it might confusing to some people
-            clazz = TileEntityDispenser.class;
-        }
-
-        Getters getters = new Getters();
-        getters.setName(clazz.getName());
-
-        List<Caller> callers = new ArrayList<Caller>();
-        callers.add(new Caller("getBox", Caller.CallerType.method));
-        callers.add(new Caller("xMin", Caller.CallerType.field));
-        getters.addCallers("X1", callers);
-
-        callers = new ArrayList<Caller>();
-        callers.add(new Caller("getBox", Caller.CallerType.method));
-        callers.add(new Caller("zMin", Caller.CallerType.field));
-        getters.addCallers("Z1", callers);
-
-        callers = new ArrayList<Caller>();
-        callers.add(new Caller("getBox", Caller.CallerType.method));
-        callers.add(new Caller("xMax", Caller.CallerType.field));
-        getters.addCallers("X2", callers);
-
-        callers = new ArrayList<Caller>();
-        callers.add(new Caller("getBox", Caller.CallerType.method));
-        callers.add(new Caller("zMax", Caller.CallerType.field));
-        getters.addCallers("Z2", callers);
-
-        callers = new ArrayList<Caller>();
-        callers.add(new Caller("blockMetadata", Caller.CallerType.field));
-        getters.addCallers("meta", callers);
-
-
         List<Segment> segments = new ArrayList<Segment>();
-        segments.add(new SegmentTileEntity(clazz, getters, FlagType.modifyBlocks, "meta != -1"));
 
-        Protection protection = new Protection("BuildCraft|Factory", segments);
+        segments.add(new SegmentBlock(net.minecraft.block.BlockButton.class, new Getters(), null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockDoor.class, new Getters(), null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockLever.class, new Getters(), null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockFenceGate.class, new Getters(), null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockDragonEgg.class, new Getters(), null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockCake.class, new Getters(), null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockTrapDoor.class, new Getters(), null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockJukebox.class, new Getters(), null, 0));
+        segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityMob.class, new Getters(), null, EntityType.hostile));
+        segments.add(new SegmentEntity(net.minecraft.entity.EntityAgeable.class, new Getters(), null, EntityType.passive));
+        Getters getters = new Getters();
+        getters.addConstant("range", 5);
+        segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityCreeper.class, getters, null, EntityType.explosive));
+        getters = new Getters();
+        getters.addConstant("range", 5);
+        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityTNTPrimed.class, getters, null, EntityType.explosive));
+
+        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.useItems, null, ItemType.rightClickBlock, true));
+        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.useItems, null, ItemType.rightClickEntity, false));
+        segments.add(new SegmentItem(net.minecraft.item.ItemShears.class, new Getters(), FlagType.useItems, null, ItemType.rightClickEntity, false));
+
+        Protection protection = new Protection("Minecraft", segments);
         try {
-            writer = new FileWriter(folderPath + "/BuildCraft-Factory.json.model");
+            writer = new FileWriter(folderPath + "/Minecraft.json");
             gson.toJson(protection, Protection.class, writer);
             writer.close();
 
