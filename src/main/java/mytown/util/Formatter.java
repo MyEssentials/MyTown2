@@ -67,6 +67,21 @@ public class Formatter {
     }
 
 
+    public static String formatResidentsToString(Collection<Resident> residents) {
+        String formatterList = null;
+        if (residents == null || residents.size() == 0) {
+            formatterList = "SERVER ADMINS";
+        } else {
+            for (Resident r : residents)
+                if (formatterList == null) {
+                    formatterList = r.getPlayerName();
+                } else {
+                    formatterList += ", " + r.getPlayerName();
+                }
+        }
+        return formatterList;
+    }
+
     /**
      * Formats a list of resident in a town to a String that is then sent to the player.
      *
@@ -187,29 +202,9 @@ public class Formatter {
         return formattedList;
     }
 
-    /**
-     * Formats a list of owners of a plot or town
-     * TODO: Generalize this
-     *
-     * @param residentList
-     * @return
-     */
-    public static String formatOwnersToString(Collection<Resident> residentList) {
-        String formattedList = null;
-        for (Resident res : residentList) {
-            if (formattedList == null)
-                formattedList = "§6Owners: " + res.getPlayerName();
-            else
-                formattedList = ", " + res.getPlayerName();
-        }
-        if(formattedList == null)
-            formattedList = "§6Owners: SERVER ADMINS";
-        return formattedList;
-    }
-
     public static String formatOwnerToString(Resident res) {
         List<Resident> list = new ArrayList<Resident>();
         list.add(res);
-        return formatOwnersToString(list);
+        return formatResidentsToString(list);
     }
 }

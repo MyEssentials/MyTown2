@@ -1,7 +1,6 @@
 package mytown.new_protection;
 
 import mytown.MyTown;
-import mytown.config.Config;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -12,6 +11,7 @@ import mytown.new_protection.segment.*;
 import mytown.new_protection.segment.enums.EntityType;
 import mytown.new_protection.segment.enums.ItemType;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
 import mytown.util.Formatter;
@@ -21,14 +21,10 @@ import mytown.util.exceptions.GetterException;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -166,7 +162,7 @@ public class Protection {
                     if (segment.checkCondition(item)) {
                         Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
                         if (town != null && !town.checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
-                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z)));
+                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z))));
                             if (segment.flag == FlagType.modifyBlocks && segment.onAdjacent) {
                                 //DimensionManager.getWorld(bp.dim).setBlock(bp.x, bp.y, bp.z, Blocks.air);
                                 //MyTown.instance.log.info("Block deleted!");
@@ -198,7 +194,7 @@ public class Protection {
                     if (segment.checkCondition(item)) {
                         Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
                         if (town != null && !town.checkPermission(res, segment.flag, entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))) {
-                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))));
+                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
                             return true;
                         }
                     }
@@ -217,7 +213,7 @@ public class Protection {
             if(segment.type == EntityType.passive && segment.theClass.isAssignableFrom(entity.getClass())) {
                 Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
                 if(town != null && !town.checkPermission(res, FlagType.protectedEntities, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
-                    res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))));
+                    res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
                     return true;
                 }
             }
@@ -238,7 +234,7 @@ public class Protection {
                     if (segment.checkCondition(item)) {
                         Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
                         if (town != null && !town.checkPermission(res, segment.flag, entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))) {
-                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))));
+                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
                             return true;
                         }
                     }

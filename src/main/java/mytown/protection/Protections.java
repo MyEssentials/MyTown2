@@ -143,7 +143,7 @@ public class Protections {
                 */
                 if (town != null) {
                     if (!town.checkPermission(res, FlagType.enter, entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)) {
-                        res.protectionDenial("§cYou have been moved because you can't access this place!", Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)));
+                        res.protectionDenial("§cYou have been moved because you can't access this place!", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, playerPos.posX, playerPos.posY, playerPos.posZ)));
                         res.respawnPlayer();
                         MyTown.instance.log.info("Player " + entity.toString() + " was respawned!");
                     }
@@ -243,7 +243,7 @@ public class Protections {
                 for (Protection prot : protections.values()) {
                     if (prot.protectedEntities.contains(ev.target.getClass())) {
                         ev.setCanceled(true);
-                        res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)));
+                        res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatResidentsToString(town.getOwnersAtPosition(ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)));
                     }
                 }
             }
@@ -273,7 +273,7 @@ public class Protections {
             }
         } else {
             if (!tblock.getTown().checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
+                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatResidentsToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
                 ev.setCanceled(true);
                 return;
             } else {
@@ -319,7 +319,7 @@ public class Protections {
             }
         } else {
             if (!tblock.getTown().checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
+                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatResidentsToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
                 ev.setCanceled(true);
                 return;
             } else {
@@ -436,7 +436,7 @@ public class Protections {
 
                     // Checking if a player can access the block here
                     if (!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                        res.protectionDenial(FlagType.accessBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z)));
+                        res.protectionDenial(FlagType.accessBlocks.getLocalizedProtectionDenial(), Formatter.formatResidentsToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z)));
                         ev.setCanceled(true);
                     }
                 }
@@ -455,7 +455,7 @@ public class Protections {
 
                     if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
                         if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z))) {
-                            res.protectionDenial(FlagType.activateBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z)));
+                            res.protectionDenial(FlagType.activateBlocks.getLocalizedProtectionDenial(), Formatter.formatResidentsToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z)));
                             ev.setCanceled(true);
                         }
                     }
@@ -478,7 +478,7 @@ public class Protections {
         } else {
             Town town = block.getTown();
             if (!town.checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
+                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatResidentsToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z)));
                 ev.setCanceled(true);
                 return;
             }
@@ -504,7 +504,7 @@ public class Protections {
                 if (!res.hasTown(town)) {
                     //TODO: Maybe centralise this too
                     if (counter == 0) {
-                        res.protectionDenial(FlagType.pickupItems.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.item.dimension, (int) ev.item.posX, (int) ev.item.posY, (int) ev.item.posZ)));
+                        res.protectionDenial(FlagType.pickupItems.getLocalizedProtectionDenial(), Formatter.formatResidentsToString(town.getOwnersAtPosition(ev.item.dimension, (int) ev.item.posX, (int) ev.item.posY, (int) ev.item.posZ)));
                         counter = 100;
                     } else
                         counter--;
@@ -523,7 +523,7 @@ public class Protections {
                 if(!pvpValue) {
                     ev.setCanceled(true);
                     Resident res = DatasourceProxy.getDatasource().getOrMakeResident((EntityPlayer)ev.source.getSourceOfDamage());
-                    res.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown().getOwnersAtPosition(ev.entityLiving.dimension, (int)ev.entityLiving.posX, (int)ev.entityLiving.posY, (int)ev.entityLiving.posZ)));
+                    res.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.entityLiving.dimension, (int) ev.entityLiving.posX, (int) ev.entityLiving.posY, (int) ev.entityLiving.posZ)));
                 }
             }
         }

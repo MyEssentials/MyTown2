@@ -6,7 +6,6 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
-import mytown.util.BlockPos;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.Entity;
@@ -21,12 +20,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityPiston;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
@@ -208,7 +203,7 @@ public class VanillaProtection extends Protection {
             boolean itemFlag = (Boolean) town.getValueAtCoords(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ, FlagType.useItems);
             if (!itemFlag && !town.checkPermission(res, FlagType.useItems)) {
                 ev.setCanceled(true);
-                res.protectionDenial(FlagType.useItems.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)));
+                res.protectionDenial(FlagType.useItems.getLocalizedProtectionDenial(), Formatter.formatResidentsToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)));
             }
         }
     }

@@ -125,7 +125,7 @@ public class BotaniaProtection extends Protection {
                         //MyTown.instance.log.info("Checking entity.");
                         for (Protection prot : Protections.instance.protections.values()) {
                             if (prot.protectedEntities.contains(entity.getClass())) {
-                                res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ)));
+                                res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.vanilla.animalCruelty"), Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ)));
                                 return true;
                             }
                         }
