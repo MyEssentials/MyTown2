@@ -1490,10 +1490,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         // Checking if flag is supposed to exist and it doesn't or otherwise.
         for (Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
             for (FlagType type : FlagType.values()) {
-                if (!type.isUsableForTowns() && town.hasFlag(type)) {
+                if (!type.canTownsModify() && town.hasFlag(type)) {
                     deleteFlag(town.getFlag(type), town);
                     MyTown.instance.log.info("A flag in town " + town.getName() + " got deleted because of the settings.");
-                } else if (type.isUsableForTowns() && !town.hasFlag(type)) {
+                } else if (type.canTownsModify() && !town.hasFlag(type)) {
                     saveFlag(new Flag(type, type.getDefaultValue()), town);
                     MyTown.instance.log.info("A flag in town " + town.getName() + " got created because of the settings.");
                 }
@@ -1503,10 +1503,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         for (Plot plot : MyTownUniverse.getInstance().getPlotsMap().values()) {
             for (FlagType type : FlagType.values()) {
                 if (!type.isTownOnly()) {
-                    if (!type.isUsableForTowns() && plot.hasFlag(type)) {
+                    if (!type.canTownsModify() && plot.hasFlag(type)) {
                         deleteFlag(plot.getFlag(type), plot);
                         MyTown.instance.log.info("A flag in a plot in town " + plot.getTown().getName() + " got deleted because of the settings.");
-                    } else if (type.isUsableForTowns() && !plot.hasFlag(type)) {
+                    } else if (type.canTownsModify() && !plot.hasFlag(type)) {
                         saveFlag(new Flag(type, type.getDefaultValue()), plot);
                         MyTown.instance.log.info("A flag in a plot in town " + plot.getTown().getName() + " got created because of the settings.");
                     }

@@ -50,7 +50,7 @@ public enum FlagType {
     private Object[] allowedValues;
     private boolean townOnly;
     private Object defaultValue;
-    private boolean isUsableForTowns;
+    private boolean canTownsModify;
     private boolean isWhitelistable;
     private String modRequired;
     private boolean isWildPerm;
@@ -66,7 +66,7 @@ public enum FlagType {
         this.allowedValues = allowedValues;
         this.modRequired = modRequired;
         this.isWhitelistable = isWhitelistable;
-        this.isUsableForTowns = true;
+        this.canTownsModify = true;
         this.defaultValue = defaultValue;
         this.isWildPerm = wildPerm;
         this.defaultWildPerm = defaultWildPerm;
@@ -117,12 +117,12 @@ public enum FlagType {
     }
 
 
-    public boolean isUsableForTowns() {
-        return this.isUsableForTowns;
+    public boolean canTownsModify() {
+        return this.canTownsModify;
     }
 
-    public void setIsUsableForTowns(boolean bool) {
-        this.isUsableForTowns = bool;
+    public void setModifiableForTowns(boolean bool) {
+        this.canTownsModify = bool;
     }
 
     public boolean isTownOnly() {

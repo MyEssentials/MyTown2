@@ -36,7 +36,7 @@ public class FlagsConfig {
         List<Wrapper> wrappers = new ArrayList<Wrapper>();
 
         for (FlagType type : FlagType.values()) {
-            wrappers.add(new Wrapper(type, type.getDefaultValue(), type.isUsableForTowns()));
+            wrappers.add(new Wrapper(type, type.getDefaultValue(), type.canTownsModify()));
         }
         try {
             Writer writer = new FileWriter(path);
@@ -83,7 +83,7 @@ public class FlagsConfig {
             for (Wrapper w : wrappers) {
                 if (w.flagType.getType().isAssignableFrom(w.defaultState.getClass())) {
                     w.flagType.setDefaultValue(w.defaultState);
-                    w.flagType.setIsUsableForTowns(w.isAllowedInTowns);
+                    w.flagType.setModifiableForTowns(w.isAllowedInTowns);
                     //MyTown.instance.log.info("Added flag: " + w.flagType.toString() + " with default " + w.defaultState.toString() + " and allowed in towns: " + w.isAllowedInTowns );
                 } else {
                     MyTown.instance.log.error("The default value provided is not the proper one (for flag " + w.flagType.toString() + ")!");
