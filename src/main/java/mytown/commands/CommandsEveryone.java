@@ -386,8 +386,9 @@ public class CommandsEveryone extends Commands {
         public static void plotInfoCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-
-            res.sendMessage(Formatter.formatPlotInfo(plot));
+            if(plot == null)
+                throw new MyTownCommandException("mytown.cmd.err.plot.notInPlot");
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.info", plot.getName(), Formatter.formatResidentsToString(plot), plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ()));
         }
 
         @CommandNode(

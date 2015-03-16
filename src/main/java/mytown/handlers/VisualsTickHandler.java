@@ -53,8 +53,8 @@ public class VisualsTickHandler {
                         iterator.remove();
                     }
                 }
-                if(set.getValue().size() == 0)
-                    markedBlocks.remove(set.getKey());
+                //if(set.getValue().size() == 0)
+                //    markedBlocks.remove(set.getKey());
             }
         }
     }

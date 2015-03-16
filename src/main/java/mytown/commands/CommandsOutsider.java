@@ -44,12 +44,13 @@ public class CommandsOutsider extends Commands {
                 towns = new ArrayList<Town>(getUniverse().getTownsMap().values());
                 // TODO Sort
             } else {
-                towns.add(getTownFromName(args.get(0)));
+                if(getTownFromName(args.get(0)) != null)
+                    towns.add(getTownFromName(args.get(0)));
             }
         }
 
         for (Town town : towns) {
-            sendMessageBackToSender(sender, Formatter.formatTownInfo(town));
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.info", town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getMaxBlocks(), town.getPlots().size(), Formatter.formatResidentsToString(town), Formatter.formatRanksToString(town.getRanks())));
         }
     }
 
@@ -67,7 +68,7 @@ public class CommandsOutsider extends Commands {
         if (res == null) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
         }
-        sendMessageBackToSender(sender, Formatter.formatResidentInfo(res));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.resident.info", res.getPlayerName(), Formatter.formatTownsToString(res), Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline())));
     }
 
     @CommandNode(

@@ -28,56 +28,6 @@ public class Formatter {
         return String.format(" ---------- Block ----------\nTown: %1$s\nDimension: %2$s\nLocation: %3$s", block.getTown().getName(), block.getDim(), block.getCoordString());
     }
 
-    public static String formatNationInfo(Nation nation) {
-        return String.format(nationInfoFormat, nation.getName());
-    }
-
-    public static String formatPlotInfo(Plot plot) {
-        String residents = null;
-        for (Resident res : plot.getResidents()) {
-            String added = (plot.hasOwner(res) ? EnumChatFormatting.RED : EnumChatFormatting.WHITE) + res.getPlayerName() + EnumChatFormatting.WHITE;
-
-            if (residents == null)
-                residents = added;
-            else
-                residents += ", " + added;
-        }
-        residents += EnumChatFormatting.WHITE;
-        String position = String.format("(%s, %s, %s) --> (%s, %s, %s)", plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ());
-        return "Plot: " + plot.getName() + "\nResidents: " + residents + "\nBorders: " + position;
-    }
-
-    public static String formatRankInfo(Rank rank) {
-        return String.format(rankInfoFormat, rank.getName(), rank.getPermissionsString());
-    }
-
-    public static String formatResidentInfo(Resident resident) {
-        String towns = null;
-        for (Town town : resident.getTowns()) {
-            String added = (resident.getSelectedTown().equals(town) ? EnumChatFormatting.RED : EnumChatFormatting.WHITE) + town.getName() + EnumChatFormatting.WHITE;
-            if (towns == null)
-                towns = added;
-            else
-                towns += ", " + added;
-        }
-        String format = EnumChatFormatting.WHITE + "Resident: %s" + EnumChatFormatting.WHITE +
-                "\nTowns: %s" + EnumChatFormatting.WHITE +
-                "\nJoined: %s" + EnumChatFormatting.WHITE +
-                "\nLast Online: %s" + EnumChatFormatting.WHITE;
-        return String.format(format, resident.getPlayerName(), towns, formatDate(resident.getJoinDate()), formatDate(resident.getLastOnline()));
-    }
-
-    public static String formatTownInfo(Town town) { // TODO Show spawn/home-block location?
-        String msg;
-
-        String residentsString = formatResidentsToString(town.getResidents(), town);
-        String ranksString = formatRanksToString(town.getRanks());
-
-        msg = String.format(townInfoFormat, town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getMaxBlocks(), town.getPlots().size(), residentsString, ranksString);
-
-        return msg;
-    }
-
     public static void sendMap(Resident res, int dim, int cx, int cz) {
         int heightRad = 4, widthRad = 9;
 
@@ -120,22 +70,35 @@ public class Formatter {
     /**
      * Formats a list of resident in a town to a String that is then sent to the player.
      *
-     * @param residents
      * @param t
      * @return
      */
-    public static String formatResidentsToString(Collection<Resident> residents, Town t) {
-        String res = null;
+    public static String formatResidentsToString(Town t) {
+        Collection<Resident> residents = t.getResidents();
+        String formatterList = null;
         for (Resident r : residents)
-            if (res == null) {
-                res = EnumChatFormatting.WHITE + r.getPlayerName() + EnumChatFormatting.GOLD + " (" + formatRankToString(t.getResidentRank(r)) + EnumChatFormatting.GOLD + ")";
+            if (formatterList == null) {
+                formatterList = EnumChatFormatting.WHITE + r.getPlayerName() + EnumChatFormatting.GOLD + " (" + formatRankToString(t.getResidentRank(r)) + EnumChatFormatting.GOLD + ")";
             } else {
-                res += ", " + EnumChatFormatting.WHITE + r.getPlayerName() + EnumChatFormatting.GOLD + " (" + formatRankToString(t.getResidentRank(r)) + EnumChatFormatting.GOLD + ")";
+                formatterList += ", " + EnumChatFormatting.WHITE + r.getPlayerName() + EnumChatFormatting.GOLD + " (" + formatRankToString(t.getResidentRank(r)) + EnumChatFormatting.GOLD + ")";
             }
         if (residents.size() == 0) {
-            res = EnumChatFormatting.RED + "NONE";
+            formatterList = EnumChatFormatting.RED + "NONE";
         }
-        return res;
+        return formatterList;
+    }
+
+    public static String formatResidentsToString(Plot p) {
+        Collection<Resident> residents = p.getResidents();
+        String formattedList = null;
+        for(Resident r : residents) {
+            String toAdd = (p.hasOwner(r) ? EnumChatFormatting.RED : EnumChatFormatting.WHITE) + r.getPlayerName();
+            if(formattedList == null)
+                formattedList = toAdd;
+            else
+                formattedList += ", " + toAdd;
+        }
+        return formattedList;
     }
 
     /**
@@ -202,11 +165,24 @@ public class Formatter {
     public static String formatTownsToString(Collection<Town> towns) {
         String formattedList = null;
         for(Town town : towns) {
-            String toAdd = "\n" + EnumChatFormatting.GREEN + town.getName() + ":" + EnumChatFormatting.GRAY + " { " + EnumChatFormatting.RED + "Mayor: " + EnumChatFormatting.WHITE + (town.getMayor() != null ? town.getMayor().getPlayerName() : EnumChatFormatting.RED + "SERVER ADMINS") + EnumChatFormatting.GRAY + "}";
+            String toAdd = EnumChatFormatting.GREEN + town.getName() + ":" + EnumChatFormatting.GRAY + " { " + EnumChatFormatting.RED + "Mayor: " + EnumChatFormatting.WHITE + (town.getMayor() != null ? town.getMayor().getPlayerName() : EnumChatFormatting.RED + "SERVER ADMINS") + EnumChatFormatting.GRAY + " }";
             if(formattedList == null)
                 formattedList = toAdd;
             else
-                formattedList = "\n" + toAdd;
+                formattedList += "\\n" + toAdd;
+        }
+        return formattedList;
+    }
+
+    public static String formatTownsToString(Resident res) {
+        Collection<Town> towns = res.getTowns();
+        String formattedList = null;
+        for(Town town : towns) {
+            String toAdd = (res.getSelectedTown() == town ? EnumChatFormatting.GREEN : EnumChatFormatting.WHITE) + town.getName();
+            if(formattedList == null)
+                formattedList = toAdd;
+            else
+                formattedList += ", " + toAdd;
         }
         return formattedList;
     }
@@ -236,22 +212,4 @@ public class Formatter {
         list.add(res);
         return formatOwnersToString(list);
     }
-
-
-    public static String blockInfoFormat = " ---------- Block ----------\nTown: %1$s\nDimension: %2$s\nLocation: %3$s";
-
-    public static String nationInfoFormat = " ---------- %1$s  ----------\nCapital: TODO";
-
-    public static String plotInfoFormat = " ---------- %1$s  ----------\nTown: %2$s\nDimension: %3$s\nStart: %4$s\nEnd: %5$s";
-
-    public static String rankInfoFormat = " ---------- %1$s  ----------\nPermissions: %2$s";
-
-    public static String residentInfoFormat = " ---------- %1$s  ----------";
-
-    public static String townInfoFormat =
-            EnumChatFormatting.GRAY + " -------- " + EnumChatFormatting.GREEN + " %1$s " + EnumChatFormatting.GREEN + " (" + EnumChatFormatting.WHITE + "R:%2$s" + EnumChatFormatting.GREEN + " |" + EnumChatFormatting.WHITE + " C:%3$s/%4$s " + EnumChatFormatting.GREEN + "| " + EnumChatFormatting.WHITE + "P:%5$s" + EnumChatFormatting.GREEN + ")" + EnumChatFormatting.GRAY + " --------" +
-                    "\n" + EnumChatFormatting.GRAY + "Residents: %6$s" +
-                    "\n" + EnumChatFormatting.GRAY + "Ranks: %7$s";
-
-
 }
