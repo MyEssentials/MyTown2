@@ -1,11 +1,9 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
-import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.api.interfaces.IHasFlags;
 import mytown.config.Config;
 import mytown.core.Localization;
-import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
@@ -18,8 +16,6 @@ import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
@@ -44,7 +40,8 @@ public abstract class Commands {
     /**
      * Calls the method to which the set of arguments corresponds to.
      */
-    public static boolean callSubFunctions(ICommandSender sender, List<String> args, List<String> subCommands, String callersPermNode) {
+    public static boolean callSubFunctions(ICommandSender sender, List<String> args, String callersPermNode) {
+        List<String> subCommands = CommandManager.getSubCommandsList(callersPermNode);
         if (args.size() > 0) {
             for (String s : subCommands) {
                 String name = CommandManager.commandNames.get(s);
@@ -56,33 +53,16 @@ public abstract class Commands {
             }
         }
 
-        sendHelpMessage(sender, callersPermNode);
-
+        sendHelpMessage(sender, callersPermNode, null);
         return false;
-    }
-
-
-    public static void sendHelpMessage(ICommandSender sender, String permissionBase) {
-        List<String> scList = CommandManager.getSubCommandsList(permissionBase);
-        String command = null;
-        for (String s = permissionBase; s != null; s = CommandManager.getParentPermNode(s)) {
-            if (command == null)
-                command = CommandManager.commandNames.get(s);
-            else
-                command = new StringBuilder(command).insert(0, CommandManager.commandNames.get(s) + " ").toString();
-        }
-        sendMessageBackToSender(sender, "/" + command + ": ");
-        for (String s : scList) {
-            sendMessageBackToSender(sender, "   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
-        }
     }
 
     /**
      * Sends the help message for the permission node with the arguments.
      */
-    public static void sendHelpMessageWithArgs(ICommandSender sender, List<String> args, String permBase) {
+    public static void sendHelpMessage(ICommandSender sender, String permBase, List<String> args) {
         String node;
-        if (args.size() < 1) {
+        if (args == null || args.size() == 0) {
             //If no arguments are provided then we check for the base permission
             node = permBase;
         } else {
@@ -91,14 +71,17 @@ public abstract class Commands {
 
 
         String command = "/" + CommandManager.commandNames.get(permBase);
-        String prevNode = permBase;
-        for (String s : args) {
-            String t = CommandManager.getSubCommandNode(s, prevNode);
-            if (t != null) {
-                command += " " + s;
-                prevNode = t;
-            } else
-                break;
+
+        if(args != null) {
+            String prevNode = permBase;
+            for (String s : args) {
+                String t = CommandManager.getSubCommandNode(s, prevNode);
+                if (t != null) {
+                    command += " " + s;
+                    prevNode = t;
+                } else
+                    break;
+            }
         }
 
         sendMessageBackToSender(sender, command);

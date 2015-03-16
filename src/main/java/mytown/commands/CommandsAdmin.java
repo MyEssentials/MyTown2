@@ -7,7 +7,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
-import mytown.core.Localization;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
@@ -42,8 +41,8 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd",
             alias = {"ta", "townadmin"},
             opsOnlyAccess = true)
-    public static void townAdminCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd");
+    public static void townAdminCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd");
     }
 
     @CommandNode(
@@ -51,8 +50,8 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.config",
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
-    public static void configCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.config");
+    public static void configCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.config");
     }
 
     @CommandNode(
@@ -182,8 +181,8 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.setextra",
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
-    public static void setExtraCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.setextra");
+    public static void setExtraCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.setextra");
     }
 
     @CommandNode(
@@ -247,8 +246,8 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true,
             players = false)
-    public static void dbCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.db");
+    public static void dbCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.db");
     }
 
     @CommandNode(
@@ -273,8 +272,8 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.perm",
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
-    public static void permCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.perm");
+    public static void permCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.perm");
     }
 
     @CommandNode(
@@ -282,8 +281,8 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.perm.town",
             parentName = "mytown.adm.cmd.perm",
             nonPlayers = true)
-    public static void permTownCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.perm.town");
+    public static void permTownCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.perm.town");
     }
 
     @CommandNode(
@@ -342,7 +341,7 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.perm.town.whitelist",
             parentName = "mytown.adm.cmd.perm.town",
             completionKeys = {"townCompletion", "flagCompletionWhitelist"})
-    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
             throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
@@ -361,8 +360,8 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.perm.wild",
             parentName = "mytown.adm.cmd.perm",
             nonPlayers = true)
-    public static void permWildCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.perm.wild");
+    public static void permWildCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.perm.wild");
     }
 
     @CommandNode(
@@ -457,7 +456,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
-        sendHelpMessageWithArgs(sender, args, "mytown.adm.cmd");
+        sendHelpMessage(sender, "mytown.adm.cmd", args);
     }
 
     @CommandNode(
@@ -465,8 +464,8 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.cost",
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
-    public static void costCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.adm.cmd.cost");
+    public static void costCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.cost");
     }
 
     @CommandNode(

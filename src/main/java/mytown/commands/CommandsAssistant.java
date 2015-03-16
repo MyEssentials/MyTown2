@@ -10,7 +10,6 @@ import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
@@ -95,8 +94,8 @@ public class CommandsAssistant extends Commands {
             name = "blocks",
             permission = "mytown.cmd.assistant.blocks",
             parentName = "mytown.cmd")
-    public static void blocksCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.blocks");
+    public static void blocksCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.assistant.blocks");
     }
 
     @CommandNode(
@@ -122,16 +121,16 @@ public class CommandsAssistant extends Commands {
             name = "perm",
             permission = "mytown.cmd.assistant.perm",
             parentName = "mytown.cmd")
-    public static void permCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.perm");
+    public static void permCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.assistant.perm");
     }
 
     @CommandNode(
             name = "town",
             permission = "mytown.cmd.assistant.perm.town",
             parentName = "mytown.cmd.assistant.perm")
-    public static void permTownCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.perm.town");
+    public static void permTownCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.assistant.perm.town");
     }
 
     @CommandNode(
@@ -159,7 +158,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.perm.town.whitelist",
             parentName = "mytown.cmd.assistant.perm.town",
             completionKeys = {"flagCompletionWhitelist"})
-    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args) {
         if (args.size() == 0)
             throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
@@ -306,8 +305,8 @@ public class CommandsAssistant extends Commands {
             name = "perm",
             permission = "mytown.cmd.assistant.ranks.perm",
             parentName = "mytown.cmd.everyone.ranks")
-    public static void ranksPermCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.ranks.perm");
+    public static void ranksPermCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.assistant.ranks.perm");
     }
 
     @CommandNode(
@@ -363,15 +362,15 @@ public class CommandsAssistant extends Commands {
             name = "limit",
             permission = "mytown.cmd.assistant.plot.limit",
             parentName = "mytown.cmd.everyone.plot")
-    public static void plotLimitCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.assistant.plot.limit");
+    public static void plotLimitCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.assistant.plot.limit");
     }
 
     @CommandNode(
             name = "show",
             permission = "mytown.cmd.assistant.plot.limit.show",
             parentName = "mytown.cmd.everyone.plot.limit")
-    public static void plotLimitShowCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
+    public static void plotLimitShowCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));

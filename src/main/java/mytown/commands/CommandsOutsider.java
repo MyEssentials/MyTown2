@@ -3,23 +3,20 @@ package mytown.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-import mytown.MyTown;
+
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandNode;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.entities.TownBlock;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
-import mytown.util.UtilEconomy;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 /**
  * Created by AfterWind on 9/9/2014.
@@ -183,8 +180,8 @@ public class CommandsOutsider extends Commands {
             name = "friends",
             permission = "mytown.cmd.outsider.friends",
             parentName = "mytown.cmd")
-    public static void friendsCommand(ICommandSender sender, List<String> args, List<String> subCommands) {
-        callSubFunctions(sender, args, subCommands, "mytown.cmd.outsider.friends");
+    public static void friendsCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.outsider.friends");
     }
 
     @CommandNode(
@@ -281,7 +278,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
-        sendHelpMessageWithArgs(sender, args, "mytown.cmd");
+        sendHelpMessage(sender, "mytown.cmd", args);
     }
 
     @CommandNode(

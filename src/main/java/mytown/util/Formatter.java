@@ -140,9 +140,6 @@ public class Formatter {
 
     /**
      * Formats a list of ranks to a String that is then sent to the player.
-     *
-     * @param ranks
-     * @return
      */
     public static String formatRanksToString(Collection<Rank> ranks) {
 
@@ -161,7 +158,7 @@ public class Formatter {
     }
 
     /**
-     * Formats a rank to String with colo(u)r
+     * Formats a rank to String with color
      *
      * @param rank
      * @return
