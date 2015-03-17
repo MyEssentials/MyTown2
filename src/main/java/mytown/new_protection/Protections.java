@@ -6,6 +6,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.config.Config;
+import mytown.core.Localization;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
@@ -154,21 +155,26 @@ public class Protections {
         }
     }
 
-
-    // ---- Forge 1236 - Events ----
-
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerAttackEntityEvent(AttackEntityEvent ev) {
-        // TODO: More wilderness goes here
-        Town town = MyTownUtils.getTownAtPosition(ev.target.dimension, ev.target.chunkCoordX, ev.target.chunkCoordZ);
-        if (town != null) {
-            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-            if (!town.checkPermission(res, FlagType.protectedEntities, ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)) {
+        TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.target.dimension, ev.target.chunkCoordX, ev.target.chunkCoordZ);
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        if (block == null) {
+            if(!Wild.getInstance().checkPermission(res, FlagType.protectedEntities)) {
+                for(Protection prot : protections) {
+                    if(prot.isEntityProtected(ev.target.getClass())) {
+                        ev.setCanceled(true);
+                        res.sendMessage(FlagType.protectedEntities.getLocalizedProtectionDenial());
+                    }
+                }
+            }
+        } else {
+            if (!block.getTown().checkPermission(res, FlagType.protectedEntities, ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ)) {
                 for (Protection prot : protections) {
                     if (prot.isEntityProtected(ev.target.getClass())) {
                         ev.setCanceled(true);
-                        res.protectionDenial(LocalizationProxy.getLocalization().getLocalization("mytown.protection.entityCruelty"), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ))));
+                        res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.target.dimension, (int) ev.target.posX, (int) ev.target.posY, (int) ev.target.posZ))));
                     }
                 }
             }
@@ -190,11 +196,11 @@ public class Protections {
     /**
      * Checks against any type of block placement
      */
-    public boolean onAnyBlockPlacement(final EntityPlayer player, ItemStack itemInHand, Block block, final int dimensionId, final int x, final int y, final int z) {
-        TownBlock tblock = DatasourceProxy.getDatasource().getBlock(dimensionId, x >> 4, z >> 4);
+    public boolean onAnyBlockPlacement(final EntityPlayer player, ItemStack itemInHand, Block blockType, final int dimensionId, final int x, final int y, final int z) {
+        TownBlock block = DatasourceProxy.getDatasource().getBlock(dimensionId, x >> 4, z >> 4);
         final Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
 
-        if (tblock == null) {
+        if (block == null) {
             if (!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
                 res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
                 return true;
@@ -209,25 +215,25 @@ public class Protections {
                 }
             }
         } else {
-            if (!tblock.getTown().checkPermission(res, FlagType.modifyBlocks, dimensionId, x, y, z)) {
-                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(tblock.getTown().getOwnersAtPosition(dimensionId, x, y, z))));
+            if (!block.getTown().checkPermission(res, FlagType.modifyBlocks, dimensionId, x, y, z)) {
+                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(dimensionId, x, y, z))));
                 return true;
             } else {
                 // If it has permission, then check nearby
                 List<Town> nearbyTowns = MyTownUtils.getTownsInRange(dimensionId, x, z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
-                    if (tblock.getTown() != t && !t.checkPermission(res, FlagType.modifyBlocks)) {
+                    if (block.getTown() != t && !t.checkPermission(res, FlagType.modifyBlocks)) {
                         res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), Formatter.formatOwnerToString(t.getMayor()));
                         return true;
                     }
                 }
             }
-            if (res.hasTown(tblock.getTown()) && block instanceof ITileEntityProvider) {
+            if (res.hasTown(block.getTown()) && block instanceof ITileEntityProvider) {
                 if(itemInHand != null){
                     TileEntity te = ((ITileEntityProvider) block).createNewTileEntity(DimensionManager.getWorld(dimensionId), itemInHand.getItemDamage());
                     if (te != null) {
                         Class<? extends TileEntity> clsTe = te.getClass();
-                        ProtectionUtils.addToBlockWhitelist(clsTe, dimensionId, x, y, z, tblock.getTown());
+                        ProtectionUtils.addToBlockWhitelist(clsTe, dimensionId, x, y, z, block.getTown());
                     }
                 }
             }
@@ -240,7 +246,17 @@ public class Protections {
     public void onEntityInteract(EntityInteractEvent ev) {
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
         ItemStack currStack = ev.entityPlayer.getHeldItem();
-        if (currStack != null) {
+        if (currStack == null) {
+            if(!Wild.getInstance().checkPermission(res, FlagType.protectedEntities)) {
+                for (Protection prot : protections) {
+                    if (prot.isEntityProtected(ev.target.getClass())) {
+                        res.sendMessage(FlagType.protectedEntities.getLocalizedProtectionDenial());
+                        ev.setCanceled(true);
+                        return;
+                    }
+                }
+            }
+        } else {
             for (Protection prot : protections) {
                 if (prot.checkEntityRightClick(currStack, res, ev.target)) {
                     ev.setCanceled(true);
@@ -248,6 +264,7 @@ public class Protections {
                 }
             }
         }
+
     }
 
     @SuppressWarnings("unchecked")
@@ -396,20 +413,25 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void onItemPickup(EntityItemPickupEvent ev) {
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
         TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.entityPlayer.dimension, ev.entityPlayer.chunkCoordX, ev.entityPlayer.chunkCoordZ);
         if (block != null) {
-            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-            Town town = block.getTown();
-            if (!town.checkPermission(res, FlagType.pickupItems, ev.item.dimension, (int) ev.item.posX, (int) ev.item.posY, (int) ev.item.posZ)) {
-                if (!res.hasTown(town)) {
-                    //TODO: Maybe centralise this too
-                    if (itemPickupCounter == 0) {
-                        res.protectionDenial(FlagType.pickupItems.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(ev.item.dimension, (int) ev.item.posX, (int) ev.item.posY, (int) ev.item.posZ))));
-                        itemPickupCounter = 100;
-                    } else
-                        itemPickupCounter--;
-                    ev.setCanceled(true);
-                }
+            if (!block.getTown().checkPermission(res, FlagType.pickupItems, ev.item.dimension, (int) ev.item.posX, (int) ev.item.posY, (int) ev.item.posZ)) {
+                if (itemPickupCounter == 0) {
+                    res.protectionDenial(FlagType.pickupItems.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.item.dimension, (int) ev.item.posX, (int) ev.item.posY, (int) ev.item.posZ))));
+                    itemPickupCounter = 100;
+                } else
+                    itemPickupCounter--;
+                ev.setCanceled(true);
+            }
+        } else {
+            if(!Wild.getInstance().checkPermission(res, FlagType.pickupItems)) {
+                if (itemPickupCounter == 0) {
+                    res.sendMessage(FlagType.pickupItems.getLocalizedProtectionDenial());
+                    itemPickupCounter = 100;
+                } else
+                    itemPickupCounter--;
+                ev.setCanceled(true);
             }
         }
     }
@@ -418,32 +440,35 @@ public class Protections {
     public void onLivingAttack(LivingAttackEvent ev) {
         if(ev.entityLiving instanceof EntityPlayer && ev.source.getSourceOfDamage() instanceof EntityPlayer) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.entityLiving.dimension, ev.entityLiving.chunkCoordX, ev.entityLiving.chunkCoordZ);
+            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.source.getEntity());
             if(block != null) {
-                Boolean pvpValue = (Boolean)block.getTown().getValueAtCoords(ev.entityLiving.dimension, (int)ev.entityLiving.posX, (int)ev.entityLiving.posY, (int)ev.entityLiving.posZ, FlagType.pvp);
-                if(!pvpValue) {
+                if(!block.getTown().checkPermission(res, FlagType.pvp, ev.entityLiving.dimension, (int)ev.entityLiving.posX, (int)ev.entityLiving.posY, (int)ev.entityLiving.posZ)) {
                     ev.setCanceled(true);
-                    Resident res = DatasourceProxy.getDatasource().getOrMakeResident((EntityPlayer)ev.source.getSourceOfDamage());
                     res.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.entityLiving.dimension, (int) ev.entityLiving.posX, (int) ev.entityLiving.posY, (int) ev.entityLiving.posZ))));
+                }
+            } else {
+                if(!Wild.getInstance().checkPermission(res, FlagType.pvp)) {
+                    ev.setCanceled(true);
+                    res.sendMessage(FlagType.pvp.getLocalizedProtectionDenial());
                 }
             }
         }
     }
 
-    /*
-
-    */
-
     @SubscribeEvent
     public void onBucketFill(FillBucketEvent ev) {
-        Town town = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
-        if(town != null) {
-            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-            if(!town.checkPermission(res, FlagType.useItems, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
-                res.protectionDenial(FlagType.useItems.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ))));
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
+        if(block == null) {
+            if(!Wild.getInstance().checkPermission(res, FlagType.useItems)) {
+                res.sendMessage(FlagType.useItems.getLocalizedProtectionDenial());
+                ev.setCanceled(true);
+            }
+        } else {
+            if(!block.getTown().checkPermission(res, FlagType.useItems, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
+                res.protectionDenial(FlagType.useItems.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ))));
                 ev.setCanceled(true);
             }
         }
     }
-
-
 }
