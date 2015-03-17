@@ -355,7 +355,6 @@ public class Protection {
         for(SegmentBlock segment : segmentsBlocks) {
             if(segment.theClass.isAssignableFrom(blockType.getClass())) {
                 if(segment.flag == FlagType.accessBlocks || segment.flag == FlagType.activateBlocks) {
-                    MyTown.instance.log.info("Found block: " + blockType.getUnlocalizedName());
                     TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
                     if(block == null) {
                         if(!Wild.getInstance().checkPermission(res, segment.flag)) {
