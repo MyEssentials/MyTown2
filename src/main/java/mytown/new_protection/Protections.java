@@ -316,8 +316,14 @@ public class Protections {
 
         // Activate and access check here
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+            for(Protection protection : protections) {
+                if(protection.checkBlockRightClick(res, new BlockPos(x, y, z, ev.world.provider.dimensionId))) {
+                    ev.setCanceled(true);
+                    return;
+                }
+            }
 
-            TileEntity te = ev.world.getTileEntity(x, y, z);
+            //TileEntity te = ev.world.getTileEntity(x, y, z);
 
             // DEV: Developement only
                 /*
@@ -325,28 +331,29 @@ public class Protections {
                     MyTown.instance.log.info("Found tile with name " + te.toString() + " on block " + ev.world.getBlock(x, y, z).getUnlocalizedName());
                 }
                 */
-            TownBlock tblock = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, x >> 4, z >> 4);
+
 
             // If player is trying to open an inventory
+            /*
             if (te instanceof IInventory) {
-                if (tblock == null) {
+                if (block == null) {
                     if (!Wild.getInstance().checkPermission(res, FlagType.accessBlocks)) {
                         res.sendMessage(FlagType.accessBlocks.getLocalizedProtectionDenial());
                         ev.setCanceled(true);
                     }
                 } else {
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.accessBlocks))
+                    if (block.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.accessBlocks))
                         return;
 
                     // Checking if a player can access the block here
-                    if (!tblock.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                        res.protectionDenial(FlagType.accessBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z))));
+                    if (!block.getTown().checkPermission(res, FlagType.accessBlocks, ev.world.provider.dimensionId, x, y, z)) {
+                        res.protectionDenial(FlagType.accessBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z))));
                         ev.setCanceled(true);
                     }
                 }
             } else {
                 // If player is trying to "activate" block
-                if (tblock == null) {
+                if (block == null) {
                     if (ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z), ev.world.getBlockMetadata(x, y, z))) {
                         if (!Wild.getInstance().checkPermission(res, FlagType.activateBlocks)) {
                             res.sendMessage(FlagType.activateBlocks.getLocalizedProtectionDenial());
@@ -355,32 +362,35 @@ public class Protections {
                         }
                     }
                 } else {
-                    if (tblock.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.activateBlocks))
+                    if (block.getTown().hasBlockWhitelist(ev.world.provider.dimensionId, x, y, z, FlagType.activateBlocks))
                         return;
 
                     if(ProtectionUtils.checkActivatedBlocks(ev.world.getBlock(x, y, z), ev.world.getBlockMetadata(x, y, z))) {
-                        if (!tblock.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                            res.protectionDenial(FlagType.activateBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z))));
+                        if (!block.getTown().checkPermission(res, FlagType.activateBlocks, ev.world.provider.dimensionId, x, y, z)) {
+                            res.protectionDenial(FlagType.activateBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z))));
                             ev.setCanceled(true);
                             return;
                         }
                     }
                 }
             }
+            */
+            /*
+            TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.entity.dimension, x >> 4, z >> 4);
 
             // Other right click actions (placing itemFrames)
-            if(tblock == null) {
+            if(block == null) {
                 if(!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
                     res.sendMessage(FlagType.modifyBlocks.getLocalizedProtectionDenial());
                     ev.setCanceled(true);
                 }
             } else {
-                if(!tblock.getTown().checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, x, y, z)) {
-                    res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(tblock.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z))));
+                if(!block.getTown().checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, x, y, z)) {
+                    res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, x, y, z))));
                     ev.setCanceled(true);
                 }
-
             }
+            */
         }
     }
 

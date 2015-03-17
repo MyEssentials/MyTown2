@@ -74,14 +74,17 @@ public class JSONParser {
     private static void createModel() {
         List<Segment> segments = new ArrayList<Segment>();
 
-        segments.add(new SegmentBlock(net.minecraft.block.BlockButton.class, new Getters(), null, 0));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockDoor.class, new Getters(), null, 0));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockLever.class, new Getters(), null, 0));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockFenceGate.class, new Getters(), null, 0));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockDragonEgg.class, new Getters(), null, 0));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockCake.class, new Getters(), null, 0));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockTrapDoor.class, new Getters(), null, 0));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockJukebox.class, new Getters(), null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockButton.class, new Getters(), FlagType.activateBlocks, null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockDoor.class, new Getters(), FlagType.activateBlocks, null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockLever.class, new Getters(), FlagType.activateBlocks, null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockFenceGate.class, new Getters(), FlagType.activateBlocks, null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockDragonEgg.class, new Getters(), FlagType.activateBlocks, null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockCake.class, new Getters(), FlagType.activateBlocks, null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockTrapDoor.class, new Getters(), FlagType.activateBlocks, null, 0));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockJukebox.class, new Getters(), FlagType.activateBlocks, null, 0));
+
+        segments.add(new SegmentBlock(net.minecraft.block.BlockContainer.class, new Getters(), FlagType.accessBlocks, null, 0));
+
         segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityMob.class, new Getters(), null, EntityType.hostile));
         segments.add(new SegmentEntity(net.minecraft.entity.EntityAgeable.class, new Getters(), null, EntityType.passive));
         Getters getters = new Getters();

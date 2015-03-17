@@ -1,5 +1,6 @@
 package mytown.new_protection.segment;
 
+import mytown.entities.flag.FlagType;
 import mytown.new_protection.segment.getter.Getters;
 
 /**
@@ -8,8 +9,9 @@ import mytown.new_protection.segment.getter.Getters;
  */
 public class SegmentBlock extends Segment {
     public int meta;
-    public SegmentBlock(Class<?> theClass, Getters getters, String conditionString, int meta) {
+    public SegmentBlock(Class<?> theClass, Getters getters, FlagType flag, String conditionString, int meta) {
         super(theClass, getters, conditionString);
         this.meta = meta;
+        this.flag = flag;
     }
 }

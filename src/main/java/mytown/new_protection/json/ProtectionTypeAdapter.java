@@ -61,7 +61,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.beginObject();
             out.name("class").value(segment.theClass.getName());
             out.name("type").value("block");
-            out.name("flag").value(segment.flag == null ? FlagType.activateBlocks.toString() : segment.flag.toString());
+            out.name("flag").value(segment.flag.toString());
             if(segment.conditionString != null)
                 out.name("condition").value(StringUtils.join(segment.conditionString, " "));
             for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
@@ -283,8 +283,10 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                         throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
                                     }
                                 } else if (type.equals("block")) {
+                                    if (flag == null)
+                                        throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
                                     try {
-                                        segment = new SegmentBlock(Class.forName(clazz), getters, condition, meta);
+                                        segment = new SegmentBlock(Class.forName(clazz), getters, flag, condition, meta);
                                     } catch (ClassNotFoundException ex) {
                                         throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " in invalid!");
                                     }

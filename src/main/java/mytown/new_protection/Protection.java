@@ -1,6 +1,7 @@
 package mytown.new_protection;
 
 import mytown.MyTown;
+import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
@@ -22,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
@@ -341,6 +343,35 @@ public class Protection {
                 }
             }
         }
+        return false;
+    }
+
+    /**
+     * Checking right click actions on blocks.
+     */
+    public boolean checkBlockRightClick(Resident res, BlockPos bp) {
+        Block blockType = DimensionManager.getWorld(bp.dim).getBlock(bp.x, bp.y, bp.z);
+
+        for(SegmentBlock segment : segmentsBlocks) {
+            if(segment.theClass.isAssignableFrom(blockType.getClass())) {
+                if(segment.flag == FlagType.accessBlocks || segment.flag == FlagType.activateBlocks) {
+                    MyTown.instance.log.info("Found block: " + blockType.getUnlocalizedName());
+                    TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
+                    if(block == null) {
+                        if(!Wild.getInstance().checkPermission(res, segment.flag)) {
+                            res.sendMessage(segment.flag.getLocalizedProtectionDenial());
+                            return true;
+                        }
+                    } else {
+                        if(!block.getTown().checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
+                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z)));
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
         return false;
     }
 
