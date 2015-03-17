@@ -23,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
@@ -160,14 +161,27 @@ public class Protection {
                 }
                 try {
                     if (segment.checkCondition(item)) {
-                        Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
-                        if (town != null && !town.checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
-                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z))));
-                            if (segment.flag == FlagType.modifyBlocks && segment.onAdjacent) {
-                                //DimensionManager.getWorld(bp.dim).setBlock(bp.x, bp.y, bp.z, Blocks.air);
-                                //MyTown.instance.log.info("Block deleted!");
+                        if(segment.getters.hasValue("range")) {
+                            int range = segment.getRange(item);
+                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox(bp.x - range, bp.z - range, bp.x + range, bp.z + range);
+                            for(ChunkPos chunk : chunks) {
+                                Town town = MyTownUtils.getTownAtPosition(bp.dim, chunk.getX(), chunk.getZ());
+                                if (town != null && !town.checkPermission(res, segment.flag)) {
+                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
+                                    return true;
+                                }
                             }
-                            return true;
+
+                        } else {
+                            Town town = MyTownUtils.getTownAtPosition(bp.dim, bp.x >> 4, bp.z >> 4);
+                            if (town != null && !town.checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
+                                res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z))));
+                                if (segment.flag == FlagType.modifyBlocks && segment.onAdjacent) {
+                                    //DimensionManager.getWorld(bp.dim).setBlock(bp.x, bp.y, bp.z, Blocks.air);
+                                    //MyTown.instance.log.info("Block deleted!");
+                                }
+                                return true;
+                            }
                         }
                     }
                 } catch (Exception ex) {
@@ -187,15 +201,38 @@ public class Protection {
      * Checking item usage for right click on entity
      */
     public boolean checkEntityRightClick(ItemStack item, Resident res, Entity entity) {
+        for(Iterator<SegmentEntity> it = segmentsEntities.iterator(); it.hasNext();) {
+            SegmentEntity segment = it.next();
+            if(segment.type == EntityType.passive && segment.theClass.isAssignableFrom(entity.getClass())) {
+                Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
+                if(town != null && !town.checkPermission(res, FlagType.protectedEntities, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
+                    res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
+                    return true;
+                }
+            }
+        }
+
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
             if(segment.type == ItemType.rightClickEntity && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
                 try {
                     if (segment.checkCondition(item)) {
-                        Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
-                        if (town != null && !town.checkPermission(res, segment.flag, entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))) {
-                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
-                            return true;
+                        if(segment.getters.hasValue("range")) {
+                            int range = segment.getRange(item);
+                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)entity.posX - range, (int)entity.posZ - range, (int)entity.posX + range, (int)entity.posZ + range);
+                            for(ChunkPos chunk : chunks) {
+                                Town town = MyTownUtils.getTownAtPosition(entity.dimension, chunk.getX(), chunk.getZ());
+                                if (town != null && !town.checkPermission(res, segment.flag)) {
+                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
+                                    return true;
+                                }
+                            }
+                        } else {
+                            Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
+                            if (town != null && !town.checkPermission(res, segment.flag, entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))) {
+                                res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
+                                return true;
+                            }
                         }
                     }
                 } catch (Exception ex) {
@@ -205,16 +242,6 @@ public class Protection {
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
                     }
-                }
-            }
-        }
-        for(Iterator<SegmentEntity> it = segmentsEntities.iterator(); it.hasNext();) {
-            SegmentEntity segment = it.next();
-            if(segment.type == EntityType.passive && segment.theClass.isAssignableFrom(entity.getClass())) {
-                Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
-                if(town != null && !town.checkPermission(res, FlagType.protectedEntities, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
-                    res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
-                    return true;
                 }
             }
         }
@@ -232,10 +259,22 @@ public class Protection {
 
                 try {
                     if (segment.checkCondition(item)) {
-                        Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
-                        if (town != null && !town.checkPermission(res, segment.flag, entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))) {
-                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
-                            return true;
+                        if(segment.getters.hasValue("range")) {
+                            int range = segment.getRange(item);
+                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)entity.posX - range, (int)entity.posZ - range, (int)entity.posX + range, (int)entity.posZ + range);
+                            for(ChunkPos chunk : chunks) {
+                                Town town = MyTownUtils.getTownAtPosition(entity.dimension, chunk.getX(), chunk.getZ());
+                                if (town != null && !town.checkPermission(res, segment.flag)) {
+                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
+                                    return true;
+                                }
+                            }
+                        } else {
+                            Town town = MyTownUtils.getTownAtPosition(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
+                            if (town != null && !town.checkPermission(res, segment.flag, entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))) {
+                                res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
+                                return true;
+                            }
                         }
                     }
                 } catch (Exception ex) {

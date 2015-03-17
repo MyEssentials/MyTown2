@@ -54,6 +54,10 @@ public class Getters {
     public Map<String, List<Caller>> getCallersMap() { return ImmutableMap.copyOf(callersMap); }
     public Map<String, Object> getConstantsMap() { return ImmutableMap.copyOf(constantsMap); }
 
+    public boolean hasValue(String key) {
+        return callersMap.containsKey(key) || constantsMap.containsKey(key);
+    }
+
     /**
      * From a list of Callers it tries to get a value of type with all its getters calling on the instance.
      * OR It simply gets a constant available in the constantsMap.
