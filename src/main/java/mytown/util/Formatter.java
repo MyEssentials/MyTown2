@@ -2,6 +2,7 @@ package mytown.util;
 
 import mytown.core.utils.chat.JsonMessageBuilder;
 import mytown.entities.*;
+import mytown.entities.flag.Flag;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -206,5 +207,18 @@ public class Formatter {
         List<Resident> list = new ArrayList<Resident>();
         list.add(res);
         return formatResidentsToString(list);
+    }
+
+    public static String formatFlagsToString(Collection<Flag> flags) {
+        String formattedFlagList = null;
+        for (Flag flag : flags) {
+            if (formattedFlagList == null) {
+                formattedFlagList = "";
+            } else {
+                formattedFlagList += "\\n";
+            }
+            formattedFlagList += flag;
+        }
+        return formattedFlagList == null ? EnumChatFormatting.RED + "NO FLAGS TO CONFIGURE" : formattedFlagList;
     }
 }

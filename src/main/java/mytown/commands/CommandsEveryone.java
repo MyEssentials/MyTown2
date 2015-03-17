@@ -112,23 +112,9 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.perm.town.list",
             parentName = "mytown.cmd.assistant.perm.town")
     public static void listPermCommand(ICommandSender sender, List<String> args) {
-
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-
-        String formattedFlagList = null;
-        for (Flag flag : town.getFlags()) {
-            if (formattedFlagList == null) {
-                formattedFlagList = "";
-            } else {
-                formattedFlagList += '\n';
-            }
-            formattedFlagList += flag;
-        }
-        if (formattedFlagList != null)
-            res.sendMessage(formattedFlagList);
-        else
-            res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
+        res.sendMessage(Formatter.formatFlagsToString(town.getFlags()));
     }
 
     public static class Plots {
@@ -169,23 +155,9 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.perm.plot.list",
                 parentName = "mytown.cmd.everyone.perm.plot")
         public static void permPlotListCommand(ICommandSender sender, List<String> args) {
-
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-
-            String formattedFlagList = null;
-            for (Flag flag : plot.getFlags()) {
-                if (formattedFlagList == null) {
-                    formattedFlagList = "";
-                } else {
-                    formattedFlagList += '\n';
-                }
-                formattedFlagList += flag;
-            }
-            if (formattedFlagList != null)
-                res.sendMessage(formattedFlagList);
-            else
-                res.sendMessage(getLocal().getLocalization("mytown.cmd.err.flag.list"));
+            res.sendMessage(Formatter.formatFlagsToString(plot.getFlags()));
         }
 
         @CommandNode(

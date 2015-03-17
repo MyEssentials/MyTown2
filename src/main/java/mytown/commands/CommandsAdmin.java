@@ -23,6 +23,7 @@ import mytown.handlers.SafemodeHandler;
 import mytown.new_protection.json.JSONParser;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
+import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
@@ -298,20 +299,7 @@ public class CommandsAdmin extends Commands {
         }
 
         Town town = getTownFromName(args.get(0));
-
-        String formattedFlagList = null;
-        for (Flag flag : town.getFlags()) {
-            if (formattedFlagList == null) {
-                formattedFlagList = "";
-            } else {
-                formattedFlagList += '\n';
-            }
-            formattedFlagList += flag;
-        }
-        if (formattedFlagList != null)
-            sendMessageBackToSender(sender, formattedFlagList);
-        else
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.err.flag.list"));
+        sendMessageBackToSender(sender, Formatter.formatFlagsToString(town.getFlags()));
     }
 
     @CommandNode(
@@ -372,19 +360,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true,
             completionKeys = {"flagCompletion"})
     public static void permWildListCommand(ICommandSender sender, List<String> args) {
-        String formattedFlagList = null;
-        for (Flag flag : Wild.getInstance().getFlags()) {
-            if (formattedFlagList == null) {
-                formattedFlagList = "";
-            } else {
-                formattedFlagList += '\n';
-            }
-            formattedFlagList += flag;
-        }
-        if (formattedFlagList != null)
-            sendMessageBackToSender(sender, formattedFlagList);
-        else
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.err.flag.list"));
+        sendMessageBackToSender(sender, Formatter.formatFlagsToString(Wild.getInstance().getFlags()));
     }
 
     @CommandNode(
