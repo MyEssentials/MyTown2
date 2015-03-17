@@ -93,10 +93,12 @@ public class JSONParser {
         getters = new Getters();
         getters.addConstant("range", 5);
         segments.add(new SegmentEntity(net.minecraft.entity.item.EntityTNTPrimed.class, getters, null, EntityType.explosive));
+        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityItemFrame.class, new Getters(), null, EntityType.passive));
 
         segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.useItems, null, ItemType.rightClickBlock, true));
         segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.useItems, null, ItemType.rightClickEntity, false));
         segments.add(new SegmentItem(net.minecraft.item.ItemShears.class, new Getters(), FlagType.useItems, null, ItemType.rightClickEntity, false));
+        segments.add(new SegmentItem(net.minecraft.item.ItemHangingEntity.class, new Getters(), FlagType.useItems, null, ItemType.rightClickBlock, true));
 
         Protection protection = new Protection("Minecraft", segments);
         try {
