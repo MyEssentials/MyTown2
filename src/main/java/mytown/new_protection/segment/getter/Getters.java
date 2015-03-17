@@ -103,10 +103,6 @@ public class Getters {
                         // Return instantly since it can only be a number
                         lastInstance = getInfoFromFormula(caller.element, instance, parameter);
                         break forLoop;
-                    case value:
-                        // Return instantly since it can only be a constant
-                        lastInstance = Integer.parseInt(caller.element);
-                        break forLoop;
                     case nbt:
                         if(lastInstance instanceof TileEntity) {
                             NBTTagCompound nbt = new NBTTagCompound();
