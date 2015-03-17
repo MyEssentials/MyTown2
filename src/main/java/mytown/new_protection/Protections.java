@@ -128,7 +128,7 @@ public class Protections {
                 for (Protection prot : protections) {
                     if(prot.isEntityTracked(entity.getClass())) {
                         if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
-                            MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
+                            //MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
                             checkedEntities.remove(entity);
                             entity.setDead();
                         }

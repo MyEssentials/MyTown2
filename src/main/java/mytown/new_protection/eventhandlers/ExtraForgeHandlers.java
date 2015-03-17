@@ -2,7 +2,10 @@ package mytown.new_protection.eventhandlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import mytown.entities.Town;
+import mytown.entities.TownBlock;
+import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
+import mytown.proxies.DatasourceProxy;
 import mytown.util.ChunkPos;
 import mytown.util.MyTownUtils;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -29,12 +32,16 @@ public class ExtraForgeHandlers {
     public void onExplosion(ExplosionEvent.Start ev) {
         List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.explosionX - ev.explosion.explosionSize), (int)(ev.explosion.explosionZ - ev.explosion.explosionSize), (int)(ev.explosion.explosionX + ev.explosion.explosionSize), (int)(ev.explosion.explosionZ + ev.explosion.explosionSize));
         for(ChunkPos chunk : chunks) {
-            Town town = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
-            if(town != null) {
-                boolean explosionValue = (Boolean) town.getValue(FlagType.explosions);
-                if (!explosionValue) {
+            TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
+            if(block == null) {
+                if(!(Boolean)Wild.getInstance().getValue(FlagType.explosions)) {
                     ev.setCanceled(true);
-                    town.notifyEveryone(FlagType.explosions.getLocalizedTownNotification());
+                    return;
+                }
+            } else {
+                if (!(Boolean) block.getTown().getValue(FlagType.explosions)) {
+                    ev.setCanceled(true);
+                    block.getTown().notifyEveryone(FlagType.explosions.getLocalizedTownNotification());
                     return;
                 }
             }
