@@ -351,9 +351,8 @@ public class Protection {
      */
     public boolean checkBlockRightClick(Resident res, BlockPos bp) {
         Block blockType = DimensionManager.getWorld(bp.dim).getBlock(bp.x, bp.y, bp.z);
-
         for(SegmentBlock segment : segmentsBlocks) {
-            if(segment.theClass.isAssignableFrom(blockType.getClass())) {
+            if(segment.theClass.isAssignableFrom(blockType.getClass()) && (segment.meta == -1 || segment.meta == DimensionManager.getWorld(bp.dim).getBlockMetadata(bp.x, bp.y, bp.z))) {
                 if(segment.flag == FlagType.accessBlocks || segment.flag == FlagType.activateBlocks) {
                     TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
                     if(block == null) {
@@ -363,7 +362,7 @@ public class Protection {
                         }
                     } else {
                         if(!block.getTown().checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
-                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z)));
+                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z))));
                             return true;
                         }
                     }

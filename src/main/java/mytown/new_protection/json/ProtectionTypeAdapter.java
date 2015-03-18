@@ -62,6 +62,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.name("class").value(segment.theClass.getName());
             out.name("type").value("block");
             out.name("flag").value(segment.flag.toString());
+            out.name("meta").value(segment.meta);
             if(segment.conditionString != null)
                 out.name("condition").value(StringUtils.join(segment.conditionString, " "));
             for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
@@ -167,7 +168,6 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 in.beginArray();
                 MyTown.instance.log.info("   ------------------------------------------------------------");
                 while (in.hasNext()) {
-
                     Segment segment = null;
                     String clazz = null, type = null;
                     EntityType entityType = null;

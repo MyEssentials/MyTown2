@@ -1,6 +1,7 @@
 package mytown.new_protection.eventhandlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import mytown.MyTown;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
@@ -30,7 +31,7 @@ public class ExtraForgeHandlers {
      */
     @SubscribeEvent
     public void onExplosion(ExplosionEvent.Start ev) {
-        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.explosionX - ev.explosion.explosionSize), (int)(ev.explosion.explosionZ - ev.explosion.explosionSize), (int)(ev.explosion.explosionX + ev.explosion.explosionSize), (int)(ev.explosion.explosionZ + ev.explosion.explosionSize));
+        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.explosionX - ev.explosion.explosionSize - 2), (int)(ev.explosion.explosionZ - ev.explosion.explosionSize - 2), (int)(ev.explosion.explosionX + ev.explosion.explosionSize + 2), (int)(ev.explosion.explosionZ + ev.explosion.explosionSize + 2));
         for(ChunkPos chunk : chunks) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
             if(block == null) {
