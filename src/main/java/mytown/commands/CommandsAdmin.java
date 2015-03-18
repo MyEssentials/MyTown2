@@ -1,6 +1,7 @@
 package mytown.commands;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -27,9 +28,13 @@ import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
 
 /**
@@ -461,4 +466,45 @@ public class CommandsAdmin extends Commands {
             sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.cost.itemname", itemName));
         }
     }
+
+    @CommandNode(
+            name = "debug",
+            permission = "mytown.adm.cmd.debug",
+            parentName = "mytown.adm.cmd",
+            nonPlayers = false)
+    public static void debugCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.debug");
+    }
+
+    @CommandNode(
+            name = "itemClass",
+            permission = "mytown.adm.cmd.debug.item",
+            parentName = "mytown.adm.cmd.debug",
+            nonPlayers = false)
+    public static void debugItemCommand(ICommandSender sender, List<String> args) {
+        if(sender instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer)sender;
+            if(player.inventory.getCurrentItem() != null) {
+                List<Class> list = new ArrayList<Class>();
+                if(player.inventory.getCurrentItem().getItem() instanceof ItemBlock) {
+                    Block block = ((ItemBlock)player.inventory.getCurrentItem().getItem()).field_150939_a;
+                    list.add(block.getClass());
+                    if(block instanceof ITileEntityProvider) {
+                        list.add(((ITileEntityProvider) block).createNewTileEntity(DimensionManager.getWorld(0), 0).getClass());
+                    }
+                } else {
+                    list.add(player.inventory.getCurrentItem().getItem().getClass());
+                }
+
+                sendMessageBackToSender(sender, "For item: " + player.inventory.getCurrentItem().getDisplayName());
+                for(Class cls : list) {
+                    while (cls != Object.class) {
+                        sendMessageBackToSender(sender, cls.getName());
+                        cls = cls.getSuperclass();
+                    }
+                }
+            }
+        }
+    }
+
 }
