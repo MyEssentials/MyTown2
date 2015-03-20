@@ -228,9 +228,9 @@ public class Protections {
                     }
                 }
             }
-            if (res.hasTown(block.getTown()) && block instanceof ITileEntityProvider) {
+            if (res.hasTown(block.getTown()) && blockType instanceof ITileEntityProvider) {
                 if(itemInHand != null){
-                    TileEntity te = ((ITileEntityProvider) block).createNewTileEntity(DimensionManager.getWorld(dimensionId), itemInHand.getItemDamage());
+                    TileEntity te = ((ITileEntityProvider) blockType).createNewTileEntity(DimensionManager.getWorld(dimensionId), itemInHand.getItemDamage());
                     if (te != null) {
                         Class<? extends TileEntity> clsTe = te.getClass();
                         ProtectionUtils.addToBlockWhitelist(clsTe, dimensionId, x, y, z, block.getTown());
