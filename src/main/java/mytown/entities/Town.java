@@ -100,7 +100,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public boolean hasResident(Resident res) {
-        return residents.containsKey(res);
+        return res != null ? residents.containsKey(res) : false;
     }
 
     public boolean hasResident(String username) {
@@ -603,6 +603,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
                 //    return PEXCompat.getInstance().checkPermission(res, flagType.getBypassPermission()) || Utils.isOp(res);
                 //else
                     // Check, when PEX is not present, if player is OP
+
                     return Utils.isOp(res.getPlayer());
             }
         } else {

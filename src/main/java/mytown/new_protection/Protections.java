@@ -382,7 +382,7 @@ public class Protections {
 
     @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent ev) {
-        if(ev.entityLiving instanceof EntityPlayer && ev.source.getSourceOfDamage() instanceof EntityPlayer) {
+        if(ev.source.getEntity() instanceof EntityPlayer && ev.entityLiving instanceof EntityPlayer && ev.source.getSourceOfDamage() instanceof EntityPlayer) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.entityLiving.dimension, ev.entityLiving.chunkCoordX, ev.entityLiving.chunkCoordZ);
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.source.getEntity());
             if(block != null) {
