@@ -200,7 +200,7 @@ mytown.notification.enter.town=&cWelcome to %s!
 mytown.notification.enter.ownTown=&cWelcome back!
 
 mytown.notification.town.list=&7 Towns: \n&f%s
-mytown.notification.town.info=&7 --------  &a%s (&fR:%s &a|&f C:%s/%s &a| &fP:%s&) &7 -------- \n &7Residents:&f %s\n &7Ranks:&f %s
+mytown.notification.town.info=&7 --------  &a%s (&fR:%s &a|&f C:%s/%s &a| &fP:%s&a) &7 -------- \n &7Residents:&f %s\n &7Ranks:&f %s
 mytown.notification.plot.info=&7 --------  Plot: &a%s &7--------\n &7Residents: &f%s\n &7Borders: &9(%s, %s, %s)&7 --> &9(%s, %s, %s)
 mytown.notification.resident.info=&7 --------  Resident: &a%s &7--------\n &7Towns: &f%s\n &7Joined: &f%s\n &7Last online: &f%s
 mytown.notification.town.owners=&6 Owners: &c%s
