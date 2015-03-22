@@ -1,5 +1,6 @@
 package mytown.new_protection;
 
+import mytown.MyTown;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -96,6 +97,14 @@ public class ProtectionUtils {
         return false;
     }
 
+    public static boolean isTileEntityOwnable(Class<? extends TileEntity> clsTe) {
+        for(Protection protection : Protections.getInstance().getProtections()) {
+            if(protection.isTileEntityOwnable(clsTe))
+                return true;
+        }
+        return false;
+    }
+
     public static List<FlagType> getFlagsForTile(Class<? extends TileEntity> te) {
         List<FlagType> flags = new ArrayList<FlagType>();
         for(Protection protection : Protections.getInstance().getProtections()) {
@@ -123,5 +132,18 @@ public class ProtectionUtils {
             return getFlagsForTile(te.getClass()).contains(bw.getFlagType());
         }
         return true;
+    }
+
+    /**
+     * Method called by the ThreadPlacementCheck after it found a TileEntity
+     */
+    public static synchronized void addTileEntity(TileEntity te, Resident res) {
+        Protections.getInstance().activePlacementThreads--;
+        MyTown.instance.log.info("Added tile entity " + te.toString());
+        Protections.getInstance().ownedTileEntities.put(te, res);
+    }
+
+    public static synchronized void placementThreadTimeout() {
+        Protections.getInstance().activePlacementThreads--;
     }
 }

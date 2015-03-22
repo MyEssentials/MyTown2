@@ -48,6 +48,10 @@ public class Protections {
 
     public Map<TileEntity, Boolean> checkedTileEntities = new HashMap<TileEntity, Boolean>();
     public Map<Entity, Boolean> checkedEntities = new HashMap<Entity, Boolean>();
+
+    public Map<TileEntity, Resident> ownedTileEntities = new HashMap<TileEntity, Resident>();
+    public int activePlacementThreads = 0;
+
     public int maximalRange = 0;
 
     private List<Protection> protections = new ArrayList<Protection>();
@@ -145,8 +149,8 @@ public class Protections {
                 if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.isTileTracked(te.getClass())) {
                     if (prot.checkTileEntity(te)) {
                         MyTownUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
-                        //te.getBlockType().breakBlock(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, te.blockType, te.blockMetadata);
                         te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
+                        te.invalidate();
                         MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
                     }
                     checkedTileEntities.put(te, true);
@@ -196,9 +200,9 @@ public class Protections {
     /**
      * Checks against any type of block placement
      */
-    public boolean onAnyBlockPlacement(final EntityPlayer player, ItemStack itemInHand, Block blockType, final int dimensionId, final int x, final int y, final int z) {
+    public boolean onAnyBlockPlacement(EntityPlayer player, ItemStack itemInHand, Block blockType, int dimensionId, int x, int y, int z) {
         TownBlock block = DatasourceProxy.getDatasource().getBlock(dimensionId, x >> 4, z >> 4);
-        final Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
 
         if (block == null) {
             if (!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
@@ -228,6 +232,7 @@ public class Protections {
                     }
                 }
             }
+
             if (res.hasTown(block.getTown()) && blockType instanceof ITileEntityProvider) {
                 if(itemInHand != null){
                     TileEntity te = ((ITileEntityProvider) blockType).createNewTileEntity(DimensionManager.getWorld(dimensionId), itemInHand.getItemDamage());
@@ -235,6 +240,15 @@ public class Protections {
                         Class<? extends TileEntity> clsTe = te.getClass();
                         ProtectionUtils.addToBlockWhitelist(clsTe, dimensionId, x, y, z, block.getTown());
                     }
+                }
+            }
+        }
+        if(blockType instanceof ITileEntityProvider) {
+            if(itemInHand != null){
+                TileEntity te = ((ITileEntityProvider) blockType).createNewTileEntity(DimensionManager.getWorld(dimensionId), itemInHand.getItemDamage());
+                if (te != null && ProtectionUtils.isTileEntityOwnable(te.getClass())) {
+                    ThreadPlacementCheck thread = new ThreadPlacementCheck(res, x, y, z, dimensionId);
+                    thread.start();
                 }
             }
         }

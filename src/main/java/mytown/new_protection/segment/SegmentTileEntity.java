@@ -12,10 +12,12 @@ import net.minecraft.tileentity.TileEntity;
  */
 public class SegmentTileEntity extends Segment {
 
-    public SegmentTileEntity(Class<?> theClass, Getters getters, FlagType flag, String conditionString) {
-        // List 0 = x1, List 1 = y1 etc...
+    private boolean hasOwner = false;
+
+    public SegmentTileEntity(Class<?> theClass, Getters getters, FlagType flag, String conditionString, boolean hasOwner) {
         super(theClass, getters, conditionString);
         this.flag = flag;
+        this.hasOwner = true;
     }
 
     public int getX1(TileEntity te) {
@@ -48,5 +50,9 @@ public class SegmentTileEntity extends Segment {
         } catch (GetterException ex) {
             return te.zCoord + Config.defaultProtectionSize;
         }
+    }
+
+    public boolean hasOwner() {
+        return this.hasOwner;
     }
 }

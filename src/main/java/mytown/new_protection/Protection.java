@@ -423,6 +423,14 @@ public class Protection {
         return false;
     }
 
+    public boolean isTileEntityOwnable(Class<? extends TileEntity> te) {
+        for(SegmentTileEntity segment : segmentsTiles) {
+            if(segment.theClass.isAssignableFrom(te) && segment.hasOwner())
+                return true;
+        }
+        return false;
+    }
+
     /*  ---- Protection instance utilities ---- */
 
     private void disableSegment(Iterator<? extends Segment> it, Segment segment, String message) {

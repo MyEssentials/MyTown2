@@ -175,6 +175,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     String condition = null;
                     FlagType flag = null;
                     boolean isAdjacent = false;
+                    boolean hasOwner = false;
                     int meta = -1;
                     Getters getters = new Getters();
 
@@ -234,6 +235,12 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     continue;
                                 }
                             }
+                            if(type.equals("tileEntity")) {
+                                if(nextName.equals("hasOwner")) {
+                                    hasOwner = in.nextBoolean();
+                                    continue;
+                                }
+                            }
 
                             // If it gets here it means that it should be some extra data that will be used in checking something
                             if(in.peek() == JsonToken.BOOLEAN || in.peek() == JsonToken.NUMBER || in.peek() == JsonToken.STRING)
@@ -262,7 +269,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                             getters.removeGetter("zMax");
                                         }
 
-                                        segment = new SegmentTileEntity(Class.forName(clazz), getters, flag, condition);
+                                        segment = new SegmentTileEntity(Class.forName(clazz), getters, flag, condition, hasOwner);
                                     } catch (ClassNotFoundException ex) {
                                         throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
                                     }
