@@ -75,6 +75,10 @@ public class Protections {
         protections = new ArrayList<Protection>();
     }
 
+    public Resident getOwnerForTileEntity(TileEntity te) {
+        return this.ownedTileEntities.get(te);
+    }
+
 
     // ---- Main ticking method ----
 
@@ -143,19 +147,23 @@ public class Protections {
         }
 
         // TileEntity check
-        for (TileEntity te : (Iterable<TileEntity>) ev.world.loadedTileEntityList) {
-            //MyTown.instance.log.info("Checking tile: " + te.toString());
-            for (Protection prot : protections) {
-                if((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.isTileTracked(te.getClass())) {
-                    if (prot.checkTileEntity(te)) {
-                        MyTownUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
-                        te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
-                        te.invalidate();
-                        MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
+        if(activePlacementThreads == 0) {
+            for (TileEntity te : (Iterable<TileEntity>) ev.world.loadedTileEntityList) {
+                //MyTown.instance.log.info("Checking tile: " + te.toString());
+                for (Protection prot : protections) {
+                    if ((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.isTileTracked(te.getClass())) {
+                        if (prot.checkTileEntity(te)) {
+                            MyTownUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
+                            te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
+                            te.invalidate();
+                            MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
+                        }
+                        checkedTileEntities.put(te, true);
                     }
-                    checkedTileEntities.put(te, true);
                 }
             }
+        } else {
+            MyTown.instance.log.info("Active threads for placement: " + activePlacementThreads);
         }
     }
 
@@ -248,6 +256,7 @@ public class Protections {
                 TileEntity te = ((ITileEntityProvider) blockType).createNewTileEntity(DimensionManager.getWorld(dimensionId), itemInHand.getItemDamage());
                 if (te != null && ProtectionUtils.isTileEntityOwnable(te.getClass())) {
                     ThreadPlacementCheck thread = new ThreadPlacementCheck(res, x, y, z, dimensionId);
+                    activePlacementThreads++;
                     thread.start();
                 }
             }
@@ -365,6 +374,15 @@ public class Protections {
                 if(te != null)
                     ProtectionUtils.removeFromWhitelist(te.getClass(), ev.world.provider.dimensionId, ev.x, ev.y, ev.z, town);
             }
+        }
+
+        if (ev.block instanceof ITileEntityProvider) {
+            TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata);
+            if(te != null && ProtectionUtils.isTileEntityOwnable(te.getClass())) {
+                ownedTileEntities.remove(te);
+                MyTown.instance.log.info("Removed te " + te.toString());
+            }
+
         }
     }
 

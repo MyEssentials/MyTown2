@@ -138,9 +138,9 @@ public class ProtectionUtils {
      * Method called by the ThreadPlacementCheck after it found a TileEntity
      */
     public static synchronized void addTileEntity(TileEntity te, Resident res) {
+        Protections.getInstance().ownedTileEntities.put(te, res);
         Protections.getInstance().activePlacementThreads--;
         MyTown.instance.log.info("Added tile entity " + te.toString());
-        Protections.getInstance().ownedTileEntities.put(te, res);
     }
 
     public static synchronized void placementThreadTimeout() {

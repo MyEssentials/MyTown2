@@ -87,12 +87,23 @@ public class Protection {
                         List<ChunkPos> chunks = MyTownUtils.getChunksInBox(x1, z1, x2, z2);
                         for (ChunkPos chunk : chunks) {
                             TownBlock block = getDatasource().getBlock(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
-                            if (block == null) {
-                                if(!(Boolean)Wild.getInstance().getValue(segment.flag)) {
-                                    return true;
+                            if(block == null) {
+                                if(!(Boolean) Wild.getInstance().getValue(segment.flag)) {
+                                    if (segment.hasOwner()) {
+                                        Resident res = Protections.getInstance().getOwnerForTileEntity(te);
+                                        if (res == null || !Wild.getInstance().checkPermission(res, segment.flag))
+                                            return true;
+
+                                    } else {
+                                        return true;
+                                    }
                                 }
                             } else {
-                                if (!(Boolean) block.getTown().getValue(segment.flag) && !block.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
+                                if(segment.hasOwner()) {
+                                    Resident res = Protections.getInstance().getOwnerForTileEntity(te);
+                                    if (res == null || !block.getTown().checkPermission(res, segment.flag))
+                                        return true;
+                                } else if (!(Boolean) block.getTown().getValue(segment.flag) && !block.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
                                     block.getTown().notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
                                     return true;
                                 }
