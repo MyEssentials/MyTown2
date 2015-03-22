@@ -252,14 +252,14 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                         throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
                                     try {
                                         // Log if the segment is using default protection
-                                        if (getters.getCallersMap().get("X1") == null || getters.getCallersMap().get("X2") == null || getters.getCallersMap().get("Z1") == null || getters.getCallersMap().get("Z2") == null) {
-                                            MyTown.instance.log.info("   [Segment: " + clazz + "] Could not find one of the getters (X1, X2, Z1 or Z2). Using default protection size.");
+                                        if (getters.getCallersMap().get("xMin") == null || getters.getCallersMap().get("xMax") == null || getters.getCallersMap().get("zMin") == null || getters.getCallersMap().get("zMax") == null) {
+                                            MyTown.instance.log.info("   [Segment: " + clazz + "] Could not find one of the getters (xMin, xMax, zMin, zMax). Using default protection size.");
 
                                             // Removing all of them since it will only create problems if left there
-                                            getters.removeGetter("X1");
-                                            getters.removeGetter("X2");
-                                            getters.removeGetter("Z1");
-                                            getters.removeGetter("Z2");
+                                            getters.removeGetter("xMin");
+                                            getters.removeGetter("xMax");
+                                            getters.removeGetter("zMin");
+                                            getters.removeGetter("zMax");
                                         }
 
                                         segment = new SegmentTileEntity(Class.forName(clazz), getters, flag, condition);
