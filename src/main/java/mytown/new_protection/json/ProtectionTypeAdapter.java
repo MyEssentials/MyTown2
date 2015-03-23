@@ -200,6 +200,8 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             }
                             if (nextName.equals("flag")) {
                                 flag = FlagType.valueOf(in.nextString());
+                                if(flag != null && flag.getType() != Boolean.class)
+                                    throw new SegmentException("[Segment: " + clazz + "] Flag is not a boolean type. Non-boolean type flags (such as 'mobs') are not yet supported.");
                                 continue;
                             }
                             // Checking if clazz and type is not null before anything else.
