@@ -1,5 +1,6 @@
 package mytown.commands;
 
+import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.command.CommandManager;
@@ -50,16 +51,21 @@ public class CommandsAssistant extends Commands {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
+        boolean isClaimFar = false;
 
         if (town.getBlocks().size() >= town.getMaxBlocks())
             throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
             throw new MyTownCommandException("mytown.cmd.err.claim.already");
-        if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
-            throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
+        if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) {
+            if(!Config.allowFarClaims)
+                throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
+            isClaimFar = true;
+        }
+
         //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
 
-        makePayment(player, Config.costAmountClaim);
+        makePayment(player, isClaimFar ? Config.costAmountClaimFar : Config.costAmountClaim);
 
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)

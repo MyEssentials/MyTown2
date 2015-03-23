@@ -406,8 +406,7 @@ public class CommandsAdmin extends Commands {
         if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
             throw new MyTownCommandException("mytown.cmd.err.claim.already");
         if (!CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
-            throw new MyTownCommandException("mytown.cmd.err.farClaim.unimplemented");
-        //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
         TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
         if (block == null)
             throw new MyTownCommandException("Failed to create Block"); // TODO Localize
@@ -429,7 +428,7 @@ public class CommandsAdmin extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.unclaim.spawnPoint");
 
         getDatasource().deleteBlock(block);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, (block.getX() << 4) + 15, (block.getZ() << 4) + 15, town.getName()));
     }
 
     @CommandNode(

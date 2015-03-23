@@ -46,6 +46,9 @@ public class Config {
     @ConfigProperty(category = "towns", name = "modifiableRanks", comment = "If true residents with permission can modify the ranks of their towns. This feature hasn't been fully tested yet and it might cause problems!")
     public static boolean modifiableRanks = false;
 
+    @ConfigProperty(category = "towns", name = "allowFarClaims", comment = "If true people will be able to claim land anywhere for the price specified in the cost category.")
+    public static boolean allowFarClaims = false;
+
     @ConfigProperty(category = "residents", name = "teleportCooldown", comment = "The amount of time in server ticks for how long a player needs to wait between teleports.")
     public static int teleportCooldown = 200;
 
@@ -55,8 +58,11 @@ public class Config {
     @ConfigProperty(category = "cost", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town.")
     public static int costAmountMakeTown = 5;
 
-    @ConfigProperty(category = "cost", name = "costAmountClaim", comment = "The amount of the cost item you need to create a town.")
+    @ConfigProperty(category = "cost", name = "costAmountClaim", comment = "The amount of the cost item you need to claim a chunk.")
     public static int costAmountClaim = 3;
+
+    @ConfigProperty(category = "cost", name = "costAmountClaimFar", comment = "The amount of the cost item you need to claim a chunk that is not adjacent to the town.")
+    public static int costAmountClaimFar = 8;
 
     @ConfigProperty(category = "cost", name = "costAmountSpawn", comment = "The amount of the cost item you need to warp to the town's spawn point.")
     public static int costAmountSpawn = 0;

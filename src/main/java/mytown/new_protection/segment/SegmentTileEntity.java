@@ -17,7 +17,7 @@ public class SegmentTileEntity extends Segment {
     public SegmentTileEntity(Class<?> theClass, Getters getters, FlagType flag, String conditionString, boolean hasOwner) {
         super(theClass, getters, conditionString);
         this.flag = flag;
-        this.hasOwner = true;
+        this.hasOwner = hasOwner;
     }
 
     public int getX1(TileEntity te) {

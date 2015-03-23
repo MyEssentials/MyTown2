@@ -103,4 +103,11 @@ public class Segment {
         }
         return false;
     }
+
+    /**
+     * Gets the range of the area of effect of this thing, or 0 if none is specified.
+     */
+    public int getRange(Object object) {
+        return getters.hasValue("range") ? (Integer)getters.getValue("range", Integer.class, object, object) : 0;
+    }
 }

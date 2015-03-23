@@ -4,6 +4,7 @@ import mytown.new_protection.segment.enums.EntityType;
 import mytown.new_protection.segment.getter.Caller;
 import mytown.new_protection.segment.getter.Getters;
 import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -20,10 +21,4 @@ public class SegmentEntity extends Segment {
         super(theClass, getters, conditionString);
         this.type = type;
     }
-
-    /**
-     * Returns the range in which the entity should be checked (only for explosives so far)
-     */
-    public int getRange(Entity entity) { return (Integer)getters.getValue("range",  Integer.class, entity, null); }
-
 }
