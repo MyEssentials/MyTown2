@@ -92,6 +92,11 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    protected boolean loadBlockOwners() {
+        return false;
+    }
+
+    @Override
     public boolean saveTown(Town town) {
         log.debug("Saving Town %s", town.getName());
         if (MyTownUniverse.getInstance().hasTown(town)) { // Update
@@ -193,6 +198,11 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveWorld(int dim) {
+        return false;
+    }
+
+    @Override
+    public boolean saveBlockOwner(Resident res, int dim, int x, int y, int z) {
         return false;
     }
 
@@ -366,6 +376,11 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean removeRankPermission(Rank rank, String perm) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteAllBlockOwners() {
         return false;
     }
 

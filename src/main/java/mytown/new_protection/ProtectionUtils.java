@@ -16,6 +16,7 @@ import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by AfterWind on 12/1/2014.
@@ -134,13 +135,20 @@ public class ProtectionUtils {
         return true;
     }
 
+    public static void saveBlockOwnersToDB() {
+        for(Map.Entry<TileEntity, Resident> set : Protections.getInstance().ownedTileEntities.entrySet()) {
+            DatasourceProxy.getDatasource().saveBlockOwner(set.getValue(), set.getKey().getWorldObj().provider.dimensionId, set.getKey().xCoord, set.getKey().yCoord, set.getKey().zCoord);
+        }
+    }
+
     /**
      * Method called by the ThreadPlacementCheck after it found a TileEntity
      */
     public static synchronized void addTileEntity(TileEntity te, Resident res) {
         Protections.getInstance().ownedTileEntities.put(te, res);
-        Protections.getInstance().activePlacementThreads--;
-        MyTown.instance.log.info("Added tile entity " + te.toString());
+        if(Protections.getInstance().activePlacementThreads != 0)
+            Protections.getInstance().activePlacementThreads--;
+        //MyTown.instance.log.info("Added tile entity " + te.toString());
     }
 
     public static synchronized void placementThreadTimeout() {

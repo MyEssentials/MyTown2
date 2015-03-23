@@ -20,6 +20,7 @@ import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.Ticker;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
+import mytown.new_protection.ProtectionUtils;
 import mytown.new_protection.Protections;
 import mytown.new_protection.eventhandlers.ExtraForgeHandlers;
 import mytown.new_protection.json.JSONParser;
@@ -104,6 +105,8 @@ public class MyTown {
 
     @EventHandler
     public void serverStopping(FMLServerStoppingEvent ev) {
+        DatasourceProxy.getDatasource().deleteAllBlockOwners();
+        ProtectionUtils.saveBlockOwnersToDB();
         DatasourceProxy.stop();
     }
 

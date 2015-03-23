@@ -10,7 +10,9 @@ import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.new_protection.ProtectionUtils;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
@@ -589,6 +591,44 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
+    @Override
+    protected boolean loadBlockOwners() {
+        try {
+            PreparedStatement s = prepare("SELECT * FROM " + prefix + "BlockOwners", true);
+            ResultSet rs = s.executeQuery();
+            while(rs.next()) {
+                Resident res = MyTownUniverse.getInstance().getResident(rs.getString("resident"));
+                int dim = rs.getInt("dim");
+                int x = rs.getInt("x");
+                int y = rs.getInt("y");
+                int z = rs.getInt("z");
+
+                TileEntity te = DimensionManager.getWorld(dim).getTileEntity(x, y, z);
+                if(te == null) {
+                    log.error("Failed to find a TileEntity at position ("+ x +", "+ y +", "+ z +"| DIM: "+ dim +")" );
+                    /*
+                    PreparedStatement s2 = prepare("DELETE FROM BlockOwners WHERE dim=? AND x=? AND y=? AND z=?", false);
+                    s2.setInt(1, dim);
+                    s2.setInt(2, x);
+                    s2.setInt(3, y);
+                    s2.setInt(4, z);
+                    s2.execute();
+                    log.error("BlockOwner deleted!");
+                    */
+                    continue;
+                }
+                ProtectionUtils.addTileEntity(te, res);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to load block owners.");
+            return false;
+        }
+
+
+        return true;
+    }
+
     /* ----- Save ----- */
 
     @Override
@@ -1040,6 +1080,25 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
+    @Override
+    public boolean saveBlockOwner(Resident res, int dim, int x, int y, int z) {
+        try {
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "BlockOwners(resident, dim, x, y, z) VALUES(?, ?, ?, ?, ?)", false);
+            s.setString(1, res.getUUID().toString());
+            s.setInt(2, dim);
+            s.setInt(3, x);
+            s.setInt(4, y);
+            s.setInt(5, z);
+            s.executeUpdate();
+        } catch (SQLException e) {
+            log.error("Failed to save block owner.");
+        }
+
+
+        return true;
+    }
+
     /* ----- Link ----- */
 
     @Override
@@ -1480,13 +1539,23 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean deleteAllBlockOwners() {
+        try {
+            PreparedStatement s = prepare("DELETE FROM BlockOwners", false);
+            s.execute();
+        } catch (SQLException e) {
+            log.error("Failed to delete BlockOwners table!");
+            return false;
+        }
+        return true;
+    }
+
     /* ----- Checks ------ */
 
     @SuppressWarnings("unchecked")
     @Override
     protected boolean checkFlags() {
-
-
         // Checking if flag is supposed to exist and it doesn't or otherwise.
         for (Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
             for (FlagType type : FlagType.values()) {
@@ -1738,6 +1807,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
         updates.add(new DBUpdate("11.4.2014.1", "Add 'extraBlocks to residents", "ALTER TABLE " + prefix +
                 "Residents ADD extraBlocks INTEGER DEFAULT 0;"));
+        updates.add(new DBUpdate("3.22.2014.1", "Add 'BlockOwners table'", "CREATE TABLE IF NOT EXISTS " + prefix + "BlockOwners(" +
+                "resident CHAR(36), " +
+                "dim INT NOT NULL, " +
+                "x INT NOT NULL," +
+                "y INT NOT NULL," +
+                "z INT NOT NULL, " +
+                "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE)"));
     }
 
     /**

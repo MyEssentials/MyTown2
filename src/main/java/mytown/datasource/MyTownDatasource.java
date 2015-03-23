@@ -194,7 +194,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites();
+        return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites() && loadBlockOwners();
     }
 
     /**
@@ -228,6 +228,8 @@ public abstract class MyTownDatasource {
 
     protected abstract boolean loadTownInvites();
 
+    protected abstract boolean loadBlockOwners();
+
     /* ----- Save ----- */
 
     public abstract boolean saveTown(Town town);
@@ -259,6 +261,8 @@ public abstract class MyTownDatasource {
     public abstract boolean saveTownInvite(Resident res, Town town);
 
     public abstract boolean saveWorld(int dim);
+
+    public abstract boolean saveBlockOwner(Resident res, int dim, int x, int y, int z);
 
     /* ----- Link ----- */
 
@@ -333,6 +337,11 @@ public abstract class MyTownDatasource {
     public abstract boolean deleteWorld(int dim);
 
     public abstract boolean removeRankPermission(Rank rank, String perm);
+
+    /**
+     * Deletes everything from the BlockOwners table. No specific deletion is needed since coordinates are variable.
+     */
+    public abstract boolean deleteAllBlockOwners();
 
     /* ----- Checks ------ */
 

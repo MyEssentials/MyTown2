@@ -379,6 +379,7 @@ public class Protections {
         if (ev.block instanceof ITileEntityProvider) {
             TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata);
             if(te != null && ProtectionUtils.isTileEntityOwnable(te.getClass())) {
+                te = ev.world.getTileEntity(ev.x, ev.y, ev.z);
                 ownedTileEntities.remove(te);
                 MyTown.instance.log.info("Removed te " + te.toString());
             }
