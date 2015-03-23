@@ -111,19 +111,23 @@ mytown.cmd.err.ranks.perm.remove.failed=&cFailed to remove permission!
 mytown.cmd.usage.plot.rename=&3/t plot rename <name>
 mytown.cmd.usage.plot.add=&3/t plot add <owner|member> <resident>
 mytown.cmd.usage.plot.limit.set=&3/t plot limit set <limitNumber>
+mytown.cmd.usage.plot.remove=&3/t plot remove <resident>
+mytown.cmd.err.plot.remove.notInPlot=&cResident is not in plot!
+mytown.cmd.err.plot.add.alreadyInPlot=&cResident is already in plot!
 mytown.cmd.err.plot.start.failed=&cYour inventory is full!
 mytown.cmd.err.plot.failed=&cCreating plot failed!
 mytown.cmd.err.plot.alreadySelected=&cYou already selected!
 mytown.cmd.err.plot.selectionFailed=&cYou cannot make a plot outside the town!
 mytown.cmd.err.plot.notSelected=&cYou need to select 2 corners first!
 mytown.cmd.err.plot.notInPlot=&cYou are not standing in a plot!
-mytown.cmd.err.plot.notOwner=&cYou do not have permission for this plot, only owners can set flags, rename or delete this plot!
+mytown.cmd.err.plot.notOwner=&cYou do not have owner permissions for this plot!
 mytown.cmd.err.plot.limit=&cYou cannot make more plots than %s!
 mytown.cmd.err.plot.limit.toPlayer=&cPlayer %s can't be owner to any more plots!
 mytown.cmd.err.plot.tooSmall=&cSelection too small! Minimum area: %s. Minimum height: %s.
 mytown.cmd.err.plot.outside=&cSelection is outside of town!
 mytown.cmd.err.plot.insideOther=&cSelection is inside plot %s!
-mytown.cmd.err.plot.perm.set.noPermission=&cYou are not the plot owner!
+mytown.cmd.err.plot.perm.set.noPermission=&cYou are not this plot's owner!
+
 
 # /t perm
 mytown.adm.cmd.usage.perm.list=&3/ta perm list <townname>
@@ -268,6 +272,9 @@ mytown.notification.refund.inventory=&3%s %ss have been added to your inventory.
 mytown.notification.refund.wallet=&3%s%s have been added to your Wallet.
 mytown.notification.town.setExtra=&3%s extra blocks have been added to the town's max claims.
 mytown.notification.resident.setExtra=&3%s extra blocks have been added to the resident's max claims.
+mytown.notification.plot.sender.removed=&c%s has been removed from the plot.
+mytown.notification.plot.target.removed=&cYou have been removed from plot %s!
+
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)

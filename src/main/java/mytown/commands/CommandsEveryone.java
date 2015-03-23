@@ -234,7 +234,6 @@ public class CommandsEveryone extends Commands {
             getDatasource().savePlot(plot);
 
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
         }
 
         @CommandNode(
@@ -270,7 +269,6 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.plot.select.reset",
                 parentName = "mytown.cmd.everyone.plot.select")
         public static void plotSelectResetCommand(ICommandSender sender, List<String> args) {
-
             Resident res = getDatasource().getOrMakeResident(sender);
             res.resetSelection(true);
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.selectionReset");
@@ -321,11 +319,16 @@ public class CommandsEveryone extends Commands {
             if (!res.hasTown(town))
                 throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", res.getPlayerName(), town.getName());
 
-            if (!town.canResidentMakePlot(target)) {
-                throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
-            }
-
             Plot plot = getPlotAtResident(res);
+
+            if(!plot.hasOwner(res))
+                throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
+
+            if(plot.hasResident(target))
+                throw new MyTownCommandException("mytown.cmd.err.plot.add.alreadyInPlot");
+
+            if (!town.canResidentMakePlot(target))
+                throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
 
             getDatasource().linkResidentToPlot(target, plot, true);
 
@@ -345,6 +348,12 @@ public class CommandsEveryone extends Commands {
             Resident target = getResidentFromName(args.get(0));
             Plot plot = getPlotAtResident(res);
 
+            if(!plot.hasOwner(res))
+                throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
+
+            if(plot.hasResident(target))
+                throw new MyTownCommandException("mytown.cmd.err.plot.add.alreadyInPlot");
+
             getDatasource().linkResidentToPlot(target, plot, false);
 
             res.sendMessage(getLocal().getLocalization("mytown.notification.plot.member.sender.added", target.getPlayerName(), plot.getName()));
@@ -352,14 +361,35 @@ public class CommandsEveryone extends Commands {
         }
 
         @CommandNode(
+                name = "remove",
+                permission = "mytown.cmd.everyone.plot.remove",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotRemoveCommand(ICommandSender sender, List<String> args) {
+            if (args.size() < 1)
+                throw new MyTownWrongUsageException("mytown.cmd.usage.plot.remove");
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident target = getResidentFromName(args.get(0));
+            Plot plot = getPlotAtResident(res);
+
+            if(!plot.hasOwner(res))
+                throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
+
+            if(!plot.hasResident(target))
+                throw new MyTownCommandException("mytown.cmd.err.plot.remove.notInPlot");
+
+            getDatasource().unlinkResidentFromPlot(target, plot);
+
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.sender.removed", target.getPlayerName(), plot.getName()));
+            target.sendMessage(getLocal().getLocalization("mytown.notification.plot.target.removed", plot.getName()));
+        }
+
+            @CommandNode(
                 name = "info",
                 permission = "mytown.cmd.everyone.plot.info",
                 parentName = "mytown.cmd.everyone.plot")
         public static void plotInfoCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            if(plot == null)
-                throw new MyTownCommandException("mytown.cmd.err.plot.notInPlot");
             res.sendMessage(getLocal().getLocalization("mytown.notification.plot.info", plot.getName(), Formatter.formatResidentsToString(plot), plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ()));
         }
 
