@@ -415,18 +415,37 @@ public class Protections {
 
     @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent ev) {
-        if(ev.source.getEntity() instanceof EntityPlayer && ev.entityLiving instanceof EntityPlayer && ev.source.getSourceOfDamage() instanceof EntityPlayer) {
+        if(ev.source.getSourceOfDamage() != null) MyTown.instance.log.info("Got damage from: " + ev.source.getSourceOfDamage().getCommandSenderName());
+        if(ev.source.getEntity() != null) MyTown.instance.log.info("Got entity damage from: " + ev.source.getEntity().getCommandSenderName());
+        if(ev.entityLiving instanceof EntityPlayer) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.entityLiving.dimension, ev.entityLiving.chunkCoordX, ev.entityLiving.chunkCoordZ);
-            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.source.getEntity());
-            if(block != null) {
-                if(!block.getTown().checkPermission(res, FlagType.pvp, ev.entityLiving.dimension, (int)ev.entityLiving.posX, (int)ev.entityLiving.posY, (int)ev.entityLiving.posZ)) {
-                    ev.setCanceled(true);
-                    res.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.entityLiving.dimension, (int) ev.entityLiving.posX, (int) ev.entityLiving.posY, (int) ev.entityLiving.posZ))));
+            Resident target = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityLiving);
+            // If the entity that "shot" the source of damage is a Player (ex. an arrow shot by player)
+            if(ev.source.getEntity() != null && ev.source.getEntity() instanceof EntityPlayer) {
+                Resident source = DatasourceProxy.getDatasource().getOrMakeResident(ev.source.getEntity());
+                if(block != null) {
+                    if(!block.getTown().checkPermission(source, FlagType.pvp, ((EntityPlayer) ev.entityLiving).dimension, (int)((EntityPlayer) ev.entityLiving).posX, (int)((EntityPlayer) ev.entityLiving).posY, (int)((EntityPlayer) ev.entityLiving).posZ)) {
+                        ev.setCanceled(true);
+                        source.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(((EntityPlayer) ev.entityLiving).dimension, (int)((EntityPlayer) ev.entityLiving).posX, (int)((EntityPlayer) ev.entityLiving).posY, (int)((EntityPlayer) ev.entityLiving).posZ))));
+                    }
+                } else {
+                    if(!Wild.getInstance().checkPermission(source, FlagType.pvp)) {
+                        ev.setCanceled(true);
+                        source.sendMessage(FlagType.pvp.getLocalizedProtectionDenial());
+                    }
                 }
-            } else {
-                if(!Wild.getInstance().checkPermission(res, FlagType.pvp)) {
-                    ev.setCanceled(true);
-                    res.sendMessage(FlagType.pvp.getLocalizedProtectionDenial());
+            // If the entity that "shot" the source of damage is null or not a player check for specified entities that can bypass pvp flag
+            } else if(ev.source.getSourceOfDamage() != null && ProtectionUtils.canEntityTrespassPvp(ev.source.getSourceOfDamage().getClass())) {
+                if (block != null) {
+                    if (!(Boolean) block.getTown().getValue(FlagType.pvp)) {
+                        ev.setCanceled(true);
+                        target.sendMessage(FlagType.pvp.getLocalizedTownNotification());
+                    }
+                } else {
+                    if (!(Boolean)Wild.getInstance().getValue(FlagType.pvp)) {
+                        ev.setCanceled(true);
+                        target.sendMessage(FlagType.pvp.getLocalizedTownNotification());
+                    }
                 }
             }
         }

@@ -135,11 +135,22 @@ public class ProtectionUtils {
         return true;
     }
 
+    public static boolean canEntityTrespassPvp(Class<? extends Entity> entity) {
+        for(Protection protection : Protections.getInstance().getProtections()) {
+            if(protection.canEntityTrespassPvp(entity))
+                return true;
+        }
+        return false;
+    }
+
+
     public static void saveBlockOwnersToDB() {
         for(Map.Entry<TileEntity, Resident> set : Protections.getInstance().ownedTileEntities.entrySet()) {
             DatasourceProxy.getDatasource().saveBlockOwner(set.getValue(), set.getKey().getWorldObj().provider.dimensionId, set.getKey().xCoord, set.getKey().yCoord, set.getKey().zCoord);
         }
     }
+
+
 
     /**
      * Method called by the ThreadPlacementCheck after it found a TileEntity

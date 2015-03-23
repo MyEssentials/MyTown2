@@ -442,6 +442,15 @@ public class Protection {
         return false;
     }
 
+    public boolean canEntityTrespassPvp(Class<? extends Entity> entity) {
+        for(SegmentEntity segment : segmentsEntities) {
+            if(segment.theClass.isAssignableFrom(entity) && segment.type == EntityType.pvp) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /*  ---- Protection instance utilities ---- */
 
     private void disableSegment(Iterator<? extends Segment> it, Segment segment, String message) {

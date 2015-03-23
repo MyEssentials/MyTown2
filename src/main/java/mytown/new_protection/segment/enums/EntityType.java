@@ -16,5 +16,10 @@ public enum EntityType {
     /**
      * Anything that explodes.
      */
-    explosive
+    explosive,
+    /**
+     * Anything that can be fired by a player and attack another and it's trespassing the pvp flag.
+     * This does not apply to things like Arrows, Snowballs etc.
+     */
+    pvp
 }
