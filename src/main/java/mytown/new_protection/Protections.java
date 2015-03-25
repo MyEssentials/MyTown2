@@ -162,8 +162,6 @@ public class Protections {
                     }
                 }
             }
-        } else {
-            MyTown.instance.log.info("Active threads for placement: " + activePlacementThreads);
         }
     }
 

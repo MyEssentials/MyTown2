@@ -597,7 +597,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
         if (plot == null) {
-            if((Boolean) getValue(flagType)) {
+            if(!(Boolean) getValue(flagType)) {
                 if (!hasResident(res) && !residentHasFriendInTown(res) || (Boolean) getValue(FlagType.restrictedTownPerms)) {
                     return Utils.isOp(res.getPlayer());
                 }
