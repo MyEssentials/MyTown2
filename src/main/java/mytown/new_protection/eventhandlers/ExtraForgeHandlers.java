@@ -31,6 +31,8 @@ public class ExtraForgeHandlers {
      */
     @SubscribeEvent
     public void onExplosion(ExplosionEvent.Start ev) {
+        if(ev.world.isRemote)
+            return;
         List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.explosionX - ev.explosion.explosionSize - 2), (int)(ev.explosion.explosionZ - ev.explosion.explosionSize - 2), (int)(ev.explosion.explosionX + ev.explosion.explosionSize + 2), (int)(ev.explosion.explosionZ + ev.explosion.explosionSize + 2));
         for(ChunkPos chunk : chunks) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());

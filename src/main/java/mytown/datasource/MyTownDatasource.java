@@ -1,6 +1,7 @@
 package mytown.datasource;
 
 import com.mojang.authlib.GameProfile;
+import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.api.events.*;
 import mytown.core.utils.Log;

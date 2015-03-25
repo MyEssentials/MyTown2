@@ -7,6 +7,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.FlagsConfig;
@@ -63,6 +64,8 @@ public class MyTown {
         LocalizationProxy.load();
 
         JSONParser.folderPath = ev.getModConfigurationDirectory() + "/MyTown/protections";
+
+
         registerHandlers();
 
         // Add all the ModProxies

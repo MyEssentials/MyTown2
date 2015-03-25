@@ -169,15 +169,15 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true,
             completionKeys = {"residentCompletion", "townCompletion"})
     public static void remCommand(ICommandSender sender, List<String> args) {
-
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.rem");
 
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromName(args.get(1));
 
-        if (!town.hasResident(target))
+        if (!town.hasResident(target)) {
             throw new MyTownCommandException("mytown.adm.cmd.err.rem.resident", args.get(0), args.get(1));
+        }
 
         getDatasource().unlinkResidentFromTown(target, town);
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.resident.remove", args.get(0), args.get(1)));
