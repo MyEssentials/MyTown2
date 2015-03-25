@@ -100,7 +100,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public boolean hasResident(Resident res) {
-        return res != null ? residents.containsKey(res) : false;
+        return res != null && residents.containsKey(res);
     }
 
     public boolean hasResident(String username) {
@@ -597,14 +597,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
         if (plot == null) {
-            if (!(Boolean) getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
-                //if (MyTown.instance.isCauldron && BukkitCompat.getInstance().hasPEX())
-                    // Check if PEX has a permission bypass
-                //    return PEXCompat.getInstance().checkPermission(res, flagType.getBypassPermission()) || Utils.isOp(res);
-                //else
-                    // Check, when PEX is not present, if player is OP
-
+            if((Boolean) getValue(flagType)) {
+                if (!hasResident(res) && !residentHasFriendInTown(res) || (Boolean) getValue(FlagType.restrictedTownPerms)) {
                     return Utils.isOp(res.getPlayer());
+                }
             }
         } else {
             if (!(Boolean) plot.getValue(flagType) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
@@ -621,7 +617,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         if (flagType.getType() != Boolean.class)
             throw new RuntimeException("FlagType is not boolean!");
 
-        if (!(Boolean) getValue(flagType) && !hasResident(res) && !residentHasFriendInTown(res)) {
+        if (!(Boolean) getValue(flagType) && (!hasResident(res) && !residentHasFriendInTown(res) || (Boolean)getValue(FlagType.restrictedTownPerms))) {
             //TODO: Check for permission
             return Utils.isOp(res.getPlayer());
         }
