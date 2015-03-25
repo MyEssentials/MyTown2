@@ -114,7 +114,7 @@ public class CommandsEveryone extends Commands {
     public static void listPermCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        res.sendMessage(Formatter.formatFlagsToString(town.getFlags()));
+        res.sendMessage(Formatter.formatFlagsToString(town));
     }
 
     public static class Plots {
@@ -157,7 +157,7 @@ public class CommandsEveryone extends Commands {
         public static void permPlotListCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            res.sendMessage(Formatter.formatFlagsToString(plot.getFlags()));
+            res.sendMessage(Formatter.formatFlagsToString(plot));
         }
 
         @CommandNode(

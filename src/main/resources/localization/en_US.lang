@@ -35,7 +35,7 @@ mytown.cmd.err.notPositiveInteger=&cValue '%s' needs to be a positive integer!
  mytown.flag.protectedEntities=&3Allows interacting with entities.
  mytown.flag.useItems=&3Allows usage of items (eggs, buckets etc.)
  mytown.flag.pvp=&3Allows PVP - Player vs. Player
- mytown.flag.restrictedTownPerms=&3Gives residents permission outside their plots.
+ mytown.flag.restrictedTownPerms=&3Gives permission outside player's plots.
  mytown.flag.pumps=&3Allows outsiders to pump liquids from town.
  
  # Notify Town
@@ -75,7 +75,7 @@ mytown.cmd.usage.friends.remove=&c/t friends add <resident>
 mytown.cmd.err.claim.failed=&cFailed to claim chunk!
 mytown.cmd.err.claim.already=&cThis chunk has already been claimed!
 mytown.cmd.err.claim.notexist=&cThis block is not claimed by town %s!
-mytown.cmd.err.claim.far.notAllowed=&cYou can't claim chunks that are not adjacent to you town!
+mytown.cmd.err.claim.far.notAllowed=&cYou can't claim chunks that are not adjacent to your town!
 mytown.cmd.err.town.maxBlocks=&cYou have already claimed all your chunks!
 
 # /t unclaim

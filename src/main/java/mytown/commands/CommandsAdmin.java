@@ -304,7 +304,7 @@ public class CommandsAdmin extends Commands {
         }
 
         Town town = getTownFromName(args.get(0));
-        sendMessageBackToSender(sender, Formatter.formatFlagsToString(town.getFlags()));
+        sendMessageBackToSender(sender, Formatter.formatFlagsToString(town));
     }
 
     @CommandNode(
@@ -365,7 +365,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true,
             completionKeys = {"flagCompletion"})
     public static void permWildListCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, Formatter.formatFlagsToString(Wild.getInstance().getFlags()));
+        sendMessageBackToSender(sender, Formatter.formatFlagsToString(Wild.getInstance()));
     }
 
     @CommandNode(

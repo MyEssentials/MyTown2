@@ -93,9 +93,4 @@ public class Flag<T> {
         }
         return false;
     }
-
-    @Override
-    public String toString() {
-        return String.format(EnumChatFormatting.GRAY + "%s" + EnumChatFormatting.WHITE + "[" + EnumChatFormatting.GREEN + "%s" + EnumChatFormatting.WHITE + "]:" + EnumChatFormatting.GRAY + " %s", flagType.toString(), valueToString(), flagType.getLocalizedDescription());
-    }
 }

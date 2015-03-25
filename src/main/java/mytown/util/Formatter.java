@@ -1,8 +1,10 @@
 package mytown.util;
 
+import mytown.api.interfaces.IHasFlags;
 import mytown.core.utils.chat.JsonMessageBuilder;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -209,16 +211,40 @@ public class Formatter {
         return formatResidentsToString(list);
     }
 
-    public static String formatFlagsToString(Collection<Flag> flags) {
+    @SuppressWarnings("unchecked")
+    public static String formatFlagsToString(IHasFlags container) {
         String formattedFlagList = null;
-        for (Flag flag : flags) {
-            if (formattedFlagList == null) {
-                formattedFlagList = "";
-            } else {
-                formattedFlagList += "\\n";
+
+        for (Flag flag : container.getFlags()) {
+            if(flag.flagType.canTownsModify()) {
+                if (formattedFlagList == null) {
+                    formattedFlagList = "";
+                } else {
+                    formattedFlagList += "\\n";
+                }
+                formattedFlagList += formatFlagToString(flag, EnumChatFormatting.GREEN);
             }
-            formattedFlagList += flag;
         }
-        return formattedFlagList == null ? EnumChatFormatting.RED + "NO FLAGS TO CONFIGURE" : formattedFlagList;
+
+        String unconfigurableFlags = "";
+        for(FlagType flagType : FlagType.values()) {
+            if(!container.hasFlag(flagType) && (!(container instanceof Plot) || !flagType.isTownOnly()) && (!(container instanceof Wild) || flagType.isWildPerm())) {
+                unconfigurableFlags += "\\n" + formatFlagToString(new Flag(flagType, flagType.getDefaultValue()), EnumChatFormatting.RED);
+            }
+        }
+
+        if(formattedFlagList == null)
+            formattedFlagList = "";
+
+        if(!unconfigurableFlags.equals(""))
+            formattedFlagList += "\\n" + EnumChatFormatting.RED + "UNCONFIGURABLE FLAGS: " + unconfigurableFlags;
+
+        return formattedFlagList;
+    }
+
+    public static String formatFlagToString(Flag flag, EnumChatFormatting valueColor) {
+        return String.format(EnumChatFormatting.GRAY + "%s" + EnumChatFormatting.WHITE + "[" + valueColor + "%s" + EnumChatFormatting.WHITE + "]:" + EnumChatFormatting.GRAY + " %s", flag.flagType.toString(), flag.valueToString(), flag.flagType.getLocalizedDescription());
     }
 }
+
+
