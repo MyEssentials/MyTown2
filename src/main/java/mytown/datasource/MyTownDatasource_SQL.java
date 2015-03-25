@@ -1219,10 +1219,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean unlinkResidentFromPlot(Resident res, Plot plot) {
         try {
-            PreparedStatement s = prepare("DELETE FROM" + prefix + "ResidentsToPlots WHERE resident=? AND plotID=?", true);
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "ResidentsToPlots WHERE resident=? AND plotID=?", true);
             s.setString(1, res.getUUID().toString());
             s.setInt(2, plot.getDb_ID());
             s.executeUpdate();
+
+            plot.removeResident(res);
 
         } catch (SQLException e) {
             log.error("Failed to link " + res.getPlayerName() + " to plot " + plot.getName() + " in town " + plot.getTown().getName());
@@ -1234,7 +1236,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner) {
         try {
-            PreparedStatement s = prepare("UPDATE" + prefix + "ResidentsToPlots SET isOwner=? WHERE resident=? AND plotID=?", true);
+            PreparedStatement s = prepare("UPDATE " + prefix + "ResidentsToPlots SET isOwner=? WHERE resident=? AND plotID=?", true);
             s.setBoolean(1, isOwner);
             s.setString(2, res.getUUID().toString());
             s.setInt(3, plot.getDb_ID());

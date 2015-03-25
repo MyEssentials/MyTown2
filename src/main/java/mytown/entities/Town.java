@@ -598,7 +598,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
         if (plot == null) {
             if(!(Boolean) getValue(flagType)) {
-                if (!hasResident(res) && !residentHasFriendInTown(res) || (Boolean) getValue(FlagType.restrictedTownPerms)) {
+                if (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean) getValue(FlagType.restrictedTownPerms) && !(getMayor() == res))) {
                     return Utils.isOp(res.getPlayer());
                 }
             }
@@ -617,7 +617,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         if (flagType.getType() != Boolean.class)
             throw new RuntimeException("FlagType is not boolean!");
 
-        if (!(Boolean) getValue(flagType) && (!hasResident(res) && !residentHasFriendInTown(res) || (Boolean)getValue(FlagType.restrictedTownPerms))) {
+        if (!(Boolean) getValue(flagType) && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && !(getMayor() == res)))) {
             //TODO: Check for permission
             return Utils.isOp(res.getPlayer());
         }

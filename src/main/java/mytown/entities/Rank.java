@@ -49,7 +49,7 @@ public class Rank {
             return true;
         for (String p : permissions) {
             if (permission.contains(p)) {
-                MyTown.instance.log.info("Rank " + getName() + " doesn't contain " + permission + " but contains permission " + p);
+                //MyTown.instance.log.info("Rank " + getName() + " doesn't contain " + permission + " but contains permission " + p);
                 return true;
             }
         }
