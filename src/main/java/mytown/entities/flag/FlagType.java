@@ -41,13 +41,12 @@ public enum FlagType {
     modifyBlocks(Boolean.class, false, null, true, true, true, null, true),
 
     // Allows explosions.
-    explosions(Boolean.class, false, null, true, true, true, null),;
+    explosions(Boolean.class, false, null, true, true, true, null),
+
+    // Allows normal residents to have permission outside their claimed plots.
+    restrictedTownPerms(Boolean.class, false, null, false, false, true, null),;
 
     private Class<?> type;
-    private String descriptionKey;
-    private String protectionKey;
-    private String notifyKey;
-    private String bypassPerm;
     private Object[] allowedValues;
     private boolean townOnly;
     private Object defaultValue;
@@ -59,10 +58,6 @@ public enum FlagType {
 
     private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, boolean townOnly, String modRequired, boolean isWhitelistable) {
         this.type = type;
-        this.descriptionKey = "mytown.flag." + this.toString();
-        this.protectionKey = "mytown.protection." + this.toString();
-        this.notifyKey = "mytown.protection.notify." + this.toString();
-        this.bypassPerm = "mytown.protection.bypass." + this.toString();
         this.townOnly = townOnly;
         this.allowedValues = allowedValues;
         this.modRequired = modRequired;
@@ -95,7 +90,7 @@ public enum FlagType {
      * Returns the permission needed to bypass the protection.
      */
     public String getBypassPermission() {
-        return this.bypassPerm;
+        return "mytown.protection.bypass." + this.toString();
     }
 
     /**
@@ -141,21 +136,21 @@ public enum FlagType {
      * Gets the localized description
      */
     public String getLocalizedDescription() {
-        return LocalizationProxy.getLocalization().getLocalization(descriptionKey);
+        return LocalizationProxy.getLocalization().getLocalization("mytown.flag." + this.toString());
     }
 
     /**
      * Gets the localized message of when the flag denies an action of a player
      */
     public String getLocalizedProtectionDenial() {
-        return LocalizationProxy.getLocalization().getLocalization(protectionKey);
+        return LocalizationProxy.getLocalization().getLocalization("mytown.protection." + this.toString());
     }
 
     /**
      * Gets the localized message that is sent to all players on the town when something tried to bypass protection.
      */
     public String getLocalizedTownNotification() {
-        return LocalizationProxy.getLocalization().getLocalization(notifyKey);
+        return LocalizationProxy.getLocalization().getLocalization("mytown.protection.notify." + this.toString());
     }
 
     public boolean isWhitelistable() {

@@ -21,23 +21,21 @@ mytown.cmd.err.notPositiveInteger=&cValue '%s' needs to be a positive integer!
  mytown.protection.protectedEntities=&cDon't touch that!
  mytown.protection.useItems=&cYou cannot use items in here!
  mytown.protection.pvp=&cYou cannot attack this player!
- mytown.protection.entityCruelty=&cYou cannot attack this!
 
  mytown.protection.pumps=&cYou cannot pump from this area!
 
-
  # Flag Info
  mytown.flag.enter=&3Allows outsiders to enter.
- mytown.flag.activateBlocks=&3Usage of doors/buttons/etc.
- mytown.flag.accessBlocks=&3Access to blocks with GUIs.
- mytown.flag.modifyBlocks=&3Allows modifying land by outsiders.
- mytown.flag.pickupItems=&3Allows item pickup by outsiders.
- mytown.flag.explosions=&3Allows DA-BOOM-BOOM!
- mytown.flag.mobs=&3Controls mob spawning.
- mytown.flag.protectedEntities=&3Allows right clicking on entities.
+ mytown.flag.activateBlocks=&3Allows usage of doors/buttons/etc.
+ mytown.flag.accessBlocks=&3Allows right-clicking blocks.
+ mytown.flag.modifyBlocks=&3Allows modifying land.
+ mytown.flag.pickupItems=&3Allows item pickup.
+ mytown.flag.explosions=&3Allows explosions!
+ mytown.flag.mobs=&3Controls what kind of mobs are allowed to exist.
+ mytown.flag.protectedEntities=&3Allows interacting with entities.
  mytown.flag.useItems=&3Allows usage of items (eggs, buckets etc.)
- mytown.flag.pvp=&3PVP - Player vs. Player
-
+ mytown.flag.pvp=&3Allows PVP - Player vs. Player
+ mytown.flag.restrictedTownPerms=&3Gives residents permission outside their plots.
  mytown.flag.pumps=&3Allows outsiders to pump liquids from town.
  
  # Notify Town
