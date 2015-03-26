@@ -320,12 +320,12 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                         MyTown.instance.log.error("  [Segment: " + clazz + "] Segment was not properly initialized!");
                     else {
                         // Precheck for configurations
-                        if(segment instanceof SegmentEntity && ((SegmentEntity) segment).type == EntityType.explosive && Config.useExtraEvents)
-                            MyTown.instance.log.info("  [Segment:" + segment.theClass.getName() + "] Omitting segment because use of extra events is enabled.");
-                        else {
+                        //if(segment instanceof SegmentEntity && ((SegmentEntity) segment).type == EntityType.explosive && Config.useExtraEvents)
+                        //    MyTown.instance.log.info("  [Segment:" + segment.theClass.getName() + "] Omitting segment because use of extra events is enabled.");
+                        //else {
                             MyTown.instance.log.info("   Added segment for class: " + segment.theClass.getName());
                             segments.add(segment);
-                        }
+                        //}
                     }
                     MyTown.instance.log.info("   ------------------------------------------------------------");
                 }
@@ -353,6 +353,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             in.beginObject();
             String element = null;
             Caller.CallerType callerType = null;
+            Class<?> valueType = null;
 
             nextName = in.nextName();
             if(nextName.equals("element"))
@@ -360,6 +361,15 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             nextName = in.nextName();
             if(nextName.equals("type"))
                 callerType = Caller.CallerType.valueOf(in.nextString());
+            if(in.peek() != JsonToken.END_OBJECT) {
+                nextName = in.nextName();
+                if(nextName.equals("valueType"))
+                    try {
+                        valueType = Class.forName(in.nextString());
+                    } catch (ClassNotFoundException ex) {
+                        throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " the valueType specified does not exist.");
+                    }
+            }
 
             if(callerType == null)
                 throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " does not have a valid type.");
@@ -367,7 +377,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " does not have a value.");
 
             in.endObject();
-            callers.add(new Caller(element, callerType));
+            callers.add(new Caller(element, callerType, valueType));
         }
         in.endArray();
         return callers;

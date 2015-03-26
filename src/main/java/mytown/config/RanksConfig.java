@@ -34,6 +34,7 @@ public class RanksConfig {
         } else {
             readFile();
         }
+
     }
 
     private void writeFile() {

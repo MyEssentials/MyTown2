@@ -2,7 +2,9 @@ package mytown.new_protection.segment.getter;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
+import mytown.MyTown;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -150,7 +152,10 @@ public class Getters {
                         break;
                 }
             }
-            if(!returnType.isAssignableFrom(lastInstance.getClass()))
+            if(returnType == Integer.class)
+                lastInstance = tryConvert(lastInstance);
+
+            if(!returnType.isAssignableFrom(lastInstance.getClass()) || callerList.get(callerList.size() - 1).valueType != null && !callerList.get(callerList.size() - 1).valueType.isAssignableFrom(lastInstance.getClass()))
                 throw new GetterException("[Segment:"+ segmentName +"] Failed to get " + returnType.getSimpleName() + " type in getter: " + callerName);
             return lastInstance;
         } catch(NoSuchFieldException nfex) {
@@ -165,22 +170,41 @@ public class Getters {
     }
 
     /**
+     * Converts an Object that is Float, Double, Short or Long to an Integer type.
+     */
+    public Object tryConvert(Object obj) {
+        if(obj instanceof Float) {
+            return ((Float) obj).intValue();
+        } else if(obj instanceof Double) {
+            return ((Double) obj).intValue();
+        } else if(obj instanceof Long) {
+            return ((Long) obj).intValue();
+        } else if(obj instanceof Short)
+            return ((Short) obj).intValue();
+        return obj;
+    }
+
+    /**
      * Converts a formula that contains Getter identifiers to an (integer) value
      */
-    public int getInfoFromFormula(String formula, Object instance, Object parameter) {
-        int result = -1;
+    public Object getInfoFromFormula(String formula, Object instance, Object parameter) {
+        Object result = null;
 
         String[] elements = formula.split(" ");
 
         // Replace all the getters with proper numbers, assume getters that are invalid as being numbers
-        for(String element : elements) {
-            if(!element.equals("+") && !element.equals("-") && !element.equals("*") && !element.equals("/") && !element.equals("^")) {
-                int info = (Integer) getValue(element, Integer.class, instance, parameter);
+        for(int i = 0 ; i < elements.length; i++) {
+            //MyTown.instance.log.info("Trying to find identifier for '" + elements[i] + "'");
+            if(!elements[i].equals("+") && !elements[i].equals("-") && !elements[i].equals("*") && !elements[i].equals("/") && !elements[i].equals("^") && hasValue(elements[i])) {
+
+                Object info = getValue(elements[i], Object.class, instance, parameter);
                 // Replace all occurrences with the value that it got.
                 // Spaces are needed to not replace parts of other getters.
-                formula = formula.replace(" " + element + " ", " " + String.valueOf(info) + " ");
+                elements[i] = info.toString();
             }
         }
+
+        formula = Joiner.on(' ').join(elements);
 
         //MyTown.instance.log.info("Got formula at the end: " + formula);
         //MyTown.instance.log.info("Trying to parse it.");
@@ -188,10 +212,11 @@ public class Getters {
         Interpreter interpreter = new Interpreter();
         try {
             interpreter.eval("result = " + formula);
-            result = (Integer)interpreter.get("result");
+            result = interpreter.get("result");
         } catch (EvalError ex) {
             ex.printStackTrace();
         }
+
         //MyTown.instance.log.info("Returning: " + result);
         return result;
     }
