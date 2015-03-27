@@ -505,4 +505,21 @@ public class CommandsEveryone extends Commands {
         makePayment(res.getPlayer(), amount);
         getDatasource().updateTownBank(town, town.getBankAmount() + amount);
     }
+
+    @CommandNode(
+            name = "wild",
+            permission = "mytown.cmd.everyone.perm.wild",
+            parentName = "mytown.cmd.assistant.perm")
+    public static void permWildCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.everyone.perm.wild");
+    }
+
+    @CommandNode(
+            name = "list",
+            permission = "mytown.cmd.everyone.perm.wild.list",
+            parentName = "mytown.cmd.everyone.perm.wild")
+    public static void permWildListCommand(ICommandSender sender, List<String> args) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+        res.sendMessage(Formatter.formatFlagsToString(Wild.getInstance()));
+    }
 }
