@@ -11,54 +11,54 @@ public enum FlagType {
     // CONSTRUCTOR: class, value, allowedValues, wildPerm, defaultWildPerm, townOnly, mod, isWhitelistable <false>
 
     // Allows entering the area
-    enter(Boolean.class, true, null, false, true, false, null),
+    enter(Boolean.class, true, null, false, true, Property.all, null),
 
     // Allows opening GUIs and right-clicking TileEntities
-    accessBlocks(Boolean.class, false, null, true, true, false, null, true),
+    accessBlocks(Boolean.class, false, null, true, true, Property.all, null, true),
 
     // Allows pickup of items.
-    pickupItems(Boolean.class, true, null, true, true, false, null),
+    pickupItems(Boolean.class, true, null, true, true, Property.all, null),
 
     // Allows pvp
-    pvp(Boolean.class, false, null, true, true, false, null),
+    pvp(Boolean.class, false, null, true, true, Property.all, null),
 
     // Only the values in the array are allowed
     // Allows modifying which types of mods are allowed in the town.
-    mobs(String.class, "all", new String[]{"all", "hostiles", "none"}, true, "all", false, null),
+    mobs(String.class, "all", new String[]{"all", "hostiles", "none"}, true, "all", Property.all, null),
 
     // Allows outsiders to hurt passive and other types of entities.
-    protectedEntities(Boolean.class, false, null, true, true, false, null),
+    protectedEntities(Boolean.class, false, null, true, true, Property.all, null),
 
     // Allows the use of some items such as: Bucket, Spawn Eggs etc.
-    useItems(Boolean.class, false, null, true, true, false, null),
+    useItems(Boolean.class, false, null, true, true, Property.all, null),
 
     // Allows to activate blocks such as: Buttons, Doors etc.
-    activateBlocks(Boolean.class, false, null, true, true, false, null, true),
+    activateBlocks(Boolean.class, false, null, true, true, Property.all, null, true),
 
     // ---- Flags that don't go in plots. ----
 
     // Allows modifying blocks.
-    modifyBlocks(Boolean.class, false, null, true, true, true, null, true),
+    modifyBlocks(Boolean.class, false, null, true, true, Property.townOnly, null, true),
 
     // Allows explosions.
-    explosions(Boolean.class, false, null, true, true, true, null),
+    explosions(Boolean.class, false, null, true, true, Property.townOnly, null),
 
     // Allows normal residents to have permission outside their claimed plots.
-    restrictedTownPerms(Boolean.class, false, null, false, false, true, null),;
+    restrictedTownPerms(Boolean.class, false, null, false, false, Property.townOnly, null),;
 
     private Class<?> type;
     private Object[] allowedValues;
-    private boolean townOnly;
     private Object defaultValue;
+    private Property property;
     private boolean canTownsModify;
     private boolean isWhitelistable;
     private String modRequired;
     private boolean isWildPerm;
     private Object defaultWildPerm;
 
-    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, boolean townOnly, String modRequired, boolean isWhitelistable) {
+    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property, String modRequired, boolean isWhitelistable) {
         this.type = type;
-        this.townOnly = townOnly;
+        this.property = property;
         this.allowedValues = allowedValues;
         this.modRequired = modRequired;
         this.isWhitelistable = isWhitelistable;
@@ -68,8 +68,8 @@ public enum FlagType {
         this.defaultWildPerm = defaultWildPerm;
     }
 
-    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, boolean townOnly, String modRequired) {
-        this(type, defaultValue, allowedValues, wildPerm, defaultWildPerm, townOnly, modRequired, false);
+    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property, String modRequired) {
+        this(type, defaultValue, allowedValues, wildPerm, defaultWildPerm, property, modRequired, false);
     }
 
     /**
@@ -122,7 +122,7 @@ public enum FlagType {
     }
 
     public boolean isTownOnly() {
-        return townOnly;
+        return property == Property.townOnly;
     }
 
     /**
@@ -168,6 +168,11 @@ public enum FlagType {
         return false;
     }
 
+    public enum Property {
+        all,
+        townOnly,
+        plotOnly
+    }
 
 }
 
