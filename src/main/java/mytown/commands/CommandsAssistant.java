@@ -18,6 +18,7 @@ import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -54,10 +55,9 @@ public class CommandsAssistant extends Commands {
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
 
+        boolean isClaimFar = false;
+
         if(args.size() < 1) {
-
-            boolean isClaimFar = false;
-
             if (town.getBlocks().size() >= town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
             if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
@@ -79,11 +79,32 @@ public class CommandsAssistant extends Commands {
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
-            //if(!MyTownUtils.tryParseInt(args.get(0)))
-            //    throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
-            //int radius = Integer.parseInt(args.get(0));
-            //List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(player.posX - radius*16), )
+            if(!MyTownUtils.tryParseInt(args.get(0)))
+                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
+            int radius = Integer.parseInt(args.get(0));
+            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(player.posX - radius*16), (int)(player.posZ - radius*16), (int)(player.posX + radius*16), (int)(player.posZ + radius*16));
+            isClaimFar = true;
+
+            for(Iterator<ChunkPos> it = chunks.iterator(); it.hasNext();) {
+                ChunkPos chunk = it.next();
+                if(checkNearby(player.dimension, chunk.getX(), chunk.getZ(), town)) {
+                    isClaimFar = false;
+                }
+                if (getDatasource().hasBlock(player.dimension, chunk.getX(), chunk.getZ()))
+                    it.remove();
+            }
+
+            if (town.getBlocks().size() + chunks.size() > town.getMaxBlocks())
+                throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
+
+            makePayment(player, isClaimFar ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1): Config.costAmountClaim * chunks.size());
+
+            for(ChunkPos chunk : chunks) {
+                TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), town);
+                getDatasource().saveBlock(block);
+                res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+            }
         }
     }
 

@@ -77,7 +77,7 @@ mytown.cmd.err.claim.failed=&cFailed to claim chunk!
 mytown.cmd.err.claim.already=&cThis chunk has already been claimed!
 mytown.cmd.err.claim.notexist=&cThis block is not claimed by town %s!
 mytown.cmd.err.claim.far.notAllowed=&cYou can't claim chunks that are not adjacent to your town!
-mytown.cmd.err.town.maxBlocks=&cYou have already claimed all your chunks!
+mytown.cmd.err.town.maxBlocks=&cNot enough free slots for %s chunks!
 
 # /t unclaim
 mytown.cmd.err.unclaim.notInTown=&cThe block you want to unclaim is not in the town you've selected!

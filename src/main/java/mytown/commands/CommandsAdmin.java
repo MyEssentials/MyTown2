@@ -2,6 +2,7 @@ package mytown.commands;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -23,6 +24,7 @@ import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
 import mytown.new_protection.json.JSONParser;
 import mytown.proxies.LocalizationProxy;
+import mytown.util.ChunkPos;
 import mytown.util.Constants;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
@@ -401,17 +403,47 @@ public class CommandsAdmin extends Commands {
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromName(args.get(0));
 
-        if (town.getBlocks().size() >= town.getMaxBlocks())
-            throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
-        if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
-            throw new MyTownCommandException("mytown.cmd.err.claim.already");
-        if (!CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
-            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
-        TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
-        if (block == null)
-            throw new MyTownCommandException("Failed to create Block"); // TODO Localize
-        getDatasource().saveBlock(block);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+        if(args.size() < 2) {
+
+            if (town.getBlocks().size() >= town.getMaxBlocks())
+                throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
+            if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
+                throw new MyTownCommandException("mytown.cmd.err.claim.already");
+            if (!CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
+                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
+            TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+            if (block == null)
+                throw new MyTownCommandException("Failed to create Block"); // TODO Localize
+            getDatasource().saveBlock(block);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+        } else {
+            if(!MyTownUtils.tryParseInt(args.get(1)))
+                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+            int radius = Integer.parseInt(args.get(1));
+            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(player.posX - radius*16), (int)(player.posZ - radius*16), (int)(player.posX + radius*16), (int)(player.posZ + radius*16));
+            boolean isClaimFar = true;
+            for(Iterator<ChunkPos> it = chunks.iterator(); it.hasNext();) {
+                ChunkPos chunk = it.next();
+                if(CommandsAssistant.checkNearby(player.dimension, chunk.getX(), chunk.getZ(), town)) {
+                    isClaimFar = false;
+                }
+                if (getDatasource().hasBlock(player.dimension, chunk.getX(), chunk.getZ()))
+                    it.remove();
+            }
+            if(isClaimFar)
+                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
+
+            if (town.getBlocks().size() + chunks.size() > town.getMaxBlocks())
+                throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
+
+            for(ChunkPos chunk : chunks) {
+                TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), town);
+                getDatasource().saveBlock(block);
+                res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+            }
+        }
+
     }
 
     @CommandNode(
