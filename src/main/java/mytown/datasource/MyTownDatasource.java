@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.api.events.*;
+import mytown.config.Config;
 import mytown.core.utils.Log;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
@@ -111,6 +112,8 @@ public abstract class MyTownDatasource {
             // Linking resident to town
             if (!linkResidentToTown(creator, town, onCreationDefaultRank))
                 MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
+
+            saveTownBank(town, Config.defaultBankAmount);
         }
 
         TownEvent.fire(new TownEvent.TownCreateEvent(town));
@@ -195,7 +198,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites() && loadBlockOwners();
+        return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites() && loadBlockOwners() && loadTownBanks();
     }
 
     /**
@@ -231,6 +234,8 @@ public abstract class MyTownDatasource {
 
     protected abstract boolean loadBlockOwners();
 
+    protected abstract boolean loadTownBanks();
+
     /* ----- Save ----- */
 
     public abstract boolean saveTown(Town town);
@@ -265,6 +270,8 @@ public abstract class MyTownDatasource {
 
     public abstract boolean saveBlockOwner(Resident res, int dim, int x, int y, int z);
 
+    public abstract boolean saveTownBank(Town town, int amount);
+
     /* ----- Link ----- */
 
     /**
@@ -296,6 +303,8 @@ public abstract class MyTownDatasource {
     public abstract boolean unlinkResidentFromPlot(Resident res, Plot plot);
 
     public abstract boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner);
+
+    public abstract boolean updateTownBank(Town town, int amount);
 
     /* ----- Delete ----- */
 

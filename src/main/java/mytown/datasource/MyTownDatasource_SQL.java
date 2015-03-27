@@ -624,8 +624,23 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             log.error("Failed to load block owners.");
             return false;
         }
+        return true;
+    }
 
-
+    @Override
+    protected boolean loadTownBanks() {
+        try {
+            PreparedStatement s = prepare("SELECT * FROM " + prefix + "TownBanks", true);
+            ResultSet rs = s.executeQuery();
+            while(rs.next()) {
+                Town town = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
+                int amount = rs.getInt("amount");
+                town.setBankAmount(amount);
+            }
+        } catch (SQLException e) {
+            log.error("Failed to load town banks.");
+            return false;
+        }
         return true;
     }
 
@@ -1093,11 +1108,26 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.executeUpdate();
         } catch (SQLException e) {
             log.error("Failed to save block owner.");
+            return false;
         }
-
-
         return true;
     }
+
+    @Override
+    public boolean saveTownBank(Town town, int amount) {
+        try {
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "TownBanks VALUES(?, ?)", false);
+            s.setString(1, town.getName());
+            s.setInt(2, amount);
+            s.executeUpdate();
+            town.setBankAmount(amount);
+        } catch (SQLException e) {
+            log.error("Failed to save a town's bank.");
+            return false;
+        }
+        return true;
+    }
+
 
     /* ----- Link ----- */
 
@@ -1244,6 +1274,21 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             log.error("Failed to link " + res.getPlayerName() + " to plot " + plot.getName() + " in town " + plot.getTown().getName());
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateTownBank(Town town, int amount) {
+        try {
+            PreparedStatement s = prepare("UPDATE " + prefix + "TownBanks SET amount=? WHERE townName=?", false);
+            s.setInt(1, amount);
+            s.setString(2, town.getName());
+            s.executeUpdate();
+            town.setBankAmount(amount);
+        } catch (SQLException e) {
+            log.error("Failed to save a town's bank.");
             return false;
         }
         return true;
@@ -1809,13 +1854,23 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
         updates.add(new DBUpdate("11.4.2014.1", "Add 'extraBlocks to residents", "ALTER TABLE " + prefix +
                 "Residents ADD extraBlocks INTEGER DEFAULT 0;"));
-        updates.add(new DBUpdate("3.22.2014.1", "Add 'BlockOwners table'", "CREATE TABLE IF NOT EXISTS " + prefix + "BlockOwners(" +
+        updates.add(new DBUpdate("3.22.2014.1", "Add 'BlockOwners' table", "CREATE TABLE IF NOT EXISTS " + prefix + "BlockOwners(" +
                 "resident CHAR(36), " +
                 "dim INT NOT NULL, " +
                 "x INT NOT NULL," +
                 "y INT NOT NULL," +
                 "z INT NOT NULL, " +
                 "FOREIGN KEY(resident) REFERENCES " + prefix + "Residents(UUID) ON DELETE CASCADE)"));
+        updates.add(new DBUpdate("3.27.2014.1", "Add 'TownBanks' table", "CREATE TABLE IF NOT EXISTS " + prefix + "TownBanks(" +
+                "townName VARCHAR(50), " +
+                "amount INT NOT NULL, " +
+                "PRIMARY KEY(townName), " +
+                "FOREIGN KEY(townName) REFERENCES " + prefix + "Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"));
+        updates.add(new DBUpdate("3.27.2014.2", "Add 'PlotBanks' table", "CREATE TABLE IF NOT EXISTS " + prefix + "PlotBanks(" +
+                "plotID INT NOT NULL, " +
+                "amount INT NOT NULL, " +
+                "PRIMARY KEY(plotID), " +
+                "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
     }
 
     /**

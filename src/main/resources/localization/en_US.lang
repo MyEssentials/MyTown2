@@ -7,6 +7,7 @@ mytown.cmd.err.rank.notexist=&cThe rank %s does not exist in %s!
 mytown.cmd.err.cost=&cYou need to have %s %ss in your inventory in order to pay for claiming or making a town!
 mytown.cmd.err.money=&cYou need to have %s %s in order to pay for claiming or making a town!
 mytown.cmd.err.notPositiveInteger=&cValue '%s' needs to be a positive integer!
+mytown.cmd.err.adminTown=&cAction denied because %s is an admin town!
 
 # Flag based notifications
 
@@ -159,6 +160,9 @@ mytown.notification.town.kicked=&cYou have been kicked from %s!
 # /t pass
 mytown.cmd.usage.leave.pass=&3/t pass <resident>
 
+# /t bank
+mytown.cmd.usage.bank.pay=&3/t pay <amount>
+
 # /ta delete
 mytown.adm.cmd.delete.usage=&3/ta delete <townname> [townname2 townname3...]
 mytown.adm.cmd.delete.success=&cDeleted town with name %s!
@@ -272,7 +276,8 @@ mytown.notification.town.setExtra=&3%s extra blocks have been added to the town'
 mytown.notification.resident.setExtra=&3%s extra blocks have been added to the resident's max claims.
 mytown.notification.plot.sender.removed=&c%s has been removed from the plot.
 mytown.notification.plot.target.removed=&cYou have been removed from plot %s!
-
+mytown.notification.town.bank.amount=&3Bank amount: %s %s
+mytown.notification.town.upkeep=&3A new day is upon us, taxes have been collected!
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)

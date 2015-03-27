@@ -1,7 +1,9 @@
 package mytown.commands;
 
+import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
+import mytown.core.Localization;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.*;
@@ -9,6 +11,7 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Formatter;
+import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
@@ -457,5 +460,49 @@ public class CommandsEveryone extends Commands {
 
         town.hideBorders();
         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
+    }
+
+    @CommandNode(
+            name = "bank",
+            permission = "mytown.cmd.everyone.bank",
+            parentName = "mytown.cmd")
+    public static void bankCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.everyone.bank");
+    }
+
+    @CommandNode(
+            name = "amount",
+            permission = "mytown.cmd.everyone.bank.amount",
+            parentName = "mytown.cmd.everyone.bank")
+    public static void bankAmountCommand(ICommandSender sender, List<String> args) {
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+
+        if(town instanceof AdminTown)
+            throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
+
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.amount", town.getBankAmount(), Config.costItemName.equals("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
+    }
+
+    @CommandNode(
+            name = "pay",
+            permission = "mytown.cmd.everyone.bank.pay",
+            parentName = "mytown.cmd.everyone.bank")
+    public static void bankPayCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new MyTownWrongUsageException("mytown.cmd.usage.bank.pay");
+
+        if(!MyTownUtils.tryParseInt(args.get(0)))
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+
+        if(town instanceof AdminTown)
+            throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
+
+        int amount = Integer.parseInt(args.get(0));
+        makePayment(res.getPlayer(), amount);
+        getDatasource().updateTownBank(town, town.getBankAmount() + amount);
     }
 }

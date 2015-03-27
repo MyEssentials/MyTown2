@@ -542,6 +542,23 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         this.spawn = spawn;
     }
 
+    /* ----- Bank ----- */
+
+    private int bankAmount = 0;
+
+    public int getBankAmount() { return this.bankAmount; }
+    public boolean makePayment(int amount) {
+        if(bankAmount >= amount) {
+            bankAmount -= amount;
+            return true;
+        }
+        return false;
+    }
+
+    public void setBankAmount(int amount) {
+        bankAmount = amount;
+    }
+
     /* ----- Helpers ----- */
 
     /**

@@ -7,10 +7,12 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.api.events.TownEvent;
+import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
+import mytown.entities.AdminTown;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -35,13 +37,36 @@ import net.minecraftforge.event.world.BlockEvent;
  */
 public class Ticker {
 
+    private boolean ticked = true;
     @SubscribeEvent
     public void onTickEvent(TickEvent.WorldTickEvent ev) {
         if(ev.side == Side.CLIENT)
             return;
 
+
         for(Resident res : MyTownUniverse.getInstance().getResidentsMap().values()) {
             res.tick();
+        }
+
+        // TODO: rework the logic of this
+        if(ev.phase == TickEvent.Phase.START) {
+            if (ticked) {
+                if (ev.world.getWorldTime() % 24000 == 0)
+                    MyTown.instance.log.info("Got ticked! " + ev.side + " " + ev.phase);
+
+                if (ev.world.getWorldTime() % 24000 == 0 && Config.costTownUpkeep > 0) {
+                    for (Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
+                        if (!(town instanceof AdminTown)) {
+                            town.makePayment(Config.costTownUpkeep + Config.costAdditionalUpkeep * town.getBlocks().size());
+                            town.notifyEveryone(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.upkeep", Config.costTownUpkeep));
+                        }
+                    }
+                    ticked = false;
+                }
+            } else {
+                if(ev.world.getWorldTime() % 24000 != 0)
+                    ticked = true;
+            }
         }
     }
 

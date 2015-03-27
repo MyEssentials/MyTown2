@@ -70,6 +70,15 @@ public class Config {
     @ConfigProperty(category = "cost", name = "costAmountSetSpawn", comment = "The amount of the cost item you need to create a spawn point for the town.")
     public static int costAmountSetSpawn = 1;
 
+    @ConfigProperty(category = "cost", name = "costTownUpkeep", comment = "The amount of the cost item towns have to pay everyday to maintain it.")
+    public static int costTownUpkeep = 0;
+
+    @ConfigProperty(category = "cost", name = "costAdditionalUpkeep", comment = "The amount of the cost item towns have to pay everyday per chunk owned to maintain it.")
+    public static int costAdditionalUpkeep = 0;
+
+    @ConfigProperty(category = "cost", name = "defaultBankAmount", comment = "The amount of the cost item that the towns are gonna start with in their banks after created.")
+    public static int defaultBankAmount = 5;
+
     @ConfigProperty(category = "towns", name = "defaultMaxPlotsPerPlayer", comment = "The maximum amount of plots a player can make in a town as a default.")
     public static int defaultMaxPlots = 1;
 
