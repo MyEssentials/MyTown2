@@ -1,5 +1,6 @@
 package mytown.new_protection;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -23,6 +24,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.DimensionManager;
@@ -351,6 +353,14 @@ public class Protections {
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             for(Protection protection : protections) {
                 if(protection.checkBlockRightClick(res, new BlockPos(x, y, z, ev.world.provider.dimensionId))) {
+                    // Update the blocks so that it's synced with the player.
+                    S23PacketBlockChange packet = new S23PacketBlockChange(x, y, z, ev.world);
+                    packet.field_148884_e = ev.world.getBlockMetadata(x, y, z);
+                    FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
+                    packet = new S23PacketBlockChange(x, y-1, z, ev.world);
+                    packet.field_148884_e = ev.world.getBlockMetadata(x, y-1, z);
+                    FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
+
                     ev.setCanceled(true);
                     return;
                 }

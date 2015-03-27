@@ -11,6 +11,8 @@ import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.util.ChunkPos;
+import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
@@ -51,28 +53,38 @@ public class CommandsAssistant extends Commands {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
-        boolean isClaimFar = false;
 
-        if (town.getBlocks().size() >= town.getMaxBlocks())
-            throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
-        if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
-            throw new MyTownCommandException("mytown.cmd.err.claim.already");
-        if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) {
-            if(!Config.allowFarClaims)
-                throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
-            isClaimFar = true;
+        if(args.size() < 1) {
+
+            boolean isClaimFar = false;
+
+            if (town.getBlocks().size() >= town.getMaxBlocks())
+                throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
+            if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
+                throw new MyTownCommandException("mytown.cmd.err.claim.already");
+            if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) {
+                if (!Config.allowFarClaims)
+                    throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
+                isClaimFar = true;
+            }
+
+            //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+
+            makePayment(player, isClaimFar ? Config.costAmountClaimFar : Config.costAmountClaim);
+
+            TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+            if (block == null)
+                throw new MyTownCommandException("mytown.cmd.err.claim.failed");
+
+            getDatasource().saveBlock(block);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+        } else {
+            //if(!MyTownUtils.tryParseInt(args.get(0)))
+            //    throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
+            //int radius = Integer.parseInt(args.get(0));
+            //List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(player.posX - radius*16), )
+
         }
-
-        //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
-
-        makePayment(player, isClaimFar ? Config.costAmountClaimFar : Config.costAmountClaim);
-
-        TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
-        if (block == null)
-            throw new MyTownCommandException("mytown.cmd.err.claim.failed");
-
-        getDatasource().saveBlock(block);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
     }
 
     @CommandNode(
