@@ -246,7 +246,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public void setExtraBlocks(int extra) {
-        extraBlocks = extra;
+        extraBlocks = extra < 0 ? 0 : extra;
     }
 
     @Override

@@ -175,6 +175,16 @@ mytown.adm.cmd.err.rem.resident=&cPlayer %s is not part of the town %s
 mytown.adm.cmd.usage.add=&3/ta add <resident> <toTown> [rankName]
 mytown.adm.cmd.err.add.already=&cPlayer %s is already a resident of the town %s
 
+# /ta town
+mytown.cmd.usage.town.blocks.extra.set=&3/ta town blocks extra set <townName> <maxBlocks>
+mytown.cmd.usage.town.blocks.extra.add=&3/ta town blocks extra add <townName> <amount>
+mytown.cmd.usage.town.blocks.extra.remove=&3/ta town blocks extra remove <townName> <amount>
+
+# /ta res
+mytown.cmd.usage.res.blocks.extra.set=&3/ta res blocks extra set <townName> <maxBlocks>
+mytown.cmd.usage.res.blocks.extra.add=&3/ta res blocks extra add <townName> <amount>
+mytown.cmd.usage.res.blocks.extra.remove=&3/ta res blocks extra remove <townName> <amount>
+
 # /ta setExtra town [townname] [number]
 mytown.adm.cmd.usage.setExtra.town=&3/ta setExtra town <town> <number>
 
@@ -278,6 +288,8 @@ mytown.notification.plot.sender.removed=&c%s has been removed from the plot.
 mytown.notification.plot.target.removed=&cYou have been removed from plot %s!
 mytown.notification.town.bank.amount=&3Bank amount: %s %s
 mytown.notification.town.upkeep=&3A new day is upon us, taxes have been collected!
+mytown.notification.town.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for town %s.
+mytown.notification.resident.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for resident %s.
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)

@@ -186,50 +186,170 @@ public class CommandsAdmin extends Commands {
     }
 
     @CommandNode(
-            name = "setExtra",
-            permission = "mytown.adm.cmd.setextra",
+            name = "town",
+            permission = "mytown.adm.cmd.town",
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
-    public static void setExtraCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.setextra");
-    }
-
-    @CommandNode(
-            name = "town",
-            permission = "mytown.adm.cmd.setextra.town",
-            parentName = "mytown.adm.cmd.setextra",
-            completionKeys = {"townCompletion"},
-            nonPlayers = true)
-    public static void setExtraTownCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.setExtra.town");
-        Town town = getUniverse().getTown(args.get(0));
-        if (town == null)
-            throw new MyTownCommandException("mytown.cmd.err.town.notexist", args.get(0));
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        town.setExtraBlocks(Integer.parseInt(args.get(1)));
-        getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.resident.setExtra", args.get(1)));
+    public static void townCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.town");
     }
 
     @CommandNode(
             name = "res",
-            permission = "mytown.adm.cmd.setextra.res",
-            parentName = "mytown.adm.cmd.setextra",
-            completionKeys = {"residentCompletion"},
+            permission = "mytown.adm.cmd.res",
+            parentName = "mytown.adm.cmd",
             nonPlayers = true)
-    public static void setExtraResCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.setExtra.res");
-        Resident target = getUniverse().getResidentByName(args.get(0));
-        if (target == null)
-            throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
+    public static void resCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.res");
+    }
+
+    @CommandNode(
+            name = "blocks",
+            permission = "mytown.adm.cmd.town.blocks",
+            parentName = "mytown.adm.cmd.town",
+            nonPlayers = true)
+    public static void townBlocksCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.town.blocks");
+    }
+
+    @CommandNode(
+            name = "extra",
+            permission = "mytown.adm.cmd.town.blocks.extra",
+            parentName = "mytown.adm.cmd.town.blocks",
+            nonPlayers = true)
+    public static void townBlocksMaxCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.town.blocks.extra");
+    }
+
+    @CommandNode(
+            name = "set",
+            permission = "mytown.adm.cmd.town.blocks.extra.set",
+            parentName = "mytown.adm.cmd.town.blocks.extra",
+            completionKeys = {"townCompletionAndAll"},
+            nonPlayers = true)
+    public static void townBlocksMaxSetCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.cmd.usage.town.blocks.extra.set");
         if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        target.setExtraBlocks(Integer.parseInt(args.get(1)));
+
+        Town town = getTownFromName(args.get(0));
+        town.setExtraBlocks(Integer.parseInt(args.get(1)));
+        getDatasource().saveTown(town);
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.extra.set", town.getExtraBlocks(), args.get(0)));
+    }
+
+    @CommandNode(
+            name = "add",
+            permission = "mytown.adm.cmd.town.blocks.extra.add",
+            parentName = "mytown.adm.cmd.town.blocks.extra",
+            completionKeys = {"townCompletionAndAll"},
+            nonPlayers = true)
+    public static void townBlocksMaxAddCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.cmd.usage.town.blocks.extra.add");
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+        Town town = getTownFromName(args.get(0));
+        int amount = Integer.parseInt(args.get(1));
+        town.setExtraBlocks(town.getExtraBlocks() + amount);
+        getDatasource().saveTown(town);
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.extra.set", town.getExtraBlocks(), args.get(0)));
+    }
+
+    @CommandNode(
+            name = "remove",
+            permission = "mytown.adm.cmd.town.blocks.extra.remove",
+            parentName = "mytown.adm.cmd.town.blocks.extra",
+            completionKeys = {"townCompletionAndAll"},
+            nonPlayers = true)
+    public static void townBlocksMaxRemoveCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.cmd.usage.town.blocks.extra.remove");
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+        Town town = getTownFromName(args.get(0));
+        int amount = Integer.parseInt(args.get(1));
+        town.setExtraBlocks(town.getExtraBlocks() - amount);
+        getDatasource().saveTown(town);
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.extra.set", town.getExtraBlocks(), args.get(0)));
+    }
+
+    @CommandNode(
+            name = "blocks",
+            permission = "mytown.adm.cmd.res.blocks",
+            parentName = "mytown.adm.cmd.res",
+            nonPlayers = true)
+    public static void resBlocksCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.res.blocks");
+    }
+
+    @CommandNode(
+            name = "extra",
+            permission = "mytown.adm.cmd.res.blocks.extra",
+            parentName = "mytown.adm.cmd.res.blocks",
+            nonPlayers = true)
+    public static void resBlocksMaxCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.res.blocks.extra");
+    }
+
+    @CommandNode(
+            name = "set",
+            permission = "mytown.adm.cmd.res.blocks.extra.set",
+            parentName = "mytown.adm.cmd.res.blocks.extra",
+            completionKeys = {"residentCompletion"},
+            nonPlayers = true)
+    public static void resBlocksSetCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.cmd.usage.res.blocks.extra.remove");
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+        Resident target = getResidentFromName(args.get(0));
+        int amount = Integer.parseInt(args.get(1));
+        target.setExtraBlocks(amount);
         getDatasource().saveResident(target);
-        target.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.resident.setExtra", args.get(1)));
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
+    }
+
+    @CommandNode(
+            name = "add",
+            permission = "mytown.adm.cmd.res.blocks.extra.add",
+            parentName = "mytown.adm.cmd.res.blocks.extra",
+            completionKeys = {"residentCompletion"},
+            nonPlayers = true)
+    public static void resBlocksAddCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.cmd.usage.res.blocks.extra.remove");
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+        Resident target = getResidentFromName(args.get(0));
+        int amount = Integer.parseInt(args.get(1));
+        target.setExtraBlocks(target.getExtraBlocks() + amount);
+        getDatasource().saveResident(target);
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
+    }
+
+    @CommandNode(
+            name = "remove",
+            permission = "mytown.adm.cmd.res.blocks.extra.remove",
+            parentName = "mytown.adm.cmd.res.blocks.extra",
+            completionKeys = {"residentCompletion"},
+            nonPlayers = true)
+    public static void resBlocksRemoveCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.cmd.usage.res.blocks.extra.remove");
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+        Resident target = getResidentFromName(args.get(0));
+        int amount = Integer.parseInt(args.get(1));
+        target.setExtraBlocks(target.getExtraBlocks() - amount);
+        getDatasource().saveResident(target);
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
     }
 
     @CommandNode(
