@@ -179,7 +179,7 @@ public class MyTown {
         // Checking cost item
         if(Config.costItemName.equals("$")) {
             if (!Loader.isModLoaded("ForgeEssentials")) {
-                throw new RuntimeException("Failed to find ForgeEssentials for economy implementation. Reverting to default.");
+                throw new RuntimeException("Failed to find ForgeEssentials for economy implementation.");
             }
         } else {
             String[] split = Config.costItemName.split(":");
