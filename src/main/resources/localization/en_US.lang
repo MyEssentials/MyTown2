@@ -185,13 +185,6 @@ mytown.cmd.usage.res.blocks.extra.set=&3/ta res blocks extra set <townName> <max
 mytown.cmd.usage.res.blocks.extra.add=&3/ta res blocks extra add <townName> <amount>
 mytown.cmd.usage.res.blocks.extra.remove=&3/ta res blocks extra remove <townName> <amount>
 
-# /ta setExtra town [townname] [number]
-mytown.adm.cmd.usage.setExtra.town=&3/ta setExtra town <town> <number>
-
-# /ta setExtra res [resident] [number]
-mytown.adm.cmd.usage.setExtra.res=&3/ta setExtra res <resident> <number>
-
-
 # /ta perm
 mytown.adm.cmd.usage.perm.town.set=&3/ta perm town set <townName> <flag> <value>
 mytown.adm.cmd.usage.perm.wild.set=&3/ta perm wild set <flag> <value>
@@ -282,8 +275,6 @@ mytown.notification.payment.inventory=&3%s %ss have been taken from your invento
 mytown.notification.payment.wallet=&3%s%s have been taken from your Wallet.
 mytown.notification.refund.inventory=&3%s %ss have been added to your inventory.
 mytown.notification.refund.wallet=&3%s%s have been added to your Wallet.
-mytown.notification.town.setExtra=&3%s extra blocks have been added to the town's max claims.
-mytown.notification.resident.setExtra=&3%s extra blocks have been added to the resident's max claims.
 mytown.notification.plot.sender.removed=&c%s has been removed from the plot.
 mytown.notification.plot.target.removed=&cYou have been removed from plot %s!
 mytown.notification.town.bank.amount=&3Bank amount: %s %s
@@ -355,6 +346,9 @@ mytown.cmd.outsider.res.help=&2Shows information about residents.
 mytown.cmd.everyone.borders.help=&2Information about borders of the town
 mytown.cmd.everyone.borders.show.help=&2Visually shows the town borders.
 mytown.cmd.everyone.borders.hide.help=&2Visually hides the town borders.
+mytown.cmd.everyone.bank.help=&2Everything about the money in the town.
+mytown.cmd.everyone.bank.pay=&2Gives money to the town's bank.
+mytown.cmd.everyone.bank.amount=&2Shows the amount of money in the town's bank.
 
 mytown.adm.cmd.config.help=&9Everything about the configs.
 mytown.adm.cmd.config.load.help=&9Reloads the config.
@@ -377,5 +371,19 @@ mytown.adm.cmd.perm.wild.set.help=&9Sets a flag's value.
 mytown.adm.cmd.claim.help=&9Claims a chunk for a town.
 mytown.adm.cmd.unclaim.help=&9Removes a chunked claim from a town.
 mytown.adm.cmd.help.help=&9Gives all help about the admin commands.
-mytown.adm.cmd.setExtra.res.help=&9Gives player extra blocks with which can claim more chunks.
-mytown.adm.cmd.setExtra.town.help=&9Gives town extra blocks with which can claim more chunks.
+mytown.adm.cmd.cost.help=&9Information about the cost item
+mytown.adm.cmd.cost.itemname.help=&9The name that can be used in config as the cost item.
+mytown.adm.cmd.debug.help=&9Debug options and tools for protection making.
+mytown.adm.cmd.debug.itemClass.help=&9Gives information about the class
+mytown.adm.cmd.res.help=&9Everything about a resident.
+mytown.adm.cmd.res.blocks.help=&9Everything about the blocks owned by the resident.
+mytown.adm.cmd.res.blocks.extra.help=&9Everything about the extra amount of blocks for a resident.
+mytown.adm.cmd.res.blocks.extra.set.help=&9Sets the extra amount of blocks for a resident.
+mytown.adm.cmd.res.blocks.extra.add.help=&9Adds to the the extra amount of blocks for a resident.
+mytown.adm.cmd.res.blocks.extra.remove.help=&9Subtracts from the extra amount of blocks for a resident.
+mytown.adm.cmd.town.help=&9Everything about a town.
+mytown.adm.cmd.town.blocks.help=&9Sets the extra amount of blocks for a resident.
+mytown.adm.cmd.town.blocks.extra.help=&9Everything about the extra amount of blocks for a town.
+mytown.adm.cmd.town.blocks.extra.set.help=&9Sets the extra amount of blocks for a town.
+mytown.adm.cmd.town.blocks.extra.add.help=&9Adds to the extra amount of blocks for a town.
+mytown.adm.cmd.town.blocks.extra.remove.help=&9Subtracts from the extra amount of blocks for a town.

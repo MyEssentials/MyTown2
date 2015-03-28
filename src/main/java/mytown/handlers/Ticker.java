@@ -51,8 +51,8 @@ public class Ticker {
         // TODO: rework the logic of this
         if(ev.phase == TickEvent.Phase.START) {
             if (ticked) {
-                if (ev.world.getWorldTime() % 24000 == 0)
-                    MyTown.instance.log.info("Got ticked! " + ev.side + " " + ev.phase);
+                //if (ev.world.getWorldTime() % 24000 == 0)
+                    //MyTown.instance.log.info("Got ticked! " + ev.side + " " + ev.phase);
 
                 if (ev.world.getWorldTime() % 24000 == 0 && Config.costTownUpkeep > 0) {
                     for (Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
