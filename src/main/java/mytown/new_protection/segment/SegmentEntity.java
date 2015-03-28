@@ -1,5 +1,6 @@
 package mytown.new_protection.segment;
 
+import mytown.entities.flag.FlagType;
 import mytown.new_protection.segment.enums.EntityType;
 import mytown.new_protection.segment.getter.Caller;
 import mytown.new_protection.segment.getter.Getters;
@@ -17,8 +18,8 @@ public class SegmentEntity extends Segment {
 
     public EntityType type;
 
-    public SegmentEntity(Class<?> theClass, Getters getters, String conditionString, EntityType type) {
-        super(theClass, getters, conditionString);
+    public SegmentEntity(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString, EntityType type) {
+        super(theClass, getters, flag, denialValue, conditionString);
         this.type = type;
     }
 }

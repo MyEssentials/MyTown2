@@ -11,9 +11,8 @@ import net.minecraft.block.Block;
 public class SegmentBlock extends Segment {
     public int meta;
 
-    public SegmentBlock(Class<?> theClass, Getters getters, FlagType flag, String conditionString, int meta) {
-        super(theClass, getters, conditionString);
+    public SegmentBlock(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString, int meta) {
+        super(theClass, getters, flag, denialValue, conditionString);
         this.meta = meta;
-        this.flag = flag;
     }
 }

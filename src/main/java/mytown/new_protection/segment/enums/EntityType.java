@@ -6,17 +6,13 @@ package mytown.new_protection.segment.enums;
  */
 public enum EntityType {
     /**
-     * Anything that can kill the player without him attacking it.
+     * Anything that is checked every tick, in order to prevent griefing through entities.
      */
-    hostile,
+    tracked,
     /**
      * Anything that has some kind of value of having and needs to bne protected from right/left clicking or death by other players.
      */
-    passive,
-    /**
-     * Anything that explodes.
-     */
-    explosive,
+    protect,
     /**
      * Anything that can be fired by a player and attack another and it's trespassing the pvp flag.
      * This does not apply to things like Arrows, Snowballs etc.

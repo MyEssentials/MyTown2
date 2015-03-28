@@ -69,13 +69,10 @@ public class Wild implements IHasFlags {
     /**
      * Checks if Resident is allowed to do the action specified by the FlagType in the Wild
      */
-    public boolean checkPermission(Resident res, FlagType type) {
-        if (getFlag(type).getValue() instanceof Boolean) {
-            if (!(Boolean) getFlag(type).getValue()) {
-                return Utils.isOp(res.getPlayer());
-            }
+    public boolean checkPermission(Resident res, FlagType type, Object denialValue) {
+        if (getFlag(type).getValue() == denialValue) {
+            return Utils.isOp(res.getPlayer());
         }
-        // TODO: Implement other types of flags
         return true;
     }
 

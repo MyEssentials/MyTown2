@@ -93,7 +93,7 @@ public abstract class MyTownDatasource {
 
         // Saving and adding all flags to the database
         for (FlagType type : FlagType.values()) {
-            if (type.canTownsModify() && type.shouldLoad()) {
+            if (type.canTownsModify()) {
                 saveFlag(new Flag(type, type.getDefaultValue()), town);
             }
         }

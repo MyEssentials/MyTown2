@@ -608,19 +608,17 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * This method will go through all the plots and prioritize the plot's flags over town flags.
      */
     @SuppressWarnings("unchecked")
-    public boolean checkPermission(Resident res, FlagType flagType, int dim, int x, int y, int z) {
-        if (flagType.getType() != Boolean.class)
-            throw new RuntimeException("FlagType is not boolean!");
+    public boolean checkPermission(Resident res, FlagType flagType, Object denialValue, int dim, int x, int y, int z) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
         if (plot == null) {
-            if(!(Boolean) getValue(flagType)) {
+            if(getValue(flagType) == denialValue) {
                 if (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean) getValue(FlagType.restrictedTownPerms) && !(getMayor() == res))) {
                     return Utils.isOp(res.getPlayer());
                 }
             }
         } else {
-            if (!(Boolean) plot.getValue(flagType) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
+            if (plot.getValue(flagType) == denialValue && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
                 return Utils.isOp(res.getPlayer());
         }
         return true;
@@ -630,11 +628,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * Checks if the Resident is allowed to do the action specified by the FlagType in this town.
      */
     @SuppressWarnings("unchecked")
-    public boolean checkPermission(Resident res, FlagType flagType) {
-        if (flagType.getType() != Boolean.class)
-            throw new RuntimeException("FlagType is not boolean!");
-
-        if (!(Boolean) getValue(flagType) && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && !(getMayor() == res)))) {
+    public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
+        if (getValue(flagType) == denialValue && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && !(getMayor() == res)))) {
             //TODO: Check for permission
             return Utils.isOp(res.getPlayer());
         }

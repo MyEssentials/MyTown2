@@ -27,7 +27,6 @@ import mytown.new_protection.eventhandlers.ExtraForgeHandlers;
 import mytown.new_protection.json.JSONParser;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
 import mytown.util.MyTownUtils;
 import net.minecraft.command.ICommandSender;
@@ -67,9 +66,6 @@ public class MyTown {
 
 
         registerHandlers();
-
-        // Add all the ModProxies
-        ModProxies.addProxies();
 
         // Register ICrashCallable's
         FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());

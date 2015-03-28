@@ -1,7 +1,6 @@
 package mytown.entities.flag;
 
 import mytown.proxies.LocalizationProxy;
-import mytown.proxies.mod.ModProxies;
 
 /**
  * Created by AfterWind on 9/16/2014.
@@ -123,13 +122,6 @@ public enum FlagType {
 
     public boolean isTownOnly() {
         return property == Property.townOnly;
-    }
-
-    /**
-     * Checks to see if this type of flag has the mod needed to load
-     */
-    public boolean shouldLoad() {
-        return (this.modRequired == null || ModProxies.isProxyLoaded(modRequired));
     }
 
     /**

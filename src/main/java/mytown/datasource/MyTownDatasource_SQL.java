@@ -358,8 +358,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
                     Town town = MyTownUniverse.getInstance().getTownsMap().get(townName);
                     if (town != null) {
-                        if (flag.flagType.shouldLoad())
-                            town.addFlag(flag);
+                        town.addFlag(flag);
                     } else {
                         log.error("Failed to load flag " + flagName + " because the town given was invalid!");
                     }
@@ -402,8 +401,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
                     Plot plot = MyTownUniverse.getInstance().getPlot(plotID);
                     if (plot != null) {
-                        if (flag.flagType.shouldLoad())
-                            plot.addFlag(flag);
+                        plot.addFlag(flag);
                     } else {
                         log.error("Failed to load flag " + flagName + " because the town given was invalid!");
                     }
@@ -903,7 +901,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Plot plot) {
-        if (!flag.flagType.shouldLoad()) return false;
         log.debug("Saving Flag %s for Plot %s", flag.flagType.name(), plot.getKey());
         try {
             if (plot.hasFlag(flag.flagType)) {
@@ -935,7 +932,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Town town) {
-        if (!flag.flagType.shouldLoad()) return false;
         log.debug("Saving Flag %s for Town %s", flag.flagType.name(), town.getName());
         try {
             if (town.hasFlag(flag.flagType)) {

@@ -169,11 +169,16 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 MyTown.instance.log.info("   ------------------------------------------------------------");
                 while (in.hasNext()) {
                     Segment segment = null;
-                    String clazz = null, type = null;
+                    String type = null;
+                    Class clazz = null;
+
                     EntityType entityType = null;
                     ItemType itemType = null;
+
                     String condition = null;
                     FlagType flag = null;
+                    Object denialValue = null;
+
                     boolean isAdjacent = false;
                     boolean hasOwner = false;
                     int meta = -1;
@@ -184,8 +189,12 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                         while (!in.peek().equals(JsonToken.END_OBJECT)) {
                             nextName = in.nextName();
                             if (nextName.equals("class")) {
-                                clazz = in.nextString();
-                                getters.setName(clazz);
+                                try {
+                                    clazz = Class.forName(in.nextString());
+                                } catch (ClassNotFoundException ex) {
+                                    throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
+                                }
+                                getters.setName(clazz.getName());
                                 continue;
                             }
                             if (nextName.equals("type")) {
@@ -199,9 +208,23 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 continue;
                             }
                             if (nextName.equals("flag")) {
-                                flag = FlagType.valueOf(in.nextString());
-                                if(flag != null && flag.getType() != Boolean.class)
-                                    throw new SegmentException("[Segment: " + clazz + "] Flag is not a boolean type. Non-boolean type flags (such as 'mobs') are not yet supported.");
+                                if(in.peek() == JsonToken.BEGIN_OBJECT) {
+                                    in.beginObject();
+                                    if(in.nextName().equals("name"))
+                                        flag = FlagType.valueOf(in.nextString());
+                                    if(in.nextName().equals("denialValue"))
+                                        denialValue = parseConstant(in, clazz.getName(), "denialValue");
+                                    in.endObject();
+                                } else {
+                                    flag = FlagType.valueOf(in.nextString());
+                                    denialValue = Boolean.FALSE;
+                                    if(flag != null && flag.getType() != Boolean.class)
+                                       throw new SegmentException("[Segment: " + clazz + "] Flag is not a boolean type. Non-boolean types need to have a denialValue specified.");
+                                }
+                                if (flag == null)
+                                    throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
+                                if(flag.getType() != denialValue.getClass())
+                                    throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag denial value!");
                                 continue;
                             }
                             // Checking if clazz and type is not null before anything else.
@@ -246,9 +269,9 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
 
                             // If it gets here it means that it should be some extra data that will be used in checking something
                             if(in.peek() == JsonToken.BOOLEAN || in.peek() == JsonToken.NUMBER || in.peek() == JsonToken.STRING)
-                                getters.addConstant(nextName, parseConstant(in, clazz, nextName));
+                                getters.addConstant(nextName, parseConstant(in, clazz.getName(), nextName));
                             else
-                                getters.addCallers(nextName, parseCallers(in, clazz, nextName));
+                                getters.addCallers(nextName, parseCallers(in, clazz.getName(), nextName));
 
                         }
 
@@ -256,49 +279,28 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
 
                         try {
                             if (type != null) {
+                                if (flag == null)
+                                    throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
                                 if (type.equals("tileEntity")) {
-                                    if (flag == null)
-                                        throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
-                                    try {
-                                        // Log if the segment is using default protection
-                                        if (getters.getCallersMap().get("xMin") == null || getters.getCallersMap().get("xMax") == null || getters.getCallersMap().get("zMin") == null || getters.getCallersMap().get("zMax") == null) {
-                                            MyTown.instance.log.info("   [Segment: " + clazz + "] Could not find one of the getters (xMin, xMax, zMin, zMax). Using default protection size.");
+                                    // Log if the segment is using default protection
+                                    if (getters.getCallersMap().get("xMin") == null || getters.getCallersMap().get("xMax") == null || getters.getCallersMap().get("zMin") == null || getters.getCallersMap().get("zMax") == null) {
+                                        MyTown.instance.log.info("   [Segment: " + clazz + "] Could not find one of the getters (xMin, xMax, zMin, zMax). Using default protection size.");
 
-                                            // Removing all of them since it will only create problems if left there
-                                            getters.removeGetter("xMin");
-                                            getters.removeGetter("xMax");
-                                            getters.removeGetter("zMin");
-                                            getters.removeGetter("zMax");
-                                        }
-
-                                        segment = new SegmentTileEntity(Class.forName(clazz), getters, flag, condition, hasOwner);
-                                    } catch (ClassNotFoundException ex) {
-                                        throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
+                                        // Removing all of them since it will only create problems if left there
+                                        getters.removeGetter("xMin");
+                                        getters.removeGetter("xMax");
+                                        getters.removeGetter("zMin");
+                                        getters.removeGetter("zMax");
                                     }
+                                    segment = new SegmentTileEntity(clazz, getters, flag, denialValue, condition, hasOwner);
                                 } else if (type.equals("entity")) {
                                     if (entityType == null)
                                         throw new SegmentException("[Segment: " + clazz + "] The entityType is not being specified.");
-                                    try {
-                                        segment = new SegmentEntity(Class.forName(clazz), getters, condition, entityType);
-                                    } catch (ClassNotFoundException ex) {
-                                        throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
-                                    }
+                                    segment = new SegmentEntity(clazz, getters, flag, denialValue, condition, entityType);
                                 } else if (type.equals("item")) {
-                                    if (flag == null)
-                                        throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
-                                    try {
-                                        segment = new SegmentItem(Class.forName(clazz), getters, flag, condition, itemType, isAdjacent);
-                                    } catch (ClassNotFoundException ex) {
-                                        throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
-                                    }
+                                    segment = new SegmentItem(clazz, getters, flag, denialValue, condition, itemType, isAdjacent);
                                 } else if (type.equals("block")) {
-                                    if (flag == null)
-                                        throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
-                                    try {
-                                        segment = new SegmentBlock(Class.forName(clazz), getters, flag, condition, meta);
-                                    } catch (ClassNotFoundException ex) {
-                                        throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " in invalid!");
-                                    }
+                                    segment = new SegmentBlock(clazz, getters, flag, denialValue, condition, meta);
                                 }
                             }
                         } catch (SegmentException ex) {

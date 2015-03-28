@@ -1,7 +1,6 @@
 package mytown.new_protection;
 
 import mytown.MyTown;
-import mytown.core.Localization;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
@@ -88,10 +87,10 @@ public class Protection {
                         for (ChunkPos chunk : chunks) {
                             TownBlock block = getDatasource().getBlock(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
                             if(block == null) {
-                                if(!(Boolean) Wild.getInstance().getValue(segment.flag)) {
+                                if(Wild.getInstance().getValue(segment.flag) == segment.denialValue) {
                                     if (segment.hasOwner()) {
                                         Resident res = Protections.getInstance().getOwnerForTileEntity(te);
-                                        if (res == null || !Wild.getInstance().checkPermission(res, segment.flag))
+                                        if (res == null || !Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue))
                                             return true;
 
                                     } else {
@@ -101,7 +100,7 @@ public class Protection {
                             } else {
                                 if(segment.hasOwner()) {
                                     Resident res = Protections.getInstance().getOwnerForTileEntity(te);
-                                    if (res == null || !block.getTown().checkPermission(res, segment.flag))
+                                    if (res == null || !block.getTown().checkPermission(res, segment.flag, segment.denialValue))
                                         return true;
                                 } else if (!(Boolean) block.getTown().getValue(segment.flag) && !block.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
                                     block.getTown().notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
@@ -131,35 +130,17 @@ public class Protection {
     public boolean checkEntity(Entity entity) {
         for(SegmentEntity segment : segmentsEntities) {
             if (segment.theClass.isAssignableFrom(entity.getClass())) {
-                if (segment.type == EntityType.hostile) {
-                    if (segment.theClass.isAssignableFrom(entity.getClass())) {
-                        TownBlock block = getDatasource().getBlock(entity.dimension, (int)entity.posX >> 4, (int)entity.posZ >> 4);
-                        String mobsValue;
-                        if (block == null) {
-                            mobsValue = (String) Wild.getInstance().getValue(FlagType.mobs);
-                            if(mobsValue.equals("hostiles"))
-                                return true;
-                        } else {
-                            mobsValue = (String) block.getTown().getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, FlagType.mobs);
-                            if (mobsValue.equals("hostiles"))
-                                return true;
-                        }
-                    }
-                } else if(segment.type == EntityType.explosive) {
+                if(segment.type == EntityType.tracked) {
                     int range = segment.getRange(entity);
                     List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) (entity.posX - range), (int) (entity.posZ - range), (int) (entity.posX + range), (int) (entity.posZ + range));
-                    boolean explosionValue;
                     for (ChunkPos chunk : chunks) {
                         TownBlock block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
                         if (block != null) {
-                            explosionValue = (Boolean) block.getTown().getValue(FlagType.explosions);
-                            if(!explosionValue)
+                            if(block.getTown().getValue(segment.flag) == segment.denialValue)
                                 return true;
                         }
                     }
-
-                    explosionValue = (Boolean) Wild.getInstance().getValue(FlagType.explosions);
-                    if (!explosionValue)
+                    if (Wild.getInstance().getValue(segment.flag) == segment.denialValue)
                         return true;
                 }
             }
@@ -180,37 +161,18 @@ public class Protection {
                 }
                 try {
                     if (segment.checkCondition(item)) {
-                        if(segment.getters.hasValue("range")) {
-                            int range = segment.getRange(item);
-                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox(bp.x - range, bp.z - range, bp.x + range, bp.z + range);
-                            for(ChunkPos chunk : chunks) {
-                                TownBlock block = getDatasource().getBlock(bp.dim, chunk.getX(), chunk.getZ());
-                                if (block == null) {
-                                    if (!Wild.getInstance().checkPermission(res, segment.flag)) {
-                                        res.sendMessage(segment.flag.getLocalizedProtectionDenial());
-                                        return true;
-                                    }
-                                } else {
-                                    if (!block.getTown().checkPermission(res, segment.flag)) {
-                                        res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
-                                        return true;
-                                    }
-                                }
-                            }
-                        } else {
-                            TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
-                            if(block == null) {
-                                if (!Wild.getInstance().checkPermission(res, segment.flag)) {
+                        int range = segment.getRange(item);
+                        List<ChunkPos> chunks = MyTownUtils.getChunksInBox(bp.x - range, bp.z - range, bp.x + range, bp.z + range);
+                        for(ChunkPos chunk : chunks) {
+                            TownBlock block = getDatasource().getBlock(bp.dim, chunk.getX(), chunk.getZ());
+                            if (block == null) {
+                                if (!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
                                     res.sendMessage(segment.flag.getLocalizedProtectionDenial());
                                     return true;
                                 }
                             } else {
-                                if(!block.getTown().checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
-                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z))));
-                                    if (segment.flag == FlagType.modifyBlocks && segment.onAdjacent) {
-                                        //DimensionManager.getWorld(bp.dim).setBlock(bp.x, bp.y, bp.z, Blocks.air);
-                                        //MyTown.instance.log.info("Block deleted!");
-                                    }
+                                if (!block.getTown().checkPermission(res, segment.flag, segment.denialValue)) {
+                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
                                     return true;
                                 }
                             }
@@ -235,65 +197,49 @@ public class Protection {
     public boolean checkEntityRightClick(ItemStack item, Resident res, Entity entity) {
         for(Iterator<SegmentEntity> it = segmentsEntities.iterator(); it.hasNext();) {
             SegmentEntity segment = it.next();
-            if(segment.type == EntityType.passive && segment.theClass.isAssignableFrom(entity.getClass())) {
+            if(segment.type == EntityType.protect && segment.theClass.isAssignableFrom(entity.getClass())) {
                 TownBlock block = getDatasource().getBlock(entity.dimension, (int) entity.posX >> 4, (int) entity.posZ >> 4);
                 if(block == null) {
-                    if(!Wild.getInstance().checkPermission(res, FlagType.protectedEntities)) {
+                    if(!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
                         res.sendMessage(FlagType.protectedEntities.getLocalizedProtectionDenial());
                         return true;
                     }
                 } else {
-                    if(!block.getTown().checkPermission(res, FlagType.protectedEntities, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
+                    if(!block.getTown().checkPermission(res, segment.flag, segment.denialValue, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
                         res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
                         return true;
                     }
                 }
             }
         }
-
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
-            if(segment.type == ItemType.rightClickEntity && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+            if(segment.type == ItemType.rightClickBlock && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
                 try {
                     if (segment.checkCondition(item)) {
-                        if(segment.getters.hasValue("range")) {
-                            int range = segment.getRange(item);
-                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)entity.posX - range, (int)entity.posZ - range, (int)entity.posX + range, (int)entity.posZ + range);
-                            for(ChunkPos chunk : chunks) {
-                                TownBlock block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
-                                if(block == null) {
-                                    if(!Wild.getInstance().checkPermission(res, segment.flag)) {
-                                        res.sendMessage(segment.flag.getLocalizedProtectionDenial());
-                                        return true;
-                                    }
-                                } else {
-                                    if (!block.getTown().checkPermission(res, segment.flag)) {
-                                        res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
-                                        return true;
-                                    }
-                                }
-                            }
-                        } else {
-                            TownBlock block = getDatasource().getBlock(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
-                            if(block == null) {
-                                if(!Wild.getInstance().checkPermission(res, segment.flag)) {
+                        int range = segment.getRange(item);
+                        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)entity.posX - range, (int)entity.posZ - range, (int)entity.posX  + range, (int)entity.posZ + range);
+                        for(ChunkPos chunk : chunks) {
+                            TownBlock block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
+                            if (block == null) {
+                                if (!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
                                     res.sendMessage(segment.flag.getLocalizedProtectionDenial());
                                     return true;
                                 }
                             } else {
-                                if (!block.getTown().checkPermission(res, segment.flag, entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))) {
-                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
+                                if (!block.getTown().checkPermission(res, segment.flag, segment.denialValue)) {
+                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
                                     return true;
                                 }
                             }
                         }
                     }
                 } catch (Exception ex) {
-                    MyTown.instance.log.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( "
-                            + ", " + entity.posX + ", " + entity.posY + ", " + entity.posZ + " | WorldID: " + entity.dimension + " )");
-
+                    MyTown.instance.log.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + (int)entity.posX
+                            + ", " + (int)entity.posY + ", " + (int)entity.posZ + " | WorldID: " + entity.dimension + " )");
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -312,33 +258,18 @@ public class Protection {
 
                 try {
                     if (segment.checkCondition(item)) {
-                        if(segment.getters.hasValue("range")) {
-                            int range = segment.getRange(item);
-                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)entity.posX - range, (int)entity.posZ - range, (int)entity.posX + range, (int)entity.posZ + range);
-                            for(ChunkPos chunk : chunks) {
-                                TownBlock block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
-                                if(block == null) {
-                                    if(!Wild.getInstance().checkPermission(res, segment.flag)) {
-                                        res.sendMessage(segment.flag.getLocalizedProtectionDenial());
-                                        return true;
-                                    }
-                                } else {
-                                    if (!block.getTown().checkPermission(res, segment.flag)) {
-                                        res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
-                                        return true;
-                                    }
-                                }
-                            }
-                        } else {
-                            TownBlock block = getDatasource().getBlock(entity.dimension, ((int) entity.posX) >> 4, ((int) entity.posZ) >> 4);
+                        int range = segment.getRange(item);
+                        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)entity.posX - range, (int)entity.posZ - range, (int)entity.posX + range, (int)entity.posZ + range);
+                        for(ChunkPos chunk : chunks) {
+                            TownBlock block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
                             if(block == null) {
-                                if(!Wild.getInstance().checkPermission(res, segment.flag)) {
+                                if(!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
                                     res.sendMessage(segment.flag.getLocalizedProtectionDenial());
                                     return true;
                                 }
                             } else {
-                                if (!block.getTown().checkPermission(res, segment.flag, entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ))) {
-                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
+                                if (!block.getTown().checkPermission(res, segment.flag, segment.denialValue)) {
+                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
                                     return true;
                                 }
                             }
@@ -367,12 +298,12 @@ public class Protection {
                 if(segment.flag == FlagType.accessBlocks || segment.flag == FlagType.activateBlocks) {
                     TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
                     if(block == null) {
-                        if(!Wild.getInstance().checkPermission(res, segment.flag)) {
+                        if(!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
                             res.sendMessage(segment.flag.getLocalizedProtectionDenial());
                             return true;
                         }
                     } else {
-                        if(!block.getTown().checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
+                        if(!block.getTown().checkPermission(res, segment.flag, segment.denialValue, bp.dim, bp.x, bp.y, bp.z)) {
                             res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z))));
                             return true;
                         }
@@ -407,7 +338,7 @@ public class Protection {
 
     public boolean isEntityProtected(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
-        return type != null && type == EntityType.passive;
+        return type != null && type == EntityType.protect;
     }
 
     /**
@@ -415,7 +346,7 @@ public class Protection {
      */
     public boolean isEntityTracked(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
-        return type != null && (type == EntityType.hostile || type == EntityType.explosive);
+        return type != null && (type == EntityType.tracked);
     }
 
     public boolean isTileTracked(Class<? extends TileEntity> te) {

@@ -13,12 +13,15 @@ import net.minecraft.item.ItemStack;
 public class Segment {
     public Class<?> theClass;
     public FlagType flag;
+    public Object denialValue;
     public Getters getters;
     public String[] conditionString;
 
-    public Segment(Class<?> theClass, Getters getters, String conditionString) {
+    public Segment(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString) {
         this.theClass = theClass;
         this.getters = getters;
+        this.flag = flag;
+        this.denialValue = denialValue;
         if(conditionString != null)
             this.conditionString = conditionString.split(" ");
     }
