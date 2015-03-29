@@ -85,9 +85,9 @@ dependencies {
 
     // Mod Deps
     compile project(":MyEssentials-Core")
-	compile 'com.mod-buildcraft:buildcraft:6.1.8:dev'
+	//compile 'com.mod-buildcraft:buildcraft:6.1.8:dev'
 	
-	compile 'net.industrial-craft:industrialcraft-2-2.2.705-experimental:api'
+	//compile 'net.industrial-craft:industrialcraft-2-2.2.705-experimental:api'
     
 	//compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
 	//compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
