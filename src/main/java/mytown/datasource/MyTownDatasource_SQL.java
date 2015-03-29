@@ -13,6 +13,7 @@ import mytown.entities.flag.FlagType;
 import mytown.new_protection.ProtectionUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
@@ -143,8 +144,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         }
 
         for (World world : MinecraftServer.getServer().worldServers) {
-            if (!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
-                saveWorld(world.provider.dimensionId);
+            if (!MyTownUniverse.getInstance().hasWorld(world.provider.getDimensionId())) {
+                saveWorld(world.provider.getDimensionId());
             }
         }
         for (int dim : MyTownUniverse.getInstance().getWorldsList()) {
@@ -358,8 +359,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
                     Town town = MyTownUniverse.getInstance().getTownsMap().get(townName);
                     if (town != null) {
-                        if (flag.flagType.shouldLoad())
-                            town.addFlag(flag);
+                        town.addFlag(flag);
                     } else {
                         log.error("Failed to load flag " + flagName + " because the town given was invalid!");
                     }
@@ -402,8 +402,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
                     Plot plot = MyTownUniverse.getInstance().getPlot(plotID);
                     if (plot != null) {
-                        if (flag.flagType.shouldLoad())
-                            plot.addFlag(flag);
+                        plot.addFlag(flag);
                     } else {
                         log.error("Failed to load flag " + flagName + " because the town given was invalid!");
                     }
@@ -604,7 +603,8 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 int y = rs.getInt("y");
                 int z = rs.getInt("z");
 
-                TileEntity te = DimensionManager.getWorld(dim).getTileEntity(x, y, z);
+                BlockPos pos = new BlockPos(x, y, z);
+                TileEntity te = DimensionManager.getWorld(dim).getTileEntity(pos);
                 if(te == null) {
                     log.error("Failed to find a TileEntity at position ("+ x +", "+ y +", "+ z +"| DIM: "+ dim +")" );
                     /*
@@ -903,7 +903,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Plot plot) {
-        if (!flag.flagType.shouldLoad()) return false;
         log.debug("Saving Flag %s for Plot %s", flag.flagType.name(), plot.getKey());
         try {
             if (plot.hasFlag(flag.flagType)) {
@@ -935,7 +934,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Town town) {
-        if (!flag.flagType.shouldLoad()) return false;
         log.debug("Saving Flag %s for Town %s", flag.flagType.name(), town.getName());
         try {
             if (town.hasFlag(flag.flagType)) {

@@ -31,7 +31,7 @@ public class CommandsAssistant extends Commands {
             name = "setspawn",
             permission = "mytown.cmd.assistant.setspawn",
             parentName = "mytown.cmd")
-    public static void setSpawnCommand(ICommandSender sender, List<String> args) {
+    public static void setSpawnCommand(ICommandSender sender, List<String> args) throws Exception{
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
@@ -50,7 +50,7 @@ public class CommandsAssistant extends Commands {
             name = "claim",
             permission = "mytown.cmd.assistant.claim",
             parentName = "mytown.cmd")
-    public static void claimCommand(ICommandSender sender, List<String> args) {
+    public static void claimCommand(ICommandSender sender, List<String> args) throws Exception{
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
@@ -112,7 +112,7 @@ public class CommandsAssistant extends Commands {
             name = "unclaim",
             permission = "mytown.cmd.assistant.unclaim",
             parentName = "mytown.cmd")
-    public static void unclaimCommand(ICommandSender sender, List<String> args) {
+    public static void unclaimCommand(ICommandSender sender, List<String> args) throws Exception{
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(sender);
         TownBlock block = getBlockAtResident(res);
@@ -142,7 +142,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.invite",
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion"})
-    public static void inviteCommand(ICommandSender sender, List<String> args) {
+    public static void inviteCommand(ICommandSender sender, List<String> args) throws Exception{
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         if (args.size() < 1)
@@ -177,7 +177,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.perm.town.set",
             parentName = "mytown.cmd.assistant.perm.town",
             completionKeys = "flagCompletion")
-    public static void permSetTownCommand(ICommandSender sender, List<String> args) {
+    public static void permSetTownCommand(ICommandSender sender, List<String> args) throws Exception{
 
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
@@ -197,7 +197,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.perm.town.whitelist",
             parentName = "mytown.cmd.assistant.perm.town",
             completionKeys = {"flagCompletionWhitelist"})
-    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args) {
+    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args) throws Exception{
         if (args.size() == 0)
             throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
@@ -217,7 +217,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.promote",
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion", "rankCompletion"})
-    public static void promoteCommand(ICommandSender sender, List<String> args) {
+    public static void promoteCommand(ICommandSender sender, List<String> args) throws Exception{
 
         // /t promote <user> <rank>
         if (args.size() < 2)
@@ -247,7 +247,7 @@ public class CommandsAssistant extends Commands {
                 permission = "mytown.cmd.assistant.ranks.add",
                 parentName = "mytown.cmd.everyone.ranks",
                 completionKeys = {"-", "ranksCompletion"})
-        public static void ranksAddCommand(ICommandSender sender, List<String> args) {
+        public static void ranksAddCommand(ICommandSender sender, List<String> args) throws Exception{
 
             if (args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.ranks");
@@ -270,7 +270,7 @@ public class CommandsAssistant extends Commands {
                 permission = "mytown.cmd.assistant.ranks.remove",
                 parentName = "mytown.cmd.everyone.ranks",
                 completionKeys = {"rankCompletion"})
-        public static void ranksRemoveCommand(ICommandSender sender, List<String> args) {
+        public static void ranksRemoveCommand(ICommandSender sender, List<String> args) throws Exception{
 
             if (args.size() < 1)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.ranks");
@@ -293,7 +293,7 @@ public class CommandsAssistant extends Commands {
                 name = "add",
                 permission = "mytown.cmd.assistant.ranks.perm.add",
                 parentName = "mytown.cmd.assistant.ranks.perm")
-        public static void ranksPermAddCommand(ICommandSender sender, List<String> args) {
+        public static void ranksPermAddCommand(ICommandSender sender, List<String> args) throws Exception{
 
             if (args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.ranks.perm");
@@ -317,7 +317,7 @@ public class CommandsAssistant extends Commands {
                 name = "remove",
                 permission = "mytown.cmd.assistant.ranks.perm.remove",
                 parentName = "mytown.cmd.assistant.ranks.perm")
-        public static void ranksPermRemoveCommand(ICommandSender sender, List<String> args) {
+        public static void ranksPermRemoveCommand(ICommandSender sender, List<String> args) throws Exception {
 
             if (args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.ranks.perm");
@@ -344,7 +344,7 @@ public class CommandsAssistant extends Commands {
             name = "perm",
             permission = "mytown.cmd.assistant.ranks.perm",
             parentName = "mytown.cmd.everyone.ranks")
-    public static void ranksPermCommand(ICommandSender sender, List<String> args) {
+    public static void ranksPermCommand(ICommandSender sender, List<String> args)throws Exception {
         callSubFunctions(sender, args, "mytown.cmd.assistant.ranks.perm");
     }
 
@@ -352,7 +352,7 @@ public class CommandsAssistant extends Commands {
             name = "list",
             permission = "mytown.cmd.assistant.ranks.perm.list",
             parentName = "mytown.cmd.assistant.ranks.perm")
-    public static void ranksPermListCommand(ICommandSender sender, List<String> args) {
+    public static void ranksPermListCommand(ICommandSender sender, List<String> args)throws Exception {
 
         Rank rank;
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -376,7 +376,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.mayor.pass",
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion"})
-    public static void passCommand(ICommandSender sender, List<String> args) {
+    public static void passCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1)
             throw new MyTownCommandException("mytown.cmd.usage.leave.pass");
 
@@ -409,7 +409,7 @@ public class CommandsAssistant extends Commands {
             name = "show",
             permission = "mytown.cmd.assistant.plot.limit.show",
             parentName = "mytown.cmd.everyone.plot.limit")
-    public static void plotLimitShowCommand(ICommandSender sender, List<String> args) {
+    public static void plotLimitShowCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));
@@ -420,7 +420,7 @@ public class CommandsAssistant extends Commands {
             name = "set",
             permission = "mytown.cmd.assistant.plot.limit.set",
             parentName = "mytown.cmd.assistant.plot.limit")
-    public static void plotLimitSetCommand(ICommandSender sender, List<String> args) {
+    public static void plotLimitSetCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
         }
@@ -441,7 +441,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.kick",
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion"})
-    public static void kickCommand(ICommandSender sender, List<String> args) {
+    public static void kickCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.kick");
         }
@@ -464,7 +464,7 @@ public class CommandsAssistant extends Commands {
             name = "delete",
             permission = "mytown.cmd.mayor.leave.delete",
             parentName = "mytown.cmd.everyone.leave")
-    public static void leaveDeleteCommand(ICommandSender sender, List<String> args) {
+    public static void leaveDeleteCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         EntityPlayer player = (EntityPlayer)sender;

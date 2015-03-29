@@ -26,12 +26,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.DimensionManager;
 
 /**
@@ -86,7 +87,8 @@ public class MyTownUtils {
         int[] dz = {0, 0, 0, 0, 1, -1};
 
         for (int i = 0; i < 6; i++) {
-            TileEntity found = te.getWorldObj().getTileEntity(te.xCoord + dx[i], te.yCoord + dy[i], te.zCoord + dz[i]);
+            net.minecraft.util.BlockPos newPos = new net.minecraft.util.BlockPos(te.getPos().getX() + dx[i], te.getPos().getY() + dy[i] , te.getPos().getZ() + dz[i]);
+            TileEntity found = te.getWorld().getTileEntity(newPos);
             if (found != null && type.isAssignableFrom(found.getClass())) {
                 MyTown.instance.log.info("Found tile entity " + found + " for class " + type.getName());
                 result.add(found);
@@ -111,10 +113,10 @@ public class MyTownUtils {
     /**
      * Searches if the specified block is whitelisted in any town
      */
-    public static boolean isBlockWhitelisted(int dim, int x, int y, int z, FlagType flagType) {
-        Town town = getTownAtPosition(dim, x >> 4, z >> 4);
+    public static boolean isBlockWhitelisted(int dim,BlockPos pos, FlagType flagType) {
+        Town town = getTownAtPosition(dim, pos.getX() >> 4, pos.getZ() >> 4);
         if (town == null) return false;
-        BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
+        BlockWhitelist bw = town.getBlockWhitelist(dim, pos.getX(), pos.getY(), pos.getZ(), flagType);
         if (bw != null) {
             if (bw.isDeleted) {
                 getDatasource().deleteBlockWhitelist(bw, town);
@@ -125,19 +127,20 @@ public class MyTownUtils {
         return false;
     }
 
+    //TODO: Fix for Dim
     /**
      * Gets all the blocks nearby the specified block position and returns only the positions which have a town in it
      * Not checking on the y axis!
      */
-    public static List<BlockPos> getPositionNearby(BlockPos block) {
+    public static List<BlockPos> getPositionNearby(BlockPos block, int dim) {
         List<BlockPos> list = new ArrayList<BlockPos>();
         int[] dx = {0, 1, 0, -1};
         int[] dz = {1, 0, -1, 0};
 
         for (int i = 0; i < 4; i++) {
-            Town town = getTownAtPosition(block.dim, (block.x + dx[i]) >> 4, (block.z + dz[i]) >> 4);
+            Town town = getTownAtPosition(dim, (block.getX() + dx[i]) >> 4, (block.getZ() + dz[i]) >> 4);
             if (town != null) {
-                list.add(new BlockPos(block.x + dx[i], block.y, block.z + dz[i], block.dim));
+                list.add(new BlockPos(block.getX() + dx[i], block.getY(), block.getZ() + dz[i]));
             }
         }
         return list;
@@ -185,7 +188,7 @@ public class MyTownUtils {
         double d0 = p_77621_2_.prevPosX + (p_77621_2_.posX - p_77621_2_.prevPosX) * (double) f;
         double d1 = p_77621_2_.prevPosY + (p_77621_2_.posY - p_77621_2_.prevPosY) * (double) f + (double) (p_77621_1_.isRemote ? p_77621_2_.getEyeHeight() - p_77621_2_.getDefaultEyeHeight() : p_77621_2_.getEyeHeight()); // isRemote check to revert changes to ray trace position due to adding the eye height clientside and player yOffset differences
         double d2 = p_77621_2_.prevPosZ + (p_77621_2_.posZ - p_77621_2_.prevPosZ) * (double) f;
-        Vec3 vec3 = Vec3.createVectorHelper(d0, d1, d2);
+        Vec3 vec3 = new Vec3(d0, d1, d2);
         float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
         float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
         float f5 = -MathHelper.cos(-f1 * 0.017453292F);
@@ -197,7 +200,7 @@ public class MyTownUtils {
             d3 = ((EntityPlayerMP) p_77621_2_).theItemInWorldManager.getBlockReachDistance();
         }
         Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
-        return p_77621_1_.func_147447_a(vec3, vec31, p_77621_3_, !p_77621_3_, false);
+        return p_77621_1_.rayTraceBlocks(vec3, vec31, p_77621_3_, !p_77621_3_, false);
     }
 
 
@@ -422,10 +425,13 @@ public class MyTownUtils {
     /**
      * Returns the first block from top to bottom that is considered not opaque
      */
+
+    @Deprecated
     public static int getMaxHeightWithSolid(int dim, int x, int z) {
         World world = DimensionManager.getWorld(dim);
         int y = world.getActualHeight();
-        while(!world.getBlock(x, y, z).getMaterial().isOpaque())
+        net.minecraft.util.BlockPos pos = new net.minecraft.util.BlockPos(x,y,z);
+        while(!world.getBlockState(pos).getBlock().getMaterial().isOpaque())
             y--;
         return y;
     }

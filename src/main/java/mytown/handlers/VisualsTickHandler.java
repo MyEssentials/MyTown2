@@ -1,9 +1,11 @@
 package mytown.handlers;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
@@ -37,17 +39,18 @@ public class VisualsTickHandler {
                 Iterator<BlockCoords> iterator = set.getValue().iterator();
                 while (iterator.hasNext()) {
                     BlockCoords coord = iterator.next();
+                    BlockPos pos = new BlockPos(coord.x, coord.y, coord.z);
                     if (!coord.packetSent) {
-                        S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
-                        packet.field_148883_d = coord.block;
+                        S23PacketBlockChange packet = new S23PacketBlockChange(MinecraftServer.getServer().worldServerForDimension(coord.dim), pos);
+                        packet.field_148883_d = coord.block.getDefaultState();
                         FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
 
                         coord.packetSent = true;
                     }
                     if (coord.deleted) {
-                        S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
-                        packet.field_148883_d = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlock(coord.x, coord.y, coord.z);
-                        packet.field_148884_e = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockMetadata(coord.x, coord.y, coord.z);
+                        S23PacketBlockChange packet = new S23PacketBlockChange(MinecraftServer.getServer().worldServerForDimension(coord.dim), pos);
+                        packet.field_148883_d = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockState(pos);
+                        //packet.field_148884_e = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockMetadata(coord.x, coord.y, coord.z);
                         FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
 
                         iterator.remove();

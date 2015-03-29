@@ -2,8 +2,8 @@ package mytown.new_protection;
 
 import mytown.MyTown;
 import mytown.entities.Resident;
-import mytown.util.BlockPos;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
@@ -17,24 +17,25 @@ public class ThreadPlacementCheck extends Thread {
 
     private Resident res;
     private BlockPos position;
-
+    private int dim;
     public ThreadPlacementCheck(Resident res, int x, int y, int z, int dim) {
         super();
         this.res = res;
-        this.position = new BlockPos(x, y, z, dim);
+        this.position = new BlockPos(x, y, z);
+        this.dim = dim; //TODO: Reimplement
     }
 
     @Override
     public void run() {
         long startTime = System.currentTimeMillis();
-        World world = DimensionManager.getWorld(position.dim);
+        World world = DimensionManager.getWorld(dim);
         TileEntity te = null;
         while(te == null) {
             if(System.currentTimeMillis() - startTime >= timeOutInMS) {
                 ProtectionUtils.placementThreadTimeout();
                 return;
             }
-            te = world.getTileEntity(position.x, position.y, position.z);
+            te = world.getTileEntity(position);
         }
         ProtectionUtils.addTileEntity(te, res);
     }

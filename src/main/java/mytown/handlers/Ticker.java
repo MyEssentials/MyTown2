@@ -1,10 +1,10 @@
 package mytown.handlers;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.api.events.TownEvent;
 import mytown.config.Config;
@@ -77,7 +77,7 @@ public class Ticker {
         if (res != null) {
             res.setPlayer(ev.player);
         } else {
-            MyTown.instance.log.error("Didn't create resident for player %s (%s)", ev.player.getCommandSenderName(), ev.player.getPersistentID());
+            MyTown.instance.log.error("Didn't create resident for player %s (%s)", ev.player.getDisplayNameString(), ev.player.getPersistentID());
         }
     }
 
@@ -159,7 +159,7 @@ public class Ticker {
                 if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
                     ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
                 } else {
-                    boolean result = res.selectBlockForPlot(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
+                    boolean result = res.selectBlockForPlot(ev.entityPlayer.dimension, ev.pos.getX(), ev.pos.getY(), ev.pos.getY());
                     if (result) {
                         if (!res.isSecondPlotSelectionActive()) {
                             ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.plot.selectionStart");
@@ -172,7 +172,7 @@ public class Ticker {
                 }
             } else if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
                 town = MyTownUniverse.getInstance().getTownsMap().get(MyTownUtils.getTownNameFromLore(ev.entityPlayer));
-                Town townAt = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+                Town townAt = MyTownUtils.getTownAtPosition(ev.world.provider.getDimensionId(), ev.pos.getX() >> 4, ev.pos.getZ() >> 4);
                 if (town == null || town != townAt) {
                     res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
                 } else {
@@ -180,9 +180,9 @@ public class Ticker {
 
                     FlagType flagType = FlagType.valueOf(MyTownUtils.getFlagNameFromLore(ev.entityPlayer));
                     ev.entityPlayer.setCurrentItemOrArmor(0, null);
-                    BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
+                    BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.getDimensionId(), ev.pos.getX(), ev.pos.getY(), ev.pos.getZ(), flagType);
                     if (bw == null) {
-                        bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
+                        bw = new BlockWhitelist(ev.world.provider.getDimensionId(), ev.pos.getX(), ev.pos.getY(), ev.pos.getZ(), flagType);
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
                         DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
                     } else {
@@ -198,7 +198,7 @@ public class Ticker {
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
-        if (VisualsTickHandler.getInstance().isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
+        if (VisualsTickHandler.getInstance().isBlockMarked(ev.pos.getX(), ev.pos.getY(), ev.pos.getZ(), ev.world.provider.getDimensionId())) {
             // Cancel event if it's a border that has been broken
             ev.setCanceled(true);
         }

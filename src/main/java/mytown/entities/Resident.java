@@ -20,7 +20,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.FakePlayer;
 
@@ -83,7 +83,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     public void setPlayer(EntityPlayer pl) {
         this.player = pl;
         setUUID(pl.getPersistentID());
-        this.playerName = pl.getDisplayName();
+        this.playerName = pl.getDisplayNameString();
     }
 
     public UUID getUUID() {
@@ -193,14 +193,20 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
      * This does NOT perform as well as some other methods of retrieving plots. Please use sparingly and with caution!
      * @see mytown.api.interfaces.IHasPlots
      */
+
     @Override
-    public Plot getPlotAtCoords(int dim, int x, int y, int z) {
+    public Plot getPlotAtCoords(int dim, BlockPos pos) {
         for (Plot plot : plots) {
-            if (plot.isCoordWithin(dim, x, y, z)) {
+            if (plot.isCoordWithin(dim, pos.getX(), pos.getY(), pos.getZ())) {
                 return plot;
             }
         }
         return null;
+    }
+
+    @Override
+    public Plot getPlotAtCoords(int dim, int x, int y, int z) {
+        return getPlotAtCoords(dim, new BlockPos(x ,y ,z));
     }
 
     /* ----- IHasTowns ----- */
@@ -412,10 +418,10 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
             return;
         }
 
-        ChunkCoordinates spawn = player.getBedLocation(player.dimension);
+        BlockPos spawn = player.getBedLocation(player.dimension);
         if (spawn == null)
             spawn = player.worldObj.getSpawnPoint();
-        ((EntityPlayerMP) player).playerNetServerHandler.setPlayerLocation(spawn.posX, spawn.posY, spawn.posZ, player.rotationYaw, player.rotationPitch);
+        ((EntityPlayerMP) player).playerNetServerHandler.setPlayerLocation(spawn.getX(), spawn.getY(), spawn.getZ(), player.rotationYaw, player.rotationPitch);
     }
 
     /**
@@ -486,6 +492,9 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         return true;
     }
 
+    public int getDimension() {
+        return getPlayer().worldObj.provider.getDimensionId();
+    }
 
     public boolean isFirstPlotSelectionActive() {
         return firstSelectionActive;

@@ -1,7 +1,7 @@
 package mytown.datasource;
 
 import com.mojang.authlib.GameProfile;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.api.events.*;
 import mytown.config.Config;
@@ -66,8 +66,8 @@ public abstract class MyTownDatasource {
     @SuppressWarnings("unchecked")
     private void configureTown(Town town, Resident creator) {
         for (World world : MinecraftServer.getServer().worldServers) {
-            if (!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
-                saveWorld(world.provider.dimensionId);
+            if (!MyTownUniverse.getInstance().hasWorld(world.provider.getDimensionId())) {
+                saveWorld(world.provider.getDimensionId());
             }
         }
         for (int dim : MyTownUniverse.getInstance().getWorldsList()) {
@@ -83,7 +83,11 @@ public abstract class MyTownDatasource {
 
         // Saving town to database
         if (!saveTown(town))
-            throw new CommandException("Failed to save Town"); // TODO Localize!
+            try {
+                throw new CommandException("Failed to save Town"); // TODO Localize!
+            } catch (CommandException e) {
+                e.printStackTrace();
+            }
 
 
         //Claiming first block
@@ -93,7 +97,7 @@ public abstract class MyTownDatasource {
 
         // Saving and adding all flags to the database
         for (FlagType type : FlagType.values()) {
-            if (type.canTownsModify() && type.shouldLoad()) {
+            if (type.canTownsModify()) {
                 saveFlag(new Flag(type, type.getDefaultValue()), town);
             }
         }
@@ -415,7 +419,7 @@ public abstract class MyTownDatasource {
     }
 
     public final boolean hasResident(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username); // TODO I have no idea if this will actually work. xD
+        GameProfile profile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(username); // TODO I have no idea if this will actually work. xD
         return profile != null && hasResident(profile.getId());
     }
 
@@ -452,7 +456,7 @@ public abstract class MyTownDatasource {
     }
 
     public Resident getOrMakeResident(EntityPlayer player) {
-        return getOrMakeResident(player.getPersistentID(), player.getDisplayName());
+        return getOrMakeResident(player.getPersistentID(), player.getDisplayNameString());
     }
 
     public Resident getOrMakeResident(Entity e) {
@@ -470,7 +474,7 @@ public abstract class MyTownDatasource {
     }
 
     public Resident getOrMakeResident(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
+        GameProfile profile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(username);
         return profile == null ? null : getOrMakeResident(profile.getId(), profile.getName());
     }
 

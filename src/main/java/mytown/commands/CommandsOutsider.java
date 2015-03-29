@@ -29,7 +29,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             nonPlayers = true,
             completionKeys = {"townCompletionAndAll"})
-    public static void infoCommand(ICommandSender sender, List<String> args) {
+    public static void infoCommand(ICommandSender sender, List<String> args) throws Exception {
         List<Town> towns = new ArrayList<Town>();
 
         if (args.size() < 1) {
@@ -60,7 +60,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             nonPlayers = true,
             completionKeys = {"residentCompletion"})
-    public static void resCommand(ICommandSender sender, List<String> args) {
+    public static void resCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.res");
         }
@@ -76,7 +76,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.list",
             parentName = "mytown.cmd",
             nonPlayers = true)
-    public static void listCommand(ICommandSender sender, List<String> args) {
+    public static void listCommand(ICommandSender sender, List<String> args) throws Exception {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", Formatter.formatTownsToString(MyTownUniverse.getInstance().getTownsMap().values())));
     }
 
@@ -84,7 +84,7 @@ public class CommandsOutsider extends Commands {
             name = "new",
             permission = "mytown.cmd.outsider.new",
             parentName = "mytown.cmd")
-    public static void newTownCommand(ICommandSender sender, List<String> args) {
+    public static void newTownCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.newtown");
 
@@ -119,7 +119,7 @@ public class CommandsOutsider extends Commands {
             name = "map",
             permission = "mytown.cmd.outsider.map",
             parentName = "mytown.cmd")
-    public static void mapCommand(ICommandSender sender, List<String> args) {
+    public static void mapCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         if (args.size() == 0) {
             Formatter.sendMap(res);
@@ -133,7 +133,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.accept",
             parentName = "mytown.cmd",
             completionKeys = {"townCompletion"})
-    public static void acceptCommand(ICommandSender sender, List<String> args) {
+    public static void acceptCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
@@ -160,7 +160,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.refuse",
             parentName = "mytown.cmd",
             completionKeys = {"townCompletion"})
-    public static void refuseCommand(ICommandSender sender, List<String> args) {
+    public static void refuseCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
 
         List<Town> invites = getInvitesFromResident(res);
@@ -181,7 +181,7 @@ public class CommandsOutsider extends Commands {
             name = "friends",
             permission = "mytown.cmd.outsider.friends",
             parentName = "mytown.cmd")
-    public static void friendsCommand(ICommandSender sender, List<String> args) {
+    public static void friendsCommand(ICommandSender sender, List<String> args) throws Exception {
         callSubFunctions(sender, args, "mytown.cmd.outsider.friends");
     }
 
@@ -189,7 +189,7 @@ public class CommandsOutsider extends Commands {
             name = "list",
             permission = "mytown.cmd.outsider.friends.list",
             parentName = "mytown.cmd.outsider.friends")
-    public static void friendsListCommand(ICommandSender sender, List<String> args) {
+    public static void friendsListCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
 
         String friends = null;
@@ -208,7 +208,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.friends.add",
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
-    public static void friendsAddCommand(ICommandSender sender, List<String> args) {
+    public static void friendsAddCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.friends.add");
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -227,7 +227,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.friends.remove",
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
-    public static void friendsRemoveCommand(ICommandSender sender, List<String> args) {
+    public static void friendsRemoveCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.friends.remove");
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -246,7 +246,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.friends.accept",
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
-    public static void friendsAcceptCommand(ICommandSender sender, List<String> args) {
+    public static void friendsAcceptCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1)
             throw new MyTownCommandException("mytown.cmd.usage.friends.accept");
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -262,7 +262,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.friends.refuse",
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
-    public static void friendsRefuseCommand(ICommandSender sender, List<String> args) {
+    public static void friendsRefuseCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1)
             throw new MyTownCommandException("mytown.cmd.usage.friends.refuse");
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -278,7 +278,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.help",
             parentName = "mytown.cmd",
             nonPlayers = true)
-    public static void helpCommand(ICommandSender sender, List<String> args) {
+    public static void helpCommand(ICommandSender sender, List<String> args) throws Exception {
         sendHelpMessage(sender, "mytown.cmd", args);
     }
 
@@ -286,7 +286,7 @@ public class CommandsOutsider extends Commands {
             name = "invites",
             permission = "mytown.cmd.outsider.invites",
             parentName = "mytown.cmd")
-    public static void invitesCommand(ICommandSender sender, List<String> args) {
+    public static void invitesCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         if (res.getInvites().size() == 0)
             res.sendMessage(getLocal().getLocalization("mytown.notification.resident.noInvites"));

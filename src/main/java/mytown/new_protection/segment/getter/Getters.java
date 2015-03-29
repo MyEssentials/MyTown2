@@ -121,13 +121,13 @@ public class Getters {
                             lastInstance = ((NBTTagCompound) lastInstance).getTag(caller.element);
 
                             if(lastInstance instanceof NBTTagDouble) {
-                                lastInstance = ((NBTTagDouble) lastInstance).func_150286_g();
+                                lastInstance = ((NBTTagDouble) lastInstance).getDouble();
                             } else if(lastInstance instanceof NBTTagFloat) {
-                                lastInstance = ((NBTTagFloat) lastInstance).func_150288_h();
+                                lastInstance = ((NBTTagFloat) lastInstance).getFloat();
                             } else if(lastInstance instanceof NBTTagInt) {
-                                lastInstance = ((NBTTagInt) lastInstance).func_150287_d();
+                                lastInstance = ((NBTTagInt) lastInstance).getInt();
                             } else if(lastInstance instanceof NBTTagString) {
-                                lastInstance = ((NBTTagString) lastInstance).func_150285_a_();
+                                lastInstance = ((NBTTagString) lastInstance).getString();
                             }
 
                             //MyTown.instance.log.info("Got tag with name: " + getter.element + " and value " + lastInstance.toString());

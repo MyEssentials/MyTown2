@@ -156,28 +156,28 @@ public abstract class Commands {
 
     /* ---- HELPERS ---- */
 
-    public static Town getTownFromResident(Resident res) {
+    public static Town getTownFromResident(Resident res) throws Exception {
         Town town = res.getSelectedTown();
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.partOfTown");
         return town;
     }
 
-    public static Town getTownFromName(String name) {
+    public static Town getTownFromName(String name) throws Exception {
         Town town = MyTownUniverse.getInstance().getTownsMap().get(name);
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.town.notexist", name);
         return town;
     }
 
-    public static Resident getResidentFromName(String playerName) {
+    public static Resident getResidentFromName(String playerName) throws Exception {
         Resident res = getDatasource().getOrMakeResident(playerName);
         if (res == null)
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", playerName);
         return res;
     }
 
-    public static Plot getPlotAtResident(Resident res) {
+    public static Plot getPlotAtResident(Resident res) throws Exception {
         Town town = getTownFromResident(res);
         Plot plot = town.getPlotAtResident(res);
         if (plot == null)
@@ -185,35 +185,35 @@ public abstract class Commands {
         return plot;
     }
 
-    public static ImmutableList<Town> getInvitesFromResident(Resident res) {
+    public static ImmutableList<Town> getInvitesFromResident(Resident res) throws Exception {
         ImmutableList<Town> list = res.getInvites();
         if (list == null || list.isEmpty())
             throw new MyTownCommandException("mytown.cmd.err.invite.noinvitations");
         return list;
     }
 
-    public static Flag getFlagFromType(IHasFlags hasFlags, FlagType flagType) {
+    public static Flag getFlagFromType(IHasFlags hasFlags, FlagType flagType) throws Exception {
         Flag flag = hasFlags.getFlag(flagType);
         if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", flagType.toString());
         return flag;
     }
 
-    public static Flag getFlagFromName(IHasFlags hasFlags, String name) {
+    public static Flag getFlagFromName(IHasFlags hasFlags, String name) throws Exception {
         Flag flag = hasFlags.getFlag(FlagType.valueOf(name));
         if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", name);
         return flag;
     }
 
-    public static TownBlock getBlockAtResident(Resident res) {
+    public static TownBlock getBlockAtResident(Resident res) throws Exception {
         TownBlock block = getDatasource().getBlock(res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
         if (block == null)
             throw new MyTownCommandException("mytown.cmd.err.claim.notexist", res.getSelectedTown());
         return block;
     }
 
-    public static Rank getRankFromTown(Town town, String rankName) {
+    public static Rank getRankFromTown(Town town, String rankName) throws Exception {
         Rank rank = town.getRank(rankName);
         if (rank == null) {
             throw new MyTownCommandException("mytown.cmd.err.rank.notexist", rankName, town.getName());
@@ -221,7 +221,7 @@ public abstract class Commands {
         return rank;
     }
 
-    public static Rank getRankFromResident(Resident res) {
+    public static Rank getRankFromResident(Resident res) throws Exception {
         Rank rank = res.getTownRank();
         if (rank == null) {
             throw new MyTownCommandException("mytown.cmd.err.partOfTown");
@@ -229,7 +229,7 @@ public abstract class Commands {
         return rank;
     }
 
-    public static Plot getPlotAtPosition(int dim, int x, int y, int z) {
+    public static Plot getPlotAtPosition(int dim, int x, int y, int z) throws Exception {
         Town town = MyTownUtils.getTownAtPosition(dim, x >> 4, z >> 4);
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.blockNotInPlot");
@@ -239,7 +239,7 @@ public abstract class Commands {
         return plot;
     }
 
-    public static FlagType getFlagTypeFromName(String name) {
+    public static FlagType getFlagTypeFromName(String name) throws Exception {
         try {
             return FlagType.valueOf(name);
         } catch (IllegalArgumentException e) {
@@ -256,7 +256,7 @@ public abstract class Commands {
         }
     }
 
-    public static boolean makePayment(EntityPlayer player, int amount) {
+    public static boolean makePayment(EntityPlayer player, int amount) throws Exception {
         if(amount == 0)
             return true;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);

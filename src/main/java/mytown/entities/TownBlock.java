@@ -2,6 +2,7 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.api.interfaces.IHasPlots;
+import net.minecraft.util.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,13 +91,18 @@ public class TownBlock implements IHasPlots {
     }
 
     @Override
-    public Plot getPlotAtCoords(int dim, int x, int y, int z) {
+    public Plot getPlotAtCoords(int dim, BlockPos pos) {
         for (Plot plot : plots) {
-            if (plot.isCoordWithin(dim, x, y, z)) {
+            if (plot.isCoordWithin(dim, pos.getX(), pos.getY(), pos.getZ())) {
                 return plot;
             }
         }
         return null;
+    }
+
+    @Override
+    public Plot getPlotAtCoords(int dim, int x, int y, int z) {
+        return getPlotAtCoords(dim, new BlockPos(x, y, z));
     }
 
     /* ----- Helpers ----- */

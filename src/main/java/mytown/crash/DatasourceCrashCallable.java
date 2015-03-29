@@ -1,6 +1,6 @@
 package mytown.crash;
 
-import cpw.mods.fml.common.ICrashCallable;
+import net.minecraftforge.fml.common.ICrashCallable;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownDatasource_SQL;
 import mytown.datasource.MyTownUniverse;

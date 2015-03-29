@@ -5,7 +5,7 @@ import mytown.core.utils.config.ConfigProcessor;
 import mytown.core.utils.config.ConfigProperty;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Items;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.lang.reflect.Field;
 

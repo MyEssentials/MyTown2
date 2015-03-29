@@ -1,13 +1,13 @@
 package mytown;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.FlagsConfig;
@@ -27,7 +27,6 @@ import mytown.new_protection.eventhandlers.ExtraForgeHandlers;
 import mytown.new_protection.json.JSONParser;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.proxies.mod.ModProxies;
 import mytown.util.Constants;
 import mytown.util.MyTownUtils;
 import net.minecraft.command.ICommandSender;
@@ -65,11 +64,7 @@ public class MyTown {
 
         JSONParser.folderPath = ev.getModConfigurationDirectory() + "/MyTown/protections";
 
-
         registerHandlers();
-
-        // Add all the ModProxies
-        ModProxies.addProxies();
 
         // Register ICrashCallable's
         FMLCommonHandler.instance().registerCrashCallable(new DatasourceCrashCallable());

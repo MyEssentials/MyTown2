@@ -12,19 +12,22 @@ import mytown.new_protection.segment.enums.EntityType;
 import mytown.new_protection.segment.enums.ItemType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.BlockPos;
 import mytown.util.ChunkPos;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -86,7 +89,7 @@ public class Protection {
 
                         List<ChunkPos> chunks = MyTownUtils.getChunksInBox(x1, z1, x2, z2);
                         for (ChunkPos chunk : chunks) {
-                            TownBlock block = getDatasource().getBlock(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
+                            TownBlock block = getDatasource().getBlock(te.getWorld().provider.getDimensionId(), chunk.getX(), chunk.getZ());
                             if(block == null) {
                                 if(!(Boolean) Wild.getInstance().getValue(segment.flag)) {
                                     if (segment.hasOwner()) {
@@ -103,7 +106,7 @@ public class Protection {
                                     Resident res = Protections.getInstance().getOwnerForTileEntity(te);
                                     if (res == null || !block.getTown().checkPermission(res, segment.flag))
                                         return true;
-                                } else if (!(Boolean) block.getTown().getValue(segment.flag) && !block.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
+                                } else if (!(Boolean) block.getTown().getValue(segment.flag) && !block.getTown().hasBlockWhitelist(te.getWorld().provider.getDimensionId(), te.getPos().getX(), te.getPos().getY(), te.getPos().getZ(), FlagType.modifyBlocks)) {
                                     block.getTown().notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
                                     return true;
                                 }
@@ -113,7 +116,7 @@ public class Protection {
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    MyTown.instance.log.error("Failed to check tile entity: " + te.getClass().getSimpleName() + "( " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " | WorldID: " + te.getWorldObj().provider.dimensionId + " )");
+                    MyTown.instance.log.error("Failed to check tile entity: " + te.getClass().getSimpleName() + "( " + te.getPos().getX() + ", " + te.getPos().getY() + ", " + te.getPos().getZ() + " | WorldID: " + te.getWorld().provider.getDimensionId() + " )");
                     // Disabling protection if something errors.
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
@@ -175,16 +178,16 @@ public class Protection {
             SegmentItem segment = it.next();
             if(segment.type == ItemType.rightClickBlock && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
                 if(segment.onAdjacent) {
-                    ForgeDirection dir = ForgeDirection.getOrientation(face);
-                    bp = new BlockPos(bp.x + dir.offsetX, bp.y + dir.offsetY, bp.z + dir.offsetZ, bp.dim);
+                    EnumFacing dir = EnumFacing.getFront(face);//TODO: Replace for string maybe?
+                    bp = new BlockPos(bp.getX() + dir.getFrontOffsetX(), bp.getY() + dir.getFrontOffsetY(), bp.getZ() + dir.getFrontOffsetZ());
                 }
                 try {
                     if (segment.checkCondition(item)) {
                         if(segment.getters.hasValue("range")) {
                             int range = segment.getRange(item);
-                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox(bp.x - range, bp.z - range, bp.x + range, bp.z + range);
+                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox(bp.getX() - range, bp.getZ() - range, bp.getX() + range, bp.getZ() + range);
                             for(ChunkPos chunk : chunks) {
-                                TownBlock block = getDatasource().getBlock(bp.dim, chunk.getX(), chunk.getZ());
+                                TownBlock block = getDatasource().getBlock(res.getDimension(), chunk.getX(), chunk.getZ());
                                 if (block == null) {
                                     if (!Wild.getInstance().checkPermission(res, segment.flag)) {
                                         res.sendMessage(segment.flag.getLocalizedProtectionDenial());
@@ -198,15 +201,15 @@ public class Protection {
                                 }
                             }
                         } else {
-                            TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
+                            TownBlock block = getDatasource().getBlock(res.getDimension(), bp.getX() >> 4, bp.getZ() >> 4);
                             if(block == null) {
                                 if (!Wild.getInstance().checkPermission(res, segment.flag)) {
                                     res.sendMessage(segment.flag.getLocalizedProtectionDenial());
                                     return true;
                                 }
                             } else {
-                                if(!block.getTown().checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
-                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z))));
+                                if(!block.getTown().checkPermission(res, segment.flag, res.getDimension(), bp)) {
+                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(res.getDimension(), bp.getX(), bp.getY(), bp.getZ()))));
                                     if (segment.flag == FlagType.modifyBlocks && segment.onAdjacent) {
                                         //DimensionManager.getWorld(bp.dim).setBlock(bp.x, bp.y, bp.z, Blocks.air);
                                         //MyTown.instance.log.info("Block deleted!");
@@ -217,8 +220,8 @@ public class Protection {
                         }
                     }
                 } catch (Exception ex) {
-                    MyTown.instance.log.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + bp.x
-                            + ", " + bp.y + ", " + bp.z + " | WorldID: " + bp.dim + " )");
+                    MyTown.instance.log.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + bp.getX()
+                            + ", " + bp.getY() + ", " + bp.getZ() + " | WorldID: " + res.getDimension() + " )");
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
                         ex.printStackTrace();
@@ -304,7 +307,7 @@ public class Protection {
     /**
      * Checking item usage for right click on air
      */
-    public boolean checkItem(ItemStack item, Resident res) {
+    public boolean checkItem(ItemStack item, Resident res, BlockPos pos, EnumFacing face) {
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
             if(segment.type == ItemType.rightClickAir && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
@@ -361,19 +364,22 @@ public class Protection {
      * Checking right click actions on blocks.
      */
     public boolean checkBlockRightClick(Resident res, BlockPos bp) {
-        Block blockType = DimensionManager.getWorld(bp.dim).getBlock(bp.x, bp.y, bp.z);
+        Block blockType = DimensionManager.getWorld(res.getDimension()).getBlockState(bp).getBlock();
         for(SegmentBlock segment : segmentsBlocks) {
-            if(segment.theClass.isAssignableFrom(blockType.getClass()) && (segment.meta == -1 || segment.meta == DimensionManager.getWorld(bp.dim).getBlockMetadata(bp.x, bp.y, bp.z))) {
+            World world = DimensionManager.getWorld(res.getDimension());
+            IBlockState b = world.getBlockState(bp);
+            int meta = b.getBlock().getMetaFromState(b);
+            if(segment.theClass.isAssignableFrom(blockType.getClass()) && (segment.meta == -1 || segment.meta == meta)) {
                 if(segment.flag == FlagType.accessBlocks || segment.flag == FlagType.activateBlocks) {
-                    TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
+                    TownBlock block = getDatasource().getBlock(res.getDimension(), bp.getX() >> 4, bp.getZ() >> 4);
                     if(block == null) {
                         if(!Wild.getInstance().checkPermission(res, segment.flag)) {
                             res.sendMessage(segment.flag.getLocalizedProtectionDenial());
                             return true;
                         }
                     } else {
-                        if(!block.getTown().checkPermission(res, segment.flag, bp.dim, bp.x, bp.y, bp.z)) {
-                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(bp.dim, bp.x, bp.y, bp.z))));
+                        if(!block.getTown().checkPermission(res, segment.flag, res.getDimension(), bp.getX(), bp.getY(), bp.getZ())) {
+                            res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(res.getDimension(), bp.getX(), bp.getY(), bp.getZ()))));
                             return true;
                         }
                     }
@@ -428,7 +434,7 @@ public class Protection {
 
     public boolean isBlockTracked(Class<? extends Block> block, int meta) {
         for(SegmentBlock segment : segmentsBlocks) {
-            if(segment.theClass.isAssignableFrom(block) &&( segment.meta == -1 || segment.meta == meta))
+            if(segment.theClass.isAssignableFrom(block) &&/*segment.meta == -1 ||*/ segment.meta == meta)
                 return true;
         }
         return false;

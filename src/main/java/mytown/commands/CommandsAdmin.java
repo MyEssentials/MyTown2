@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
@@ -93,7 +93,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true,
             completionKeys = {"residentCompletion", "townCompletion"})
-    public static void addCommand(ICommandSender sender, List<String> args) {
+    public static void addCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.add");
 
@@ -124,7 +124,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true,
             completionKeys = {"townCompletion"})
-    public static void deleteCommand(ICommandSender sender, List<String> args) {
+    public static void deleteCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.adm.cmd.delete.usage");
 
@@ -143,7 +143,7 @@ public class CommandsAdmin extends Commands {
             name = "new",
             permission = "mytown.adm.cmd.new",
             parentName = "mytown.adm.cmd")
-    public static void newCommand(ICommandSender sender, List<String> args) {
+    public static void newCommand(ICommandSender sender, List<String> args) throws Exception{
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.newtown");
 
@@ -170,7 +170,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true,
             completionKeys = {"residentCompletion", "townCompletion"})
-    public static void remCommand(ICommandSender sender, List<String> args) {
+    public static void remCommand(ICommandSender sender, List<String> args) throws Exception{
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.rem");
 
@@ -200,7 +200,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.setextra",
             completionKeys = {"townCompletion"},
             nonPlayers = true)
-    public static void setExtraTownCommand(ICommandSender sender, List<String> args) {
+    public static void setExtraTownCommand(ICommandSender sender, List<String> args) throws Exception{
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.setExtra.town");
         Town town = getUniverse().getTown(args.get(0));
@@ -219,7 +219,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.setextra",
             completionKeys = {"residentCompletion"},
             nonPlayers = true)
-    public static void setExtraResCommand(ICommandSender sender, List<String> args) {
+    public static void setExtraResCommand(ICommandSender sender, List<String> args) throws Exception{
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.setExtra.res");
         Resident target = getUniverse().getResidentByName(args.get(0));
@@ -237,7 +237,7 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.safemode",
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
-    public static void safemodeCommand(ICommandSender sender, List<String> args) {
+    public static void safemodeCommand(ICommandSender sender, List<String> args) throws Exception{
         boolean safemode;
         if (args.size() < 1) { // Toggle safemode
             safemode = !SafemodeHandler.isInSafemode();
@@ -300,7 +300,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.perm.town",
             nonPlayers = true,
             completionKeys = {"townCompletion"})
-    public static void permTownListCommand(ICommandSender sender, List<String> args) {
+    public static void permTownListCommand(ICommandSender sender, List<String> args) throws Exception{
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.list");
         }
@@ -315,7 +315,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.perm.town",
             nonPlayers = true,
             completionKeys = {"townCompletion", "flagCompletion"})
-    public static void permTownSetCommand(ICommandSender sender, List<String> args) {
+    public static void permTownSetCommand(ICommandSender sender, List<String> args) throws Exception{
         if (args.size() < 3) {
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.town.set");
         }
@@ -337,7 +337,7 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.perm.town.whitelist",
             parentName = "mytown.adm.cmd.perm.town",
             completionKeys = {"townCompletion", "flagCompletionWhitelist"})
-    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args) {
+    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args) throws Exception{
         if (args.size() < 2)
             throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
@@ -376,7 +376,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.perm.wild",
             nonPlayers = true,
             completionKeys = {"flagCompletion"})
-    public static void permWildSetCommand(ICommandSender sender, List<String> args) {
+    public static void permWildSetCommand(ICommandSender sender, List<String> args) throws Exception{
         if (args.size() < 2) {
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.wild.set");
         }
@@ -396,7 +396,7 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.claim",
             parentName = "mytown.adm.cmd",
             completionKeys = {"townCompletion"})
-    public static void claimCommand(ICommandSender sender, List<String> args) {
+    public static void claimCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.claim");
         EntityPlayer player = (EntityPlayer) sender;
@@ -450,7 +450,7 @@ public class CommandsAdmin extends Commands {
             name = "unclaim",
             permission = "mytown.adm.cmd.unclaim",
             parentName = "mytown.adm.cmd")
-    public static void unclaimCommand(ICommandSender sender, List<String> args) {
+    public static void unclaimCommand(ICommandSender sender, List<String> args) throws Exception{
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(pl);
         TownBlock block = getBlockAtResident(res);
@@ -518,7 +518,7 @@ public class CommandsAdmin extends Commands {
             if(player.inventory.getCurrentItem() != null) {
                 List<Class> list = new ArrayList<Class>();
                 if(player.inventory.getCurrentItem().getItem() instanceof ItemBlock) {
-                    Block block = ((ItemBlock)player.inventory.getCurrentItem().getItem()).field_150939_a;
+                    Block block = ((ItemBlock)player.inventory.getCurrentItem().getItem()).block;
                     list.add(block.getClass());
                     if(block instanceof ITileEntityProvider) {
                         list.add(((ITileEntityProvider) block).createNewTileEntity(DimensionManager.getWorld(0), 0).getClass());

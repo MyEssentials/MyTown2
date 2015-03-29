@@ -29,7 +29,7 @@ public class CommandsEveryone extends Commands {
             name = "mytown",
             permission = "mytown.cmd",
             alias = {"t", "town"})
-    public static void townCommand(ICommandSender sender, List<String> args) {
+    public static void townCommand(ICommandSender sender, List<String> args) throws Exception {
         callSubFunctions(sender, args, "mytown.cmd");
     }
 
@@ -37,7 +37,7 @@ public class CommandsEveryone extends Commands {
             name = "leave",
             permission = "mytown.cmd.everyone.leave",
             parentName = "mytown.cmd")
-    public static void leaveCommand(ICommandSender sender, List<String> args) {
+    public static void leaveCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() > 0)
             callSubFunctions(sender, args, "mytown.cmd.everyone.leave");
         else {
@@ -61,7 +61,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.spawn",
             parentName = "mytown.cmd",
             completionKeys = {"townCompletion"})
-    public static void spawnCommand(ICommandSender sender, List<String> args) {
+    public static void spawnCommand(ICommandSender sender, List<String> args) throws Exception {
         EntityPlayer player = (EntityPlayer)sender;
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town;
@@ -88,7 +88,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.select",
             parentName = "mytown.cmd",
             completionKeys = {"townCompletion"})
-    public static void selectCommand(ICommandSender sender, List<String> args) {
+    public static void selectCommand(ICommandSender sender, List<String> args) throws Exception {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.select");
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -103,7 +103,7 @@ public class CommandsEveryone extends Commands {
             name = "list",
             permission = "mytown.cmd.everyone.blocks.list",
             parentName = "mytown.cmd.assistant.blocks")
-    public static void blocksListCommand(ICommandSender sender, List<String> args) {
+    public static void blocksListCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
@@ -114,7 +114,7 @@ public class CommandsEveryone extends Commands {
             name = "list",
             permission = "mytown.cmd.everyone.perm.town.list",
             parentName = "mytown.cmd.assistant.perm.town")
-    public static void listPermCommand(ICommandSender sender, List<String> args) {
+    public static void listPermCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         res.sendMessage(Formatter.formatFlagsToString(town));
@@ -126,7 +126,7 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.perm.plot.set",
                 parentName = "mytown.cmd.everyone.perm.plot",
                 completionKeys = {"flagCompletion"})
-        public static void permSetPlotCommand(ICommandSender sender, List<String> args) {
+        public static void permSetPlotCommand(ICommandSender sender, List<String> args) throws Exception {
 
             if (args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
@@ -149,7 +149,7 @@ public class CommandsEveryone extends Commands {
                 name = "plot",
                 permission = "mytown.cmd.everyone.perm.plot",
                 parentName = "mytown.cmd.assistant.perm")
-        public static void permPlotCommand(ICommandSender sender, List<String> args) {
+        public static void permPlotCommand(ICommandSender sender, List<String> args) throws Exception {
             callSubFunctions(sender, args, "mytown.cmd.everyone.perm.plot");
         }
 
@@ -157,7 +157,7 @@ public class CommandsEveryone extends Commands {
                 name = "list",
                 permission = "mytown.cmd.everyone.perm.plot.list",
                 parentName = "mytown.cmd.everyone.perm.plot")
-        public static void permPlotListCommand(ICommandSender sender, List<String> args) {
+        public static void permPlotListCommand(ICommandSender sender, List<String> args) throws Exception {
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
             res.sendMessage(Formatter.formatFlagsToString(plot));
@@ -168,7 +168,7 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.perm.plot.whitelist",
                 parentName = "mytown.cmd.everyone.perm.plot",
                 completionKeys = {"flagCompletionWhitelist"})
-        public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args) {
+        public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args) throws Exception {
             if (args.size() == 0)
                 throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
@@ -187,7 +187,7 @@ public class CommandsEveryone extends Commands {
                 name = "plot",
                 permission = "mytown.cmd.everyone.plot",
                 parentName = "mytown.cmd")
-        public static void plotCommand(ICommandSender sender, List<String> args) {
+        public static void plotCommand(ICommandSender sender, List<String> args) throws Exception {
             callSubFunctions(sender, args, "mytown.cmd.everyone.plot");
         }
 
@@ -195,7 +195,7 @@ public class CommandsEveryone extends Commands {
                 name = "make",
                 permission = "mytown.cmd.everyone.plot.make",
                 parentName = "mytown.cmd.everyone.plot")
-        public static void plotMakeCommand(ICommandSender sender, List<String> args) {
+        public static void plotMakeCommand(ICommandSender sender, List<String> args) throws Exception {
             Resident res = getDatasource().getOrMakeResident(sender);
 
             Town town = getTownFromResident(res);
@@ -225,7 +225,7 @@ public class CommandsEveryone extends Commands {
                 name = "rename",
                 permission = "mytown.cmd.everyone.plot.rename",
                 parentName = "mytown.cmd.everyone.plot")
-        public static void plotRenameCommand(ICommandSender sender, List<String> args) {
+        public static void plotRenameCommand(ICommandSender sender, List<String> args) throws Exception {
             if (args.size() < 1)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.plot.rename");
 
@@ -256,7 +256,7 @@ public class CommandsEveryone extends Commands {
                 name = "expandVert",
                 permission = "mytown.cmd.everyone.plot.select.expand",
                 parentName = "mytown.cmd.everyone.plot.select")
-        public static void plotSelectExpandCommand(ICommandSender sender, List<String> args) {
+        public static void plotSelectExpandCommand(ICommandSender sender, List<String> args) throws Exception {
             Resident res = getDatasource().getOrMakeResident(sender);
 
             if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))
@@ -271,7 +271,7 @@ public class CommandsEveryone extends Commands {
                 name = "reset",
                 permission = "mytown.cmd.everyone.plot.select.reset",
                 parentName = "mytown.cmd.everyone.plot.select")
-        public static void plotSelectResetCommand(ICommandSender sender, List<String> args) {
+        public static void plotSelectResetCommand(ICommandSender sender, List<String> args) throws Exception {
             Resident res = getDatasource().getOrMakeResident(sender);
             res.resetSelection(true);
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.selectionReset");
@@ -281,7 +281,7 @@ public class CommandsEveryone extends Commands {
                 name = "show",
                 permission = "mytown.cmd.everyone.plot.show",
                 parentName = "mytown.cmd.everyone.plot")
-        public static void plotShowCommand(ICommandSender sender, List<String> args) {
+        public static void plotShowCommand(ICommandSender sender, List<String> args) throws Exception {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             town.showPlots();
@@ -292,7 +292,7 @@ public class CommandsEveryone extends Commands {
                 name = "hide",
                 permission = "mytown.cmd.everyone.plot.hide",
                 parentName = "mytown.cmd.everyone.plot")
-        public static void plotHideCommand(ICommandSender sender, List<String> args) {
+        public static void plotHideCommand(ICommandSender sender, List<String> args) throws Exception {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             town.hidePlots();
@@ -303,7 +303,7 @@ public class CommandsEveryone extends Commands {
                 name = "add",
                 permission = "mytown.cmd.everyone.plot.add",
                 parentName = "mytown.cmd.everyone.plot")
-        public static void plotAddCommand(ICommandSender sender, List<String> args) {
+        public static void plotAddCommand(ICommandSender sender, List<String> args) throws Exception {
             callSubFunctions(sender, args, "mytown.cmd.everyone.plot.add");
         }
 
@@ -312,7 +312,7 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.plot.add.owner",
                 parentName = "mytown.cmd.everyone.plot.add",
                 completionKeys = {"residentCompletion"})
-        public static void plotAddOwnerCommand(ICommandSender sender, List<String> args) {
+        public static void plotAddOwnerCommand(ICommandSender sender, List<String> args) throws Exception {
             if (args.size() < 1)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
             Resident res = getDatasource().getOrMakeResident(sender);
@@ -344,7 +344,7 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.plot.add.member",
                 parentName = "mytown.cmd.everyone.plot.add",
                 completionKeys = {"residentCompletion"})
-        public static void plotAddMemberCommand(ICommandSender sender, List<String> args) {
+        public static void plotAddMemberCommand(ICommandSender sender, List<String> args) throws Exception {
             if (args.size() < 1)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.plot.add");
             Resident res = getDatasource().getOrMakeResident(sender);
@@ -367,7 +367,7 @@ public class CommandsEveryone extends Commands {
                 name = "remove",
                 permission = "mytown.cmd.everyone.plot.remove",
                 parentName = "mytown.cmd.everyone.plot")
-        public static void plotRemoveCommand(ICommandSender sender, List<String> args) {
+        public static void plotRemoveCommand(ICommandSender sender, List<String> args) throws Exception {
             if (args.size() < 1)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.plot.remove");
             Resident res = getDatasource().getOrMakeResident(sender);
@@ -390,7 +390,7 @@ public class CommandsEveryone extends Commands {
                 name = "info",
                 permission = "mytown.cmd.everyone.plot.info",
                 parentName = "mytown.cmd.everyone.plot")
-        public static void plotInfoCommand(ICommandSender sender, List<String> args) {
+        public static void plotInfoCommand(ICommandSender sender, List<String> args) throws Exception{
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
             res.sendMessage(getLocal().getLocalization("mytown.notification.plot.info", plot.getName(), Formatter.formatResidentsToString(plot), plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ()));
@@ -400,7 +400,7 @@ public class CommandsEveryone extends Commands {
                 name = "delete",
                 permission = "mytown.cmd.everyone.plot.delete",
                 parentName = "mytown.cmd.everyone.plot")
-        public static void plotDeleteCommand(ICommandSender sender, List<String> args) {
+        public static void plotDeleteCommand(ICommandSender sender, List<String> args) throws Exception {
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
             if (!plot.hasOwner(res))
@@ -423,7 +423,7 @@ public class CommandsEveryone extends Commands {
             name = "list",
             permission = "mytown.cmd.everyone.ranks.list",
             parentName = "mytown.cmd.everyone.ranks")
-    public static void listRanksCommand(ICommandSender sender, List<String> args) {
+    public static void listRanksCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
@@ -434,7 +434,7 @@ public class CommandsEveryone extends Commands {
             name = "borders",
             permission = "mytown.cmd.everyone.borders",
             parentName = "mytown.cmd")
-    public static void bordersCommand(ICommandSender sender, List<String> args) {
+    public static void bordersCommand(ICommandSender sender, List<String> args) throws Exception{
         callSubFunctions(sender, args, "mytown.cmd.everyone.borders");
     }
 
@@ -442,7 +442,7 @@ public class CommandsEveryone extends Commands {
             name = "show",
             permission = "mytown.cmd.everyone.borders.show",
             parentName = "mytown.cmd.everyone.borders")
-    public static void bordersShowCommand(ICommandSender sender, List<String> args) {
+    public static void bordersShowCommand(ICommandSender sender, List<String> args) throws Exception{
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
@@ -454,7 +454,7 @@ public class CommandsEveryone extends Commands {
             name = "hide",
             permission = "mytown.cmd.everyone.borders.hide",
             parentName = "mytown.cmd.everyone.borders")
-    public static void bordersHideCommand(ICommandSender sender, List<String> args) {
+    public static void bordersHideCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
@@ -474,7 +474,7 @@ public class CommandsEveryone extends Commands {
             name = "amount",
             permission = "mytown.cmd.everyone.bank.amount",
             parentName = "mytown.cmd.everyone.bank")
-    public static void bankAmountCommand(ICommandSender sender, List<String> args) {
+    public static void bankAmountCommand(ICommandSender sender, List<String> args) throws Exception {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
@@ -488,7 +488,7 @@ public class CommandsEveryone extends Commands {
             name = "pay",
             permission = "mytown.cmd.everyone.bank.pay",
             parentName = "mytown.cmd.everyone.bank")
-    public static void bankPayCommand(ICommandSender sender, List<String> args) {
+    public static void bankPayCommand(ICommandSender sender, List<String> args) throws Exception {
         if(args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.bank.pay");
 

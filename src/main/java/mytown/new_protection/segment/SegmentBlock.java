@@ -2,7 +2,7 @@ package mytown.new_protection.segment;
 
 import mytown.entities.flag.FlagType;
 import mytown.new_protection.segment.getter.Getters;
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 
 /**
  * Created by AfterWind on 1/11/2015.

@@ -165,7 +165,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public Resident getResidentByName(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
+        GameProfile profile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(username);
         return getResident(profile.getId().toString());
     }
 

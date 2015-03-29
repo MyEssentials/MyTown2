@@ -7,6 +7,7 @@ import mytown.api.interfaces.IHasFlags;
 import mytown.api.interfaces.IHasResidents;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import net.minecraft.util.BlockPos;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,6 +21,10 @@ public class Plot implements IHasFlags, IHasResidents {
     private final int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
     private String key, name;
+
+    public Plot(String name, Town town, int dim, BlockPos pos, BlockPos pos2) {
+        this(name, town, dim, pos.getX(), pos.getY(), pos.getZ(), pos2.getX(), pos2.getY(), pos2.getZ());
+    }
 
     public Plot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         if (x1 > x2) {

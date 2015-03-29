@@ -2,6 +2,7 @@ package mytown.api.interfaces;
 
 import com.google.common.collect.ImmutableList;
 import mytown.entities.Plot;
+import net.minecraft.util.BlockPos;
 
 /**
  * @author Joe Goett
@@ -20,5 +21,7 @@ public interface IHasPlots {
     /**
      * Returns the Plot in the dimension, and at the given coords (non-chunk coords)
      */
+    public Plot getPlotAtCoords(int dim, BlockPos pos);
+
     public Plot getPlotAtCoords(int dim, int x, int y, int z);
 }

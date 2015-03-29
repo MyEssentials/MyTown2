@@ -1,6 +1,6 @@
 package mytown.proxies;
 
-import cpw.mods.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import mytown.config.Config;
 import mytown.core.utils.Log;
 import mytown.core.utils.config.ConfigProcessor;

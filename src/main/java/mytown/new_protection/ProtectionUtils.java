@@ -6,12 +6,12 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.util.BlockPos;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
@@ -121,14 +121,15 @@ public class ProtectionUtils {
     public static boolean isBlockWhitelistValid(BlockWhitelist bw) {
         // TODO: Maybe make this better
         // Delete if the town is gone
+        int meta = DimensionManager.getWorld(bw.dim).getBlockState(new BlockPos(bw.x, bw.y, bw.z)).getBlock().getMetaFromState(DimensionManager.getWorld(bw.dim).getBlockState(new BlockPos(bw.x, bw.y, bw.z))); //TODO: Simplify
         if (MyTownUtils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
             return false;
 
         if (bw.getFlagType() == FlagType.activateBlocks
-                && !(checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z), DimensionManager.getWorld(bw.dim).getBlockMetadata(bw.x, bw.y, bw.z))))
+                && !(checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlockState(new BlockPos(bw.x, bw.y, bw.z)).getBlock(), meta)))
             return false;
         if ((bw.getFlagType() == FlagType.modifyBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems)) {
-            TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(bw.x, bw.y, bw.z);
+            TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(new BlockPos(bw.x, bw.y, bw.z));
             if (te == null) return false;
             return getFlagsForTile(te.getClass()).contains(bw.getFlagType());
         }
@@ -146,7 +147,7 @@ public class ProtectionUtils {
 
     public static void saveBlockOwnersToDB() {
         for(Map.Entry<TileEntity, Resident> set : Protections.getInstance().ownedTileEntities.entrySet()) {
-            DatasourceProxy.getDatasource().saveBlockOwner(set.getValue(), set.getKey().getWorldObj().provider.dimensionId, set.getKey().xCoord, set.getKey().yCoord, set.getKey().zCoord);
+            DatasourceProxy.getDatasource().saveBlockOwner(set.getValue(), set.getKey().getWorld().provider.getDimensionId(), set.getKey().getPos().getX(), set.getKey().getPos().getY(), set.getKey().getPos().getZ());
         }
     }
 

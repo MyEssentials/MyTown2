@@ -1,10 +1,11 @@
 package mytown.new_protection;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.Localization;
@@ -13,7 +14,6 @@ import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.BlockPos;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
@@ -156,8 +156,8 @@ public class Protections {
                 for (Protection prot : protections) {
                     if ((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.isTileTracked(te.getClass())) {
                         if (prot.checkTileEntity(te)) {
-                            MyTownUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
-                            te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
+                            MyTownUtils.dropAsEntity(te.getWorld(), te.getPos().getX(), te.getPos().getY(), te.getPos().getZ(), new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
+                            te.getWorld().setBlockToAir(te.getPos());
                             te.invalidate();
                             MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
                         }
@@ -200,7 +200,7 @@ public class Protections {
     public void onBlockPlacement(BlockEvent.PlaceEvent ev) {
         if(ev.world.isRemote)
             return;
-        if(onAnyBlockPlacement(ev.player, ev.itemInHand, ev.placedBlock, ev.world.provider.dimensionId, ev.x, ev.y, ev.z))
+        if(onAnyBlockPlacement(ev.player, ev.itemInHand, ev.placedBlock.getBlock(), ev.world.provider.getDimensionId(), ev.pos.getX(), ev.pos.getY(), ev.pos.getZ()))
             ev.setCanceled(true);
     }
 
@@ -208,7 +208,7 @@ public class Protections {
     public void onMultiBlockPlacement(BlockEvent.MultiPlaceEvent ev) {
         if(ev.world.isRemote)
             return;
-        if(onAnyBlockPlacement(ev.player, ev.itemInHand, ev.placedBlock, ev.world.provider.dimensionId, ev.x, ev.y, ev.z))
+        if(onAnyBlockPlacement(ev.player, ev.itemInHand, ev.placedBlock.getBlock(), ev.world.provider.getDimensionId(), ev.pos.getX(), ev.pos.getY(), ev.pos.getZ()))
             ev.setCanceled(true);
     }
 
@@ -313,13 +313,11 @@ public class Protections {
             return;
         }
 
-        int x = ev.x, y = ev.y, z = ev.z;
+        BlockPos pos = new BlockPos(ev.pos.getX(), ev.pos.getY(), ev.pos.getZ());
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
 
-        if(ev.world.getBlock(x, y, z) == Blocks.air) {
-            x = (int)ev.entityPlayer.posX;
-            y = (int)ev.entityPlayer.posY;
-            z = (int)ev.entityPlayer.posZ;
+        if(ev.world.getBlockState(ev.pos) == Blocks.air) {
+            pos = ev.entityPlayer.getPosition();
         }
 
 
@@ -340,8 +338,8 @@ public class Protections {
         // Item usage check here
         if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
             for (Protection protection : protections) {
-                if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
-                        ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && protection.checkItem(currentStack, res)) {
+                if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, res, ev.pos, ev.face) ||
+                        ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && protection.checkItem(currentStack, res, ev.pos, ev.face)) {
                     ev.setCanceled(true);
                     return;
                 }
@@ -352,13 +350,14 @@ public class Protections {
         // Activate and access check here
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             for(Protection protection : protections) {
-                if(protection.checkBlockRightClick(res, new BlockPos(x, y, z, ev.world.provider.dimensionId))) {
+                if(protection.checkBlockRightClick(res, pos)) {
                     // Update the blocks so that it's synced with the player.
-                    S23PacketBlockChange packet = new S23PacketBlockChange(x, y, z, ev.world);
-                    packet.field_148884_e = ev.world.getBlockMetadata(x, y, z);
+                    S23PacketBlockChange packet = new S23PacketBlockChange(ev.world, pos);
+                    packet.field_148883_d = ev.world.getBlockState(pos);
                     FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
-                    packet = new S23PacketBlockChange(x, y-1, z, ev.world);
-                    packet.field_148884_e = ev.world.getBlockMetadata(x, y-1, z);
+                    BlockPos newPos = new BlockPos(pos.getX(), pos.getY()-1, pos.getZ());
+                    packet = new S23PacketBlockChange(ev.world, newPos);
+                    packet.field_148883_d = ev.world.getBlockState(newPos);
                     FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
 
                     ev.setCanceled(true);
@@ -373,7 +372,7 @@ public class Protections {
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
         if(ev.world.isRemote)
             return;
-        TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+        TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.getDimensionId(), ev.pos.getX() >> 4, ev.pos.getZ() >> 4);
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer());
         if (block == null) {
             if (!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks)) {
@@ -382,23 +381,23 @@ public class Protections {
             }
         } else {
             Town town = block.getTown();
-            if (!town.checkPermission(res, FlagType.modifyBlocks, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(ev.world.provider.dimensionId, ev.x, ev.y, ev.z))));
+            if (!town.checkPermission(res, FlagType.modifyBlocks, ev.world.provider.getDimensionId(), ev.pos.getX(), ev.pos.getY(), ev.pos.getZ())) {
+                res.protectionDenial(FlagType.modifyBlocks.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(ev.world.provider.getDimensionId(), ev.pos.getX(), ev.pos.getY(), ev.pos.getZ()))));
                 ev.setCanceled(true);
                 return;
             }
 
-            if (ev.block instanceof ITileEntityProvider) {
-                TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata);
+            if (ev.state.getBlock() instanceof ITileEntityProvider) {
+                TileEntity te = ((ITileEntityProvider) ev.state.getBlock()).createNewTileEntity(ev.world, ev.state.getBlock().getMetaFromState(ev.state));
                 if(te != null)
-                    ProtectionUtils.removeFromWhitelist(te.getClass(), ev.world.provider.dimensionId, ev.x, ev.y, ev.z, town);
+                    ProtectionUtils.removeFromWhitelist(te.getClass(), ev.world.provider.getDimensionId(), ev.pos.getX(), ev.pos.getY(), ev.pos.getZ(), town);
             }
         }
 
-        if (ev.block instanceof ITileEntityProvider) {
-            TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata);
+        if (ev.state.getBlock() instanceof ITileEntityProvider) {
+            TileEntity te = ((ITileEntityProvider) ev.state.getBlock()).createNewTileEntity(ev.world, ev.state.getBlock().getMetaFromState(ev.state));
             if(te != null && ProtectionUtils.isTileEntityOwnable(te.getClass())) {
-                te = ev.world.getTileEntity(ev.x, ev.y, ev.z);
+                te = ev.world.getTileEntity(ev.pos);
                 ownedTileEntities.remove(te);
                 MyTown.instance.log.info("Removed te " + te.toString());
             }
@@ -477,15 +476,15 @@ public class Protections {
         if(ev.entity.worldObj.isRemote)
             return;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-        TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
+        TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.getDimensionId(), ev.target.func_178782_a().getX() >> 4, ev.target.func_178782_a().getZ() >> 4);
         if(block == null) {
             if(!Wild.getInstance().checkPermission(res, FlagType.useItems)) {
                 res.sendMessage(FlagType.useItems.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
             }
         } else {
-            if(!block.getTown().checkPermission(res, FlagType.useItems, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
-                res.protectionDenial(FlagType.useItems.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ))));
+            if(!block.getTown().checkPermission(res, FlagType.useItems, ev.world.provider.getDimensionId(), ev.target.func_178782_a().getX(), ev.target.func_178782_a().getY(), ev.target.func_178782_a().getZ())) {
+                res.protectionDenial(FlagType.useItems.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.world.provider.getDimensionId(), ev.target.func_178782_a().getX(), ev.target.func_178782_a().getY(), ev.target.func_178782_a().getZ()))));
                 ev.setCanceled(true);
             }
         }

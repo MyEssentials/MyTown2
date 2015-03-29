@@ -13,6 +13,7 @@ import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.DimensionManager;
 
 import java.util.*;
@@ -351,9 +352,15 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public Plot getPlotAtCoords(int dim, int x, int y, int z) {
-        TownBlock b = getBlockAtCoords(dim, x >> 4, z >> 4);
+        BlockPos pos = new BlockPos(x,y,z);
+        return getPlotAtCoords(dim, pos);
+    }
+
+    @Override
+    public Plot getPlotAtCoords(int dim, BlockPos pos) {
+        TownBlock b = getBlockAtCoords(dim, pos.getX() >> 4, pos.getZ() >> 4);
         if (b != null) {
-            return b.getPlotAtCoords(dim, x, y, z);
+            return b.getPlotAtCoords(dim, pos);
         }
 
         return null;
@@ -607,11 +614,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * Checks if the Resident is allowed to do the action specified by the FlagType at the coordinates given.
      * This method will go through all the plots and prioritize the plot's flags over town flags.
      */
+
     @SuppressWarnings("unchecked")
-    public boolean checkPermission(Resident res, FlagType flagType, int dim, int x, int y, int z) {
+    public boolean checkPermission(Resident res, FlagType flagType, int dim, BlockPos pos) {
         if (flagType.getType() != Boolean.class)
             throw new RuntimeException("FlagType is not boolean!");
-        Plot plot = getPlotAtCoords(dim, x, y, z);
+        Plot plot = getPlotAtCoords(dim, pos);
 
         if (plot == null) {
             if(!(Boolean) getValue(flagType)) {
@@ -624,6 +632,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
                 return Utils.isOp(res.getPlayer());
         }
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    public boolean checkPermission(Resident res, FlagType flagType, int dim, int x, int y, int z) {
+        return checkPermission(res, flagType, dim, new BlockPos(x, y, z));
     }
 
     /**
@@ -647,7 +661,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      */
     public List<Resident> getOwnersAtPosition(int dim, int x, int y, int z) {
         List<Resident> list = new ArrayList<Resident>();
-        Plot plot = getPlotAtCoords(dim, x, y, z);
+        BlockPos pos = new BlockPos(x, y, z);
+        Plot plot = getPlotAtCoords(dim, pos);
         if (plot == null) {
             if (isPointInTown(dim, x, z) && !(this instanceof AdminTown) && residents.size() != 0) {
                 list.add(getMayor());

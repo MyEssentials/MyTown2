@@ -1,6 +1,6 @@
 package mytown.new_protection.eventhandlers;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import mytown.MyTown;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
@@ -33,9 +33,10 @@ public class ExtraForgeHandlers {
     public void onExplosion(ExplosionEvent.Start ev) {
         if(ev.world.isRemote)
             return;
-        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.explosionX - ev.explosion.explosionSize - 2), (int)(ev.explosion.explosionZ - ev.explosion.explosionSize - 2), (int)(ev.explosion.explosionX + ev.explosion.explosionSize + 2), (int)(ev.explosion.explosionZ + ev.explosion.explosionSize + 2));
+        //TODO: Fix for explosion size
+        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.getPosition().xCoord - /*ev.explosion.explosionSize -*/ 2), (int)(ev.explosion.getPosition().zCoord /*- ev.explosion.explosionSize*/ - 2), (int)(ev.explosion.getPosition().xCoord + /*ev.explosion.explosionSize +*/ 2), (int)(ev.explosion.getPosition().zCoord + /*ev.explosion.explosionSize +*/ 2));
         for(ChunkPos chunk : chunks) {
-            TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
+            TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.getDimensionId(), chunk.getX(), chunk.getZ());
             if(block == null) {
                 if(!(Boolean)Wild.getInstance().getValue(FlagType.explosions)) {
                     ev.setCanceled(true);
