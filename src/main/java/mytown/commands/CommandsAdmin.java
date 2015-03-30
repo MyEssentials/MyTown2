@@ -21,6 +21,7 @@ import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
+import mytown.handlers.VisualsTickHandler;
 import mytown.protection.json.JSONParser;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.ChunkPos;
@@ -33,6 +34,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.DimensionManager;
@@ -654,6 +656,71 @@ public class CommandsAdmin extends Commands {
                     }
                 }
             }
+        }
+    }
+
+    @CommandNode(
+            name = "plot",
+            permission = "mytown.adm.cmd.plot",
+            parentName = "mytown.adm.cmd")
+    public static void plotCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.plot");
+    }
+
+    @CommandNode(
+            name = "show",
+            permission = "mytown.adm.cmd.plot.show",
+            parentName = "mytown.adm.cmd.plot")
+    public static void plotShowCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new MyTownCommandException("mytown.adm.cmd.usage.plot.show");
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromName(args.get(0));
+        town.showPlots(res);
+        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
+    }
+
+    @CommandNode(
+            name = "hide",
+            permission = "mytown.adm.cmd.plot.hide",
+            parentName = "mytown.adm.cmd.plot")
+    public static void plotHideCommand(ICommandSender sender, List<String> args) {
+        if(sender instanceof EntityPlayerMP) {
+            VisualsTickHandler.getInstance().unmarkBlocksForPlots((EntityPlayerMP) sender);
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.plot.vanished"));
+        }
+    }
+
+    @CommandNode(
+            name = "borders",
+            permission = "mytown.adm.cmd.borders",
+            parentName = "mytown.adm.cmd")
+    public static void bordersCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.borders");
+    }
+
+    @CommandNode(
+            name = "show",
+            permission = "mytown.adm.cmd.borders.show",
+            parentName = "mytown.adm.cmd.borders")
+    public static void bordersShowCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new MyTownCommandException("mytown.adm.cmd.usage.borders.show");
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromName(args.get(0));
+        town.showBorders(res);
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.show", town.getName()));
+    }
+
+    @CommandNode(
+            name = "hide",
+            permission = "mytown.adm.cmd.borders.hide",
+            parentName = "mytown.adm.cmd.borders")
+    public static void bordersHideCommand(ICommandSender sender, List<String> args) {
+        if(sender instanceof EntityPlayerMP) {
+            VisualsTickHandler.getInstance().unmarkBlocksForTown((EntityPlayerMP)sender);
+            sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
         }
     }
 

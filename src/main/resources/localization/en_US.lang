@@ -199,6 +199,12 @@ mytown.adm.cmd.usage.unclaim=&3/ta unclaim
 # /ta cost
 mytown.adm.cmd.cost.itemname=&3The unique name of this item is: &c%s\n&3Add this as the costItem in your config to set the cost item.
 
+# /ta plot
+mytown.adm.cmd.usage.plot.show=&3/ta plot show <townName>
+
+# /ta borders
+mytown.adm.cmd.usage.borders.show=&3/ta borders show <townName>
+
 # Notifications
 mytown.notification.town.created=&aTown %s created!
 mytown.notification.admtown.created=&aAdmin town %s created!
