@@ -9,6 +9,9 @@ notifications:
       - "Result: %{result}"
       - "Change view: %{compare_url}"
       - "Build details: %{build_url}"
+cache:
+  directories:
+  - $HOME/.gradle/caches/
 deploy:
   provider: releases
   api_key:
