@@ -36,7 +36,7 @@ public class CommandsAssistant extends Commands {
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
 
-        if(!town.isPointInTown(player.dimension, (int)player.posX, (int)player.posZ))
+        if (!town.isPointInTown(player.dimension, (int) player.posX, (int) player.posZ))
             throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()));
 
         makePayment(player, Config.costAmountSetSpawn);
@@ -57,7 +57,7 @@ public class CommandsAssistant extends Commands {
 
         boolean isClaimFar = false;
 
-        if(args.size() < 1) {
+        if (args.size() < 1) {
             if (town.getBlocks().size() >= town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
             if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
@@ -79,16 +79,16 @@ public class CommandsAssistant extends Commands {
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
-            if(!MyTownUtils.tryParseInt(args.get(0)))
+            if (!MyTownUtils.tryParseInt(args.get(0)))
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
             int radius = Integer.parseInt(args.get(0));
-            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(player.posX - radius*16), (int)(player.posZ - radius*16), (int)(player.posX + radius*16), (int)(player.posZ + radius*16));
+            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) (player.posX - radius * 16), (int) (player.posZ - radius * 16), (int) (player.posX + radius * 16), (int) (player.posZ + radius * 16));
             isClaimFar = true;
 
-            for(Iterator<ChunkPos> it = chunks.iterator(); it.hasNext();) {
+            for (Iterator<ChunkPos> it = chunks.iterator(); it.hasNext(); ) {
                 ChunkPos chunk = it.next();
-                if(checkNearby(player.dimension, chunk.getX(), chunk.getZ(), town)) {
+                if (checkNearby(player.dimension, chunk.getX(), chunk.getZ(), town)) {
                     isClaimFar = false;
                 }
                 if (getDatasource().hasBlock(player.dimension, chunk.getX(), chunk.getZ()))
@@ -98,9 +98,9 @@ public class CommandsAssistant extends Commands {
             if (town.getBlocks().size() + chunks.size() > town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
 
-            makePayment(player, isClaimFar ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1): Config.costAmountClaim * chunks.size());
+            makePayment(player, isClaimFar ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1) : Config.costAmountClaim * chunks.size());
 
-            for(ChunkPos chunk : chunks) {
+            for (ChunkPos chunk : chunks) {
                 TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), town);
                 getDatasource().saveBlock(block);
                 res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
@@ -118,7 +118,7 @@ public class CommandsAssistant extends Commands {
         TownBlock block = getBlockAtResident(res);
         Town town = res.getSelectedTown();
 
-        if(town != block.getTown())
+        if (town != block.getTown())
             throw new MyTownCommandException("mytown.cmd.err.unclaim.notInTown");
         if (block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ()))
             throw new MyTownCommandException("mytown.cmd.err.unclaim.spawnPoint");
@@ -416,7 +416,7 @@ public class CommandsAssistant extends Commands {
     }
 
 
-        @CommandNode(
+    @CommandNode(
             name = "set",
             permission = "mytown.cmd.assistant.plot.limit.set",
             parentName = "mytown.cmd.assistant.plot.limit")
@@ -424,16 +424,15 @@ public class CommandsAssistant extends Commands {
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
         }
-        try {
-            int limit = Integer.parseInt(args.get(0));
-            Resident res = getDatasource().getOrMakeResident(sender);
-            Town town = getTownFromResident(res);
-            town.setMaxPlots(limit);
-            getDatasource().saveTown(town);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));
-        } catch (NumberFormatException ex) {
-            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
+        if (MyTownUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger");
         }
+        int limit = Integer.parseInt(args.get(0));
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+        town.setMaxPlots(limit);
+        getDatasource().saveTown(town);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));
     }
 
     @CommandNode(
