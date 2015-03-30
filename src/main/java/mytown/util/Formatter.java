@@ -216,7 +216,7 @@ public class Formatter {
         String formattedFlagList = null;
 
         for (Flag flag : container.getFlags()) {
-            if(flag.flagType.canTownsModify()) {
+            if(flag.flagType.canTownsModify() || container instanceof Wild) {
                 if (formattedFlagList == null) {
                     formattedFlagList = "";
                 } else {

@@ -7,12 +7,12 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
 import mytown.commands.*;
-import mytown.config.Config;
-import mytown.config.FlagsConfig;
-import mytown.config.RanksConfig;
-import mytown.config.WildPermsConfig;
+import mytown.config.*;
+import mytown.config.json.FlagsConfig;
+import mytown.config.json.JSONConfig;
+import mytown.config.json.RanksConfig;
+import mytown.config.json.WildPermsConfig;
 import mytown.core.Localization;
 import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandManager;
@@ -35,6 +35,8 @@ import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO Add a way to safely reload
 /**/
@@ -48,6 +50,8 @@ public class MyTown {
     public RanksConfig ranksConfig;
     public WildPermsConfig wildConfig;
     public FlagsConfig flagsConfig;
+
+    public List<JSONConfig> jsonConfigs =  new ArrayList<JSONConfig>();
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
@@ -93,9 +97,14 @@ public class MyTown {
         registerCommands();
         Commands.populateCompletionMap();
         // This needs to be after registerCommands... might want to move both methods...
-        ranksConfig = new RanksConfig(new File(Constants.CONFIG_FOLDER, "DefaultRanks.json"));
-        wildConfig = new WildPermsConfig(new File(Constants.CONFIG_FOLDER, "WildPerms.json"));
-        flagsConfig = new FlagsConfig(new File(Constants.CONFIG_FOLDER, "DefaultFlags.json"));
+
+        jsonConfigs.add(new RanksConfig(Constants.CONFIG_FOLDER + "/DefaultRanks.json"));
+        jsonConfigs.add(new WildPermsConfig(Constants.CONFIG_FOLDER + "/WildPerms.json"));
+        jsonConfigs.add(new FlagsConfig(Constants.CONFIG_FOLDER + "/DefaultFlags.json"));
+        for (JSONConfig config : jsonConfigs) {
+            config.init();
+        }
+
         JSONParser.start();
         registerPermissionHandler();
         DatasourceProxy.setLog(log);
