@@ -65,21 +65,23 @@ public class CommandsEveryone extends Commands {
         EntityPlayer player = (EntityPlayer)sender;
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town;
+        int amount;
 
         if (args.size() == 0) {
             town = getTownFromResident(res);
+            amount = Config.costAmountSpawn;
         } else {
             town = getTownFromName(args.get(0));
+            amount = Config.costAmountOtherSpawn;
         }
 
-        // TODO Check if the Resident is allowed to go to spawn
         if (!town.hasSpawn())
             throw new MyTownCommandException("mytown.cmd.err.spawn.notexist", town.getName());
 
         if(res.getTeleportCooldown() > 0)
             throw new MyTownCommandException("mytown.cmd.err.spawn.cooldown", res.getTeleportCooldown(), res.getTeleportCooldown() / 20);
 
-        makePayment(player, Config.costAmountSpawn);
+        makePayment(player, amount);
         town.sendToSpawn(res);
     }
 

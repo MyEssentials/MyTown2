@@ -67,6 +67,9 @@ public class Config {
     @ConfigProperty(category = "cost", name = "costAmountSpawn", comment = "The amount of the cost item you need to warp to the town's spawn point.")
     public static int costAmountSpawn = 0;
 
+    @ConfigProperty(category = "cost", name = "costAmountOtherSpawn", comment = "The amount of the cost item you need to warp to the spawn point of a town that the player is not a resident of.")
+    public static int costAmountOtherSpawn = 1;
+
     @ConfigProperty(category = "cost", name = "costAmountSetSpawn", comment = "The amount of the cost item you need to create a spawn point for the town.")
     public static int costAmountSetSpawn = 1;
 
