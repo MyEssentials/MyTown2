@@ -612,13 +612,13 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
         if (plot == null) {
-            if(getValue(flagType) == denialValue) {
+            if(getValue(flagType).equals(denialValue)) {
                 if (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean) getValue(FlagType.restrictedTownPerms) && !(getMayor() == res))) {
                     return Utils.isOp(res.getPlayer());
                 }
             }
         } else {
-            if (plot.getValue(flagType) == denialValue && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
+            if (plot.getValue(flagType).equals(denialValue) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
                 return Utils.isOp(res.getPlayer());
         }
         return true;
@@ -629,7 +629,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      */
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
-        if (getValue(flagType) == denialValue && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && !(getMayor() == res)))) {
+        if (getValue(flagType).equals(denialValue) && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && !(getMayor() == res)))) {
             //TODO: Check for permission
             return Utils.isOp(res.getPlayer());
         }

@@ -87,7 +87,7 @@ public class Protection {
                         for (ChunkPos chunk : chunks) {
                             TownBlock block = getDatasource().getBlock(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
                             if(block == null) {
-                                if(Wild.getInstance().getValue(segment.flag) == segment.denialValue) {
+                                if(Wild.getInstance().getValue(segment.flag).equals(segment.denialValue)) {
                                     if (segment.hasOwner()) {
                                         Resident res = Protections.getInstance().getOwnerForTileEntity(te);
                                         if (res == null || !Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue))
@@ -136,11 +136,11 @@ public class Protection {
                     for (ChunkPos chunk : chunks) {
                         TownBlock block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
                         if (block != null) {
-                            if(block.getTown().getValue(segment.flag) == segment.denialValue)
+                            if(block.getTown().getValue(segment.flag).equals(segment.denialValue))
                                 return true;
                         }
                     }
-                    if (Wild.getInstance().getValue(segment.flag) == segment.denialValue)
+                    if (Wild.getInstance().getValue(segment.flag).equals(segment.denialValue))
                         return true;
                 }
             }
