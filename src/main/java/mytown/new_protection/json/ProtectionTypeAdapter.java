@@ -41,7 +41,20 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.name("class").value(segment.theClass.getName());
             out.name("type").value("tileEntity");
             out.name("condition").value(StringUtils.join(segment.conditionString, " "));
-            out.name("flag").value(segment.flag.toString());
+            out.name("flag");
+            if(segment.flag.getType() == Boolean.class && segment.denialValue == Boolean.FALSE) {
+                out.value(segment.flag.toString());
+            } else {
+                out.beginObject();
+                out.name("name").value(segment.flag.toString());
+                out.name("denialValue");
+                if(segment.denialValue instanceof Boolean) {
+                    out.value((Boolean)segment.denialValue);
+                } else {
+                    out.value(segment.denialValue.toString());
+                }
+                out.endObject();
+            }
             for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
@@ -61,8 +74,21 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.beginObject();
             out.name("class").value(segment.theClass.getName());
             out.name("type").value("block");
-            out.name("flag").value(segment.flag.toString());
             out.name("meta").value(segment.meta);
+            out.name("flag");
+            if(segment.flag.getType() == Boolean.class && segment.denialValue == Boolean.FALSE) {
+                out.value(segment.flag.toString());
+            } else {
+                out.beginObject();
+                out.name("name").value(segment.flag.toString());
+                out.name("denialValue");
+                if(segment.denialValue instanceof Boolean) {
+                    out.value((Boolean)segment.denialValue);
+                } else {
+                    out.value(segment.denialValue.toString());
+                }
+                out.endObject();
+            }
             if(segment.conditionString != null)
                 out.name("condition").value(StringUtils.join(segment.conditionString, " "));
             for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
@@ -85,6 +111,20 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.name("class").value(segment.theClass.getName());
             out.name("type").value("entity");
             out.name("entityType").value(segment.type.toString());
+            out.name("flag");
+            if(segment.flag.getType() == Boolean.class && segment.denialValue == Boolean.FALSE) {
+                out.value(segment.flag.toString());
+            } else {
+                out.beginObject();
+                out.name("name").value(segment.flag.toString());
+                out.name("denialValue");
+                if(segment.denialValue instanceof Boolean) {
+                    out.value((Boolean)segment.denialValue);
+                } else {
+                    out.value(segment.denialValue.toString());
+                }
+                out.endObject();
+            }
             if(segment.conditionString != null)
                 out.name("condition").value(StringUtils.join(segment.conditionString, " "));
             for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
@@ -110,7 +150,20 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.name("onAdjacent").value(segment.onAdjacent);
             if(segment.conditionString != null)
                 out.name("condition").value(StringUtils.join(segment.conditionString, " "));
-            out.name("flag").value(segment.flag.toString());
+            out.name("flag");
+            if(segment.flag.getType() == Boolean.class && segment.denialValue == Boolean.FALSE) {
+                out.value(segment.flag.toString());
+            } else {
+                out.beginObject();
+                out.name("name").value(segment.flag.toString());
+                out.name("denialValue");
+                if(segment.denialValue instanceof Boolean) {
+                    out.value((Boolean)segment.denialValue);
+                } else {
+                    out.value(segment.denialValue.toString());
+                }
+                out.endObject();
+            }
             for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
