@@ -1,4 +1,4 @@
-package mytown.new_protection.json;
+package mytown.protection.json;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
@@ -7,18 +7,16 @@ import com.google.gson.stream.JsonWriter;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
-import mytown.config.Config;
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.Protection;
-import mytown.new_protection.segment.*;
-import mytown.new_protection.segment.enums.EntityType;
-import mytown.new_protection.segment.enums.ItemType;
-import mytown.new_protection.segment.getter.Caller;
-import mytown.new_protection.segment.getter.Getters;
+import mytown.protection.Protection;
+import mytown.protection.segment.*;
+import mytown.protection.segment.enums.EntityType;
+import mytown.protection.segment.enums.ItemType;
+import mytown.protection.segment.getter.Caller;
+import mytown.protection.segment.getter.Getters;
 import mytown.util.exceptions.SegmentException;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.print.DocFlavor;
 import java.io.IOException;
 import java.util.*;
 

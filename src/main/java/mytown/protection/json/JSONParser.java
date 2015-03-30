@@ -1,15 +1,15 @@
-package mytown.new_protection.json;
+package mytown.protection.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.Protection;
-import mytown.new_protection.Protections;
-import mytown.new_protection.segment.*;
-import mytown.new_protection.segment.enums.EntityType;
-import mytown.new_protection.segment.enums.ItemType;
-import mytown.new_protection.segment.getter.Getters;
+import mytown.protection.Protection;
+import mytown.protection.Protections;
+import mytown.protection.segment.*;
+import mytown.protection.segment.enums.EntityType;
+import mytown.protection.segment.enums.ItemType;
+import mytown.protection.segment.getter.Getters;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

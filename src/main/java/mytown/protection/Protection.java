@@ -1,4 +1,4 @@
-package mytown.new_protection;
+package mytown.protection;
 
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
@@ -6,9 +6,9 @@ import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.segment.*;
-import mytown.new_protection.segment.enums.EntityType;
-import mytown.new_protection.segment.enums.ItemType;
+import mytown.protection.segment.*;
+import mytown.protection.segment.enums.EntityType;
+import mytown.protection.segment.enums.ItemType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.BlockPos;

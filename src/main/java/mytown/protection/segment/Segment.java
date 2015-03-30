@@ -1,7 +1,7 @@
-package mytown.new_protection.segment;
+package mytown.protection.segment;
 
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.segment.getter.Getters;
+import mytown.protection.segment.getter.Getters;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.ConditionException;
 import net.minecraft.item.ItemStack;

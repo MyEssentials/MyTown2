@@ -1,10 +1,9 @@
-package mytown.new_protection.segment.getter;
+package mytown.protection.segment.getter;
 
 import bsh.EvalError;
 import bsh.Interpreter;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-import mytown.MyTown;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

@@ -1,4 +1,4 @@
-package mytown.new_protection.segment.getter;
+package mytown.protection.segment.getter;
 
 /**
  * Created by AfterWind on 1/1/2015.

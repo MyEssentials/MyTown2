@@ -1,6 +1,5 @@
-package mytown.new_protection;
+package mytown.protection;
 
-import mytown.MyTown;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Resident;
 import mytown.entities.Town;

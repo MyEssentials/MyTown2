@@ -1,8 +1,6 @@
-package mytown.new_protection.eventhandlers;
+package mytown.protection.eventhandlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mytown.MyTown;
-import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;

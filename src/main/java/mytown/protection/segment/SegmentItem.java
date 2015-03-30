@@ -1,13 +1,8 @@
-package mytown.new_protection.segment;
+package mytown.protection.segment;
 
 import mytown.entities.flag.FlagType;
-import mytown.new_protection.segment.enums.ItemType;
-import mytown.new_protection.segment.getter.Caller;
-import mytown.new_protection.segment.getter.Getters;
-import net.minecraft.item.ItemStack;
-
-import java.util.List;
-import java.util.Map;
+import mytown.protection.segment.enums.ItemType;
+import mytown.protection.segment.getter.Getters;
 
 /**
  * Created by AfterWind on 1/1/2015.
