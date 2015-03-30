@@ -129,7 +129,7 @@ public class Plot implements IHasFlags, IHasResidents {
         return this.db_ID;
     }
 
-    public boolean isCoordWithin(int dim, int x, int y, int z) { // TODO Is dim really needed?
+    public boolean isCoordWithin(int dim, int x, int y, int z) {
         return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
     }
 

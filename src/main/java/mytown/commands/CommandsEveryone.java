@@ -286,7 +286,7 @@ public class CommandsEveryone extends Commands {
         public static void plotShowCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
-            town.showPlots();
+            town.showPlots(res);
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
         }
 
@@ -297,7 +297,7 @@ public class CommandsEveryone extends Commands {
         public static void plotHideCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
-            town.hidePlots();
+            town.hidePlots(res);
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.vanished");
         }
 
@@ -448,7 +448,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        town.showBorders();
+        town.showBorders(res);
         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.show", town.getName()));
     }
 
@@ -460,7 +460,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        town.hideBorders();
+        town.hideBorders(res);
         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
     }
 

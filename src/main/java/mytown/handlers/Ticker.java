@@ -23,6 +23,7 @@ import mytown.util.Constants;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;

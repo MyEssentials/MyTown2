@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import mytown.MyTown;
 import mytown.api.interfaces.IHasPlots;
 
 import java.util.ArrayList;

@@ -12,6 +12,7 @@ import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.DimensionManager;
 
@@ -204,24 +205,15 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     protected Map<String, TownBlock> blocks = new Hashtable<String, TownBlock>();
     protected int extraBlocks = 0;
-    private boolean isShowingBorders = false;
 
     @Override
     public void addBlock(TownBlock block) {
         blocks.put(block.getKey(), block);
-        if(isShowingBorders) {
-            hideBorders();
-            showBorders();
-        }
     }
 
     @Override
     public void removeBlock(TownBlock block) {
         blocks.remove(block.getKey());
-        if(isShowingBorders) {
-            hideBorders();
-            showBorders();
-        }
     }
 
     @Override
@@ -260,14 +252,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return maxBlocks;
     }
 
-    public void showBorders() {
-        isShowingBorders = true;
-        VisualsTickHandler.getInstance().markTownBorders(this);
+    public void showBorders(Resident caller) {
+        if(caller.getPlayer() instanceof EntityPlayerMP)
+            VisualsTickHandler.getInstance().markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
     }
 
-    public void hideBorders() {
-        isShowingBorders = false;
-        VisualsTickHandler.getInstance().unmarkBlocks(this);
+    public void hideBorders(Resident caller) {
+        if(caller.getPlayer() instanceof EntityPlayerMP)
+            VisualsTickHandler.getInstance().unmarkBlocksForTown((EntityPlayerMP) caller.getPlayer());
     }
 
     /* ----- IHasPlots ----- */
@@ -318,9 +310,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public void addPlot(Plot plot) {
-        if(isShowingPlots)
-            VisualsTickHandler.getInstance().markPlotBorders(plot);
-
         plots.add(plot);
     }
 
@@ -334,8 +323,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
                 }
             }
         }
-        if(isShowingPlots)
-            VisualsTickHandler.getInstance().unmarkBlocks(plot);
         plots.remove(plot);
     }
 
@@ -363,18 +350,16 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return getPlotAtCoords(res.getPlayer().dimension, (int) res.getPlayer().posX, (int) res.getPlayer().posY, (int) res.getPlayer().posZ);
     }
 
-    public void showPlots() {
-        this.isShowingPlots = true;
-        for (Plot plot : plots) {
-            VisualsTickHandler.getInstance().markPlotBorders(plot);
-        }
+    public void showPlots(Resident caller) {
+        if(caller.getPlayer() instanceof EntityPlayerMP)
+            for(Plot plot : plots) {
+                VisualsTickHandler.getInstance().markPlotBorders(plot, (EntityPlayerMP)caller.getPlayer());
+            }
     }
 
-    public void hidePlots() {
-        this.isShowingPlots = false;
-        for (Plot plot : plots) {
-            VisualsTickHandler.getInstance().unmarkBlocks(plot);
-        }
+    public void hidePlots(Resident caller) {
+        if(caller.getPlayer() instanceof EntityPlayerMP)
+            VisualsTickHandler.getInstance().unmarkBlocksForPlots((EntityPlayerMP)caller.getPlayer());
     }
 
     /* ----- IHasFlags ------ */

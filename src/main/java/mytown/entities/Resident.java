@@ -472,7 +472,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
             firstSelectionActive = true;
 
             // This is marked twice :P
-            VisualsTickHandler.getInstance().markBlock(x, y, z, dim, Blocks.redstone_block, this);
+            if(getPlayer() instanceof EntityPlayerMP)
+                VisualsTickHandler.getInstance().markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP)getPlayer());
 
         } else {
 
@@ -480,7 +481,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
             selectionY2 = y;
             selectionZ2 = z;
             secondSelectionActive = true;
-            VisualsTickHandler.getInstance().markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, this);
+            if(getPlayer() instanceof EntityPlayerMP)
+                VisualsTickHandler.getInstance().markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer());
         }
 
         return true;
@@ -562,7 +564,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     public void expandSelectionVert() {
         // When selection is expanded vertically we'll show it's borders... (Temporary solution)
 
-        VisualsTickHandler.getInstance().unmarkBlocks(this);
+        if(getPlayer() instanceof EntityPlayerMP)
+            VisualsTickHandler.getInstance().unmarkBlocks((EntityPlayerMP)getPlayer());
 
         selectionY1 = 1;
         try {
@@ -573,7 +576,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         }
         selectionExpandedVert = true;
 
-        VisualsTickHandler.getInstance().markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, this);
+        if(getPlayer() instanceof EntityPlayerMP)
+            VisualsTickHandler.getInstance().markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer());
     }
 
     public void resetSelection(boolean resetBlocks) {
@@ -581,7 +585,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         secondSelectionActive = false;
 
         if(resetBlocks) {
-            VisualsTickHandler.getInstance().unmarkBlocks(this);
+            if(getPlayer() instanceof EntityPlayerMP)
+                VisualsTickHandler.getInstance().unmarkBlocks((EntityPlayerMP)getPlayer());
         }
     }
 
