@@ -114,21 +114,30 @@ public class CommandsEveryone extends Commands {
 
     @CommandNode(
             name = "list",
-            permission = "mytown.cmd.everyone.perm.town.list",
-            parentName = "mytown.cmd.assistant.perm.town")
-    public static void listPermCommand(ICommandSender sender, List<String> args) {
+            permission = "mytown.cmd.everyone.perm.list",
+            parentName = "mytown.cmd.assistant.perm")
+    public static void permListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         res.sendMessage(Formatter.formatFlagsToString(town));
     }
 
     public static class Plots {
+
+        @CommandNode(
+                name = "perm",
+                permission = "mytown.cmd.everyone.plot.perm",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotPermCommand(ICommandSender sender, List<String> args) {
+            callSubFunctions(sender, args, "mytown.cmd.everyone.plot.perm");
+        }
+
         @CommandNode(
                 name = "set",
-                permission = "mytown.cmd.everyone.perm.plot.set",
-                parentName = "mytown.cmd.everyone.perm.plot",
+                permission = "mytown.cmd.everyone.plot.perm.set",
+                parentName = "mytown.cmd.everyone.plot.perm",
                 completionKeys = {"flagCompletion"})
-        public static void permSetPlotCommand(ICommandSender sender, List<String> args) {
+        public static void plotPermSetCommand(ICommandSender sender, List<String> args) {
 
             if (args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
@@ -148,18 +157,10 @@ public class CommandsEveryone extends Commands {
         }
 
         @CommandNode(
-                name = "plot",
-                permission = "mytown.cmd.everyone.perm.plot",
-                parentName = "mytown.cmd.assistant.perm")
-        public static void permPlotCommand(ICommandSender sender, List<String> args) {
-            callSubFunctions(sender, args, "mytown.cmd.everyone.perm.plot");
-        }
-
-        @CommandNode(
                 name = "list",
-                permission = "mytown.cmd.everyone.perm.plot.list",
-                parentName = "mytown.cmd.everyone.perm.plot")
-        public static void permPlotListCommand(ICommandSender sender, List<String> args) {
+                permission = "mytown.cmd.everyone.plot.perm.list",
+                parentName = "mytown.cmd.everyone.plot.perm")
+        public static void plotPermListCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
             res.sendMessage(Formatter.formatFlagsToString(plot));
@@ -167,10 +168,10 @@ public class CommandsEveryone extends Commands {
 
         @CommandNode(
                 name = "whitelist",
-                permission = "mytown.cmd.everyone.perm.plot.whitelist",
-                parentName = "mytown.cmd.everyone.perm.plot",
+                permission = "mytown.cmd.everyone.plot.perm.whitelist",
+                parentName = "mytown.cmd.everyone.plot.perm",
                 completionKeys = {"flagCompletionWhitelist"})
-        public static void permPlotWhitelistCommand(ICommandSender sender, List<String> args) {
+        public static void plotPermWhitelistCommand(ICommandSender sender, List<String> args) {
             if (args.size() == 0)
                 throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
@@ -510,16 +511,16 @@ public class CommandsEveryone extends Commands {
 
     @CommandNode(
             name = "wild",
-            permission = "mytown.cmd.everyone.perm.wild",
-            parentName = "mytown.cmd.assistant.perm")
+            permission = "mytown.cmd.everyone.wild",
+            parentName = "mytown.cmd")
     public static void permWildCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.everyone.perm.wild");
+        callSubFunctions(sender, args, "mytown.cmd.everyone.wild");
     }
 
     @CommandNode(
-            name = "list",
-            permission = "mytown.cmd.everyone.perm.wild.list",
-            parentName = "mytown.cmd.everyone.perm.wild")
+            name = "perm",
+            permission = "mytown.cmd.everyone.wild.perm",
+            parentName = "mytown.cmd.everyone.wild")
     public static void permWildListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         res.sendMessage(Formatter.formatFlagsToString(Wild.getInstance()));

@@ -165,19 +165,11 @@ public class CommandsAssistant extends Commands {
     }
 
     @CommandNode(
-            name = "town",
-            permission = "mytown.cmd.assistant.perm.town",
-            parentName = "mytown.cmd.assistant.perm")
-    public static void permTownCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.assistant.perm.town");
-    }
-
-    @CommandNode(
             name = "set",
-            permission = "mytown.cmd.assistant.perm.town.set",
-            parentName = "mytown.cmd.assistant.perm.town",
+            permission = "mytown.cmd.assistant.perm.set",
+            parentName = "mytown.cmd.assistant.perm",
             completionKeys = "flagCompletion")
-    public static void permSetTownCommand(ICommandSender sender, List<String> args) {
+    public static void permSetCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
@@ -194,10 +186,10 @@ public class CommandsAssistant extends Commands {
 
     @CommandNode(
             name = "whitelist",
-            permission = "mytown.cmd.assistant.perm.town.whitelist",
-            parentName = "mytown.cmd.assistant.perm.town",
+            permission = "mytown.cmd.assistant.perm.whitelist",
+            parentName = "mytown.cmd.assistant.perm",
             completionKeys = {"flagCompletionWhitelist"})
-    public static void permTownWhitelistCommand(ICommandSender sender, List<String> args) {
+    public static void permWhitelistCommand(ICommandSender sender, List<String> args) {
         if (args.size() == 0)
             throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
