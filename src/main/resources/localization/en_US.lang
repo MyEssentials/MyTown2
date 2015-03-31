@@ -112,6 +112,7 @@ mytown.cmd.usage.plot.add=&3/t plot add <owner|member> <resident>
 mytown.cmd.usage.plot.limit.set=&3/t plot limit set <limitNumber>
 mytown.cmd.usage.plot.remove=&3/t plot remove <resident>
 mytown.cmd.err.plot.remove.notInPlot=&cResident is not a member/owner of this plot!
+mytown.cmd.err.plot.remove.onlyOwner=&cYou are the only owner of this plot, you can only delete the plot!
 mytown.cmd.err.plot.add.alreadyInPlot=&cResident is already in plot!
 mytown.cmd.err.plot.start.failed=&cYour inventory is full!
 mytown.cmd.err.plot.failed=&cCreating plot failed!

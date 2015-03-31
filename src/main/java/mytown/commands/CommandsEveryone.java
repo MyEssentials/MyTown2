@@ -249,6 +249,8 @@ public class CommandsEveryone extends Commands {
         public static void plotSelectCommand(ICommandSender sender, List<String> args) {
             if (args.size() == 0) {
                 Resident res = getDatasource().getOrMakeResident(sender);
+                if(res.getSelectedTown() == null)
+                    throw new MyTownCommandException("mytown.cmd.err.partOfTown");
                 res.startPlotSelection();
             } else {
                 callSubFunctions(sender, args, "mytown.cmd.everyone.plot.select");
@@ -382,6 +384,9 @@ public class CommandsEveryone extends Commands {
 
             if(!plot.hasResident(target))
                 throw new MyTownCommandException("mytown.cmd.err.plot.remove.notInPlot");
+
+            if(plot.hasOwner(target) && plot.getOwners().size() == 1)
+                throw new MyTownCommandException("mytown.cmd.err.plot.remove.onlyOwner");
 
             getDatasource().unlinkResidentFromPlot(target, plot);
 
