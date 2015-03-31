@@ -59,7 +59,7 @@ public class CommandsAssistant extends Commands {
 
         if (args.size() < 1) {
             if (town.getBlocks().size() >= town.getMaxBlocks())
-                throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
+                throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", 1);
             if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
                 throw new MyTownCommandException("mytown.cmd.err.claim.already");
             if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) {

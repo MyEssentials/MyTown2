@@ -527,7 +527,7 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
 
             if (town.getBlocks().size() >= town.getMaxBlocks())
-                throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks");
+                throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", 1);
             if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
                 throw new MyTownCommandException("mytown.cmd.err.claim.already");
             if (!CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
