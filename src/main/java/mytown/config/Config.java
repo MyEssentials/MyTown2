@@ -85,11 +85,17 @@ public class Config {
     @ConfigProperty(category = "towns", name = "defaultMaxPlotsPerPlayer", comment = "The maximum amount of plots a player can make in a town as a default.")
     public static int defaultMaxPlots = 1;
 
-    @ConfigProperty(category = "plots", name = "minPlotsArea", comment = "The minimum area required to create a plot (X*Z)")
+    @ConfigProperty(category = "plots", name = "minPlotsArea", comment = "The minimum area required to create a plot. (X*Z)")
     public static int minPlotsArea = 9;
 
-    @ConfigProperty(category = "plots", name = "minPlotsHeight", comment = "The minimum height required to create a plot(Y)")
+    @ConfigProperty(category = "plots", name = "minPlotsHeight", comment = "The minimum height required to create a plot. (Y)")
     public static int minPlotsHeight = 1;
+
+    @ConfigProperty(category = "plots", name = "maxPlotsArea", comment = "The maximum area a plot can have. (X*Z)")
+    public static int maxPlotsArea = 300;
+
+    @ConfigProperty(category = "plots", name = "maxPlotsHeight", comment = "The maximum height a plot can have. (Y) [255 for unlimited height.]")
+    public static int maxPlotsHeight = 255;
 
     @ConfigProperty(category = "plots", name = "enablePlots", comment = "Set this to false to disable all types of plot interaction.")
     public static boolean enablePlots = true;

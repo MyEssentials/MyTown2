@@ -500,10 +500,22 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     public Plot makePlotFromSelection(String plotName) {
         // TODO: Check everything separately or throw exceptions?
 
-        if (!secondSelectionActive || !firstSelectionActive || ((Math.abs(selectionX1 - selectionX2) + 1) * (Math.abs(selectionZ1 - selectionZ2) + 1) < Config.minPlotsArea || Math.abs(selectionY1 - selectionY2) + 1 < Config.minPlotsHeight) && !(selectedTown instanceof AdminTown)) {
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.tooSmall", Config.minPlotsArea, Config.minPlotsHeight));
+        if (!secondSelectionActive || !firstSelectionActive) {
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notSelected"));
             resetSelection(true);
             return null;
+        }
+
+        if(!(selectedTown instanceof AdminTown)) {
+            if((Math.abs(selectionX1 - selectionX2) + 1) * (Math.abs(selectionZ1 - selectionZ2) + 1) < Config.minPlotsArea || Math.abs(selectionY1 - selectionY2) + 1 < Config.minPlotsHeight) {
+                sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.tooSmall", Config.minPlotsArea, Config.minPlotsHeight));
+                resetSelection(true);
+                return null;
+            } else if((Math.abs(selectionX1 - selectionX2) + 1) * (Math.abs(selectionZ1 - selectionZ2) + 1) > Config.maxPlotsArea || Math.abs(selectionY1 - selectionY2) + 1 > Config.maxPlotsHeight) {
+                sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.tooLarge", Config.maxPlotsArea, Config.maxPlotsHeight));
+                resetSelection(true);
+                return null;
+            }
         }
 
         int x1 = selectionX1, x2 = selectionX2, y1 = selectionY1, y2 = selectionY2, z1 = selectionZ1, z2 = selectionZ2;
@@ -585,8 +597,10 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         secondSelectionActive = false;
 
         if(resetBlocks) {
-            if(getPlayer() instanceof EntityPlayerMP)
-                VisualsTickHandler.getInstance().unmarkBlocks((EntityPlayerMP)getPlayer());
+            if(getPlayer() instanceof EntityPlayerMP) {
+                VisualsTickHandler.getInstance().unmarkBlocksForPlots((EntityPlayerMP) getPlayer());
+                VisualsTickHandler.getInstance().unmarkBlocks((EntityPlayerMP) getPlayer());
+            }
         }
     }
 

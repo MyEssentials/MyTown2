@@ -123,6 +123,7 @@ mytown.cmd.err.plot.notOwner=&cYou do not have owner permissions for this plot!
 mytown.cmd.err.plot.limit=&cYou cannot make more plots than %s!
 mytown.cmd.err.plot.limit.toPlayer=&cPlayer %s can't be owner to any more plots!
 mytown.cmd.err.plot.tooSmall=&cSelection too small! Minimum area: %s. Minimum height: %s.
+mytown.cmd.err.plot.tooLarge=&cSelection too large! Maximum area: %s. Maximum height: %s.
 mytown.cmd.err.plot.outside=&cSelection is outside of town!
 mytown.cmd.err.plot.insideOther=&cSelection is inside plot %s!
 mytown.cmd.err.plot.perm.set.noPermission=&cYou are not this plot's owner!
