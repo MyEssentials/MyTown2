@@ -405,6 +405,15 @@ public class MyTownUtils {
         return value.equals("true") || value.equals("false");
     }
 
+    /**
+     * Returns the sum from n to m (Ex: n = 1, m = 3 => 1 + 2 + 3 = 6)
+     */
+    public static int sumFromNtoM(int n, int m) {
+        int sum = 0;
+        for(int i = n; i <= m; i++)
+            sum += i;
+        return sum;
+    }
 
     /**
      * Searches for the class using the path. Example: "net.minecraft.block.Block"

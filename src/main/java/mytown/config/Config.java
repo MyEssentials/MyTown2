@@ -79,6 +79,13 @@ public class Config {
     @ConfigProperty(category = "cost", name = "costAdditionalUpkeep", comment = "The amount of the cost item towns have to pay everyday per chunk owned to maintain it.")
     public static int costAdditionalUpkeep = 0;
 
+    @ConfigProperty(category = "cost", name = "costAdditionClaim", comment = "The additional amount of the cost item people need to pay for each block already claimed [Ex: if you have 3 chunks in town claiming the next one will cost costAdditionClaim*3 + costAmountClaim]. This can be used with costMultiplicativeClaim.")
+    public static int costAdditionClaim = 0;
+
+    @ConfigProperty(category = "cost", name = "costMultiplicativeClaim", comment = "The multiplicative amount of the cost item people need to pay for each block already claimed [Ex: if you have 2 chunks the next one will cost costMultiplicativeClaim ^ 2 * costAmountClaim]. This can be used with costAdditionClaim.")
+    public static float costMultiplicativeClaim = 1;
+
+
     @ConfigProperty(category = "cost", name = "defaultBankAmount", comment = "The amount of the cost item that the towns are gonna start with in their banks after created.")
     public static int defaultBankAmount = 5;
 

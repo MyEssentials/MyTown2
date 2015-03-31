@@ -70,7 +70,7 @@ public class CommandsAssistant extends Commands {
 
             //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
 
-            makePayment(player, isClaimFar ? Config.costAmountClaimFar : Config.costAmountClaim);
+            makePayment(player, (isClaimFar ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.getBlocks().size());
 
             TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
             if (block == null)
@@ -98,7 +98,8 @@ public class CommandsAssistant extends Commands {
             if (town.getBlocks().size() + chunks.size() > town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
 
-            makePayment(player, isClaimFar ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1) : Config.costAmountClaim * chunks.size());
+            makePayment(player, (isClaimFar ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1) : Config.costAmountClaim * chunks.size())
+                    + MyTownUtils.sumFromNtoM(town.getBlocks().size(), town.getBlocks().size() + chunks.size() - 1) * Config.costAdditionClaim );
 
             for (ChunkPos chunk : chunks) {
                 TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), town);
@@ -125,7 +126,7 @@ public class CommandsAssistant extends Commands {
 
         getDatasource().deleteBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
-        makeRefund(pl, Config.costAmountClaim);
+        makeRefund(pl, Config.costAmountClaim + Config.costAdditionClaim * (town.getBlocks().size() - 1));
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.payReturn", Config.costAmountClaim, Config.costItemName));
     }
 
@@ -462,7 +463,7 @@ public class CommandsAssistant extends Commands {
 
         if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
-            makeRefund(player, Config.costAmountClaim * town.getBlocks().size());
+            makeRefund(player, Config.costAmountClaim * town.getBlocks().size() + ((town.getBlocks().size() - 1) * town.getBlocks().size() / 2) * Config.costAdditionClaim);
             getDatasource().deleteTown(town);
         }
     }
