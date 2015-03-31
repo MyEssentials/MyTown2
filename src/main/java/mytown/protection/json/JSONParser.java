@@ -42,6 +42,7 @@ public class JSONParser {
         String[] extensions = new String[1];
         extensions[0] = "json";
         Protections.getInstance().reset();
+        Protection vanillaProtection = null;
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
             try {
                 reader = new FileReader(file);
@@ -49,11 +50,12 @@ public class JSONParser {
                 Protection protection = gson.fromJson(reader, Protection.class);
                 if(protection != null) {
                     if (protection.modid.equals("Minecraft")) {
-                        MyTown.instance.log.info("Adding vanilla protection.");
+                        vanillaProtection = protection;
+                        //MyTown.instance.log.info("Adding vanilla protection.");
                     } else {
                         MyTown.instance.log.info("Adding protection for mod: " + protection.modid);
+                        Protections.getInstance().addProtection(protection);
                     }
-                    Protections.getInstance().addProtection(protection);
                 }
                 reader.close();
 
@@ -62,6 +64,11 @@ public class JSONParser {
                 ex.printStackTrace();
             }
         }
+        if(vanillaProtection != null) {
+            MyTown.instance.log.info("Adding vanilla protection.");
+            Protections.getInstance().addProtection(vanillaProtection);
+        }
+
         return true;
     }
 
