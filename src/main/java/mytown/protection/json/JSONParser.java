@@ -7,6 +7,7 @@ import mytown.entities.flag.FlagType;
 import mytown.protection.Protection;
 import mytown.protection.Protections;
 import mytown.protection.segment.*;
+import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.getter.Getters;
@@ -72,21 +73,21 @@ public class JSONParser {
     private static void createModel() {
         List<Segment> segments = new ArrayList<Segment>();
 
-        segments.add(new SegmentBlock(net.minecraft.block.BlockButton.class, new Getters(), FlagType.activateBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockDoor.class, new Getters(), FlagType.activateBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockLever.class, new Getters(), FlagType.activateBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockFenceGate.class, new Getters(), FlagType.activateBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockDragonEgg.class, new Getters(), FlagType.activateBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockCake.class, new Getters(), FlagType.activateBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockTrapDoor.class, new Getters(), FlagType.activateBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockJukebox.class, new Getters(), FlagType.activateBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneRepeater.class, new Getters(), FlagType.activateBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneComparator.class, new Getters(), FlagType.activateBlocks, false, null, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockButton.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockDoor.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockLever.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockFenceGate.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockDragonEgg.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.anyClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockCake.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockTrapDoor.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockJukebox.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneRepeater.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneComparator.class, new Getters(), FlagType.activateBlocks, false, null, BlockType.rightClick, -1));
 
-        segments.add(new SegmentBlock(net.minecraft.block.BlockAnvil.class, new Getters(), FlagType.accessBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockCauldron.class, new Getters(), FlagType.accessBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockContainer.class, new Getters(), FlagType.accessBlocks, false, null, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockBed.class, new Getters(), FlagType.accessBlocks, false, null, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockAnvil.class, new Getters(), FlagType.accessBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockCauldron.class, new Getters(), FlagType.accessBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockContainer.class, new Getters(), FlagType.accessBlocks, false, null, BlockType.rightClick, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockBed.class, new Getters(), FlagType.accessBlocks, false, null, BlockType.rightClick, -1));
 
         segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityMob.class, new Getters(), FlagType.mobs, "hostiles", null, EntityType.tracked));
         segments.add(new SegmentEntity(net.minecraft.entity.EntityAgeable.class, new Getters(), FlagType.protectedEntities, true, null, EntityType.protect));

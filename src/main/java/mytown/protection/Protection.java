@@ -7,6 +7,7 @@ import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.*;
+import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.proxies.DatasourceProxy;
@@ -24,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -364,10 +366,12 @@ public class Protection {
     /**
      * Checking right click actions on blocks.
      */
-    public boolean checkBlockRightClick(Resident res, BlockPos bp) {
+    public boolean checkBlockRightClick(Resident res, BlockPos bp, PlayerInteractEvent.Action action) {
         Block blockType = DimensionManager.getWorld(bp.dim).getBlock(bp.x, bp.y, bp.z);
         for(SegmentBlock segment : segmentsBlocks) {
-            if(segment.theClass.isAssignableFrom(blockType.getClass()) && (segment.meta == -1 || segment.meta == DimensionManager.getWorld(bp.dim).getBlockMetadata(bp.x, bp.y, bp.z))) {
+            if(segment.theClass.isAssignableFrom(blockType.getClass())
+                    && (segment.meta == -1 || segment.meta == DimensionManager.getWorld(bp.dim).getBlockMetadata(bp.x, bp.y, bp.z))
+                    && (segment.type == BlockType.anyClick || segment.type == BlockType.rightClick && action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || segment.type == BlockType.leftClick && action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)) {
                 if(segment.flag == FlagType.accessBlocks || segment.flag == FlagType.activateBlocks) {
                     TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
                     if(block == null) {

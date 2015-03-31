@@ -346,15 +346,15 @@ public class Protections {
 
 
         // Activate and access check here
-        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-            for(Protection protection : protections) {
-                if(protection.checkBlockRightClick(res, new BlockPos(x, y, z, ev.world.provider.dimensionId))) {
+        if(ev.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
+            for (Protection protection : protections) {
+                if (protection.checkBlockRightClick(res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.action)) {
                     // Update the blocks so that it's synced with the player.
                     S23PacketBlockChange packet = new S23PacketBlockChange(x, y, z, ev.world);
                     packet.field_148884_e = ev.world.getBlockMetadata(x, y, z);
                     FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
-                    packet = new S23PacketBlockChange(x, y-1, z, ev.world);
-                    packet.field_148884_e = ev.world.getBlockMetadata(x, y-1, z);
+                    packet = new S23PacketBlockChange(x, y - 1, z, ev.world);
+                    packet.field_148884_e = ev.world.getBlockMetadata(x, y - 1, z);
                     FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
 
                     ev.setCanceled(true);

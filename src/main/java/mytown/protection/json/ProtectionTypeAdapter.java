@@ -10,6 +10,7 @@ import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.protection.Protection;
 import mytown.protection.segment.*;
+import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.getter.Caller;
@@ -72,6 +73,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.beginObject();
             out.name("class").value(segment.theClass.getName());
             out.name("type").value("block");
+            out.name("blockType").value(segment.type.toString());
             out.name("meta").value(segment.meta);
             out.name("flag");
             if(segment.flag.getType() == Boolean.class && segment.denialValue == Boolean.FALSE) {
@@ -225,6 +227,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
 
                     EntityType entityType = null;
                     ItemType itemType = null;
+                    BlockType blockType = null;
 
                     String condition = null;
                     FlagType flag = null;
@@ -310,6 +313,12 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     meta = in.nextInt();
                                     continue;
                                 }
+                                if(nextName.equals("blockType")) {
+                                    blockType = BlockType.valueOf(in.nextString());
+                                    if(blockType == null)
+                                        throw new SegmentException("[Segment: " + clazz + "] Invalid block type.");
+                                    continue;
+                                }
                             }
                             if(type.equals("tileEntity")) {
                                 if(nextName.equals("hasOwner")) {
@@ -345,13 +354,23 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     }
                                     segment = new SegmentTileEntity(clazz, getters, flag, denialValue, condition, hasOwner);
                                 } else if (type.equals("entity")) {
-                                    if (entityType == null)
-                                        throw new SegmentException("[Segment: " + clazz + "] The entityType is not being specified.");
+                                    if (entityType == null) {
+                                        MyTown.instance.log.info("   entityType is not specified, defaulting to 'tracked'.");
+                                        entityType = EntityType.tracked;
+                                    }
                                     segment = new SegmentEntity(clazz, getters, flag, denialValue, condition, entityType);
                                 } else if (type.equals("item")) {
+                                    if(itemType == null) {
+                                        MyTown.instance.log.info("   itemType is not specified, defaulting to 'rightClickBlock'.");
+                                        itemType = ItemType.rightClickBlock;
+                                    }
                                     segment = new SegmentItem(clazz, getters, flag, denialValue, condition, itemType, isAdjacent);
                                 } else if (type.equals("block")) {
-                                    segment = new SegmentBlock(clazz, getters, flag, denialValue, condition, meta);
+                                    if(blockType == null) {
+                                        MyTown.instance.log.info("   blockType is not specified, defaulting to 'rightClick'.");
+                                        blockType = BlockType.rightClick;
+                                    }
+                                    segment = new SegmentBlock(clazz, getters, flag, denialValue, condition, blockType, meta);
                                 }
                             }
                         } catch (SegmentException ex) {
