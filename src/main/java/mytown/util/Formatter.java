@@ -93,17 +93,17 @@ public class Formatter {
      */
     public static String formatResidentsToString(Town t) {
         Collection<Resident> residents = t.getResidents();
-        String formatterList = null;
+        String formattedList = null;
         for (Resident r : residents)
-            if (formatterList == null) {
-                formatterList = EnumChatFormatting.WHITE + r.getPlayerName() + EnumChatFormatting.GOLD + " (" + formatRankToString(t.getResidentRank(r)) + EnumChatFormatting.GOLD + ")";
+            if (formattedList == null) {
+                formattedList = EnumChatFormatting.WHITE + r.getPlayerName() + EnumChatFormatting.GOLD + " (" + formatRankToString(t.getResidentRank(r)) + EnumChatFormatting.GOLD + ")";
             } else {
-                formatterList += ", " + EnumChatFormatting.WHITE + r.getPlayerName() + EnumChatFormatting.GOLD + " (" + formatRankToString(t.getResidentRank(r)) + EnumChatFormatting.GOLD + ")";
+                formattedList += ", " + EnumChatFormatting.WHITE + r.getPlayerName() + EnumChatFormatting.GOLD + " (" + formatRankToString(t.getResidentRank(r)) + EnumChatFormatting.GOLD + ")";
             }
         if (residents.size() == 0) {
-            formatterList = EnumChatFormatting.RED + "NONE";
+            formattedList = EnumChatFormatting.RED + "NONE";
         }
-        return formatterList;
+        return formattedList;
     }
 
     public static String formatResidentsToString(Plot p) {
@@ -115,6 +115,9 @@ public class Formatter {
                 formattedList = toAdd;
             else
                 formattedList += ", " + toAdd;
+        }
+        if (residents.size() == 0) {
+            formattedList = EnumChatFormatting.RED + "NONE";
         }
         return formattedList;
     }
