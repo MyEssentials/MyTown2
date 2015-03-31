@@ -55,7 +55,7 @@ public class Config {
     @ConfigProperty(category = "cost", name = "costItem", comment = "The item which is used for paying for claims and making new towns. Use '$' if you want to use ForgeEssentials economy")
     public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).toString();
 
-    @ConfigProperty(category = "cost", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town.")
+    @ConfigProperty(category = "cost", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town. Making a town will cost this amount + amount to claim a chunk.")
     public static int costAmountMakeTown = 5;
 
     @ConfigProperty(category = "cost", name = "costAmountClaim", comment = "The amount of the cost item you need to claim a chunk.")

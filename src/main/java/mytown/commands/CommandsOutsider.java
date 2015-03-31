@@ -106,7 +106,7 @@ public class CommandsOutsider extends Commands {
             }
         }
         // Special case for ForgeEssentials
-        makePayment(player, Config.costAmountMakeTown);
+        makePayment(player, Config.costAmountMakeTown + Config.costAmountClaim);
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
