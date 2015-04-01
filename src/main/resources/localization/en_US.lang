@@ -288,6 +288,7 @@ mytown.notification.plot.sender.removed=&c%s has been removed from the plot.
 mytown.notification.plot.target.removed=&cYou have been removed from plot %s!
 mytown.notification.town.bank.amount=&3Bank amount: %s %s
 mytown.notification.town.upkeep=&3A new day is upon us, taxes have been collected!
+mytown.notification.town.upkeep.failed=&cA new day has passed but the bank is out of money. %s days before town deletion!
 mytown.notification.town.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for town %s.
 mytown.notification.resident.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for resident %s.
 

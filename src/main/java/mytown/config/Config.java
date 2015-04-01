@@ -92,6 +92,9 @@ public class Config {
     @ConfigProperty(category = "towns", name = "defaultMaxPlotsPerPlayer", comment = "The maximum amount of plots a player can make in a town as a default.")
     public static int defaultMaxPlots = 1;
 
+    @ConfigProperty(category = "towns", name = "upkeepTownDeletionDays", comment = "The amount of days a town can go on without paying upkeep.")
+    public static int upkeepTownDeletionDays = 7;
+
     @ConfigProperty(category = "plots", name = "minPlotsArea", comment = "The minimum area required to create a plot. (X*Z)")
     public static int minPlotsArea = 9;
 

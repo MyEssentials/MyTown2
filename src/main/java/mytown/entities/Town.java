@@ -1,7 +1,6 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.MyTown;
 import mytown.api.interfaces.*;
 import mytown.config.Config;
 import mytown.core.Utils;
@@ -10,11 +9,8 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraftforge.common.DimensionManager;
 
 import java.util.*;
 
@@ -530,19 +526,35 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     /* ----- Bank ----- */
 
     private int bankAmount = 0;
+    private int daysNotPaid = 0;
 
+    public void setBankAmount(int amount) {
+        bankAmount = amount;
+    }
     public int getBankAmount() { return this.bankAmount; }
+
     public boolean makePayment(int amount) {
-        if(bankAmount >= amount) {
+        if (bankAmount >= amount) {
             bankAmount -= amount;
             return true;
         }
         return false;
     }
 
-    public void setBankAmount(int amount) {
-        bankAmount = amount;
+    public void payUpkeep() {
+        int amount = (Config.costTownUpkeep + Config.costAdditionalUpkeep * blocks.size()) * (1 + daysNotPaid);
+        if(makePayment(amount)) {
+            daysNotPaid = 0;
+            notifyEveryone(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.upkeep"));
+        } else {
+            daysNotPaid++;
+            notifyEveryone(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.upkeep.failed", Config.upkeepTownDeletionDays - daysNotPaid));
+        }
+
     }
+
+    public void setDaysNotPaid(int days) { this.daysNotPaid = days; }
+    public int getDaysNotPaid() { return this.daysNotPaid; }
 
     /* ----- Helpers ----- */
 

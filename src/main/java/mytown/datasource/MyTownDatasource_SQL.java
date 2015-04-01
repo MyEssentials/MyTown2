@@ -633,7 +633,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             while(rs.next()) {
                 Town town = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
                 int amount = rs.getInt("amount");
+                int daysNotPaid = rs.getInt("daysNotPaid");
                 town.setBankAmount(amount);
+                town.setDaysNotPaid(daysNotPaid);
             }
         } catch (SQLException e) {
             log.error("Failed to load town banks.");
@@ -1110,13 +1112,15 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveTownBank(Town town, int amount) {
+    public boolean saveTownBank(Town town, int amount, int daysNotPaid) {
         try {
-            PreparedStatement s = prepare("INSERT INTO " + prefix + "TownBanks VALUES(?, ?)", false);
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "TownBanks VALUES(?, ?, ?)", false);
             s.setString(1, town.getName());
             s.setInt(2, amount);
+            s.setInt(3, daysNotPaid);
             s.executeUpdate();
             town.setBankAmount(amount);
+            town.setDaysNotPaid(daysNotPaid);
         } catch (SQLException e) {
             log.error("Failed to save a town's bank.");
             return false;
@@ -1278,9 +1282,10 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean updateTownBank(Town town, int amount) {
         try {
-            PreparedStatement s = prepare("UPDATE " + prefix + "TownBanks SET amount=? WHERE townName=?", false);
+            PreparedStatement s = prepare("UPDATE " + prefix + "TownBanks SET amount=?, daysNotPaid=? WHERE townName=?", false);
             s.setInt(1, amount);
-            s.setString(2, town.getName());
+            s.setInt(2, town.getDaysNotPaid());
+            s.setString(3, town.getName());
             s.executeUpdate();
             town.setBankAmount(amount);
         } catch (SQLException e) {
@@ -1638,6 +1643,19 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 log.info("Adding default rank for town.");
                 saveRank(rank, true);
             }
+            if(!(town instanceof AdminTown)) {
+                try {
+                    PreparedStatement s = prepare("SELECT * FROM TownBanks WHERE townName=?", true);
+                    s.setString(1, town.getName());
+                    ResultSet rs = s.executeQuery();
+                    if (!rs.next()) {
+                        saveTownBank(town, Config.defaultBankAmount, 0);
+                        log.info("Added bank entry for " + town.getName());
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
         return true;
     }
@@ -1867,6 +1885,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "amount INT NOT NULL, " +
                 "PRIMARY KEY(plotID), " +
                 "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
+        updates.add(new DBUpdate("4.1.2015.1", "Add 'daysNotPaid' to TownBanks", "ALTER TABLE " + prefix +
+                "TownBanks ADD daysNotPaid INTEGER DEFAULT 0"));
+
     }
 
     /**

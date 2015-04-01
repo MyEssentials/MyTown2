@@ -131,14 +131,6 @@ public class CommandsAssistant extends Commands {
     }
 
     @CommandNode(
-            name = "blocks",
-            permission = "mytown.cmd.assistant.blocks",
-            parentName = "mytown.cmd")
-    public static void blocksCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.assistant.blocks");
-    }
-
-    @CommandNode(
             name = "invite",
             permission = "mytown.cmd.assistant.invite",
             parentName = "mytown.cmd",
@@ -158,17 +150,9 @@ public class CommandsAssistant extends Commands {
     }
 
     @CommandNode(
-            name = "perm",
-            permission = "mytown.cmd.assistant.perm",
-            parentName = "mytown.cmd")
-    public static void permCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.assistant.perm");
-    }
-
-    @CommandNode(
             name = "set",
             permission = "mytown.cmd.assistant.perm.set",
-            parentName = "mytown.cmd.assistant.perm",
+            parentName = "mytown.cmd.everyone.perm",
             completionKeys = "flagCompletion")
     public static void permSetCommand(ICommandSender sender, List<String> args) {
 
@@ -188,7 +172,7 @@ public class CommandsAssistant extends Commands {
     @CommandNode(
             name = "whitelist",
             permission = "mytown.cmd.assistant.perm.whitelist",
-            parentName = "mytown.cmd.assistant.perm",
+            parentName = "mytown.cmd.everyone.perm",
             completionKeys = {"flagCompletionWhitelist"})
     public static void permWhitelistCommand(ICommandSender sender, List<String> args) {
         if (args.size() == 0)
