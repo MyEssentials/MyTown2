@@ -8,7 +8,13 @@ Version 2 of MyTown - A Minecraft Server Protection Mod
 
 Protections contained at: https://github.com/MyEssentials/MyTown2-Protections
 
-Jenkins Build Server: https://ci.mineguild.net/job/MyTown2/
+<h3>Jenkins</h3>
+
+MyTown2 Builds: https://ci.mineguild.net/job/MyTown2/
+
+MyEssentials-Core Builds: https://ci.mineguild.net/job/MyEssentials-Core/
+
+(To run this, you need both, MyTown2 and MyEssentials-Core!)
 
 Features
 ========
