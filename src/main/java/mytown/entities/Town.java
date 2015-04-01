@@ -542,7 +542,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     public void payUpkeep() {
-        int amount = (Config.costTownUpkeep + Config.costAdditionalUpkeep * blocks.size()) * (1 + daysNotPaid);
+        int amount = getNextPaymentAmount();
         if(makePayment(amount)) {
             daysNotPaid = 0;
             notifyEveryone(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.upkeep"));
@@ -555,6 +555,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     public void setDaysNotPaid(int days) { this.daysNotPaid = days; }
     public int getDaysNotPaid() { return this.daysNotPaid; }
+
+    public int getNextPaymentAmount() {
+        return (Config.costTownUpkeep + Config.costAdditionalUpkeep * blocks.size()) * (1 + daysNotPaid);
+    }
 
     /* ----- Helpers ----- */
 

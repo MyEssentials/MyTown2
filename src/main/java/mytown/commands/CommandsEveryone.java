@@ -500,8 +500,8 @@ public class CommandsEveryone extends Commands {
     }
 
     @CommandNode(
-            name = "amount",
-            permission = "mytown.cmd.everyone.bank.amount",
+            name = "info",
+            permission = "mytown.cmd.everyone.bank.info",
             parentName = "mytown.cmd.everyone.bank")
     public static void bankAmountCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -510,7 +510,7 @@ public class CommandsEveryone extends Commands {
         if(town instanceof AdminTown)
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
 
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.amount", town.getBankAmount(), Config.costItemName.equals("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", town.getBankAmount(), Config.costItemName.equals("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName(), town.getNextPaymentAmount(), Config.costItemName.equals("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
     }
 
     @CommandNode(
