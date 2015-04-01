@@ -51,7 +51,6 @@ public enum FlagType {
     private Property property;
     private boolean canTownsModify;
     private boolean isWhitelistable;
-    private String modRequired;
     private boolean isWildPerm;
     private Object defaultWildPerm;
 
@@ -59,7 +58,6 @@ public enum FlagType {
         this.type = type;
         this.property = property;
         this.allowedValues = allowedValues;
-        this.modRequired = modRequired;
         this.isWhitelistable = isWhitelistable;
         this.canTownsModify = true;
         this.defaultValue = defaultValue;
