@@ -47,9 +47,6 @@ public class MyTown {
     public Log log;
     // ---- Configuration files ----
     public Configuration config;
-    public RanksConfig ranksConfig;
-    public WildPermsConfig wildConfig;
-    public FlagsConfig flagsConfig;
 
     public List<JSONConfig> jsonConfigs =  new ArrayList<JSONConfig>();
 
@@ -144,6 +141,14 @@ public class MyTown {
             BukkitCompat.getInstance();
         }
         */
+    }
+
+    public WildPermsConfig getWildConfig() {
+        for(JSONConfig config : jsonConfigs) {
+            if(config instanceof WildPermsConfig)
+                return (WildPermsConfig)config;
+        }
+        return null;
     }
 
     private void registerPermissionHandler() {
