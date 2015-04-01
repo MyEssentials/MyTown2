@@ -6,6 +6,16 @@ Version 2 of MyTown - A Minecraft Server Protection Mod
 [![Support via Gittip](http://img.shields.io/gittip/legobear154.svg)](https://www.gittip.com/legobear154/)
 [![Release][release-img]][release-url]
 
+Protections contained at: https://github.com/MyEssentials/MyTown2-Protections
+
+<h3>Jenkins</h3>
+
+MyTown2 Builds: https://ci.mineguild.net/job/MyTown2/
+
+MyEssentials-Core Builds: https://ci.mineguild.net/job/MyEssentials-Core/
+
+(To run this, you need both, MyTown2 and MyEssentials-Core!)
+
 Features
 ========
 * Create Towns and claim Blocks to protect your stuff!
