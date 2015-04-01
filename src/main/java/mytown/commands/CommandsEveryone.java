@@ -78,6 +78,9 @@ public class CommandsEveryone extends Commands {
         if (!town.hasSpawn())
             throw new MyTownCommandException("mytown.cmd.err.spawn.notexist", town.getName());
 
+        if(!town.checkPermission(res, FlagType.enter, false, town.getSpawn().getDim(), (int)town.getSpawn().getX(), (int)town.getSpawn().getY(), (int)town.getSpawn().getZ()))
+            throw new MyTownCommandException("mytown.cmd.err.spawn.protected", town.getName());
+
         if(res.getTeleportCooldown() > 0)
             throw new MyTownCommandException("mytown.cmd.err.spawn.cooldown", res.getTeleportCooldown(), res.getTeleportCooldown() / 20);
 

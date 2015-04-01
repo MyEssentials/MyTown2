@@ -153,6 +153,7 @@ mytown.cmd.err.setspawn.notintown=&cThe position that you're at is not inside th
 # /t spawn
 mytown.cmd.err.spawn.notexist=&cThe TownBlock that the spawn of %s was on got deleted or the spawn wasn't set! &3Please use "/t setspawn" to set another one.
 mytown.cmd.err.spawn.cooldown=&cYou are still on teleport cooldown please wait &6%s &6(&9%ss&6)&c more ticks before trying again.
+mytown.cmd.err.spawn.protected=&cYou are not allowed to teleport to the location of %s's spawn!
 
 # /t kick
 mytown.cmd.usage.kick=&3/t kick <resident>
