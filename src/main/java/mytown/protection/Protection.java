@@ -366,7 +366,7 @@ public class Protection {
     /**
      * Checking right click actions on blocks.
      */
-    public boolean checkBlockRightClick(Resident res, BlockPos bp, PlayerInteractEvent.Action action) {
+    public boolean checkBlockInteraction(Resident res, BlockPos bp, PlayerInteractEvent.Action action) {
         Block blockType = DimensionManager.getWorld(bp.dim).getBlock(bp.x, bp.y, bp.z);
         for(SegmentBlock segment : segmentsBlocks) {
             if(segment.theClass.isAssignableFrom(blockType.getClass())
