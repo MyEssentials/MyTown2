@@ -199,8 +199,10 @@ mytown.adm.cmd.far.claim=&3You have bypassed far claims!
 # /ta unclaim
 mytown.adm.cmd.usage.unclaim=&3/ta unclaim
 
-# /ta cost
-mytown.adm.cmd.cost.itemname=&3The unique name of this item is: &c%s\n&3Add this as the costItem in your config to set the cost item.
+# /ta shop
+mytown.adm.cmd.shop.itemname=&3The unique name of this item is: &c%s\n&3Add this as the costItem in your config to set the cost item.
+mytown.adm.cmd.usage.shop.create=&3/ta shop create sell|buy|sellbuy <amount> <costAmount>
+mytown.adm.cmd.err.item=&cYou need to be holding an item in hand that will be used for the shop!
 
 # /ta plot
 mytown.adm.cmd.usage.plot.show=&3/ta plot show <townName>

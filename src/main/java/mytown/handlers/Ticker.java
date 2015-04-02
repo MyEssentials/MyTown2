@@ -22,10 +22,13 @@ import mytown.util.Constants;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
@@ -153,54 +156,71 @@ public class Ticker {
                 // For shift right clicking the selector, we may need it
             }
         }
-        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
-            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-            Town town;
-            //TODO: Verify permission
+        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK ) {
+            if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+                Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+                Town town;
+                //TODO: Verify permission
 
-            NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-            String description = lore.getStringTagAt(0);
+                NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
+                String description = lore.getStringTagAt(0);
 
-            if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
-                if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
-                    ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
-                } else {
-                    boolean result = res.selectBlockForPlot(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
-                    if (result) {
-                        if (!res.isSecondPlotSelectionActive()) {
-                            ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.plot.selectionStart");
-                        } else {
-                            ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.plot.selectionEnd");
-                        }
-                    } else
-                        ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.selectionFailed");
-
-                }
-            } else if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
-                town = MyTownUniverse.getInstance().getTownsMap().get(MyTownUtils.getTownNameFromLore(ev.entityPlayer));
-                Town townAt = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
-                if (town == null || town != townAt) {
-                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
-                } else {
-                    // If town is found then create of delete the block whitelist
-
-                    FlagType flagType = FlagType.valueOf(MyTownUtils.getFlagNameFromLore(ev.entityPlayer));
-                    ev.entityPlayer.setCurrentItemOrArmor(0, null);
-                    BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
-                    if (bw == null) {
-                        bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
-                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
-                        DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
+                if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
+                    if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
+                        ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
                     } else {
-                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
-                        DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
+                        boolean result = res.selectBlockForPlot(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
+                        if (result) {
+                            if (!res.isSecondPlotSelectionActive()) {
+                                ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.plot.selectionStart");
+                            } else {
+                                ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.plot.selectionEnd");
+                            }
+                        } else
+                            ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.selectionFailed");
+
                     }
-                    ev.setCanceled(true);
+                } else if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
+                    town = MyTownUniverse.getInstance().getTownsMap().get(MyTownUtils.getTownNameFromLore(ev.entityPlayer));
+                    Town townAt = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
+                    if (town == null || town != townAt) {
+                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
+                    } else {
+                        // If town is found then create of delete the block whitelist
+
+                        FlagType flagType = FlagType.valueOf(MyTownUtils.getFlagNameFromLore(ev.entityPlayer));
+                        ev.entityPlayer.setCurrentItemOrArmor(0, null);
+                        BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
+                        if (bw == null) {
+                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
+                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
+                            DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
+                        } else {
+                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
+                            DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
+                        }
+                        ev.setCanceled(true);
+                    }
                 }
+            } else if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.SIGN_SHOP_NAME)) {
+                ForgeDirection direction = ForgeDirection.getOrientation(ev.face);
+                int x = ev.x + direction.offsetX;
+                int y = ev.y + direction.offsetY;
+                int z = ev.z + direction.offsetZ;
+
+                if(direction == ForgeDirection.DOWN || ev.face == 1) {
+                    int i1 = MathHelper.floor_double((double) ((ev.entityPlayer.rotationYaw + 180.0F) * 16.0F / 360.0F) + 0.5D) & 15;
+                    ev.world.setBlock(x, y, z, Blocks.standing_sign, i1, 3);
+                } else {
+                    ev.world.setBlock(x, y, z, Blocks.wall_sign, ev.face, 3);
+                }
+
+                //Items.sign.onItemUse(stack, ev.entityPlayer, ev.world, )
+                //ev.world.setBlock(x, y, z, direction == ForgeDirection.UP ? Blocks.standing_sign : Blocks.wall_sign);
+                //Blocks.wall_sign.setBlockBoundsBasedOnState(ev.world, x, y, z);
             }
         }
     }
-
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {

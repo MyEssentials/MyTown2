@@ -24,10 +24,7 @@ import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
 import mytown.protection.json.JSONParser;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.ChunkPos;
-import mytown.util.Constants;
-import mytown.util.Formatter;
-import mytown.util.MyTownUtils;
+import mytown.util.*;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.block.Block;
@@ -594,20 +591,20 @@ public class CommandsAdmin extends Commands {
     }
 
     @CommandNode(
-            name = "cost",
-            permission = "mytown.adm.cmd.cost",
+            name = "shop",
+            permission = "mytown.adm.cmd.shop",
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
-    public static void costCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.cost");
+    public static void shopCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.shop");
     }
 
     @CommandNode(
             name = "itemname",
-            permission = "mytown.adm.cmd.cost.itemname",
-            parentName = "mytown.adm.cmd.cost",
+            permission = "mytown.adm.cmd.shop.itemname",
+            parentName = "mytown.adm.cmd.shop",
             nonPlayers = false)
-    public static void costItemNameCommand(ICommandSender sender, List<String> args) {
+    public static void shopItemNameCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayer) {
             ItemStack stack = ((EntityPlayer) sender).getHeldItem();
             if(stack == null)
@@ -615,11 +612,44 @@ public class CommandsAdmin extends Commands {
             String itemName = GameRegistry.findUniqueIdentifierFor(stack.getItem()).toString();
             if(stack.getItemDamage() != 0)
                 itemName += ":" + stack.getItemDamage();
-            sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.cost.itemname", itemName));
+            sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.shop.itemname", itemName));
         }
     }
 
     @CommandNode(
+            name = "create",
+            permission = "mytown.adm.cmd.shop.create",
+            parentName = "mytown.adm.cmd.shop",
+            nonPlayers = false)
+    public static void shopCreateCommand(ICommandSender sender, List<String> args) {
+        // /ta shop create sell|buy|sellBuy amount costAmount
+        if(args.size() < 3)
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.shop.create");
+
+        ShopType shopType = ShopType.fromString(args.get(0));
+        if(shopType == null)
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.shop.create");
+
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) <= 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+        if(!MyTownUtils.tryParseInt(args.get(2)) || Integer.parseInt(args.get(2)) <= 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(2));
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+
+        if(res.getPlayer().inventory.getCurrentItem() == null)
+            throw new MyTownCommandException("mytown.adm.cmd.err.item");
+
+        int amount = Integer.parseInt(args.get(1));
+        int costAmount = Integer.parseInt(args.get(2));
+
+        res.startSignCreation(res.getPlayer().inventory.getCurrentItem(), amount, costAmount, shopType);
+
+    }
+
+
+        @CommandNode(
             name = "debug",
             permission = "mytown.adm.cmd.debug",
             parentName = "mytown.adm.cmd",
