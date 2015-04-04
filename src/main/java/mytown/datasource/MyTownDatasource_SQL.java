@@ -11,9 +11,16 @@ import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.protection.ProtectionUtils;
+import mytown.shop.Shop;
+import mytown.shop.ShopType;
+import mytown.util.Constants;
+import mytown.util.MyTownUtils;
+import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.DimensionManager;
 
 import java.sql.*;
@@ -644,6 +651,27 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    protected boolean loadShops() {
+        try {
+            PreparedStatement s = prepare("SELECT * FROM " + prefix + "Shops", true);
+            ResultSet rs = s.executeQuery();
+            while(rs.next()) {
+                int id = rs.getInt("ID");
+
+                Shop shop = new Shop(rs.getString("itemString"), rs.getInt("amount"), rs.getInt("price"), ShopType.fromString(rs.getString("shopType")), rs.getInt("dim"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"));
+                shop.setDb_ID(id);
+                MyTownUniverse.getInstance().addShop(shop);
+
+            }
+        } catch(SQLException e) {
+            log.error("Failed to load shops.");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /* ----- Save ----- */
 
     @Override
@@ -1128,6 +1156,33 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean saveShop(Shop shop) {
+        try {
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "Shops(dim, x, y, z, itemString, amount, price, shopType) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", true);
+            s.setInt(1, shop.dim);
+            s.setInt(2, shop.x);
+            s.setInt(3, shop.y);
+            s.setInt(4, shop.z);
+            s.setString(5, MyTownUtils.nameFromItemStack(shop.itemStack));
+            s.setInt(6, shop.getAmount());
+            s.setInt(7, shop.price);
+            s.setString(8, shop.type.toString());
+            s.executeUpdate();
+
+            ResultSet generatedKeys = s.getGeneratedKeys();
+            if (generatedKeys.next())
+                shop.setDb_ID(generatedKeys.getInt(1));
+
+            MyTownUniverse.getInstance().addShop(shop);
+            MyTown.instance.log.info("Saved shop with ID " + shop.db_ID);
+
+        } catch (SQLException e) {
+            log.error("Failed to save the shop.");
+        }
+
+        return true;
+    }
 
     /* ----- Link ----- */
 
@@ -1599,6 +1654,21 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
+    public boolean deleteShop(int id) {
+        try {
+            PreparedStatement s = prepare("DELETE FROM Shops WHERE ID=?", false);
+            s.setInt(1, id);
+            s.execute();
+            MyTownUniverse.getInstance().removeShop(id);
+        } catch (SQLException e) {
+            log.error("Failed de delete shop with id " + id);
+            return false;
+        }
+
+        return true;
+    }
+
     /* ----- Checks ------ */
 
     @SuppressWarnings("unchecked")
@@ -1656,6 +1726,26 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     ex.printStackTrace();
                 }
             }
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean checkShops() {
+        for(Shop shop : MyTownUniverse.getInstance().getShopsList()) {
+            World world = DimensionManager.getWorld(shop.dim);
+            if(world.getBlock(shop.x, shop.y, shop.z) != Blocks.wall_sign && world.getBlock(shop.x, shop.y, shop.z) != Blocks.standing_sign) {
+                deleteShop(shop.db_ID);
+                MyTown.instance.log.info("Shop with ID " + shop.db_ID + " has been deleted because the sign no longer exists!");
+            }
+            /*
+            TileEntity te = world.getTileEntity(shop.x, shop.y, shop.z);
+            if (te == null) MyTown.instance.log.info("TE is null!" + " At coords " + shop.x + ", " + shop.y + ", " + shop.z);
+            if (te == null || !(te instanceof TileEntitySign) || !((TileEntitySign) te).signText[3].startsWith(Constants.SIGN_ID_TEXT) || Integer.parseInt(((TileEntitySign) te).signText[3].split(" ")[1]) != shop.db_ID) {
+                deleteShop(shop.db_ID);
+                MyTown.instance.log.info("Shop with ID " + shop.db_ID + " has been deleted because the sign no longer exists!");
+            }
+            */
         }
         return true;
     }
@@ -1887,6 +1977,17 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
         updates.add(new DBUpdate("4.1.2015.1", "Add 'daysNotPaid' to TownBanks", "ALTER TABLE " + prefix +
                 "TownBanks ADD daysNotPaid INTEGER DEFAULT 0"));
+        updates.add(new DBUpdate("4.4.2015.1", "Add 'Shops' table", "CREATE TABLE IF NOT EXISTS " + prefix + "Shops(" +
+                "ID INTEGER NOT NULL " + AUTO_INCREMENT + ", " +
+                "dim INT, " +
+                "x INT, " +
+                "y INT, " +
+                "z INT, " +
+                "itemString CHAR(100), " +
+                "amount INT, " +
+                "price INT, " +
+                "shopType CHAR(20), " +
+                "PRIMARY KEY(ID))"));
 
     }
 

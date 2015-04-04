@@ -24,6 +24,7 @@ import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
 import mytown.protection.json.JSONParser;
 import mytown.proxies.LocalizationProxy;
+import mytown.shop.ShopType;
 import mytown.util.*;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;

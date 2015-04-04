@@ -2,6 +2,7 @@ package mytown.datasource;
 
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
+import mytown.shop.Shop;
 
 /**
  * @author Joe Goett
@@ -98,6 +99,11 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     protected boolean loadTownBanks() {
+        return false;
+    }
+
+    @Override
+    protected boolean loadShops() {
         return false;
     }
 
@@ -215,6 +221,12 @@ public class InMemoryDatasource extends MyTownDatasource {
     public boolean saveTownBank(Town town, int amount, int daysNotPaid) {
         return false;
     }
+
+    @Override
+    public boolean saveShop(Shop shop) {
+        return false;
+    }
+
 
     /*
     FIXME: This is partially borken
@@ -365,6 +377,11 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
+    public boolean deleteShop(int id) {
+        return false;
+    }
+
+    @Override
     public boolean deleteSelectedTown(Resident res) {
         return false;
     }
@@ -406,6 +423,11 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     protected boolean checkTowns() {
+        return false;
+    }
+
+    @Override
+    protected boolean checkShops() {
         return false;
     }
 }

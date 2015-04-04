@@ -6,37 +6,25 @@ import com.mojang.authlib.GameProfile;
 import mytown.MyTown;
 import mytown.core.utils.command.CommandManager;
 import mytown.entities.*;
+import mytown.shop.Shop;
 import net.minecraft.server.MinecraftServer;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Joe Goett
  */
 public class MyTownUniverse { // TODO Allow migrating between different Datasources
-    private Map<String, Resident> residents;
-    private Map<String, Town> towns;
-    private Map<String, Nation> nations;
-    private Map<String, TownBlock> blocks;
-    private Map<Integer, Plot> plots;
-    private Map<String, Rank> ranks;
-    private List<Integer> worlds;
+    private Map<String, Resident> residents = new HashMap<String, Resident>();
+    private Map<String, Town> towns = new HashMap<String, Town>();
+    private Map<String, Nation> nations = new HashMap<String, Nation>();
+    private Map<String, TownBlock> blocks = new HashMap<String, TownBlock>();
+    private Map<Integer, Plot> plots = new HashMap<Integer, Plot>();
+    private Map<String, Rank> ranks = new HashMap<String, Rank>();
+    private Map<Integer, Shop> shops = new HashMap<Integer, Shop>();
+    private List<Integer> worlds = new ArrayList<Integer>();
 
-    //TODO: Some stuff are stored twice, fix it
-
-    private MyTownUniverse() {
-        residents = new Hashtable<String, Resident>();
-        towns = new Hashtable<String, Town>();
-        nations = new Hashtable<String, Nation>();
-        blocks = new Hashtable<String, TownBlock>();
-        plots = new Hashtable<Integer, Plot>();
-        ranks = new Hashtable<String, Rank>();
-
-        worlds = new ArrayList<Integer>();
-    }
+    public MyTownUniverse() {}
 
     public final ImmutableMap<String, Resident> getResidentsMap() {
         return ImmutableMap.copyOf(residents);
@@ -64,6 +52,10 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public final ImmutableList<Integer> getWorldsList() {
         return ImmutableList.copyOf(worlds);
+    }
+
+    public final ImmutableList<Shop> getShopsList() {
+        return ImmutableList.copyOf(shops.values());
     }
 
     /* ----- Add Entity ----- */
@@ -116,6 +108,11 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
+    public final boolean addShop(Shop shop) {
+        shops.put(shop.db_ID, shop);
+        return true;
+    }
+
     /* ----- Remove Entity ----- */
 
     public final boolean removeResident(Resident res) {
@@ -158,6 +155,11 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
+    public final boolean removeShop(int id) {
+        shops.remove(id);
+        return true;
+    }
+
     /* ----- Get Entity ----- */
 
     public Resident getResident(String key) {
@@ -193,6 +195,10 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return plots.get(key);
     }
 
+    public Shop getShop(int id) {
+        return shops.get(id);
+    }
+
     /* ----- Has Entity ----- */
 
     public boolean hasResident(Resident res) {
@@ -221,6 +227,10 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public boolean hasWorld(int dim) {
         return worlds.contains(dim);
+    }
+
+    public boolean hasShop(int id) {
+        return shops.containsKey(id);
     }
 
     /* ----- Singleton ----- */

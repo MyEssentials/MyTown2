@@ -93,7 +93,6 @@ public class MyTown {
         checkConfig();
         registerCommands();
         Commands.populateCompletionMap();
-        // This needs to be after registerCommands... might want to move both methods...
 
         jsonConfigs.add(new RanksConfig(Constants.CONFIG_FOLDER + "/DefaultRanks.json"));
         jsonConfigs.add(new WildPermsConfig(Constants.CONFIG_FOLDER + "/WildPerms.json"));

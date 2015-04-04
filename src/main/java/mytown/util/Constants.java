@@ -15,4 +15,5 @@ public class Constants {
     public static final String EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection.";
 
     public static final String SIGN_SHOP_NAME = EnumChatFormatting.BLUE + "Shop Sign";
+    public static final String SIGN_ID_TEXT = "" + EnumChatFormatting.ITALIC + EnumChatFormatting.GRAY + "ID: ";
 }

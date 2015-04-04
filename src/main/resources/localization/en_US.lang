@@ -201,7 +201,7 @@ mytown.adm.cmd.usage.unclaim=&3/ta unclaim
 
 # /ta shop
 mytown.adm.cmd.shop.itemname=&3The unique name of this item is: &c%s\n&3Add this as the costItem in your config to set the cost item.
-mytown.adm.cmd.usage.shop.create=&3/ta shop create sell|buy|sellbuy <amount> <costAmount>
+mytown.adm.cmd.usage.shop.create=&3/ta shop create sell|buy|sellBuy <amount> <price>
 mytown.adm.cmd.err.item=&cYou need to be holding an item in hand that will be used for the shop!
 
 # /ta plot
@@ -293,7 +293,10 @@ mytown.notification.town.upkeep=&3A new day is upon us, taxes have been collecte
 mytown.notification.town.upkeep.failed=&cA new day has passed but the bank is out of money. %s days before town deletion!
 mytown.notification.town.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for town %s.
 mytown.notification.resident.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for resident %s.
-
+mytown.notification.shop.buy.success=&aYou have bought %s %s with %s %s.
+mytown.notification.shop.buy.failed=&cYou don't have %s %s!
+mytown.notification.shop.sell.success=&aYou have sold %s %s with %s %s.
+mytown.notification.shop.sell.failed=&cYou don't have %s %s!
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)

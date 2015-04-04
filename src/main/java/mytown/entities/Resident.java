@@ -13,13 +13,12 @@ import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.MyTownUtils;
-import mytown.util.ShopType;
+import mytown.shop.ShopType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
@@ -629,12 +628,10 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         ItemStack signShop = new ItemStack(Items.wooden_hoe);
         signShop.setStackDisplayName(Constants.SIGN_SHOP_NAME);
         NBTTagList lore = new NBTTagList();
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "AmountAndCost: " + amount + "|" + costAmount));
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "AmountAndCost: " + amount + " | " + costAmount));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Type: " + type));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Item: " + itemStack.getDisplayName()));
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Item: " + MyTownUtils.nameFromItemStack(itemStack)));
         signShop.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
-        if(itemStack.getTagCompound() != null)
-            signShop.getTagCompound().setTag("itemStackUsed", itemStack.getTagCompound());
 
         return player.inventory.addItemStackToInventory(signShop);
     }

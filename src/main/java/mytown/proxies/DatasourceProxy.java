@@ -62,7 +62,7 @@ public class DatasourceProxy {
             return false;
         }
 
-        if (!datasource.checkAll()) {
+        if (!datasource.checkAllOnStart()) {
             log.error("Failed to check the Datasource!");
             return false;
         }
@@ -78,6 +78,11 @@ public class DatasourceProxy {
      */
     public static boolean stop() {
         // TODO Implement stop! xD
+        if(!datasource.checkAllOnStop()) {
+            log.error("Failed to check the Datasource!");
+            return false;
+        }
+
         return true;
     }
 
