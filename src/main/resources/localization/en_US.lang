@@ -63,7 +63,8 @@ mytown.cmd.usage.invite=&3/t invite <resident|accept|refuse> [town-name]
 mytown.cmd.err.invite.already=&cResident %s already exists in town %s!
 mytown.cmd.err.invite.noinvitations=&cYou have no invitations!
 mytown.cmd.err.resident.notexist=&cThat player does not exist!
-mytown.cmd.err.invite.accept=&cYou have more invitations! &3Choose what invitation you want to accept: "/t invite accept <town-name>".
+mytown.cmd.err.invite.accept=&cYou have more than one invitation! &3Choose what invitation you want to accept: "/t accept <townName>".
+mytown.cmd.err.invite.refuse=&cYou have more than one invitation! &3Choose what invitation you want to refuse: "/t refuse <townName>".
 
 # /t friends
 mytown.cmd.err.friends.add=&c%s is already a friend of yours or you already sent an invitation!
@@ -255,7 +256,7 @@ mytown.notification.town.perm.set.success=&aFlag successfully changed!
 mytown.notification.town.invited.refuse=&aYou've &crefused&a the invitation from town %s!
 mytown.notification.town.invited.accept=&aYou've &aaccepted&a the invitation from town %s!
 mytown.notification.town.joined=&3%s has &ajoined&3 the town %s!
-mytown.notification.town.invited=&cYou have been invited to town %s!
+mytown.notification.town.invited=&aYou have been invited to town %s! \n&3/t accept or refuse to answer.
 mytown.notification.town.invite.sent=&aThe invitation was successfully sent!
 mytown.notification.town.setspawn=&aSpawn has been set!
 mytown.notification.town.left.asMayor=Before you leave you need to choose between deleting the town or passing mayorship to other resident: /t pass <resident> or /t leave delete

@@ -137,6 +137,9 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
+        if(invites.size() > 1)
+            throw new MyTownCommandException("mytown.cmd.err.invite.accept");
+
         if (args.size() == 0)
             town = invites.get(0);
         else {
@@ -162,9 +165,11 @@ public class CommandsOutsider extends Commands {
             completionKeys = {"townCompletion"})
     public static void refuseCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-
         List<Town> invites = getInvitesFromResident(res);
         Town town;
+        if(invites.size() > 1)
+            throw new MyTownCommandException("mytown.cmd.err.invite.refuse");
+
         if (args.size() == 0)
             town = invites.get(0);
         else
