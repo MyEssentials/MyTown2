@@ -243,7 +243,7 @@ public class Ticker {
                     signText[0] = " " + signText[0];
 
                 signText[1] = (amount > 1 ? (amount + "x") : "") + EnumChatFormatting.DARK_BLUE;
-                signText[1] += shop.itemStack.getDisplayName().substring(0, 15 - signText[1].length());
+                signText[1] += signText[1].length() + shop.itemStack.getDisplayName().length() > 15 ? shop.itemStack.getDisplayName().substring(0, 15 - signText[1].length()) : shop.itemStack.getDisplayName();
                 for(int i = 0; i < (15 - signText[1].length()) / 2; i++)
                     signText[1] = " " + signText[1];
 
