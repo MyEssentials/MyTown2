@@ -16,4 +16,7 @@ public class Constants {
 
     public static final String SIGN_SHOP_NAME = EnumChatFormatting.BLUE + "Shop Sign";
     public static final String SIGN_ID_TEXT = "" + EnumChatFormatting.ITALIC + EnumChatFormatting.GRAY + "ID: ";
+
+    public static final String PLOT_SELL_NAME = EnumChatFormatting.BLUE + "Plot Sell";
+    public static final String PLOT_SELL_IDENTIFIER = EnumChatFormatting.DARK_BLUE + "Plot Sale";
 }

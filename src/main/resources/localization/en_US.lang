@@ -8,6 +8,7 @@ mytown.cmd.err.cost=&cYou need to have %s %ss in your inventory in order to pay 
 mytown.cmd.err.money=&cYou need to have %s %s in order to pay for claiming or making a town!
 mytown.cmd.err.notPositiveInteger=&cValue '%s' needs to be a positive integer!
 mytown.cmd.err.adminTown=&cAction denied because %s is an admin town!
+mytown.cmd.err.notInTown=&cYou are not in town %s!
 
 # Flag based notifications
 
@@ -111,6 +112,7 @@ mytown.cmd.usage.plot.rename=&3/t plot rename <name>
 mytown.cmd.usage.plot.add=&3/t plot add <owner|member> <resident>
 mytown.cmd.usage.plot.limit.set=&3/t plot limit set <limitNumber>
 mytown.cmd.usage.plot.remove=&3/t plot remove <resident>
+mytown.cmd.usage.plot.sell=&3/t plot sell <price>
 mytown.cmd.err.plot.remove.notInPlot=&cResident is not a member/owner of this plot!
 mytown.cmd.err.plot.remove.onlyOwner=&cYou are the only owner of this plot, you can only delete the plot!
 mytown.cmd.err.plot.add.alreadyInPlot=&cResident is already in plot!
@@ -120,8 +122,10 @@ mytown.cmd.err.plot.alreadySelected=&cYou already selected!
 mytown.cmd.err.plot.selectionFailed=&cYou cannot make a plot outside the town!
 mytown.cmd.err.plot.notSelected=&cYou need to select 2 corners first!
 mytown.cmd.err.plot.notInPlot=&cYou are not standing in a plot!
+mytown.cmd.err.plot.sell.notInPlot=&cThe selection is not in a plot in town %s!
+mytown.cmd.err.plot.sell.alreadyOwner=&cYou are already an owner of this plot!
 mytown.cmd.err.plot.notOwner=&cYou do not have owner permissions for this plot!
-mytown.cmd.err.plot.limit=&cYou cannot make more plots than %s!
+mytown.cmd.err.plot.limit=&cYou cannot be owner of more plots than %s!
 mytown.cmd.err.plot.limit.toPlayer=&cPlayer %s can't be owner to any more plots!
 mytown.cmd.err.plot.tooSmall=&cSelection too small! Minimum area: %s. Minimum height: %s.
 mytown.cmd.err.plot.tooLarge=&cSelection too large! Maximum area: %s. Maximum height: %s.
@@ -297,6 +301,10 @@ mytown.notification.shop.buy.success=&aYou have bought %s %s with %s %s.
 mytown.notification.shop.buy.failed=&cYou don't have %s %s!
 mytown.notification.shop.sell.success=&aYou have sold %s %s with %s %s.
 mytown.notification.shop.sell.failed=&cYou don't have %s %s!
+mytown.notification.plot.buy.newOwner=&aYou have successfully bought plot %s!
+mytown.notification.plot.buy.oldOwner=&aThe plot %s has been successfully sold!
+
+
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)

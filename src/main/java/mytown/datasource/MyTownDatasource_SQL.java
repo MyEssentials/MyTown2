@@ -531,8 +531,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
 
                 if (rs.getBoolean("isOwner"))
                     plot.addOwner(res);
-
-                plot.addResident(res);
             }
         } catch (SQLException e) {
             log.error("Failed to link Residents to Plots");

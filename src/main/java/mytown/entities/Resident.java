@@ -624,13 +624,24 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         return player.inventory.addItemStackToInventory(selectionTool);
     }
 
-    public boolean startSignCreation(ItemStack itemStack, int amount, int costAmount, ShopType type) {
+    public boolean startShopCreation(ItemStack itemStack, int amount, int price, ShopType type) {
         ItemStack signShop = new ItemStack(Items.wooden_hoe);
         signShop.setStackDisplayName(Constants.SIGN_SHOP_NAME);
         NBTTagList lore = new NBTTagList();
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "AmountAndCost: " + amount + " | " + costAmount));
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "AmountAndCost: " + amount + " | " + price));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Type: " + type));
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Item: " + MyTownUtils.nameFromItemStack(itemStack)));
+        signShop.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
+
+        return player.inventory.addItemStackToInventory(signShop);
+    }
+
+    public boolean startPlotSell(String townName, int price) {
+        ItemStack signShop = new ItemStack(Items.wooden_hoe);
+        signShop.setStackDisplayName(Constants.PLOT_SELL_NAME);
+        NBTTagList lore = new NBTTagList();
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Town: " + townName));
+        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Price: " + price));
         signShop.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
 
         return player.inventory.addItemStackToInventory(signShop);

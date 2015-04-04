@@ -645,7 +645,7 @@ public class CommandsAdmin extends Commands {
         int amount = Integer.parseInt(args.get(1));
         int costAmount = Integer.parseInt(args.get(2));
 
-        res.startSignCreation(res.getPlayer().inventory.getCurrentItem(), amount, costAmount, shopType);
+        res.startShopCreation(res.getPlayer().inventory.getCurrentItem(), amount, costAmount, shopType);
 
     }
 

@@ -438,6 +438,24 @@ public class CommandsEveryone extends Commands {
             getDatasource().deletePlot(plot);
             res.sendMessage(getLocal().getLocalization("mytown.notification.plot.deleted", plot.getName()));
         }
+
+        @CommandNode(
+                name = "sell",
+                permission = "mytown.cmd.everyone.plot.sell",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotSellCommand(ICommandSender sender, List<String> args) {
+            if(args.size() < 1)
+                throw new MyTownWrongUsageException("mytown.cmd.usage.plot.sell");
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+
+            if(!MyTownUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0)
+                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
+
+            int price = Integer.parseInt(args.get(0));
+
+            res.startPlotSell(town.getName(), price);
+        }
     }
 
     @CommandNode(

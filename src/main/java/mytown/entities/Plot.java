@@ -206,6 +206,7 @@ public class Plot implements IHasFlags, IHasResidents {
     @Override
     public void removeResident(Resident res) {
         whitelist.remove(res);
+        owners.remove(res);
     }
 
     @Override
@@ -222,10 +223,12 @@ public class Plot implements IHasFlags, IHasResidents {
 
     public void addOwner(Resident res) {
         owners.add(res);
+        whitelist.add(res);
     }
 
     public void removeOwner(Resident res) {
         owners.remove(res);
+        whitelist.remove(res);
     }
 
     public boolean hasOwner(Resident res) {
