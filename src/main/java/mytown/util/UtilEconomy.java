@@ -27,9 +27,13 @@ public class UtilEconomy implements IEconManager{
 	 */
 	public UtilEconomy(){		
 	}
-	
-	static String EcoClass = "com.forgeessentials.economy.WalletHandler";	
-	
+
+	static String EcoClass = "com.forgeessentials.economy.WalletHandler";
+
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
+    }
+
 	@Override
 	public int getWallet() {	
 		@SuppressWarnings("rawtypes")

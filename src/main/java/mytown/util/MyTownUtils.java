@@ -18,6 +18,7 @@ import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.EconomyProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -260,7 +261,9 @@ public class MyTownUtils {
      * Returns false if player doesn't have the money necessary
      */
     public static boolean takeMoneyFromPlayer(EntityPlayer player, int amount) {
-        UtilEconomy eco = new UtilEconomy(player.getUniqueID());
+        // UtilEconomy eco = new UtilEconomy(player.getUniqueID());
+        IEconManager eco = EconomyProxy.economyManagerForUUID(player.getUniqueID());
+        if (eco == null) return false;
         int wallet = eco.getWallet();
         if(wallet >= amount) {
             eco.removeFromWallet(amount);
@@ -352,7 +355,9 @@ public class MyTownUtils {
      * Returns false if player doesn't have the money necessary
      */
     public static void giveMoneyToPlayer(EntityPlayer player, int amount) {
-        UtilEconomy eco = new UtilEconomy(player.getUniqueID());
+        //UtilEconomy eco = new UtilEconomy(player.getUniqueID());
+        IEconManager eco = EconomyProxy.economyManagerForUUID(player.getUniqueID());
+        if (eco == null) return;
         eco.addToWallet(amount);
     }
 
