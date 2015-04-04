@@ -9,7 +9,6 @@ import mytown.MyTown;
 import mytown.api.events.TownEvent;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
-import mytown.core.utils.Log;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.AdminTown;
@@ -23,7 +22,6 @@ import mytown.util.Constants;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -33,12 +31,15 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
+import java.util.Calendar;
+
 /**
  * @author Joe Goett
  */
 public class Ticker {
 
     private boolean ticked = true;
+    private int lastCalendarDay = -1;
     @SubscribeEvent
     public void onTickEvent(TickEvent.WorldTickEvent ev) {
         if(ev.side == Side.CLIENT)
@@ -49,24 +50,28 @@ public class Ticker {
             res.tick();
         }
 
-        // TODO: rework the logic of this
-        if(ev.phase == TickEvent.Phase.START) {
-            if (ticked) {
-                //if (ev.world.getWorldTime() % 24000 == 0)
-                    //MyTown.instance.log.info("Got ticked! " + ev.side + " " + ev.phase);
-
-                if (ev.world.getWorldTime() % 24000 == 0 && Config.costTownUpkeep > 0) {
-                    for (Town town : MyTownUniverse.getInstance().getTownsMap().values()) {
-                        if (!(town instanceof AdminTown)) {
-                            town.makePayment(Config.costTownUpkeep + Config.costAdditionalUpkeep * town.getBlocks().size());
-                            town.notifyEveryone(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.upkeep", Config.costTownUpkeep));
+        if(Config.costTownUpkeep > 0 || Config.costAdditionalUpkeep > 0) {
+            if (ev.phase == TickEvent.Phase.START) {
+                if (ticked) {
+                    if(lastCalendarDay != -1 && Calendar.getInstance().get(Calendar.DAY_OF_YEAR) != lastCalendarDay) {
+                        for (int i = 0; i < MyTownUniverse.getInstance().getTownsMap().size(); i++) {
+                            Town town = MyTownUniverse.getInstance().getTownsMap().values().asList().get(i);
+                            if (!(town instanceof AdminTown)) {
+                                town.payUpkeep();
+                                if(town.getDaysNotPaid() == Config.upkeepTownDeletionDays && Config.upkeepTownDeletionDays > 0) {
+                                    MyTown.instance.log.info("Town " + town.getName() + " has been deleted because it didn't pay upkeep for " + Config.upkeepTownDeletionDays + " days.");
+                                    DatasourceProxy.getDatasource().deleteTown(town);
+                                } else {
+                                    DatasourceProxy.getDatasource().updateTownBank(town, town.getBankAmount());
+                                }
+                            }
                         }
+                        ticked = false;
                     }
-                    ticked = false;
-                }
-            } else {
-                if(ev.world.getWorldTime() % 24000 != 0)
+                    lastCalendarDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+                } else {
                     ticked = true;
+                }
             }
         }
     }

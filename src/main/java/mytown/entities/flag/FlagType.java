@@ -26,7 +26,7 @@ public enum FlagType {
     mobs(String.class, "all", new String[]{"all", "hostiles", "none"}, true, "all", Property.all, null),
 
     // Allows outsiders to hurt passive and other types of entities.
-    protectedEntities(Boolean.class, false, null, true, true, Property.all, null),
+    protectedEntities(Boolean.class, false, null, true, false, Property.all, null),
 
     // Allows the use of some items such as: Bucket, Spawn Eggs etc.
     useItems(Boolean.class, false, null, true, true, Property.all, null),
@@ -51,7 +51,6 @@ public enum FlagType {
     private Property property;
     private boolean canTownsModify;
     private boolean isWhitelistable;
-    private String modRequired;
     private boolean isWildPerm;
     private Object defaultWildPerm;
 
@@ -59,7 +58,6 @@ public enum FlagType {
         this.type = type;
         this.property = property;
         this.allowedValues = allowedValues;
-        this.modRequired = modRequired;
         this.isWhitelistable = isWhitelistable;
         this.canTownsModify = true;
         this.defaultValue = defaultValue;

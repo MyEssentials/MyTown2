@@ -1,17 +1,8 @@
 package mytown.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
+import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
+import mytown.core.utils.teleport.EssentialsTeleporter;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
@@ -23,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -31,9 +23,19 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Created by AfterWind on 9/9/2014.

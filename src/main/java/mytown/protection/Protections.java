@@ -3,7 +3,8 @@ package mytown.protection;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.*;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.config.Config;
@@ -346,9 +347,9 @@ public class Protections {
 
 
         // Activate and access check here
-        if(ev.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
+        if(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             for (Protection protection : protections) {
-                if (protection.checkBlockRightClick(res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.action)) {
+                if (protection.checkBlockInteraction(res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.action)) {
                     // Update the blocks so that it's synced with the player.
                     S23PacketBlockChange packet = new S23PacketBlockChange(x, y, z, ev.world);
                     packet.field_148884_e = ev.world.getBlockMetadata(x, y, z);
@@ -483,6 +484,21 @@ public class Protections {
             if(!block.getTown().checkPermission(res, FlagType.useItems, false, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
                 res.protectionDenial(FlagType.useItems.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ))));
                 ev.setCanceled(true);
+            }
+        }
+    }
+
+
+    // Fired AFTER the teleport
+    @SubscribeEvent
+    public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent ev) {
+        TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.player.dimension, ((int)ev.player.posX) >> 4, ((int)ev.player.posZ) >> 4);
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
+        if(block != null) {
+            if(!block.getTown().checkPermission(res, FlagType.enter, false, ev.player.dimension, (int)ev.player.posX, (int)ev.player.posY, (int)ev.player.posZ)) {
+                // Because of badly coded teleportation code by Mojang we can only send the player back to spawn. :I
+                res.respawnPlayer();
+                res.protectionDenial(FlagType.enter.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.player.dimension, (int)ev.player.posX, (int)ev.player.posY, (int)ev.player.posZ))));
             }
         }
     }

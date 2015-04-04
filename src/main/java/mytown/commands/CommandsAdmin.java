@@ -509,7 +509,7 @@ public class CommandsAdmin extends Commands {
         } else
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
         //Saving changes to file
-        MyTown.instance.wildConfig.write(Wild.getInstance().getFlags());
+        MyTown.instance.getWildConfig().write(Wild.getInstance().getFlags());
     }
 
     @CommandNode(

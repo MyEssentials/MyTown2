@@ -153,6 +153,7 @@ mytown.cmd.err.setspawn.notintown=&cThe position that you're at is not inside th
 # /t spawn
 mytown.cmd.err.spawn.notexist=&cThe TownBlock that the spawn of %s was on got deleted or the spawn wasn't set! &3Please use "/t setspawn" to set another one.
 mytown.cmd.err.spawn.cooldown=&cYou are still on teleport cooldown please wait &6%s &6(&9%ss&6)&c more ticks before trying again.
+mytown.cmd.err.spawn.protected=&cYou are not allowed to teleport to the location of %s's spawn!
 
 # /t kick
 mytown.cmd.usage.kick=&3/t kick <resident>
@@ -285,10 +286,12 @@ mytown.notification.refund.inventory=&3%s %ss have been added to your inventory.
 mytown.notification.refund.wallet=&3%s%s have been added to your Wallet.
 mytown.notification.plot.sender.removed=&c%s has been removed from the plot.
 mytown.notification.plot.target.removed=&cYou have been removed from plot %s!
-mytown.notification.town.bank.amount=&3Bank amount: %s %s
+mytown.notification.town.bank.info=&aAmount in bank: &7%s %s \n&aNext payment: &7%s %s
 mytown.notification.town.upkeep=&3A new day is upon us, taxes have been collected!
+mytown.notification.town.upkeep.failed=&cA new day has passed but the bank is out of money. %s days before town deletion!
 mytown.notification.town.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for town %s.
 mytown.notification.resident.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for resident %s.
+
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)

@@ -78,6 +78,9 @@ public class CommandsEveryone extends Commands {
         if (!town.hasSpawn())
             throw new MyTownCommandException("mytown.cmd.err.spawn.notexist", town.getName());
 
+        if(!town.checkPermission(res, FlagType.enter, false, town.getSpawn().getDim(), (int)town.getSpawn().getX(), (int)town.getSpawn().getY(), (int)town.getSpawn().getZ()))
+            throw new MyTownCommandException("mytown.cmd.err.spawn.protected", town.getName());
+
         if(res.getTeleportCooldown() > 0)
             throw new MyTownCommandException("mytown.cmd.err.spawn.cooldown", res.getTeleportCooldown(), res.getTeleportCooldown() / 20);
 
@@ -101,10 +104,19 @@ public class CommandsEveryone extends Commands {
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.select", args.get(0)));
     }
 
+
+    @CommandNode(
+            name = "blocks",
+            permission = "mytown.cmd.everyone.blocks",
+            parentName = "mytown.cmd")
+    public static void blocksCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.everyone.blocks");
+    }
+
     @CommandNode(
             name = "list",
             permission = "mytown.cmd.everyone.blocks.list",
-            parentName = "mytown.cmd.assistant.blocks")
+            parentName = "mytown.cmd.everyone.blocks")
     public static void blocksListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
@@ -112,10 +124,19 @@ public class CommandsEveryone extends Commands {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.block.list", town.getName(), "\n" + Formatter.formatTownBlocksToString(town.getBlocks())));
     }
 
+
+    @CommandNode(
+            name = "perm",
+            permission = "mytown.cmd.everyone.perm",
+            parentName = "mytown.cmd")
+    public static void permCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.cmd.everyone.perm");
+    }
+
     @CommandNode(
             name = "list",
             permission = "mytown.cmd.everyone.perm.list",
-            parentName = "mytown.cmd.assistant.perm")
+            parentName = "mytown.cmd.everyone.perm")
     public static void permListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
@@ -479,8 +500,8 @@ public class CommandsEveryone extends Commands {
     }
 
     @CommandNode(
-            name = "amount",
-            permission = "mytown.cmd.everyone.bank.amount",
+            name = "info",
+            permission = "mytown.cmd.everyone.bank.info",
             parentName = "mytown.cmd.everyone.bank")
     public static void bankAmountCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -489,7 +510,7 @@ public class CommandsEveryone extends Commands {
         if(town instanceof AdminTown)
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
 
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.amount", town.getBankAmount(), Config.costItemName.equals("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", town.getBankAmount(), Config.costItemName.equals("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName(), town.getNextPaymentAmount(), Config.costItemName.equals("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
     }
 
     @CommandNode(

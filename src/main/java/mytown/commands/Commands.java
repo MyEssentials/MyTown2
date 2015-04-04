@@ -112,7 +112,6 @@ public abstract class Commands {
 
         if (rank == null) {
             return true;
-            //return Rank.outsiderPermCheck(permission);
         }
         return rank.hasPermissionOrSuperPermission(permission);
     }

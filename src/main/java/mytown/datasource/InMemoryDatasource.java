@@ -212,7 +212,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveTownBank(Town town, int amount) {
+    public boolean saveTownBank(Town town, int amount, int daysNotPaid) {
         return false;
     }
 

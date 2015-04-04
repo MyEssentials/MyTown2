@@ -113,7 +113,7 @@ public abstract class MyTownDatasource {
             if (!linkResidentToTown(creator, town, onCreationDefaultRank))
                 MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
 
-            saveTownBank(town, Config.defaultBankAmount);
+            saveTownBank(town, Config.defaultBankAmount, 0);
         }
 
         TownEvent.fire(new TownEvent.TownCreateEvent(town));
@@ -270,7 +270,7 @@ public abstract class MyTownDatasource {
 
     public abstract boolean saveBlockOwner(Resident res, int dim, int x, int y, int z);
 
-    public abstract boolean saveTownBank(Town town, int amount);
+    public abstract boolean saveTownBank(Town town, int amount, int daysNotPaid);
 
     /* ----- Link ----- */
 
