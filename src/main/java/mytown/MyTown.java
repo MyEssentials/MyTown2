@@ -27,6 +27,7 @@ import mytown.protection.Protections;
 import mytown.protection.eventhandlers.ExtraForgeHandlers;
 import mytown.protection.json.JSONParser;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.EconomyProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.MyTownUtils;
@@ -198,8 +199,8 @@ public class MyTown {
     public void checkConfig() {
         // Checking cost item
         if(Config.costItemName.startsWith("$")) {
-            if (!Loader.isModLoaded("ForgeEssentials")) {
-                //throw new RuntimeException("Failed to find ForgeEssentials for economy implementation.");
+            if (EconomyProxy.econManagerClass == null) {
+                throw new RuntimeException("No economy implementation found!");
             }
         } else {
             String[] split = Config.costItemName.split(":");
