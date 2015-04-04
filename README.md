@@ -27,6 +27,10 @@ Features
 * Protects against multiple Minecraft mods including Tinkers Construct, IC2, Buildcraft 3, ComputerCraft, Minefactory Reloaded, and many more!
 * And much more!
 
+Modpacks
+========
+You are welcome to include MyTown in any modpacks. Credits/links are appriciated, but not mandatory.
+
 Submitting Pull Requests
 ========================
 Only work against the Master branch, any other branches should be considered unstable and potentially dangerous.

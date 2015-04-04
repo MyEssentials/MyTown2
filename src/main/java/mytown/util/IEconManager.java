@@ -1,10 +1,13 @@
 package mytown.util;
 
 import java.util.Map;
+import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 
 public interface IEconManager {
+
+    public void setUUID(UUID uuid);
 
     /**
      * Add a set amount to a target's Wallet

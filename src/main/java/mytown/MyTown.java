@@ -7,6 +7,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
+import mytown.bukkit.BukkitCompat;
 import mytown.commands.*;
 import mytown.config.*;
 import mytown.config.json.FlagsConfig;
@@ -26,6 +27,7 @@ import mytown.protection.Protections;
 import mytown.protection.eventhandlers.ExtraForgeHandlers;
 import mytown.protection.json.JSONParser;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.EconomyProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.MyTownUtils;
@@ -50,10 +52,13 @@ public class MyTown {
 
     public List<JSONConfig> jsonConfigs =  new ArrayList<JSONConfig>();
 
+    public File thisFile;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
         // Setup Loggers
         log = new Log(ev.getModLog());
+        thisFile = ev.getSourceFile();
 
         Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyTown/";
 
@@ -90,6 +95,9 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
+        // Register bukkit compat. TODO Move this?
+        BukkitCompat.initCompat(thisFile);
+
         checkConfig();
         registerCommands();
         Commands.populateCompletionMap();
@@ -105,6 +113,10 @@ public class MyTown {
         registerPermissionHandler();
         DatasourceProxy.setLog(log);
         SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
+    }
+
+    @EventHandler
+    public void serverStarted(FMLServerStartedEvent ev) {
     }
 
     @EventHandler
@@ -190,9 +202,9 @@ public class MyTown {
      */
     public void checkConfig() {
         // Checking cost item
-        if(Config.costItemName.equals("$")) {
-            if (!Loader.isModLoaded("ForgeEssentials")) {
-                throw new RuntimeException("Failed to find ForgeEssentials for economy implementation.");
+        if(Config.costItemName.startsWith("$")) {
+            if (EconomyProxy.econManagerClass == null) {
+                throw new RuntimeException("No economy implementation found!");
             }
         } else {
             String[] split = Config.costItemName.split(":");
