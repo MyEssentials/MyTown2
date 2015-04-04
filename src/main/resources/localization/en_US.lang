@@ -220,9 +220,9 @@ mytown.notification.admtown.created=&aAdmin town %s created!
 mytown.notification.town.deleted=&cTown %s deleted!
 mytown.notification.nation.created=Nation %s created!
 mytown.notification.nation.deleted=Nation %s deleted!
-mytown.notification.enter.wild=&cYou just entered the wild!
-mytown.notification.enter.town=&cWelcome to %s!
-mytown.notification.enter.ownTown=&cWelcome back!
+mytown.notification.enter.wild=&2You just entered the wild!
+mytown.notification.enter.town=&2Welcome to %s!
+mytown.notification.enter.ownTown=&2Welcome back!
 
 mytown.notification.town.list=&7 Towns: \n&f%s
 mytown.notification.town.info=&7 --------  &a%s (&fR:%s &a|&f C:%s/%s &a| &fP:%s&a) &7 -------- \n &7Residents:&f %s\n &7Ranks:&f %s
