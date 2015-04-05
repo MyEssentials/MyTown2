@@ -23,8 +23,6 @@ mytown.cmd.err.notInTown=&cYou are not in town %s!
  mytown.protection.useItems=&cYou cannot use items in here!
  mytown.protection.pvp=&cYou cannot attack this player!
 
- mytown.protection.pumps=&cYou cannot pump from this area!
-
  # Flag Info
  mytown.flag.enter=&3Allows outsiders to enter.
  mytown.flag.activateBlocks=&3Allows usage of doors/buttons/etc.
@@ -37,8 +35,8 @@ mytown.cmd.err.notInTown=&cYou are not in town %s!
  mytown.flag.useItems=&3Allows usage of items (eggs, buckets etc.)
  mytown.flag.pvp=&3Allows PVP - Player vs. Player
  mytown.flag.restrictedTownPerms=&3Gives permission outside player's plots.
- mytown.flag.pumps=&3Allows outsiders to pump liquids from town.
- 
+ mytown.flag.allowFakePlayers=&3Allows fake players to bypass (ex: Thaumcraft Golems)
+
  # Notify Town
  mytown.protection.notify.explosions=&3An explosion has been stopped!
 

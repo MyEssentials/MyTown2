@@ -274,6 +274,10 @@ public class Protection {
                 }
             }
         }
+
+        if(item == null)
+            return false;
+
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
             if(segment.type == ItemType.rightClickBlock && segment.theClass.isAssignableFrom(item.getItem().getClass())) {

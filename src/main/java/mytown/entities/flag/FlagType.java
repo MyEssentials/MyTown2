@@ -34,6 +34,9 @@ public enum FlagType {
     // Allows to activate blocks such as: Buttons, Doors etc.
     activateBlocks(Boolean.class, false, null, true, true, Property.all, null, true),
 
+    // Allows fake players to bypass some of the flags (modifyBlocks, useItems, protectedEntities)
+    allowFakePlayers(Boolean.class, true, null, true, true, Property.all, null),
+
     // ---- Flags that don't go in plots. ----
 
     // Allows modifying blocks.
