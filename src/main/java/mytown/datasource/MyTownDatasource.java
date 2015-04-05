@@ -1,7 +1,6 @@
 package mytown.datasource;
 
 import com.mojang.authlib.GameProfile;
-import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.api.events.*;
 import mytown.config.Config;
@@ -10,7 +9,7 @@ import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.shop.Shop;
+import mytown.economy.shop.Shop;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;

@@ -127,7 +127,6 @@ public class CommandsAssistant extends Commands {
         getDatasource().deleteBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
         makeRefund(pl, Config.costAmountClaim + Config.costAdditionClaim * (town.getBlocks().size() - 1));
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.payReturn", Config.costAmountClaim, Config.costItemName));
     }
 
     @CommandNode(

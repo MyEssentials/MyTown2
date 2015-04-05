@@ -6,6 +6,7 @@ import mytown.core.ChatUtils;
 import mytown.core.Localization;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
+import mytown.economy.EconomyUtils;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -528,7 +529,7 @@ public class CommandsEveryone extends Commands {
         if(town instanceof AdminTown)
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
 
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", town.getBankAmount(), Config.costItemName.equals("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName(), town.getNextPaymentAmount(), Config.costItemName.equals("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", town.getBankAmount(), EconomyUtils.getCurrency(town.getBankAmount()), town.getNextPaymentAmount(), EconomyUtils.getCurrency(town.getNextPaymentAmount())));
     }
 
     @CommandNode(

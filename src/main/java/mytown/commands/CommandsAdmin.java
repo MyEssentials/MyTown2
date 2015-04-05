@@ -1,31 +1,26 @@
 package mytown.commands;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
+import mytown.bukkit.BukkitCompat;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.entities.Rank;
-import mytown.entities.Resident;
-import mytown.entities.Town;
-import mytown.entities.TownBlock;
-import mytown.entities.Wild;
+import mytown.economy.shop.ShopType;
+import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
 import mytown.protection.json.JSONParser;
 import mytown.proxies.LocalizationProxy;
-import mytown.shop.ShopType;
-import mytown.util.*;
+import mytown.util.ChunkPos;
+import mytown.util.Constants;
+import mytown.util.Formatter;
+import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.block.Block;
@@ -37,6 +32,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by AfterWind on 8/29/2014.
@@ -63,27 +63,18 @@ public class CommandsAdmin extends Commands {
     }
 
     @CommandNode(
-            name = "load",
-            permission = "mytown.adm.cmd.config.load",
+            name = "reload",
+            permission = "mytown.adm.cmd.config.reload",
             parentName = "mytown.adm.cmd.config",
             nonPlayers = true)
     public static void configLoadCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.start"));
         MyTown.instance.config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
         ConfigProcessor.load(MyTown.instance.config, Config.class);
+        BukkitCompat.initCompat(MyTown.instance.thisFile);
+        MyTown.instance.checkConfig();
         JSONParser.start();
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.stop"));
-    }
-
-    @CommandNode(
-            name = "save",
-            permission = "mytown.adm.cmd.config.save",
-            parentName = "mytown.adm.cmd.config",
-            nonPlayers = true)
-    public static void configSaveCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.save.start"));
-        ConfigProcessor.save(MyTown.instance.config, Config.class);
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.save.stop"));
     }
 
     @CommandNode(

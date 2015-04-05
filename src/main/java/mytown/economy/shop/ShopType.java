@@ -1,4 +1,4 @@
-package mytown.shop;
+package mytown.economy.shop;
 
 /**
  * Created by AfterWind on 4/2/2015.

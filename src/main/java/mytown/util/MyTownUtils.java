@@ -2,20 +2,16 @@ package mytown.util;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
-import mytown.config.Config;
-import mytown.core.utils.teleport.EssentialsTeleporter;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.EconomyProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,7 +22,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 import java.io.File;
@@ -262,26 +257,6 @@ public class MyTownUtils {
     }
 
     /**
-     * Takes the amount of money specified.
-     * Returns false if player doesn't have the money necessary
-     */
-    public static boolean takeMoneyFromPlayer(EntityPlayer player, int amount) {
-        // UtilEconomy eco = new UtilEconomy(player.getUniqueID());
-        if(Config.costItemName.startsWith("$")) {
-            IEconManager eco = EconomyProxy.economyManagerForUUID(player.getUniqueID());
-            if (eco == null) return false;
-            int wallet = eco.getWallet();
-            if (wallet >= amount) {
-                eco.removeFromWallet(amount);
-                return true;
-            }
-            return false;
-        } else {
-            return takeItemFromPlayer(player, Config.costItemName, amount);
-        }
-    }
-
-    /**
      * Takes the amount of items specified.
      * Returns false if player doesn't have the items necessary
      */
@@ -401,22 +376,6 @@ public class MyTownUtils {
                 // send S2FPacketSetSlot to the player with the new / changed stack (or null)
                 ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, slot.slotNumber, player.inventory.mainInventory[i]));
             }
-        }
-    }
-
-
-    /**
-     * Takes the amount of money specified.
-     * Returns false if player doesn't have the money necessary
-     */
-    public static void giveMoneyToPlayer(EntityPlayer player, int amount) {
-        if (Config.costItemName.startsWith("$")) {
-            //UtilEconomy eco = new UtilEconomy(player.getUniqueID());
-            IEconManager eco = EconomyProxy.economyManagerForUUID(player.getUniqueID());
-            if (eco == null) return;
-            eco.addToWallet(amount);
-        } else {
-            giveItemToPlayer(player, Config.costItemName, amount);
         }
     }
 

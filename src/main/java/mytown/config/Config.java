@@ -52,7 +52,7 @@ public class Config {
     @ConfigProperty(category = "residents", name = "teleportCooldown", comment = "The amount of time in server ticks for how long a player needs to wait between teleports.")
     public static int teleportCooldown = 200;
 
-    @ConfigProperty(category = "cost", name = "costItem", comment = "The item which is used for paying for claims and making new towns. Use '$' if you want to use ForgeEssentials economy")
+    @ConfigProperty(category = "cost", name = "costItem", comment = "The item which is used for paying for claims and making new towns. Use $ForgeEssentials if you want to use ForgeEssentials economy or $Vault if you want Vault economy.")
     public static String costItemName = GameRegistry.findUniqueIdentifierFor(Items.diamond).toString();
 
     @ConfigProperty(category = "cost", name = "costAmountMakeTown", comment = "The amount of the cost item you need to create a town. Making a town will cost this amount + amount to claim a chunk.")
@@ -84,7 +84,6 @@ public class Config {
 
     @ConfigProperty(category = "cost", name = "costMultiplicativeClaim", comment = "The multiplicative amount of the cost item people need to pay for each block already claimed [Ex: if you have 2 chunks the next one will cost costMultiplicativeClaim ^ 2 * costAmountClaim]. This can be used with costAdditionClaim.")
     public static float costMultiplicativeClaim = 1;
-
 
     @ConfigProperty(category = "cost", name = "defaultBankAmount", comment = "The amount of the cost item that the towns are gonna start with in their banks after created.")
     public static int defaultBankAmount = 5;

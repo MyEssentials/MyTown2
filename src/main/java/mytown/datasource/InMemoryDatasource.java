@@ -2,7 +2,7 @@ package mytown.datasource;
 
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.shop.Shop;
+import mytown.economy.shop.Shop;
 
 /**
  * @author Joe Goett

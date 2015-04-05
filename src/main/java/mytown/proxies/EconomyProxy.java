@@ -1,7 +1,7 @@
 package mytown.proxies;
 
 import mytown.MyTown;
-import mytown.util.IEconManager;
+import mytown.economy.IEconManager;
 
 import java.util.UUID;
 

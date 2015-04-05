@@ -13,7 +13,7 @@ import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.MyTownUtils;
-import mytown.shop.ShopType;
+import mytown.economy.shop.ShopType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;

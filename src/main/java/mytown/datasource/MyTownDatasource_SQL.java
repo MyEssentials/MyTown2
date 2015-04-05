@@ -11,16 +11,13 @@ import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.protection.ProtectionUtils;
-import mytown.shop.Shop;
-import mytown.shop.ShopType;
-import mytown.util.Constants;
+import mytown.economy.shop.Shop;
+import mytown.economy.shop.ShopType;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.DimensionManager;
 
 import java.sql.*;

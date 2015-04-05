@@ -19,6 +19,7 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
+import mytown.economy.EconomyUtils;
 import mytown.handlers.Ticker;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
@@ -70,7 +71,6 @@ public class MyTown {
 
         JSONParser.folderPath = ev.getModConfigurationDirectory() + "/MyTown/protections";
 
-
         registerHandlers();
 
         // Register ICrashCallable's
@@ -95,7 +95,6 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
-        // Register bukkit compat. TODO Move this?
         BukkitCompat.initCompat(thisFile);
 
         checkConfig();
@@ -202,7 +201,7 @@ public class MyTown {
      */
     public void checkConfig() {
         // Checking cost item
-        if(Config.costItemName.startsWith("$")) {
+        if(EconomyUtils.checkCurrencyString(Config.costItemName)) {
             if (EconomyProxy.econManagerClass == null) {
                 throw new RuntimeException("No economy implementation found!");
             }

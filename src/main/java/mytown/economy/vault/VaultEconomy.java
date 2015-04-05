@@ -1,6 +1,6 @@
-package mytown.bukkit;
+package mytown.economy.vault;
 
-import mytown.util.IEconManager;
+import mytown.economy.IEconManager;
 import net.milkbowl.vault.economy.Economy;
 import net.minecraft.entity.player.EntityPlayer;
 import org.bukkit.Bukkit;
@@ -12,18 +12,18 @@ import java.util.UUID;
 /**
  * @author Joe Goett
  */
-public class VaultEcon implements IEconManager {
+public class VaultEconomy implements IEconManager {
     public static Economy econ;
 
     private UUID uuid;
     private OfflinePlayer player;
 
-    public VaultEcon(UUID uuid) {
+    public VaultEconomy(UUID uuid) {
         this.uuid = uuid;
         player = Bukkit.getServer().getOfflinePlayer(uuid);
     }
 
-    public VaultEcon() {
+    public VaultEconomy() {
     }
 
     public void setUUID(UUID uuid) {

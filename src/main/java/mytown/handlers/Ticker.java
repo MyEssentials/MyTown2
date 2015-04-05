@@ -1,6 +1,5 @@
 package mytown.handlers;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -10,26 +9,25 @@ import mytown.MyTown;
 import mytown.api.events.TownEvent;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
-import mytown.core.Localization;
 import mytown.core.Utils;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
+import mytown.economy.EconomyUtils;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.shop.Shop;
+import mytown.economy.shop.Shop;
 import mytown.util.Constants;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
-import mytown.shop.ShopType;
+import mytown.economy.shop.ShopType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
@@ -323,18 +321,18 @@ public class Ticker {
                         // Right click to sell
                         if(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && shop.type.canSell()) {
                             if(MyTownUtils.takeItemFromPlayer(ev.entityPlayer, shop.itemStack, shop.getAmount())) {
-                                MyTownUtils.giveMoneyToPlayer(ev.entityPlayer, shop.price);
-                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.sell.success", shop.getAmount(), shop.itemStack.getDisplayName(), shop.price, Config.costItemName.startsWith("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
+                                EconomyUtils.giveMoneyToPlayer(ev.entityPlayer, shop.price);
+                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.sell.success", shop.getAmount(), shop.itemStack.getDisplayName(), shop.price, EconomyUtils.getCurrency(shop.price)));
                             } else {
                                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.sell.failed", shop.getAmount(), shop.itemStack.getDisplayName()));
                             }
                         // Left click to buy if shoptype is sellbuy and right click if not.
                         } else if(ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && shop.type == ShopType.sellBuy || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && shop.type == ShopType.buy) {
-                            if(MyTownUtils.takeMoneyFromPlayer(ev.entityPlayer, shop.price)) {
+                            if(EconomyUtils.takeMoneyFromPlayer(ev.entityPlayer, shop.price)) {
                                 MyTownUtils.giveItemToPlayer(ev.entityPlayer, shop.itemStack, shop.getAmount());
-                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.success", shop.getAmount(), shop.itemStack.getDisplayName(), shop.price, Config.costItemName.startsWith("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
+                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.success", shop.getAmount(), shop.itemStack.getDisplayName(), shop.price, EconomyUtils.getCurrency(shop.price)));
                             } else {
-                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.failed", shop.price, Config.costItemName.startsWith("$") ? "$" : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
+                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.failed", shop.price, EconomyUtils.getCurrency(shop.price)));
                             }
                         }
                         ev.setCanceled(true);
@@ -351,7 +349,7 @@ public class Ticker {
                                     if(!plot.hasOwner(res)) {
                                         if (town.canResidentMakePlot(res)) {
                                             int price = Integer.parseInt(te.signText[2].substring(2, te.signText[2].length()));
-                                            if (MyTownUtils.takeMoneyFromPlayer(ev.entityPlayer, price)) {
+                                            if (EconomyUtils.takeMoneyFromPlayer(ev.entityPlayer, price)) {
                                                 for(Resident resInPlot : plot.getOwners()) {
                                                     resInPlot.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.oldOwner", plot.getName()));
                                                 }
@@ -362,7 +360,7 @@ public class Ticker {
                                                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.newOwner", plot.getName()));
                                                 ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
                                             } else {
-                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.failed", price, Config.costItemName.startsWith("$") ? Config.costItemName : MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
+                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.failed", price, EconomyUtils.getCurrency(price)));
                                             }
                                         } else {
                                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.getMaxPlots()));

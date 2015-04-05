@@ -7,6 +7,7 @@ import mytown.core.Localization;
 import mytown.core.utils.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
+import mytown.economy.EconomyUtils;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -259,17 +260,10 @@ public abstract class Commands {
         if(amount == 0)
             return true;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
-        if(Config.costItemName.equals("$")){
-            if(!MyTownUtils.takeMoneyFromPlayer(player, amount)){
-                throw new MyTownCommandException("mytown.cmd.err.money", amount, Config.costItemName);
-            }
-            res.sendMessage(getLocal().getLocalization("mytown.notification.payment.wallet", "$", amount));
-        } else {
-            if(!MyTownUtils.takeItemFromPlayer(player, Config.costItemName, amount)) {
-                throw new MyTownCommandException("mytown.cmd.err.cost", amount, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName());
-            }
-            res.sendMessage(getLocal().getLocalization("mytown.notification.payment.inventory", amount, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
+        if(!EconomyUtils.takeMoneyFromPlayer(player, amount)){
+            throw new MyTownCommandException("mytown.cmd.err.payment", amount, EconomyUtils.getCurrency(amount));
         }
+        res.sendMessage(getLocal().getLocalization("mytown.notification.payment", amount, EconomyUtils.getCurrency(amount)));
         return true;
     }
 
@@ -277,12 +271,7 @@ public abstract class Commands {
         if(amount == 0)
             return;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
-        if(Config.costItemName.equals("$")) {
-            MyTownUtils.giveMoneyToPlayer(player, amount);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.refund.wallet", "$", amount));
-        } else {
-            MyTownUtils.giveItemToPlayer(player, Config.costItemName, amount);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.refund.inventory", amount, MyTownUtils.itemStackFromName(Config.costItemName).getDisplayName()));
-        }
+        EconomyUtils.giveMoneyToPlayer(player, amount);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.refund", amount, EconomyUtils.getCurrency(amount)));
     }
 }
