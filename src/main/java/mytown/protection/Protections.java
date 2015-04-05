@@ -11,6 +11,7 @@ import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
+import mytown.protection.segment.SegmentEntity;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.BlockPos;
@@ -215,6 +216,11 @@ public class Protections {
     public boolean onAnyBlockPlacement(EntityPlayer player, ItemStack itemInHand, Block blockType, int dimensionId, int x, int y, int z) {
         TownBlock block = DatasourceProxy.getDatasource().getBlock(dimensionId, x >> 4, z >> 4);
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+
+        if(res.getPlayer() instanceof FakePlayer) {
+
+        }
+
 
         if (block == null) {
             if (!Wild.getInstance().checkPermission(res, FlagType.modifyBlocks, false)) {
@@ -454,15 +460,37 @@ public class Protections {
                 }
             // If the entity that "shot" the source of damage is null or not a player check for specified entities that can bypass pvp flag
             } else if(ev.source.getSourceOfDamage() != null && ProtectionUtils.canEntityTrespassPvp(ev.source.getSourceOfDamage().getClass())) {
+                Resident owner = null;
+                for(Protection prot : protections) {
+                    for(SegmentEntity segment : prot.segmentsEntities) {
+                        if(segment.theClass.isAssignableFrom(ev.source.getSourceOfDamage().getClass())) {
+                            owner = segment.getOwner(ev.source.getSourceOfDamage());
+                        }
+                    }
+                }
                 if (block != null) {
-                    if (!(Boolean) block.getTown().getValue(FlagType.pvp)) {
-                        ev.setCanceled(true);
-                        target.sendMessage(FlagType.pvp.getLocalizedTownNotification());
+                    if(owner == null) {
+                        if (!(Boolean)block.getTown().getValueAtCoords(((EntityPlayer) ev.entityLiving).dimension, (int)((EntityPlayer) ev.entityLiving).posX, (int)((EntityPlayer) ev.entityLiving).posY, (int)((EntityPlayer) ev.entityLiving).posZ, FlagType.pvp)) {
+                            ev.setCanceled(true);
+                            target.sendMessage(FlagType.pvp.getLocalizedTownNotification());
+                        }
+                    } else {
+                        if (!block.getTown().checkPermission(owner, FlagType.pvp, false, ((EntityPlayer) ev.entityLiving).dimension, (int) ((EntityPlayer) ev.entityLiving).posX, (int) ((EntityPlayer) ev.entityLiving).posY, (int) ((EntityPlayer) ev.entityLiving).posZ)) {
+                            ev.setCanceled(true);
+                            owner.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(((EntityPlayer) ev.entityLiving).dimension, (int) ((EntityPlayer) ev.entityLiving).posX, (int) ((EntityPlayer) ev.entityLiving).posY, (int) ((EntityPlayer) ev.entityLiving).posZ))));
+                        }
                     }
                 } else {
-                    if (!(Boolean)Wild.getInstance().getValue(FlagType.pvp)) {
-                        ev.setCanceled(true);
-                        target.sendMessage(FlagType.pvp.getLocalizedTownNotification());
+                    if(owner == null) {
+                        if (!(Boolean) Wild.getInstance().getValue(FlagType.pvp)) {
+                            ev.setCanceled(true);
+                            target.sendMessage(FlagType.pvp.getLocalizedTownNotification());
+                        }
+                    } else {
+                        if(!Wild.getInstance().checkPermission(owner, FlagType.pvp, false)) {
+                            ev.setCanceled(true);
+                            owner.sendMessage(FlagType.pvp.getLocalizedProtectionDenial());
+                        }
                     }
                 }
             }
