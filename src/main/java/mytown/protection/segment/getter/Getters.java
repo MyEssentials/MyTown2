@@ -86,21 +86,40 @@ public class Getters {
             forLoop: for (Caller caller : callerList) {
                 switch (caller.type) {
                     case field:
-                        Field fieldObject = lastInstance.getClass().getField(caller.element);
-                        fieldObject.setAccessible(true);
-                        lastInstance = fieldObject.get(lastInstance);
+                        try {
+                            Field fieldObject = lastInstance.getClass().getField(caller.element);
+                            lastInstance = fieldObject.get(lastInstance);
+                        } catch (NoSuchFieldException ex) {
+                            Field fieldObject = lastInstance.getClass().getDeclaredField(caller.element);
+                            fieldObject.setAccessible(true);
+                            lastInstance = fieldObject.get(lastInstance);
+                        }
                         break;
                     case method:
-                        Method methodObject = lastInstance.getClass().getDeclaredMethod(caller.element);
-                        methodObject.setAccessible(true);
                         try {
-                            lastInstance = methodObject.invoke(lastInstance);
-                        } catch (IllegalArgumentException ex) {
+                            Method methodObject = lastInstance.getClass().getMethod(caller.element);
                             try {
-                                lastInstance = methodObject.invoke(lastInstance, parameter);
-                            } catch (IllegalArgumentException ex2) {
-                                // Throwing the original exception.
-                                throw ex;
+                                lastInstance = methodObject.invoke(lastInstance);
+                            } catch (IllegalArgumentException ex) {
+                                try {
+                                    lastInstance = methodObject.invoke(lastInstance, parameter);
+                                } catch (IllegalArgumentException ex2) {
+                                    // Throwing the original exception.
+                                    throw ex;
+                                }
+                            }
+                        } catch (NoSuchMethodException ex) {
+                            Method methodObject = lastInstance.getClass().getDeclaredMethod(caller.element);
+                            methodObject.setAccessible(true);
+                            try {
+                                lastInstance = methodObject.invoke(lastInstance);
+                            } catch (IllegalArgumentException ex1) {
+                                try {
+                                    lastInstance = methodObject.invoke(lastInstance, parameter);
+                                } catch (IllegalArgumentException ex2) {
+                                    // Throwing the original exception.
+                                    throw ex1;
+                                }
                             }
                         }
                         break;
