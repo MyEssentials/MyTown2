@@ -138,14 +138,25 @@ public class Protection {
                 if(segment.type == EntityType.tracked) {
                     int range = segment.getRange(entity);
                     TownBlock block;
+                    Resident owner = segment.getOwner(entity);
                     if(range == 0) {
                         block = getDatasource().getBlock(entity.dimension, ((int)entity.posX) >> 4, ((int)entity.posZ) >> 4);
                         if(block == null) {
-                            if(Wild.getInstance().getValue(segment.flag).equals(segment.denialValue))
-                                return true;
+                            if(owner == null) {
+                                if (Wild.getInstance().getValue(segment.flag).equals(segment.denialValue))
+                                    return true;
+                            } else {
+                                if(!Wild.getInstance().checkPermission(owner, segment.flag, segment.denialValue))
+                                    return true;
+                            }
                         } else {
-                            if (block.getTown().getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, segment.flag).equals(segment.denialValue))
-                                return true;
+                            if(owner == null) {
+                                if (block.getTown().getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, segment.flag).equals(segment.denialValue))
+                                    return true;
+                            } else {
+                                if(!block.getTown().checkPermission(owner, segment.flag, segment.denialValue, entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ))
+                                    return true;
+                            }
                         }
                     } else {
                         List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) (entity.posX - range), (int) (entity.posZ - range), (int) (entity.posX + range), (int) (entity.posZ + range));
@@ -156,12 +167,24 @@ public class Protection {
                             if (block == null) {
                                 inWild = true;
                             } else {
-                                if (block.getTown().getValue(segment.flag).equals(segment.denialValue))
+                                if(owner == null) {
+                                    if (block.getTown().getValue(segment.flag).equals(segment.denialValue))
+                                        return true;
+                                } else {
+                                    if (block.getTown().checkPermission(owner, segment.flag, segment.denialValue))
+                                        return true;
+                                }
+                            }
+                        }
+                        if(inWild) {
+                            if (owner == null) {
+                                if (Wild.getInstance().getValue(segment.flag).equals(segment.denialValue))
+                                    return true;
+                            } else {
+                                if (!Wild.getInstance().checkPermission(owner, segment.flag, segment.denialValue))
                                     return true;
                             }
                         }
-                        if(inWild && Wild.getInstance().getValue(segment.flag).equals(segment.denialValue))
-                            return true;
                     }
                 }
             }
@@ -251,6 +274,10 @@ public class Protection {
                 }
             }
         }
+
+        if(item == null)
+            return false;
+
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
             if(segment.type == ItemType.rightClickBlock && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
@@ -424,6 +451,14 @@ public class Protection {
     public boolean isEntityTracked(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
         return type != null && (type == EntityType.tracked);
+    }
+
+    public boolean isEntityOwnable(Class<? extends Entity> entity) {
+        for(SegmentEntity segment : segmentsEntities) {
+            if(segment.theClass.isAssignableFrom(entity) && segment.hasOwner())
+                return true;
+        }
+        return false;
     }
 
     public boolean isTileTracked(Class<? extends TileEntity> te) {

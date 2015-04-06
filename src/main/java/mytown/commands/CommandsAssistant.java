@@ -451,6 +451,23 @@ public class CommandsAssistant extends Commands {
         }
     }
 
+    /*
+    @CommandNode(
+            name = "rename",
+            permission = "mytown.cmd.assistant.rename",
+            parentName = "mytown.cmd")
+    public static void renameCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new MyTownWrongUsageException("mytown.cmd.usage.rename");
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+
+        town.setName(args.get(0));
+        getDatasource().saveTown(town);
+    }
+    */
+
 
     // Temporary here, might integrate in the methods
     protected static boolean checkNearby(int dim, int x, int z, Town town) {
