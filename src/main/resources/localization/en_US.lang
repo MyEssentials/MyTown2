@@ -11,34 +11,34 @@ mytown.cmd.err.notInTown=&cYou are not in town %s!
 
 # Flag based notifications
 
- # Protection
- mytown.protection.enter=&cYou are not allowed to enter here!
- mytown.protection.activateBlocks=&cYou cannot activate that block!
- mytown.protection.accessBlocks=&cYou cannot access that block!
- mytown.protection.modifyBlocks=&cYou cannot modify the land here!
- mytown.protection.pickupItems=&cYou cannot pickup blocks/items in here!
- mytown.protection.explosions=&cYou cannot use explosions in here!
- mytown.protection.mobs=&cYou cannot spawn this type of mob in here!
- mytown.protection.protectedEntities=&cDon't touch that!
- mytown.protection.useItems=&cYou cannot use items in here!
- mytown.protection.pvp=&cYou cannot attack this player!
+# Protection
+mytown.protection.enter=&cYou are not allowed to enter here!
+mytown.protection.activateBlocks=&cYou cannot activate that block!
+mytown.protection.accessBlocks=&cYou cannot access that block!
+mytown.protection.modifyBlocks=&cYou cannot modify the land here!
+mytown.protection.pickupItems=&cYou cannot pickup blocks/items in here!
+mytown.protection.explosions=&cYou cannot use explosions in here!
+mytown.protection.mobs=&cYou cannot spawn this type of mob in here!
+mytown.protection.protectedEntities=&cDon't touch that!
+mytown.protection.useItems=&cYou cannot use items in here!
+mytown.protection.pvp=&cYou cannot attack this player!
 
- # Flag Info
- mytown.flag.enter=&3Allows outsiders to enter.
- mytown.flag.activateBlocks=&3Allows usage of doors/buttons/etc.
- mytown.flag.accessBlocks=&3Allows right-clicking blocks.
- mytown.flag.modifyBlocks=&3Allows modifying land.
- mytown.flag.pickupItems=&3Allows item pickup.
- mytown.flag.explosions=&3Allows explosions!
- mytown.flag.mobs=&3Controls what kind of mobs are not allowed to exist.
- mytown.flag.protectedEntities=&3Allows interacting with entities.
- mytown.flag.useItems=&3Allows usage of items (eggs, buckets etc.)
- mytown.flag.pvp=&3Allows PVP - Player vs. Player
- mytown.flag.restrictedTownPerms=&3Gives permission outside player's plots.
- mytown.flag.allowFakePlayers=&3Allows fake players to bypass (ex: Thaumcraft Golems)
+# Flag Info
+mytown.flag.enter=&3Allows outsiders to enter.
+mytown.flag.activateBlocks=&3Allows usage of doors/buttons/etc.
+mytown.flag.accessBlocks=&3Allows right-clicking blocks.
+mytown.flag.modifyBlocks=&3Allows modifying land.
+mytown.flag.pickupItems=&3Allows item pickup.
+mytown.flag.explosions=&3Allows explosions!
+mytown.flag.mobs=&3Controls what kind of mobs are not allowed to exist.
+mytown.flag.protectedEntities=&3Allows interacting with entities.
+mytown.flag.useItems=&3Allows usage of items (eggs, buckets etc.)
+mytown.flag.pvp=&3Allows PVP - Player vs. Player
+mytown.flag.restrictedTownPerms=&3Gives permission outside player's plots.
+mytown.flag.allowFakePlayers=&3Allows fake players to bypass (ex: Thaumcraft Golems)
 
- # Notify Town
- mytown.protection.notify.explosions=&3An explosion has been stopped!
+# Notify Town
+mytown.protection.notify.explosions=&3An explosion has been stopped!
 
 # /ta config [load|save]
 mytown.cmd.config.load.start=&3Loading config...
@@ -305,8 +305,7 @@ mytown.notification.plot.buy.oldOwner=&aThe plot %s has been successfully sold!
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)
 mytown.cmd.assistant.claim.help=&2Claims the chunk you are in.
 mytown.cmd.assistant.invite.help=&2Invites a player to your town.
-mytown.cmd.assistant.perm.help=&2Everything related to protection.
-mytown.cmd.assistant.perm.help=&2Protections related to the town.
+mytown.cmd.everyone.perm.help=&2Everything related to protection.
 mytown.cmd.assistant.perm.set.help=&2Sets a flag to the specified value.
 mytown.cmd.assistant.perm.whitelist.help=&2Makes a block/entity bypass a flag.
 mytown.cmd.assistant.promote.help=&2Promotes a resident to the specified rank.
@@ -337,10 +336,10 @@ mytown.cmd.everyone.plot.select.help=&2Gives a 'selector' tool.
 mytown.cmd.everyone.plot.select.expand.help=&2Expands the selection.
 mytown.cmd.everyone.plot.select.reset.help=&2Resets the selection.
 mytown.cmd.everyone.plot.show.help=&2Visually shows all plots.
-mytown.cmd.everyone.plot.vanish.help=&2Visually hides all plots.
+mytown.cmd.everyone.plot.hide.help=&2Visually hides all plots.
 mytown.cmd.everyone.ranks.help=&2Everything related to ranks.
 mytown.cmd.everyone.ranks.list.help=&2Lists all ranks from the town.
-mytown.cmd.everyone.select.help=&2Selects a town in which you are in.
+mytown.cmd.everyone.select.help=&2Selects a town which you are resident of.
 mytown.cmd.everyone.spawn.help=&2Teleports the player to town's spawn.
 mytown.cmd.outsider.accept.help=&2Accepts the invitation to join a town.
 mytown.cmd.outsider.friends.help=&2Everything related to friends.
@@ -353,9 +352,9 @@ mytown.cmd.outsider.info.help=&2Gives info about a town.
 mytown.cmd.outsider.list.help=&2Lists all towns.
 mytown.cmd.outsider.map.help=&2Gives a map of the nearby claimed chunks.
 mytown.cmd.outsider.new.help=&2Makes a new town.
-mytown.cmd.outsider.refuse.help=&2Refuses a invitation to a town.
+mytown.cmd.outsider.refuse.help=&2Refuses an invitation from a town.
 mytown.cmd.outsider.help.help=&2Gives help about commands.
-mytown.cmd.outsider.invites.help=&2Shows all the invites.
+mytown.cmd.outsider.invites.help=&2Shows all the invites from towns.
 mytown.cmd.mayor.pass.help=&2Passes mayorship to someone else in the town.
 mytown.cmd.assistant.kick.help=&2Removes the resident from the town.
 mytown.cmd.assistant.plot.limit.help=&2Limit of how many plots a player can be owner of.
@@ -366,13 +365,18 @@ mytown.cmd.everyone.borders.help=&2Information about borders of the town
 mytown.cmd.everyone.borders.show.help=&2Visually shows the town borders.
 mytown.cmd.everyone.borders.hide.help=&2Visually hides the town borders.
 mytown.cmd.everyone.bank.help=&2Everything about the money in the town.
-mytown.cmd.everyone.bank.pay=&2Gives money to the town's bank.
-mytown.cmd.everyone.bank.amount=&2Shows the amount of money in the town's bank.
+mytown.cmd.everyone.bank.pay.help=&2Gives money to the town's bank.
+mytown.cmd.everyone.bank.info.help=&2Shows information about the town's bank.
+mytown.cmd.everyone.wild.help=&2Shows information about the Wild.
+mytown.cmd.everyone.blocks.help=&2Shows information about the blocks claimed.
+mytown.cmd.everyone.plot.sell.help=&2Puts plots to sale.
+mytown.cmd.everyone.plot.remove.help=&2Remove members or owners from the plot.
+mytown.cmd.mayor.leave.delete.help=&2Deletes the town.
 
 mytown.adm.cmd.config.help=&9Everything about the configs.
 mytown.adm.cmd.config.load.help=&9Reloads the config.
 mytown.adm.cmd.config.save.help=&9Saves the config.
-mytown.adm.cmd.add.help=&9Adds a player to a specified town.
+mytown.adm.cmd.add.help=&9Adds a player to a specified town with the specified rank.
 mytown.adm.cmd.delete.help=&9Deletes a town.
 mytown.adm.cmd.new.help=&9Creates an AdminTown.
 mytown.adm.cmd.rem.help=&9Removes a player from the town.
@@ -395,14 +399,22 @@ mytown.adm.cmd.cost.itemname.help=&9The name that can be used in config as the c
 mytown.adm.cmd.debug.help=&9Debug options and tools for protection making.
 mytown.adm.cmd.debug.itemClass.help=&9Gives information about the class
 mytown.adm.cmd.res.help=&9Everything about a resident.
-mytown.adm.cmd.res.blocks.help=&9Everything about the blocks owned by the resident.
-mytown.adm.cmd.res.blocks.extra.help=&9Everything about the extra amount of blocks for a resident.
+mytown.adm.cmd.res.blocks.help=&9Shows information about the blocks of a resident.
+mytown.adm.cmd.res.blocks.extra.help=&9Shows information about the extra blocks of a resident.
 mytown.adm.cmd.res.blocks.extra.set.help=&9Sets the extra amount of blocks for a resident.
 mytown.adm.cmd.res.blocks.extra.add.help=&9Adds to the the extra amount of blocks for a resident.
 mytown.adm.cmd.res.blocks.extra.remove.help=&9Subtracts from the extra amount of blocks for a resident.
 mytown.adm.cmd.town.help=&9Everything about a town.
-mytown.adm.cmd.town.blocks.help=&9Sets the extra amount of blocks for a resident.
-mytown.adm.cmd.town.blocks.extra.help=&9Everything about the extra amount of blocks for a town.
+mytown.adm.cmd.town.blocks.help=&9Shows information about the blocks in a town.
+mytown.adm.cmd.town.blocks.extra.help=&9Shows information about the extra blocks.
 mytown.adm.cmd.town.blocks.extra.set.help=&9Sets the extra amount of blocks for a town.
 mytown.adm.cmd.town.blocks.extra.add.help=&9Adds to the extra amount of blocks for a town.
 mytown.adm.cmd.town.blocks.extra.remove.help=&9Subtracts from the extra amount of blocks for a town.
+mytown.adm.cmd.debug.itemClass.help=&9Shows information about the class of the held item.
+mytown.adm.cmd.borders.help=&9Information about borders of a town
+mytown.adm.cmd.borders.show.help=&9Visually shows the town borders.
+mytown.adm.cmd.borders.hide.help=&9Visually hides all the town borders.
+mytown.adm.cmd.plot.help=&9Everything related to plots.
+mytown.adm.cmd.plot.show.help=&9Visually shows all plots in a town.
+mytown.adm.cmd.plot.hide.help=&9Visually hides all plots.
+mytown.adm.cmd.config.reload=&9Reloads all the config files, including protections.

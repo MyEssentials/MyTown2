@@ -18,8 +18,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by AfterWind on 8/29/2014.
@@ -89,8 +88,13 @@ public abstract class Commands {
         if (scList == null || scList.size() == 0) {
             sendMessageBackToSender(sender, "   " + getLocal().getLocalization(node + ".help"));
         } else {
-            for (String s : scList) {
-                sendMessageBackToSender(sender, "   " + CommandManager.commandNames.get(s) + ": " + getLocal().getLocalization(s + ".help"));
+            List<String> nameList = new ArrayList<String>();
+            for(String s : scList) {
+                nameList.add(CommandManager.commandNames.get(s));
+            }
+            Collections.sort(nameList);
+            for (String s : nameList) {
+                sendMessageBackToSender(sender, "   " + s + ": " + getLocal().getLocalization(CommandManager.getSubCommandNode(s, node) + ".help"));
             }
         }
     }

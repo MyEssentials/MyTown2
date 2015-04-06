@@ -65,6 +65,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
                 if(w.flagType == null) {
                     MyTown.instance.log.error("Found a type of flag that does not exist. Removing...");
                     it.remove();
+                    continue;
                 }
                 if (!w.flagType.getType().isAssignableFrom(w.defaultState.getClass())) {
                     MyTown.instance.log.error("The default value for the flag is of invalid type for flag " + w.flagType.toString() + "! Needed " + w.flagType.getType().getSimpleName() + " Removing...");

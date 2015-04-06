@@ -13,7 +13,6 @@ public class EconomyProxy {
         if (economy == null) {
             economy = new Economy(Config.costItemName);
         }
-
         return economy;
     }
 }
