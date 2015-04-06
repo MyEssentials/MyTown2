@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import mytown.MyTown;
 import mytown.api.interfaces.*;
 import mytown.config.Config;
 import mytown.core.Utils;
@@ -343,7 +344,13 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     public Plot getPlotAtResident(Resident res) {
-        return getPlotAtCoords(res.getPlayer().dimension, (int) res.getPlayer().posX, (int) res.getPlayer().posY, (int) res.getPlayer().posZ);
+        /*
+        MyTown.instance.log.info("Floor: " + Math.floor(res.getPlayer().posX) + ", " + Math.floor(res.getPlayer().posY) + ", " + Math.floor(res.getPlayer().posZ));
+        MyTown.instance.log.info("Ceil: " + Math.ceil(res.getPlayer().posX) + ", " + Math.ceil(res.getPlayer().posY) + ", " + Math.ceil(res.getPlayer().posZ));
+        MyTown.instance.log.info("Pos: " + (int)res.getPlayer().posX + ", " + (int)res.getPlayer().posY + ", " + (int)res.getPlayer().posZ);
+        */
+
+        return getPlotAtCoords(res.getPlayer().dimension, (int) Math.floor(res.getPlayer().posX), (int) Math.floor(res.getPlayer().posY), (int) Math.floor(res.getPlayer().posZ));
     }
 
     public void showPlots(Resident caller) {
