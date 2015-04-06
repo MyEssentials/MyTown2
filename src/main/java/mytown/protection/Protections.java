@@ -110,9 +110,12 @@ public class Protections {
         // TODO: Add a command to clean up the block whitelist table periodically
         if (tickerWhitelist == 0) {
             for (Town town : MyTownUniverse.getInstance().getTownsMap().values())
-                for (BlockWhitelist bw : town.getWhitelists())
-                    if (!ProtectionUtils.isBlockWhitelistValid(bw))
-                        bw.delete();
+                for (Iterator<BlockWhitelist> it = town.getWhitelists().iterator(); it.hasNext();) {
+                    BlockWhitelist bw = it.next();
+                    if (!ProtectionUtils.isBlockWhitelistValid(bw)) {
+                        DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
+                    }
+                }
             tickerWhitelist = MinecraftServer.getServer().worldServers.length * tickerWhitelistStart;
         } else {
             tickerWhitelist--;

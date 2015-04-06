@@ -112,9 +112,7 @@ public class Protection {
                                 return true;
                             }
                         }
-
                     }
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     MyTown.instance.log.error("Failed to check tile entity: " + te.getClass().getSimpleName() + "( " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " | WorldID: " + te.getWorldObj().provider.dimensionId + " )");
@@ -140,7 +138,7 @@ public class Protection {
                     TownBlock block;
                     Resident owner = segment.getOwner(entity);
                     if(range == 0) {
-                        block = getDatasource().getBlock(entity.dimension, ((int)entity.posX) >> 4, ((int)entity.posZ) >> 4);
+                        block = getDatasource().getBlock(entity.dimension, ((int)Math.floor(entity.posX)) >> 4, ((int)Math.floor(entity.posZ)) >> 4);
                         if(block == null) {
                             if(owner == null) {
                                 if (Wild.getInstance().getValue(segment.flag).equals(segment.denialValue))
@@ -151,10 +149,10 @@ public class Protection {
                             }
                         } else {
                             if(owner == null) {
-                                if (block.getTown().getValueAtCoords(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ, segment.flag).equals(segment.denialValue))
+                                if (block.getTown().getValueAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, segment.flag).equals(segment.denialValue))
                                     return true;
                             } else {
-                                if(!block.getTown().checkPermission(owner, segment.flag, segment.denialValue, entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ))
+                                if(!block.getTown().checkPermission(owner, segment.flag, segment.denialValue, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ))
                                     return true;
                             }
                         }

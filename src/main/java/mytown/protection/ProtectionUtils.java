@@ -142,7 +142,6 @@ public class ProtectionUtils {
         return false;
     }
 
-
     public static void saveBlockOwnersToDB() {
         for(Map.Entry<TileEntity, Resident> set : Protections.getInstance().ownedTileEntities.entrySet()) {
             DatasourceProxy.getDatasource().saveBlockOwner(set.getValue(), set.getKey().getWorldObj().provider.dimensionId, set.getKey().xCoord, set.getKey().yCoord, set.getKey().zCoord);

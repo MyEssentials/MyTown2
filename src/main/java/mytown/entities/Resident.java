@@ -623,6 +623,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         return player.inventory.addItemStackToInventory(selectionTool);
     }
 
+    /* ----- Plot Selling ----- */
+
     public boolean startPlotSell(String townName, int price) {
         ItemStack signShop = new ItemStack(Items.wooden_hoe);
         signShop.setStackDisplayName(Constants.PLOT_SELL_NAME);
