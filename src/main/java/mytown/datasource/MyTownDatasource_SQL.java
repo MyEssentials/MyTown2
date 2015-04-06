@@ -1884,18 +1884,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
         updates.add(new DBUpdate("4.1.2015.1", "Add 'daysNotPaid' to TownBanks", "ALTER TABLE " + prefix +
                 "TownBanks ADD daysNotPaid INTEGER DEFAULT 0"));
-        updates.add(new DBUpdate("4.4.2015.1", "Add 'Shops' table", "CREATE TABLE IF NOT EXISTS " + prefix + "Shops(" +
-                "ID INTEGER NOT NULL " + AUTO_INCREMENT + ", " +
-                "dim INT, " +
-                "x INT, " +
-                "y INT, " +
-                "z INT, " +
-                "itemString CHAR(100), " +
-                "amount INT, " +
-                "price INT, " +
-                "shopType CHAR(20), " +
-                "PRIMARY KEY(ID))"));
-
     }
 
     /**
