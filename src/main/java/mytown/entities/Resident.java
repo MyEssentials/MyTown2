@@ -631,13 +631,13 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Price: " + price));
         signShop.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
 
-        return player.inventory.addItemStackToInventory(signShop);
+        boolean result = player.inventory.addItemStackToInventory(signShop);
+        if(result)
+            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.sell.start"));
+        return result;
     }
-
-
 
     private MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
-
 }

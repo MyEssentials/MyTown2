@@ -292,14 +292,10 @@ mytown.notification.town.upkeep=&3A new day is upon us, taxes have been collecte
 mytown.notification.town.upkeep.failed=&cA new day has passed but the bank is out of money. %s days before town deletion!
 mytown.notification.town.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for town %s.
 mytown.notification.resident.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for resident %s.
-mytown.notification.shop.buy.success=&aYou have bought %s %s with %s %s.
-mytown.notification.shop.buy.failed=&cYou don't have %s %s!
-mytown.notification.shop.sell.success=&aYou have sold %s %s with %s %s.
-mytown.notification.shop.sell.failed=&cYou don't have %s %s!
+mytown.notification.plot.buy.failed=&cYou don't have %s %s!
 mytown.notification.plot.buy.newOwner=&aYou have successfully bought plot %s!
 mytown.notification.plot.buy.oldOwner=&aThe plot %s has been successfully sold!
-
-
+mytown.notification.plot.sell.start=&3Right click on a plot with the tool given to put the plot on sale.
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)
