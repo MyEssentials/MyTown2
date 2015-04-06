@@ -1,15 +1,12 @@
 package mytown.commands;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.MyTown;
-import mytown.bukkit.BukkitCompat;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.core.utils.config.ConfigProcessor;
-import mytown.economy.shop.ShopType;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -29,7 +26,6 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
 
@@ -71,7 +67,6 @@ public class CommandsAdmin extends Commands {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.start"));
         MyTown.instance.config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
         ConfigProcessor.load(MyTown.instance.config, Config.class);
-        BukkitCompat.initCompat(MyTown.instance.thisFile);
         MyTown.instance.checkConfig();
         JSONParser.start();
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.stop"));
@@ -582,70 +577,12 @@ public class CommandsAdmin extends Commands {
         sendHelpMessage(sender, "mytown.adm.cmd", args);
     }
 
-    @CommandNode(
-            name = "shop",
-            permission = "mytown.adm.cmd.shop",
-            parentName = "mytown.adm.cmd",
-            nonPlayers = true)
-    public static void shopCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.shop");
-    }
 
     @CommandNode(
-            name = "itemname",
-            permission = "mytown.adm.cmd.shop.itemname",
-            parentName = "mytown.adm.cmd.shop",
-            nonPlayers = false)
-    public static void shopItemNameCommand(ICommandSender sender, List<String> args) {
-        if(sender instanceof EntityPlayer) {
-            ItemStack stack = ((EntityPlayer) sender).getHeldItem();
-            if(stack == null)
-                return;
-            String itemName = GameRegistry.findUniqueIdentifierFor(stack.getItem()).toString();
-            if(stack.getItemDamage() != 0)
-                itemName += ":" + stack.getItemDamage();
-            sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.shop.itemname", itemName));
-        }
-    }
-
-    @CommandNode(
-            name = "create",
-            permission = "mytown.adm.cmd.shop.create",
-            parentName = "mytown.adm.cmd.shop",
-            nonPlayers = false)
-    public static void shopCreateCommand(ICommandSender sender, List<String> args) {
-        // /ta shop create sell|buy|sellBuy amount costAmount
-        if(args.size() < 3)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.shop.create");
-
-        ShopType shopType = ShopType.fromString(args.get(0));
-        if(shopType == null)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.shop.create");
-
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) <= 0)
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-
-        if(!MyTownUtils.tryParseInt(args.get(2)) || Integer.parseInt(args.get(2)) <= 0)
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(2));
-
-        Resident res = getDatasource().getOrMakeResident(sender);
-
-        if(res.getPlayer().inventory.getCurrentItem() == null)
-            throw new MyTownCommandException("mytown.adm.cmd.err.item");
-
-        int amount = Integer.parseInt(args.get(1));
-        int costAmount = Integer.parseInt(args.get(2));
-
-        res.startShopCreation(res.getPlayer().inventory.getCurrentItem(), amount, costAmount, shopType);
-
-    }
-
-
-        @CommandNode(
-            name = "debug",
-            permission = "mytown.adm.cmd.debug",
-            parentName = "mytown.adm.cmd",
-            nonPlayers = false)
+        name = "debug",
+        permission = "mytown.adm.cmd.debug",
+        parentName = "mytown.adm.cmd",
+        nonPlayers = false)
     public static void debugCommand(ICommandSender sender, List<String> args) {
         callSubFunctions(sender, args, "mytown.adm.cmd.debug");
     }

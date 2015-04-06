@@ -1,29 +1,19 @@
 package mytown.proxies;
 
-import mytown.MyTown;
-import mytown.economy.IEconManager;
-
-import java.util.UUID;
+import mytown.config.Config;
+import mytown.core.utils.economy.Economy;
 
 /**
  * @author Joe Goett
  */
 public class EconomyProxy {
-    public static Class<IEconManager> econManagerClass;
+    private static Economy economy = null;
 
-    public static IEconManager economyManagerForUUID(UUID uuid) {
-        if (econManagerClass == null) {
-            return null;
+    public static Economy economy() {
+        if (economy == null) {
+            economy = new Economy(Config.costItemName);
         }
 
-        try {
-            IEconManager manager = econManagerClass.newInstance();
-            manager.setUUID(uuid);
-            return manager;
-        } catch(Exception ex) {
-            MyTown.instance.log.info("Failed to create IEconManager", ex);
-        }
-
-        return null; // Hopefully this doesn't break things...
+        return economy;
     }
 }

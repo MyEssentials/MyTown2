@@ -9,7 +9,6 @@ import mytown.core.utils.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.economy.shop.Shop;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -198,7 +197,7 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() { // TODO Change load order?
-        return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites() && loadBlockOwners() && loadTownBanks() && loadShops();
+        return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites() && loadBlockOwners() && loadTownBanks();
     }
 
     /**
@@ -236,8 +235,6 @@ public abstract class MyTownDatasource {
 
     protected abstract boolean loadTownBanks();
 
-    protected abstract boolean loadShops();
-
     /* ----- Save ----- */
 
     public abstract boolean saveTown(Town town);
@@ -273,8 +270,6 @@ public abstract class MyTownDatasource {
     public abstract boolean saveBlockOwner(Resident res, int dim, int x, int y, int z);
 
     public abstract boolean saveTownBank(Town town, int amount, int daysNotPaid);
-
-    public abstract boolean saveShop(Shop shop);
 
     /* ----- Link ----- */
 
@@ -330,8 +325,6 @@ public abstract class MyTownDatasource {
 
     public abstract boolean deleteBlockWhitelist(BlockWhitelist bw, Town town);
 
-    public abstract boolean deleteShop(int id);
-
     /**
      * Deletes a town that was selected previously
      * Not extremely useful, the selected town is changed when saving another on top
@@ -364,7 +357,7 @@ public abstract class MyTownDatasource {
     public boolean checkAllOnStart() {
         return checkFlags() && checkTowns();
     }
-    public boolean checkAllOnStop() { return checkFlags() && checkTowns() && checkShops(); }
+    public boolean checkAllOnStop() { return checkFlags() && checkTowns(); }
 
     /**
      * Checks the flags on each town and plot. Makes sure that all the desired flagtypes are in them, if not it's gonna add them.
@@ -376,11 +369,6 @@ public abstract class MyTownDatasource {
      * Checks whether or not the town has a default rank.
      */
     protected abstract boolean checkTowns();
-
-    /**
-     * Checks if there are shops that do not exist anymore
-     */
-    protected abstract boolean checkShops();
 
     /* ----- Has ----- */
 

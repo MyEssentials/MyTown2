@@ -12,16 +12,14 @@ import mytown.core.ChatUtils;
 import mytown.core.Utils;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
-import mytown.economy.EconomyUtils;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.EconomyProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.economy.shop.Shop;
 import mytown.util.Constants;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
-import mytown.economy.shop.ShopType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -206,47 +204,6 @@ public class Ticker {
                         ev.setCanceled(true);
                     }
                 }
-            } else if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.SIGN_SHOP_NAME)) {
-                ForgeDirection direction = ForgeDirection.getOrientation(ev.face);
-                int x = ev.x + direction.offsetX;
-                int y = ev.y + direction.offsetY;
-                int z = ev.z + direction.offsetZ;
-
-                if(ev.world.getBlock(x, y, z) != Blocks.air)
-                    return;
-
-                if(direction == ForgeDirection.DOWN || ev.face == 1) {
-                    int i1 = MathHelper.floor_double((double) ((ev.entityPlayer.rotationYaw + 180.0F) * 16.0F / 360.0F) + 0.5D) & 15;
-                    ev.world.setBlock(x, y, z, Blocks.standing_sign, i1, 3);
-                } else {
-                    ev.world.setBlock(x, y, z, Blocks.wall_sign, ev.face, 3);
-                }
-
-                TileEntitySign te = (TileEntitySign)ev.world.getTileEntity(x, y, z);
-
-                NBTTagList tagList = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-                int amount = Integer.parseInt(tagList.getStringTagAt(0).split(" ")[1]);
-                int price = Integer.parseInt(tagList.getStringTagAt(0).split(" ")[3]);
-                ShopType shopType = ShopType.fromString(tagList.getStringTagAt(1).split(" ")[1]);
-                String itemString = tagList.getStringTagAt(2).split(" ")[1];
-
-                Shop shop =  new Shop(itemString, amount, price, shopType, ev.world.provider.dimensionId, x, y, z);
-                DatasourceProxy.getDatasource().saveShop(shop);
-
-                String[] signText = new String[4];
-                signText[0] = EnumChatFormatting.BLACK + "[ " + shopType.toString() + " ]";
-                for(int i = 0; i < (15 - signText[0].length()) / 2; i++)
-                    signText[0] = " " + signText[0];
-
-                signText[1] = (amount > 1 ? (amount + "x") : "") + EnumChatFormatting.DARK_BLUE;
-                signText[1] += signText[1].length() + shop.itemStack.getDisplayName().length() > 15 ? shop.itemStack.getDisplayName().substring(0, 15 - signText[1].length()) : shop.itemStack.getDisplayName();
-                for(int i = 0; i < (15 - signText[1].length()) / 2; i++)
-                    signText[1] = " " + signText[1];
-
-                signText[2] = "" + EnumChatFormatting.GOLD + price;
-                signText[3] = Constants.SIGN_ID_TEXT + shop.db_ID;
-
-                te.signText = signText;
             } else if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.PLOT_SELL_NAME)) {
                 ForgeDirection direction = ForgeDirection.getOrientation(ev.face);
                 int x = ev.x + direction.offsetX;
@@ -311,33 +268,7 @@ public class Ticker {
             if (block == Blocks.wall_sign || block == Blocks.standing_sign) {
                 TileEntitySign te = (TileEntitySign) ev.world.getTileEntity(ev.x, ev.y, ev.z);
 
-                if (te.signText[3].startsWith(Constants.SIGN_ID_TEXT)) {
-                    if (ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && ev.entityPlayer.isSneaking() && Utils.isOp(ev.entityPlayer)) {
-                        ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
-                        DatasourceProxy.getDatasource().deleteShop(Integer.parseInt(te.signText[3].split(" ")[1]));
-                    } else {
-                        Shop shop = MyTownUniverse.getInstance().getShop(Integer.parseInt(te.signText[3].split(" ")[1]));
-
-                        // Right click to sell
-                        if(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && shop.type.canSell()) {
-                            if(MyTownUtils.takeItemFromPlayer(ev.entityPlayer, shop.itemStack, shop.getAmount())) {
-                                EconomyUtils.giveMoneyToPlayer(ev.entityPlayer, shop.price);
-                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.sell.success", shop.getAmount(), shop.itemStack.getDisplayName(), shop.price, EconomyUtils.getCurrency(shop.price)));
-                            } else {
-                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.sell.failed", shop.getAmount(), shop.itemStack.getDisplayName()));
-                            }
-                        // Left click to buy if shoptype is sellbuy and right click if not.
-                        } else if(ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && shop.type == ShopType.sellBuy || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && shop.type == ShopType.buy) {
-                            if(EconomyUtils.takeMoneyFromPlayer(ev.entityPlayer, shop.price)) {
-                                MyTownUtils.giveItemToPlayer(ev.entityPlayer, shop.itemStack, shop.getAmount());
-                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.success", shop.getAmount(), shop.itemStack.getDisplayName(), shop.price, EconomyUtils.getCurrency(shop.price)));
-                            } else {
-                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.failed", shop.price, EconomyUtils.getCurrency(shop.price)));
-                            }
-                        }
-                        ev.setCanceled(true);
-                    }
-                } else if(te.signText[1].equals(Constants.PLOT_SELL_IDENTIFIER)) {
+                if(te.signText[1].equals(Constants.PLOT_SELL_IDENTIFIER)) {
                     if (ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && ev.entityPlayer.isSneaking() && Utils.isOp(ev.entityPlayer)) {
                         ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
                     } else if(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
@@ -349,7 +280,7 @@ public class Ticker {
                                     if(!plot.hasOwner(res)) {
                                         if (town.canResidentMakePlot(res)) {
                                             int price = Integer.parseInt(te.signText[2].substring(2, te.signText[2].length()));
-                                            if (EconomyUtils.takeMoneyFromPlayer(ev.entityPlayer, price)) {
+                                            if (EconomyProxy.economy().takeMoneyFromPlayer(ev.entityPlayer, price)) {
                                                 for(Resident resInPlot : plot.getOwners()) {
                                                     resInPlot.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.oldOwner", plot.getName()));
                                                 }
@@ -360,7 +291,7 @@ public class Ticker {
                                                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.newOwner", plot.getName()));
                                                 ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
                                             } else {
-                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.failed", price, EconomyUtils.getCurrency(price)));
+                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.shop.buy.failed", price, EconomyProxy.economy().getCurrency(price)));
                                             }
                                         } else {
                                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.getMaxPlots()));

@@ -13,7 +13,6 @@ import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.MyTownUtils;
-import mytown.economy.shop.ShopType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -622,18 +621,6 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
 
         return player.inventory.addItemStackToInventory(selectionTool);
-    }
-
-    public boolean startShopCreation(ItemStack itemStack, int amount, int price, ShopType type) {
-        ItemStack signShop = new ItemStack(Items.wooden_hoe);
-        signShop.setStackDisplayName(Constants.SIGN_SHOP_NAME);
-        NBTTagList lore = new NBTTagList();
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "AmountAndCost: " + amount + " | " + price));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Type: " + type));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Item: " + MyTownUtils.nameFromItemStack(itemStack)));
-        signShop.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
-
-        return player.inventory.addItemStackToInventory(signShop);
     }
 
     public boolean startPlotSell(String townName, int price) {

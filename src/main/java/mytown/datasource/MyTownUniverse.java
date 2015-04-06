@@ -5,10 +5,12 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
 import mytown.core.utils.command.CommandManager;
 import mytown.entities.*;
-import mytown.economy.shop.Shop;
 import net.minecraft.server.MinecraftServer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Joe Goett
@@ -20,7 +22,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     private Map<String, TownBlock> blocks = new HashMap<String, TownBlock>();
     private Map<Integer, Plot> plots = new HashMap<Integer, Plot>();
     private Map<String, Rank> ranks = new HashMap<String, Rank>();
-    private Map<Integer, Shop> shops = new HashMap<Integer, Shop>();
     private List<Integer> worlds = new ArrayList<Integer>();
 
     public MyTownUniverse() {}
@@ -53,9 +54,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return ImmutableList.copyOf(worlds);
     }
 
-    public final ImmutableList<Shop> getShopsList() {
-        return ImmutableList.copyOf(shops.values());
-    }
 
     /* ----- Add Entity ----- */
 
@@ -107,11 +105,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
-    public final boolean addShop(Shop shop) {
-        shops.put(shop.db_ID, shop);
-        return true;
-    }
-
     /* ----- Remove Entity ----- */
 
     public final boolean removeResident(Resident res) {
@@ -154,11 +147,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
-    public final boolean removeShop(int id) {
-        shops.remove(id);
-        return true;
-    }
-
     /* ----- Get Entity ----- */
 
     public Resident getResident(String key) {
@@ -194,10 +182,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return plots.get(key);
     }
 
-    public Shop getShop(int id) {
-        return shops.get(id);
-    }
-
     /* ----- Has Entity ----- */
 
     public boolean hasResident(Resident res) {
@@ -226,10 +210,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public boolean hasWorld(int dim) {
         return worlds.contains(dim);
-    }
-
-    public boolean hasShop(int id) {
-        return shops.containsKey(id);
     }
 
     /* ----- Singleton ----- */

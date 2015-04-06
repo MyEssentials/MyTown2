@@ -1,15 +1,13 @@
 package mytown;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
-import mytown.bukkit.BukkitCompat;
 import mytown.commands.*;
-import mytown.config.*;
+import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
 import mytown.config.json.JSONConfig;
 import mytown.config.json.RanksConfig;
@@ -19,9 +17,8 @@ import mytown.core.utils.Log;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.config.ConfigProcessor;
 import mytown.crash.DatasourceCrashCallable;
-import mytown.economy.EconomyUtils;
-import mytown.handlers.Ticker;
 import mytown.handlers.SafemodeHandler;
+import mytown.handlers.Ticker;
 import mytown.handlers.VisualsTickHandler;
 import mytown.protection.ProtectionUtils;
 import mytown.protection.Protections;
@@ -95,8 +92,6 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
-        BukkitCompat.initCompat(thisFile);
-
         checkConfig();
         registerCommands();
         Commands.populateCompletionMap();
@@ -201,8 +196,8 @@ public class MyTown {
      */
     public void checkConfig() {
         // Checking cost item
-        if(EconomyUtils.checkCurrencyString(Config.costItemName)) {
-            if (EconomyProxy.econManagerClass == null) {
+        if(EconomyProxy.economy().checkCurrencyString(Config.costItemName)) {
+            if (EconomyProxy.economy().econManagerClass == null) {
                 throw new RuntimeException("No economy implementation found!");
             }
         } else {

@@ -2,16 +2,15 @@ package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
 import mytown.api.interfaces.IHasFlags;
-import mytown.config.Config;
 import mytown.core.Localization;
 import mytown.core.utils.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
-import mytown.economy.EconomyUtils;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.EconomyProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
@@ -260,10 +259,10 @@ public abstract class Commands {
         if(amount == 0)
             return true;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
-        if(!EconomyUtils.takeMoneyFromPlayer(player, amount)){
-            throw new MyTownCommandException("mytown.cmd.err.payment", amount, EconomyUtils.getCurrency(amount));
+        if(!EconomyProxy.economy().takeMoneyFromPlayer(player, amount)){
+            throw new MyTownCommandException("mytown.cmd.err.payment", amount, EconomyProxy.economy().getCurrency(amount));
         }
-        res.sendMessage(getLocal().getLocalization("mytown.notification.payment", amount, EconomyUtils.getCurrency(amount)));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.payment", amount, EconomyProxy.economy().getCurrency(amount)));
         return true;
     }
 
@@ -271,7 +270,7 @@ public abstract class Commands {
         if(amount == 0)
             return;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
-        EconomyUtils.giveMoneyToPlayer(player, amount);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.refund", amount, EconomyUtils.getCurrency(amount)));
+        EconomyProxy.economy().giveMoneyToPlayer(player, amount);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.refund", amount, EconomyProxy.economy().getCurrency(amount)));
     }
 }

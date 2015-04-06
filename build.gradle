@@ -93,10 +93,6 @@ dependencies {
     
 	//compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
 	//compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
-
-    // Deps for Cauldron compat
-    compile "org.bukkit:bukkit:1.7.9-R0.2"
-    compile "net.milkbowl.vault:VaultAPI:1.3.2"
 }
 
 // Process Resources, injecting version numbers in
