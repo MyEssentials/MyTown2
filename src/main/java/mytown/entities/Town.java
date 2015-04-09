@@ -637,11 +637,11 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      */
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
-        if (getValue(flagType).equals(denialValue) && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && !(getMayor() == res)))) {
-            //TODO: Check for permission
-            return Utils.isOp(res.getPlayer());
+        if (!getValue(flagType).equals(denialValue) || hasResident(res) || residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && getMayor() == res)) {
+        	return true;
         }
-        return true;
+        //TODO: Check for permission
+        return Utils.isOp(res.getPlayer());
     }
 
     /**
