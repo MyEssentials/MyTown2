@@ -84,6 +84,9 @@ public class Getters {
 
         try {
             forLoop: for (Caller caller : callerList) {
+            	if (lastInstance == null) {
+            		return null;
+            	}
                 switch (caller.type) {
                     case field:
                         try {
