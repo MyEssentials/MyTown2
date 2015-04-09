@@ -169,7 +169,7 @@ public class Protection {
                                     if (block.getTown().getValue(segment.flag).equals(segment.denialValue))
                                         return true;
                                 } else {
-                                    if (block.getTown().checkPermission(owner, segment.flag, segment.denialValue))
+                                    if (!block.getTown().checkPermission(owner, segment.flag, segment.denialValue))
                                         return true;
                                 }
                             }
