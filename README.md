@@ -3,8 +3,14 @@ MyTown2
 Version 2 of MyTown - A Minecraft Server Protection Mod
 
 [![Build Status](http://img.shields.io/travis/MyEssentials/MyTown2.svg)](https://travis-ci.org/MyEssentials/MyTown2)
-[![Support via Gittip](http://img.shields.io/gittip/legobear154.svg)](https://www.gittip.com/legobear154/)
 [![Release][release-img]][release-url]
+
+
+
+ - Support AfterWind: [![Support via Gittip](http://img.shields.io/gittip/AfterWind.svg)](https://www.gittip.com/AfterWind/)
+ - Support Legobear154: 
+[![Support via Gittip](http://img.shields.io/gittip/legobear154.svg)](https://www.gittip.com/legobear154/)
+
 
 Protections contained at: https://github.com/MyEssentials/MyTown2-Protections
 
