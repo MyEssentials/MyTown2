@@ -214,7 +214,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true)
     public static void townBlocksMaxSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.town.blocks.extra.set");
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.extra.set");
         if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -232,7 +232,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true)
     public static void townBlocksMaxAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.town.blocks.extra.add");
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.extra.add");
         if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -251,7 +251,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true)
     public static void townBlocksMaxRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.town.blocks.extra.remove");
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.extra.remove");
         if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -261,6 +261,69 @@ public class CommandsAdmin extends Commands {
         getDatasource().saveTown(town);
         sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.extra.set", town.getExtraBlocks(), args.get(0)));
     }
+
+    @CommandNode(
+            name = "farClaims",
+            permission = "mytown.adm.cmd.town.blocks.farClaims",
+            parentName = "mytown.adm.cmd.town.blocks")
+    public static void townBlocksFarClaimsCommand(ICommandSender sender, List<String> args) {
+        callSubFunctions(sender, args, "mytown.adm.cmd.town.blocks.farClaims");
+    }
+
+    @CommandNode(
+            name = "set",
+            permission = "mytown.adm.cmd.town.blocks.farClaims.set",
+            parentName = "mytown.adm.cmd.town.blocks.farClaims",
+            completionKeys = {"townCompletionAndAll"},
+            nonPlayers = true)
+    public static void townBlocksFarclaimsSetCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.farClaims.set");
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+        Town town = getTownFromName(args.get(0));
+        town.setMaxFarClaims(Integer.parseInt(args.get(1)));
+        getDatasource().saveTown(town);
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.farClaims.set", town.getMaxFarClaims(), args.get(0)));
+    }
+
+    @CommandNode(
+            name = "add",
+            permission = "mytown.adm.cmd.town.blocks.farClaims.add",
+            parentName = "mytown.adm.cmd.town.blocks.farClaims")
+    public static void townBlocksFarclaimsAddCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.adm.cmd.town.blocks.farClaims.add");
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+        Town town = getTownFromName(args.get(0));
+        int amount = Integer.parseInt(args.get(1));
+        town.setMaxFarClaims(town.getMaxFarClaims() + amount);
+        getDatasource().saveTown(town);
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.farClaims.set", town.getMaxFarClaims(), args.get(0)));
+    }
+
+    @CommandNode(
+            name = "remove",
+            permission = "mytown.adm.cmd.town.blocks.farClaims.remove",
+            parentName = "mytown.adm.cmd.town.blocks.farClaims",
+            completionKeys = {"townCompletionAndAll"},
+            nonPlayers = true)
+    public static void townBlocksFarClaimsRemoveCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.farClaims.remove");
+        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
+
+        Town town = getTownFromName(args.get(0));
+        int amount = Integer.parseInt(args.get(1));
+        town.setMaxFarClaims(town.getMaxFarClaims() - amount);
+        getDatasource().saveTown(town);
+        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.farClaims.set", town.getMaxFarClaims(), args.get(0)));
+    }
+
 
     @CommandNode(
             name = "blocks",
@@ -288,7 +351,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true)
     public static void resBlocksSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.res.blocks.extra.remove");
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.res.blocks.extra.remove");
         if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -307,7 +370,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true)
     public static void resBlocksAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.res.blocks.extra.remove");
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.res.blocks.extra.remove");
         if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -326,7 +389,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true)
     public static void resBlocksRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.res.blocks.extra.remove");
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.res.blocks.extra.remove");
         if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -508,15 +571,19 @@ public class CommandsAdmin extends Commands {
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromName(args.get(0));
 
+        boolean isFarClaim = false;
+
         if(args.size() < 2) {
 
             if (town.getBlocks().size() >= town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", 1);
             if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
                 throw new MyTownCommandException("mytown.cmd.err.claim.already");
-            if (!CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) // Checks if the player can claim far
+            if (!CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) { // Checks if the player can claim far
                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
-            TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+                isFarClaim = true;
+            }
+            TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, 0, town);
             if (block == null)
                 throw new MyTownCommandException("Failed to create Block"); // TODO Localize
             getDatasource().saveBlock(block);
@@ -527,23 +594,25 @@ public class CommandsAdmin extends Commands {
 
             int radius = Integer.parseInt(args.get(1));
             List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(player.posX - radius*16), (int)(player.posZ - radius*16), (int)(player.posX + radius*16), (int)(player.posZ + radius*16));
-            boolean isClaimFar = true;
+            isFarClaim = true;
             for(Iterator<ChunkPos> it = chunks.iterator(); it.hasNext();) {
                 ChunkPos chunk = it.next();
                 if(CommandsAssistant.checkNearby(player.dimension, chunk.getX(), chunk.getZ(), town)) {
-                    isClaimFar = false;
+                    isFarClaim = false;
                 }
                 if (getDatasource().hasBlock(player.dimension, chunk.getX(), chunk.getZ()))
                     it.remove();
             }
-            if(isClaimFar)
+            if(isFarClaim)
                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
 
             if (town.getBlocks().size() + chunks.size() > town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
 
             for(ChunkPos chunk : chunks) {
-                TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), town);
+                TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), isFarClaim, 0, town);
+                // Just so that only one of the blocks will be marked as far claim.
+                isFarClaim = false;
                 getDatasource().saveBlock(block);
                 res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
             }
@@ -682,5 +751,4 @@ public class CommandsAdmin extends Commands {
             sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
         }
     }
-
 }

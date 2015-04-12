@@ -81,12 +81,13 @@ mytown.cmd.usage.friends.remove=&c/t friends add <resident>
 mytown.cmd.err.claim.failed=&cFailed to claim chunk!
 mytown.cmd.err.claim.already=&cThis chunk has already been claimed!
 mytown.cmd.err.claim.notexist=&cThis block is not claimed by town %s!
-mytown.cmd.err.claim.far.notAllowed=&cYou can't claim chunks that are not adjacent to your town!
+mytown.cmd.err.claim.far.notAllowed=&cYou cannot have anymore far claims!
 mytown.cmd.err.town.maxBlocks=&cNot enough free slots for %s chunks!
 
 # /t unclaim
 mytown.cmd.err.unclaim.notInTown=&cThe block you want to unclaim is not in the town you've selected!
 mytown.cmd.err.unclaim.spawnPoint=&cYou cannot delete the Block containing the spawn point!
+mytown.cmd.err.unclaim.lastClaim=&cYou're town must at least have 1 chunk. Use "/t leave delete" to remove the town.
 
 # /t info
 mytown.cmd.usage.info=&3/t info <townname>
@@ -202,14 +203,18 @@ mytown.adm.cmd.usage.add=&3/ta add <resident> <toTown> [rankName]
 mytown.adm.cmd.err.add.already=&cPlayer %s is already a resident of the town %s
 
 # /ta town
-mytown.cmd.usage.town.blocks.extra.set=&3/ta town blocks extra set <townName> <maxBlocks>
-mytown.cmd.usage.town.blocks.extra.add=&3/ta town blocks extra add <townName> <amount>
-mytown.cmd.usage.town.blocks.extra.remove=&3/ta town blocks extra remove <townName> <amount>
+mytown.adm.cmd.usage.town.blocks.extra.set=&3/ta town blocks extra set <townName> <maxBlocks>
+mytown.adm.cmd.usage.town.blocks.extra.add=&3/ta town blocks extra add <townName> <amount>
+mytown.adm.cmd.usage.town.blocks.extra.remove=&3/ta town blocks extra remove <townName> <amount>
+
+mytown.adm.cmd.usage.town.blocks.farClaims.set=&3/ta town blocks farClaims set <townName> <maxFarClaims>
+mytown.adm.cmd.usage.town.blocks.farClaims.add=&3/ta town blocks farClaims add <townName> <amount>
+mytown.adm.cmd.usage.town.blocks.farClaims.remove=&3/ta town blocks farClaims remove <townName> <amount>
 
 # /ta res
-mytown.cmd.usage.res.blocks.extra.set=&3/ta res blocks extra set <townName> <maxBlocks>
-mytown.cmd.usage.res.blocks.extra.add=&3/ta res blocks extra add <townName> <amount>
-mytown.cmd.usage.res.blocks.extra.remove=&3/ta res blocks extra remove <townName> <amount>
+mytown.adm.cmd.usage.res.blocks.extra.set=&3/ta res blocks extra set <townName> <maxBlocks>
+mytown.adm.cmd.usage.res.blocks.extra.add=&3/ta res blocks extra add <townName> <amount>
+mytown.adm.cmd.usage.res.blocks.extra.remove=&3/ta res blocks extra remove <townName> <amount>
 
 # /ta perm
 mytown.adm.cmd.usage.perm.town.set=&3/ta perm town set <townName> <flag> <value>
@@ -294,6 +299,7 @@ mytown.notification.town.bank.info=&aAmount in bank: &7%s %s \n&aNext payment: &
 mytown.notification.town.upkeep=&3A new day is upon us, taxes have been collected!
 mytown.notification.town.upkeep.failed=&cA new day has passed but the bank is out of money. %s days before town deletion!
 mytown.notification.town.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for town %s.
+mytown.notification.town.blocks.farClaims.set=&3The amount of max far claims has been set to %s for town %s.
 mytown.notification.resident.blocks.extra.set=&3The amount of extra claimable blocks has been set to %s for resident %s.
 mytown.notification.plot.buy.failed=&cYou don't have %s %s!
 mytown.notification.plot.buy.newOwner=&aYou have successfully bought plot %s!
@@ -409,6 +415,10 @@ mytown.adm.cmd.town.blocks.extra.help=&9Shows information about the extra blocks
 mytown.adm.cmd.town.blocks.extra.set.help=&9Sets the extra amount of blocks for a town.
 mytown.adm.cmd.town.blocks.extra.add.help=&9Adds to the extra amount of blocks for a town.
 mytown.adm.cmd.town.blocks.extra.remove.help=&9Subtracts from the extra amount of blocks for a town.
+mytown.adm.cmd.town.blocks.farClaims.help=&9Shows information about the far claims.
+mytown.adm.cmd.town.blocks.farClaims.set.help=&9Sets the max far claims for a town.
+mytown.adm.cmd.town.blocks.farClaims.add.help=&9Adds to the max far claims of a town.
+mytown.adm.cmd.town.blocks.farClaims.remove.help=&9Subtracts from the max far claims of a town.
 mytown.adm.cmd.debug.itemClass.help=&9Shows information about the class of the held item.
 mytown.adm.cmd.borders.help=&9Information about borders of a town
 mytown.adm.cmd.borders.show.help=&9Visually shows the town borders.

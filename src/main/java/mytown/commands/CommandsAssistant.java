@@ -55,7 +55,7 @@ public class CommandsAssistant extends Commands {
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
 
-        boolean isClaimFar = false;
+        boolean isFarClaim = false;
 
         if (args.size() < 1) {
             if (town.getBlocks().size() >= town.getMaxBlocks())
@@ -63,9 +63,9 @@ public class CommandsAssistant extends Commands {
             if (getDatasource().hasBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ))
                 throw new MyTownCommandException("mytown.cmd.err.claim.already");
             if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) {
-                if (!Config.allowFarClaims)
+                if (town.getFarClaims() >= town.getMaxFarClaims())
                     throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
-                isClaimFar = true;
+                isFarClaim = true;
             }
             for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
                 for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
@@ -75,11 +75,14 @@ public class CommandsAssistant extends Commands {
                 }
             }
 
-            //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
+            if(isFarClaim && town.getFarClaims() + 1 > town.getMaxFarClaims())
+                throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
 
-            makePayment(player, (isClaimFar ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.getBlocks().size());
+            int price = (isFarClaim ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.getBlocks().size();
 
-            TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, town);
+            makePayment(player, price);
+
+            TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, price, town);
             if (block == null)
                 throw new MyTownCommandException("mytown.cmd.err.claim.failed");
 
@@ -91,12 +94,12 @@ public class CommandsAssistant extends Commands {
 
             int radius = Integer.parseInt(args.get(0));
             List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) (player.posX - radius * 16), (int) (player.posZ - radius * 16), (int) (player.posX + radius * 16), (int) (player.posZ + radius * 16));
-            isClaimFar = true;
+            isFarClaim = true;
 
             for (Iterator<ChunkPos> it = chunks.iterator(); it.hasNext(); ) {
                 ChunkPos chunk = it.next();
                 if (checkNearby(player.dimension, chunk.getX(), chunk.getZ(), town)) {
-                    isClaimFar = false;
+                    isFarClaim = false;
                 }
                 if (getDatasource().hasBlock(player.dimension, chunk.getX(), chunk.getZ()))
                     it.remove();
@@ -113,11 +116,17 @@ public class CommandsAssistant extends Commands {
             if (town.getBlocks().size() + chunks.size() > town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
 
-            makePayment(player, (isClaimFar ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1) : Config.costAmountClaim * chunks.size())
+            if(isFarClaim && town.getFarClaims() + 1 > town.getMaxFarClaims())
+                throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
+
+            makePayment(player, (isFarClaim ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1) : Config.costAmountClaim * chunks.size())
                     + MyTownUtils.sumFromNtoM(town.getBlocks().size(), town.getBlocks().size() + chunks.size() - 1) * Config.costAdditionClaim );
 
             for (ChunkPos chunk : chunks) {
-                TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), town);
+                int price = (isFarClaim ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.getBlocks().size();
+                TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), isFarClaim, price, town);
+                // Only one of the block will be a farClaim, rest will be normal claim
+                isFarClaim = false;
                 getDatasource().saveBlock(block);
                 res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
             }
@@ -138,10 +147,14 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.unclaim.notInTown");
         if (block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ()))
             throw new MyTownCommandException("mytown.cmd.err.unclaim.spawnPoint");
+        if(!checkNearby(block.getDim(), block.getX(), block.getZ(), town)) {
+            if(town.getBlocks().size() <= 1)
+                throw new MyTownCommandException("mytown.cmd.err.unclaim.lastClaim");
+        }
 
         getDatasource().deleteBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
-        makeRefund(pl, Config.costAmountClaim + Config.costAdditionClaim * (town.getBlocks().size() - 1));
+        makeRefund(pl, block.getPricePaid());
     }
 
     @CommandNode(
@@ -461,7 +474,12 @@ public class CommandsAssistant extends Commands {
 
         if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
-            makeRefund(player, Config.costAmountClaim * town.getBlocks().size() + ((town.getBlocks().size() - 1) * town.getBlocks().size() / 2) * Config.costAdditionClaim);
+            int refund = 0;
+            for(TownBlock block : town.getBlocks()) {
+                refund += block.getPricePaid();
+            }
+
+            makeRefund(player, refund);
             getDatasource().deleteTown(town);
         }
     }

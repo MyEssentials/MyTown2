@@ -30,4 +30,8 @@ public interface IHasBlocks {
     public void setExtraBlocks(int extra);
 
     public int getMaxBlocks();
+
+    public int getMaxFarClaims();
+
+    public void setMaxFarClaims(int maxFarClaims);
 }

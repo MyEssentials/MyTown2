@@ -46,8 +46,8 @@ public class Config {
     @ConfigProperty(category = "towns", name = "modifiableRanks", comment = "If true residents with permission can modify the ranks of their towns. This feature hasn't been fully tested yet and it might cause problems!")
     public static boolean modifiableRanks = false;
 
-    @ConfigProperty(category = "towns", name = "allowFarClaims", comment = "If true people will be able to claim land anywhere for the price specified in the cost category.")
-    public static boolean allowFarClaims = false;
+    @ConfigProperty(category = "towns", name = "maxFarClaims", comment = "The maximum amount of chunks not attached to any other claimed chunk that are allowed per town. Set to 0 to disable far claims altogether.")
+    public static int maxFarClaims = 0;
 
     @ConfigProperty(category = "residents", name = "teleportCooldown", comment = "The amount of time in server ticks for how long a player needs to wait between teleports.")
     public static int teleportCooldown = 200;

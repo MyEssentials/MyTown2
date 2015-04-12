@@ -86,7 +86,7 @@ public abstract class MyTownDatasource {
 
 
         //Claiming first block
-        TownBlock block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, town);
+        TownBlock block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, false, Config.costAmountClaim, town);
         // Saving block to db and town
         saveBlock(block);
 
@@ -123,8 +123,8 @@ public abstract class MyTownDatasource {
      *
      * @return The new Block, or null if it failed
      */
-    public final TownBlock newBlock(int dim, int x, int z, Town town) {
-        TownBlock block = new TownBlock(dim, x, z, town);
+    public final TownBlock newBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town) {
+        TownBlock block = new TownBlock(dim, x, z, isFarClaim, pricePaid, town);
         if (TownBlockEvent.fire(new TownBlockEvent.BlockCreateEvent(block)))
             return null;
         return block;

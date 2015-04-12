@@ -19,12 +19,16 @@ public class TownBlock implements IHasPlots {
     private int dim, x, z;
     private Town town;
     private String key;
+    private boolean isFarClaim;
+    private int pricePaid;
 
-    public TownBlock(int dim, int x, int z, Town town) {
+    public TownBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town) {
         this.dim = dim;
         this.x = x;
         this.z = z;
         this.town = town;
+        this.isFarClaim = isFarClaim;
+        this.pricePaid = pricePaid;
         updateKey();
     }
 
@@ -54,6 +58,14 @@ public class TownBlock implements IHasPlots {
 
     private void updateKey() {
         key = String.format(keyFormat, dim, x, z);
+    }
+
+    public boolean isFarClaim() {
+        return this.isFarClaim;
+    }
+
+    public int getPricePaid() {
+        return this.pricePaid;
     }
 
     @Override

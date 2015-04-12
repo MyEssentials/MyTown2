@@ -173,6 +173,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 town.setSpawn(new Teleport(rs.getInt("spawnDim"), rs.getFloat("spawnX"), rs.getFloat("spawnY"), rs.getFloat("spawnZ"), rs.getFloat("cameraYaw"), rs.getFloat("cameraPitch")));
                 town.setExtraBlocks(rs.getInt("extraBlocks"));
                 town.setMaxPlots(rs.getInt("maxPlots"));
+                town.setMaxFarClaims(rs.getInt("maxFarClaims"));
 
                 MyTownUniverse.getInstance().addTown(town);
             }
@@ -205,7 +206,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                     */
                     continue;
                 }
-                TownBlock block = new TownBlock(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), town);
+                TownBlock block = new TownBlock(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), rs.getBoolean("isFarClaim"), rs.getInt("pricePaid"), town);
                 MyTownUniverse.getInstance().addTownBlock(block);
                 block.getTown().addBlock(block);
             }
@@ -649,7 +650,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         log.debug("Saving Town %s", town.getName());
         try {
             if (MyTownUniverse.getInstance().hasTown(town)) { // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=?, spawnDim=?, spawnX=?, spawnY=?, spawnZ=?, cameraYaw=?, cameraPitch=?, extraBlocks=?, maxPlots=? WHERE name=?", true);
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=?, spawnDim=?, spawnX=?, spawnY=?, spawnZ=?, cameraYaw=?, cameraPitch=?, extraBlocks=?, maxPlots=?, maxFarClaims=? WHERE name=?", true);
                 updateStatement.setString(1, town.getName());
                 updateStatement.setInt(2, town.getSpawn().getDim());
                 updateStatement.setFloat(3, town.getSpawn().getX());
@@ -659,11 +660,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 updateStatement.setFloat(7, town.getSpawn().getPitch());
                 updateStatement.setInt(8, town.getExtraBlocks());
                 updateStatement.setInt(9, town.getMaxPlots());
+                updateStatement.setInt(10, town.getMaxFarClaims());
 
                 if (town.getOldName() == null)
-                    updateStatement.setString(10, town.getName());
+                    updateStatement.setString(11, town.getName());
                 else
-                    updateStatement.setString(10, town.getOldName());
+                    updateStatement.setString(11, town.getOldName());
 
                 updateStatement.executeUpdate();
 
@@ -675,7 +677,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 }
                 town.resetOldName();
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name, spawnDim, spawnX, spawnY, spawnZ, cameraYaw, cameraPitch, isAdminTown, extraBlocks, maxPlots) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name, spawnDim, spawnX, spawnY, spawnZ, cameraYaw, cameraPitch, isAdminTown, extraBlocks, maxPlots, maxFarClaims) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, town.getName());
                 insertStatement.setInt(2, town.getSpawn().getDim());
                 insertStatement.setFloat(3, town.getSpawn().getX());
@@ -686,6 +688,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 insertStatement.setBoolean(8, town instanceof AdminTown);
                 insertStatement.setInt(9, town.getExtraBlocks());
                 insertStatement.setInt(10, town.getMaxPlots());
+                insertStatement.setInt(11, town.getMaxFarClaims());
 
                 insertStatement.executeUpdate();
 
@@ -707,11 +710,13 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             if (MyTownUniverse.getInstance().hasTownBlock(block)) { // Update
                 // TODO Update Block (If needed?)
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Blocks (dim, x, z, townName) VALUES (?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Blocks (dim, x, z, isFarClaim, pricePaid, townName) VALUES (?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setInt(1, block.getDim());
                 insertStatement.setInt(2, block.getX());
                 insertStatement.setInt(3, block.getZ());
-                insertStatement.setString(4, block.getTown().getName());
+                insertStatement.setBoolean(4, block.isFarClaim());
+                insertStatement.setInt(5, block.getPricePaid());
+                insertStatement.setString(6, block.getTown().getName());
                 insertStatement.executeUpdate();
 
                 // Put the Block in the Map
@@ -1884,6 +1889,12 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 "FOREIGN KEY(plotID) REFERENCES " + prefix + "Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"));
         updates.add(new DBUpdate("4.1.2015.1", "Add 'daysNotPaid' to TownBanks", "ALTER TABLE " + prefix +
                 "TownBanks ADD daysNotPaid INTEGER DEFAULT 0"));
+        updates.add(new DBUpdate("4.12.2015.1", "Add 'isFarClaim' to Blocks", "ALTER TABLE " + prefix +
+                "Blocks ADD isFarClaim boolean DEFAULT false"));
+        updates.add(new DBUpdate("4.12.2015.2", "Add 'maxFarClaims' to Towns", "ALTER TABLE " + prefix +
+                "Towns ADD maxFarClaims INTEGER DEFAULT " + Config.maxFarClaims));
+        updates.add(new DBUpdate("4.12.2015.3", "Add 'pricePaid' to Blocks", "ALTER TABLE " + prefix +
+                "Blocks ADD pricePaid INTEGER DEFAULT " + Config.costAmountClaim));
     }
 
     /**

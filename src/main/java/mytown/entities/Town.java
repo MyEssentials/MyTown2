@@ -1,7 +1,6 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.MyTown;
 import mytown.api.interfaces.*;
 import mytown.config.Config;
 import mytown.core.Utils;
@@ -202,6 +201,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     protected Map<String, TownBlock> blocks = new Hashtable<String, TownBlock>();
     protected int extraBlocks = 0;
+    protected int maxFarClaims = Config.maxFarClaims;
 
     @Override
     public void addBlock(TownBlock block) {
@@ -247,6 +247,24 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         }
 
         return maxBlocks;
+    }
+
+    public int getFarClaims() {
+        int farClaims = 0;
+        for(TownBlock block : blocks.values())
+            if(block.isFarClaim())
+                farClaims++;
+        return farClaims;
+    }
+
+    @Override
+    public int getMaxFarClaims() {
+        return maxFarClaims;
+    }
+
+    @Override
+    public void setMaxFarClaims(int maxFarClaims) {
+        this.maxFarClaims = maxFarClaims;
     }
 
     public void showBorders(Resident caller) {
