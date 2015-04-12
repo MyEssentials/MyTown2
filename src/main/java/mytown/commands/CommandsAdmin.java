@@ -715,7 +715,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.plot")
     public static void plotHideCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayerMP) {
-            VisualsTickHandler.getInstance().unmarkBlocksForPlots((EntityPlayerMP) sender);
+            VisualsTickHandler.getInstance().unmarkPlots((EntityPlayerMP) sender);
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.plot.vanished"));
         }
     }
@@ -747,7 +747,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.borders")
     public static void bordersHideCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayerMP) {
-            VisualsTickHandler.getInstance().unmarkBlocksForTown((EntityPlayerMP)sender);
+            VisualsTickHandler.getInstance().unmarkTowns((EntityPlayerMP)sender);
             sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
         }
     }

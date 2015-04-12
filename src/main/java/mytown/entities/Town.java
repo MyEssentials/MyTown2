@@ -274,7 +274,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     public void hideBorders(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
-            VisualsTickHandler.getInstance().unmarkBlocksForTown((EntityPlayerMP) caller.getPlayer());
+            VisualsTickHandler.getInstance().unmarkBlocks(this, (EntityPlayerMP) caller.getPlayer());
     }
 
     /* ----- IHasPlots ----- */
@@ -380,7 +380,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     public void hidePlots(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
-            VisualsTickHandler.getInstance().unmarkBlocksForPlots((EntityPlayerMP)caller.getPlayer());
+            for(Plot plot : plots)
+                VisualsTickHandler.getInstance().unmarkBlocks(plot, (EntityPlayerMP)caller.getPlayer());
     }
 
     /* ----- IHasFlags ------ */

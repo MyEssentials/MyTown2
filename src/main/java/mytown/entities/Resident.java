@@ -473,7 +473,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
             // This is marked twice :P
             if(getPlayer() instanceof EntityPlayerMP)
-                VisualsTickHandler.getInstance().markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP)getPlayer());
+                VisualsTickHandler.getInstance().markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP)getPlayer(), null);
 
         } else {
 
@@ -577,7 +577,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         // When selection is expanded vertically we'll show it's borders... (Temporary solution)
 
         if(getPlayer() instanceof EntityPlayerMP)
-            VisualsTickHandler.getInstance().unmarkBlocks((EntityPlayerMP)getPlayer());
+            VisualsTickHandler.getInstance().unmarkBlocks(null, (EntityPlayerMP)getPlayer());
 
         selectionY1 = 1;
         try {
@@ -589,7 +589,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         selectionExpandedVert = true;
 
         if(getPlayer() instanceof EntityPlayerMP)
-            VisualsTickHandler.getInstance().markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer());
+            VisualsTickHandler.getInstance().markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer(), null);
     }
 
     public void resetSelection(boolean resetBlocks) {
@@ -598,8 +598,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
         if(resetBlocks) {
             if(getPlayer() instanceof EntityPlayerMP) {
-                VisualsTickHandler.getInstance().unmarkBlocksForPlots((EntityPlayerMP) getPlayer());
-                VisualsTickHandler.getInstance().unmarkBlocks((EntityPlayerMP) getPlayer());
+                VisualsTickHandler.getInstance().unmarkBlocks(null, (EntityPlayerMP)getPlayer());
             }
         }
     }
