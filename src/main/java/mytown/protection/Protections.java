@@ -135,6 +135,7 @@ public class Protections {
                     res.protectionDenial(FlagType.enter.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, (int) entity.posX, (int) entity.posY, (int) entity.posZ))));
                     res.knockbackPlayer();
                 }
+                
             } else {
                 // Other entity checks
                 for (Protection prot : protections) {

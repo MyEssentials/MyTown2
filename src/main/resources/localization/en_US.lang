@@ -1,3 +1,4 @@
+# Other
 mytown.cmd.unimplemented=&c%s is currently unimplemented!
 mytown.cmd.err.partOfTown=&cYou need to be part of a town!
 mytown.cmd.err.town.notexist=&cThe town %s does not exist!
@@ -8,6 +9,9 @@ mytown.cmd.err.payment=&cYou need %s %s in order to pay for this!
 mytown.cmd.err.notPositiveInteger=&cValue '%s' needs to be a positive integer!
 mytown.cmd.err.adminTown=&cAction denied because %s is an admin town!
 mytown.cmd.err.notInTown=&cYou are not in town %s!
+mytown.notification.enter.wild=&2You just entered the wild!
+mytown.notification.enter.town=&2Welcome to %s!
+mytown.notification.enter.ownTown=&2Welcome back!
 
 # Flag based notifications
 
@@ -22,6 +26,7 @@ mytown.protection.mobs=&cYou cannot spawn this type of mob in here!
 mytown.protection.protectedEntities=&cDon't touch that!
 mytown.protection.useItems=&cYou cannot use items in here!
 mytown.protection.pvp=&cYou cannot attack this player!
+mytown.protection.notify.explosions=&3An explosion has been stopped!
 
 # Flag Info
 mytown.flag.enter=&3Allows outsiders to enter.
@@ -37,9 +42,6 @@ mytown.flag.pvp=&3Allows PVP - Player vs. Player
 mytown.flag.restrictedTownPerms=&3Gives permission outside player's plots.
 mytown.flag.allowFakePlayers=&3Allows fake players to bypass (ex: Thaumcraft Golems)
 
-# Notify Town
-mytown.protection.notify.explosions=&3An explosion has been stopped!
-
 # /ta config [load|save]
 mytown.cmd.config.load.start=&3Loading config...
 mytown.cmd.config.load.stop=&aConfig loaded
@@ -50,9 +52,13 @@ mytown.cmd.config.save.stop=&aConfig saved
 mytown.cmd.err.newtown.nameinuse=&cTown name %s already in use!
 mytown.cmd.err.newtown.positionError=&cYou cannot make a new town on a claimed chunk.
 mytown.cmd.err.newtown.failed=&cThe town has failed to be created!
-mytown.cmd.err.newtown.tooClose=&cThe town is too close to another town. Please leave at least %s chunks in between each town.
+mytown.cmd.err.claim.tooClose=&cYou are too close to town %s. Please leave at least %s between the towns.
 mytown.cmd.usage.newtown=&3/t new <townname>
 mytown.cmd.err.resident.maxTowns=&cYou cannot create/join any more towns, you have hit the maximum amount of towns you can be in.
+mytown.notification.town.created=&aTown %s created!
+mytown.notification.town.deleted=&cTown %s deleted!
+mytown.notification.nation.created=Nation %s created!
+mytown.notification.nation.deleted=Nation %s deleted!
 
 
 # /t invite
@@ -86,12 +92,16 @@ mytown.cmd.err.unclaim.spawnPoint=&cYou cannot delete the Block containing the s
 mytown.cmd.usage.info=&3/t info <townname>
 mytown.cmd.err.info.notpart=&cYou are not part of a town. &3Alternative usage: "/t info <townname>".
 
+mytown.notification.town.list=&7 Towns: \n&f%s
+mytown.notification.town.info=&7 --------  &a%s (&fR:%s &a|&f C:%s/%s &a| &fP:%s&a) &7 -------- \n &7Residents:&f %s\n &7Ranks:&f %s
+
 # /t res
 mytown.cmd.usage.res=&3/t res <resident>
 
 # /t select
 mytown.cmd.usage.select=&3/t select <townname>
 mytown.cmd.err.select.notpart=&cYou are not part of town %s. Please choose a town that you're a member of.
+mytown.notification.town.select=&3The town %s has been selected as your primary town!
 
 # /t ranks
 mytown.cmd.usage.ranks=&3/t ranks <add|remove|perm>
@@ -130,6 +140,9 @@ mytown.cmd.err.plot.tooLarge=&cSelection too large! Maximum area: %s. Maximum he
 mytown.cmd.err.plot.outside=&cSelection is outside of town!
 mytown.cmd.err.plot.insideOther=&cSelection is inside plot %s!
 mytown.cmd.err.plot.perm.set.noPermission=&cYou are not this plot's owner!
+mytown.notification.plot.info=&7 --------  Plot: &a%s &7--------\n &7Residents: &f%s\n &7Borders: &9(%s, %s, %s)&7 --> &9(%s, %s, %s)
+mytown.notification.resident.info=&7 --------  Resident: &a%s &7--------\n &7Towns: &f%s\n &7Joined: &f%s\n &7Last online: &f%s
+mytown.notification.town.owners=&6 Owners: &c%s
 
 
 # /t perm
@@ -168,6 +181,12 @@ mytown.cmd.usage.leave.pass=&3/t pass <resident>
 # /t bank
 mytown.cmd.usage.bank.pay=&3/t pay <amount>
 
+# /t ranks
+mytown.notification.town.ranks=Ranks: %s
+
+# /ta new
+mytown.notification.admtown.created=&aAdmin town %s created!
+
 # /ta delete
 mytown.adm.cmd.delete.usage=&3/ta delete <townname> [townname2 townname3...]
 mytown.adm.cmd.delete.success=&cDeleted town with name %s!
@@ -175,6 +194,8 @@ mytown.adm.cmd.delete.success=&cDeleted town with name %s!
 # /ta rem
 mytown.adm.cmd.usage.rem=&3/ta rem <resident> <fromTown>
 mytown.adm.cmd.err.rem.resident=&cPlayer %s is not part of the town %s
+mytown.notification.town.resident.remove=&aResident %s has been &cremoved&a from town %s!
+mytown.notification.town.resident.add=&aResident %s has been added to town %s!
 
 # /ta add
 mytown.adm.cmd.usage.add=&3/ta add <resident> <toTown> [rankName]
@@ -211,29 +232,11 @@ mytown.adm.cmd.usage.plot.show=&3/ta plot show <townName>
 
 # /ta borders
 mytown.adm.cmd.usage.borders.show=&3/ta borders show <townName>
-
-# Notifications
-mytown.notification.town.created=&aTown %s created!
-mytown.notification.admtown.created=&aAdmin town %s created!
-mytown.notification.town.deleted=&cTown %s deleted!
-mytown.notification.nation.created=Nation %s created!
-mytown.notification.nation.deleted=Nation %s deleted!
-mytown.notification.enter.wild=&2You just entered the wild!
-mytown.notification.enter.town=&2Welcome to %s!
-mytown.notification.enter.ownTown=&2Welcome back!
-
-mytown.notification.town.list=&7 Towns: \n&f%s
-mytown.notification.town.info=&7 --------  &a%s (&fR:%s &a|&f C:%s/%s &a| &fP:%s&a) &7 -------- \n &7Residents:&f %s\n &7Ranks:&f %s
-mytown.notification.plot.info=&7 --------  Plot: &a%s &7--------\n &7Residents: &f%s\n &7Borders: &9(%s, %s, %s)&7 --> &9(%s, %s, %s)
-mytown.notification.resident.info=&7 --------  Resident: &a%s &7--------\n &7Towns: &f%s\n &7Joined: &f%s\n &7Last online: &f%s
-mytown.notification.town.owners=&6 Owners: &c%s
-
-mytown.notification.town.select=&3The town %s has been selected as your primary town!
-mytown.notification.town.resident.remove=&aResident %s has been &cremoved&a from town %s!
-mytown.notification.town.resident.add=&aResident %s has been added to town %s!
 mytown.notification.town.borders.show=&3Showing borders of town %s. Use /t borders hide to hide them.
 mytown.notification.town.borders.hide=&aBorders have been successfully hidden!
-mytown.notification.town.ranks=Ranks: %s
+
+# Notifications
+
 mytown.notification.block.added=&aTown block from (%s, %s) to (%s, %s) has been added to town %s!
 mytown.notification.block.removed=&aTown block from (%s, %s) to (%s, %s) has been removed from town %s!
 mytown.notification.block.list=Blocks in town %s: %s

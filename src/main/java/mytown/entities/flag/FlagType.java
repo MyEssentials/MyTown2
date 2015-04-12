@@ -46,7 +46,10 @@ public enum FlagType {
     explosions(Boolean.class, false, null, true, true, Property.townOnly, null),
 
     // Allows normal residents to have permission outside their claimed plots.
-    restrictedTownPerms(Boolean.class, false, null, false, false, Property.townOnly, null),;
+    restrictedTownPerms(Boolean.class, false, null, false, false, Property.townOnly, null),
+
+    // Allows other towns to be created nearby
+    nearbyTowns(Boolean.class, false, null, false, false, Property.townOnly, null);
 
     private Class<?> type;
     private Object[] allowedValues;

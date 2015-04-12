@@ -10,6 +10,7 @@ import mytown.core.utils.command.CommandNode;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
+import mytown.entities.flag.FlagType;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
@@ -101,11 +102,12 @@ public class CommandsOutsider extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
         for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
             for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
-                if (MyTownUtils.getTownAtPosition(player.dimension, x, z) != null)
-                    throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", Config.distanceBetweenTowns);
+                Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
+                if (nearbyTown != null && !(Boolean)nearbyTown.getValue(FlagType.nearbyTowns))
+                    throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
             }
         }
-        // Special case for ForgeEssentials
+
         makePayment(player, Config.costAmountMakeTown + Config.costAmountClaim);
 
         Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town

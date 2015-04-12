@@ -67,6 +67,13 @@ public class CommandsAssistant extends Commands {
                     throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
                 isClaimFar = true;
             }
+            for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
+                for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
+                    Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
+                    if (nearbyTown != null && nearbyTown != town && !(Boolean)nearbyTown.getValue(FlagType.nearbyTowns))
+                        throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
+                }
+            }
 
             //Assert.Perm(player, "mytown.cmd.assistant.claim.far");
 
@@ -93,6 +100,14 @@ public class CommandsAssistant extends Commands {
                 }
                 if (getDatasource().hasBlock(player.dimension, chunk.getX(), chunk.getZ()))
                     it.remove();
+
+                for (int x = chunk.getX() - Config.distanceBetweenTowns; x <= chunk.getX() + Config.distanceBetweenTowns; x++) {
+                    for (int z = chunk.getZ() - Config.distanceBetweenTowns; z <= chunk.getZ() + Config.distanceBetweenTowns; z++) {
+                        Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
+                        if (nearbyTown != null && nearbyTown != town && !(Boolean)nearbyTown.getValue(FlagType.nearbyTowns))
+                            throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
+                    }
+                }
             }
 
             if (town.getBlocks().size() + chunks.size() > town.getMaxBlocks())
