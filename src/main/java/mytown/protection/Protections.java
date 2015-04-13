@@ -110,8 +110,7 @@ public class Protections {
         // TODO: Add a command to clean up the block whitelist table periodically
         if (tickerWhitelist == 0) {
             for (Town town : MyTownUniverse.getInstance().getTownsMap().values())
-                for (Iterator<BlockWhitelist> it = town.getWhitelists().iterator(); it.hasNext();) {
-                    BlockWhitelist bw = it.next();
+                for (BlockWhitelist bw : town.getWhitelists()) {
                     if (!ProtectionUtils.isBlockWhitelistValid(bw)) {
                         DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
                     }
