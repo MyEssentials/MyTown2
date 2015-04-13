@@ -496,7 +496,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     @Override
     public List<BlockWhitelist> getWhitelists() {
-        return blockWhitelists;
+        return ImmutableList.copyOf(blockWhitelists);
     }
 
     /*

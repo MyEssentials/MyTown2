@@ -1,15 +1,10 @@
 package mytown.config;
 
-import mytown.MyTown;
-import mytown.core.utils.config.ConfigProcessor;
+import cpw.mods.fml.common.registry.GameRegistry;
 import mytown.core.utils.config.ConfigProperty;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Items;
-import cpw.mods.fml.common.registry.GameRegistry;
 
-import java.lang.reflect.Field;
-
-// TODO More config!
 public class Config {
     /* ----- General Config ----- */
 
@@ -23,9 +18,6 @@ public class Config {
 
     @ConfigProperty(category = "datasource", name = "Type", comment = "Datasource Type. Eg: MySQL, SQLite, etc.")
     public static String dbType = "SQLite";
-
-    /* ----- Formatter Config ----- */
-    // TODO Finish default formats (Colors, more fields, etc)
 
     /* ----- Others ----- */
     @ConfigProperty(category = "towns", name = "distance", comment = "Minimum distance (in chunks) between 2 towns. Checked when creating a town")
