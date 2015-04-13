@@ -206,11 +206,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     @Override
     public void addBlock(TownBlock block) {
         blocks.put(block.getKey(), block);
+
+        VisualsTickHandler.getInstance().updateTownBorders(this);
     }
 
     @Override
     public void removeBlock(TownBlock block) {
         blocks.remove(block.getKey());
+        VisualsTickHandler.getInstance().updateTownBorders(this);
     }
 
     @Override
@@ -280,7 +283,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     /* ----- IHasPlots ----- */
 
     private int maxPlots;
-    private boolean isShowingPlots = false;
 
     public void setMaxPlots(int maxPlots) {
         this.maxPlots = maxPlots;

@@ -27,6 +27,6 @@ public class PlayerObjectPair {
 
     @Override
     public int hashCode() {
-        return (int)(player.posX + player.posY + player.posZ);
+        return player.hashCode() * object.hashCode();
     }
 }
