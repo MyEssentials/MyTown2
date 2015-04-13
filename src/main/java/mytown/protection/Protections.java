@@ -115,6 +115,7 @@ public class Protections {
                     if (!ProtectionUtils.isBlockWhitelistValid(bw)) {
                         DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
                     }
+                    it.remove();
                 }
             tickerWhitelist = MinecraftServer.getServer().worldServers.length * tickerWhitelistStart;
         } else {
