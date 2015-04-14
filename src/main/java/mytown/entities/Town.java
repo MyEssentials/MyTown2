@@ -24,17 +24,30 @@ import java.util.*;
 public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, IHasBlockWhitelists, Comparable<Town> {
     private String name, oldName = null;
 
-    public Town(String name) {
-        setName(name);
-    }
+    private Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
+    private List<Rank> ranks = new ArrayList<Rank>();
+    private List<Flag> flags = new ArrayList<Flag>();
+    private List<BlockWhitelist> blockWhitelists = new ArrayList<BlockWhitelist>();
+    private List<Plot> plots = new ArrayList<Plot>();
+    protected Map<String, TownBlock> blocks = new Hashtable<String, TownBlock>();
 
-    public String getName() {
-        return name;
-    }
+    private Rank defaultRank = null;
+    protected int extraBlocks = 0;
+    protected int maxFarClaims = Config.maxFarClaims;
+    private int maxPlots;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    private int bankAmount = 0;
+    private int daysNotPaid = 0;
+
+    private Nation nation = null;
+    private Teleport spawn = null;
+
+    public void setMaxPlots(int maxPlots) { this.maxPlots = maxPlots; }
+    public int getMaxPlots() { return maxPlots; }
+    public Town(String name) { setName(name); }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getOldName() { return oldName; }
 
     /**
      * Renames this current Town setting oldName to the previous name. You MUST set oldName to null after saving it in the Datasource
@@ -44,10 +57,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         name = newName;
     }
 
-    public String getOldName() {
-        return oldName;
-    }
-
     /**
      * Resets the oldName to null. You MUST call this after a name change in the Datasource!
      */
@@ -55,34 +64,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         oldName = null;
     }
 
-
-    @Override
-    public String toString() {
-        return String.format("Town: {Name: %s}", name);
-    }
-
-    /**
-     * Returns the name that is currently used in the DB
-     */
-    public String getDBName() {
-        if (getOldName() == null)
-            return getName();
-        else
-            return getOldName();
-    }
-
     /* ----- IHasResidents ----- */
 
-    private Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
-
-    public void addResident(Resident res, Rank rank) {
-        residents.put(res, rank);
-    }
+    public void addResident(Resident res, Rank rank) { residents.put(res, rank); }
 
     @Override
-    public void addResident(Resident res) {
-        addResident(res, defaultRank);
-    }
+    public void addResident(Resident res) { addResident(res, defaultRank); }
 
     @Override
     public void removeResident(Resident res) {
@@ -96,9 +83,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public boolean hasResident(Resident res) {
-        return res != null && residents.containsKey(res);
-    }
+    public boolean hasResident(Resident res) { return res != null && residents.containsKey(res); }
 
     public boolean hasResident(String username) {
         for (Resident res : residents.keySet()) { // TODO Can this be made faster?
@@ -110,58 +95,31 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public ImmutableList<Resident> getResidents() {
-        return ImmutableList.copyOf(residents.keySet());
-    }
-
-    /**
-     * Returns the Rank the Resident is assigned to.
-     */
-    public Rank getResidentRank(Resident res) {
-        return residents.get(res);
-    }
-
-    /**
-     * Sets the given Residents Rank for this Town.
-     *
-     * @param res
-     * @param rank
-     */
+    public ImmutableList<Resident> getResidents() { return ImmutableList.copyOf(residents.keySet()); }
+    public Rank getResidentRank(Resident res) { return residents.get(res); }
     public void setResidentRank(Resident res, Rank rank) {
-        if (residents.containsKey(res)) { // So a Resident is not accidentally added by setting the Rank of a non-resident
+        if (residents.containsKey(res)) {
             residents.put(res, rank);
         }
     }
 
     /* ----- IHasRanks ----- */
 
-    private List<Rank> ranks = new ArrayList<Rank>();
-    private Rank defaultRank = null; // TODO Set default rank during creation?
 
     @Override
-    public void addRank(Rank rank) {
-        ranks.add(rank);
-    }
+    public void addRank(Rank rank) { ranks.add(rank); }
 
     @Override
-    public void removeRank(Rank rank) {
-        ranks.remove(rank);
-    }
+    public void removeRank(Rank rank) { ranks.remove(rank); }
 
     @Override
-    public void setDefaultRank(Rank rank) {
-        defaultRank = rank;
-    }
+    public void setDefaultRank(Rank rank) { defaultRank = rank; }
 
     @Override
-    public Rank getDefaultRank() {
-        return defaultRank;
-    }
+    public Rank getDefaultRank() { return defaultRank; }
 
     @Override
-    public boolean hasRank(Rank rank) {
-        return ranks.contains(rank);
-    }
+    public boolean hasRank(Rank rank) { return ranks.contains(rank); }
 
     @Override
     public boolean hasRankName(String rankName) {
@@ -191,17 +149,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return false;
     }
 
-
     @Override
     public ImmutableList<Rank> getRanks() {
         return ImmutableList.copyOf(ranks);
     }
 
     /* ----- IHasBlocks ----- */
-
-    protected Map<String, TownBlock> blocks = new Hashtable<String, TownBlock>();
-    protected int extraBlocks = 0;
-    protected int maxFarClaims = Config.maxFarClaims;
 
     @Override
     public void addBlock(TownBlock block) {
@@ -217,34 +170,23 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public boolean hasBlock(TownBlock block) {
-        return blocks.containsValue(block);
-    }
+    public boolean hasBlock(TownBlock block) { return blocks.containsValue(block); }
 
     @Override
-    public ImmutableList<TownBlock> getBlocks() {
-        return ImmutableList.copyOf(blocks.values());
-    }
+    public ImmutableList<TownBlock> getBlocks() { return ImmutableList.copyOf(blocks.values()); }
 
     @Override
-    public TownBlock getBlockAtCoords(int dim, int x, int z) {
-        return blocks.get(String.format(TownBlock.keyFormat, dim, x, z));
-    }
+    public TownBlock getBlockAtCoords(int dim, int x, int z) {  return blocks.get(String.format(TownBlock.keyFormat, dim, x, z)); }
 
     @Override
-    public int getExtraBlocks() {
-        return extraBlocks;
-    }
+    public int getExtraBlocks() { return extraBlocks; }
 
     @Override
-    public void setExtraBlocks(int extra) {
-        extraBlocks = extra < 0 ? 0 : extra;
-    }
+    public void setExtraBlocks(int extra) { extraBlocks = extra < 0 ? 0 : extra; }
 
     @Override
     public int getMaxBlocks() { // TODO Cache this stuff?
         int maxBlocks = Config.blocksMayor + (Config.blocksResident * (residents.size() - 1)) + extraBlocks;
-
         for (Resident res : getResidents()) {
             maxBlocks += res.getExtraBlocks();
         }
@@ -261,14 +203,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public int getMaxFarClaims() {
-        return maxFarClaims;
-    }
+    public int getMaxFarClaims() { return maxFarClaims; }
 
     @Override
-    public void setMaxFarClaims(int maxFarClaims) {
-        this.maxFarClaims = maxFarClaims;
-    }
+    public void setMaxFarClaims(int maxFarClaims) { this.maxFarClaims = maxFarClaims; }
 
     public void showBorders(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
@@ -282,18 +220,9 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /* ----- IHasPlots ----- */
 
-    private int maxPlots;
-
-    public void setMaxPlots(int maxPlots) {
-        this.maxPlots = maxPlots;
-    }
-
-    public int getMaxPlots() {
-        return maxPlots;
-    }
 
     /**
-     * Returns plots owned by the player
+     * Returns plots owned by the resident
      */
     public List<Plot> getPlotsOwned(Resident res) {
         List<Plot> list = new ArrayList<Plot>();
@@ -323,12 +252,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         return getAmountPlotsOwned(res) >= maxPlots && !residents.get(res).hasPermission("mytown.plot.unlimited");
     }
 
-    private List<Plot> plots = new ArrayList<Plot>();
-
     @Override
-    public void addPlot(Plot plot) {
-        plots.add(plot);
-    }
+    public void addPlot(Plot plot) { plots.add(plot); }
 
     @Override
     public void removePlot(Plot plot) {
@@ -344,14 +269,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public boolean hasPlot(Plot plot) {
-        return plots.contains(plot);
-    }
+    public boolean hasPlot(Plot plot) { return plots.contains(plot); }
 
     @Override
-    public ImmutableList<Plot> getPlots() {
-        return ImmutableList.copyOf(plots);
-    }
+    public ImmutableList<Plot> getPlots() { return ImmutableList.copyOf(plots); }
 
     @Override
     public Plot getPlotAtCoords(int dim, int x, int y, int z) {
@@ -369,7 +290,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         MyTown.instance.log.info("Ceil: " + Math.ceil(res.getPlayer().posX) + ", " + Math.ceil(res.getPlayer().posY) + ", " + Math.ceil(res.getPlayer().posZ));
         MyTown.instance.log.info("Pos: " + (int)res.getPlayer().posX + ", " + (int)res.getPlayer().posY + ", " + (int)res.getPlayer().posZ);
         */
-
         return getPlotAtCoords(res.getPlayer().dimension, (int) Math.floor(res.getPlayer().posX), (int) Math.floor(res.getPlayer().posY), (int) Math.floor(res.getPlayer().posZ));
     }
 
@@ -388,12 +308,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /* ----- IHasFlags ------ */
 
-    private List<Flag> flags = new ArrayList<Flag>();
-
     @Override
-    public void addFlag(Flag flag) {
-        flags.add(flag);
-    }
+    public void addFlag(Flag flag) { flags.add(flag); }
 
     @Override
     public boolean hasFlag(FlagType type) {
@@ -404,9 +320,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public ImmutableList<Flag> getFlags() {
-        return ImmutableList.copyOf(flags);
-    }
+    public ImmutableList<Flag> getFlags() { return ImmutableList.copyOf(flags); }
 
     @Override
     public Flag getFlag(FlagType type) {
@@ -447,12 +361,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /* ---- IHasBlockWhitelists ---- */
 
-    private List<BlockWhitelist> blockWhitelists = new ArrayList<BlockWhitelist>();
-
     @Override
-    public void addBlockWhitelist(BlockWhitelist bw) {
-        blockWhitelists.add(bw);
-    }
+    public void addBlockWhitelist(BlockWhitelist bw) { blockWhitelists.add(bw); }
 
     @Override
     public boolean hasBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
@@ -465,14 +375,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public boolean hasBlockWhitelist(BlockWhitelist bw) {
-        return blockWhitelists.contains(bw);
-    }
+    public boolean hasBlockWhitelist(BlockWhitelist bw) { return blockWhitelists.contains(bw); }
 
     @Override
-    public void removeBlockWhitelist(BlockWhitelist bw) {
-        blockWhitelists.remove(bw);
-    }
+    public void removeBlockWhitelist(BlockWhitelist bw) { blockWhitelists.remove(bw); }
 
     @Override
     public void removeBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
@@ -495,42 +401,15 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     }
 
     @Override
-    public List<BlockWhitelist> getWhitelists() {
-        return ImmutableList.copyOf(blockWhitelists);
-    }
-
-    /*
-    public boolean flagValueOfPossiblyWhitelisted(int dim, int x, int y, int z) {
-        if(!isPointInTown(dim, x >> 4, y >> 4)) {
-            return false;
-        } else {
-
-        }
-    }
-    */
-
+    public List<BlockWhitelist> getWhitelists() { return ImmutableList.copyOf(blockWhitelists); }
 
     /* ----- Nation ----- */
 
-    private Nation nation = null;
-
-    public Nation getNation() {
-        return nation;
-    }
-
-    public void setNation(Nation nation) {
-        this.nation = nation;
-    }
+    public Nation getNation() { return nation; }
+    public void setNation(Nation nation) { this.nation = nation; }
 
     /* ----- Spawn ----- */
 
-    private Teleport spawn = null;
-
-    /**
-     * Sends the Resident to the spawn
-     *
-     * @param res
-     */
     public void sendToSpawn(Resident res) {
         EntityPlayer pl = res.getPlayer();
         if (pl != null) {
@@ -539,26 +418,15 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         }
     }
 
-    public boolean hasSpawn() {
-        return spawn != null;
-    }
-
-    public Teleport getSpawn() {
-        return spawn;
-    }
-
-    public void setSpawn(Teleport spawn) {
-        this.spawn = spawn;
-    }
+    public boolean hasSpawn() { return spawn != null; }
+    public Teleport getSpawn() { return spawn; }
+    public void setSpawn(Teleport spawn) { this.spawn = spawn; }
 
     /* ----- Bank ----- */
 
-    private int bankAmount = 0;
-    private int daysNotPaid = 0;
 
-    public void setBankAmount(int amount) {
-        bankAmount = amount;
-    }
+
+    public void setBankAmount(int amount) { bankAmount = amount; }
     public int getBankAmount() { return this.bankAmount; }
 
     public boolean makePayment(int amount) {
@@ -592,16 +460,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     /**
      * Checks if the given block in non-chunk coordinates is in this Town
-     *
-     * @param dim
-     * @param x
-     * @param z
-     * @return
      */
-    public boolean isPointInTown(int dim, int x, int z) {
-        return isChunkInTown(dim, x >> 4, z >> 4);
-    }
-
+    public boolean isPointInTown(int dim, int x, int z) { return isChunkInTown(dim, x >> 4, z >> 4); }
     public boolean isChunkInTown(int dim, int cx, int cz) {
         return blocks.containsKey(String.format(TownBlock.keyFormat, dim, cx, cz));
     }
@@ -616,7 +476,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      * Notifies every resident in this town sending a message.
      */
     public void notifyEveryone(String message) {
-        // TODO: Check permission for if it should receive message
         for (Resident r : residents.keySet()) {
             r.sendMessage(message);
         }
