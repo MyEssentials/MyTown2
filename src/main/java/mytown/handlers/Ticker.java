@@ -291,7 +291,7 @@ public class Ticker {
                                                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.newOwner", plot.getName()));
                                                 ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
                                             } else {
-                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.failed", price, EconomyProxy.getEconomy().getCurrency(price)));
+                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.failed", EconomyProxy.getCurrency(price)));
                                             }
                                         } else {
                                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.getMaxPlots()));

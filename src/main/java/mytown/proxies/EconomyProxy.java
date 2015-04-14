@@ -27,4 +27,12 @@ public class EconomyProxy {
         }
         return true;
     }
+
+    public static String getCurrency(int amount) {
+        String currency = economy.getCurrency(amount);
+        if(Character.isDigit(currency.charAt(0)))
+            return currency;
+        else
+            return amount + " " + currency;
+    }
 }

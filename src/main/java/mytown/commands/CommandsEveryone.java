@@ -527,7 +527,7 @@ public class CommandsEveryone extends Commands {
         if(town instanceof AdminTown)
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
 
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", town.getBankAmount(), EconomyProxy.getEconomy().getCurrency(town.getBankAmount()), town.getNextPaymentAmount(), EconomyProxy.getEconomy().getCurrency(town.getNextPaymentAmount())));
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", EconomyProxy.getCurrency(town.getBankAmount()), EconomyProxy.getCurrency(town.getNextPaymentAmount())));
     }
 
     @CommandNode(

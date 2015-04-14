@@ -264,9 +264,9 @@ public abstract class Commands {
             return true;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
         if(!EconomyProxy.getEconomy().takeMoneyFromPlayer(player, amount)){
-            throw new MyTownCommandException("mytown.cmd.err.payment", amount, EconomyProxy.getEconomy().getCurrency(amount));
+            throw new MyTownCommandException("mytown.cmd.err.payment", EconomyProxy.getCurrency(amount));
         }
-        res.sendMessage(getLocal().getLocalization("mytown.notification.payment", amount, EconomyProxy.getEconomy().getCurrency(amount)));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.payment", EconomyProxy.getCurrency(amount)));
         return true;
     }
 
@@ -275,6 +275,6 @@ public abstract class Commands {
             return;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
         EconomyProxy.getEconomy().giveMoneyToPlayer(player, amount);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.refund", amount, EconomyProxy.getEconomy().getCurrency(amount)));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.refund", EconomyProxy.getCurrency(amount)));
     }
 }
