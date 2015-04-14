@@ -280,7 +280,7 @@ public class Ticker {
                                     if(!plot.hasOwner(res)) {
                                         if (town.canResidentMakePlot(res)) {
                                             int price = Integer.parseInt(te.signText[2].substring(2, te.signText[2].length()));
-                                            if (EconomyProxy.economy().takeMoneyFromPlayer(ev.entityPlayer, price)) {
+                                            if (EconomyProxy.getEconomy().takeMoneyFromPlayer(ev.entityPlayer, price)) {
                                                 for(Resident resInPlot : plot.getOwners()) {
                                                     resInPlot.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.oldOwner", plot.getName()));
                                                 }
@@ -291,7 +291,7 @@ public class Ticker {
                                                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.newOwner", plot.getName()));
                                                 ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
                                             } else {
-                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.failed", price, EconomyProxy.economy().getCurrency(price)));
+                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.failed", price, EconomyProxy.getEconomy().getCurrency(price)));
                                             }
                                         } else {
                                             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.getMaxPlots()));

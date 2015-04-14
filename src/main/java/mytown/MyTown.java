@@ -93,6 +93,7 @@ public class MyTown {
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
         checkConfig();
+        EconomyProxy.init();
         registerCommands();
         Commands.populateCompletionMap();
 
@@ -190,17 +191,27 @@ public class MyTown {
             MinecraftForge.EVENT_BUS.register(ExtraForgeHandlers.getInstance());
     }
 
+    public void loadConfigs() {
+        config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
+        ConfigProcessor.load(config, Config.class);
+
+        checkConfig();
+        EconomyProxy.init();
+
+        for (JSONConfig config : jsonConfigs) {
+            config.init();
+        }
+
+        JSONParser.start();
+    }
+
     /**
      * Checks the config to see if there are any wrong values.
      * Throws an exception if there is a problem.
      */
     public void checkConfig() {
         // Checking cost item
-        if(EconomyProxy.economy().checkCurrencyString(Config.costItemName)) {
-            if (EconomyProxy.economy().econManagerClass == null) {
-                throw new RuntimeException("No economy implementation found!");
-            }
-        } else {
+        if(EconomyProxy.isItemEconomy()) {
             String[] split = Config.costItemName.split(":");
             if (split.length < 2 || split.length > 3) {
                 throw new RuntimeException("Field costItem has an invalid value. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");

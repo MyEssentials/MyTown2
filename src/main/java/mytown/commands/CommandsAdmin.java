@@ -63,12 +63,9 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.config.reload",
             parentName = "mytown.adm.cmd.config",
             nonPlayers = true)
-    public static void configLoadCommand(ICommandSender sender, List<String> args) {
+    public static void configReloadCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.start"));
-        MyTown.instance.config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
-        ConfigProcessor.load(MyTown.instance.config, Config.class);
-        MyTown.instance.checkConfig();
-        JSONParser.start();
+        MyTown.instance.loadConfigs();
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.stop"));
     }
 
