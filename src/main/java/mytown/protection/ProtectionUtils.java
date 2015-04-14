@@ -118,7 +118,6 @@ public class ProtectionUtils {
      * Checks if the block whitelist is still valid
      */
     public static boolean isBlockWhitelistValid(BlockWhitelist bw) {
-        // TODO: Maybe make this better
         // Delete if the town is gone
         if (MyTownUtils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
             return false;

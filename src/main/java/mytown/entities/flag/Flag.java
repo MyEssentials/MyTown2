@@ -45,7 +45,6 @@ public class Flag<T> {
         else if (value instanceof Integer || value instanceof Boolean || value instanceof Float || value instanceof Character) {
             return String.valueOf(value);
         } else {
-            // TODO: not sure if this will fully work
             return value.toString();
         }
     }

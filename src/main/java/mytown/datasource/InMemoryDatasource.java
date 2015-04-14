@@ -218,7 +218,6 @@ public class InMemoryDatasource extends MyTownDatasource {
 
 
     /*
-    FIXME: This is partially borken
 
     @Override
     public boolean saveNation(Nation nation) {

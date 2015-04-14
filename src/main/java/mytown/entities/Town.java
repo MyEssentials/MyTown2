@@ -14,8 +14,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.*;
 
-// TODO Implement TownType
-
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
  *
@@ -86,7 +84,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public boolean hasResident(Resident res) { return res != null && residents.containsKey(res); }
 
     public boolean hasResident(String username) {
-        for (Resident res : residents.keySet()) { // TODO Can this be made faster?
+        for (Resident res : residents.keySet()) {
             if (res.getPlayerName().equals(username)) {
                 return true;
             }
@@ -518,7 +516,6 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
         if (getValue(flagType).equals(denialValue) && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && !(getMayor() == res)))) {
-            //TODO: Check for permission
             return Utils.isOp(res.getPlayer());
         }
         return true;

@@ -169,7 +169,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 } else {
                     town = new Town(rs.getString("name"));
                 }
-                // TODO: Maybe spawn is not needed when town is an admintown?
                 town.setSpawn(new Teleport(rs.getInt("spawnDim"), rs.getFloat("spawnX"), rs.getFloat("spawnY"), rs.getFloat("spawnZ"), rs.getFloat("cameraYaw"), rs.getFloat("cameraPitch")));
                 town.setExtraBlocks(rs.getInt("extraBlocks"));
                 town.setMaxPlots(rs.getInt("maxPlots"));
@@ -308,7 +307,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 Town town = MyTownUniverse.getInstance().getTown(rs.getString("townName"));
                 if (town == null) {
                     log.error("Failed to load Plot (%s) due to missing Town (%s)", rs.getString("name"), rs.getString("townName"));
-                    continue; // TODO Should I just return out?
+                    continue;
                 }
                 Plot plot = new Plot(rs.getString("name"), town, rs.getInt("dim"), rs.getInt("x1"), rs.getInt("y1"), rs.getInt("z1"), rs.getInt("x2"), rs.getInt("y2"), rs.getInt("z2"));
                 plot.setDb_ID(rs.getInt("ID"));
@@ -1713,7 +1712,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     /**
      * Setup all the updates
      */
-    protected void setupUpdates() { // TODO Move these into a XML/JSON file?
+    protected void setupUpdates() {
         updates.add(new DBUpdate("07.25.2014.1", "Add Updates Table", "CREATE TABLE IF NOT EXISTS " + prefix + "Updates (" +
                 "id VARCHAR(20) NOT NULL," +
                 "description VARCHAR(50) NOT NULL," +

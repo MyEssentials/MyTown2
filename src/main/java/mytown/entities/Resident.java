@@ -498,8 +498,6 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     }
 
     public Plot makePlotFromSelection(String plotName) {
-        // TODO: Check everything separately or throw exceptions?
-
         if (!secondSelectionActive || !firstSelectionActive) {
             sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notSelected"));
             resetSelection(true);

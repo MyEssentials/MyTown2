@@ -129,7 +129,6 @@ public class CommandsAdmin extends Commands {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.newtown");
 
-        //TODO: make adminTown work properly
         Resident res = getDatasource().getOrMakeResident(sender);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
 
@@ -582,7 +581,7 @@ public class CommandsAdmin extends Commands {
             }
             TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, 0, town);
             if (block == null)
-                throw new MyTownCommandException("Failed to create Block"); // TODO Localize
+                throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.claim.failed"));
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {

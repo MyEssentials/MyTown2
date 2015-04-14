@@ -82,7 +82,7 @@ public abstract class MyTownDatasource {
 
         // Saving town to database
         if (!saveTown(town))
-            throw new CommandException("Failed to save Town"); // TODO Localize!
+            throw new CommandException("Failed to save Town");
 
 
         //Claiming first block
@@ -196,7 +196,7 @@ public abstract class MyTownDatasource {
      *
      * @return If successfully loaded
      */
-    public boolean loadAll() { // TODO Change load order?
+    public boolean loadAll() {
         return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites() && loadBlockOwners() && loadTownBanks();
     }
 

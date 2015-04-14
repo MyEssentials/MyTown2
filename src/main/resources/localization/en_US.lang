@@ -159,7 +159,7 @@ mytown.cmd.err.perm.valueNotValid=&cInvalid value!
 
 # /t promote
 mytown.cmd.usage.promote=&3/t promote <resident> <rank>
-mytown.cmd.err.promote.notMayor=&cYou cannot promote anyone to mayor. &3Try /t pass <newmayor>
+mytown.cmd.err.promote.notMayor=&cYou cannot promote anyone to mayor. &3Try /t pass <newMayor>
 mytown.cmd.promote.success.sender=&3%s has been &apromoted&3 to rank &f%s!
 mytown.cmd.promote.success.target=&aYou have been promoted to rank %s!
 

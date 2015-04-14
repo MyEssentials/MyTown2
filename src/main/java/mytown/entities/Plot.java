@@ -1,7 +1,5 @@
 package mytown.entities;
 
-// TODO Implement PlotType
-
 import com.google.common.collect.ImmutableList;
 import mytown.api.interfaces.IHasFlags;
 import mytown.api.interfaces.IHasResidents;

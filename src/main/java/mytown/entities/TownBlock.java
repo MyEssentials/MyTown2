@@ -82,7 +82,7 @@ public class TownBlock implements IHasPlots {
 
     @Override
     public void addPlot(Plot plot) {
-        if (x >= plot.getStartChunkX() && x <= plot.getEndChunkX() && z >= plot.getStartChunkZ() && z <= plot.getEndChunkZ()) { // TODO Not really sure if this will work. Need to test!
+        if (x >= plot.getStartChunkX() && x <= plot.getEndChunkX() && z >= plot.getStartChunkZ() && z <= plot.getEndChunkZ()) {
             plots.add(plot);
         }
     }

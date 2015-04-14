@@ -223,8 +223,6 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion", "rankCompletion"})
     public static void promoteCommand(ICommandSender sender, List<String> args) {
-
-        // /t promote <user> <rank>
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.cmd.usage.promote");
         Resident resSender = getDatasource().getOrMakeResident(sender);
@@ -234,8 +232,7 @@ public class CommandsAssistant extends Commands {
         if (!resTarget.getTowns().contains(town))
             throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", args.get(0), town.getName());
 
-        //TODO: implement this properly
-        if (args.get(1).equalsIgnoreCase("mayor"))
+        if (args.get(1).equalsIgnoreCase(Rank.theMayorDefaultRank))
             throw new MyTownCommandException("mytown.cmd.err.promote.notMayor");
         Rank rank = getRankFromTown(town, args.get(1));
         if (getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
@@ -266,7 +263,7 @@ public class CommandsAssistant extends Commands {
 
 
             Rank rank = new Rank(args.get(0), town.getRank(args.get(1)).getPermissions(), town);
-            getDatasource().saveRank(rank, false); // TODO: Set default properly?
+            getDatasource().saveRank(rank, false);
             res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(0), town.getName()));
         }
 
