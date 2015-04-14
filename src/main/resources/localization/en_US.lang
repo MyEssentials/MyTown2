@@ -185,6 +185,9 @@ mytown.cmd.usage.bank.pay=&3/t pay <amount>
 # /t ranks
 mytown.notification.town.ranks=Ranks: %s
 
+# /t rename
+mytown.cmd.usage.rename=&3/t rename <newName>
+
 # /ta new
 mytown.notification.admtown.created=&aAdmin town %s created!
 
@@ -239,6 +242,9 @@ mytown.adm.cmd.usage.plot.show=&3/ta plot show <townName>
 mytown.adm.cmd.usage.borders.show=&3/ta borders show <townName>
 mytown.notification.town.borders.show=&3Showing borders of town %s. Use /t borders hide to hide them.
 mytown.notification.town.borders.hide=&aBorders have been successfully hidden!
+
+# /ta rename
+mytown.adm.cmd.usage.rename=&3/ta rename <townName> <newName>
 
 # Notifications
 
@@ -305,6 +311,7 @@ mytown.notification.plot.buy.failed=&cYou don't have %s!
 mytown.notification.plot.buy.newOwner=&aYou have successfully bought plot %s!
 mytown.notification.plot.buy.oldOwner=&aThe plot %s has been successfully sold!
 mytown.notification.plot.sell.start=&3Right click on a plot with the tool given to put the plot on sale.
+mytown.notification.town.renamed=&3Town has been renamed!
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)
@@ -377,10 +384,11 @@ mytown.cmd.everyone.blocks.help=&2Shows information about the blocks claimed.
 mytown.cmd.everyone.plot.sell.help=&2Puts plots to sale.
 mytown.cmd.everyone.plot.remove.help=&2Remove members or owners from the plot.
 mytown.cmd.mayor.leave.delete.help=&2Deletes the town.
+mytown.cmd.assistant.rename.help=&2Renames the town.
+
 
 mytown.adm.cmd.config.help=&9Everything about the configs.
-mytown.adm.cmd.config.load.help=&9Reloads the config.
-mytown.adm.cmd.config.save.help=&9Saves the config.
+mytown.adm.cmd.config.reload.help=&9Reloads the config.
 mytown.adm.cmd.add.help=&9Adds a player to a specified town with the specified rank.
 mytown.adm.cmd.delete.help=&9Deletes a town.
 mytown.adm.cmd.new.help=&9Creates an AdminTown.

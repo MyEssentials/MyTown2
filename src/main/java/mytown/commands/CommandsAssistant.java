@@ -3,6 +3,7 @@ package mytown.commands;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.ChatUtils;
+import mytown.core.Localization;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.Rank;
@@ -484,7 +485,7 @@ public class CommandsAssistant extends Commands {
         }
     }
 
-    /*
+
     @CommandNode(
             name = "rename",
             permission = "mytown.cmd.assistant.rename",
@@ -496,10 +497,14 @@ public class CommandsAssistant extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        town.setName(args.get(0));
+        if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
+            throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
+
+        town.rename(args.get(0));
         getDatasource().saveTown(town);
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.renamed"));
     }
-    */
+
 
 
     // Temporary here, might integrate in the methods

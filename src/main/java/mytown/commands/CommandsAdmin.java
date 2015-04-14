@@ -748,4 +748,22 @@ public class CommandsAdmin extends Commands {
             sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
         }
     }
+
+    @CommandNode(
+            name = "rename",
+            permission = "mytown.adm.cmd.rename",
+            parentName = "mytown.adm.cmd")
+    public static void renameCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2)
+            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.rename");
+
+        Town town = getTownFromName(args.get(0));
+
+        if (getDatasource().hasTown(args.get(1))) // Is the town name already in use?
+            throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(1));
+
+        town.rename(args.get(1));
+        getDatasource().saveTown(town);
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.renamed"));
+    }
 }

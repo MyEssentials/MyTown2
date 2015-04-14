@@ -114,7 +114,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public final boolean removeTown(Town town) {
-        towns.remove(town.getName());
+        towns.remove(town.getOldName() != null ? town.getOldName() : town.getName());
         CommandManager.completionMap.get("townCompletionAndAll").remove(town.getName());
         CommandManager.completionMap.get("townCompletion").remove(town.getName());
         return true;
