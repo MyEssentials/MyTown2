@@ -1027,11 +1027,9 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
             s.setString(2, res2.getUUID().toString());
             s.executeUpdate();
 
-            /*
-            Adding them BEFORE saving, only when a friend request is accepted
             res1.addFriend(res2);
             res2.addFriend(res1);
-            */
+
         } catch (SQLException e) {
             log.error("Failed to save friend link between " + res1.getPlayerName() + " and " + res2.getPlayerName());
             return false;
@@ -1476,9 +1474,11 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @Override
     public boolean deleteFriendLink(Resident res1, Resident res2) {
         try {
-            PreparedStatement s = prepare("DELETE FROM " + prefix + "Friends WHERE resident1=? AND resident2=?", true);
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "Friends WHERE resident1=? AND resident2=? OR resident1=? AND resident2=?", true);
             s.setString(1, res1.getUUID().toString());
             s.setString(2, res2.getUUID().toString());
+            s.setString(3, res2.getUUID().toString());
+            s.setString(4, res1.getUUID().toString());
             s.executeUpdate();
         } catch (SQLException e) {
             log.error("Failed to delete link between " + res1.getPlayerName() + " and " + res2.getPlayerName());
@@ -1488,7 +1488,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean deleteFriendRequest(Resident res1, Resident res2, boolean response) {
+    public boolean deleteFriendRequest(Resident res1, Resident res2) {
         try {
             if (res2.hasFriendRequest(res1)) {
                 PreparedStatement s = prepare("DELETE FROM " + prefix + "FriendRequests WHERE resident=? AND residentTarget=?", true);
@@ -1496,9 +1496,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
                 s.setString(2, res2.getUUID().toString());
                 s.executeUpdate();
 
-                if (response)
-                    saveFriendLink(res1, res2);
-                res2.verifyFriendRequest(res1, response);
+                res2.removeFriendRequest(res1);
             } else {
                 return false;
             }

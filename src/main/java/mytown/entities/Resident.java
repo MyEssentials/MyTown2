@@ -374,12 +374,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         return friendRequests.add(res);
     }
 
-    public void verifyFriendRequest(Resident res, boolean response) {
-        if (response) {
-            friends.add(res);
-            res.addFriend(this);
-        }
-        friendRequests.remove(res);
+    public boolean removeFriendRequest(Resident res) {
+        return friendRequests.remove(res);
     }
 
     public boolean hasFriendRequest(Resident res) {

@@ -375,7 +375,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean deleteFriendRequest(Resident res1, Resident res2, boolean response) {
+    public boolean deleteFriendRequest(Resident res1, Resident res2) {
         return false;
     }
 

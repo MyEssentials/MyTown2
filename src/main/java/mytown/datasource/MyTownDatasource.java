@@ -336,7 +336,7 @@ public abstract class MyTownDatasource {
 
     public abstract boolean deleteFriendLink(Resident res1, Resident res2);
 
-    public abstract boolean deleteFriendRequest(Resident res1, Resident res2, boolean response);
+    public abstract boolean deleteFriendRequest(Resident res1, Resident res2);
 
     /**
      * Deletes a town invite with the response to whether they should be added to town or not

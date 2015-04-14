@@ -223,9 +223,10 @@ public class CommandsOutsider extends Commands {
         Resident toAdd = getResidentFromName(args.get(0));
         if (res == toAdd)
             throw new MyTownCommandException("mytown.cmd.err.friends.add.self");
-        if (!getDatasource().saveFriendRequest(res, toAdd)) {
+        if(res.hasFriendRequest(toAdd))
             throw new MyTownCommandException("mytown.cmd.err.friends.add.already");
-        }
+
+        getDatasource().saveFriendRequest(res, toAdd);
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.invitationSent"));
         toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotInvitation", res.getPlayerName()));
     }
@@ -239,14 +240,15 @@ public class CommandsOutsider extends Commands {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.friends.remove");
         Resident res = getDatasource().getOrMakeResident(sender);
-        Resident toAdd = getResidentFromName(args.get(0));
-        if (!toAdd.removeFriend(res)) {
+        Resident toRemove = getResidentFromName(args.get(0));
+        if (!toRemove.removeFriend(res)) {
             throw new MyTownCommandException("mytown.cmd.err.friends.remove");
         } else {
-            res.removeFriend(toAdd);
+            res.removeFriend(toRemove);
         }
+        getDatasource().deleteFriendLink(res, toRemove);
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.removed"));
-        toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotRemoved", res.getPlayerName()));
+        toRemove.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotRemoved", res.getPlayerName()));
     }
 
     @CommandNode(
@@ -260,9 +262,10 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
 
-        getDatasource().deleteFriendRequest(res, toAdd, true);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.friends.accepted", toAdd.getPlayerName()));
-        toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotAccepted", res.getPlayerName()));
+        getDatasource().deleteFriendRequest(toAdd, res);
+        getDatasource().saveFriendLink(res, toAdd);
+        toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.accepted", res.getPlayerName()));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotAccepted", toAdd.getPlayerName()));
     }
 
     @CommandNode(
@@ -276,7 +279,7 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
 
-        getDatasource().deleteFriendRequest(res, toAdd, false);
+        getDatasource().deleteFriendRequest(toAdd, res);
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.refused", toAdd.getPlayerName()));
         toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotRefused", res.getPlayerName()));
     }
