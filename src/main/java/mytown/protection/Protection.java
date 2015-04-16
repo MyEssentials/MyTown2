@@ -138,7 +138,7 @@ public class Protection {
                     TownBlock block;
                     Resident owner = segment.getOwner(entity);
                     if(range == 0) {
-                        block = getDatasource().getBlock(entity.dimension, ((int)Math.floor(entity.posX)) >> 4, ((int)Math.floor(entity.posZ)) >> 4);
+                        block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                         if(block == null) {
                             if(owner == null) {
                                 if (Wild.getInstance().getValue(segment.flag).equals(segment.denialValue))
@@ -149,15 +149,15 @@ public class Protection {
                             }
                         } else {
                             if(owner == null) {
-                                if (block.getTown().getValueAtCoords(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ, segment.flag).equals(segment.denialValue))
+                                if (block.getTown().getValueAtCoords(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ), segment.flag).equals(segment.denialValue))
                                     return true;
                             } else {
-                                if(!block.getTown().checkPermission(owner, segment.flag, segment.denialValue, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ))
+                                if(!block.getTown().checkPermission(owner, segment.flag, segment.denialValue, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))
                                     return true;
                             }
                         }
                     } else {
-                        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) (entity.posX - range), (int) (entity.posZ - range), (int) (entity.posX + range), (int) (entity.posZ + range));
+                        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
                         // Just so that it doesn't check more than once for Wild permissions
                         boolean inWild = false;
                         for (ChunkPos chunk : chunks) {
@@ -258,15 +258,15 @@ public class Protection {
         for(Iterator<SegmentEntity> it = segmentsEntities.iterator(); it.hasNext();) {
             SegmentEntity segment = it.next();
             if(segment.type == EntityType.protect && segment.theClass.isAssignableFrom(entity.getClass())) {
-                TownBlock block = getDatasource().getBlock(entity.dimension, (int) entity.posX >> 4, (int) entity.posZ >> 4);
+                TownBlock block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                 if(block == null) {
                     if(!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
                         res.sendMessage(FlagType.protectedEntities.getLocalizedProtectionDenial());
                         return true;
                     }
                 } else {
-                    if(!block.getTown().checkPermission(res, segment.flag, segment.denialValue, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
-                        res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, ((int) entity.posX), ((int) entity.posY), ((int) entity.posZ)))));
+                    if(!block.getTown().checkPermission(res, segment.flag, segment.denialValue, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
+                        res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
                         return true;
                     }
                 }
@@ -284,20 +284,20 @@ public class Protection {
                         int range = segment.getRange(item);
                         TownBlock block;
                         if(range == 0) {
-                            block = getDatasource().getBlock(entity.dimension, ((int)entity.posX) >> 4, ((int)entity.posZ) >> 4);
+                            block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                             if(block == null) {
                                 if (!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
                                     res.sendMessage(segment.flag.getLocalizedProtectionDenial());
                                     return true;
                                 }
                             } else {
-                                if (!block.getTown().checkPermission(res, segment.flag, segment.denialValue, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
-                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ))));
+                                if (!block.getTown().checkPermission(res, segment.flag, segment.denialValue, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
+                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
                                     return true;
                                 }
                             }
                         } else {
-                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) entity.posX - range, (int) entity.posZ - range, (int) entity.posX + range, (int) entity.posZ + range);
+                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
                             boolean inWild = false;
                             for (ChunkPos chunk : chunks) {
                                 block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
@@ -343,20 +343,20 @@ public class Protection {
                         int range = segment.getRange(item);
                         TownBlock block;
                         if(range == 0) {
-                            block = getDatasource().getBlock(entity.dimension, ((int)entity.posX) >> 4, ((int)entity.posZ) >> 4);
+                            block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                             if(block == null) {
                                 if (!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
                                     res.sendMessage(segment.flag.getLocalizedProtectionDenial());
                                     return true;
                                 }
                             } else {
-                                if (!block.getTown().checkPermission(res, segment.flag, segment.denialValue, entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ)) {
-                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int)entity.posX, (int)entity.posY, (int)entity.posZ))));
+                                if (!block.getTown().checkPermission(res, segment.flag, segment.denialValue, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
+                                    res.protectionDenial(segment.flag.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
                                     return true;
                                 }
                             }
                         } else {
-                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) entity.posX - range, (int) entity.posZ - range, (int) entity.posX + range, (int) entity.posZ + range);
+                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
                             boolean inWild = false;
                             for (ChunkPos chunk : chunks) {
                                 block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
