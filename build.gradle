@@ -45,6 +45,9 @@ repositories {
 
 // Load Configs
 
+apply plugin: "curseforge"
+apply plugin: "forge"
+
 ext.configFile = file "build.properties"
 
 ext.configFile.withReader {
@@ -61,8 +64,7 @@ if (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty()) {
     ext.config.build_type = "r"
 }
 
-apply plugin: "curseforge"
-apply plugin: "forge"
+
 
 // Configure Everything
 
@@ -88,11 +90,7 @@ dependencies {
     // Mod Deps
     compile project(":MyEssentials-Core")
 	compile 'com.mod-buildcraft:buildcraft:6.1.8:dev'
-	
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
-    
-	//compile 'appeng:appliedenergistics2:rv1-beta-37:dev'
-	//compile 'Azanor:Thaumcraft:1.7.10-4.2.0.1'
 }
 
 // Process Resources, injecting version numbers in

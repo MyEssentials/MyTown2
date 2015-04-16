@@ -27,6 +27,6 @@ public class PlayerObjectPair {
 
     @Override
     public int hashCode() {
-        return player.hashCode() * object.hashCode();
+        return object == null ? player.hashCode() : player.hashCode() * object.hashCode();
     }
 }
