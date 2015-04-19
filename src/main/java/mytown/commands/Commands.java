@@ -203,7 +203,12 @@ public abstract class Commands {
     }
 
     public static Flag getFlagFromName(IHasFlags hasFlags, String name) {
-        Flag flag = hasFlags.getFlag(FlagType.valueOf(name));
+        Flag flag = null;
+        try {
+            flag = hasFlags.getFlag(FlagType.valueOf(name));
+        } catch (IllegalArgumentException ex) {
+            throw new MyTownCommandException("mytown.cmd.err.flagNotExists", name);
+        }
         if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", name);
         return flag;
