@@ -12,6 +12,7 @@ import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.SegmentEntity;
+import mytown.protection.thread.ThreadPlacementCheck;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.BlockPos;

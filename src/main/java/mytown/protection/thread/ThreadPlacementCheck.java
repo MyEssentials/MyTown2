@@ -1,6 +1,7 @@
-package mytown.protection;
+package mytown.protection.thread;
 
 import mytown.entities.Resident;
+import mytown.protection.ProtectionUtils;
 import mytown.util.BlockPos;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
