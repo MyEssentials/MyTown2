@@ -497,7 +497,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue, int dim, int x, int y, int z) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
-        if (plot == null) {
+        if (plot == null || flagType.isTownOnly()) {
             if(getValue(flagType).equals(denialValue)) {
                 if (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean) getValue(FlagType.restrictedTownPerms) && !(getMayor() == res))) {
                     return Utils.isOp(res.getPlayer());
