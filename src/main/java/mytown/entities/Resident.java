@@ -22,6 +22,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.ArrayList;
@@ -420,6 +421,30 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     public void knockbackPlayer() {
         if(this.player != null) {
             player.setPositionAndUpdate(player.lastTickPosX, player.lastTickPosY, player.lastTickPosZ);
+        }
+    }
+
+    /**
+     * Moves the player to the nearest place (in the positive X direction) in which it has permission to enter.
+     */
+    public void knockbackPlayerToBorder(Town town) {
+        if(this.player != null) {
+            int x = (int) Math.floor(player.posX);
+            int y = (int) Math.floor(player.posY);
+            int z = (int) Math.floor(player.posZ);
+            boolean ok = false;
+            while(!ok) {
+                while (!town.checkPermission(this, FlagType.enter, false, player.dimension, x, y, z) && town.isPointInTown(player.dimension, x, z))
+                    x++;
+                x += 3;
+
+                while(player.worldObj.getBlock(x, y, z) != Blocks.air && player.worldObj.getBlock(x, y + 1, z) != Blocks.air && y < 256)
+                    y++;
+
+                if(town.checkPermission(this, FlagType.enter, false, player.dimension, x, y, z) || !town.isPointInTown(player.dimension, x, z))
+                    ok = true;
+            }
+            player.setPositionAndUpdate(x, y, z);
         }
     }
 

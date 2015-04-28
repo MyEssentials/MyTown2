@@ -51,6 +51,7 @@ public class Protections {
 
     public Map<TileEntity, Boolean> checkedTileEntities = new HashMap<TileEntity, Boolean>();
     public Map<Entity, Boolean> checkedEntities = new HashMap<Entity, Boolean>();
+    public Map<Resident, Integer> movedResidents = new HashMap<Resident, Integer>();
 
     public Map<TileEntity, Resident> ownedTileEntities = new HashMap<TileEntity, Resident>();
     public int activePlacementThreads = 0;
@@ -90,9 +91,11 @@ public class Protections {
     public void tick(TickEvent.WorldTickEvent ev) {
         if (ev.side == Side.CLIENT)
             return;
+        if(ev.phase == TickEvent.Phase.END)
+            return;
+
         // Map updates
         if (tickerMap == 0) {
-
             for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
                 checkedEntities.put(entry.getKey(), false);
             }
@@ -130,12 +133,23 @@ public class Protections {
 
             if (entity instanceof EntityPlayer && !(entity instanceof FakePlayer)) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
-
+                if(movedResidents.get(res) == null)
+                    movedResidents.put(res, 0);
+                int amountMoved = movedResidents.get(res);
                 if (town != null && !town.checkPermission(res, FlagType.enter, false, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
                     res.protectionDenial(FlagType.enter.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
                     res.knockbackPlayer();
+                    if(amountMoved > 250) {
+                        //res.knockbackPlayerToBorder(town);
+                        movedResidents.put(res, 0);
+                    } else {
+
+                    }
+                    movedResidents.put(res, amountMoved + 1);
+                } else {
+                    movedResidents.put(res, 0);
                 }
-                
+
             } else {
                 // Other entity checks
                 for (Protection prot : protections) {
