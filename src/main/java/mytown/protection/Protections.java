@@ -331,7 +331,7 @@ public class Protections {
     }
 
     @SuppressWarnings("unchecked")
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent ev) {
         if (ev.entityPlayer.worldObj.isRemote)
             return;
@@ -379,6 +379,7 @@ public class Protections {
 
         // Item usage check here
         if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
+            MyTown.instance.log.info("Started check for: " + currentStack.getDisplayName());
             for (Protection protection : protections) {
                 if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
                         ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && protection.checkItem(currentStack, res)) {

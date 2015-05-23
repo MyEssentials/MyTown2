@@ -194,9 +194,11 @@ public class Protection {
      * Checking item usage for right click on block
      */
     public boolean checkItem(ItemStack item, Resident res, BlockPos bp, int face) {
+
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
             if(segment.type == ItemType.rightClickBlock && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+                MyTown.instance.log.info("Checking usage for: " + item.getDisplayName());
                 if(segment.onAdjacent) {
                     ForgeDirection dir = ForgeDirection.getOrientation(face);
                     bp = new BlockPos(bp.x + dir.offsetX, bp.y + dir.offsetY, bp.z + dir.offsetZ, bp.dim);
