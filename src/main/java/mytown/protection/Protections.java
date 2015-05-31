@@ -8,6 +8,7 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.config.Config;
+import mytown.core.utils.PlayerUtils;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
@@ -23,6 +24,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -142,8 +144,6 @@ public class Protections {
             tickerWhitelist--;
         }
 
-
-
         // Entity check
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
@@ -151,11 +151,20 @@ public class Protections {
 
             Town town = MyTownUtils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
             //MyTown.instance.log.info("Checking player...");
-            if (entity instanceof EntityPlayer && !(entity instanceof FakePlayer)) {
+            if (entity instanceof EntityPlayerMP && !(entity instanceof FakePlayer)) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
                 if (town != null && !town.checkPermission(res, FlagType.enter, false, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
                     res.protectionDenial(FlagType.enter.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
-                    res.knockbackPlayer();
+                    EntityPos lastTickPos = lastTickPlayerPos.get(entity);
+                    if(lastTickPos == null)
+                        res.knockbackPlayerToBorder(town);
+                    else
+                        if(lastTickPos.x != entity.posX && lastTickPos.y != entity.posY && lastTickPos.z != entity.posZ && lastTickPos.dim != entity.dimension) {
+                            PlayerUtils.teleport((EntityPlayerMP) entity, lastTickPos.dim, lastTickPos.x, lastTickPos.y, lastTickPos.z);
+                            MyTown.instance.log.info("Teleporting");
+                        }
+                        else
+                            res.knockbackPlayerToBorder(town);
                 }
                 lastTickPlayerPos.put((EntityPlayer)entity, new EntityPos(entity.posX, entity.posY, entity.posZ, entity.dimension));
             } else {
