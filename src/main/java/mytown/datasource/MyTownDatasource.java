@@ -194,7 +194,11 @@ public abstract class MyTownDatasource {
      * @return If successfully loaded
      */
     public boolean loadAll() {
-        return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() && loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() && loadBlockWhitelists() && loadSelectedTowns() && loadFriends() && loadFriendRequests() && loadTownInvites() && loadBlockOwners() && loadTownBanks();
+        return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() &&
+                loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() &&
+                loadBlockWhitelists() && loadSelectedTowns() && loadFriends() &&
+                loadFriendRequests() && loadTownInvites() && loadBlockOwners() && loadTownBanks() &&
+                loadRankPermissions() && loadResidentsToTowns() && loadTownsToNations() && loadResidentsToPlots();
     }
 
     /**
@@ -231,6 +235,15 @@ public abstract class MyTownDatasource {
     protected abstract boolean loadBlockOwners();
 
     protected abstract boolean loadTownBanks();
+
+    protected abstract boolean loadRankPermissions();
+
+    protected abstract boolean loadResidentsToTowns();
+
+    protected abstract boolean loadTownsToNations();
+
+    protected abstract boolean loadResidentsToPlots();
+
 
     /* ----- Save ----- */
 

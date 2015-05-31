@@ -120,11 +120,6 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     /* ----- Read ----- */
 
     @Override
-    public boolean loadAll() {
-        return super.loadAll() && loadRankPermissions() && loadResidentsToTowns() && loadTownsToNations() && loadResidentsToPlots();
-    }
-
-    @Override
     protected boolean loadWorlds() {
         try {
             PreparedStatement s = prepare("SELECT * FROM " + prefix + "Worlds", true);
