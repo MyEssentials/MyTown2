@@ -5,9 +5,6 @@ import cpw.mods.fml.common.eventhandler.Event;
 import mytown.entities.TownBlock;
 import net.minecraftforge.common.MinecraftForge;
 
-/**
- * @author Joe Goett
- */
 public class TownBlockEvent extends Event {
     public TownBlock block = null;
 

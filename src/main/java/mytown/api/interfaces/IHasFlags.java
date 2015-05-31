@@ -5,7 +5,6 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 
 /**
- * Created by AfterWind on 8/26/2014.
  * Represents an object that can hold Flags
  */
 public interface IHasFlags {

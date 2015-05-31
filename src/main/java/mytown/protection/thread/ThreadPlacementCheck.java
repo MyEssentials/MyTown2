@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 /**
- * Created by AfterWind on 3/22/2015.
  * A thread which checks if there's TileEntity on given block.
  * If there isn't found one in 1 second it exits.
  */

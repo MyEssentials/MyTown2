@@ -14,9 +14,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Joe Goett
- */
 public class Formatter {
     private static final DateFormat dateFormatter = DateFormat.getDateTimeInstance(0, 0);
 

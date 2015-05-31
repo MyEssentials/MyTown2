@@ -3,7 +3,6 @@ package mytown.handlers;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 /**
- * Created by AfterWind on 4/12/2015.
  * Map which holds two keys.
  */
 public class PlayerObjectPair {

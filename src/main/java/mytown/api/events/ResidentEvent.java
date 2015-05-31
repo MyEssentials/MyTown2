@@ -5,9 +5,6 @@ import cpw.mods.fml.common.eventhandler.Event;
 import mytown.entities.Resident;
 import net.minecraftforge.common.MinecraftForge;
 
-/**
- * @author Joe Goett
- */
 public class ResidentEvent extends Event {
     public Resident resident = null;
 

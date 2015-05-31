@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by AfterWind on 10/2/2014.
  * Wilderness flags
  */
 public class WildPermsConfig extends JSONConfig<Flag> {

@@ -5,9 +5,6 @@ import cpw.mods.fml.common.eventhandler.Event;
 import mytown.entities.Plot;
 import net.minecraftforge.common.MinecraftForge;
 
-/**
- * @author Joe Goett
- */
 public class PlotEvent extends Event {
     public Plot plot = null;
 

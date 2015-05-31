@@ -1,8 +1,7 @@
 package mytown.util;
 
 /**
- * Created by AfterWind on 9/15/2014.
- * Class which stores information about a chunk
+ * Helper class for storing position of a chunk
  */
 public class ChunkPos {
     private final int x;

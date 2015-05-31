@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by AfterWind on 1/1/2015.
  * JSON Parser used to parse protection files.
  */
 public class JSONParser {

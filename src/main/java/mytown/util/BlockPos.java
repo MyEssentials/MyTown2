@@ -1,7 +1,6 @@
 package mytown.util;
 
 /**
- * Created by AfterWind on 9/20/2014.
  * Helper class for storing position of a block
  */
 public class BlockPos {

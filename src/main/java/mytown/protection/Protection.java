@@ -32,7 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by AfterWind on 1/1/2015.
  * An object which offers protection for a specific mod and version
  */
 public class Protection {

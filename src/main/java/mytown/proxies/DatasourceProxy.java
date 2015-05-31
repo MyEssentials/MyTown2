@@ -13,9 +13,6 @@ import net.minecraftforge.common.config.Configuration;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Joe Goett
- */
 public class DatasourceProxy {
     private static Map<String, Class<?>> dbTypes = new HashMap<String, Class<?>>();
     private static MyTownDatasource datasource = null;

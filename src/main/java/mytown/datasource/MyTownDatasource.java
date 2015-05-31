@@ -19,9 +19,6 @@ import net.minecraftforge.common.DimensionManager;
 
 import java.util.UUID;
 
-/**
- * @author Joe Goett
- */
 public abstract class MyTownDatasource {
     protected Log log = null;
 

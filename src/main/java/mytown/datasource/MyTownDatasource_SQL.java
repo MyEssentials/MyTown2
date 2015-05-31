@@ -25,9 +25,6 @@ import java.util.Properties;
 // TODO Run DB writes (and maybe reads?) on a separate thread
 // TODO Ensure thread safety!
 
-/**
- * @author Joe Goett
- */
 public abstract class MyTownDatasource_SQL extends MyTownDatasource {
     @ConfigProperty(category = "datasource.sql", comment = "The prefix of each of the tables. <prefix>tablename")
     protected String prefix = "";

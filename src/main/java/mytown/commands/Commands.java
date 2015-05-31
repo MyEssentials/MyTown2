@@ -21,7 +21,6 @@ import net.minecraft.util.ChatComponentText;
 import java.util.*;
 
 /**
- * Created by AfterWind on 8/29/2014.
  * Base class for all classes that hold command methods... Mostly for some utils
  */
 public abstract class Commands {

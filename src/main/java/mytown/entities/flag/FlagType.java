@@ -3,7 +3,6 @@ package mytown.entities.flag;
 import mytown.proxies.LocalizationProxy;
 
 /**
- * Created by AfterWind on 9/16/2014.
  * Flags enumeration. Enumerating all flags here
  */
 public enum FlagType {

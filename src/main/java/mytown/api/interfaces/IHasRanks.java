@@ -5,26 +5,25 @@ import mytown.entities.Rank;
 import mytown.entities.Resident;
 
 /**
- * Created by joe on 7/18/14.
  * Represents an object that can hold Ranks
  */
 public interface IHasRanks {
 
-    public void addRank(Rank rank);
+    void addRank(Rank rank);
 
-    public void removeRank(Rank rank);
+    void removeRank(Rank rank);
 
-    public boolean hasRank(Rank rank);
+    boolean hasRank(Rank rank);
 
-    public boolean hasRankName(String rankName);
+    boolean hasRankName(String rankName);
 
-    public Rank getRank(String rankName);
+    Rank getRank(String rankName);
 
-    public void setDefaultRank(Rank rank);
+    void setDefaultRank(Rank rank);
 
-    public Rank getDefaultRank();
+    Rank getDefaultRank();
 
-    public boolean promoteResident(Resident res, Rank rank);
+    boolean promoteResident(Resident res, Rank rank);
 
-    public ImmutableList<Rank> getRanks();
+    ImmutableList<Rank> getRanks();
 }

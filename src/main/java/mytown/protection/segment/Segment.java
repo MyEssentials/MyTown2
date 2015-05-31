@@ -7,7 +7,6 @@ import mytown.util.exceptions.ConditionException;
 import net.minecraft.item.ItemStack;
 
 /**
- * Created by AfterWind on 1/1/2015.
  * A part of the protection that protects against a specific thing.
  */
 public class Segment {

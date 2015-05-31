@@ -8,8 +8,8 @@ import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.api.events.TownEvent;
 import mytown.config.Config;
-import mytown.core.ChatUtils;
-import mytown.core.Utils;
+import mytown.core.utils.ChatUtils;
+import mytown.core.utils.PlayerUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
@@ -38,9 +38,6 @@ import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.Calendar;
 
-/**
- * @author Joe Goett
- */
 public class Ticker {
 
     private boolean ticked = true;
@@ -269,7 +266,7 @@ public class Ticker {
                 TileEntitySign te = (TileEntitySign) ev.world.getTileEntity(ev.x, ev.y, ev.z);
 
                 if(te.signText[1].equals(Constants.PLOT_SELL_IDENTIFIER)) {
-                    if (ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && ev.entityPlayer.isSneaking() && Utils.isOp(ev.entityPlayer)) {
+                    if (ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && ev.entityPlayer.isSneaking() && PlayerUtils.isOp(ev.entityPlayer)) {
                         ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
                     } else if(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
                         Town town = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);

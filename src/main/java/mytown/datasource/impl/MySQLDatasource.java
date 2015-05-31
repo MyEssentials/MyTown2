@@ -3,9 +3,6 @@ package mytown.datasource.impl;
 import mytown.core.utils.config.ConfigProperty;
 import mytown.datasource.MyTownDatasource_SQL;
 
-/**
- * @author Joe Goett
- */
 public class MySQLDatasource extends MyTownDatasource_SQL {
     // Config
     @ConfigProperty(category = "datasource.sql", comment = "Username to use when connecting")

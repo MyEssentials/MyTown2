@@ -6,9 +6,6 @@ import mytown.api.interfaces.IHasTowns;
 import java.util.Hashtable;
 import java.util.Map;
 
-/**
- * @author Joe Goett
- */
 public class Nation implements IHasTowns, Comparable<Nation> {
     private String name;
 

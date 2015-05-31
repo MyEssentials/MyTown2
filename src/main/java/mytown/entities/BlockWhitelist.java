@@ -3,7 +3,6 @@ package mytown.entities;
 import mytown.entities.flag.FlagType;
 
 /**
- * Created by AfterWind on 9/4/2014.
  * Stores coords and flagname to give whitelist for that block on the flag specified
  */
 public class BlockWhitelist {

@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by AfterWind on 12/1/2014.
  * Utilities for the protections
  */
 public class ProtectionUtils {

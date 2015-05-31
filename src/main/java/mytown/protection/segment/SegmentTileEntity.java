@@ -7,7 +7,6 @@ import mytown.util.exceptions.GetterException;
 import net.minecraft.tileentity.TileEntity;
 
 /**
- * Created by AfterWind on 1/1/2015.
  * Segment that protects against a TileEntity
  */
 public class SegmentTileEntity extends Segment {

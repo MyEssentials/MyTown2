@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author Joe Goett
- */
 public class Plot implements IHasFlags, IHasResidents {
     private int db_ID;
     private final int dim, x1, y1, z1, x2, y2, z2;

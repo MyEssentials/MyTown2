@@ -1,21 +1,17 @@
 package mytown.commands;
 
 import mytown.MyTown;
-import mytown.config.Config;
-import mytown.core.ChatUtils;
+import mytown.core.utils.ChatUtils;
 import mytown.core.utils.Assert;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
-import mytown.core.utils.config.ConfigProcessor;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsTickHandler;
-import mytown.protection.json.JSONParser;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.ChunkPos;
-import mytown.util.Constants;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
@@ -27,15 +23,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.config.Configuration;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by AfterWind on 8/29/2014.
  * All commands for admins go here
  */
 public class CommandsAdmin extends Commands {

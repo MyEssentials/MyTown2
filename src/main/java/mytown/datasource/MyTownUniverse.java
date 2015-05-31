@@ -12,9 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Joe Goett
- */
 public class MyTownUniverse { // TODO Allow migrating between different Datasources
     private Map<String, Resident> residents = new HashMap<String, Resident>();
     private Map<String, Town> towns = new HashMap<String, Town>();

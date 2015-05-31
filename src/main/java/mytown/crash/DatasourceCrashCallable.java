@@ -13,8 +13,6 @@ import java.sql.SQLWarning;
 
 /**
  * Adds {@link mytown.datasource.MyTownDatasource} and {@link Connection} info to the crash report
- *
- * @author Joe Goett
  */
 public class DatasourceCrashCallable implements ICrashCallable {
     @Override

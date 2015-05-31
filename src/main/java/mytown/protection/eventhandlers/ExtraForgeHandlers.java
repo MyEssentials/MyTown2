@@ -12,7 +12,6 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import java.util.List;
 
 /**
- * Created by AfterWind on 3/4/2015.
  * Handling any events that are not yet compatible with the most commonly used version of forge.
  */
 public class ExtraForgeHandlers {

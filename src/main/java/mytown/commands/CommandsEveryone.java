@@ -1,7 +1,7 @@
 package mytown.commands;
 
 import mytown.config.Config;
-import mytown.core.ChatUtils;
+import mytown.core.utils.ChatUtils;
 import mytown.core.utils.command.Command;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.*;
@@ -19,7 +19,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import java.util.List;
 
 /**
- * Created by AfterWind on 8/28/2014.
  * Process methods for all commands that can be used by everyone
  */
 public class CommandsEveryone extends Commands {

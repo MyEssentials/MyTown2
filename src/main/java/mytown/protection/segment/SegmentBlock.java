@@ -5,7 +5,6 @@ import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.getter.Getters;
 
 /**
- * Created by AfterWind on 1/11/2015.
  * Offers protection for blocks
  */
 public class SegmentBlock extends Segment {

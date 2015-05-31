@@ -3,9 +3,6 @@ package mytown.datasource;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 
-/**
- * @author Joe Goett
- */
 public class InMemoryDatasource extends MyTownDatasource {
     @Override
     public boolean initialize() {

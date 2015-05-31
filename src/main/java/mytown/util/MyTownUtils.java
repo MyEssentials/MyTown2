@@ -36,7 +36,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * Created by AfterWind on 9/9/2014.
  * Utils class for random useful things
  */
 public class MyTownUtils {

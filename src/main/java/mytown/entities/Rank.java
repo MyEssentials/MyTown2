@@ -5,9 +5,6 @@ import mytown.MyTown;
 
 import java.util.*;
 
-/**
- * @author Joe Goett
- */
 public class Rank {
     private String key, name;
     private List<String> permissions;

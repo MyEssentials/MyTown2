@@ -4,9 +4,6 @@ import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.utils.economy.Economy;
 
-/**
- * @author Joe Goett
- */
 public class EconomyProxy {
     private static Economy economy = null;
 

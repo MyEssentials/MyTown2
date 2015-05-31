@@ -1,9 +1,8 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.MyTown;
 import mytown.api.interfaces.IHasFlags;
-import mytown.core.Utils;
+import mytown.core.utils.PlayerUtils;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by AfterWind on 10/2/2014.
  * Wilderness permissions
  */
 public class Wild implements IHasFlags {
@@ -71,7 +69,7 @@ public class Wild implements IHasFlags {
      */
     public boolean checkPermission(Resident res, FlagType type, Object denialValue) {
         if (getFlag(type).getValue() == denialValue) {
-            return Utils.isOp(res.getPlayer());
+            return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
     }

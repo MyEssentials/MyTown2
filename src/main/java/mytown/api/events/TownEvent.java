@@ -6,9 +6,6 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import net.minecraftforge.common.MinecraftForge;
 
-/**
- * @author Joe Goett
- */
 public class TownEvent extends Event {
     public Town town = null;
 

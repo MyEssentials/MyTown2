@@ -2,11 +2,10 @@ package mytown.commands;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import mytown.config.Config;
-import mytown.core.ChatUtils;
+import mytown.core.utils.ChatUtils;
 import mytown.core.utils.command.CommandNode;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
@@ -21,7 +20,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
 
 /**
- * Created by AfterWind on 9/9/2014.
  * All commands that can be accessed by everyone whether or not he's in a town
  */
 public class CommandsOutsider extends Commands {

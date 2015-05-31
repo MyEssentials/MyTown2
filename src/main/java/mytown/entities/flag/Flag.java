@@ -8,7 +8,6 @@ import net.minecraft.util.EnumChatFormatting;
 import java.lang.reflect.Type;
 
 /**
- * Created by AfterWind on 8/26/2014.
  * Another attempt at the dreaded town flags :P
  */
 public class Flag<T> {

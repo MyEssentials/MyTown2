@@ -1,7 +1,6 @@
 package mytown.protection.segment.getter;
 
 /**
- * Created by AfterWind on 1/1/2015.
  * A caller is the information needed to get an object/value
  */
 public class Caller {

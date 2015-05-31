@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by AfterWind on 3/6/2015.
  * Stores all the getters from a Segment
  */
 public class Getters {

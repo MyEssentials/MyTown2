@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by AfterWind on 10/4/2014.
  * Default flags on town creation config file.
  */
 public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {

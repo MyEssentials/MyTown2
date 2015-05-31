@@ -1,9 +1,7 @@
 package mytown.commands;
 
-import mytown.MyTown;
 import mytown.config.Config;
-import mytown.core.ChatUtils;
-import mytown.core.Localization;
+import mytown.core.utils.ChatUtils;
 import mytown.core.utils.command.CommandManager;
 import mytown.core.utils.command.CommandNode;
 import mytown.entities.Rank;
@@ -23,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by AfterWind on 8/29/2014.
  * All commands that require the assistant permission go here
  */
 public class CommandsAssistant extends Commands {

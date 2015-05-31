@@ -6,7 +6,6 @@ import mytown.entities.flag.FlagType;
 import java.util.List;
 
 /**
- * Created by AfterWind on 9/4/2014.
  * Represents an objects that can hold BlockWhitelists
  */
 public interface IHasBlockWhitelists {

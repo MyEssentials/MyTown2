@@ -8,9 +8,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.FakePlayer;
 
-/**
- * @author Joe Goett
- */
 public class SafemodeHandler {
     private static boolean safemode = false;
 

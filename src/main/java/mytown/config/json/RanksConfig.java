@@ -9,7 +9,6 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Created by AfterWind on 7/4/2014
  * JSON Default ranks config
  */
 public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {

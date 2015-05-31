@@ -3,7 +3,7 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import mytown.api.interfaces.*;
 import mytown.config.Config;
-import mytown.core.Utils;
+import mytown.core.utils.PlayerUtils;
 import mytown.core.utils.teleport.Teleport;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -16,8 +16,6 @@ import java.util.*;
 
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
- *
- * @author Joe Goett
  */
 public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, IHasBlockWhitelists, Comparable<Town> {
     private String name, oldName = null;
@@ -500,12 +498,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         if (plot == null || flagType.isTownOnly()) {
             if(getValue(flagType).equals(denialValue)) {
                 if (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean) getValue(FlagType.restrictedTownPerms) && !(getMayor() == res))) {
-                    return Utils.isOp(res.getPlayer());
+                    return PlayerUtils.isOp(res.getPlayer());
                 }
             }
         } else {
             if (plot.getValue(flagType).equals(denialValue) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
-                return Utils.isOp(res.getPlayer());
+                return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
     }
@@ -516,7 +514,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
         if (getValue(flagType).equals(denialValue) && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && !(getMayor() == res)))) {
-            return Utils.isOp(res.getPlayer());
+            return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
     }

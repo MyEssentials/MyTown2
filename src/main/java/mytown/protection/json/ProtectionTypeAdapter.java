@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by AfterWind on 1/1/2015.
  * Serializes a protection
  */
 public class ProtectionTypeAdapter extends TypeAdapter<Protection>{

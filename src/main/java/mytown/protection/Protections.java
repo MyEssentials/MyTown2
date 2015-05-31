@@ -16,6 +16,7 @@ import mytown.protection.thread.ThreadPlacementCheck;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.BlockPos;
+import mytown.util.EntityPos;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
@@ -28,6 +29,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -37,7 +40,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import java.util.*;
 
 /**
- * Created by AfterWind on 1/1/2015.
  * Handles all the protections
  */
 public class Protections {
@@ -51,7 +53,7 @@ public class Protections {
 
     public Map<TileEntity, Boolean> checkedTileEntities = new HashMap<TileEntity, Boolean>();
     public Map<Entity, Boolean> checkedEntities = new HashMap<Entity, Boolean>();
-    public Map<Resident, Integer> movedResidents = new HashMap<Resident, Integer>();
+    public Map<EntityPlayer, EntityPos> lastTickPlayerPos = new HashMap<EntityPlayer, EntityPos>();
 
     public Map<TileEntity, Resident> ownedTileEntities = new HashMap<TileEntity, Resident>();
     public int activePlacementThreads = 0;
@@ -66,6 +68,9 @@ public class Protections {
     private int tickerWhitelist = 600;
     private int tickerWhitelistStart = 600;
     private int itemPickupCounter = 0;
+
+    private int lastTick = -1;
+    private int ticked = 0;
 
     // ---- Utility methods for accessing protections ----
 
@@ -91,8 +96,21 @@ public class Protections {
     public void tick(TickEvent.WorldTickEvent ev) {
         if (ev.side == Side.CLIENT)
             return;
-        if(ev.phase == TickEvent.Phase.END)
+        if(ev.phase == TickEvent.Phase.END) {
             return;
+        }
+
+        // Ticking every 4th tick, since that is the one that retains information about the entities
+        if(lastTick != MinecraftServer.getServer().getTickCounter() || lastTick == -1) {
+            lastTick = MinecraftServer.getServer().getTickCounter();
+            ticked = 1;
+        }
+        if(ticked != 4) {
+            ticked++;
+            return;
+        }
+
+        //MyTown.instance.log.info("Tick number: " + MinecraftServer.getServer().getTickCounter());
 
         // Map updates
         if (tickerMap == 0) {
@@ -125,31 +143,21 @@ public class Protections {
         }
 
 
+
         // Entity check
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
             // Player check, every tick
-            Town town = MyTownUtils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
 
+            Town town = MyTownUtils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+            //MyTown.instance.log.info("Checking player...");
             if (entity instanceof EntityPlayer && !(entity instanceof FakePlayer)) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
-                if(movedResidents.get(res) == null)
-                    movedResidents.put(res, 0);
-                int amountMoved = movedResidents.get(res);
                 if (town != null && !town.checkPermission(res, FlagType.enter, false, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
                     res.protectionDenial(FlagType.enter.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
                     res.knockbackPlayer();
-                    if(amountMoved > 250) {
-                        //res.knockbackPlayerToBorder(town);
-                        movedResidents.put(res, 0);
-                    } else {
-
-                    }
-                    movedResidents.put(res, amountMoved + 1);
-                } else {
-                    movedResidents.put(res, 0);
                 }
-
+                lastTickPlayerPos.put((EntityPlayer)entity, new EntityPos(entity.posX, entity.posY, entity.posZ, entity.dimension));
             } else {
                 // Other entity checks
                 for (Protection prot : protections) {

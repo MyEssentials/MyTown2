@@ -5,9 +5,6 @@ import cpw.mods.fml.common.eventhandler.Event;
 import mytown.entities.Rank;
 import net.minecraftforge.common.MinecraftForge;
 
-/**
- * @author Joe Goett
- */
 public class RankEvent extends Event {
     public Rank rank = null;
 

@@ -7,9 +7,6 @@ import mytown.api.interfaces.IHasPlots;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Joe Goett
- */
 public class TownBlock implements IHasPlots {
     /**
      * Used for storing in database

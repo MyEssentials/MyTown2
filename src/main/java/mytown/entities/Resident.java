@@ -5,7 +5,7 @@ import mytown.MyTown;
 import mytown.api.interfaces.IHasPlots;
 import mytown.api.interfaces.IHasTowns;
 import mytown.config.Config;
-import mytown.core.ChatUtils;
+import mytown.core.utils.ChatUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsTickHandler;
@@ -22,7 +22,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.ArrayList;
@@ -30,9 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * @author Joe Goett
- */
 public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     private EntityPlayer player;
     private UUID playerUUID;

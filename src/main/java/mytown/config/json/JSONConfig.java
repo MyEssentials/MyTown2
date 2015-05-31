@@ -9,7 +9,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * Created by AfterWind on 3/30/2015.
  * An abstract class for all JSON configs.
  */
 public abstract class JSONConfig<T> {
