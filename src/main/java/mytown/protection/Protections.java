@@ -200,6 +200,10 @@ public class Protections {
             if(ev.entityPlayer instanceof FakePlayer && (Boolean)Wild.getInstance().getValue(FlagType.allowFakePlayers))
                 return;
 
+            // Allow pvp on players.
+            if(ev.target instanceof EntityPlayer && (Boolean)Wild.getInstance().getValue(FlagType.pvp))
+                return;
+
             if(!Wild.getInstance().checkPermission(res, FlagType.protectedEntities, true)) {
                 for(Protection prot : protections) {
                     if(prot.isEntityProtected(ev.target.getClass())) {
@@ -211,6 +215,10 @@ public class Protections {
         } else {
             // Bypass for fakePlayers
             if(ev.entityPlayer instanceof FakePlayer && (Boolean)block.getTown().getValueAtCoords(ev.target.dimension, (int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int)Math.floor(ev.target.posZ), FlagType.allowFakePlayers))
+                return;
+
+            // Allow pvp on players.
+            if(ev.target instanceof EntityPlayer && (Boolean)block.getTown().getValueAtCoords(ev.target.dimension, (int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int) Math.floor(ev.target.posZ), FlagType.pvp))
                 return;
 
             if (!block.getTown().checkPermission(res, FlagType.protectedEntities, true, ev.target.dimension, (int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int) Math.floor(ev.target.posZ))) {
@@ -490,54 +498,31 @@ public class Protections {
             return;
         if(ev.entityLiving instanceof EntityPlayer) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.entityLiving.dimension, ev.entityLiving.chunkCoordX, ev.entityLiving.chunkCoordZ);
-            Resident target = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityLiving);
             // If the entity that "shot" the source of damage is a Player (ex. an arrow shot by player)
             if(ev.source.getEntity() != null && ev.source.getEntity() instanceof EntityPlayer) {
                 Resident source = DatasourceProxy.getDatasource().getOrMakeResident(ev.source.getEntity());
                 if(block != null) {
-                    if(!block.getTown().checkPermission(source, FlagType.pvp, false, ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ))) {
+                    if(!(Boolean)block.getTown().getValueAtCoords(ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ), FlagType.pvp)) {
                         ev.setCanceled(true);
                         source.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ)))));
                     }
                 } else {
-                    if(!Wild.getInstance().checkPermission(source, FlagType.pvp, false)) {
+                    if(!(Boolean)Wild.getInstance().getValue(FlagType.pvp)) {
                         ev.setCanceled(true);
                         source.sendMessage(FlagType.pvp.getLocalizedProtectionDenial());
                     }
                 }
             // If the entity that "shot" the source of damage is null or not a player check for specified entities that can bypass pvp flag
             } else if(ev.source.getSourceOfDamage() != null && ProtectionUtils.canEntityTrespassPvp(ev.source.getSourceOfDamage().getClass())) {
-                Resident owner = null;
-                for(Protection prot : protections) {
-                    for(SegmentEntity segment : prot.segmentsEntities) {
-                        if(segment.theClass.isAssignableFrom(ev.source.getSourceOfDamage().getClass())) {
-                            owner = segment.getOwner(ev.source.getSourceOfDamage());
-                        }
-                    }
-                }
                 if (block != null) {
-                    if(owner == null) {
-                        if (!(Boolean)block.getTown().getValueAtCoords(ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ), FlagType.pvp)) {
-                            ev.setCanceled(true);
-                            target.sendMessage(FlagType.pvp.getLocalizedTownNotification());
-                        }
-                    } else {
-                        if (!block.getTown().checkPermission(owner, FlagType.pvp, false, ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ))) {
-                            ev.setCanceled(true);
-                            owner.protectionDenial(FlagType.pvp.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ)))));
-                        }
+                    if (!(Boolean)block.getTown().getValueAtCoords(ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ), FlagType.pvp)) {
+                        ev.setCanceled(true);
+                        block.getTown().notifyEveryone(FlagType.pvp.getLocalizedTownNotification());
                     }
                 } else {
-                    if(owner == null) {
-                        if (!(Boolean) Wild.getInstance().getValue(FlagType.pvp)) {
-                            ev.setCanceled(true);
-                            target.sendMessage(FlagType.pvp.getLocalizedTownNotification());
-                        }
-                    } else {
-                        if(!Wild.getInstance().checkPermission(owner, FlagType.pvp, false)) {
-                            ev.setCanceled(true);
-                            owner.sendMessage(FlagType.pvp.getLocalizedProtectionDenial());
-                        }
+                    if (!(Boolean) Wild.getInstance().getValue(FlagType.pvp)) {
+                        ev.setCanceled(true);
+                        //target.sendMessage(FlagType.pvp.getLocalizedTownNotification());
                     }
                 }
             }
