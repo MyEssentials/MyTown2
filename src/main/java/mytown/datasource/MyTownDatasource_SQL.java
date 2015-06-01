@@ -247,6 +247,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
     protected boolean loadRankPermissions() {
         try {
             PreparedStatement loadRankPermsStatement = prepare("SELECT * FROM " + prefix + "RankPermissions", true);
@@ -413,6 +414,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
     protected boolean loadResidentsToTowns() {
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "ResidentsToTowns", true);
@@ -481,6 +483,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
     protected boolean loadTownsToNations() {
         try {
             PreparedStatement statement = prepare("SELECT * FROM " + prefix + "TownsToNations", true);
@@ -505,6 +508,7 @@ public abstract class MyTownDatasource_SQL extends MyTownDatasource {
         return true;
     }
 
+    @Override
     protected boolean loadResidentsToPlots() {
         try {
             PreparedStatement loadStatement = prepare("SELECT * FROM " + prefix + "ResidentsToPlots", true);

@@ -53,11 +53,9 @@ public class Protections {
         return instance;
     }
 
-    public Map<TileEntity, Boolean> checkedTileEntities = new HashMap<TileEntity, Boolean>();
-    public Map<Entity, Boolean> checkedEntities = new HashMap<Entity, Boolean>();
     public Map<EntityPlayer, EntityPos> lastTickPlayerPos = new HashMap<EntityPlayer, EntityPos>();
-
     public Map<TileEntity, Resident> ownedTileEntities = new HashMap<TileEntity, Resident>();
+
     public int activePlacementThreads = 0;
 
     public int maximalRange = 0;
@@ -65,8 +63,10 @@ public class Protections {
     private List<Protection> protections = new ArrayList<Protection>();
 
     // ---- All the counters/tickers for preventing check every tick ----
-    private int tickerMap = 20;
-    private int tickerMapStart = 20;
+    private int tickerEntityChecks = 20;
+    private int tickerEntityChecksStart = 20;
+    private int tickerTilesChecks = 20;
+    private int tickerTilesChecksStart = 20;
     private int tickerWhitelist = 600;
     private int tickerWhitelistStart = 600;
     private int itemPickupCounter = 0;
@@ -81,12 +81,12 @@ public class Protections {
     public List<Protection> getProtections() { return this.protections; }
 
     public void reset() {
-        checkedEntities = new HashMap<Entity, Boolean>();
-        checkedTileEntities = new HashMap<TileEntity, Boolean>();
         protections = new ArrayList<Protection>();
     }
 
     public Resident getOwnerForTileEntity(TileEntity te) {
+        MyTown.instance.log.info("Trying to get owner for te: " + te.toString());
+        MyTown.instance.log.info("And got " + (this.ownedTileEntities.get(te) == null ? "null" : this.ownedTileEntities.get(te).getPlayerName()));
         return this.ownedTileEntities.get(te);
     }
 
@@ -113,23 +113,6 @@ public class Protections {
         }
 
         //MyTown.instance.log.info("Tick number: " + MinecraftServer.getServer().getTickCounter());
-
-        // Map updates
-        if (tickerMap == 0) {
-            for (Map.Entry<Entity, Boolean> entry : checkedEntities.entrySet()) {
-                checkedEntities.put(entry.getKey(), false);
-            }
-            for (Iterator<Map.Entry<TileEntity, Boolean>> it = checkedTileEntities.entrySet().iterator(); it.hasNext(); ) {
-                Map.Entry<TileEntity, Boolean> entry = it.next();
-                if (entry.getKey().isInvalid())
-                    it.remove();
-                else
-                    entry.setValue(false);
-            }
-            tickerMap = MinecraftServer.getServer().worldServers.length * tickerMapStart;
-        } else {
-            tickerMap--;
-        }
 
         // TODO: Add a command to clean up the block whitelist table periodically
         if (tickerWhitelist == 0) {
@@ -169,35 +152,39 @@ public class Protections {
                 lastTickPlayerPos.put((EntityPlayer)entity, new EntityPos(entity.posX, entity.posY, entity.posZ, entity.dimension));
             } else {
                 // Other entity checks
-                for (Protection prot : protections) {
-                    if(prot.isEntityTracked(entity.getClass())) {
-                        if ((checkedEntities.get(entity) == null || !checkedEntities.get(entity)) && prot.checkEntity(entity)) {
+                if(tickerEntityChecks == 0) {
+                    for (Protection prot : protections) {
+                        if (prot.isEntityTracked(entity.getClass()) && prot.checkEntity(entity)) {
                             //MyTown.instance.log.info("Entity " + entity.toString() + " was ATOMICALLY DISINTEGRATED!");
-                            checkedEntities.remove(entity);
                             entity.setDead();
                         }
-                        checkedEntities.put(entity, true);
                     }
+                    tickerEntityChecks = tickerEntityChecksStart;
+                } else {
+                    tickerEntityChecks--;
                 }
             }
         }
 
+        // Ticker will stay at 0 while there are some active placement threads.
         // TileEntity check
-        if(activePlacementThreads == 0) {
-            for (TileEntity te : (Iterable<TileEntity>) ev.world.loadedTileEntityList) {
-                //MyTown.instance.log.info("Checking tile: " + te.toString());
-                for (Protection prot : protections) {
-                    if ((checkedTileEntities.get(te) == null || !checkedTileEntities.get(te)) && prot.isTileTracked(te.getClass())) {
-                        if (prot.checkTileEntity(te)) {
+        if(tickerTilesChecks == 0) {
+            if (activePlacementThreads == 0) {
+                for (TileEntity te : (Iterable<TileEntity>) ev.world.loadedTileEntityList) {
+                    //MyTown.instance.log.info("Checking tile: " + te.toString());
+                    for (Protection prot : protections) {
+                        if (prot.isTileTracked(te.getClass()) && prot.checkTileEntity(te)) {
                             MyTownUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
                             te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
                             te.invalidate();
                             MyTown.instance.log.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
                         }
-                        checkedTileEntities.put(te, true);
                     }
                 }
+                tickerTilesChecks = tickerTilesChecksStart;
             }
+        } else {
+            tickerTilesChecks--;
         }
     }
 
@@ -396,7 +383,6 @@ public class Protections {
 
         // Item usage check here
         if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
-            MyTown.instance.log.info("Started check for: " + currentStack.getDisplayName());
             for (Protection protection : protections) {
                 if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
                         ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && protection.checkItem(currentStack, res)) {
