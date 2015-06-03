@@ -6,49 +6,49 @@ import mytown.proxies.LocalizationProxy;
  * Flags enumeration. Enumerating all flags here
  */
 public enum FlagType {
-    // CONSTRUCTOR: class, value, allowedValues, wildPerm, defaultWildPerm, townOnly, mod, isWhitelistable <false>
+    // CONSTRUCTOR: class, value, allowedValues, wildPerm, defaultWildPerm, townOnly, isWhitelistable <false>
 
     // Allows entering the area
-    ENTER(Boolean.class, true, null, false, true, Property.ALL, null),
+    ENTER(Boolean.class, true, null, false, true, Property.ALL),
 
     // Allows opening GUIs and right-clicking TileEntities
-    ACCESS_BLOCKS(Boolean.class, false, null, true, true, Property.ALL, null, true),
+    ACCESS_BLOCKS(Boolean.class, false, null, true, true, Property.ALL, true),
 
     // Allows pickup of items.
-    PICKUP_ITEMS(Boolean.class, true, null, true, true, Property.ALL, null),
+    PICKUP_ITEMS(Boolean.class, true, null, true, true, Property.ALL),
 
     // Allows pvp
-    PVP(Boolean.class, false, null, true, true, Property.ALL, null),
+    PVP(Boolean.class, false, null, true, true, Property.ALL),
 
     // Only the values in the array are allowed
     // Allows modifying which types of mods are allowed in the town.
-    MOBS(String.class, "all", new String[]{"all", "hostiles", "none"}, true, "all", Property.ALL, null),
+    MOBS(String.class, "all", new String[]{"all", "hostiles", "none"}, true, "all", Property.ALL),
 
     // Allows outsiders to hurt passive and other types of entities.
-    PROTECTED_ENTITIES(Boolean.class, false, null, true, false, Property.ALL, null),
+    PROTECTED_ENTITIES(Boolean.class, false, null, true, false, Property.ALL),
 
     // Allows the use of some items such as: Bucket, Spawn Eggs etc.
-    USE_ITEMS(Boolean.class, false, null, true, true, Property.ALL, null),
+    USE_ITEMS(Boolean.class, false, null, true, true, Property.ALL),
 
     // Allows to activate blocks such as: Buttons, Doors etc.
-    ACTIVATE_BLOCKS(Boolean.class, false, null, true, true, Property.ALL, null, true),
+    ACTIVATE_BLOCKS(Boolean.class, false, null, true, true, Property.ALL, true),
 
     // Allows fake players to bypass some of the flags (MODIFY_BLOCKS, USE_ITEMS, PROTECTED_ENTITIES)
-    ALLOW_FAKE_PLAYERS(Boolean.class, true, null, true, true, Property.ALL, null),
+    ALLOW_FAKE_PLAYERS(Boolean.class, true, null, true, true, Property.ALL),
 
     // ---- Flags that don't go in plots. ----
 
     // Allows modifying blocks.
-    MODIFY_BLOCKS(Boolean.class, false, null, true, true, Property.TOWN_ONLY, null, true),
+    MODIFY_BLOCKS(Boolean.class, false, null, true, true, Property.TOWN_ONLY, true),
 
     // Allows explosions.
-    EXPLOSIONS(Boolean.class, false, null, true, true, Property.TOWN_ONLY, null),
+    EXPLOSIONS(Boolean.class, false, null, true, true, Property.TOWN_ONLY),
 
     // Allows normal residents to have permission outside their claimed plots.
-    RESTRICTED_TOWN_PERMS(Boolean.class, false, null, false, false, Property.TOWN_ONLY, null),
+    RESTRICTED_TOWN_PERMS(Boolean.class, false, null, false, false, Property.TOWN_ONLY),
 
     // Allows other towns to be created nearby
-    NEARBY_TOWNS(Boolean.class, false, null, false, false, Property.TOWN_ONLY, null);
+    NEARBY_TOWNS(Boolean.class, false, null, false, false, Property.TOWN_ONLY);
 
     private Class<?> type;
     private Object[] allowedValues;
@@ -59,7 +59,7 @@ public enum FlagType {
     private boolean isWildPerm;
     private Object defaultWildPerm;
 
-    FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property, String modRequired, boolean isWhitelistable) {
+    FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property, boolean isWhitelistable) {
         this.type = type;
         this.property = property;
         this.allowedValues = allowedValues;
@@ -70,8 +70,8 @@ public enum FlagType {
         this.defaultWildPerm = defaultWildPerm;
     }
 
-    FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property, String modRequired) {
-        this(type, defaultValue, allowedValues, wildPerm, defaultWildPerm, property, modRequired, false);
+    FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property) {
+        this(type, defaultValue, allowedValues, wildPerm, defaultWildPerm, property, false);
     }
 
     /**

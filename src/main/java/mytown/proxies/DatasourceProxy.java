@@ -1,6 +1,7 @@
 package mytown.proxies;
 
 import cpw.mods.fml.common.event.FMLInterModComms;
+import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.logger.Log;
 import mytown.core.config.ConfigProcessor;
@@ -14,14 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DatasourceProxy {
-
-    private DatasourceProxy() {
-
-    }
-
     private static Map<String, Class<?>> dbTypes = new HashMap<String, Class<?>>();
     private static MyTownDatasource datasource = null;
-    private static Log LOG = null;
 
     static {
         registerType("in-memory", InMemoryDatasource.class);
@@ -29,21 +24,23 @@ public class DatasourceProxy {
         registerType("sqlite", SQLiteDatasource.class);
     }
 
+    private DatasourceProxy() {
+    }
+
     /**
      * Initializes, configures, and loads the Datasource returning if successful
      */
     public static boolean start(Configuration config) {
         if (!dbTypes.containsKey(Config.dbType.toLowerCase())) {
-            LOG.error("Unknown Datasource type %s!", Config.dbType.toLowerCase());
+            MyTown.instance.LOG.error("Unknown Datasource type %s!", Config.dbType.toLowerCase());
             return false;
         }
 
         try {
             // Create MyTownDatasource instance
             datasource = (MyTownDatasource) dbTypes.get(Config.dbType.toLowerCase()).newInstance();
-            datasource.setLog(LOG);
         } catch (Exception e) {
-            LOG.error("Failed to instantiate the Datasource (%s)!", e, Config.dbType.toLowerCase());
+            MyTown.instance.LOG.error("Failed to instantiate the Datasource (%s)!", e, Config.dbType.toLowerCase());
             return false;
         }
 
@@ -52,18 +49,18 @@ public class DatasourceProxy {
 
         // Do actual initialization
         if (!datasource.initialize()) {
-            LOG.error("Failed to initialize the Datasource!");
+            MyTown.instance.LOG.error("Failed to initialize the Datasource!");
             return false;
         }
 
         // Load everything
         if (!datasource.loadAll()) {
-            LOG.error("Failed to load the Datasource!");
+            MyTown.instance.LOG.error("Failed to load the Datasource!");
             return false;
         }
 
         if (!datasource.checkAllOnStart()) {
-            LOG.error("Failed to check the Datasource!");
+            MyTown.instance.LOG.error("Failed to check the Datasource!");
             return false;
         }
 
@@ -77,7 +74,7 @@ public class DatasourceProxy {
     public static boolean stop() {
         // TODO Implement stop! xD
         if(!datasource.checkAllOnStop()) {
-            LOG.error("Failed to check the Datasource!");
+            MyTown.instance.LOG.error("Failed to check the Datasource!");
             return false;
         }
 
@@ -92,18 +89,11 @@ public class DatasourceProxy {
     }
 
     /**
-     * Sets the Log for this Proxy. Useful when writing JUnit tests that doesn't have access to the MyTown instance
-     */
-    public static void setLog(Log log) {
-        DatasourceProxy.LOG = log;
-    }
-
-    /**
      * Registers the type with the given name
      */
     public static void registerType(String name, Class<?> type) {
         if (dbTypes.containsKey(name)) {
-            LOG.warn("Type %s already registered!", name);
+            MyTown.instance.LOG.warn("Type %s already registered!", name);
             return;
         }
         dbTypes.put(name, type);
@@ -125,7 +115,7 @@ public class DatasourceProxy {
             try {
                 registerType(datasourceName, Class.forName(datasourceClassName));
             } catch (ClassNotFoundException e) {
-                LOG.warn("Failed to register datasource type %s from mod %s", e, datasourceName, msg.getSender());
+                MyTown.instance.LOG.warn("Failed to register datasource type %s from mod %s", e, datasourceName, msg.getSender());
             }
         }
     }

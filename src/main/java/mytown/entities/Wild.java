@@ -14,13 +14,7 @@ import java.util.List;
  */
 public class Wild implements FlagsContainer {
 
-    private static Wild instance;
-    public static Wild getInstance() {
-        if (instance == null) {
-            instance = new Wild();
-        }
-        return instance;
-    }
+    public static final Wild instance = new Wild();
 
     private final List<Flag> flagList = new ArrayList<Flag>();
 
@@ -32,7 +26,7 @@ public class Wild implements FlagsContainer {
     @Override
     public boolean hasFlag(FlagType type) {
         for (Flag f : flagList) {
-            if (f.flagType == type)
+            if (f.getFlagType() == type)
                 return true;
         }
         return false;
@@ -46,7 +40,7 @@ public class Wild implements FlagsContainer {
     @Override
     public Flag getFlag(FlagType type) {
         for (Flag f : flagList) {
-            if (f.flagType == type)
+            if (f.getFlagType() == type)
                 return f;
         }
         return null;
@@ -55,7 +49,7 @@ public class Wild implements FlagsContainer {
     @Override
     public boolean removeFlag(FlagType type) {
         for (Iterator<Flag> it = flagList.iterator(); it.hasNext(); ) {
-            if (it.next().flagType == type) {
+            if (it.next().getFlagType() == type) {
                 it.remove();
                 return true;
             }
@@ -76,7 +70,7 @@ public class Wild implements FlagsContainer {
     @Override
     public Object getValue(FlagType type) {
         for (Flag flag : flagList) {
-            if (flag.flagType == type)
+            if (flag.getFlagType() == type)
                 return flag.getValue();
         }
         return null;

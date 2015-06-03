@@ -196,11 +196,11 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
         while(!in.peek().equals(JsonToken.END_OBJECT)) {
 
             nextName = in.nextName();
-            if (nextName.equals("modid")) {
+            if ("modid".equals(nextName)) {
                 modid = in.nextString();
                 if (modid == null)
                     throw new IOException("Missing modid for a protection!");
-                if(!Loader.isModLoaded(modid) && !modid.equals("Minecraft")) {
+                if(!Loader.isModLoaded(modid) && !"Minecraft".equals(modid)) {
                     MyTown.instance.LOG.info("   Skipped protection because the mod " + modid + " wasn't loaded.");
                     return null;
                 } else if(version != null) {
@@ -209,13 +209,13 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                         return null;
                     }
                 }
-            } else if(nextName.equals("version")) {
+            } else if("version".equals(nextName)) {
                 version = in.nextString();
-                if(modid != null && !modid.equals("Vanilla") && !verifyVersion(modid, version)) {
+                if(modid != null && !"Vanilla".equals(modid) && !verifyVersion(modid, version)) {
                     MyTown.instance.LOG.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
                     return null;
                 }
-            } else if (nextName.equals("segments")) {
+            } else if ("segments".equals(nextName)) {
                 in.beginArray();
                 MyTown.instance.LOG.info("   ------------------------------------------------------------");
                 while (in.hasNext()) {
@@ -240,7 +240,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     try {
                         while (!in.peek().equals(JsonToken.END_OBJECT)) {
                             nextName = in.nextName();
-                            if (nextName.equals("class")) {
+                            if ("class".equals(nextName)) {
                                 try {
                                     clazz = Class.forName(in.nextString());
                                 } catch (ClassNotFoundException ex) {
@@ -249,22 +249,22 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 getters.setName(clazz.getName());
                                 continue;
                             }
-                            if (nextName.equals("type")) {
+                            if ("type".equals(nextName)) {
                                 type = in.nextString();
                                 if (type == null)
                                     throw new SegmentException("[Segment: " + clazz + "] Segment is missing type!");
                                 continue;
                             }
-                            if (nextName.equals("condition")) {
+                            if ("condition".equals(nextName)) {
                                 condition = in.nextString();
                                 continue;
                             }
-                            if (nextName.equals("flag")) {
+                            if ("flag".equals(nextName)) {
                                 if(in.peek() == JsonToken.BEGIN_OBJECT) {
                                     in.beginObject();
-                                    if(in.nextName().equals("name"))
+                                    if("name".equals(in.nextName()))
                                         flag = FlagType.valueOf(in.nextString());
-                                    if(in.nextName().equals("denialValue"))
+                                    if("denialValue".equals(in.nextName()))
                                         denialValue = parseConstant(in, clazz.getName(), "denialValue");
                                     in.endObject();
                                 } else {
@@ -285,41 +285,41 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             if (type == null)
                                 throw new SegmentException("[Segment: " + clazz + "] Type is specified after the type-specific data.");
 
-                            if (type.equals("entity")) {
-                                if (nextName.equals("entityType")) {
+                            if ("entity".equals(type)) {
+                                if ("entityType".equals(nextName)) {
                                     entityType = EntityType.valueOf(in.nextString());
                                     if (entityType == null)
                                         throw new SegmentException("[Segment: " + clazz + "] Invalid entity type.");
                                     continue;
                                 }
                             }
-                            if (type.equals("item")) {
-                                if (nextName.equals("itemType")) {
+                            if ("item".equals(type)) {
+                                if ("itemType".equals(nextName)) {
                                     itemType = ItemType.valueOf(in.nextString());
                                     if (itemType == null)
                                         throw new SegmentException("[Segment: " + clazz + "] Invalid item type.");
                                     continue;
                                 }
-                                if (nextName.equals("isAdjacent")) {
+                                if ("isAdjacent".equals(nextName)) {
                                     isAdjacent = in.nextBoolean();
                                     continue;
                                 }
 
                             }
-                            if (type.equals("block")) {
-                                if (nextName.equals("meta")) {
+                            if ("block".equals(type)) {
+                                if ("meta".equals(nextName)) {
                                     meta = in.nextInt();
                                     continue;
                                 }
-                                if(nextName.equals("blockType")) {
+                                if("blockType".equals(nextName)) {
                                     blockType = BlockType.valueOf(in.nextString());
                                     if(blockType == null)
                                         throw new SegmentException("[Segment: " + clazz + "] Invalid block type.");
                                     continue;
                                 }
                             }
-                            if(type.equals("tileEntity")) {
-                                if(nextName.equals("hasOwner")) {
+                            if("tileEntity".equals(type)) {
+                                if("hasOwner".equals(nextName)) {
                                     hasOwner = in.nextBoolean();
                                     continue;
                                 }
@@ -339,7 +339,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             if (type != null) {
                                 if (flag == null)
                                     throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
-                                if (type.equals("tileEntity")) {
+                                if ("tileEntity".equals(type)) {
                                     // Log if the segment is using default protection
                                     if (getters.getCallersMap().get("xMin") == null || getters.getCallersMap().get("xMax") == null || getters.getCallersMap().get("zMin") == null || getters.getCallersMap().get("zMax") == null) {
                                         MyTown.instance.LOG.info("   [Segment: " + clazz + "] Could not find one of the getters (xMin, xMax, zMin, zMax). Using default protection size.");
@@ -351,19 +351,19 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                         getters.removeGetter("zMax");
                                     }
                                     segment = new SegmentTileEntity(clazz, getters, flag, denialValue, condition, hasOwner);
-                                } else if (type.equals("entity")) {
+                                } else if ("entity".equals(type)) {
                                     if (entityType == null) {
                                         MyTown.instance.LOG.info("   entityType is not specified, defaulting to 'TRACKED'.");
                                         entityType = EntityType.TRACKED;
                                     }
                                     segment = new SegmentEntity(clazz, getters, flag, denialValue, condition, entityType);
-                                } else if (type.equals("item")) {
+                                } else if ("item".equals(type)) {
                                     if(itemType == null) {
                                         MyTown.instance.LOG.info("   itemType is not specified, defaulting to 'RIGHT_CLICK_BLOCK'.");
                                         itemType = ItemType.RIGHT_CLICK_BLOCK;
                                     }
                                     segment = new SegmentItem(clazz, getters, flag, denialValue, condition, itemType, isAdjacent);
-                                } else if (type.equals("block")) {
+                                } else if ("block".equals(type)) {
                                     if(blockType == null) {
                                         MyTown.instance.LOG.info("   blockType is not specified, defaulting to 'RIGHT_CLICK'.");
                                         blockType = BlockType.RIGHT_CLICK;
@@ -426,18 +426,18 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             Class<?> valueType = null;
 
             nextName = in.nextName();
-            if(nextName.equals("element"))
+            if("element".equals(nextName))
                 element = in.nextString();
             nextName = in.nextName();
-            if(nextName.equals("type"))
+            if("type".equals(nextName))
                 callerType = Caller.CallerType.valueOf(in.nextString());
             if(in.peek() != JsonToken.END_OBJECT) {
                 nextName = in.nextName();
-                if(nextName.equals("valueType"))
+                if("valueType".equals(nextName))
                     try {
                         valueType = Class.forName(in.nextString());
                     } catch (ClassNotFoundException ex) {
-                        throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " the valueType specified does not exist.");
+                        throw new SegmentException("[Segment: " + clazz + "] Getter with name " + getterName + " the valueType specified does not exist.", ex);
                     }
             }
 

@@ -20,11 +20,7 @@ import net.minecraftforge.common.DimensionManager;
 import java.util.UUID;
 
 public abstract class MyTownDatasource {
-    protected Log LOG = null;
-
-    public final void setLog(Log log) {
-        this.LOG = log;
-    }
+    protected static Log LOG = MyTown.instance.LOG;
 
     /**
      * Initialize the Datasource.
@@ -62,11 +58,11 @@ public abstract class MyTownDatasource {
     @SuppressWarnings("unchecked")
     private void configureTown(Town town, Resident creator) {
         for (World world : MinecraftServer.getServer().worldServers) {
-            if (!MyTownUniverse.getInstance().hasWorld(world.provider.dimensionId)) {
+            if (!MyTownUniverse.instance.hasWorld(world.provider.dimensionId)) {
                 saveWorld(world.provider.dimensionId);
             }
         }
-        for (int dim : MyTownUniverse.getInstance().getWorldsList()) {
+        for (int dim : MyTownUniverse.instance.getWorldsList()) {
             if (DimensionManager.getWorld(dim) == null) {
                 deleteWorld(dim);
             }
@@ -384,14 +380,14 @@ public abstract class MyTownDatasource {
     /* ----- Has ----- */
 
     public final boolean hasTown(String townName) {
-        return MyTownUniverse.getInstance().getTown(townName) != null;
+        return MyTownUniverse.instance.getTown(townName) != null;
     }
 
     /**
      * Checks if the Block exists give the chunk coordonates and dimension
      */
     public final boolean hasBlock(int dim, int x, int z) {
-        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, x, z)) != null;
+        return MyTownUniverse.instance.getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, x, z)) != null;
     }
 
     /**
@@ -399,13 +395,13 @@ public abstract class MyTownDatasource {
      */
     public final boolean hasBlock(int dim, int x, int z, Town town) {
         String key = String.format(TownBlock.KEY_FORMAT, dim, x, z);
-        TownBlock b = MyTownUniverse.getInstance().getTownBlock(key);
+        TownBlock b = MyTownUniverse.instance.getTownBlock(key);
         return town != null && b != null && b.getTown() == town;
 
     }
 
     public final boolean hasResident(UUID uuid) {
-        return MyTownUniverse.getInstance().getResident(uuid.toString()) != null;
+        return MyTownUniverse.instance.getResident(uuid.toString()) != null;
     }
 
     public final boolean hasResident(EntityPlayer pl) {
@@ -434,7 +430,7 @@ public abstract class MyTownDatasource {
      * @return The new Resident, or null if it failed
      */
     public Resident getOrMakeResident(UUID uuid, String playerName, boolean save) {
-        Resident res = MyTownUniverse.getInstance().getResident(uuid.toString());
+        Resident res = MyTownUniverse.instance.getResident(uuid.toString());
         if (res == null) {
             res = newResident(uuid.toString(), playerName);
             if (save && res != null && !saveResident(res)) { // Only save if a new Residen
@@ -478,11 +474,11 @@ public abstract class MyTownDatasource {
     }
 
     public TownBlock getBlock(int dim, int chunkX, int chunkZ) {
-        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, chunkX, chunkZ));
+        return MyTownUniverse.instance.getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, chunkX, chunkZ));
     }
 
     public Rank getRank(String rankName, Town town) {
-        for (Rank rank : MyTownUniverse.getInstance().getRanksMap().values()) {
+        for (Rank rank : MyTownUniverse.instance.getRanksMap().values()) {
             if (rank.getName().equals(rankName) && rank.getTown().equals(town))
                 return rank;
         }

@@ -33,7 +33,7 @@ public abstract class Commands {
         return DatasourceProxy.getDatasource();
     }
     public static MyTownUniverse getUniverse() {
-        return MyTownUniverse.getInstance();
+        return MyTownUniverse.instance;
     }
     public static Localization getLocal() {
         return LocalizationProxy.getLocalization();
@@ -107,7 +107,7 @@ public abstract class Commands {
      */
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
         // Since everybody should have permission to /t
-        if (permission.equals("mytown.cmd"))
+        if ("mytown.cmd".equals(permission))
             return true;
 
         if (!(sender instanceof EntityPlayer))
@@ -128,16 +128,16 @@ public abstract class Commands {
      */
     public static void populateCompletionMap() {
         List<String> populator = new ArrayList<String>();
-        populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
+        populator.addAll(getUniverse().getTownsMap().keySet());
         populator.add("@a");
         CommandManager.completionMap.put("townCompletionAndAll", populator);
 
         populator = new ArrayList<String>();
-        populator.addAll(MyTownUniverse.getInstance().getTownsMap().keySet());
+        populator.addAll(getUniverse().getTownsMap().keySet());
         CommandManager.completionMap.put("townCompletion", populator);
 
         populator = new ArrayList<String>();
-        for (Resident res : MyTownUniverse.getInstance().getResidentsMap().values()) {
+        for (Resident res : getUniverse().getResidentsMap().values()) {
             populator.add(res.getPlayerName());
         }
         CommandManager.completionMap.put("residentCompletion", populator);
@@ -170,7 +170,7 @@ public abstract class Commands {
     }
 
     public static Town getTownFromName(String name) {
-        Town town = MyTownUniverse.getInstance().getTownsMap().get(name);
+        Town town = getUniverse().getTownsMap().get(name);
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.town.notexist", name);
         return town;
@@ -210,7 +210,7 @@ public abstract class Commands {
         try {
             flag = hasFlags.getFlag(FlagType.valueOf(name));
         } catch (IllegalArgumentException ex) {
-            throw new MyTownCommandException("mytown.cmd.err.flagNotExists", name);
+            throw new MyTownCommandException("mytown.cmd.err.flagNotExists", ex, name);
         }
         if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", name);
@@ -254,7 +254,7 @@ public abstract class Commands {
         try {
             return FlagType.valueOf(name);
         } catch (IllegalArgumentException e) {
-            throw new MyTownCommandException("mytown.cmd.err.flagNotExists", name);
+            throw new MyTownCommandException("mytown.cmd.err.flagNotExists", e, name);
         }
     }
 

@@ -53,44 +53,44 @@ public class Segment {
             // Get the boolean value of each part of the condition.
             if(StringUtils.tryParseBoolean(conditionString[i + 2])) {
                 boolean value = (Boolean) getters.getValue(conditionString[i], Boolean.class, instance, object);
-                if (conditionString[i + 1].equals("==")) {
+                if ("==".equals(conditionString[i + 1])) {
                     current = value == Boolean.parseBoolean(conditionString[i + 2]);
-                } else if(conditionString[i + 1].equals("!=")) {
+                } else if("!=".equals(conditionString[i + 1])) {
                     current = value != Boolean.parseBoolean(conditionString[i + 2]);
                 } else {
                     throw new ConditionException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
             } else if(StringUtils.tryParseInt(conditionString[i + 2])) {
                 int value = (Integer) getters.getValue(conditionString[i], Integer.class, instance, object);
-                if(conditionString[i+1].equals("==")) {
+                if("==".equals(conditionString[i + 1])) {
                     current = value == Integer.parseInt(conditionString[i + 2]);
-                } else if(conditionString[i + 1].equals("!=")) {
+                } else if("!=".equals(conditionString[i + 1])) {
                     current = value != Integer.parseInt(conditionString[i + 2]);
-                } else if(conditionString[i+1].equals("<")) {
+                } else if("<".equals(conditionString[i + 1])) {
                     current = value < Integer.parseInt(conditionString[i + 2]);
-                } else if(conditionString[i+1].equals(">")) {
+                } else if(">".equals(conditionString[i + 1])) {
                     current = value > Integer.parseInt(conditionString[i + 2]);
                 } else {
                     throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
             } else if(StringUtils.tryParseFloat(conditionString[i + 2])) {
                 float value = (Integer) getters.getValue(conditionString[i], Integer.class, instance, object);
-                if(conditionString[i+1].equals("==")) {
+                if("==".equals(conditionString[i + 1])) {
                     current = value == Float.parseFloat(conditionString[i + 2]);
-                } else if(conditionString[i + 1].equals("!=")) {
+                } else if("!=".equals(conditionString[i + 1])) {
                     current = value != Float.parseFloat(conditionString[i + 2]);
-                } else if(conditionString[i+1].equals("<")) {
+                } else if("<".equals(conditionString[i + 1])) {
                     current = value < Float.parseFloat(conditionString[i + 2]);
-                } else if(conditionString[i+1].equals(">")) {
+                } else if(">".equals(conditionString[i + 1])) {
                     current = value > Float.parseFloat(conditionString[i + 2]);
                 } else {
                     throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
                 }
             } else if(conditionString[i + 2].startsWith("'") && conditionString[i+2].endsWith("'")){
                 String value = (String) getters.getValue(conditionString[i], String.class, instance, object);
-                if(conditionString[i + 1].equals("==")) {
+                if("==".equals(conditionString[i + 1])) {
                     current = value.equals(conditionString[i+2].substring(1, conditionString[i+2].length() - 1));
-                } else if(conditionString[i + 1].equals("!=")) {
+                } else if("!=".equals(conditionString[i + 1])) {
                     current = !value.equals(conditionString[i+2].substring(1, conditionString[i+2].length() - 1));
                 } else {
                     throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
@@ -99,10 +99,10 @@ public class Segment {
                 throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element with number " + ((i/4)+1) + " has an invalid type to be checked against!");
             }
 
-            if(conditionString.length <= i + 3 || current && conditionString[i + 3].equals("OR") || !current && conditionString[i + 3].equals("AND"))
+            if(conditionString.length <= i + 3 || current && "OR".equals(conditionString[i + 3]) || !current && "AND".equals(conditionString[i + 3]))
                 return current;
 
-            if(!conditionString[i + 3].equals("OR") && !conditionString[i + 3].equals("AND"))
+            if(!"OR".equals(conditionString[i + 3]) && !"AND".equals(conditionString[i + 3]))
                 throw new ConditionException("[Segment: "+ this.theClass.getName()  +"] Invalid condition element: " + conditionString[i + 3]);
         }
         return false;

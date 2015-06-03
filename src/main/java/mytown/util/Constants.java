@@ -4,10 +4,6 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class Constants {
 
-    private Constants() {
-
-    }
-
     public static final String VERSION = "@VERSION@";
     public static final String MODID = "MyTown2";
     public static final String MODNAME = "MyTown 2";
@@ -23,4 +19,7 @@ public class Constants {
 
     public static final String PLOT_SELL_NAME = EnumChatFormatting.BLUE + "Plot Sell";
     public static final String PLOT_SELL_IDENTIFIER = EnumChatFormatting.DARK_BLUE + "Plot Sale";
+
+    private Constants() {
+    }
 }

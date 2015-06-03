@@ -565,6 +565,6 @@ public class CommandsEveryone extends Commands {
             parentName = "mytown.cmd.everyone.wild")
     public static void permWildListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        res.sendMessage(Formatter.formatFlagsToString(Wild.getInstance()));
+        res.sendMessage(Formatter.formatFlagsToString(Wild.instance));
     }
 }

@@ -120,8 +120,8 @@ public class Plot implements FlagsContainer, ResidentsContainer {
         this.name = name;
     }
 
-    public void setDbID(int ID) {
-        this.dbID = ID;
+    public void setDbID(int id) {
+        this.dbID = id;
     }
 
     public int getDbID() {
@@ -147,7 +147,7 @@ public class Plot implements FlagsContainer, ResidentsContainer {
     @Override
     public boolean hasFlag(FlagType type) {
         for (Flag flag : flags)
-            if (flag.flagType.equals(type))
+            if (flag.getFlagType().equals(type))
                 return true;
         return false;
     }
@@ -160,7 +160,7 @@ public class Plot implements FlagsContainer, ResidentsContainer {
     @Override
     public Flag getFlag(FlagType type) {
         for (Flag flag : flags)
-            if (flag.flagType.equals(type))
+            if (flag.getFlagType().equals(type))
                 return flag;
         return null;
     }
@@ -168,7 +168,7 @@ public class Plot implements FlagsContainer, ResidentsContainer {
     @Override
     public boolean removeFlag(FlagType type) {
         for (Iterator<Flag> it = flags.iterator(); it.hasNext(); ) {
-            if (it.next().flagType == type) {
+            if (it.next().getFlagType() == type) {
                 it.remove();
                 return true;
             }
@@ -179,7 +179,7 @@ public class Plot implements FlagsContainer, ResidentsContainer {
     @Override
     public Object getValue(FlagType type) {
         for (Flag flag : flags) {
-            if (flag.flagType == type)
+            if (flag.getFlagType() == type)
                 return flag.getValue();
         }
         return type.getDefaultValue();

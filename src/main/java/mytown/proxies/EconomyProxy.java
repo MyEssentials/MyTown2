@@ -5,11 +5,11 @@ import mytown.config.Config;
 import mytown.core.economy.Economy;
 
 public class EconomyProxy {
-    private EconomyProxy() {
-
-    }
 
     private static Economy economy = null;
+
+    private EconomyProxy() {
+    }
 
     public static void init() {
         economy = new Economy(Config.costItemName);

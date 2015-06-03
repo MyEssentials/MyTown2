@@ -486,7 +486,7 @@ public class Resident implements PlotsContainer, TownsContainer { // TODO Make C
 
             // This is marked twice :P
             if(getPlayer() instanceof EntityPlayerMP)
-                VisualsHandler.getInstance().markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP)getPlayer(), null);
+                VisualsHandler.instance.markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP) getPlayer(), null);
 
         } else {
 
@@ -495,7 +495,7 @@ public class Resident implements PlotsContainer, TownsContainer { // TODO Make C
             selectionZ2 = z;
             secondSelectionActive = true;
             if(getPlayer() instanceof EntityPlayerMP)
-                VisualsHandler.getInstance().markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer());
+                VisualsHandler.instance.markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP) getPlayer());
         }
 
         return true;
@@ -588,7 +588,7 @@ public class Resident implements PlotsContainer, TownsContainer { // TODO Make C
         // When selection is expanded vertically we'll show it's borders... (Temporary solution)
 
         if(getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.getInstance().unmarkBlocks(null, (EntityPlayerMP)getPlayer());
+            VisualsHandler.instance.unmarkBlocks(null, (EntityPlayerMP) getPlayer());
 
         selectionY1 = 1;
         try {
@@ -599,7 +599,7 @@ public class Resident implements PlotsContainer, TownsContainer { // TODO Make C
         }
 
         if(getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.getInstance().markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer(), null);
+            VisualsHandler.instance.markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP) getPlayer(), null);
     }
 
     public void resetSelection(boolean resetBlocks) {
@@ -607,7 +607,7 @@ public class Resident implements PlotsContainer, TownsContainer { // TODO Make C
         secondSelectionActive = false;
 
         if(resetBlocks && getPlayer() instanceof EntityPlayerMP) {
-            VisualsHandler.getInstance().unmarkBlocks(null, (EntityPlayerMP)getPlayer());
+            VisualsHandler.instance.unmarkBlocks(null, (EntityPlayerMP)getPlayer());
         }
     }
 

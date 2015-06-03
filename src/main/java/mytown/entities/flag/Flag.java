@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
  */
 public class Flag<T> {
 
-    public FlagType flagType;
+    private FlagType flagType;
     private T value;
 
 
@@ -22,17 +22,12 @@ public class Flag<T> {
         this.value = defaultValue;
     }
 
-    public T getValue() {
-        return value;
-    }
-
     /**
      * Serializes the value in a JSON String so that it can be saved to database safely
      */
     public String serializeValue() {
         Gson gson = new GsonBuilder().create();
-        Type type = new TypeToken<T>() {
-        }.getType();
+        Type type = new TypeToken<T>() { }.getType();
         return gson.toJson(value, type);
     }
 
@@ -61,7 +56,7 @@ public class Flag<T> {
                 return (T) (Integer) Integer.parseInt(str); // double cast... lol
             } else if (value instanceof Boolean) {
                 // Extra check since any String that is not "true" gets converted to false
-                if (str.equals("true") || str.equals("false")) {
+                if ("true".equals(str) || "false".equals(str)) {
                     return (T) (Boolean) Boolean.parseBoolean(str);
                 } else {
                     return null;
@@ -91,5 +86,14 @@ public class Flag<T> {
             return true;
         }
         return false;
+    }
+
+
+    public T getValue() {
+        return value;
+    }
+
+    public FlagType getFlagType() {
+        return flagType;
     }
 }

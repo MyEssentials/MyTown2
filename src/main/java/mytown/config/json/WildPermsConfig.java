@@ -27,19 +27,19 @@ public class WildPermsConfig extends JSONConfig<Flag> {
     protected List<Flag> create() {
         for (FlagType type : FlagType.values()) {
             if (type.isWildPerm())
-                Wild.getInstance().addFlag(new Flag(type, type.getDefaultWildPerm()));
+                Wild.instance.addFlag(new Flag(type, type.getDefaultWildPerm()));
         }
 
         try {
             Writer writer = new FileWriter(path);
-            gson.toJson(Wild.getInstance().getFlags(), gsonType, writer);
+            gson.toJson(Wild.instance.getFlags(), gsonType, writer);
             writer.close();
             MyTown.instance.LOG.error("Successfully created WildPerms config file!");
         } catch (IOException e) {
             MyTown.instance.LOG.error("Failed to create WildPerms config file!");
             MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
-        return Wild.getInstance().getFlags();
+        return Wild.instance.getFlags();
     }
 
     @Override
@@ -71,12 +71,12 @@ public class WildPermsConfig extends JSONConfig<Flag> {
 
         for (Iterator<Flag> it = list.iterator(); it.hasNext(); ) {
             Flag flag = it.next();
-            if(flag.flagType == null) {
+            if(flag.getFlagType() == null) {
                 MyTown.instance.LOG.error("An unrecognized flagType has been found. Removing...");
                 it.remove();
                 continue;
             }
-            if (!flag.flagType.isWildPerm()) {
+            if (!flag.getFlagType().isWildPerm()) {
                 MyTown.instance.LOG.error("A non wild flagType has been found in WildPerms config file. Removing...");
                 it.remove();
             }
@@ -93,7 +93,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
             if (type.isWildPerm()) {
                 boolean ok = false;
                 for (Flag f : items) {
-                    if (f.flagType == type)
+                    if (f.getFlagType() == type)
                         ok = true;
                 }
                 if (!ok) {
@@ -105,7 +105,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
         }
 
         for(Flag flag : items) {
-            Wild.getInstance().addFlag(flag);
+            Wild.instance.addFlag(flag);
         }
         if(updated)
             write(items);

@@ -62,7 +62,8 @@ public class Formatter {
     }
 
     public static void sendMap(Resident res) {
-        if (res.getPlayer() == null) return;
+        if (res.getPlayer() == null)
+            return;
         sendMap(res, res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
     }
 
@@ -216,7 +217,7 @@ public class Formatter {
         String formattedFlagList = null;
 
         for (Flag flag : container.getFlags()) {
-            if(flag.flagType.canTownsModify() || container instanceof Wild) {
+            if(flag.getFlagType().canTownsModify() || container instanceof Wild) {
                 if (formattedFlagList == null) {
                     formattedFlagList = "";
                 } else {
@@ -236,14 +237,14 @@ public class Formatter {
         if(formattedFlagList == null)
             formattedFlagList = "";
 
-        if(!unconfigurableFlags.equals(""))
+        if(!"".equals(unconfigurableFlags))
             formattedFlagList += "\\n" + EnumChatFormatting.RED + "UNCONFIGURABLE FLAGS: " + unconfigurableFlags;
 
         return formattedFlagList;
     }
 
     public static String formatFlagToString(Flag flag, EnumChatFormatting valueColor) {
-        return String.format(EnumChatFormatting.GRAY + "%s" + EnumChatFormatting.WHITE + "[" + valueColor + "%s" + EnumChatFormatting.WHITE + "]:" + EnumChatFormatting.GRAY + " %s", flag.flagType.toString(), flag.valueToString(), flag.flagType.getLocalizedDescription());
+        return String.format(EnumChatFormatting.GRAY + "%s" + EnumChatFormatting.WHITE + "[" + valueColor + "%s" + EnumChatFormatting.WHITE + "]:" + EnumChatFormatting.GRAY + " %s", flag.getFlagType().toString(), flag.valueToString(), flag.getFlagType().getLocalizedDescription());
     }
 }
 

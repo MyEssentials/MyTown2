@@ -34,7 +34,7 @@ public class ExtraEventsHandler {
         for(ChunkPos chunk : chunks) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
             if(block == null) {
-                if(!(Boolean)Wild.getInstance().getValue(FlagType.EXPLOSIONS)) {
+                if(!(Boolean)Wild.instance.getValue(FlagType.EXPLOSIONS)) {
                     ev.setCanceled(true);
                     return;
                 }

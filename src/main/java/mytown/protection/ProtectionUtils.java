@@ -30,7 +30,7 @@ public class ProtectionUtils {
      * Adds to the whitelist of the specified town. Used when placing blocks.
      */
     public static void addToBlockWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for (Protection prot : Protections.getInstance().getProtectionList()) {
+        for (Protection prot : Protections.instance.getProtectionList()) {
             if (prot.isTileTracked(te))
                 for (FlagType flagType : prot.getFlagsForTile(te)) {
                     if (!town.hasBlockWhitelist(dim, x, y, z, flagType)) {
@@ -45,7 +45,7 @@ public class ProtectionUtils {
      * Removes from the whitelist. Used when breaking blocks.
      */
     public static void removeFromWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for (Protection prot : Protections.getInstance().getProtectionList()) {
+        for (Protection prot : Protections.instance.getProtectionList()) {
             if (prot.isTileTracked(te))
                 for (FlagType flagType : prot.getFlagsForTile(te)) {
                     BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
@@ -60,7 +60,7 @@ public class ProtectionUtils {
      * Checks the tile entity with all the protections
      */
     public static boolean checkTileEntity(TileEntity te) {
-        for (Protection prot : Protections.getInstance().getProtectionList())
+        for (Protection prot : Protections.instance.getProtectionList())
             if (prot.checkTileEntity(te))
                 return true;
         return false;
@@ -70,7 +70,7 @@ public class ProtectionUtils {
      * Checks the item usage with all the protections
      */
     public static boolean checkItemUsage(ItemStack stack, Resident res, BlockPos bp, int face) {
-        for (Protection prot : Protections.getInstance().getProtectionList())
+        for (Protection prot : Protections.instance.getProtectionList())
             if (prot.checkItem(stack, res, bp, face))
                 return true;
         return false;
@@ -82,7 +82,7 @@ public class ProtectionUtils {
      * Checks the block if it can be activated by a right-click
      */
     public static boolean checkActivatedBlocks(Block block, int meta) {
-        for (Protection prot : Protections.getInstance().getProtectionList()) {
+        for (Protection prot : Protections.instance.getProtectionList()) {
             if (prot.isBlockTracked(block.getClass(), meta))
                 return true;
         }
@@ -92,7 +92,7 @@ public class ProtectionUtils {
      * Checks if an entity is hostile
      */
     public static boolean isEntityTracked(Class<? extends Entity> ent) {
-        for (Protection prot : Protections.getInstance().getProtectionList()) {
+        for (Protection prot : Protections.instance.getProtectionList()) {
             if (prot.isEntityTracked(ent)) {
                 return true;
             }
@@ -101,7 +101,7 @@ public class ProtectionUtils {
     }
 
     public static boolean isTileEntityOwnable(Class<? extends TileEntity> clsTe) {
-        for(Protection protection : Protections.getInstance().getProtectionList()) {
+        for(Protection protection : Protections.instance.getProtectionList()) {
             if(protection.isTileEntityOwnable(clsTe))
                 return true;
         }
@@ -110,7 +110,7 @@ public class ProtectionUtils {
 
     public static List<FlagType> getFlagsForTile(Class<? extends TileEntity> te) {
         List<FlagType> flags = new ArrayList<FlagType>();
-        for(Protection protection : Protections.getInstance().getProtectionList()) {
+        for(Protection protection : Protections.instance.getProtectionList()) {
             if(protection.isTileTracked(te))
                 flags.addAll(protection.getFlagsForTile(te));
         }
@@ -128,7 +128,7 @@ public class ProtectionUtils {
         if (bw.getFlagType() == FlagType.ACTIVATE_BLOCKS
                 && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z), DimensionManager.getWorld(bw.dim).getBlockMetadata(bw.x, bw.y, bw.z)))
             return false;
-        if ((bw.getFlagType() == FlagType.MODIFY_BLOCKS || bw.getFlagType() == FlagType.ACTIVATE_BLOCKS || bw.getFlagType() == FlagType.USE_ITEMS)) {
+        if (bw.getFlagType() == FlagType.MODIFY_BLOCKS || bw.getFlagType() == FlagType.ACTIVATE_BLOCKS || bw.getFlagType() == FlagType.USE_ITEMS) {
             TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(bw.x, bw.y, bw.z);
             if (te == null)
                 return false;
@@ -138,7 +138,7 @@ public class ProtectionUtils {
     }
 
     public static boolean canEntityTrespassPvp(Class<? extends Entity> entity) {
-        for(Protection protection : Protections.getInstance().getProtectionList()) {
+        for(Protection protection : Protections.instance.getProtectionList()) {
             if(protection.canEntityTrespassPvp(entity))
                 return true;
         }
@@ -146,7 +146,7 @@ public class ProtectionUtils {
     }
 
     public static void saveBlockOwnersToDB() {
-        for(Map.Entry<TileEntity, Resident> set : Protections.getInstance().ownedTileEntities.entrySet()) {
+        for(Map.Entry<TileEntity, Resident> set : Protections.instance.ownedTileEntities.entrySet()) {
             DatasourceProxy.getDatasource().saveBlockOwner(set.getValue(), set.getKey().getWorldObj().provider.dimensionId, set.getKey().xCoord, set.getKey().yCoord, set.getKey().zCoord);
         }
     }
@@ -157,12 +157,12 @@ public class ProtectionUtils {
      * Method called by the ThreadPlacementCheck after it found a TileEntity
      */
     public static synchronized void addTileEntity(TileEntity te, Resident res) {
-        Protections.getInstance().ownedTileEntities.put(te, res);
-        if(Protections.getInstance().activePlacementThreads != 0)
-            Protections.getInstance().activePlacementThreads--;
+        Protections.instance.ownedTileEntities.put(te, res);
+        if(Protections.instance.activePlacementThreads != 0)
+            Protections.instance.activePlacementThreads--;
     }
 
     public static synchronized void placementThreadTimeout() {
-        Protections.getInstance().activePlacementThreads--;
+        Protections.instance.activePlacementThreads--;
     }
 }

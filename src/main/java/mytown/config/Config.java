@@ -7,11 +7,6 @@ import net.minecraft.init.Items;
 
 public class Config {
 
-    private Config() {
-
-    }
-
-
     /* ----- General Config ----- */
 
     @ConfigProperty(category = "general", name = "Localization", comment = "Localization file without file extension.\\nLoaded from config/MyTown/localization/ first, then from the jar, then finally will fallback to en_US if needed.")
@@ -115,4 +110,7 @@ public class Config {
 
     //@ConfigProperty(category = "extra", name = "debug", comment = "Enables debugging output to console, use '/ta debug' to toggle ingame")
     //public static boolean debug;
+
+    private Config() {
+    }
 }

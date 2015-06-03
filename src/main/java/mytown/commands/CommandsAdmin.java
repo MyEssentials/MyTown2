@@ -527,7 +527,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true,
             completionKeys = {"flagCompletion"})
     public static void permWildListCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, Formatter.formatFlagsToString(Wild.getInstance()));
+        sendMessageBackToSender(sender, Formatter.formatFlagsToString(Wild.instance));
     }
 
     @CommandNode(
@@ -541,14 +541,14 @@ public class CommandsAdmin extends Commands {
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.wild.set");
         }
         FlagType type = getFlagTypeFromName(args.get(0));
-        Flag flag = getFlagFromType(Wild.getInstance(), type);
+        Flag flag = getFlagFromType(Wild.instance, type);
 
         if (flag.setValueFromString(args.get(1))) {
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.wild.perm.set.success", args.get(0), args.get(1)));
         } else
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
         //Saving changes to file
-        MyTown.instance.getWildConfig().write(Wild.getInstance().getFlags());
+        MyTown.instance.getWildConfig().write(Wild.instance.getFlags());
     }
 
     @CommandNode(
@@ -708,7 +708,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.plot")
     public static void plotHideCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayerMP) {
-            VisualsHandler.getInstance().unmarkPlots((EntityPlayerMP) sender);
+            VisualsHandler.instance.unmarkPlots((EntityPlayerMP) sender);
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.plot.vanished"));
         }
     }
@@ -740,7 +740,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.borders")
     public static void bordersHideCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayerMP) {
-            VisualsHandler.getInstance().unmarkTowns((EntityPlayerMP)sender);
+            VisualsHandler.instance.unmarkTowns((EntityPlayerMP)sender);
             sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
         }
     }

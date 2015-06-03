@@ -25,19 +25,17 @@ import java.util.List;
  */
 public class ProtectionParser {
 
-    private ProtectionParser() {
-
-    }
-
     private static String folderPath;
-    private static Gson gson;
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(Protection.class, new ProtectionTypeAdapter()).setPrettyPrinting().create();
+
+    private ProtectionParser() {
+    }
 
     public static void setFolderPath(String folderPath) {
         ProtectionParser.folderPath = folderPath;
     }
 
     public static boolean start() {
-        initJSON();
         File folder = new File(folderPath);
         if(!folder.exists()) {
             if(!folder.mkdir())
@@ -47,7 +45,7 @@ public class ProtectionParser {
 
         String[] extensions = new String[1];
         extensions[0] = "json";
-        Protections.getInstance().reset();
+        Protections.instance.reset();
         Protection vanillaProtection = null;
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
             try {
@@ -55,11 +53,11 @@ public class ProtectionParser {
                 MyTown.instance.LOG.info("Loading protection file: " + file.getName());
                 Protection protection = gson.fromJson(reader, Protection.class);
                 if(protection != null) {
-                    if (protection.modid.equals("Minecraft")) {
+                    if ("Minecraft".equals(protection.modid)) {
                         vanillaProtection = protection;
                     } else {
                         MyTown.instance.LOG.info("Adding protection for mod: " + protection.modid);
-                        Protections.getInstance().addProtection(protection);
+                        Protections.instance.addProtection(protection);
                     }
                 }
                 reader.close();
@@ -71,14 +69,10 @@ public class ProtectionParser {
         }
         if(vanillaProtection != null) {
             MyTown.instance.LOG.info("Adding vanilla protection.");
-            Protections.getInstance().addProtection(vanillaProtection);
+            Protections.instance.addProtection(vanillaProtection);
         }
 
         return true;
-    }
-
-    private static void initJSON() {
-        gson = new GsonBuilder().registerTypeAdapter(Protection.class, new ProtectionTypeAdapter()).setPrettyPrinting().create();
     }
 
     @SuppressWarnings("unchecked")

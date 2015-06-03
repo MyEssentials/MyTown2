@@ -157,13 +157,13 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
     public void addBlock(TownBlock block) {
         blocks.put(block.getKey(), block);
 
-        VisualsHandler.getInstance().updateTownBorders(this);
+        VisualsHandler.instance.updateTownBorders(this);
     }
 
     @Override
     public void removeBlock(TownBlock block) {
         blocks.remove(block.getKey());
-        VisualsHandler.getInstance().updateTownBorders(this);
+        VisualsHandler.instance.updateTownBorders(this);
     }
 
     @Override
@@ -207,12 +207,12 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
 
     public void showBorders(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.getInstance().markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
+            VisualsHandler.instance.markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
     }
 
     public void hideBorders(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.getInstance().unmarkBlocks(this, (EntityPlayerMP) caller.getPlayer());
+            VisualsHandler.instance.unmarkBlocks(this, (EntityPlayerMP) caller.getPlayer());
     }
 
     /* ----- IHasPlots ----- */
@@ -293,14 +293,14 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
     public void showPlots(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
             for(Plot plot : plots) {
-                VisualsHandler.getInstance().markPlotBorders(plot, (EntityPlayerMP)caller.getPlayer());
+                VisualsHandler.instance.markPlotBorders(plot, (EntityPlayerMP)caller.getPlayer());
             }
     }
 
     public void hidePlots(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
             for(Plot plot : plots)
-                VisualsHandler.getInstance().unmarkBlocks(plot, (EntityPlayerMP)caller.getPlayer());
+                VisualsHandler.instance.unmarkBlocks(plot, (EntityPlayerMP)caller.getPlayer());
     }
 
     /* ----- IHasFlags ------ */
@@ -311,7 +311,7 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
     @Override
     public boolean hasFlag(FlagType type) {
         for (Flag flag : flags)
-            if (flag.flagType == type)
+            if (flag.getFlagType() == type)
                 return true;
         return false;
     }
@@ -322,7 +322,7 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
     @Override
     public Flag getFlag(FlagType type) {
         for (Flag flag : flags)
-            if (flag.flagType == type)
+            if (flag.getFlagType() == type)
                 return flag;
         return null;
     }
@@ -330,7 +330,7 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
     @Override
     public boolean removeFlag(FlagType type) {
         for (Iterator<Flag> it = flags.iterator(); it.hasNext(); ) {
-            if (it.next().flagType == type) {
+            if (it.next().getFlagType() == type) {
                 it.remove();
                 return true;
             }
@@ -341,7 +341,7 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
     @Override
     public Object getValue(FlagType type) {
         for (Flag flag : flags) {
-            if (flag.flagType == type)
+            if (flag.getFlagType() == type)
                 return flag.getValue();
         }
         return type.getDefaultValue();

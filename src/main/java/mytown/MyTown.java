@@ -105,7 +105,6 @@ public class MyTown {
         }
 
         ProtectionParser.start();
-        DatasourceProxy.setLog(LOG);
         SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
     }
 
@@ -157,10 +156,10 @@ public class MyTown {
         FMLCommonHandler.instance().bus().register(playerTracker);
         MinecraftForge.EVENT_BUS.register(playerTracker);
 
-        FMLCommonHandler.instance().bus().register(VisualsHandler.getInstance());
+        FMLCommonHandler.instance().bus().register(VisualsHandler.instance);
 
-        FMLCommonHandler.instance().bus().register(Protections.getInstance());
-        MinecraftForge.EVENT_BUS.register(Protections.getInstance());
+        FMLCommonHandler.instance().bus().register(Protections.instance);
+        MinecraftForge.EVENT_BUS.register(Protections.instance);
 
         if(Config.useExtraEvents)
             MinecraftForge.EVENT_BUS.register(ExtraEventsHandler.getInstance());

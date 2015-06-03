@@ -19,15 +19,9 @@ import java.util.*;
 
 public class VisualsHandler {
 
-    private static VisualsHandler instance = new VisualsHandler();
-    public static VisualsHandler getInstance() {
-        if(instance == null)
-            instance = new VisualsHandler();
-        return instance;
-    }
+    public static final VisualsHandler instance = new VisualsHandler();
 
     private final Map<PlayerObjectPair, List<BlockCoords>> markedBlocks = new HashMap<PlayerObjectPair, List<BlockCoords>>();
-
 
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent ev) {

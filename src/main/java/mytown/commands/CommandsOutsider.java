@@ -40,7 +40,7 @@ public class CommandsOutsider extends Commands {
                 throw new MyTownCommandException("You are not a player!");
             }
         } else {
-            if (args.get(0).equals("@a")) {
+            if ("@a".equals(args.get(0))) {
                 towns = new ArrayList<Town>(getUniverse().getTownsMap().values());
                 // TODO Sort
             } else {
@@ -77,7 +77,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             nonPlayers = true)
     public static void listCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", Formatter.formatTownsToString(MyTownUniverse.getInstance().getTownsMap().values())));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", Formatter.formatTownsToString(getUniverse().getTownsMap().values())));
     }
 
     @CommandNode(

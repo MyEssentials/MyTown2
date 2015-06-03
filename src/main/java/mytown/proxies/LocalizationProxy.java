@@ -12,12 +12,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class LocalizationProxy {
-    private LocalizationProxy() {
-
-    }
-
-    private static Logger LOG = LogManager.getLogger("MyTown2.Localization");
+    private static final Logger LOG = LogManager.getLogger("MyTown2.Localization");
     private static Localization localization;
+
+    private LocalizationProxy() {
+    }
 
     /**
      * Loads the {@link Localization}. First tries to load it from config/MyTown/Localization, then the classpath, then loads en_US in its place

@@ -48,15 +48,15 @@ public class Ticker {
             return;
 
 
-        for(Resident res : MyTownUniverse.getInstance().getResidentsMap().values()) {
+        for(Resident res : MyTownUniverse.instance.getResidentsMap().values()) {
             res.tick();
         }
 
         if((Config.costTownUpkeep > 0 || Config.costAdditionalUpkeep > 0) && ev.phase == TickEvent.Phase.START) {
             if (ticked) {
                 if(lastCalendarDay != -1 && Calendar.getInstance().get(Calendar.DAY_OF_YEAR) != lastCalendarDay) {
-                    for (int i = 0; i < MyTownUniverse.getInstance().getTownsMap().size(); i++) {
-                        Town town = MyTownUniverse.getInstance().getTownsMap().values().asList().get(i);
+                    for (int i = 0; i < MyTownUniverse.instance.getTownsMap().size(); i++) {
+                        Town town = MyTownUniverse.instance.getTownsMap().values().asList().get(i);
                         if (!(town instanceof AdminTown)) {
                             town.payUpkeep();
                             if(town.getDaysNotPaid() == Config.upkeepTownDeletionDays && Config.upkeepTownDeletionDays > 0) {
@@ -179,7 +179,7 @@ public class Ticker {
 
                     }
                 } else if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
-                    town = MyTownUniverse.getInstance().getTownsMap().get(MyTownUtils.getTownNameFromLore(ev.entityPlayer));
+                    town = MyTownUniverse.instance.getTownsMap().get(MyTownUtils.getTownNameFromLore(ev.entityPlayer));
                     Town townAt = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
                     if (town == null || town != townAt) {
                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
@@ -210,7 +210,7 @@ public class Ticker {
                     return;
 
                 NBTTagList tagList = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-                Town town  = MyTownUniverse.getInstance().getTown(tagList.getStringTagAt(0).split(" ")[1]);
+                Town town  = MyTownUniverse.instance.getTown(tagList.getStringTagAt(0).split(" ")[1]);
                 if(town == null)
                     return;
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
@@ -247,7 +247,7 @@ public class Ticker {
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
-        if (VisualsHandler.getInstance().isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
+        if (VisualsHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
             // Cancel event if it's a border that has been broken
             ev.setCanceled(true);
         }

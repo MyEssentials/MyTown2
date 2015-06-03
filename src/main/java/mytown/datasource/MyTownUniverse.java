@@ -14,14 +14,7 @@ import java.util.Map;
 
 public class MyTownUniverse { // TODO Allow migrating between different Datasources
 
-    private static MyTownUniverse instance = null;
-
-    public static MyTownUniverse getInstance() {
-        if (instance == null) {
-            instance = new MyTownUniverse();
-        }
-        return instance;
-    }
+    public static final MyTownUniverse instance = new MyTownUniverse();
 
     private final Map<String, Resident> residents = new HashMap<String, Resident>();
     private final Map<String, Town> towns = new HashMap<String, Town>();
