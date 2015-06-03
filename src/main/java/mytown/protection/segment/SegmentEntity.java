@@ -6,7 +6,6 @@ import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.getter.Getters;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.exceptions.GetterException;
-import mytown.util.exceptions.SegmentException;
 import net.minecraft.entity.Entity;
 
 /**
@@ -14,7 +13,7 @@ import net.minecraft.entity.Entity;
  */
 public class SegmentEntity extends Segment {
 
-    public EntityType type;
+    public final EntityType type;
 
     public SegmentEntity(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString, EntityType type) {
         super(theClass, getters, flag, denialValue, conditionString);

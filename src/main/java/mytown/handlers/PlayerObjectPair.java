@@ -7,8 +7,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
  */
 public class PlayerObjectPair {
 
-    public EntityPlayerMP player;
-    public Object object;
+    public final EntityPlayerMP player;
+    public final Object object;
 
     public PlayerObjectPair(EntityPlayerMP player, Object object) {
         this.player = player;

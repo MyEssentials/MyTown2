@@ -2,13 +2,13 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
-import mytown.api.interfaces.IHasPlots;
-import mytown.api.interfaces.IHasTowns;
+import mytown.api.interfaces.PlotsContainer;
+import mytown.api.interfaces.TownsContainer;
 import mytown.config.Config;
 import mytown.core.utils.ChatUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.flag.FlagType;
-import mytown.handlers.VisualsTickHandler;
+import mytown.handlers.VisualsHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
@@ -23,13 +23,14 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.FakePlayer;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
+public class Resident implements PlotsContainer, TownsContainer { // TODO Make Comparable
     private EntityPlayer player;
     private UUID playerUUID;
     private String playerName; // This is only for display purposes when the player is offline
@@ -41,7 +42,14 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     private int selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim;
     private Town selectionTown;
     private boolean firstSelectionActive = false, secondSelectionActive = false;
-    private boolean selectionExpandedVert = false;
+    private boolean mapOn = false;
+
+    private List<Plot> plots = new ArrayList<Plot>();
+    private List<Town> towns = new ArrayList<Town>();
+    private Town selectedTown = null;
+    private List<Town> invites = new ArrayList<Town>();
+    private List<Resident> friends = new ArrayList<Resident>();
+    private List<Resident> friendRequests = new ArrayList<Resident>();
 
     public Resident(EntityPlayer pl) {
         setPlayer(pl);
@@ -164,8 +172,6 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /* ----- IHasPlots ----- */
 
-    private List<Plot> plots = new ArrayList<Plot>();
-
     @Override
     public void addPlot(Plot plot) {
         plots.add(plot);
@@ -188,7 +194,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * This does NOT perform as well as some other methods of retrieving plots. Please use sparingly and with caution!
-     * @see mytown.api.interfaces.IHasPlots
+     * @see PlotsContainer
      */
     @Override
     public Plot getPlotAtCoords(int dim, int x, int y, int z) {
@@ -201,9 +207,6 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     }
 
     /* ----- IHasTowns ----- */
-
-    private List<Town> towns = new ArrayList<Town>();
-    public Town selectedTown = null;
 
     @Override
     public void addTown(Town town) {
@@ -227,12 +230,10 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /**
      * Returns the currently selected Town, the first Town (if none is selected), or null if not part of a town.
-     *
-     * @return
      */
     public Town getSelectedTown() {
         if (selectedTown == null) {
-            return towns.size() >= 1 ? towns.get(0) : null;
+            return towns.isEmpty() ? null : towns.get(0);
         }
         return selectedTown;
     }
@@ -245,7 +246,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
      * Returns this Residents rank in the given Town, or null if the player is not part of the Town
      */
     public Rank getTownRank(Town town) {
-        if (!towns.contains(town)) return null;
+        if (!towns.contains(town))
+            return null;
         return town.getResidentRank(this);
     }
 
@@ -257,8 +259,6 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     }
 
     /* ----- Map ----- */
-
-    private boolean mapOn = false;
 
     public boolean isMapOn() {
         return mapOn;
@@ -309,8 +309,6 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /* ----- Invites ----- */
 
-    private List<Town> invites = new ArrayList<Town>();
-
     public void addInvite(Town invite) {
         invites.add(invite);
     }
@@ -347,9 +345,6 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
     /* ---- Friends ---- */
 
-    private List<Resident> friends = new ArrayList<Resident>();
-    private List<Resident> friendRequests = new ArrayList<Resident>();
-
     public boolean addFriend(Resident res) {
         return friends.add(res);
     }
@@ -367,7 +362,8 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
     }
 
     public boolean addFriendRequest(Resident res) {
-        if (friends.contains(res) || friendRequests.contains(res)) return false;
+        if (friends.contains(res) || friendRequests.contains(res))
+            return false;
         return friendRequests.add(res);
     }
 
@@ -430,14 +426,14 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
             int z = (int) Math.floor(player.posZ);
             boolean ok = false;
             while(!ok) {
-                while (!town.checkPermission(this, FlagType.enter, false, player.dimension, x, y, z) && town.isPointInTown(player.dimension, x, z))
+                while (!town.checkPermission(this, FlagType.ENTER, false, player.dimension, x, y, z) && town.isPointInTown(player.dimension, x, z))
                     x++;
                 x += 3;
 
                 while(player.worldObj.getBlock(x, y, z) != Blocks.air && player.worldObj.getBlock(x, y + 1, z) != Blocks.air && y < 256)
                     y++;
 
-                if(town.checkPermission(this, FlagType.enter, false, player.dimension, x, y, z) || !town.isPointInTown(player.dimension, x, z))
+                if(town.checkPermission(this, FlagType.ENTER, false, player.dimension, x, y, z) || !town.isPointInTown(player.dimension, x, z))
                     ok = true;
             }
             player.setPositionAndUpdate(x, y, z);
@@ -490,7 +486,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
 
             // This is marked twice :P
             if(getPlayer() instanceof EntityPlayerMP)
-                VisualsTickHandler.getInstance().markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP)getPlayer(), null);
+                VisualsHandler.getInstance().markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP)getPlayer(), null);
 
         } else {
 
@@ -499,7 +495,7 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
             selectionZ2 = z;
             secondSelectionActive = true;
             if(getPlayer() instanceof EntityPlayerMP)
-                VisualsTickHandler.getInstance().markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer());
+                VisualsHandler.getInstance().markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer());
         }
 
         return true;
@@ -592,29 +588,26 @@ public class Resident implements IHasPlots, IHasTowns { // TODO Make Comparable
         // When selection is expanded vertically we'll show it's borders... (Temporary solution)
 
         if(getPlayer() instanceof EntityPlayerMP)
-            VisualsTickHandler.getInstance().unmarkBlocks(null, (EntityPlayerMP)getPlayer());
+            VisualsHandler.getInstance().unmarkBlocks(null, (EntityPlayerMP)getPlayer());
 
         selectionY1 = 1;
         try {
             selectionY2 = player.worldObj.getActualHeight() - 1;
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
             return;
         }
-        selectionExpandedVert = true;
 
         if(getPlayer() instanceof EntityPlayerMP)
-            VisualsTickHandler.getInstance().markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer(), null);
+            VisualsHandler.getInstance().markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP)getPlayer(), null);
     }
 
     public void resetSelection(boolean resetBlocks) {
         firstSelectionActive = false;
         secondSelectionActive = false;
 
-        if(resetBlocks) {
-            if(getPlayer() instanceof EntityPlayerMP) {
-                VisualsTickHandler.getInstance().unmarkBlocks(null, (EntityPlayerMP)getPlayer());
-            }
+        if(resetBlocks && getPlayer() instanceof EntityPlayerMP) {
+            VisualsHandler.getInstance().unmarkBlocks(null, (EntityPlayerMP)getPlayer());
         }
     }
 

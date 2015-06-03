@@ -2,15 +2,15 @@ package mytown.commands;
 
 import mytown.config.Config;
 import mytown.core.utils.ChatUtils;
-import mytown.core.utils.command.Command;
-import mytown.core.utils.command.CommandNode;
+import mytown.core.utils.StringUtils;
+import mytown.core.command.Command;
+import mytown.core.command.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.EconomyProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Formatter;
-import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
@@ -36,7 +36,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.leave",
             parentName = "mytown.cmd")
     public static void leaveCommand(ICommandSender sender, List<String> args) {
-        if (args.size() > 0)
+        if (args.isEmpty())
             callSubFunctions(sender, args, "mytown.cmd.everyone.leave");
         else {
             Resident res = getDatasource().getOrMakeResident(sender);
@@ -65,7 +65,7 @@ public class CommandsEveryone extends Commands {
         Town town;
         int amount;
 
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             town = getTownFromResident(res);
             amount = Config.costAmountSpawn;
         } else {
@@ -76,7 +76,7 @@ public class CommandsEveryone extends Commands {
         if (!town.hasSpawn())
             throw new MyTownCommandException("mytown.cmd.err.spawn.notexist", town.getName());
 
-        if(!town.checkPermission(res, FlagType.enter, false, town.getSpawn().getDim(), (int)town.getSpawn().getX(), (int)town.getSpawn().getY(), (int)town.getSpawn().getZ()))
+        if(!town.checkPermission(res, FlagType.ENTER, false, town.getSpawn().getDim(), (int)town.getSpawn().getX(), (int)town.getSpawn().getY(), (int)town.getSpawn().getZ()))
             throw new MyTownCommandException("mytown.cmd.err.spawn.protected", town.getName());
 
         if(res.getTeleportCooldown() > 0)
@@ -343,8 +343,8 @@ public class CommandsEveryone extends Commands {
             Resident target = getResidentFromName(args.get(0));
 
             Town town = getTownFromResident(res);
-            if (!res.hasTown(town))
-                throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", res.getPlayerName(), town.getName());
+            if (!target.hasTown(town))
+                throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", target.getPlayerName(), town.getName());
 
             Plot plot = getPlotAtResident(res);
 
@@ -447,7 +447,7 @@ public class CommandsEveryone extends Commands {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
-            if(!MyTownUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0)
+            if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0)
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
             int price = Integer.parseInt(args.get(0));
@@ -537,7 +537,7 @@ public class CommandsEveryone extends Commands {
         if(args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.bank.pay");
 
-        if(!MyTownUtils.tryParseInt(args.get(0)))
+        if(!StringUtils.tryParseInt(args.get(0)))
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
         Resident res = getDatasource().getOrMakeResident(sender);

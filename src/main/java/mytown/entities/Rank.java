@@ -1,11 +1,19 @@
 package mytown.entities;
 
 import com.google.common.base.Joiner;
-import mytown.MyTown;
 
 import java.util.*;
 
 public class Rank {
+
+    /**
+     * Map that holds the name and the rank's permission of all the ranks that are added to a town on creation.
+     * And can be configured in the config file.
+     */
+    public static final Map<String, List<String>> defaultRanks = new HashMap<String, List<String>>();
+    public static String theDefaultRank;
+    public static String theMayorDefaultRank; // ok not the best name
+
     private String key, name;
     private List<String> permissions;
     private Town town;
@@ -76,12 +84,4 @@ public class Rank {
     public String toString() {
         return String.format("Rank: {Name: %s, Town: %s, Permissions: [%s]}", getName(), getTown().getName(), Joiner.on(", ").join(getPermissions()));
     }
-
-    /**
-     * Map that holds the name and the rank's permission of all the ranks that are added to a town on creation.
-     * And can be configured in the config file.
-     */
-    public static Map<String, List<String>> defaultRanks = new HashMap<String, List<String>>();
-    public static String theDefaultRank;
-    public static String theMayorDefaultRank; // ok not the best name
 }

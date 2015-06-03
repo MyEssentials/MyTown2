@@ -2,14 +2,18 @@ package mytown.proxies;
 
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.core.utils.economy.Economy;
+import mytown.core.economy.Economy;
 
 public class EconomyProxy {
+    private EconomyProxy() {
+
+    }
+
     private static Economy economy = null;
 
     public static void init() {
         economy = new Economy(Config.costItemName);
-        MyTown.instance.log.info("Successfully initialized economy!");
+        MyTown.instance.LOG.info("Successfully initialized economy!");
     }
 
     public static Economy getEconomy() {
@@ -17,9 +21,9 @@ public class EconomyProxy {
     }
 
     public static boolean isItemEconomy() {
-        if(Config.costItemName.equals("$ForgeEssentials")) {
+        if(Config.costItemName.equals(Economy.CURRENCY_FORGE_ESSENTIALS)) {
             return false;
-        } else if(Config.costItemName.equals("$Vault")) {
+        } else if(Config.costItemName.equals(Economy.CURRENCY_VAULT)) {
             return false;
         }
         return true;

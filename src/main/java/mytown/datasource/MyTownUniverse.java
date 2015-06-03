@@ -3,7 +3,7 @@ package mytown.datasource;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
-import mytown.core.utils.command.CommandManager;
+import mytown.core.command.CommandManager;
 import mytown.entities.*;
 import net.minecraft.server.MinecraftServer;
 
@@ -13,15 +13,27 @@ import java.util.List;
 import java.util.Map;
 
 public class MyTownUniverse { // TODO Allow migrating between different Datasources
-    private Map<String, Resident> residents = new HashMap<String, Resident>();
-    private Map<String, Town> towns = new HashMap<String, Town>();
-    private Map<String, Nation> nations = new HashMap<String, Nation>();
-    private Map<String, TownBlock> blocks = new HashMap<String, TownBlock>();
-    private Map<Integer, Plot> plots = new HashMap<Integer, Plot>();
-    private Map<String, Rank> ranks = new HashMap<String, Rank>();
-    private List<Integer> worlds = new ArrayList<Integer>();
 
-    public MyTownUniverse() {}
+    private static MyTownUniverse instance = null;
+
+    public static MyTownUniverse getInstance() {
+        if (instance == null) {
+            instance = new MyTownUniverse();
+        }
+        return instance;
+    }
+
+    private final Map<String, Resident> residents = new HashMap<String, Resident>();
+    private final Map<String, Town> towns = new HashMap<String, Town>();
+    private final Map<String, Nation> nations = new HashMap<String, Nation>();
+    private final Map<String, TownBlock> blocks = new HashMap<String, TownBlock>();
+    private final Map<Integer, Plot> plots = new HashMap<Integer, Plot>();
+    private final Map<String, Rank> ranks = new HashMap<String, Rank>();
+    private final List<Integer> worlds = new ArrayList<Integer>();
+
+    public MyTownUniverse() {
+
+    }
 
     public final ImmutableMap<String, Resident> getResidentsMap() {
         return ImmutableMap.copyOf(residents);
@@ -93,7 +105,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
             }
         }
 
-        plots.put(plot.getDb_ID(), plot);
+        plots.put(plot.getDbID(), plot);
         return true;
     }
 
@@ -130,12 +142,11 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public final boolean removeRank(Rank rank) {
         ranks.remove(rank.getKey());
         // TODO: Check properly, although it's gonna fix itself on restart
-        //CommandManager.completionMap.get("rankCompletion").remove(rank.getName());
         return true;
     }
 
     public final boolean removePlot(Plot plot) {
-        plots.remove(plot.getDb_ID());
+        plots.remove(plot.getDbID());
         return true;
     }
 
@@ -164,7 +175,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public TownBlock getTownBlock(int dim, int x, int z) {
-        return getTownBlock(String.format(TownBlock.keyFormat, dim, x, z));
+        return getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, x, z));
     }
 
     public TownBlock getTownBlock(String key) {
@@ -207,16 +218,5 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public boolean hasWorld(int dim) {
         return worlds.contains(dim);
-    }
-
-    /* ----- Singleton ----- */
-
-    private static MyTownUniverse instance = null;
-
-    public static MyTownUniverse getInstance() {
-        if (instance == null) {
-            instance = new MyTownUniverse();
-        }
-        return instance;
     }
 }

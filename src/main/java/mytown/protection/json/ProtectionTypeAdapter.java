@@ -16,6 +16,7 @@ import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.getter.Caller;
 import mytown.protection.segment.getter.Getters;
 import mytown.util.exceptions.SegmentException;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -200,25 +201,23 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 if (modid == null)
                     throw new IOException("Missing modid for a protection!");
                 if(!Loader.isModLoaded(modid) && !modid.equals("Minecraft")) {
-                    MyTown.instance.log.info("   Skipped protection because the mod " + modid + " wasn't loaded.");
+                    MyTown.instance.LOG.info("   Skipped protection because the mod " + modid + " wasn't loaded.");
                     return null;
                 } else if(version != null) {
                     if(!verifyVersion(modid, version)) {
-                        MyTown.instance.log.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
+                        MyTown.instance.LOG.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
                         return null;
                     }
                 }
             } else if(nextName.equals("version")) {
                 version = in.nextString();
-                if(modid != null && !modid.equals("Vanilla")) {
-                    if(!verifyVersion(modid, version)) {
-                        MyTown.instance.log.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
-                        return null;
-                    }
+                if(modid != null && !modid.equals("Vanilla") && !verifyVersion(modid, version)) {
+                    MyTown.instance.LOG.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
+                    return null;
                 }
             } else if (nextName.equals("segments")) {
                 in.beginArray();
-                MyTown.instance.log.info("   ------------------------------------------------------------");
+                MyTown.instance.LOG.info("   ------------------------------------------------------------");
                 while (in.hasNext()) {
                     Segment segment = null;
                     String type = null;
@@ -343,7 +342,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 if (type.equals("tileEntity")) {
                                     // Log if the segment is using default protection
                                     if (getters.getCallersMap().get("xMin") == null || getters.getCallersMap().get("xMax") == null || getters.getCallersMap().get("zMin") == null || getters.getCallersMap().get("zMax") == null) {
-                                        MyTown.instance.log.info("   [Segment: " + clazz + "] Could not find one of the getters (xMin, xMax, zMin, zMax). Using default protection size.");
+                                        MyTown.instance.LOG.info("   [Segment: " + clazz + "] Could not find one of the getters (xMin, xMax, zMin, zMax). Using default protection size.");
 
                                         // Removing all of them since it will only create problems if left there
                                         getters.removeGetter("xMin");
@@ -354,51 +353,51 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     segment = new SegmentTileEntity(clazz, getters, flag, denialValue, condition, hasOwner);
                                 } else if (type.equals("entity")) {
                                     if (entityType == null) {
-                                        MyTown.instance.log.info("   entityType is not specified, defaulting to 'tracked'.");
-                                        entityType = EntityType.tracked;
+                                        MyTown.instance.LOG.info("   entityType is not specified, defaulting to 'TRACKED'.");
+                                        entityType = EntityType.TRACKED;
                                     }
                                     segment = new SegmentEntity(clazz, getters, flag, denialValue, condition, entityType);
                                 } else if (type.equals("item")) {
                                     if(itemType == null) {
-                                        MyTown.instance.log.info("   itemType is not specified, defaulting to 'rightClickBlock'.");
-                                        itemType = ItemType.rightClickBlock;
+                                        MyTown.instance.LOG.info("   itemType is not specified, defaulting to 'RIGHT_CLICK_BLOCK'.");
+                                        itemType = ItemType.RIGHT_CLICK_BLOCK;
                                     }
                                     segment = new SegmentItem(clazz, getters, flag, denialValue, condition, itemType, isAdjacent);
                                 } else if (type.equals("block")) {
                                     if(blockType == null) {
-                                        MyTown.instance.log.info("   blockType is not specified, defaulting to 'rightClick'.");
-                                        blockType = BlockType.rightClick;
+                                        MyTown.instance.LOG.info("   blockType is not specified, defaulting to 'RIGHT_CLICK'.");
+                                        blockType = BlockType.RIGHT_CLICK;
                                     }
                                     segment = new SegmentBlock(clazz, getters, flag, denialValue, condition, blockType, meta);
                                 }
                             }
                         } catch (SegmentException ex) {
                             // This catch is for missing elements or other runtime verifiable  conditions.
-                            MyTown.instance.log.error("  " + ex.getMessage());
-                            MyTown.instance.log.error("  Segment will NOT be added, reload configs to try again.");
+                            MyTown.instance.LOG.error("  " + ExceptionUtils.getFullStackTrace(ex));
+                            MyTown.instance.LOG.error("  Segment will NOT be added, reload configs to try again.");
                         }
                     } catch (SegmentException ex) {
                         // This catch is for parsing issues when reading the segment.
 
-                        MyTown.instance.log.error("  " + ex.getMessage());
-                        MyTown.instance.log.error("  Segment will NOT be added, reload configs to try again.");
+                        MyTown.instance.LOG.error("  " + ExceptionUtils.getFullStackTrace(ex));
+                        MyTown.instance.LOG.error("  Segment will NOT be added, reload configs to try again.");
                         // Skipping everything in the segment if it errors
                         while(!in.peek().equals(JsonToken.END_OBJECT))
                             in.skipValue();
                         in.endObject();
                     }
                     if (segment == null)
-                        MyTown.instance.log.error("  [Segment: " + clazz + "] Segment was not properly initialized!");
+                        MyTown.instance.LOG.error("  [Segment: " + clazz + "] Segment was not properly initialized!");
                     else {
                         // Precheck for configurations
                         //if(segment instanceof SegmentEntity && ((SegmentEntity) segment).type == EntityType.explosive && Config.useExtraEvents)
                         //    MyTown.instance.log.info("  [Segment:" + segment.theClass.getName() + "] Omitting segment because use of extra events is enabled.");
                         //else {
-                            MyTown.instance.log.info("   Added segment for class: " + segment.theClass.getName());
+                            MyTown.instance.LOG.info("   Added segment for class: " + segment.theClass.getName());
                             segments.add(segment);
                         //}
                     }
-                    MyTown.instance.log.info("   ------------------------------------------------------------");
+                    MyTown.instance.LOG.info("   ------------------------------------------------------------");
                 }
                 in.endArray();
             }

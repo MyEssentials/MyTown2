@@ -1,11 +1,17 @@
 package mytown.config;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import mytown.core.utils.config.ConfigProperty;
-import mytown.util.MyTownUtils;
+import mytown.core.utils.ClassUtils;
+import mytown.core.config.ConfigProperty;
 import net.minecraft.init.Items;
 
 public class Config {
+
+    private Config() {
+
+    }
+
+
     /* ----- General Config ----- */
 
     @ConfigProperty(category = "general", name = "Localization", comment = "Localization file without file extension.\\nLoaded from config/MyTown/localization/ first, then from the jar, then finally will fallback to en_US if needed.")
@@ -14,7 +20,7 @@ public class Config {
     @ConfigProperty(category = "general", name = "SafeModeMessage", comment = "Message to display to users when MyTown is in safemode.")
     public static String safeModeMsg = "MyTown is in safe mode. Please tell a server admin!";
 
-	/* ----- Datasource Config ----- */
+    /* ----- Datasource Config ----- */
 
     @ConfigProperty(category = "datasource", name = "Type", comment = "Datasource Type. Eg: MySQL, SQLite, etc.")
     public static String dbType = "SQLite";
@@ -105,7 +111,7 @@ public class Config {
     public static int defaultProtectionSize = 32;
 
     @ConfigProperty(category = "protection", name = "useExtraEvents", comment = "If you have Forge 1254 or higher you can enable this feature. It provides more accurate protection.")
-    public static boolean useExtraEvents = MyTownUtils.isClassLoaded("net.minecraftforge.event.world.ExplosionEvent");
+    public static boolean useExtraEvents = ClassUtils.isClassLoaded("net.minecraftforge.event.world.ExplosionEvent");
 
     //@ConfigProperty(category = "extra", name = "debug", comment = "Enables debugging output to console, use '/ta debug' to toggle ingame")
     //public static boolean debug;

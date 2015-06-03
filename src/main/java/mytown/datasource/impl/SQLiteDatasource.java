@@ -1,10 +1,10 @@
 package mytown.datasource.impl;
 
-import mytown.core.utils.config.ConfigProperty;
-import mytown.datasource.MyTownDatasource_SQL;
+import mytown.core.config.ConfigProperty;
+import mytown.datasource.MyTownDatasourceSQL;
 import mytown.util.Constants;
 
-public class SQLiteDatasource extends MyTownDatasource_SQL {
+public class SQLiteDatasource extends MyTownDatasourceSQL {
     @ConfigProperty(category = "datasource.sql", comment = "The database file path. Used by SQLite")
     private String dbPath = Constants.CONFIG_FOLDER + "data.db";
 

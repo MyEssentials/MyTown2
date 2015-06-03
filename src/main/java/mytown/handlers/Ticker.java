@@ -52,28 +52,26 @@ public class Ticker {
             res.tick();
         }
 
-        if(Config.costTownUpkeep > 0 || Config.costAdditionalUpkeep > 0) {
-            if (ev.phase == TickEvent.Phase.START) {
-                if (ticked) {
-                    if(lastCalendarDay != -1 && Calendar.getInstance().get(Calendar.DAY_OF_YEAR) != lastCalendarDay) {
-                        for (int i = 0; i < MyTownUniverse.getInstance().getTownsMap().size(); i++) {
-                            Town town = MyTownUniverse.getInstance().getTownsMap().values().asList().get(i);
-                            if (!(town instanceof AdminTown)) {
-                                town.payUpkeep();
-                                if(town.getDaysNotPaid() == Config.upkeepTownDeletionDays && Config.upkeepTownDeletionDays > 0) {
-                                    MyTown.instance.log.info("Town " + town.getName() + " has been deleted because it didn't pay upkeep for " + Config.upkeepTownDeletionDays + " days.");
-                                    DatasourceProxy.getDatasource().deleteTown(town);
-                                } else {
-                                    DatasourceProxy.getDatasource().updateTownBank(town, town.getBankAmount());
-                                }
+        if((Config.costTownUpkeep > 0 || Config.costAdditionalUpkeep > 0) && ev.phase == TickEvent.Phase.START) {
+            if (ticked) {
+                if(lastCalendarDay != -1 && Calendar.getInstance().get(Calendar.DAY_OF_YEAR) != lastCalendarDay) {
+                    for (int i = 0; i < MyTownUniverse.getInstance().getTownsMap().size(); i++) {
+                        Town town = MyTownUniverse.getInstance().getTownsMap().values().asList().get(i);
+                        if (!(town instanceof AdminTown)) {
+                            town.payUpkeep();
+                            if(town.getDaysNotPaid() == Config.upkeepTownDeletionDays && Config.upkeepTownDeletionDays > 0) {
+                                MyTown.instance.LOG.info("Town " + town.getName() + " has been deleted because it didn't pay upkeep for " + Config.upkeepTownDeletionDays + " days.");
+                                DatasourceProxy.getDatasource().deleteTown(town);
+                            } else {
+                                DatasourceProxy.getDatasource().updateTownBank(town, town.getBankAmount());
                             }
                         }
-                        ticked = false;
                     }
-                    lastCalendarDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-                } else {
-                    ticked = true;
+                    ticked = false;
                 }
+                lastCalendarDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+            } else {
+                ticked = true;
             }
         }
     }
@@ -85,7 +83,7 @@ public class Ticker {
         if (res != null) {
             res.setPlayer(ev.player);
         } else {
-            MyTown.instance.log.error("Didn't create resident for player %s (%s)", ev.player.getCommandSenderName(), ev.player.getPersistentID());
+            MyTown.instance.LOG.error("Didn't create resident for player %s (%s)", ev.player.getCommandSenderName(), ev.player.getPersistentID());
         }
     }
 
@@ -116,7 +114,8 @@ public class Ticker {
         if (ev.entity instanceof FakePlayer || ev.entity.worldObj.isRemote)
             return;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entity);
-        if (res == null) return; // TODO Log?
+        if (res == null)
+            return; // TODO Log?
         // TODO Check Resident location
 
         res.checkLocation(ev.oldChunkX, ev.oldChunkZ, ev.newChunkX, ev.newChunkZ, ev.entity.dimension);
@@ -248,7 +247,7 @@ public class Ticker {
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
-        if (VisualsTickHandler.getInstance().isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
+        if (VisualsHandler.getInstance().isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId)) {
             // Cancel event if it's a border that has been broken
             ev.setCanceled(true);
         }

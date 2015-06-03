@@ -9,46 +9,46 @@ public enum FlagType {
     // CONSTRUCTOR: class, value, allowedValues, wildPerm, defaultWildPerm, townOnly, mod, isWhitelistable <false>
 
     // Allows entering the area
-    enter(Boolean.class, true, null, false, true, Property.all, null),
+    ENTER(Boolean.class, true, null, false, true, Property.ALL, null),
 
     // Allows opening GUIs and right-clicking TileEntities
-    accessBlocks(Boolean.class, false, null, true, true, Property.all, null, true),
+    ACCESS_BLOCKS(Boolean.class, false, null, true, true, Property.ALL, null, true),
 
     // Allows pickup of items.
-    pickupItems(Boolean.class, true, null, true, true, Property.all, null),
+    PICKUP_ITEMS(Boolean.class, true, null, true, true, Property.ALL, null),
 
     // Allows pvp
-    pvp(Boolean.class, false, null, true, true, Property.all, null),
+    PVP(Boolean.class, false, null, true, true, Property.ALL, null),
 
     // Only the values in the array are allowed
     // Allows modifying which types of mods are allowed in the town.
-    mobs(String.class, "all", new String[]{"all", "hostiles", "none"}, true, "all", Property.all, null),
+    MOBS(String.class, "all", new String[]{"all", "hostiles", "none"}, true, "all", Property.ALL, null),
 
     // Allows outsiders to hurt passive and other types of entities.
-    protectedEntities(Boolean.class, false, null, true, false, Property.all, null),
+    PROTECTED_ENTITIES(Boolean.class, false, null, true, false, Property.ALL, null),
 
     // Allows the use of some items such as: Bucket, Spawn Eggs etc.
-    useItems(Boolean.class, false, null, true, true, Property.all, null),
+    USE_ITEMS(Boolean.class, false, null, true, true, Property.ALL, null),
 
     // Allows to activate blocks such as: Buttons, Doors etc.
-    activateBlocks(Boolean.class, false, null, true, true, Property.all, null, true),
+    ACTIVATE_BLOCKS(Boolean.class, false, null, true, true, Property.ALL, null, true),
 
-    // Allows fake players to bypass some of the flags (modifyBlocks, useItems, protectedEntities)
-    allowFakePlayers(Boolean.class, true, null, true, true, Property.all, null),
+    // Allows fake players to bypass some of the flags (MODIFY_BLOCKS, USE_ITEMS, PROTECTED_ENTITIES)
+    ALLOW_FAKE_PLAYERS(Boolean.class, true, null, true, true, Property.ALL, null),
 
     // ---- Flags that don't go in plots. ----
 
     // Allows modifying blocks.
-    modifyBlocks(Boolean.class, false, null, true, true, Property.townOnly, null, true),
+    MODIFY_BLOCKS(Boolean.class, false, null, true, true, Property.TOWN_ONLY, null, true),
 
     // Allows explosions.
-    explosions(Boolean.class, false, null, true, true, Property.townOnly, null),
+    EXPLOSIONS(Boolean.class, false, null, true, true, Property.TOWN_ONLY, null),
 
     // Allows normal residents to have permission outside their claimed plots.
-    restrictedTownPerms(Boolean.class, false, null, false, false, Property.townOnly, null),
+    RESTRICTED_TOWN_PERMS(Boolean.class, false, null, false, false, Property.TOWN_ONLY, null),
 
     // Allows other towns to be created nearby
-    nearbyTowns(Boolean.class, false, null, false, false, Property.townOnly, null);
+    NEARBY_TOWNS(Boolean.class, false, null, false, false, Property.TOWN_ONLY, null);
 
     private Class<?> type;
     private Object[] allowedValues;
@@ -59,7 +59,7 @@ public enum FlagType {
     private boolean isWildPerm;
     private Object defaultWildPerm;
 
-    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property, String modRequired, boolean isWhitelistable) {
+    FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property, String modRequired, boolean isWhitelistable) {
         this.type = type;
         this.property = property;
         this.allowedValues = allowedValues;
@@ -70,7 +70,7 @@ public enum FlagType {
         this.defaultWildPerm = defaultWildPerm;
     }
 
-    private FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property, String modRequired) {
+    FlagType(Class<?> type, Object defaultValue, Object[] allowedValues, boolean wildPerm, Object defaultWildPerm, Property property, String modRequired) {
         this(type, defaultValue, allowedValues, wildPerm, defaultWildPerm, property, modRequired, false);
     }
 
@@ -124,7 +124,7 @@ public enum FlagType {
     }
 
     public boolean isTownOnly() {
-        return property == Property.townOnly;
+        return property == Property.TOWN_ONLY;
     }
 
     /**
@@ -153,7 +153,8 @@ public enum FlagType {
     }
 
     public boolean isValueAllowed(Object value) {
-        if (allowedValues == null) return true;
+        if (allowedValues == null)
+            return true;
         else {
             for (Object s : allowedValues) {
                 if (s.equals(value))
@@ -164,9 +165,9 @@ public enum FlagType {
     }
 
     public enum Property {
-        all,
-        townOnly,
-        plotOnly
+        ALL,
+        TOWN_ONLY,
+        PLOT_ONLY
     }
 
 }

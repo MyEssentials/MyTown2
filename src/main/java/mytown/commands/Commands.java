@@ -1,9 +1,9 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.IHasFlags;
+import mytown.api.interfaces.FlagsContainer;
 import mytown.core.Localization;
-import mytown.core.utils.command.CommandManager;
+import mytown.core.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
@@ -25,6 +25,10 @@ import java.util.*;
  */
 public abstract class Commands {
 
+    protected Commands() {
+
+    }
+
     public static MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
     }
@@ -40,7 +44,7 @@ public abstract class Commands {
      */
     public static boolean callSubFunctions(ICommandSender sender, List<String> args, String callersPermNode) {
         List<String> subCommands = CommandManager.getSubCommandsList(callersPermNode);
-        if (args.size() > 0) {
+        if (!args.isEmpty()) {
             for (String s : subCommands) {
                 String name = CommandManager.commandNames.get(s);
                 // Checking if name corresponds and if parent's
@@ -60,7 +64,7 @@ public abstract class Commands {
      */
     public static void sendHelpMessage(ICommandSender sender, String permBase, List<String> args) {
         String node;
-        if (args == null || args.size() == 0) {
+        if (args == null || args.isEmpty()) {
             //If no arguments are provided then we check for the base permission
             node = permBase;
         } else {
@@ -84,7 +88,7 @@ public abstract class Commands {
 
         sendMessageBackToSender(sender, command);
         List<String> scList = CommandManager.getSubCommandsList(node);
-        if (scList == null || scList.size() == 0) {
+        if (scList == null || scList.isEmpty()) {
             sendMessageBackToSender(sender, "   " + getLocal().getLocalization(node + ".help"));
         } else {
             List<String> nameList = new ArrayList<String>();
@@ -194,15 +198,15 @@ public abstract class Commands {
         return list;
     }
 
-    public static Flag getFlagFromType(IHasFlags hasFlags, FlagType flagType) {
+    public static Flag getFlagFromType(FlagsContainer hasFlags, FlagType flagType) {
         Flag flag = hasFlags.getFlag(flagType);
         if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", flagType.toString());
         return flag;
     }
 
-    public static Flag getFlagFromName(IHasFlags hasFlags, String name) {
-        Flag flag = null;
+    public static Flag getFlagFromName(FlagsContainer hasFlags, String name) {
+        Flag flag;
         try {
             flag = hasFlags.getFlag(FlagType.valueOf(name));
         } catch (IllegalArgumentException ex) {
@@ -263,15 +267,14 @@ public abstract class Commands {
         }
     }
 
-    public static boolean makePayment(EntityPlayer player, int amount) {
+    public static void makePayment(EntityPlayer player, int amount) {
         if(amount == 0)
-            return true;
+            return;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
         if(!EconomyProxy.getEconomy().takeMoneyFromPlayer(player, amount)){
             throw new MyTownCommandException("mytown.cmd.err.payment", EconomyProxy.getCurrency(amount));
         }
         res.sendMessage(getLocal().getLocalization("mytown.notification.payment", EconomyProxy.getCurrency(amount)));
-        return true;
     }
 
     public static void makeRefund(EntityPlayer player, int amount) {

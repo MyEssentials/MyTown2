@@ -6,7 +6,7 @@ import java.util.List;
 
 import mytown.config.Config;
 import mytown.core.utils.ChatUtils;
-import mytown.core.utils.command.CommandNode;
+import mytown.core.command.CommandNode;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -102,7 +102,7 @@ public class CommandsOutsider extends Commands {
         for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
             for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
                 Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                if (nearbyTown != null && !(Boolean)nearbyTown.getValue(FlagType.nearbyTowns))
+                if (nearbyTown != null && !(Boolean)nearbyTown.getValue(FlagType.NEARBY_TOWNS))
                     throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
             }
         }

@@ -4,9 +4,9 @@ package mytown.protection.segment.getter;
  * A caller is the information needed to get an object/value
  */
 public class Caller {
-    public String element;
-    public CallerType type;
-    public Class<?> valueType;
+    public final String element;
+    public final CallerType type;
+    public final Class<?> valueType;
 
     public Caller(String element, CallerType type, Class<?> valueType) {
         this.element = element;
@@ -20,9 +20,9 @@ public class Caller {
 
 
     public enum CallerType {
-        method,
-        field,
-        formula,
-        nbt
+        METHOD,
+        FIELD,
+        FORMULA,
+        NBT
     }
 }

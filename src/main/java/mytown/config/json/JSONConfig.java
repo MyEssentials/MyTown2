@@ -1,6 +1,5 @@
 package mytown.config.json;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -16,9 +15,9 @@ public abstract class JSONConfig<T> {
     /**
      * The path to the file used.
      */
-    public String path;
-    public Type gsonType;
-    public Gson gson;
+    protected final String path;
+    protected final Gson gson;
+    protected Type gsonType;
 
     public JSONConfig(String path) {
         this.path = path;
@@ -51,10 +50,10 @@ public abstract class JSONConfig<T> {
     /**
      * Reads the file and deletes all invalid values and returns a List with all values being valid.
      */
-    public abstract List<T> read();
+    protected abstract List<T> read();
 
     /**
      * Updates the file so that it has the previous valid settings plus the missing ones.
      */
-    public abstract void update(List<T> items);
+    protected abstract void update(List<T> items);
 }

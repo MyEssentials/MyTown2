@@ -2,7 +2,7 @@ package mytown.protection.thread;
 
 import mytown.entities.Resident;
 import mytown.protection.ProtectionUtils;
-import mytown.util.BlockPos;
+import mytown.core.entities.BlockPos;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -12,10 +12,10 @@ import net.minecraftforge.common.DimensionManager;
  * If there isn't found one in 1 second it exits.
  */
 public class ThreadPlacementCheck extends Thread {
-    public static int timeOutInMS = 1000;
+    private static final int TIMEOUT_IN_MS = 1000;
 
-    private Resident res;
-    private BlockPos position;
+    private final Resident res;
+    private final BlockPos position;
 
     public ThreadPlacementCheck(Resident res, int x, int y, int z, int dim) {
         super();
@@ -29,7 +29,7 @@ public class ThreadPlacementCheck extends Thread {
         World world = DimensionManager.getWorld(position.dim);
         TileEntity te = null;
         while(te == null) {
-            if(System.currentTimeMillis() - startTime >= timeOutInMS) {
+            if(System.currentTimeMillis() - startTime >= TIMEOUT_IN_MS) {
                 ProtectionUtils.placementThreadTimeout();
                 return;
             }

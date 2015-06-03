@@ -16,7 +16,7 @@ public class BlockWhitelist {
     /**
      * Database id used to retain this object in.
      */
-    private int db_id;
+    private int dbID;
     private FlagType flagType;
 
 
@@ -36,11 +36,11 @@ public class BlockWhitelist {
         this.isDeleted = true;
     }
 
-    public void setDb_ID(int id) {
-        this.db_id = id;
+    public void setDbID(int id) {
+        this.dbID = id;
     }
 
-    public int getDb_id() {
-        return this.db_id;
+    public int getDbID() {
+        return this.dbID;
     }
 }

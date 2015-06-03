@@ -1,12 +1,12 @@
 package mytown.protection.eventhandlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import mytown.core.utils.WorldUtils;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.util.ChunkPos;
-import mytown.util.MyTownUtils;
+import mytown.core.entities.ChunkPos;
 import net.minecraftforge.event.world.ExplosionEvent;
 
 import java.util.List;
@@ -14,12 +14,12 @@ import java.util.List;
 /**
  * Handling any events that are not yet compatible with the most commonly used version of forge.
  */
-public class ExtraForgeHandlers {
+public class ExtraEventsHandler {
 
-    private static ExtraForgeHandlers instance;
-    public static ExtraForgeHandlers getInstance() {
+    private static ExtraEventsHandler instance;
+    public static ExtraEventsHandler getInstance() {
         if(instance == null)
-            instance = new ExtraForgeHandlers();
+            instance = new ExtraEventsHandler();
         return instance;
     }
 
@@ -30,18 +30,18 @@ public class ExtraForgeHandlers {
     public void onExplosion(ExplosionEvent.Start ev) {
         if(ev.world.isRemote)
             return;
-        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(ev.explosion.explosionX - ev.explosion.explosionSize - 2), (int)(ev.explosion.explosionZ - ev.explosion.explosionSize - 2), (int)(ev.explosion.explosionX + ev.explosion.explosionSize + 2), (int)(ev.explosion.explosionZ + ev.explosion.explosionSize + 2));
+        List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) (ev.explosion.explosionX - ev.explosion.explosionSize - 2), (int) (ev.explosion.explosionZ - ev.explosion.explosionSize - 2), (int) (ev.explosion.explosionX + ev.explosion.explosionSize + 2), (int) (ev.explosion.explosionZ + ev.explosion.explosionSize + 2));
         for(ChunkPos chunk : chunks) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
             if(block == null) {
-                if(!(Boolean)Wild.getInstance().getValue(FlagType.explosions)) {
+                if(!(Boolean)Wild.getInstance().getValue(FlagType.EXPLOSIONS)) {
                     ev.setCanceled(true);
                     return;
                 }
             } else {
-                if (!(Boolean) block.getTown().getValue(FlagType.explosions)) {
+                if (!(Boolean) block.getTown().getValue(FlagType.EXPLOSIONS)) {
                     ev.setCanceled(true);
-                    block.getTown().notifyEveryone(FlagType.explosions.getLocalizedTownNotification());
+                    block.getTown().notifyEveryone(FlagType.EXPLOSIONS.getLocalizedTownNotification());
                     return;
                 }
             }

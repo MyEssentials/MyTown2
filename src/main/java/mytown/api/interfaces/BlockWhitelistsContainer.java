@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Represents an objects that can hold BlockWhitelists
  */
-public interface IHasBlockWhitelists {
+public interface BlockWhitelistsContainer {
     void addBlockWhitelist(BlockWhitelist bw);
 
     boolean hasBlockWhitelist(BlockWhitelist bw);

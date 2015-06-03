@@ -1,13 +1,14 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.IHasTowns;
+import mytown.api.interfaces.TownsContainer;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
-public class Nation implements IHasTowns, Comparable<Nation> {
+public class Nation implements TownsContainer, Comparable<Nation> {
     private String name;
+    private Map<Town, Rank> towns = new HashMap<Town, Rank>();
 
     public Nation(String name) {
         this.name = name;
@@ -28,11 +29,11 @@ public class Nation implements IHasTowns, Comparable<Nation> {
 
     /* ----- IHasTowns ----- */
 
-    private Map<Town, Rank> towns = new Hashtable<Town, Rank>();
+
 
     @Override
     public void addTown(Town town) {
-        towns.put(town, Rank.Town);
+        towns.put(town, Rank.TOWN);
     }
 
     @Override
@@ -52,9 +53,6 @@ public class Nation implements IHasTowns, Comparable<Nation> {
 
     /**
      * Sets the given Town to the Rank
-     *
-     * @param town
-     * @param rank
      */
     public void promoteTown(Town town, Rank rank) {
         towns.put(town, rank);
@@ -62,14 +60,11 @@ public class Nation implements IHasTowns, Comparable<Nation> {
 
     /**
      * Returns the Rank of the given town
-     *
-     * @param town
-     * @return
      */
     public Rank getTownRank(Town town) {
         if (towns.containsKey(town))
             return towns.get(town);
-        return Rank.None;
+        return Rank.NONE;
     }
 
     /* ----- Comparable ----- */
@@ -93,8 +88,8 @@ public class Nation implements IHasTowns, Comparable<Nation> {
     /**
      * Defines the Rank of a Town in the Nation
      */
-    public static enum Rank { // TODO Change this?
-        None, Town, Capital;
+    public enum Rank { // TODO Change this?
+        NONE, TOWN, CAPITAL;
 
         /**
          * Gets the rank based on [N, T, C]
@@ -104,7 +99,7 @@ public class Nation implements IHasTowns, Comparable<Nation> {
                 if (type.toString().toLowerCase().startsWith(rank.toLowerCase()))
                     return type;
             }
-            return Rank.None;
+            return Rank.NONE;
         }
 
         @Override

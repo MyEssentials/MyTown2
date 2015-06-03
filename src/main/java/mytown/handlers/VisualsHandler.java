@@ -1,41 +1,40 @@
 package mytown.handlers;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
+import mytown.core.utils.WorldUtils;
 import mytown.entities.Plot;
-import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
-import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.util.*;
 
-public class VisualsTickHandler {
+public class VisualsHandler {
 
-    private static VisualsTickHandler instance = new VisualsTickHandler();
-    public static VisualsTickHandler getInstance() {
+    private static VisualsHandler instance = new VisualsHandler();
+    public static VisualsHandler getInstance() {
         if(instance == null)
-            instance = new VisualsTickHandler();
+            instance = new VisualsHandler();
         return instance;
     }
 
-    public Map<PlayerObjectPair, List<BlockCoords>> markedBlocks = new HashMap<PlayerObjectPair, List<BlockCoords>>();
+    private final Map<PlayerObjectPair, List<BlockCoords>> markedBlocks = new HashMap<PlayerObjectPair, List<BlockCoords>>();
 
 
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent ev) {
-        if (ev.side != Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+        if (ev.side != Side.SERVER || ev.phase != TickEvent.Phase.START)
+            return;
 
-        if (markedBlocks.size() != 0) {
+        if (!markedBlocks.isEmpty()) {
             for(Map.Entry<PlayerObjectPair, List<BlockCoords>> set : markedBlocks.entrySet()) {
                 Iterator<BlockCoords> iterator = set.getValue().iterator();
                 while (iterator.hasNext()) {
@@ -154,8 +153,8 @@ public class VisualsTickHandler {
 
 
     public void markTownBorders(Town town, EntityPlayerMP caller) {
-        int dx[] = {-1, -1, 0, 1, 1, 1, 0, -1};
-        int dz[] = {0, 1, 1, 1, 0, -1, -1, -1};
+        int[] dx = {-1, -1, 0, 1, 1, 1, 0, -1};
+        int[] dz = {0, 1, 1, 1, 0, -1, -1, -1};
 
         int x, y, z;
 
@@ -170,7 +169,7 @@ public class VisualsTickHandler {
                         z = dz[i] == -1 ? block.getZ() << 4 : (block.getZ() << 4) + 15;
                         x = block.getX() << 4;
                         for(int k = x + 1; k <= x + 14; k++) {
-                            y = MyTownUtils.getMaxHeightWithSolid(block.getDim(), k, z);
+                            y = WorldUtils.getMaxHeightWithSolid(block.getDim(), k, z);
                             BlockCoords blockCoord = new BlockCoords(k, y, z, block.getDim(), Blocks.lapis_block);
                             blockList.add(blockCoord);
                         }
@@ -178,7 +177,7 @@ public class VisualsTickHandler {
                         x = dx[i] == -1 ? block.getX() << 4 : (block.getX() << 4) + 15;
                         z = block.getZ() << 4;
                         for(int k = z + 1; k <= z + 14; k++) {
-                            y = MyTownUtils.getMaxHeightWithSolid(block.getDim(), x, k);
+                            y = WorldUtils.getMaxHeightWithSolid(block.getDim(), x, k);
                             BlockCoords blockCoord = new BlockCoords(x, y, k, block.getDim(), Blocks.lapis_block);
                             blockList.add(blockCoord);
                         }
@@ -190,15 +189,12 @@ public class VisualsTickHandler {
             for(int i = 1; i < 8; i+=2) {
                 x = dx[i] == 1 ? block.getX() << 4 : (block.getX() << 4) + 15;
                 z = dz[i] == 1 ? block.getZ() << 4 : (block.getZ() << 4) + 15;
-                y = MyTownUtils.getMaxHeightWithSolid(block.getDim(), x, z);
+                y = WorldUtils.getMaxHeightWithSolid(block.getDim(), x, z);
                 BlockCoords blockCoord = new BlockCoords(x, y, z, block.getDim(), Blocks.lapis_block);
                 blockList.add(blockCoord);
             }
         }
-        /*
-        for(BlockCoords coord : blockList)
-            markBlock(coord.x, coord.y, coord.z, coord.dim, coord.block, caller, town);
-            */
+
         addMarkedBlocks(town, caller, blockList);
     }
 
@@ -253,7 +249,7 @@ public class VisualsTickHandler {
                         try {
                             Thread.sleep(5);
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
                         }
                     }
                 }
@@ -286,13 +282,16 @@ public class VisualsTickHandler {
      * Class used to store all the blocks that are marked.
      */
     public class BlockCoords {
-        public int x, y, z, dim;
+        public final int x;
+        public final int y;
+        public final int z;
+        public final int dim;
         public boolean deleted = false;
         public boolean packetSent = false;
         /**
          * The block to which the sistem should change
          */
-        public Block block;
+        public final Block block;
 
         public BlockCoords(int x, int y, int z, int dim, Block block) {
             this.x = x;

@@ -3,6 +3,7 @@ package mytown.config.json;
 import com.google.common.reflect.TypeToken;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,10 +30,10 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             Writer writer = new FileWriter(path);
             gson.toJson(wrappers, gsonType, writer);
             writer.close();
-            MyTown.instance.log.info("Created new DefaultFlags file successfully!");
+            MyTown.instance.LOG.info("Created new DefaultFlags file successfully!");
         } catch (IOException ex) {
-            ex.printStackTrace();
-            MyTown.instance.log.error("Failed to create DefaultFlags file!");
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyTown.instance.LOG.error("Failed to create DefaultFlags file!");
         }
         return wrappers;
     }
@@ -43,10 +44,10 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             Writer writer = new FileWriter(path);
             gson.toJson(items, gsonType, writer);
             writer.close();
-            MyTown.instance.log.info("Updated the DefaultFlags file successfully!");
+            MyTown.instance.LOG.info("Updated the DefaultFlags file successfully!");
         } catch (IOException ex) {
-            ex.printStackTrace();
-            MyTown.instance.log.error("Failed to update DefaultFlags file!");
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyTown.instance.LOG.error("Failed to update DefaultFlags file!");
         }
     }
 
@@ -62,19 +63,19 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             for(Iterator<Wrapper> it = wrappers.iterator(); it.hasNext();) {
                 Wrapper w = it.next();
                 if(w.flagType == null) {
-                    MyTown.instance.log.error("Found a type of flag that does not exist. Removing...");
+                    MyTown.instance.LOG.error("Found a type of flag that does not exist. Removing...");
                     it.remove();
                     continue;
                 }
                 if (!w.flagType.getType().isAssignableFrom(w.defaultState.getClass())) {
-                    MyTown.instance.log.error("The default value for the flag is of invalid type for flag " + w.flagType.toString() + "! Needed " + w.flagType.getType().getSimpleName() + " Removing...");
+                    MyTown.instance.LOG.error("The default value for the flag is of invalid type for flag " + w.flagType.toString() + "! Needed " + w.flagType.getType().getSimpleName() + " Removing...");
                     it.remove();
                 }
             }
-            MyTown.instance.log.info("Loaded DefaultFlags successfully!");
+            MyTown.instance.LOG.info("Loaded DefaultFlags successfully!");
         } catch (IOException ex) {
-            ex.printStackTrace();
-            MyTown.instance.log.error("Failed to read from DefaultFlags file!");
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyTown.instance.LOG.error("Failed to read from DefaultFlags file!");
         }
         return wrappers;
     }
@@ -95,7 +96,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             }
             if(!ok) {
                 items.add(new Wrapper(type, type.getDefaultValue(), type.canTownsModify()));
-                MyTown.instance.log.error("Flag config is missing (or is an invalid entry) " + type.toString() + " flag! Adding with default settings...");
+                MyTown.instance.LOG.error("Flag config is missing (or is an invalid entry) " + type.toString() + " flag! Adding with default settings...");
                 updated = true;
             }
         }
@@ -109,9 +110,9 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
      * Wraps around a flagType object.
      */
     public class Wrapper {
-        public FlagType flagType;
-        public Object defaultState;
-        public boolean isAllowedInTowns;
+        public final FlagType flagType;
+        public final Object defaultState;
+        public final boolean isAllowedInTowns;
 
         public Wrapper(FlagType flagType, Object defaultState, boolean isAllowedInTowns) {
             this.flagType = flagType;

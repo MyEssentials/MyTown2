@@ -4,8 +4,8 @@ package mytown.protection.segment.enums;
  * The event to which it binds when checking the item
  * */
 public enum ItemType {
-    breakBlock,
-    rightClickBlock,
-    rightClickAir,
-    rightClickEntity
+    BREAK_BLOCK,
+    RIGHT_CLICK_BLOCK,
+    RIGHT_CLICK_AIR,
+    RIGHT_CLICK_ENTITY
 }

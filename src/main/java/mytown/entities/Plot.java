@@ -1,8 +1,8 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.IHasFlags;
-import mytown.api.interfaces.IHasResidents;
+import mytown.api.interfaces.FlagsContainer;
+import mytown.api.interfaces.ResidentsContainer;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 
@@ -10,11 +10,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Plot implements IHasFlags, IHasResidents {
-    private int db_ID;
+public class Plot implements FlagsContainer, ResidentsContainer {
+    private int dbID;
     private final int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
     private String key, name;
+
+    private List<Flag> flags = new ArrayList<Flag>();
+    private List<Resident> whitelist = new ArrayList<Resident>();
+    private List<Resident> owners = new ArrayList<Resident>();
 
     public Plot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         if (x1 > x2) {
@@ -116,12 +120,12 @@ public class Plot implements IHasFlags, IHasResidents {
         this.name = name;
     }
 
-    public void setDb_ID(int ID) {
-        this.db_ID = ID;
+    public void setDbID(int ID) {
+        this.dbID = ID;
     }
 
-    public int getDb_ID() {
-        return this.db_ID;
+    public int getDbID() {
+        return this.dbID;
     }
 
     public boolean isCoordWithin(int dim, int x, int y, int z) {
@@ -134,8 +138,6 @@ public class Plot implements IHasFlags, IHasResidents {
     }
 
     /* ---- IHasFlags ----- */
-
-    private List<Flag> flags = new ArrayList<Flag>();
 
     @Override
     public void addFlag(Flag flag) {
@@ -185,13 +187,12 @@ public class Plot implements IHasFlags, IHasResidents {
 
     @Override
     public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
-        if (!isCoordWithin(dim, x, y, z)) return null;
+        if (!isCoordWithin(dim, x, y, z))
+            return null;
         return getValue(flagType);
     }
 
     /* ---- IHasResidents ----- */
-
-    private List<Resident> whitelist = new ArrayList<Resident>();
 
     @Override
     public void addResident(Resident res) {
@@ -213,8 +214,6 @@ public class Plot implements IHasFlags, IHasResidents {
     public ImmutableList<Resident> getResidents() {
         return ImmutableList.copyOf(whitelist);
     }
-
-    private List<Resident> owners = new ArrayList<Resident>();
 
     public void addOwner(Resident res) {
         owners.add(res);

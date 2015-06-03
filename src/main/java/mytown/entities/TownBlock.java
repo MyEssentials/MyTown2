@@ -1,23 +1,26 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.MyTown;
-import mytown.api.interfaces.IHasPlots;
+import mytown.api.interfaces.PlotsContainer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TownBlock implements IHasPlots {
+public class TownBlock implements PlotsContainer {
     /**
      * Used for storing in database
      */
-    public static String keyFormat = "%s;%s;%s";
+    public static final String KEY_FORMAT = "%s;%s;%s";
 
-    private int dim, x, z;
-    private Town town;
+    private final int dim;
+    private final int x;
+    private final int z;
+    private final Town town;
     private String key;
-    private boolean isFarClaim;
-    private int pricePaid;
+    private final boolean isFarClaim;
+    private final int pricePaid;
+
+    private final List<Plot> plots = new ArrayList<Plot>();
 
     public TownBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town) {
         this.dim = dim;
@@ -54,7 +57,7 @@ public class TownBlock implements IHasPlots {
     }
 
     private void updateKey() {
-        key = String.format(keyFormat, dim, x, z);
+        key = String.format(KEY_FORMAT, dim, x, z);
     }
 
     public boolean isFarClaim() {
@@ -74,8 +77,6 @@ public class TownBlock implements IHasPlots {
     This helps improve performance by allowing us to get Plots directly from the Block.
     Since Blocks are just chunks, its much quicker to grab it and return a Collection of Plots the Block has.
     */
-
-    private List<Plot> plots = new ArrayList<Plot>();
 
     @Override
     public void addPlot(Plot plot) {
@@ -132,6 +133,6 @@ public class TownBlock implements IHasPlots {
      * @return
      */
     public boolean isChunkIn(int dim, int cx, int cz) {
-        return (dim == this.dim && cx == x && cz == z);
+        return dim == this.dim && cx == x && cz == z;
     }
 }

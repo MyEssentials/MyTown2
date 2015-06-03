@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableList;
 import mytown.api.interfaces.*;
 import mytown.config.Config;
 import mytown.core.utils.PlayerUtils;
-import mytown.core.utils.teleport.Teleport;
+import mytown.core.teleport.Teleport;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.handlers.VisualsTickHandler;
+import mytown.handlers.VisualsHandler;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,15 +17,15 @@ import java.util.*;
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
  */
-public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IHasFlags, IHasBlockWhitelists, Comparable<Town> {
+public class Town implements ResidentsContainer, RanksContainer, TownBlocksContainer, PlotsContainer, FlagsContainer, BlockWhitelistsContainer, Comparable<Town> {
     private String name, oldName = null;
 
-    private Map<Resident, Rank> residents = new Hashtable<Resident, Rank>();
-    private List<Rank> ranks = new ArrayList<Rank>();
-    private List<Flag> flags = new ArrayList<Flag>();
-    private List<BlockWhitelist> blockWhitelists = new ArrayList<BlockWhitelist>();
-    private List<Plot> plots = new ArrayList<Plot>();
-    protected Map<String, TownBlock> blocks = new Hashtable<String, TownBlock>();
+    private final Map<Resident, Rank> residents = new HashMap<Resident, Rank>();
+    private final List<Rank> ranks = new ArrayList<Rank>();
+    private final List<Flag> flags = new ArrayList<Flag>();
+    private final List<BlockWhitelist> blockWhitelists = new ArrayList<BlockWhitelist>();
+    private final List<Plot> plots = new ArrayList<Plot>();
+    protected final Map<String, TownBlock> blocks = new HashMap<String, TownBlock>();
 
     private Rank defaultRank = null;
     protected int extraBlocks = 0;
@@ -38,9 +38,10 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     private Nation nation = null;
     private Teleport spawn = null;
 
+    public Town(String name) { setName(name); }
+
     public void setMaxPlots(int maxPlots) { this.maxPlots = maxPlots; }
     public int getMaxPlots() { return maxPlots; }
-    public Town(String name) { setName(name); }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getOldName() { return oldName; }
@@ -156,13 +157,13 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public void addBlock(TownBlock block) {
         blocks.put(block.getKey(), block);
 
-        VisualsTickHandler.getInstance().updateTownBorders(this);
+        VisualsHandler.getInstance().updateTownBorders(this);
     }
 
     @Override
     public void removeBlock(TownBlock block) {
         blocks.remove(block.getKey());
-        VisualsTickHandler.getInstance().updateTownBorders(this);
+        VisualsHandler.getInstance().updateTownBorders(this);
     }
 
     @Override
@@ -172,7 +173,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public ImmutableList<TownBlock> getBlocks() { return ImmutableList.copyOf(blocks.values()); }
 
     @Override
-    public TownBlock getBlockAtCoords(int dim, int x, int z) {  return blocks.get(String.format(TownBlock.keyFormat, dim, x, z)); }
+    public TownBlock getBlockAtCoords(int dim, int x, int z) {  return blocks.get(String.format(TownBlock.KEY_FORMAT, dim, x, z)); }
 
     @Override
     public int getExtraBlocks() { return extraBlocks; }
@@ -206,12 +207,12 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
 
     public void showBorders(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
-            VisualsTickHandler.getInstance().markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
+            VisualsHandler.getInstance().markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
     }
 
     public void hideBorders(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
-            VisualsTickHandler.getInstance().unmarkBlocks(this, (EntityPlayerMP) caller.getPlayer());
+            VisualsHandler.getInstance().unmarkBlocks(this, (EntityPlayerMP) caller.getPlayer());
     }
 
     /* ----- IHasPlots ----- */
@@ -292,14 +293,14 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
     public void showPlots(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
             for(Plot plot : plots) {
-                VisualsTickHandler.getInstance().markPlotBorders(plot, (EntityPlayerMP)caller.getPlayer());
+                VisualsHandler.getInstance().markPlotBorders(plot, (EntityPlayerMP)caller.getPlayer());
             }
     }
 
     public void hidePlots(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
             for(Plot plot : plots)
-                VisualsTickHandler.getInstance().unmarkBlocks(plot, (EntityPlayerMP)caller.getPlayer());
+                VisualsHandler.getInstance().unmarkBlocks(plot, (EntityPlayerMP)caller.getPlayer());
     }
 
     /* ----- IHasFlags ------ */
@@ -459,7 +460,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      */
     public boolean isPointInTown(int dim, int x, int z) { return isChunkInTown(dim, x >> 4, z >> 4); }
     public boolean isChunkInTown(int dim, int cx, int cz) {
-        return blocks.containsKey(String.format(TownBlock.keyFormat, dim, cx, cz));
+        return blocks.containsKey(String.format(TownBlock.KEY_FORMAT, dim, cx, cz));
     }
 
     public void notifyResidentJoin(Resident res) {
@@ -496,10 +497,8 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
         if (plot == null || flagType.isTownOnly()) {
-            if(getValue(flagType).equals(denialValue)) {
-                if (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean) getValue(FlagType.restrictedTownPerms) && !(getMayor() == res))) {
-                    return PlayerUtils.isOp(res.getPlayer());
-                }
+            if(getValue(flagType).equals(denialValue) && !hasResident(res) && (!residentHasFriendInTown(res) || ((Boolean) getValue(FlagType.RESTRICTED_TOWN_PERMS) && !(getMayor() == res)))) {
+                return PlayerUtils.isOp(res.getPlayer());
             }
         } else {
             if (plot.getValue(flagType).equals(denialValue) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
@@ -513,7 +512,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
      */
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
-        if (getValue(flagType).equals(denialValue) && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.restrictedTownPerms) && !(getMayor() == res)))) {
+        if (getValue(flagType).equals(denialValue) && (!hasResident(res) && !residentHasFriendInTown(res) || ((Boolean)getValue(FlagType.RESTRICTED_TOWN_PERMS) && !(getMayor() == res)))) {
             return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
@@ -527,7 +526,7 @@ public class Town implements IHasResidents, IHasRanks, IHasBlocks, IHasPlots, IH
         List<Resident> list = new ArrayList<Resident>();
         Plot plot = getPlotAtCoords(dim, x, y, z);
         if (plot == null) {
-            if (isPointInTown(dim, x, z) && !(this instanceof AdminTown) && residents.size() != 0) {
+            if (isPointInTown(dim, x, z) && !(this instanceof AdminTown) && !residents.isEmpty()) {
                 list.add(getMayor());
             } else {
                 return list;

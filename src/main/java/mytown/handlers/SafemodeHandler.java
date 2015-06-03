@@ -25,18 +25,17 @@ public class SafemodeHandler {
         if (!SafemodeHandler.safemode)
             return;
         for (Object obj : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
-            if (!(obj instanceof EntityPlayerMP)) continue;
+            if (!(obj instanceof EntityPlayerMP))
+                continue;
             SafemodeHandler.kickPlayer((EntityPlayerMP) obj);
         }
     }
 
     /**
      * Kicks the given EntityPlayerMP if they dont have mytown.adm.safemode
-     *
-     * @param pl
      */
     public static void kickPlayer(EntityPlayerMP pl) {
-        if (!(pl instanceof FakePlayer)) {//&& !ForgePermsAPI.permManager.canAccess(pl.getCommandSenderName(), pl.worldObj.provider.getDimensionName(), "mytown.adm.safemode")) {
+        if (!(pl instanceof FakePlayer)) {
             pl.playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
         }
     }

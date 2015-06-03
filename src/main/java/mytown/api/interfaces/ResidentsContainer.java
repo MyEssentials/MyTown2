@@ -6,7 +6,7 @@ import mytown.entities.Resident;
 /**
  * Represents an object that can hold Residents
  */
-public interface IHasResidents {
+public interface ResidentsContainer {
 
     void addResident(Resident res);
 

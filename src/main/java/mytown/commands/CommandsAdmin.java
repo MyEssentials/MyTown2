@@ -1,19 +1,18 @@
 package mytown.commands;
 
 import mytown.MyTown;
-import mytown.core.utils.ChatUtils;
-import mytown.core.utils.Assert;
-import mytown.core.utils.command.Command;
-import mytown.core.utils.command.CommandNode;
+import mytown.core.Assert;
+import mytown.core.entities.ChunkPos;
+import mytown.core.utils.*;
+import mytown.core.command.Command;
+import mytown.core.command.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.SafemodeHandler;
-import mytown.handlers.VisualsTickHandler;
+import mytown.handlers.VisualsHandler;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.ChunkPos;
 import mytown.util.Formatter;
-import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.block.Block;
@@ -32,6 +31,10 @@ import java.util.List;
  * All commands for admins go here
  */
 public class CommandsAdmin extends Commands {
+
+    private CommandsAdmin() {
+
+    }
 
     @Command(
             name = "mytownadmin",
@@ -204,7 +207,7 @@ public class CommandsAdmin extends Commands {
     public static void townBlocksMaxSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.extra.set");
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Town town = getTownFromName(args.get(0));
@@ -222,7 +225,7 @@ public class CommandsAdmin extends Commands {
     public static void townBlocksMaxAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.extra.add");
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Town town = getTownFromName(args.get(0));
@@ -241,7 +244,7 @@ public class CommandsAdmin extends Commands {
     public static void townBlocksMaxRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.extra.remove");
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Town town = getTownFromName(args.get(0));
@@ -268,7 +271,7 @@ public class CommandsAdmin extends Commands {
     public static void townBlocksFarclaimsSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.farClaims.set");
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Town town = getTownFromName(args.get(0));
@@ -284,7 +287,7 @@ public class CommandsAdmin extends Commands {
     public static void townBlocksFarclaimsAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.town.blocks.farClaims.add");
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Town town = getTownFromName(args.get(0));
@@ -303,7 +306,7 @@ public class CommandsAdmin extends Commands {
     public static void townBlocksFarClaimsRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.farClaims.remove");
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Town town = getTownFromName(args.get(0));
@@ -341,7 +344,7 @@ public class CommandsAdmin extends Commands {
     public static void resBlocksSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.res.blocks.extra.remove");
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Resident target = getResidentFromName(args.get(0));
@@ -360,7 +363,7 @@ public class CommandsAdmin extends Commands {
     public static void resBlocksAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.res.blocks.extra.remove");
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Resident target = getResidentFromName(args.get(0));
@@ -379,7 +382,7 @@ public class CommandsAdmin extends Commands {
     public static void resBlocksRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             throw new MyTownWrongUsageException("mytown.adm.cmd.usage.res.blocks.extra.remove");
-        if(!MyTownUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
+        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Resident target = getResidentFromName(args.get(0));
@@ -401,7 +404,7 @@ public class CommandsAdmin extends Commands {
         } else { // Set safemode
             safemode = ChatUtils.equalsOn(args.get(0));
         }
-        Assert.Perm(sender, "mytown.adm.cmd.safemode." + (safemode ? "on" : "off"));
+        Assert.perm(sender, "mytown.adm.cmd.safemode." + (safemode ? "on" : "off"));
         SafemodeHandler.setSafemode(safemode);
         SafemodeHandler.kickPlayers();
     }
@@ -578,11 +581,11 @@ public class CommandsAdmin extends Commands {
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
-            if(!MyTownUtils.tryParseInt(args.get(1)))
+            if(!StringUtils.tryParseInt(args.get(1)))
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
             int radius = Integer.parseInt(args.get(1));
-            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int)(player.posX - radius*16), (int)(player.posZ - radius*16), (int)(player.posX + radius*16), (int)(player.posZ + radius*16));
+            List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) (player.posX - radius * 16), (int) (player.posZ - radius * 16), (int) (player.posX + radius * 16), (int) (player.posZ + radius * 16));
             isFarClaim = true;
             for(Iterator<ChunkPos> it = chunks.iterator(); it.hasNext();) {
                 ChunkPos chunk = it.next();
@@ -653,8 +656,9 @@ public class CommandsAdmin extends Commands {
     public static void debugItemCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer)sender;
+            List<Class> list = new ArrayList<Class>();
             if(player.inventory.getCurrentItem() != null) {
-                List<Class> list = new ArrayList<Class>();
+
                 if(player.inventory.getCurrentItem().getItem() instanceof ItemBlock) {
                     Block block = ((ItemBlock)player.inventory.getCurrentItem().getItem()).field_150939_a;
                     list.add(block.getClass());
@@ -704,7 +708,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.plot")
     public static void plotHideCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayerMP) {
-            VisualsTickHandler.getInstance().unmarkPlots((EntityPlayerMP) sender);
+            VisualsHandler.getInstance().unmarkPlots((EntityPlayerMP) sender);
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.plot.vanished"));
         }
     }
@@ -736,7 +740,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.borders")
     public static void bordersHideCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayerMP) {
-            VisualsTickHandler.getInstance().unmarkTowns((EntityPlayerMP)sender);
+            VisualsHandler.getInstance().unmarkTowns((EntityPlayerMP)sender);
             sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
         }
     }

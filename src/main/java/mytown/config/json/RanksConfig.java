@@ -2,8 +2,9 @@ package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
 import mytown.MyTown;
-import mytown.core.utils.command.CommandManager;
+import mytown.core.command.CommandManager;
 import mytown.entities.Rank;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.io.*;
 import java.util.*;
@@ -57,24 +58,24 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             Rank.defaultRanks.put(residentRank, pResident);
 
             Rank.theDefaultRank = residentRank;
-            MyTown.instance.log.info("Added mayor rank.");
+            MyTown.instance.LOG.info("Added mayor rank.");
             Rank.theMayorDefaultRank = mayorRank;
 
 
             // Preparing to add them to JSON file
 
-            wrappers.add(new Wrapper(mayorRank, pMayor, RankType.Mayor));
-            wrappers.add(new Wrapper(assistantRank, pAssistant, RankType.Other));
-            wrappers.add(new Wrapper(residentRank, pResident, RankType.Resident));
+            wrappers.add(new Wrapper(mayorRank, pMayor, RankType.MAYOR));
+            wrappers.add(new Wrapper(assistantRank, pAssistant, RankType.OTHER));
+            wrappers.add(new Wrapper(residentRank, pResident, RankType.RESIDENT));
 
             // Adding to JSON file
             gson.toJson(wrappers, gsonType, writer);
 
             writer.close();
-            MyTown.instance.log.info("Created new DefaultRanks file successfully!");
+            MyTown.instance.LOG.info("Created new DefaultRanks file successfully!");
         } catch (IOException e) {
-            e.printStackTrace();
-            MyTown.instance.log.error("Failed to create DefaultRanks file!");
+            MyTown.instance.LOG.error("Failed to create DefaultRanks file!");
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
         return wrappers;
     }
@@ -86,10 +87,10 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             gson.toJson(items, gsonType, writer);
             writer.close();
 
-            MyTown.instance.log.info("Updated DefaultRanks file successfully!");
+            MyTown.instance.LOG.info("Updated DefaultRanks file successfully!");
         } catch (IOException e) {
-            e.printStackTrace();
-            MyTown.instance.log.error("Failed to update DefaultRanks file!");
+            MyTown.instance.LOG.error("Failed to update DefaultRanks file!");
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -115,17 +116,17 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
                         if(!CommandManager.commandList.containsKey(s.substring(1))) {
                             if (ok) {
                                 notExistingPermNodes.add(s);
-                                MyTown.instance.log.error("Permission node " + s + " does not exist! Removing...");
+                                MyTown.instance.LOG.error("Permission node " + s + " does not exist! Removing...");
                             }
                             it.remove();
                         }
                     }
                 }
             }
-            MyTown.instance.log.info("Loaded DefaultRanks successfully!");
+            MyTown.instance.LOG.info("Loaded DefaultRanks successfully!");
         } catch (Exception e) {
-            e.printStackTrace();
-            MyTown.instance.log.info("Failed to read from DefaultRanks file!");
+            MyTown.instance.LOG.info("Failed to read from DefaultRanks file!");
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
         return wrappedObjects;
     }
@@ -136,12 +137,12 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
         for(String node : CommandManager.commandList.keySet()) {
             if(node.startsWith("mytown.cmd")) {
                 for (Wrapper wrapper : items) {
-                    if(wrapper.type == RankType.Mayor ||
-                            wrapper.type == RankType.Resident && (node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")) ||
-                            wrapper.type == RankType.Assistant && (node.startsWith("mytown.cmd.assistant") || node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")))
+                    if(wrapper.type == RankType.MAYOR ||
+                            wrapper.type == RankType.RESIDENT && (node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")) ||
+                            wrapper.type == RankType.ASSISTANT && (node.startsWith("mytown.cmd.assistant") || node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")))
                         if (!wrapper.permissions.contains(node) && !wrapper.permissions.contains("-" + node)) {
                             wrapper.permissions.add(node);
-                            MyTown.instance.log.info("Permission node " + node + " is missing from the configs in rank " + wrapper.type);
+                            MyTown.instance.LOG.info("Permission node " + node + " is missing from the configs in rank " + wrapper.type);
                             updated = true;
                         }
                 }
@@ -153,13 +154,13 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             Collections.sort(wrapper.permissions);
             if(wrapper.type != null) {
                 switch (wrapper.type) {
-                    case Mayor:
+                    case MAYOR:
                         mayorExists = true;
                         break;
-                    case Resident:
+                    case RESIDENT:
                         residentExists = true;
                         break;
-                    case Assistant:
+                    case ASSISTANT:
                         assistantExists = true;
                         break;
                 }
@@ -167,7 +168,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
         }
 
         if(!mayorExists) {
-            MyTown.instance.log.info("Ranks config is missing Mayor rank. Adding...");
+            MyTown.instance.LOG.info("Ranks config is missing Mayor rank. Adding...");
             List<String> permissions = new ArrayList<String>();
             for(String node : CommandManager.commandList.keySet()) {
                 if(node.startsWith("mytown.cmd")) {
@@ -175,12 +176,12 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
                 }
             }
             Collections.sort(permissions);
-            items.add(new Wrapper("Mayor", permissions, RankType.Mayor));
+            items.add(new Wrapper("Mayor", permissions, RankType.MAYOR));
             updated = true;
         }
 
         if(!assistantExists) {
-            MyTown.instance.log.info("Ranks config is missing Assistant rank. Adding...");
+            MyTown.instance.LOG.info("Ranks config is missing Assistant rank. Adding...");
             List<String> permissions = new ArrayList<String>();
             for(String node : CommandManager.commandList.keySet()) {
                 if(node.startsWith("mytown.cmd.assistant") || node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")) {
@@ -188,12 +189,12 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
                 }
             }
             Collections.sort(permissions);
-            items.add(new Wrapper("Assistant", permissions, RankType.Assistant));
+            items.add(new Wrapper("Assistant", permissions, RankType.ASSISTANT));
             updated = true;
         }
 
         if(!residentExists) {
-            MyTown.instance.log.info("Ranks config is missing Resident rank. Adding...");
+            MyTown.instance.LOG.info("Ranks config is missing Resident rank. Adding...");
             List<String> permissions = new ArrayList<String>();
             for(String node : CommandManager.commandList.keySet()) {
                 if(node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")) {
@@ -201,7 +202,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
                 }
             }
             Collections.sort(permissions);
-            items.add(new Wrapper("Resident", permissions, RankType.Resident));
+            items.add(new Wrapper("Resident", permissions, RankType.RESIDENT));
             updated = true;
         }
 
@@ -213,9 +214,9 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             }
 
             Rank.defaultRanks.put(wrapper.name, newPerms);
-            if (wrapper.type == RankType.Resident)
+            if (wrapper.type == RankType.RESIDENT)
                 Rank.theDefaultRank = wrapper.name;
-            if (wrapper.type == RankType.Mayor)
+            if (wrapper.type == RankType.MAYOR)
                 Rank.theMayorDefaultRank = wrapper.name;
         }
 
@@ -224,19 +225,19 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
     }
 
     private enum RankType {
-        Resident,
-        Mayor,
-        Assistant,
-        Other
+        RESIDENT,
+        MAYOR,
+        ASSISTANT,
+        OTHER
     }
 
     /**
      * Wraps around a set of fields needed to instantiate Rank objects.
      */
     public class Wrapper {
-        public String name;
-        public RankType type;
-        public List<String> permissions;
+        public final String name;
+        public final RankType type;
+        public final List<String> permissions;
 
         public Wrapper(String name, List<String> permissions, RankType type) {
             this.name = name;

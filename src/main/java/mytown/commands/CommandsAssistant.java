@@ -1,16 +1,16 @@
 package mytown.commands;
 
 import mytown.config.Config;
-import mytown.core.utils.ChatUtils;
-import mytown.core.utils.command.CommandManager;
-import mytown.core.utils.command.CommandNode;
+import mytown.core.entities.ChunkPos;
+import mytown.core.utils.*;
+import mytown.core.command.CommandManager;
+import mytown.core.command.CommandNode;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.util.ChunkPos;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
@@ -68,12 +68,12 @@ public class CommandsAssistant extends Commands {
             for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
                 for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
                     Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                    if (nearbyTown != null && nearbyTown != town && !(Boolean)nearbyTown.getValue(FlagType.nearbyTowns))
+                    if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.getValue(FlagType.NEARBY_TOWNS))
                         throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
                 }
             }
 
-            if(isFarClaim && town.getFarClaims() + 1 > town.getMaxFarClaims())
+            if (isFarClaim && town.getFarClaims() + 1 > town.getMaxFarClaims())
                 throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
 
             int price = (isFarClaim ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.getBlocks().size();
@@ -87,11 +87,11 @@ public class CommandsAssistant extends Commands {
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
-            if (!MyTownUtils.tryParseInt(args.get(0)))
+            if (!StringUtils.tryParseInt(args.get(0)))
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
             int radius = Integer.parseInt(args.get(0));
-            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) (player.posX - radius * 16), (int) (player.posZ - radius * 16), (int) (player.posX + radius * 16), (int) (player.posZ + radius * 16));
+            List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) (player.posX - radius * 16), (int) (player.posZ - radius * 16), (int) (player.posX + radius * 16), (int) (player.posZ + radius * 16));
             isFarClaim = true;
 
             for (Iterator<ChunkPos> it = chunks.iterator(); it.hasNext(); ) {
@@ -105,7 +105,7 @@ public class CommandsAssistant extends Commands {
                 for (int x = chunk.getX() - Config.distanceBetweenTowns; x <= chunk.getX() + Config.distanceBetweenTowns; x++) {
                     for (int z = chunk.getZ() - Config.distanceBetweenTowns; z <= chunk.getZ() + Config.distanceBetweenTowns; z++) {
                         Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                        if (nearbyTown != null && nearbyTown != town && !(Boolean)nearbyTown.getValue(FlagType.nearbyTowns))
+                        if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.getValue(FlagType.NEARBY_TOWNS))
                             throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
                     }
                 }
@@ -114,11 +114,11 @@ public class CommandsAssistant extends Commands {
             if (town.getBlocks().size() + chunks.size() > town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
 
-            if(isFarClaim && town.getFarClaims() + 1 > town.getMaxFarClaims())
+            if (isFarClaim && town.getFarClaims() + 1 > town.getMaxFarClaims())
                 throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
 
             makePayment(player, (isFarClaim ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1) : Config.costAmountClaim * chunks.size())
-                    + MyTownUtils.sumFromNtoM(town.getBlocks().size(), town.getBlocks().size() + chunks.size() - 1) * Config.costAdditionClaim );
+                    + MathUtils.sumFromNtoM(town.getBlocks().size(), town.getBlocks().size() + chunks.size() - 1) * Config.costAdditionClaim);
 
             for (ChunkPos chunk : chunks) {
                 int price = (isFarClaim ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.getBlocks().size();
@@ -145,9 +145,8 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.unclaim.notInTown");
         if (block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ()))
             throw new MyTownCommandException("mytown.cmd.err.unclaim.spawnPoint");
-        if(!checkNearby(block.getDim(), block.getX(), block.getZ(), town)) {
-            if(town.getBlocks().size() <= 1)
-                throw new MyTownCommandException("mytown.cmd.err.unclaim.lastClaim");
+        if (!checkNearby(block.getDim(), block.getX(), block.getZ(), town) && town.getBlocks().size() <= 1) {
+            throw new MyTownCommandException("mytown.cmd.err.unclaim.lastClaim");
         }
 
         getDatasource().deleteBlock(block);
@@ -423,7 +422,7 @@ public class CommandsAssistant extends Commands {
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
         }
-        if (MyTownUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
+        if (StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger");
         }
         int limit = Integer.parseInt(args.get(0));
@@ -465,12 +464,12 @@ public class CommandsAssistant extends Commands {
     public static void leaveDeleteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        EntityPlayer player = (EntityPlayer)sender;
+        EntityPlayer player = (EntityPlayer) sender;
 
         if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
             int refund = 0;
-            for(TownBlock block : town.getBlocks()) {
+            for (TownBlock block : town.getBlocks()) {
                 refund += block.getPricePaid();
             }
 
@@ -485,7 +484,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.rename",
             parentName = "mytown.cmd")
     public static void renameCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
+        if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.rename");
 
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -498,7 +497,6 @@ public class CommandsAssistant extends Commands {
         getDatasource().saveTown(town);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.renamed"));
     }
-
 
 
     // Temporary here, might integrate in the methods

@@ -9,8 +9,8 @@ import mytown.protection.segment.getter.Getters;
  */
 public class SegmentItem extends Segment {
 
-    public ItemType type;
-    public boolean onAdjacent = false;
+    public final ItemType type;
+    public final boolean onAdjacent;
 
     public SegmentItem(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString, ItemType type, boolean onAdjacent) {
         super(theClass, getters, flag, denialValue, conditionString);

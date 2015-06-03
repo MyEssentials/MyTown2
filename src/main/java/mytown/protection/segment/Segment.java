@@ -1,8 +1,8 @@
 package mytown.protection.segment;
 
+import mytown.core.utils.StringUtils;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.getter.Getters;
-import mytown.util.MyTownUtils;
 import mytown.util.exceptions.ConditionException;
 import net.minecraft.item.ItemStack;
 
@@ -10,11 +10,11 @@ import net.minecraft.item.ItemStack;
  * A part of the protection that protects against a specific thing.
  */
 public class Segment {
-    public Class<?> theClass;
-    public FlagType flag;
-    public Object denialValue;
-    public Getters getters;
-    public String[] conditionString;
+    public final Class<?> theClass;
+    public final FlagType flag;
+    public final Object denialValue;
+    public final Getters getters;
+    public final String[] conditionString;
 
     public Segment(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString) {
         this.theClass = theClass;
@@ -23,6 +23,8 @@ public class Segment {
         this.denialValue = denialValue;
         if(conditionString != null)
             this.conditionString = conditionString.split(" ");
+        else
+            this.conditionString = null;
     }
 
     public boolean checkCondition(Object object) {
@@ -49,7 +51,7 @@ public class Segment {
         for(int i = 0; i < conditionString.length; i += 4) {
 
             // Get the boolean value of each part of the condition.
-            if(MyTownUtils.tryParseBoolean(conditionString[i + 2])) {
+            if(StringUtils.tryParseBoolean(conditionString[i + 2])) {
                 boolean value = (Boolean) getters.getValue(conditionString[i], Boolean.class, instance, object);
                 if (conditionString[i + 1].equals("==")) {
                     current = value == Boolean.parseBoolean(conditionString[i + 2]);
@@ -58,7 +60,7 @@ public class Segment {
                 } else {
                     throw new ConditionException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
-            } else if(MyTownUtils.tryParseInt(conditionString[i + 2])) {
+            } else if(StringUtils.tryParseInt(conditionString[i + 2])) {
                 int value = (Integer) getters.getValue(conditionString[i], Integer.class, instance, object);
                 if(conditionString[i+1].equals("==")) {
                     current = value == Integer.parseInt(conditionString[i + 2]);
@@ -71,7 +73,7 @@ public class Segment {
                 } else {
                     throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
-            } else if(MyTownUtils.tryParseFloat(conditionString[i + 2])) {
+            } else if(StringUtils.tryParseFloat(conditionString[i + 2])) {
                 float value = (Integer) getters.getValue(conditionString[i], Integer.class, instance, object);
                 if(conditionString[i+1].equals("==")) {
                     current = value == Float.parseFloat(conditionString[i + 2]);
@@ -110,5 +112,6 @@ public class Segment {
      * Gets the range of the area of effect of this thing, or 0 if none is specified.
      */
     public int getRange(Object object) {
-        return getters.hasValue("range") ? (Integer) getters.getValue("range", Integer.class, object, object) : 0;    }
+        return getters.hasValue("range") ? (Integer) getters.getValue("range", Integer.class, object, object) : 0;
+    }
 }

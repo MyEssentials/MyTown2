@@ -1,7 +1,7 @@
 package mytown.util;
 
-import mytown.api.interfaces.IHasFlags;
-import mytown.core.utils.chat.JsonMessageBuilder;
+import mytown.api.interfaces.FlagsContainer;
+import mytown.core.chat.JsonMessageBuilder;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -69,7 +69,7 @@ public class Formatter {
 
     public static String formatResidentsToString(Collection<Resident> residents) {
         String formatterList = null;
-        if (residents == null || residents.size() == 0) {
+        if (residents == null || residents.isEmpty()) {
             formatterList = "SERVER ADMINS";
         } else {
             for (Resident r : residents)
@@ -97,7 +97,7 @@ public class Formatter {
             } else {
                 formattedList += ", " + EnumChatFormatting.WHITE + r.getPlayerName() + EnumChatFormatting.GOLD + " (" + formatRankToString(t.getResidentRank(r)) + EnumChatFormatting.GOLD + ")";
             }
-        if (residents.size() == 0) {
+        if (residents.isEmpty()) {
             formattedList = EnumChatFormatting.RED + "NONE";
         }
         return formattedList;
@@ -113,7 +113,7 @@ public class Formatter {
             else
                 formattedList += ", " + toAdd;
         }
-        if (residents.size() == 0) {
+        if (residents.isEmpty()) {
             formattedList = EnumChatFormatting.RED + "NONE";
         }
         return formattedList;
@@ -132,7 +132,7 @@ public class Formatter {
                 res += EnumChatFormatting.WHITE + ", " + formatRankToString(r);
             }
         }
-        if (ranks.size() == 0) {
+        if (ranks.isEmpty()) {
             res = EnumChatFormatting.RED + "NONE";
         }
         return res;
@@ -212,7 +212,7 @@ public class Formatter {
     }
 
     @SuppressWarnings("unchecked")
-    public static String formatFlagsToString(IHasFlags container) {
+    public static String formatFlagsToString(FlagsContainer container) {
         String formattedFlagList = null;
 
         for (Flag flag : container.getFlags()) {

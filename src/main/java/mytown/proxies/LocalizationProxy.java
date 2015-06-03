@@ -12,7 +12,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class LocalizationProxy {
-    private static Logger logger = LogManager.getLogger("MyTown2.Localization");
+    private LocalizationProxy() {
+
+    }
+
+    private static Logger LOG = LogManager.getLogger("MyTown2.Localization");
     private static Localization localization;
 
     /**
@@ -31,13 +35,13 @@ public class LocalizationProxy {
             }
             if (is == null) {
                 is = LocalizationProxy.class.getResourceAsStream("/localization/en_US.lang");
-                logger.warn("Reverting to en_US.lang because {} does not exist!", Config.localization + ".lang");
+                LOG.warn("Reverting to en_US.lang because {} does not exist!", Config.localization + ".lang");
             }
 
             LocalizationProxy.localization = new Localization(new InputStreamReader(is));
             LocalizationProxy.localization.load();
         } catch (Exception ex) {
-            logger.warn("Failed to load localization!", ex);
+            LOG.warn("Failed to load localization!", ex);
         }
     }
 

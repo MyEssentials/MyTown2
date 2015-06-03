@@ -1,6 +1,7 @@
 package mytown.protection;
 
 import mytown.MyTown;
+import mytown.core.utils.WorldUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
@@ -12,10 +13,9 @@ import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.BlockPos;
-import mytown.util.ChunkPos;
+import mytown.core.entities.BlockPos;
+import mytown.core.entities.ChunkPos;
 import mytown.util.Formatter;
-import mytown.util.MyTownUtils;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.block.Block;
@@ -26,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,13 +37,13 @@ import java.util.List;
  */
 public class Protection {
 
-    public String modid;
-    public String version;
+    public final String modid;
+    public final String version;
 
-    public List<SegmentTileEntity> segmentsTiles;
-    public List<SegmentEntity> segmentsEntities;
-    public List<SegmentItem> segmentsItems;
-    public List<SegmentBlock> segmentsBlocks;
+    public final List<SegmentTileEntity> segmentsTiles;
+    public final List<SegmentEntity> segmentsEntities;
+    public final List<SegmentItem> segmentsItems;
+    public final List<SegmentBlock> segmentsBlocks;
 
     public Protection(String modid, List<Segment> segments) {
         this(modid, "", segments);
@@ -78,13 +79,11 @@ public class Protection {
                     if(segment.checkCondition(te)) {
 
                         int x1 = segment.getX1(te);
-                        //int y1 = segmentTE.getY1(te);
                         int z1 = segment.getZ1(te);
                         int x2 = segment.getX2(te);
-                        //int y2 = segmentTE.getY2(te);
                         int z2 = segment.getZ2(te);
 
-                        List<ChunkPos> chunks = MyTownUtils.getChunksInBox(x1, z1, x2, z2);
+                        List<ChunkPos> chunks = WorldUtils.getChunksInBox(x1, z1, x2, z2);
                         boolean inWild = false;
                         for (ChunkPos chunk : chunks) {
                             TownBlock block = getDatasource().getBlock(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
@@ -95,8 +94,8 @@ public class Protection {
                                     Resident res = Protections.getInstance().getOwnerForTileEntity(te);
                                     if (res == null || !block.getTown().checkPermission(res, segment.flag, segment.denialValue))
                                         return true;
-                                } else if (!(Boolean) block.getTown().getValue(segment.flag) && !block.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.modifyBlocks)) {
-                                    block.getTown().notifyEveryone(FlagType.modifyBlocks.getLocalizedTownNotification());
+                                } else if (!(Boolean) block.getTown().getValue(segment.flag) && !block.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.MODIFY_BLOCKS)) {
+                                    block.getTown().notifyEveryone(FlagType.MODIFY_BLOCKS.getLocalizedTownNotification());
                                     return true;
                                 }
                             }
@@ -113,13 +112,13 @@ public class Protection {
                         }
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
-                    MyTown.instance.log.error("Failed to check tile entity: " + te.getClass().getSimpleName() + "( " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " | WorldID: " + te.getWorldObj().provider.dimensionId + " )");
+                    MyTown.instance.LOG.error("Failed to check tile entity: " + te.getClass().getSimpleName() + "( " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " | WorldID: " + te.getWorldObj().provider.dimensionId + " )");
+                    MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
                     // Disabling protection if something errors.
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
                     } else {
-                        MyTown.instance.log.error("Skipping...");
+                        MyTown.instance.LOG.error("Skipping...");
                     }
                 }
                 return false;
@@ -132,7 +131,7 @@ public class Protection {
     public boolean checkEntity(Entity entity) {
         for(SegmentEntity segment : segmentsEntities) {
             if (segment.theClass.isAssignableFrom(entity.getClass())) {
-                if(segment.type == EntityType.tracked) {
+                if(segment.type == EntityType.TRACKED) {
                     int range = segment.getRange(entity);
                     TownBlock block;
                     Resident owner = segment.getOwner(entity);
@@ -156,7 +155,7 @@ public class Protection {
                             }
                         }
                     } else {
-                        List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
+                        List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
                         // Just so that it doesn't check more than once for Wild permissions
                         boolean inWild = false;
                         for (ChunkPos chunk : chunks) {
@@ -196,7 +195,7 @@ public class Protection {
 
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
-            if(segment.type == ItemType.rightClickBlock && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+            if(segment.type == ItemType.RIGHT_CLICK_BLOCK && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
                 if(segment.onAdjacent) {
                     ForgeDirection dir = ForgeDirection.getOrientation(face);
                     bp = new BlockPos(bp.x + dir.offsetX, bp.y + dir.offsetY, bp.z + dir.offsetZ, bp.dim);
@@ -219,7 +218,7 @@ public class Protection {
                                 }
                             }
                         } else {
-                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox(bp.x - range, bp.z - range, bp.x + range, bp.z + range);
+                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(bp.x - range, bp.z - range, bp.x + range, bp.z + range);
                             boolean inWild = false;
                             for (ChunkPos chunk : chunks) {
                                 block = getDatasource().getBlock(bp.dim, chunk.getX(), chunk.getZ());
@@ -239,11 +238,11 @@ public class Protection {
                         }
                     }
                 } catch (Exception ex) {
-                    MyTown.instance.log.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + bp.x
+                    MyTown.instance.LOG.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + bp.x
                             + ", " + bp.y + ", " + bp.z + " | WorldID: " + bp.dim + " )");
+                    MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
-                        ex.printStackTrace();
                     }
                 }
             }
@@ -257,16 +256,16 @@ public class Protection {
     public boolean checkEntityRightClick(ItemStack item, Resident res, Entity entity) {
         for(Iterator<SegmentEntity> it = segmentsEntities.iterator(); it.hasNext();) {
             SegmentEntity segment = it.next();
-            if(segment.type == EntityType.protect && segment.theClass.isAssignableFrom(entity.getClass())) {
+            if(segment.type == EntityType.PROTECT && segment.theClass.isAssignableFrom(entity.getClass())) {
                 TownBlock block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                 if(block == null) {
                     if(!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
-                        res.sendMessage(FlagType.protectedEntities.getLocalizedProtectionDenial());
+                        res.sendMessage(FlagType.PROTECTED_ENTITIES.getLocalizedProtectionDenial());
                         return true;
                     }
                 } else {
                     if(!block.getTown().checkPermission(res, segment.flag, segment.denialValue, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                        res.protectionDenial(FlagType.protectedEntities.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
+                        res.protectionDenial(FlagType.PROTECTED_ENTITIES.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
                         return true;
                     }
                 }
@@ -278,7 +277,7 @@ public class Protection {
 
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
-            if(segment.type == ItemType.rightClickBlock && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+            if(segment.type == ItemType.RIGHT_CLICK_BLOCK && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
                 try {
                     if (segment.checkCondition(item)) {
                         int range = segment.getRange(item);
@@ -297,7 +296,7 @@ public class Protection {
                                 }
                             }
                         } else {
-                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
+                            List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
                             boolean inWild = false;
                             for (ChunkPos chunk : chunks) {
                                 block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
@@ -317,11 +316,11 @@ public class Protection {
                         }
                     }
                 } catch (Exception ex) {
-                    MyTown.instance.log.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + (int)entity.posX
+                    MyTown.instance.LOG.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + (int)entity.posX
                             + ", " + (int)entity.posY + ", " + (int)entity.posZ + " | WorldID: " + entity.dimension + " )");
+                    MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
-                        ex.printStackTrace();
                     }
                 }
             }
@@ -335,7 +334,7 @@ public class Protection {
     public boolean checkItem(ItemStack item, Resident res) {
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
-            if(segment.type == ItemType.rightClickAir && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
+            if(segment.type == ItemType.RIGHT_CLICK_AIR && segment.theClass.isAssignableFrom(item.getItem().getClass())) {
                 EntityPlayer entity = res.getPlayer();
 
                 try {
@@ -356,7 +355,7 @@ public class Protection {
                                 }
                             }
                         } else {
-                            List<ChunkPos> chunks = MyTownUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
+                            List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
                             boolean inWild = false;
                             for (ChunkPos chunk : chunks) {
                                 block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
@@ -376,7 +375,7 @@ public class Protection {
                         }
                     }
                 } catch (Exception ex) {
-                    MyTown.instance.log.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( "
+                    MyTown.instance.LOG.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( "
                             + ", " + entity.posX + ", " + entity.posY + ", " + entity.posZ + " | WorldID: " + entity.dimension + " )");
 
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
@@ -396,8 +395,8 @@ public class Protection {
         for(SegmentBlock segment : segmentsBlocks) {
             if(segment.theClass.isAssignableFrom(blockType.getClass())
                     && (segment.meta == -1 || segment.meta == DimensionManager.getWorld(bp.dim).getBlockMetadata(bp.x, bp.y, bp.z))
-                    && (segment.type == BlockType.anyClick || segment.type == BlockType.rightClick && action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || segment.type == BlockType.leftClick && action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)) {
-                if(segment.flag == FlagType.accessBlocks || segment.flag == FlagType.activateBlocks) {
+                    && (segment.type == BlockType.ANY_CLICK || segment.type == BlockType.RIGHT_CLICK && action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || segment.type == BlockType.LEFT_CLICK && action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)) {
+                if(segment.flag == FlagType.ACCESS_BLOCKS || segment.flag == FlagType.ACTIVATE_BLOCKS) {
                     TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
                     if(block == null) {
                         if(!Wild.getInstance().checkPermission(res, segment.flag, segment.denialValue)) {
@@ -440,7 +439,7 @@ public class Protection {
 
     public boolean isEntityProtected(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
-        return type != null && type == EntityType.protect;
+        return type != null && type == EntityType.PROTECT;
     }
 
     /**
@@ -448,7 +447,7 @@ public class Protection {
      */
     public boolean isEntityTracked(Class<? extends Entity> entity) {
         EntityType type = getEntityType(entity);
-        return type != null && (type == EntityType.tracked);
+        return type != null && (type == EntityType.TRACKED);
     }
 
     public boolean isEntityOwnable(Class<? extends Entity> entity) {
@@ -485,7 +484,7 @@ public class Protection {
 
     public boolean canEntityTrespassPvp(Class<? extends Entity> entity) {
         for(SegmentEntity segment : segmentsEntities) {
-            if(segment.theClass.isAssignableFrom(entity) && segment.type == EntityType.pvp) {
+            if(segment.theClass.isAssignableFrom(entity) && segment.type == EntityType.PVP) {
                 return true;
             }
         }
@@ -496,9 +495,9 @@ public class Protection {
 
     private void disableSegment(Iterator<? extends Segment> it, Segment segment, String message) {
         it.remove();
-        MyTown.instance.log.error(message);
-        MyTown.instance.log.error("Disabling segment for " + segment.theClass.getName() + " in protection " + this.modid + ".");
-        MyTown.instance.log.info("Reload protections to enable it again.");
+        MyTown.instance.LOG.error(message);
+        MyTown.instance.LOG.error("Disabling segment for " + segment.theClass.getName() + " in protection " + this.modid + ".");
+        MyTown.instance.LOG.info("Reload protections to enable it again.");
     }
     private void disable() {
         Protections.getInstance().removeProtection(this);

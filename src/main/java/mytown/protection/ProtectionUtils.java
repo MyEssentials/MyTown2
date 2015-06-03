@@ -5,7 +5,7 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.util.BlockPos;
+import mytown.core.entities.BlockPos;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -22,11 +22,15 @@ import java.util.Map;
  */
 public class ProtectionUtils {
 
+    private ProtectionUtils() {
+
+    }
+
     /**
      * Adds to the whitelist of the specified town. Used when placing blocks.
      */
     public static void addToBlockWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for (Protection prot : Protections.getInstance().getProtections()) {
+        for (Protection prot : Protections.getInstance().getProtectionList()) {
             if (prot.isTileTracked(te))
                 for (FlagType flagType : prot.getFlagsForTile(te)) {
                     if (!town.hasBlockWhitelist(dim, x, y, z, flagType)) {
@@ -41,7 +45,7 @@ public class ProtectionUtils {
      * Removes from the whitelist. Used when breaking blocks.
      */
     public static void removeFromWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
-        for (Protection prot : Protections.getInstance().getProtections()) {
+        for (Protection prot : Protections.getInstance().getProtectionList()) {
             if (prot.isTileTracked(te))
                 for (FlagType flagType : prot.getFlagsForTile(te)) {
                     BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
@@ -56,7 +60,7 @@ public class ProtectionUtils {
      * Checks the tile entity with all the protections
      */
     public static boolean checkTileEntity(TileEntity te) {
-        for (Protection prot : Protections.getInstance().getProtections())
+        for (Protection prot : Protections.getInstance().getProtectionList())
             if (prot.checkTileEntity(te))
                 return true;
         return false;
@@ -66,7 +70,7 @@ public class ProtectionUtils {
      * Checks the item usage with all the protections
      */
     public static boolean checkItemUsage(ItemStack stack, Resident res, BlockPos bp, int face) {
-        for (Protection prot : Protections.getInstance().getProtections())
+        for (Protection prot : Protections.getInstance().getProtectionList())
             if (prot.checkItem(stack, res, bp, face))
                 return true;
         return false;
@@ -78,7 +82,7 @@ public class ProtectionUtils {
      * Checks the block if it can be activated by a right-click
      */
     public static boolean checkActivatedBlocks(Block block, int meta) {
-        for (Protection prot : Protections.getInstance().getProtections()) {
+        for (Protection prot : Protections.getInstance().getProtectionList()) {
             if (prot.isBlockTracked(block.getClass(), meta))
                 return true;
         }
@@ -88,7 +92,7 @@ public class ProtectionUtils {
      * Checks if an entity is hostile
      */
     public static boolean isEntityTracked(Class<? extends Entity> ent) {
-        for (Protection prot : Protections.getInstance().getProtections()) {
+        for (Protection prot : Protections.getInstance().getProtectionList()) {
             if (prot.isEntityTracked(ent)) {
                 return true;
             }
@@ -97,7 +101,7 @@ public class ProtectionUtils {
     }
 
     public static boolean isTileEntityOwnable(Class<? extends TileEntity> clsTe) {
-        for(Protection protection : Protections.getInstance().getProtections()) {
+        for(Protection protection : Protections.getInstance().getProtectionList()) {
             if(protection.isTileEntityOwnable(clsTe))
                 return true;
         }
@@ -106,7 +110,7 @@ public class ProtectionUtils {
 
     public static List<FlagType> getFlagsForTile(Class<? extends TileEntity> te) {
         List<FlagType> flags = new ArrayList<FlagType>();
-        for(Protection protection : Protections.getInstance().getProtections()) {
+        for(Protection protection : Protections.getInstance().getProtectionList()) {
             if(protection.isTileTracked(te))
                 flags.addAll(protection.getFlagsForTile(te));
         }
@@ -121,19 +125,20 @@ public class ProtectionUtils {
         if (MyTownUtils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
             return false;
 
-        if (bw.getFlagType() == FlagType.activateBlocks
-                && !(checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z), DimensionManager.getWorld(bw.dim).getBlockMetadata(bw.x, bw.y, bw.z))))
+        if (bw.getFlagType() == FlagType.ACTIVATE_BLOCKS
+                && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z), DimensionManager.getWorld(bw.dim).getBlockMetadata(bw.x, bw.y, bw.z)))
             return false;
-        if ((bw.getFlagType() == FlagType.modifyBlocks || bw.getFlagType() == FlagType.activateBlocks || bw.getFlagType() == FlagType.useItems)) {
+        if ((bw.getFlagType() == FlagType.MODIFY_BLOCKS || bw.getFlagType() == FlagType.ACTIVATE_BLOCKS || bw.getFlagType() == FlagType.USE_ITEMS)) {
             TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(bw.x, bw.y, bw.z);
-            if (te == null) return false;
+            if (te == null)
+                return false;
             return getFlagsForTile(te.getClass()).contains(bw.getFlagType());
         }
         return true;
     }
 
     public static boolean canEntityTrespassPvp(Class<? extends Entity> entity) {
-        for(Protection protection : Protections.getInstance().getProtections()) {
+        for(Protection protection : Protections.getInstance().getProtectionList()) {
             if(protection.canEntityTrespassPvp(entity))
                 return true;
         }
@@ -155,7 +160,6 @@ public class ProtectionUtils {
         Protections.getInstance().ownedTileEntities.put(te, res);
         if(Protections.getInstance().activePlacementThreads != 0)
             Protections.getInstance().activePlacementThreads--;
-        //MyTown.instance.log.info("Added tile entity " + te.toString());
     }
 
     public static synchronized void placementThreadTimeout() {

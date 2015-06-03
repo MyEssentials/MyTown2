@@ -5,6 +5,7 @@ import mytown.MyTown;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -33,10 +34,10 @@ public class WildPermsConfig extends JSONConfig<Flag> {
             Writer writer = new FileWriter(path);
             gson.toJson(Wild.getInstance().getFlags(), gsonType, writer);
             writer.close();
-            MyTown.instance.log.error("Successfully created WildPerms config file!");
+            MyTown.instance.LOG.error("Successfully created WildPerms config file!");
         } catch (IOException e) {
-            e.printStackTrace();
-            MyTown.instance.log.error("Failed to create WildPerms config file!");
+            MyTown.instance.LOG.error("Failed to create WildPerms config file!");
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
         return Wild.getInstance().getFlags();
     }
@@ -48,10 +49,10 @@ public class WildPermsConfig extends JSONConfig<Flag> {
             gson.toJson(items, gsonType, writer);
             writer.close();
 
-            MyTown.instance.log.info("Updated WildPerms file successfully!");
+            MyTown.instance.LOG.info("Updated WildPerms file successfully!");
         } catch (IOException e) {
-            e.printStackTrace();
-            MyTown.instance.log.error("Failed to update WildPerms file!");
+            MyTown.instance.LOG.error("Failed to update WildPerms file!");
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -62,21 +63,21 @@ public class WildPermsConfig extends JSONConfig<Flag> {
             Reader reader = new FileReader(path);
             list = gson.fromJson(reader, gsonType);
             reader.close();
-            MyTown.instance.log.info("Loaded WildPerms config file successfully!");
+            MyTown.instance.LOG.info("Loaded WildPerms config file successfully!");
         } catch (IOException e) {
-            e.printStackTrace();
-            MyTown.instance.log.error("Failed to load WildPerms config file!");
+            MyTown.instance.LOG.error("Failed to load WildPerms config file!");
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
 
         for (Iterator<Flag> it = list.iterator(); it.hasNext(); ) {
             Flag flag = it.next();
             if(flag.flagType == null) {
-                MyTown.instance.log.error("An unrecognized flagType has been found. Removing...");
+                MyTown.instance.LOG.error("An unrecognized flagType has been found. Removing...");
                 it.remove();
                 continue;
             }
             if (!flag.flagType.isWildPerm()) {
-                MyTown.instance.log.error("A non wild flagType has been found in WildPerms config file. Removing...");
+                MyTown.instance.LOG.error("A non wild flagType has been found in WildPerms config file. Removing...");
                 it.remove();
             }
         }
@@ -96,7 +97,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
                         ok = true;
                 }
                 if (!ok) {
-                    MyTown.instance.log.error("FlagType " + type.toString() + " for Wild does not exist in the WildPerms file. Adding...");
+                    MyTown.instance.LOG.error("FlagType " + type.toString() + " for Wild does not exist in the WildPerms file. Adding...");
                     items.add(new Flag(type, type.getDefaultValue()));
                     updated = true;
                 }

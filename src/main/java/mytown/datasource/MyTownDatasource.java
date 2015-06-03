@@ -4,8 +4,8 @@ import com.mojang.authlib.GameProfile;
 import mytown.MyTown;
 import mytown.api.events.*;
 import mytown.config.Config;
-import mytown.core.utils.Log;
-import mytown.core.utils.teleport.Teleport;
+import mytown.core.logger.Log;
+import mytown.core.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -20,10 +20,10 @@ import net.minecraftforge.common.DimensionManager;
 import java.util.UUID;
 
 public abstract class MyTownDatasource {
-    protected Log log = null;
+    protected Log LOG = null;
 
     public final void setLog(Log log) {
-        this.log = log;
+        this.LOG = log;
     }
 
     /**
@@ -107,7 +107,7 @@ public abstract class MyTownDatasource {
             }
             // Linking resident to town
             if (!linkResidentToTown(creator, town, onCreationDefaultRank))
-                MyTown.instance.log.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
+                MyTown.instance.LOG.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
 
             saveTownBank(town, Config.defaultBankAmount, 0);
         }
@@ -181,6 +181,7 @@ public abstract class MyTownDatasource {
      *
      * @return the new TownFlag, or null if failed
      */
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public final Flag newFlag(FlagType type, Object value) {
         Flag<Object> flag = new Flag<Object>(type, value);
         //TODO: Fire event
@@ -390,19 +391,17 @@ public abstract class MyTownDatasource {
      * Checks if the Block exists give the chunk coordonates and dimension
      */
     public final boolean hasBlock(int dim, int x, int z) {
-        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.keyFormat, dim, x, z)) != null;
+        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, x, z)) != null;
     }
 
     /**
      * Checks if the TownBlock with the given coords and dim at the town specified exists
      */
     public final boolean hasBlock(int dim, int x, int z, Town town) {
-        String key = String.format(TownBlock.keyFormat, dim, x, z);
+        String key = String.format(TownBlock.KEY_FORMAT, dim, x, z);
         TownBlock b = MyTownUniverse.getInstance().getTownBlock(key);
-        if (town != null && b != null && b.getTown() == town)
-            return true;
+        return town != null && b != null && b.getTown() == town;
 
-        return false;
     }
 
     public final boolean hasResident(UUID uuid) {
@@ -421,7 +420,7 @@ public abstract class MyTownDatasource {
     }
 
     public final boolean hasResident(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username); // TODO I have no idea if this will actually work. xD
+        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
         return profile != null && hasResident(profile.getId());
     }
 
@@ -438,10 +437,8 @@ public abstract class MyTownDatasource {
         Resident res = MyTownUniverse.getInstance().getResident(uuid.toString());
         if (res == null) {
             res = newResident(uuid.toString(), playerName);
-            if (save && res != null) { // Only save if a new Resident
-                if (!saveResident(res)) { // If saving fails, return null
-                    return null;
-                }
+            if (save && res != null && !saveResident(res)) { // Only save if a new Residen
+                return null;
             }
         }
         return res;
@@ -481,7 +478,7 @@ public abstract class MyTownDatasource {
     }
 
     public TownBlock getBlock(int dim, int chunkX, int chunkZ) {
-        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.keyFormat, dim, chunkX, chunkZ));
+        return MyTownUniverse.getInstance().getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, chunkX, chunkZ));
     }
 
     public Rank getRank(String rankName, Town town) {

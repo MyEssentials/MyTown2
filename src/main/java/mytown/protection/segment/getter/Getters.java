@@ -4,11 +4,13 @@ import bsh.EvalError;
 import bsh.Interpreter;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
+import mytown.MyTown;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -22,8 +24,8 @@ import java.util.Map;
  */
 public class Getters {
     
-    private Map<String, List<Caller>> callersMap;
-    private Map<String, Object> constantsMap;
+    private final Map<String, List<Caller>> callersMap;
+    private final Map<String, Object> constantsMap;
     
     private String segmentName;
     
@@ -83,11 +85,11 @@ public class Getters {
 
         try {
             forLoop: for (Caller caller : callerList) {
-            	if (lastInstance == null) {
-            		return null;
-            	}
+                if (lastInstance == null) {
+                    return null;
+                }
                 switch (caller.type) {
-                    case field:
+                    case FIELD:
                         try {
                             Field fieldObject = lastInstance.getClass().getField(caller.element);
                             lastInstance = fieldObject.get(lastInstance);
@@ -97,7 +99,7 @@ public class Getters {
                             lastInstance = fieldObject.get(lastInstance);
                         }
                         break;
-                    case method:
+                    case METHOD:
                         try {
                             Method methodObject = lastInstance.getClass().getMethod(caller.element);
                             try {
@@ -125,16 +127,15 @@ public class Getters {
                             }
                         }
                         break;
-                    case formula:
+                    case FORMULA:
                         // Return instantly since it can only be a number
                         lastInstance = getInfoFromFormula(caller.element, instance, parameter);
                         break forLoop;
-                    case nbt:
+                    case NBT:
                         if(lastInstance instanceof TileEntity) {
                             NBTTagCompound nbt = new NBTTagCompound();
                             ((TileEntity) lastInstance).writeToNBT(nbt);
                             lastInstance = nbt.getTag(caller.element);
-                            //MyTown.instance.log.info("Got tag with name: " + getter.element);
                         } else if(lastInstance instanceof Item) {
                             lastInstance = ((ItemStack)parameter).getTagCompound().getTag(caller.element);
                         } else if(lastInstance instanceof NBTTagCompound) {
@@ -149,8 +150,6 @@ public class Getters {
                             } else if(lastInstance instanceof NBTTagString) {
                                 lastInstance = ((NBTTagString) lastInstance).func_150285_a_();
                             }
-
-                            //MyTown.instance.log.info("Got tag with name: " + getter.element + " and value " + lastInstance.toString());
                         } else if(lastInstance instanceof NBTTagList) {
 
                             // Getting the id of the list
@@ -192,7 +191,7 @@ public class Getters {
     /**
      * Converts an Object that is Float, Double, Short or Long to an Integer type.
      */
-    public Object tryConvert(Object obj) {
+    private Object tryConvert(Object obj) {
         if(obj instanceof Float) {
             return ((Float) obj).intValue();
         } else if(obj instanceof Double) {
@@ -207,14 +206,13 @@ public class Getters {
     /**
      * Converts a formula that contains Getter identifiers to an (integer) value
      */
-    public Object getInfoFromFormula(String formula, Object instance, Object parameter) {
+    private Object getInfoFromFormula(String formula, Object instance, Object parameter) {
         Object result = null;
 
         String[] elements = formula.split(" ");
 
         // Replace all the getters with proper numbers, assume getters that are invalid as being numbers
         for(int i = 0 ; i < elements.length; i++) {
-            //MyTown.instance.log.info("Trying to find identifier for '" + elements[i] + "'");
             if(!elements[i].equals("+") && !elements[i].equals("-") && !elements[i].equals("*") && !elements[i].equals("/") && !elements[i].equals("^") && hasValue(elements[i])) {
 
                 Object info = getValue(elements[i], Object.class, instance, parameter);
@@ -226,18 +224,14 @@ public class Getters {
 
         formula = Joiner.on(' ').join(elements);
 
-        //MyTown.instance.log.info("Got formula at the end: " + formula);
-        //MyTown.instance.log.info("Trying to parse it.");
-
         Interpreter interpreter = new Interpreter();
         try {
             interpreter.eval("result = " + formula);
             result = interpreter.get("result");
         } catch (EvalError ex) {
-            ex.printStackTrace();
+            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
         }
 
-        //MyTown.instance.log.info("Returning: " + result);
         return result;
     }
 }
