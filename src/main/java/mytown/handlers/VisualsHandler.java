@@ -13,7 +13,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.*;
 
@@ -243,7 +243,7 @@ public class VisualsHandler {
                         try {
                             Thread.sleep(5);
                         } catch (Exception ex) {
-                            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+                            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
                         }
                     }
                 }

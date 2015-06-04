@@ -16,31 +16,33 @@ mytown.notification.enter.ownTown=&2Welcome back to %s
 # Flag based notifications
 
 # Protection
-mytown.protection.enter=&cYou are not allowed to enter here
-mytown.protection.activateBlocks=&cYou cannot activate that block
-mytown.protection.accessBlocks=&cYou cannot access that block
-mytown.protection.modifyBlocks=&cYou cannot modify the land here
-mytown.protection.pickupItems=&cYou cannot pickup blocks/items here
-mytown.protection.explosions=&cYou cannot use explosions here
-mytown.protection.mobs=&cYou cannot spawn this type of mob here
-mytown.protection.protectedEntities=&cYou cannot touch that
-mytown.protection.useItems=&cYou cannot use items here
-mytown.protection.pvp=&cYou cannot attack players here
-mytown.protection.notify.explosions=&3An explosion has been stopped
+mytown.protection.ENTER=&cYou are not allowed to enter here
+mytown.protection.ACTIVATE=&cYou cannot activate that block
+mytown.protection.ACCESS=&cYou cannot access that block
+mytown.protection.MODIFY=&cYou cannot modify the land here
+mytown.protection.PICKUP=&cYou cannot pickup blocks/items here
+mytown.protection.EXPLOSIONS=&cYou cannot use explosions here
+mytown.protection.MOBS=&cYou cannot spawn this type of mob here
+mytown.protection.PVE=&cYou cannot touch that
+mytown.protection.USAGE=&cYou cannot use items here
+mytown.protection.PVP=&cYou cannot attack players here
+
+mytown.protection.notify.EXPLOSIONS=&3An explosion has been stopped
 
 # Flag Info
-mytown.flag.enter=&3Allows outsiders to enter
-mytown.flag.activateBlocks=&3Allows usage of doors/buttons/etc
-mytown.flag.accessBlocks=&3Allows right-clicking of blocks
-mytown.flag.modifyBlocks=&3Allows modifying land
-mytown.flag.pickupItems=&3Allows item pickup
-mytown.flag.explosions=&3Allows explosions
-mytown.flag.mobs=&3Controls what kind of mobs are not allowed to exist here
-mytown.flag.protectedEntities=&3Allows interacting with entities
-mytown.flag.useItems=&3Allows usage of items (eggs, buckets etc.)
-mytown.flag.pvp=&3Allows PVP - Player vs. Player
-mytown.flag.restrictedTownPerms=&3Gives permission outside player's plots
-mytown.flag.allowFakePlayers=&3Allows fake players to bypass (ex: Thaumcraft Golems)
+mytown.flag.ENTER=&3Allows outsiders to enter
+mytown.flag.ACTIVATE=&3Allows right-clicking of doors, etc
+mytown.flag.ACCESS=&3Allows right-clicking of blocks
+mytown.flag.MODIFY=&3Allows modifying land
+mytown.flag.PICKUP=&3Allows item pickup
+mytown.flag.EXPLOSIONS=&3Allows explosions
+mytown.flag.MOBS=&3Controls what mobs can't exist here.
+mytown.flag.PVE=&3Allows interacting with entities
+mytown.flag.USAGE=&3Allows usage of items (eggs, buckets etc.)
+mytown.flag.PVP=&3Allows PVP - Player vs. Player
+mytown.flag.RESTRICTIONS=&3Gives permission outside player's plots
+mytown.flag.FAKERS=&3Allows fake players to bypass (ex: TCGolems)
+mytown.flag.NEARBY=&3Allows towns to be made near this town.
 
 # /ta config [load|save]
 mytown.cmd.config.load.start=&3Loading config...

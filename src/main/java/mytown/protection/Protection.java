@@ -26,7 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -89,8 +89,8 @@ public class Protection {
                                     Resident res = Protections.instance.getOwnerForTileEntity(te);
                                     if (res == null || !block.getTown().checkPermission(res, segment.flag, segment.denialValue))
                                         return true;
-                                } else if (!(Boolean) block.getTown().getValue(segment.flag) && !block.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.MODIFY_BLOCKS)) {
-                                    block.getTown().notifyEveryone(FlagType.MODIFY_BLOCKS.getLocalizedTownNotification());
+                                } else if (!(Boolean) block.getTown().getValue(segment.flag) && !block.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.MODIFY)) {
+                                    block.getTown().notifyEveryone(FlagType.MODIFY.getLocalizedTownNotification());
                                     return true;
                                 }
                             }
@@ -108,7 +108,7 @@ public class Protection {
                     }
                 } catch (Exception ex) {
                     MyTown.instance.LOG.error("Failed to check tile entity: " + te.getClass().getSimpleName() + "( " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " | WorldID: " + te.getWorldObj().provider.dimensionId + " )");
-                    MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+                    MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
                     // Disabling protection if something errors.
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
@@ -235,7 +235,7 @@ public class Protection {
                 } catch (Exception ex) {
                     MyTown.instance.LOG.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + bp.x
                             + ", " + bp.y + ", " + bp.z + " | WorldID: " + bp.dim + " )");
-                    MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+                    MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
                     }
@@ -255,12 +255,12 @@ public class Protection {
                 TownBlock block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                 if(block == null) {
                     if(!Wild.instance.checkPermission(res, segment.flag, segment.denialValue)) {
-                        res.sendMessage(FlagType.PROTECTED_ENTITIES.getLocalizedProtectionDenial());
+                        res.sendMessage(FlagType.PVE.getLocalizedProtectionDenial());
                         return true;
                     }
                 } else {
                     if(!block.getTown().checkPermission(res, segment.flag, segment.denialValue, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                        res.protectionDenial(FlagType.PROTECTED_ENTITIES.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
+                        res.protectionDenial(FlagType.PVE.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
                         return true;
                     }
                 }
@@ -313,7 +313,7 @@ public class Protection {
                 } catch (Exception ex) {
                     MyTown.instance.LOG.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + (int)entity.posX
                             + ", " + (int)entity.posY + ", " + (int)entity.posZ + " | WorldID: " + entity.dimension + " )");
-                    MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+                    MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
                     }
@@ -391,7 +391,7 @@ public class Protection {
             if(segment.theClass.isAssignableFrom(blockType.getClass())
                     && (segment.meta == -1 || segment.meta == DimensionManager.getWorld(bp.dim).getBlockMetadata(bp.x, bp.y, bp.z))
                     && (segment.type == BlockType.ANY_CLICK || segment.type == BlockType.RIGHT_CLICK && action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || segment.type == BlockType.LEFT_CLICK && action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)) {
-                if(segment.flag == FlagType.ACCESS_BLOCKS || segment.flag == FlagType.ACTIVATE_BLOCKS) {
+                if(segment.flag == FlagType.ACCESS || segment.flag == FlagType.ACTIVATE) {
                     TownBlock block = getDatasource().getBlock(bp.dim, bp.x >> 4, bp.z >> 4);
                     if(block == null) {
                         if(!Wild.instance.checkPermission(res, segment.flag, segment.denialValue)) {

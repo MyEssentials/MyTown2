@@ -5,7 +5,7 @@ import mytown.MyTown;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
             MyTown.instance.LOG.error("Successfully created WildPerms config file!");
         } catch (IOException e) {
             MyTown.instance.LOG.error("Failed to create WildPerms config file!");
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
         }
         return Wild.instance.getFlags();
     }
@@ -52,7 +52,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
             MyTown.instance.LOG.info("Updated WildPerms file successfully!");
         } catch (IOException e) {
             MyTown.instance.LOG.error("Failed to update WildPerms file!");
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
         }
     }
 
@@ -66,7 +66,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
             MyTown.instance.LOG.info("Loaded WildPerms config file successfully!");
         } catch (IOException e) {
             MyTown.instance.LOG.error("Failed to load WildPerms config file!");
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
         }
 
         for (Iterator<Flag> it = list.iterator(); it.hasNext(); ) {

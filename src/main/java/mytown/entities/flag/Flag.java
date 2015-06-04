@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import mytown.MyTown;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.Type;
 
@@ -69,7 +69,7 @@ public class Flag<T> {
                 return null;
             }
         } catch (ClassCastException e) {
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
             return null;
         }
     }

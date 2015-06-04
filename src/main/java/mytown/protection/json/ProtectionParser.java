@@ -12,7 +12,7 @@ import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.getter.Getters;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -64,7 +64,7 @@ public class ProtectionParser {
 
             } catch (Exception ex) {
                 MyTown.instance.LOG.error("Encountered error when parsing protection file: " + file.getName());
-                MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+                MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
             }
         }
         if(vanillaProtection != null) {
@@ -79,36 +79,36 @@ public class ProtectionParser {
     private static void createModel() {
         List<Segment> segments = new ArrayList<Segment>();
 
-        segments.add(new SegmentBlock(net.minecraft.block.BlockButton.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockDoor.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockLever.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockFenceGate.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockDragonEgg.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.ANY_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockCake.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockTrapDoor.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockJukebox.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneRepeater.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneComparator.class, new Getters(), FlagType.ACTIVATE_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockButton.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockDoor.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockLever.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockFenceGate.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockDragonEgg.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.ANY_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockCake.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockTrapDoor.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockJukebox.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneRepeater.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneComparator.class, new Getters(), FlagType.ACTIVATE, false, null, BlockType.RIGHT_CLICK, -1));
 
-        segments.add(new SegmentBlock(net.minecraft.block.BlockAnvil.class, new Getters(), FlagType.ACCESS_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockCauldron.class, new Getters(), FlagType.ACCESS_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockContainer.class, new Getters(), FlagType.ACCESS_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockBed.class, new Getters(), FlagType.ACCESS_BLOCKS, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockAnvil.class, new Getters(), FlagType.ACCESS, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockCauldron.class, new Getters(), FlagType.ACCESS, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockContainer.class, new Getters(), FlagType.ACCESS, false, null, BlockType.RIGHT_CLICK, -1));
+        segments.add(new SegmentBlock(net.minecraft.block.BlockBed.class, new Getters(), FlagType.ACCESS, false, null, BlockType.RIGHT_CLICK, -1));
 
         segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityMob.class, new Getters(), FlagType.MOBS, "hostiles", null, EntityType.TRACKED));
-        segments.add(new SegmentEntity(net.minecraft.entity.EntityAgeable.class, new Getters(), FlagType.PROTECTED_ENTITIES, true, null, EntityType.PROTECT));
+        segments.add(new SegmentEntity(net.minecraft.entity.EntityAgeable.class, new Getters(), FlagType.PVE, false, null, EntityType.PROTECT));
         Getters getters = new Getters();
         getters.addConstant("range", 5);
         segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityCreeper.class, getters, FlagType.EXPLOSIONS, false, null, EntityType.TRACKED));
         getters = new Getters();
         getters.addConstant("range", 5);
         segments.add(new SegmentEntity(net.minecraft.entity.item.EntityTNTPrimed.class, getters, FlagType.EXPLOSIONS, false, null, EntityType.TRACKED));
-        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityItemFrame.class, new Getters(), FlagType.PROTECTED_ENTITIES, true, null, EntityType.PROTECT));
+        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityItemFrame.class, new Getters(), FlagType.PVE, false, null, EntityType.PROTECT));
 
-        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.USE_ITEMS, false, null, ItemType.RIGHT_CLICK_BLOCK, true));
-        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.USE_ITEMS, false, null, ItemType.RIGHT_CLICK_ENTITY, false));
-        segments.add(new SegmentItem(net.minecraft.item.ItemShears.class, new Getters(), FlagType.USE_ITEMS, false, null, ItemType.RIGHT_CLICK_ENTITY, false));
-        segments.add(new SegmentItem(net.minecraft.item.ItemHangingEntity.class, new Getters(), FlagType.USE_ITEMS, false, null, ItemType.RIGHT_CLICK_BLOCK, true));
+        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.USAGE, false, null, ItemType.RIGHT_CLICK_BLOCK, true));
+        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.USAGE, false, null, ItemType.RIGHT_CLICK_ENTITY, false));
+        segments.add(new SegmentItem(net.minecraft.item.ItemShears.class, new Getters(), FlagType.USAGE, false, null, ItemType.RIGHT_CLICK_ENTITY, false));
+        segments.add(new SegmentItem(net.minecraft.item.ItemHangingEntity.class, new Getters(), FlagType.USAGE, false, null, ItemType.RIGHT_CLICK_BLOCK, true));
 
         Protection protection = new Protection("Minecraft", segments);
         try {
@@ -118,7 +118,7 @@ public class ProtectionParser {
 
         } catch (Exception ex) {
             MyTown.instance.LOG.error("Failed to create protection model :( ");
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
         }
     }
 }

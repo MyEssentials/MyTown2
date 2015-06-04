@@ -23,7 +23,7 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.FakePlayer;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -594,7 +594,7 @@ public class Resident implements PlotsContainer, TownsContainer { // TODO Make C
         try {
             selectionY2 = player.worldObj.getActualHeight() - 1;
         } catch (NullPointerException e) {
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
             return;
         }
 

@@ -15,7 +15,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             setupUpdates();
             doUpdates();
         } catch (SQLException e) {
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -102,7 +102,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             return true;
         } catch (SQLException ex) {
             LOG.error("Failed to get SQL connection! %s", ex, dsn);
-            LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            LOG.error(ExceptionUtils.getStackTrace(ex));
         }
         return false;
     }
@@ -135,7 +135,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             LOG.error("Failed to load worlds from the database!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -175,7 +175,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load Towns!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -209,7 +209,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load blocks!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -250,7 +250,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load a rank!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
         }
         return true;
     }
@@ -275,7 +275,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load RankPermissions!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -293,7 +293,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load Residents!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -319,7 +319,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load Plots!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -338,7 +338,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load Nations!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -369,7 +369,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     }
                 } catch (IllegalArgumentException ex) {
                     LOG.error("Flag " + flagName + " does no longer exist... will be deleted shortly from the database.");
-                    LOG.error(ExceptionUtils.getFullStackTrace(ex));
+                    LOG.error(ExceptionUtils.getStackTrace(ex));
                     PreparedStatement removeFlag = prepare("DELETE FROM " + prefix + "TownFlags WHERE townName=? AND name=?", true);
                     removeFlag.setString(1, townName);
                     removeFlag.setString(2, flagName);
@@ -378,7 +378,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             }
         } catch (SQLException e) {
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -413,7 +413,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     }
                 } catch (IllegalArgumentException ex) {
                     LOG.error("Flag " + flagName + " does no longer exist. Deleting from database.");
-                    LOG.error(ExceptionUtils.getFullStackTrace(ex));
+                    LOG.error(ExceptionUtils.getStackTrace(ex));
                     PreparedStatement removeFlag = prepare("DELETE FROM " + prefix + "PlotFlags WHERE plotID=? AND name=?", true);
                     removeFlag.setInt(1, plotID);
                     removeFlag.setString(2, flagName);
@@ -421,7 +421,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 }
             }
         } catch (SQLException e) {
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -451,7 +451,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to link Residents to Towns!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -475,7 +475,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             LOG.error("Failed to load a Block whitelist");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -494,7 +494,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load a town selection.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -519,7 +519,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to link Towns to Nations!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -541,7 +541,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to link Residents to Plots");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -561,7 +561,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load friends.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -580,7 +580,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load friend requests.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -598,7 +598,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load town invites.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -636,7 +636,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load block owners.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -656,7 +656,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load town banks.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -716,7 +716,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to save Town %s!", town.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -746,7 +746,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to save Block %s!", block.getKey());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -788,7 +788,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                         rank.getTown().setDefaultRank(rank);
                 } catch (SQLException e) {
                     LOG.error("Failed to insert Rank %s", rank.getKey());
-                    LOG.error(ExceptionUtils.getFullStackTrace(e));
+                    LOG.error(ExceptionUtils.getStackTrace(e));
                     getConnection().rollback();
 
                     return false;
@@ -798,7 +798,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to save Rank %s!", rank.getKey());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -814,7 +814,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             s.execute();
         } catch (SQLException e) {
             LOG.error("Failed to add permission (%s) to Rank (%s)", perm, rank.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -845,7 +845,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to save resident %s!", resident.getUUID());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -897,7 +897,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to save Plot %s!", plot.getKey());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -919,7 +919,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to save Nation %s!", nation.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             e.printStackTrace();
             return false;
         }
@@ -952,7 +952,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to save Flag %s!", flag.getFlagType().toString());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -982,7 +982,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to save Flag %s!", flag.getFlagType().toString());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1012,7 +1012,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             // NO update since ID can't change
         } catch (SQLException e) {
             LOG.error("Failed to save a Block Whitelist!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1036,7 +1036,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             LOG.error("Failed to save a town selection!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1055,7 +1055,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             LOG.error("Failed to save friend link between " + res1.getPlayerName() + " and " + res2.getPlayerName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1074,7 +1074,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to save friend request from " + res1.getPlayerName() + " to " + res2.getPlayerName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1096,7 +1096,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to load town invite: " + res.getPlayerName() + " for town " + town.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1113,7 +1113,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             MyTownUniverse.instance.addWorld(dim);
         } catch (SQLException e) {
             LOG.error("Failed to save world with dimension id " + dim);
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1132,7 +1132,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             s.executeUpdate();
         } catch (SQLException e) {
             LOG.error("Failed to save block owner.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1150,7 +1150,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             town.setDaysNotPaid(daysNotPaid);
         } catch (SQLException e) {
             LOG.error("Failed to save a town's bank.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1172,7 +1172,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             town.addResident(res, rank);
         } catch (SQLException e) {
             LOG.error("Failed to link Resident %s (%s) with Town %s", res.getPlayerName(), res.getUUID(), town.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1190,7 +1190,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             town.removeResident(res);
         } catch (SQLException e) {
             LOG.error("Failed to unlink Resident %s (%s) with Town %s", e, res.getPlayerName(), res.getUUID(), town.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1208,7 +1208,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             town.promoteResident(res, rank);
         } catch (SQLException e) {
             LOG.error("Failed to update link between Resident %s (%s) with Town %s", e, res.getPlayerName(), res.getUUID(), town.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1224,7 +1224,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             s.execute();
         } catch (SQLException e) {
             LOG.error("Failed to link a town to a nation.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1239,7 +1239,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             s.execute();
         } catch (SQLException e) {
             LOG.error("Failed to remove link from a town to a nation.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1255,7 +1255,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             s.executeUpdate();
         } catch (SQLException e) {
             LOG.error("Failed to update link between a town and a nation");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1276,7 +1276,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             LOG.error("Failed to link " + res.getPlayerName() + " to plot " + plot.getName() + " in town " + plot.getTown().getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1294,7 +1294,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             LOG.error("Failed to link " + res.getPlayerName() + " to plot " + plot.getName() + " in town " + plot.getTown().getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1311,7 +1311,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             LOG.error("Failed to link " + res.getPlayerName() + " to plot " + plot.getName() + " in town " + plot.getTown().getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1328,7 +1328,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             town.setBankAmount(amount);
         } catch (SQLException e) {
             LOG.error("Failed to save a town's bank.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1365,7 +1365,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             MyTownUniverse.instance.removeTown(town);
         } catch (SQLException e) {
             LOG.error("Failed to delete Town %s", town.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -1393,7 +1393,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             MyTownUniverse.instance.removeTownBlock(block);
         } catch (SQLException e) {
             LOG.error("Failed to delete Block %s!", block.getKey());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1412,7 +1412,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             MyTownUniverse.instance.removeRank(rank);
         } catch (SQLException e) {
             LOG.error("Failed to delete Rank %s!", rank.getKey());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
 
@@ -1431,7 +1431,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             MyTownUniverse.instance.removeResident(resident);
         } catch (SQLException e) {
             LOG.error("Failed to delete Resident %s!", resident.getUUID());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1450,7 +1450,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             plot.getTown().removePlot(plot);
         } catch (SQLException e) {
             LOG.error("Failed to delete Plot %s!", plot.getKey());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1468,7 +1468,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             MyTownUniverse.instance.removeNation(nation);
         } catch (SQLException e) {
             LOG.error("Failed to delete Nation $s!", nation.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1484,7 +1484,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             town.removeBlockWhitelist(bw);
         } catch (SQLException e) {
             LOG.error("Failed to delete BlockWhitelist!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1510,7 +1510,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (Exception e) {
             LOG.error("Failed to delete a town selection!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1527,7 +1527,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             s.executeUpdate();
         } catch (SQLException e) {
             LOG.error("Failed to delete link between " + res1.getPlayerName() + " and " + res2.getPlayerName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1548,7 +1548,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
         } catch (SQLException e) {
             LOG.error("Failed to delete friend request from " + res1.getPlayerName() + " to " + res2.getPlayerName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1566,7 +1566,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             res.removeInvite(town);
         } catch (SQLException e) {
             LOG.error("Failed to delete town invite for " + res.getPlayerName() + " to town " + town.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1584,7 +1584,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             town.removeFlag(flag.getFlagType());
         } catch (SQLException e) {
             LOG.error("Failed to delete flag %s!", flag.getFlagType().toString());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1601,7 +1601,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             plot.removeFlag(flag.getFlagType());
         } catch (SQLException e) {
             LOG.error("Failed to delete flag %s!", flag.getFlagType().toString());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1617,7 +1617,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             MyTownUniverse.instance.removeWorld(dim);
         } catch (SQLException e) {
             LOG.error("Failed to delete world with dimension id " + dim);
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1632,7 +1632,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             s.execute();
         } catch (SQLException e) {
             LOG.error("Failed to add permission (%s) to Rank (%s)", perm, rank.getName());
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1645,7 +1645,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             s.execute();
         } catch (SQLException e) {
             LOG.error("Failed to delete BlockOwners table!");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
         return true;
@@ -1705,7 +1705,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                         LOG.info("Added bank entry for " + town.getName());
                     }
                 } catch (SQLException e) {
-                    LOG.error(ExceptionUtils.getFullStackTrace(e));
+                    LOG.error(ExceptionUtils.getStackTrace(e));
                 }
             }
         }
@@ -1731,7 +1731,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             statement = conn.prepareStatement(sql, returnGenerationKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
         } catch (SQLException e) {
             LOG.fatal(sql);
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
         }
         return statement;
     }
@@ -1981,7 +1981,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 statement.executeUpdate();
             } catch (SQLException e) {
                 LOG.error("Update (%s - %s) failed to apply!", update.id, update.desc);
-                LOG.error(ExceptionUtils.getFullStackTrace(e));
+                LOG.error(ExceptionUtils.getStackTrace(e));
                 throw e; // Throws back up to force safemode
             }
         }

@@ -10,7 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -229,7 +229,7 @@ public class Getters {
             interpreter.eval("result = " + formula);
             result = interpreter.get("result");
         } catch (EvalError ex) {
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
         }
 
         return result;

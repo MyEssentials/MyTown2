@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import mytown.MyTown;
 import mytown.core.command.CommandManager;
 import mytown.entities.Rank;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.*;
 import java.util.*;
@@ -75,7 +75,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             MyTown.instance.LOG.info("Created new DefaultRanks file successfully!");
         } catch (IOException e) {
             MyTown.instance.LOG.error("Failed to create DefaultRanks file!");
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
         }
         return wrappers;
     }
@@ -90,7 +90,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             MyTown.instance.LOG.info("Updated DefaultRanks file successfully!");
         } catch (IOException e) {
             MyTown.instance.LOG.error("Failed to update DefaultRanks file!");
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
         }
     }
 
@@ -126,7 +126,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             MyTown.instance.LOG.info("Loaded DefaultRanks successfully!");
         } catch (Exception e) {
             MyTown.instance.LOG.info("Failed to read from DefaultRanks file!");
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(e));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
         }
         return wrappedObjects;
     }

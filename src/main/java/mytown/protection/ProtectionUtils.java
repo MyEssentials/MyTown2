@@ -125,10 +125,10 @@ public class ProtectionUtils {
         if (MyTownUtils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
             return false;
 
-        if (bw.getFlagType() == FlagType.ACTIVATE_BLOCKS
+        if (bw.getFlagType() == FlagType.ACTIVATE
                 && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z), DimensionManager.getWorld(bw.dim).getBlockMetadata(bw.x, bw.y, bw.z)))
             return false;
-        if (bw.getFlagType() == FlagType.MODIFY_BLOCKS || bw.getFlagType() == FlagType.ACTIVATE_BLOCKS || bw.getFlagType() == FlagType.USE_ITEMS) {
+        if (bw.getFlagType() == FlagType.MODIFY || bw.getFlagType() == FlagType.ACTIVATE || bw.getFlagType() == FlagType.USAGE) {
             TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(bw.x, bw.y, bw.z);
             if (te == null)
                 return false;

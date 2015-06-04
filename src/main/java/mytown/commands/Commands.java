@@ -144,14 +144,14 @@ public abstract class Commands {
 
         populator = new ArrayList<String>();
         for (FlagType flag : FlagType.values()) {
-            populator.add(flag.toString());
+            populator.add(flag.toString().toLowerCase());
         }
         CommandManager.completionMap.put("flagCompletion", populator);
 
         populator = new ArrayList<String>();
         for (FlagType flag : FlagType.values()) {
             if (flag.isWhitelistable())
-                populator.add(flag.toString());
+                populator.add(flag.toString().toLowerCase());
         }
         CommandManager.completionMap.put("flagCompletionWhitelist", populator);
 
@@ -208,7 +208,7 @@ public abstract class Commands {
     public static Flag getFlagFromName(FlagsContainer hasFlags, String name) {
         Flag flag;
         try {
-            flag = hasFlags.getFlag(FlagType.valueOf(name));
+            flag = hasFlags.getFlag(FlagType.valueOf(name.toUpperCase()));
         } catch (IllegalArgumentException ex) {
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", ex, name);
         }

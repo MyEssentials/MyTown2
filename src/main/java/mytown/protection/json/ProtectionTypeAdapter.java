@@ -16,7 +16,7 @@ import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.getter.Caller;
 import mytown.protection.segment.getter.Getters;
 import mytown.util.exceptions.SegmentException;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -373,13 +373,13 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             }
                         } catch (SegmentException ex) {
                             // This catch is for missing elements or other runtime verifiable  conditions.
-                            MyTown.instance.LOG.error("  " + ExceptionUtils.getFullStackTrace(ex));
+                            MyTown.instance.LOG.error("  " + ExceptionUtils.getStackTrace(ex));
                             MyTown.instance.LOG.error("  Segment will NOT be added, reload configs to try again.");
                         }
                     } catch (SegmentException ex) {
                         // This catch is for parsing issues when reading the segment.
 
-                        MyTown.instance.LOG.error("  " + ExceptionUtils.getFullStackTrace(ex));
+                        MyTown.instance.LOG.error("  " + ExceptionUtils.getStackTrace(ex));
                         MyTown.instance.LOG.error("  Segment will NOT be added, reload configs to try again.");
                         // Skipping everything in the segment if it errors
                         while(!in.peek().equals(JsonToken.END_OBJECT))

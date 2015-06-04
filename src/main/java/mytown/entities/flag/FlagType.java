@@ -1,5 +1,8 @@
 package mytown.entities.flag;
 
+import com.google.common.base.CaseFormat;
+import mytown.MyTown;
+import mytown.core.utils.StringUtils;
 import mytown.proxies.LocalizationProxy;
 
 /**
@@ -12,10 +15,10 @@ public enum FlagType {
     ENTER(Boolean.class, true, null, false, true, Property.ALL),
 
     // Allows opening GUIs and right-clicking TileEntities
-    ACCESS_BLOCKS(Boolean.class, false, null, true, true, Property.ALL, true),
+    ACCESS(Boolean.class, false, null, true, true, Property.ALL, true),
 
     // Allows pickup of items.
-    PICKUP_ITEMS(Boolean.class, true, null, true, true, Property.ALL),
+    PICKUP(Boolean.class, true, null, true, true, Property.ALL),
 
     // Allows pvp
     PVP(Boolean.class, false, null, true, true, Property.ALL),
@@ -25,30 +28,30 @@ public enum FlagType {
     MOBS(String.class, "all", new String[]{"all", "hostiles", "none"}, true, "all", Property.ALL),
 
     // Allows outsiders to hurt passive and other types of entities.
-    PROTECTED_ENTITIES(Boolean.class, false, null, true, false, Property.ALL),
+    PVE(Boolean.class, false, null, true, false, Property.ALL),
 
     // Allows the use of some items such as: Bucket, Spawn Eggs etc.
-    USE_ITEMS(Boolean.class, false, null, true, true, Property.ALL),
+    USAGE(Boolean.class, false, null, true, true, Property.ALL),
 
     // Allows to activate blocks such as: Buttons, Doors etc.
-    ACTIVATE_BLOCKS(Boolean.class, false, null, true, true, Property.ALL, true),
+    ACTIVATE(Boolean.class, false, null, true, true, Property.ALL, true),
 
-    // Allows fake players to bypass some of the flags (MODIFY_BLOCKS, USE_ITEMS, PROTECTED_ENTITIES)
-    ALLOW_FAKE_PLAYERS(Boolean.class, true, null, true, true, Property.ALL),
+    // Allows fake players to bypass some of the flags (MODIFY, USAGE, PVE)
+    FAKERS(Boolean.class, true, null, true, true, Property.ALL),
 
     // ---- Flags that don't go in plots. ----
 
     // Allows modifying blocks.
-    MODIFY_BLOCKS(Boolean.class, false, null, true, true, Property.TOWN_ONLY, true),
+    MODIFY(Boolean.class, false, null, true, true, Property.TOWN_ONLY, true),
 
     // Allows explosions.
     EXPLOSIONS(Boolean.class, false, null, true, true, Property.TOWN_ONLY),
 
     // Allows normal residents to have permission outside their claimed plots.
-    RESTRICTED_TOWN_PERMS(Boolean.class, false, null, false, false, Property.TOWN_ONLY),
+    RESTRICTIONS(Boolean.class, false, null, false, false, Property.TOWN_ONLY),
 
-    // Allows other towns to be created nearby
-    NEARBY_TOWNS(Boolean.class, false, null, false, false, Property.TOWN_ONLY);
+    // Allows other nearby towns to be created nearby
+    NEARBY(Boolean.class, false, null, false, false, Property.TOWN_ONLY);
 
     private Class<?> type;
     private Object[] allowedValues;
@@ -163,6 +166,14 @@ public enum FlagType {
         }
         return false;
     }
+
+    /*
+    @Override
+    public String toString() {
+        MyTown.instance.LOG.info(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this.name()));
+        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this.name());
+    }
+    */
 
     public enum Property {
         ALL,

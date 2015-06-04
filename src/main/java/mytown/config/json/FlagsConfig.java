@@ -3,7 +3,7 @@ package mytown.config.json;
 import com.google.common.reflect.TypeToken;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             writer.close();
             MyTown.instance.LOG.info("Created new DefaultFlags file successfully!");
         } catch (IOException ex) {
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
             MyTown.instance.LOG.error("Failed to create DefaultFlags file!");
         }
         return wrappers;
@@ -46,7 +46,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             writer.close();
             MyTown.instance.LOG.info("Updated the DefaultFlags file successfully!");
         } catch (IOException ex) {
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
             MyTown.instance.LOG.error("Failed to update DefaultFlags file!");
         }
     }
@@ -74,7 +74,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             }
             MyTown.instance.LOG.info("Loaded DefaultFlags successfully!");
         } catch (IOException ex) {
-            MyTown.instance.LOG.error(ExceptionUtils.getFullStackTrace(ex));
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
             MyTown.instance.LOG.error("Failed to read from DefaultFlags file!");
         }
         return wrappers;

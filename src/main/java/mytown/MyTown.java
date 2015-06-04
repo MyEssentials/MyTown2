@@ -34,7 +34,7 @@ import mytown.util.exceptions.ConfigException;
 import net.minecraft.command.ICommandSender;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -124,7 +124,7 @@ public class MyTown {
             m = Commands.class.getMethod("firstPermissionBreach", String.class, ICommandSender.class);
         } catch (Exception e) {
             LOG.info("Failed to get first permission breach method.");
-            LOG.error(ExceptionUtils.getFullStackTrace(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
         }
 
         CommandManager.registerCommands(CommandsEveryone.class, m);

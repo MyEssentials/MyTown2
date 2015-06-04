@@ -244,7 +244,7 @@ public class Formatter {
     }
 
     public static String formatFlagToString(Flag flag, EnumChatFormatting valueColor) {
-        return String.format(EnumChatFormatting.GRAY + "%s" + EnumChatFormatting.WHITE + "[" + valueColor + "%s" + EnumChatFormatting.WHITE + "]:" + EnumChatFormatting.GRAY + " %s", flag.getFlagType().toString(), flag.valueToString(), flag.getFlagType().getLocalizedDescription());
+        return String.format(EnumChatFormatting.GRAY + "%s" + EnumChatFormatting.WHITE + "[" + valueColor + "%s" + EnumChatFormatting.WHITE + "]:" + EnumChatFormatting.GRAY + " %s", flag.getFlagType().toString().toLowerCase(), flag.valueToString(), flag.getFlagType().getLocalizedDescription());
     }
 }
 

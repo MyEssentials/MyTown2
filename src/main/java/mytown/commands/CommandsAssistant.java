@@ -68,7 +68,7 @@ public class CommandsAssistant extends Commands {
             for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
                 for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
                     Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                    if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.getValue(FlagType.NEARBY_TOWNS))
+                    if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.getValue(FlagType.NEARBY))
                         throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
                 }
             }
@@ -105,7 +105,7 @@ public class CommandsAssistant extends Commands {
                 for (int x = chunk.getX() - Config.distanceBetweenTowns; x <= chunk.getX() + Config.distanceBetweenTowns; x++) {
                     for (int z = chunk.getZ() - Config.distanceBetweenTowns; z <= chunk.getZ() + Config.distanceBetweenTowns; z++) {
                         Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                        if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.getValue(FlagType.NEARBY_TOWNS))
+                        if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.getValue(FlagType.NEARBY))
                             throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
                     }
                 }
