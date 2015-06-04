@@ -263,7 +263,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 if(in.peek() == JsonToken.BEGIN_OBJECT) {
                                     in.beginObject();
                                     if("name".equals(in.nextName()))
-                                        flag = FlagType.valueOf(in.nextString());
+                                        flag = FlagType.valueOf(in.nextString().toUpperCase());
                                     if("denialValue".equals(in.nextName()))
                                         denialValue = parseConstant(in, clazz.getName(), "denialValue");
                                     in.endObject();
