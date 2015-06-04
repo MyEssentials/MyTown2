@@ -246,6 +246,8 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
      * Returns if resident can make any more plots
      */
     public boolean canResidentMakePlot(Resident res) {
+        if(!residents.containsKey(res))
+            return false;
         return getAmountPlotsOwned(res) >= maxPlots && !residents.get(res).hasPermission("mytown.plot.unlimited");
     }
 
