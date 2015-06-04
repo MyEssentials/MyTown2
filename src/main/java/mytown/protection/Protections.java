@@ -22,6 +22,7 @@ import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -145,9 +146,15 @@ public class Protections {
             } else {
                 // Other entity checks
                 if(tickerEntityChecks == 0) {
-                    for (Protection prot : protectionList) {
-                        if (prot.isEntityTracked(entity.getClass()) && prot.checkEntity(entity)) {
-                            entity.setDead();
+                    if(town != null && entity instanceof EntityLiving && "all".equals(town.getValueAtCoords(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ), FlagType.MOBS))) {
+                        entity.setDead();
+                    }
+                    // Don't check twice
+                    if(!entity.isDead) {
+                        for (Protection prot : protectionList) {
+                            if (prot.isEntityTracked(entity.getClass()) && prot.checkEntity(entity)) {
+                                entity.setDead();
+                            }
                         }
                     }
                     tickerEntityChecks = tickerEntityChecksStart;
