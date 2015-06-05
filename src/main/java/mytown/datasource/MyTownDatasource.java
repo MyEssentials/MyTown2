@@ -77,9 +77,10 @@ public abstract class MyTownDatasource {
             throw new CommandException("Failed to save Town");
 
         //Claiming first block
-        TownBlock block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, false, Config.costAmountClaim, town);
+        TownBlock block = newBlock(creator.getPlayer().dimension, ((int)creator.getPlayer().posX) >> 4, ((int)creator.getPlayer().posZ) >> 4, false, Config.costAmountClaim, town);
+
         // Saving block to db and town
-        if(DatasourceProxy.getDatasource().hasBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ)) {
+        if(DatasourceProxy.getDatasource().hasBlock(creator.getPlayer().dimension, ((int)creator.getPlayer().posX) >> 4, ((int)creator.getPlayer().posZ) >> 4)) {
             throw new MyTownCommandException("mytown.cmd.err.claim.already");
         }
 
