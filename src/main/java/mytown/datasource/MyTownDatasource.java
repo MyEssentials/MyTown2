@@ -6,9 +6,12 @@ import mytown.api.events.*;
 import mytown.config.Config;
 import mytown.core.logger.Log;
 import mytown.core.teleport.Teleport;
+import mytown.crash.DatasourceCrashCallable;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.proxies.DatasourceProxy;
+import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -73,10 +76,13 @@ public abstract class MyTownDatasource {
         if (!saveTown(town))
             throw new CommandException("Failed to save Town");
 
-
         //Claiming first block
         TownBlock block = newBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ, false, Config.costAmountClaim, town);
         // Saving block to db and town
+        if(DatasourceProxy.getDatasource().hasBlock(creator.getPlayer().dimension, creator.getPlayer().chunkCoordX, creator.getPlayer().chunkCoordZ)) {
+            throw new MyTownCommandException("mytown.cmd.err.claim.already");
+        }
+
         saveBlock(block);
 
         // Saving and adding all flags to the database
