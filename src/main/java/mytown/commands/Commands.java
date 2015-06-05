@@ -107,7 +107,7 @@ public abstract class Commands {
      */
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
         // Since everybody should have permission to /t and outsider commands
-        if ("mytown.cmd".equals(permission) || permission.startsWith("mytown.cmd.outsider"))
+        if ("mytown.cmd".equals(permission))
             return true;
 
         if (!(sender instanceof EntityPlayer))

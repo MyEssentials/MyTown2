@@ -768,8 +768,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     insertRankStatement.setBoolean(3, isDefault);
                     insertRankStatement.executeUpdate();
 
-                    if (rank.getPermissions().isEmpty()) {
-
+                    if (!rank.getPermissions().isEmpty()) {
                         PreparedStatement insertRankPermStatement = prepare("INSERT INTO " + prefix + "RankPermissions(node, rank, townName) VALUES(?, ?, ?)", true);
                         for (String perm : rank.getPermissions()) {
                             insertRankPermStatement.setString(1, perm);
