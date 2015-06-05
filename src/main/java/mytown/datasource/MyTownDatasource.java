@@ -25,8 +25,6 @@ public abstract class MyTownDatasource {
     /**
      * Initialize the Datasource.
      * This should create a connection to the database.
-     *
-     * @return If false is returned, MyTown is put into safe-mode
      */
     public abstract boolean initialize();
 
@@ -34,8 +32,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Town with basic entities saved to db, or null if it couldn't be created
-     *
-     * @return The new Town, or null if it failed
      */
     public final Town newTown(String name, Resident creator) {
         Town town = new Town(name);
@@ -113,8 +109,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Block, or null if it couldn't be created
-     *
-     * @return The new Block, or null if it failed
      */
     public final TownBlock newBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town) {
         TownBlock block = new TownBlock(dim, x, z, isFarClaim, pricePaid, town);
@@ -125,8 +119,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Rank, or null if it couldn't be created
-     *
-     * @return The new Rank, or null if it failed
      */
     public final Rank newRank(String name, Town town) {
         Rank rank = new Rank(name, town);
@@ -137,8 +129,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Resident, or null if it couldn't be created
-     *
-     * @return The new Resident, or null if it failed
      */
     public final Resident newResident(String uuid, String playerName) {
         Resident resident = new Resident(uuid, playerName);
@@ -150,8 +140,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Plot, or null if it couldn't be created
-     *
-     * @return The new Plot, or null if it failed
      */
     public final Plot newPlot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         Plot plot = new Plot(name, town, dim, x1, y1, z1, x2, y2, z2);
@@ -162,8 +150,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new Nation, or null if it couldn't be created
-     *
-     * @return The new Nation, or null if it failed
      */
     public final Nation newNation(String name) {
         Nation nation = new Nation(name);
@@ -174,8 +160,6 @@ public abstract class MyTownDatasource {
 
     /**
      * Creates and returns a new TownFlag or null if it couldn't be created
-     *
-     * @return the new TownFlag, or null if failed
      */
     @SuppressWarnings("UnnecessaryLocalVariable")
     public final Flag newFlag(FlagType type, Object value) {
@@ -187,8 +171,6 @@ public abstract class MyTownDatasource {
     /* ----- Read ----- */
     /**
      * Loads all the towns, ranks, blocks, residents, plots, and nations. In that order.
-     *
-     * @return If successfully loaded
      */
     public boolean loadAll() {
         return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() &&
@@ -335,9 +317,6 @@ public abstract class MyTownDatasource {
     /**
      * Deletes a town that was selected previously
      * Not extremely useful, the selected town is changed when saving another on top
-     *
-     * @param res
-     * @return
      */
     public abstract boolean deleteSelectedTown(Resident res);
 

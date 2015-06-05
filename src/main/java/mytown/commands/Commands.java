@@ -106,8 +106,8 @@ public abstract class Commands {
      * Custom check for commands which require certain rank permissions.
      */
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {
-        // Since everybody should have permission to /t
-        if ("mytown.cmd".equals(permission))
+        // Since everybody should have permission to /t and outsider commands
+        if ("mytown.cmd".equals(permission) || permission.startsWith("mytown.cmd.outsider"))
             return true;
 
         if (!(sender instanceof EntityPlayer))
