@@ -75,6 +75,7 @@ mytown.cmd.err.invite.refuse=&cYou have more than one invitation! &3Choose what 
 # /t friends
 mytown.cmd.err.friends.add=&c%s is already a friend of yours or you already sent an invitation
 mytown.cmd.err.friends.remove=&c%s is not a friend of yours
+mytown.cmd.err.friends.accept=&c%s has not sent an invitation to you
 mytown.cmd.usage.friends.accept=&c/t friends accept <resident>
 mytown.cmd.usage.friends.refuse=&c/t friends refuse <resident>
 mytown.cmd.usage.friends.add=&c/t friends add <resident>

@@ -260,7 +260,10 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
 
-        getDatasource().deleteFriendRequest(toAdd, res);
+        if(!getDatasource().deleteFriendRequest(toAdd, res)) {
+            throw new MyTownCommandException("mytown.cmd.err.friends.accept", toAdd.getPlayerName());
+        }
+        
         getDatasource().saveFriendLink(res, toAdd);
         toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.accepted", res.getPlayerName()));
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotAccepted", toAdd.getPlayerName()));
