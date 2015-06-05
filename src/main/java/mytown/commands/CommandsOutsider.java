@@ -240,7 +240,7 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toRemove = getResidentFromName(args.get(0));
         if (!toRemove.removeFriend(res)) {
-            throw new MyTownCommandException("mytown.cmd.err.friends.remove");
+            throw new MyTownCommandException("mytown.cmd.err.friends.remove", toRemove.getPlayerName());
         } else {
             res.removeFriend(toRemove);
         }
