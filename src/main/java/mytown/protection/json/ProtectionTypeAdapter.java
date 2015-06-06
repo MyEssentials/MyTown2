@@ -275,7 +275,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 }
                                 if (flag == null)
                                     throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag!");
-                                if(flag.getType() != denialValue.getClass())
+                                if(flag.getType() != denialValue.getClass() || !flag.isValueAllowed(denialValue))
                                     throw new SegmentException("[Segment: " + clazz + "] The segment does not have a valid flag denial value!");
                                 continue;
                             }

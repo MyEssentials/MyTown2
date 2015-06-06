@@ -1660,10 +1660,16 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             for (FlagType type : FlagType.values()) {
                 if (!type.canTownsModify() && town.hasFlag(type)) {
                     deleteFlag(town.getFlag(type), town);
-                    MyTown.instance.LOG.info("A flag in town " + town.getName() + " got deleted because of the settings.");
+                    LOG.info("Flag " + type.toString().toLowerCase() + " in town " + town.getName() + " got deleted because of the settings.");
                 } else if (type.canTownsModify() && !town.hasFlag(type)) {
                     saveFlag(new Flag(type, type.getDefaultValue()), town);
-                    MyTown.instance.LOG.info("A flag in town " + town.getName() + " got created because of the settings.");
+                    LOG.info("Flag " + type.toString().toLowerCase() + " in town " + town.getName() + " got created because of the settings.");
+                } else {
+                    if(!type.isValueAllowed(town.getValue(type))) {
+                        town.getFlag(type).setValueFromString(type.getDefaultValue().toString());
+                        saveFlag(town.getFlag(type), town);
+                        LOG.info("Flag " + type.toString().toLowerCase() + " in town " + town.getName() + " had invalid value and got changed to its default state.");
+                    }
                 }
             }
         }
@@ -1673,10 +1679,16 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 if (!type.isTownOnly()) {
                     if (!type.canTownsModify() && plot.hasFlag(type)) {
                         deleteFlag(plot.getFlag(type), plot);
-                        MyTown.instance.LOG.info("A flag in a plot in town " + plot.getTown().getName() + " got deleted because of the settings.");
+                        LOG.info("Flag " + type.toString().toLowerCase() + " in a plot in town " + plot.getTown().getName() + " got deleted because of the settings.");
                     } else if (type.canTownsModify() && !plot.hasFlag(type)) {
                         saveFlag(new Flag(type, type.getDefaultValue()), plot);
-                        MyTown.instance.LOG.info("A flag in a plot in town " + plot.getTown().getName() + " got created because of the settings.");
+                        LOG.info("Flag " + type.toString().toLowerCase() + " in a plot in town " + plot.getTown().getName() + " got created because of the settings.");
+                    } else {
+                        if(!type.isValueAllowed(plot.getValue(type))) {
+                            plot.getFlag(type).setValueFromString(type.getDefaultValue().toString());
+                            saveFlag(plot.getFlag(type), plot);
+                            LOG.info("Flag " + type.toString().toLowerCase() + " in town " + plot.getName() + " had invalid value and got changed to its default state.");
+                        }
                     }
                 }
             }

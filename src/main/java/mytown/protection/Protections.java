@@ -95,6 +95,7 @@ public class Protections {
             return;
         }
 
+        /*
         // Ticking every 4th tick, since that is the one that retains information about the entities
         if(lastTick != MinecraftServer.getServer().getTickCounter() || lastTick == -1) {
             lastTick = MinecraftServer.getServer().getTickCounter();
@@ -104,20 +105,19 @@ public class Protections {
             ticked++;
             return;
         }
+        */
 
         //MyTown.instance.log.info("Tick number: " + MinecraftServer.getServer().getTickCounter());
 
         // TODO: Add a command to clean up the block whitelist table periodically
-        if (tickerWhitelist == 0) {
+        // TODO: Revise this code to not check multiple times per tick or check for the ticked world
+        if (MinecraftServer.getServer().getTickCounter() % 20 == 0) {
             for (Town town : MyTownUniverse.instance.getTownsMap().values())
                 for (BlockWhitelist bw : town.getWhitelists()) {
                     if (!ProtectionUtils.isBlockWhitelistValid(bw)) {
                         DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
                     }
                 }
-            tickerWhitelist = MinecraftServer.getServer().worldServers.length * tickerWhitelistStart;
-        } else {
-            tickerWhitelist--;
         }
 
         // Entity check
@@ -145,8 +145,8 @@ public class Protections {
                 lastTickPlayerPos.put((EntityPlayer)entity, new EntityPos(entity.posX, entity.posY, entity.posZ, entity.dimension));
             } else {
                 // Other entity checks
-                if(tickerEntityChecks == 0) {
-                    if(town != null && entity instanceof EntityLiving && "all".equals(town.getValueAtCoords(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ), FlagType.MOBS))) {
+                if(MinecraftServer.getServer().getTickCounter() % 20 == 0) {
+                    if(town != null && entity instanceof EntityLiving && "none".equals(town.getValueAtCoords(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ), FlagType.MOBS))) {
                         entity.setDead();
                     }
                     // Don't check twice
@@ -157,16 +157,13 @@ public class Protections {
                             }
                         }
                     }
-                    tickerEntityChecks = tickerEntityChecksStart;
-                } else {
-                    tickerEntityChecks--;
                 }
             }
         }
 
         // Ticker will stay at 0 while there are some active placement threads.
         // TileEntity check
-        if(tickerTilesChecks == 0) {
+        if(MinecraftServer.getServer().getTickCounter() % 20 == 0) {
             if (activePlacementThreads == 0) {
                 for (TileEntity te : (Iterable<TileEntity>) ev.world.loadedTileEntityList) {
                     for (Protection prot : protectionList) {
@@ -178,10 +175,7 @@ public class Protections {
                         }
                     }
                 }
-                tickerTilesChecks = tickerTilesChecksStart;
             }
-        } else {
-            tickerTilesChecks--;
         }
     }
 

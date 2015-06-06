@@ -25,7 +25,7 @@ public enum FlagType {
 
     // Only the values in the array are allowed
     // Allows modifying which types of mods are allowed in the town.
-    MOBS(String.class, "all", new String[]{"all", "hostiles", "none"}, true, "all", Property.ALL),
+    MOBS(String.class, "all", new String[]{"all", "passives", "none"}, true, "all", Property.ALL),
 
     // Allows outsiders to hurt passive and other types of entities.
     PVE(Boolean.class, false, null, true, false, Property.ALL),
@@ -160,8 +160,9 @@ public enum FlagType {
             return true;
         else {
             for (Object s : allowedValues) {
-                if (s.equals(value))
+                if (s.equals(value)) {
                     return true;
+                }
             }
         }
         return false;

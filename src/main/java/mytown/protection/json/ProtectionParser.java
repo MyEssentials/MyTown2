@@ -95,7 +95,7 @@ public class ProtectionParser {
         segments.add(new SegmentBlock(net.minecraft.block.BlockContainer.class, new Getters(), FlagType.ACCESS, false, null, BlockType.RIGHT_CLICK, -1));
         segments.add(new SegmentBlock(net.minecraft.block.BlockBed.class, new Getters(), FlagType.ACCESS, false, null, BlockType.RIGHT_CLICK, -1));
 
-        segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityMob.class, new Getters(), FlagType.MOBS, "hostiles", null, EntityType.TRACKED));
+        segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityMob.class, new Getters(), FlagType.MOBS, "passives", null, EntityType.TRACKED));
         segments.add(new SegmentEntity(net.minecraft.entity.EntityAgeable.class, new Getters(), FlagType.PVE, false, null, EntityType.PROTECT));
         Getters getters = new Getters();
         getters.addConstant("range", 5);
