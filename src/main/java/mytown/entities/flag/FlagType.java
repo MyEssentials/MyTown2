@@ -1,8 +1,5 @@
 package mytown.entities.flag;
 
-import com.google.common.base.CaseFormat;
-import mytown.MyTown;
-import mytown.core.utils.StringUtils;
 import mytown.proxies.LocalizationProxy;
 
 /**
@@ -167,14 +164,6 @@ public enum FlagType {
         }
         return false;
     }
-
-    /*
-    @Override
-    public String toString() {
-        MyTown.instance.LOG.info(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this.name()));
-        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, this.name());
-    }
-    */
 
     public enum Property {
         ALL,

@@ -3,7 +3,6 @@ package mytown.datasource;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import mytown.MyTown;
 import mytown.config.Config;
 import mytown.core.config.ConfigProperty;
 import mytown.core.teleport.Teleport;
@@ -919,7 +918,6 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
         } catch (SQLException e) {
             LOG.error("Failed to save Nation %s!", nation.getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
-            e.printStackTrace();
             return false;
         }
 
@@ -993,10 +991,10 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
         try {
             if (!town.hasBlockWhitelist(bw)) {
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "BlockWhitelists(dim, x, y, z, flagName, townName) VALUES(?, ?, ?, ?, ?, ?)", true);
-                insertStatement.setInt(1, bw.dim);
-                insertStatement.setInt(2, bw.x);
-                insertStatement.setInt(3, bw.y);
-                insertStatement.setInt(4, bw.z);
+                insertStatement.setInt(1, bw.getDim());
+                insertStatement.setInt(2, bw.getX());
+                insertStatement.setInt(3, bw.getY());
+                insertStatement.setInt(4, bw.getZ());
                 insertStatement.setString(5, bw.getFlagType().toString());
                 insertStatement.setString(6, town.getName());
 
@@ -1758,9 +1756,9 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
         /**
          * Formatted mm.dd.yyyy.e where e increments by 1 for every update released on the same date
          */
-        public final String id;
-        public final String desc;
-        public final String sql;
+        private final String id;
+        private final String desc;
+        private final String sql;
 
         public DBUpdate(String id, String desc, String sql) {
             this.id = id;

@@ -10,11 +10,11 @@ import net.minecraft.item.ItemStack;
  * A part of the protection that protects against a specific thing.
  */
 public class Segment {
-    public final Class<?> theClass;
-    public final FlagType flag;
-    public final Object denialValue;
-    public final Getters getters;
-    public final String[] conditionString;
+    protected final Class<?> theClass;
+    protected final FlagType flag;
+    protected final Object denialValue;
+    protected final Getters getters;
+    protected final String[] conditionString;
 
     public Segment(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString) {
         this.theClass = theClass;
@@ -25,6 +25,26 @@ public class Segment {
             this.conditionString = conditionString.split(" ");
         else
             this.conditionString = null;
+    }
+
+    public Class<?> getCheckClass() {
+        return theClass;
+    }
+
+    public FlagType getFlag() {
+        return flag;
+    }
+
+    public Getters getGetters() {
+        return getters;
+    }
+
+    public Object getDenialValue() {
+        return denialValue;
+    }
+
+    public String[] getConditionString() {
+        return conditionString;
     }
 
     public boolean checkCondition(Object object) {

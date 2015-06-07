@@ -3,7 +3,6 @@ package mytown.proxies;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.core.logger.Log;
 import mytown.core.config.ConfigProcessor;
 import mytown.datasource.InMemoryDatasource;
 import mytown.datasource.MyTownDatasource;
@@ -107,7 +106,7 @@ public class DatasourceProxy {
         if (keyParts.length < 2)
             return;
 
-        if (keyParts[1].equals("registerType")) {
+        if ("registerType".equals(keyParts[1])) {
             String[] msgSplit = msg.getStringValue().split(",");
             String datasourceName = msgSplit[0].toLowerCase();
             String datasourceClassName = msgSplit[1];

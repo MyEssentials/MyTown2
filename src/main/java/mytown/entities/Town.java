@@ -366,7 +366,7 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
     @Override
     public boolean hasBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
         for (BlockWhitelist bw : blockWhitelists) {
-            if (bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
+            if (bw.getDim() == dim && bw.getX() == x && bw.getY() == y && bw.getZ() == z && bw.getFlagType().equals(flagType)) {
                 return true;
             }
         }
@@ -383,7 +383,7 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
     public void removeBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
         for (Iterator<BlockWhitelist> it = blockWhitelists.iterator(); it.hasNext(); ) {
             BlockWhitelist bw = it.next();
-            if (bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
+            if (bw.getDim() == dim && bw.getX() == x && bw.getY() == y && bw.getZ() == z && bw.getFlagType().equals(flagType)) {
                 it.remove();
             }
         }
@@ -392,7 +392,7 @@ public class Town implements ResidentsContainer, RanksContainer, TownBlocksConta
     @Override
     public BlockWhitelist getBlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
         for (BlockWhitelist bw : blockWhitelists) {
-            if (bw.dim == dim && bw.x == x && bw.y == y && bw.z == z && bw.getFlagType().equals(flagType)) {
+            if (bw.getDim() == dim && bw.getX() == x && bw.getY() == y && bw.getZ() == z && bw.getFlagType().equals(flagType)) {
                 return bw;
             }
         }

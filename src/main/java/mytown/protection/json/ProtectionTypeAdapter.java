@@ -37,144 +37,144 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
         out.name("segments").beginArray();
         for(SegmentTileEntity segment : value.segmentsTiles) {
             out.beginObject();
-            out.name("class").value(segment.theClass.getName());
+            out.name("class").value(segment.getCheckClass().getName());
             out.name("type").value("tileEntity");
-            out.name("condition").value(StringUtils.join(segment.conditionString, " "));
+            out.name("condition").value(StringUtils.join(segment.getConditionString(), " "));
             out.name("flag");
-            if(segment.flag.getType() == Boolean.class && segment.denialValue == Boolean.FALSE) {
-                out.value(segment.flag.toString());
+            if(segment.getFlag().getType() == Boolean.class && segment.getDenialValue() == Boolean.FALSE) {
+                out.value(segment.getFlag().toString());
             } else {
                 out.beginObject();
-                out.name("name").value(segment.flag.toString());
+                out.name("name").value(segment.getFlag().toString());
                 out.name("denialValue");
-                if(segment.denialValue instanceof Boolean) {
-                    out.value((Boolean)segment.denialValue);
+                if(segment.getDenialValue() instanceof Boolean) {
+                    out.value((Boolean)segment.getDenialValue());
                 } else {
-                    out.value(segment.denialValue.toString());
+                    out.value(segment.getDenialValue().toString());
                 }
                 out.endObject();
             }
-            for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
+            for (Map.Entry<String, List<Caller>> entry : segment.getGetters().getCallersMap().entrySet()) {
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
                     out.beginObject();
-                    out.name("element").value(caller.element);
-                    out.name("type").value(caller.type.toString());
+                    out.name("element").value(caller.getElement());
+                    out.name("type").value(caller.getCallerType().toString());
                     out.endObject();
                 }
                 out.endArray();
             }
-            for(Map.Entry<String, Object> entry : segment.getters.getConstantsMap().entrySet()) {
+            for(Map.Entry<String, Object> entry : segment.getGetters().getConstantsMap().entrySet()) {
                 out.name(entry.getKey()).value((Integer)entry.getValue());
             }
             out.endObject();
         }
         for(SegmentBlock segment : value.segmentsBlocks) {
             out.beginObject();
-            out.name("class").value(segment.theClass.getName());
+            out.name("class").value(segment.getCheckClass().getName());
             out.name("type").value("block");
-            out.name("blockType").value(segment.type.toString());
-            out.name("meta").value(segment.meta);
+            out.name("blockType").value(segment.getType().toString());
+            out.name("meta").value(segment.getMeta());
             out.name("flag");
-            if(segment.flag.getType() == Boolean.class && segment.denialValue == Boolean.FALSE) {
-                out.value(segment.flag.toString());
+            if(segment.getFlag().getType() == Boolean.class && segment.getDenialValue() == Boolean.FALSE) {
+                out.value(segment.getFlag().toString());
             } else {
                 out.beginObject();
-                out.name("name").value(segment.flag.toString());
+                out.name("name").value(segment.getFlag().toString());
                 out.name("denialValue");
-                if(segment.denialValue instanceof Boolean) {
-                    out.value((Boolean)segment.denialValue);
+                if(segment.getDenialValue() instanceof Boolean) {
+                    out.value((Boolean)segment.getDenialValue());
                 } else {
-                    out.value(segment.denialValue.toString());
+                    out.value(segment.getDenialValue().toString());
                 }
                 out.endObject();
             }
-            if(segment.conditionString != null)
-                out.name("condition").value(StringUtils.join(segment.conditionString, " "));
-            for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
+            if(segment.getConditionString() != null)
+                out.name("condition").value(StringUtils.join(segment.getConditionString(), " "));
+            for (Map.Entry<String, List<Caller>> entry : segment.getGetters().getCallersMap().entrySet()) {
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
                     out.beginObject();
-                    out.name("element").value(caller.element);
-                    out.name("type").value(caller.type.toString());
+                    out.name("element").value(caller.getElement());
+                    out.name("type").value(caller.getCallerType().toString());
                     out.endObject();
                 }
                 out.endArray();
             }
-            for(Map.Entry<String, Object> entry : segment.getters.getConstantsMap().entrySet()) {
+            for(Map.Entry<String, Object> entry : segment.getGetters().getConstantsMap().entrySet()) {
                 out.name(entry.getKey()).value((Integer)entry.getValue());
             }
             out.endObject();
         }
         for(SegmentEntity segment : value.segmentsEntities) {
             out.beginObject();
-            out.name("class").value(segment.theClass.getName());
+            out.name("class").value(segment.getCheckClass().getName());
             out.name("type").value("entity");
-            out.name("entityType").value(segment.type.toString());
+            out.name("entityType").value(segment.getType().toString());
             out.name("flag");
-            if(segment.flag.getType() == Boolean.class && segment.denialValue == Boolean.FALSE) {
-                out.value(segment.flag.toString());
+            if(segment.getFlag().getType() == Boolean.class && segment.getDenialValue() == Boolean.FALSE) {
+                out.value(segment.getFlag().toString());
             } else {
                 out.beginObject();
-                out.name("name").value(segment.flag.toString());
+                out.name("name").value(segment.getFlag().toString());
                 out.name("denialValue");
-                if(segment.denialValue instanceof Boolean) {
-                    out.value((Boolean)segment.denialValue);
+                if(segment.getDenialValue() instanceof Boolean) {
+                    out.value((Boolean)segment.getDenialValue());
                 } else {
-                    out.value(segment.denialValue.toString());
+                    out.value(segment.getDenialValue().toString());
                 }
                 out.endObject();
             }
-            if(segment.conditionString != null)
-                out.name("condition").value(StringUtils.join(segment.conditionString, " "));
-            for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
+            if(segment.getConditionString() != null)
+                out.name("condition").value(StringUtils.join(segment.getConditionString(), " "));
+            for (Map.Entry<String, List<Caller>> entry : segment.getGetters().getCallersMap().entrySet()) {
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
                     out.beginObject();
-                    out.name("element").value(caller.element);
-                    out.name("type").value(caller.type.toString());
+                    out.name("element").value(caller.getElement());
+                    out.name("type").value(caller.getCallerType().toString());
                     out.endObject();
                 }
                 out.endArray();
             }
-            for(Map.Entry<String, Object> entry : segment.getters.getConstantsMap().entrySet()) {
+            for(Map.Entry<String, Object> entry : segment.getGetters().getConstantsMap().entrySet()) {
                 out.name(entry.getKey()).value((Integer)entry.getValue());
             }
             out.endObject();
         }
         for(SegmentItem segment : value.segmentsItems) {
             out.beginObject();
-            out.name("class").value(segment.theClass.getName());
+            out.name("class").value(segment.getCheckClass().getName());
             out.name("type").value("item");
-            out.name("itemType").value(segment.type.toString());
-            out.name("onAdjacent").value(segment.onAdjacent);
-            if(segment.conditionString != null)
-                out.name("condition").value(StringUtils.join(segment.conditionString, " "));
+            out.name("itemType").value(segment.getType().toString());
+            out.name("onAdjacent").value(segment.isOnAdjacent());
+            if(segment.getConditionString() != null)
+                out.name("condition").value(StringUtils.join(segment.getConditionString(), " "));
             out.name("flag");
-            if(segment.flag.getType() == Boolean.class && segment.denialValue == Boolean.FALSE) {
-                out.value(segment.flag.toString());
+            if(segment.getFlag().getType() == Boolean.class && segment.getDenialValue() == Boolean.FALSE) {
+                out.value(segment.getFlag().toString());
             } else {
                 out.beginObject();
-                out.name("name").value(segment.flag.toString());
+                out.name("name").value(segment.getFlag().toString());
                 out.name("denialValue");
-                if(segment.denialValue instanceof Boolean) {
-                    out.value((Boolean)segment.denialValue);
+                if(segment.getDenialValue() instanceof Boolean) {
+                    out.value((Boolean)segment.getDenialValue());
                 } else {
-                    out.value(segment.denialValue.toString());
+                    out.value(segment.getDenialValue().toString());
                 }
                 out.endObject();
             }
-            for (Map.Entry<String, List<Caller>> entry : segment.getters.getCallersMap().entrySet()) {
+            for (Map.Entry<String, List<Caller>> entry : segment.getGetters().getCallersMap().entrySet()) {
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
                     out.beginObject();
-                    out.name("element").value(caller.element);
-                    out.name("type").value(caller.type.toString());
+                    out.name("element").value(caller.getElement());
+                    out.name("type").value(caller.getCallerType().toString());
                     out.endObject();
                 }
                 out.endArray();
             }
-            for(Map.Entry<String, Object> entry : segment.getters.getConstantsMap().entrySet()) {
+            for(Map.Entry<String, Object> entry : segment.getGetters().getConstantsMap().entrySet()) {
                 out.name(entry.getKey()).value((Integer)entry.getValue());
             }
             out.endObject();
@@ -203,11 +203,9 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 if(!Loader.isModLoaded(modid) && !"Minecraft".equals(modid)) {
                     MyTown.instance.LOG.info("   Skipped protection because the mod " + modid + " wasn't loaded.");
                     return null;
-                } else if(version != null) {
-                    if(!verifyVersion(modid, version)) {
-                        MyTown.instance.LOG.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
-                        return null;
-                    }
+                } else if(version != null && !verifyVersion(modid, version)) {
+                    MyTown.instance.LOG.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
+                    return null;
                 }
             } else if("version".equals(nextName)) {
                 version = in.nextString();
@@ -244,7 +242,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 try {
                                     clazz = Class.forName(in.nextString());
                                 } catch (ClassNotFoundException ex) {
-                                    throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!");
+                                    throw new SegmentException("[Segment: " + clazz + "] Class " + clazz + " is invalid!", ex);
                                 }
                                 getters.setName(clazz.getName());
                                 continue;
@@ -391,9 +389,9 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     else {
                         // Precheck for configurations
                         //if(segment instanceof SegmentEntity && ((SegmentEntity) segment).type == EntityType.explosive && Config.useExtraEvents)
-                        //    MyTown.instance.log.info("  [Segment:" + segment.theClass.getName() + "] Omitting segment because use of extra events is enabled.");
+                        //    MyTown.instance.log.info("  [Segment:" + segment.getCheckClass().getName() + "] Omitting segment because use of extra events is enabled.");
                         //else {
-                            MyTown.instance.LOG.info("   Added segment for class: " + segment.theClass.getName());
+                            MyTown.instance.LOG.info("   Added segment for class: " + segment.getCheckClass().getName());
                             segments.add(segment);
                         //}
                     }

@@ -7,12 +7,20 @@ import net.minecraft.entity.player.EntityPlayerMP;
  */
 public class PlayerObjectPair {
 
-    public final EntityPlayerMP player;
-    public final Object object;
+    private final EntityPlayerMP player;
+    private final Object object;
 
     public PlayerObjectPair(EntityPlayerMP player, Object object) {
         this.player = player;
         this.object = object;
+    }
+
+    public EntityPlayerMP getPlayer() {
+        return player;
+    }
+
+    public Object getObject() {
+        return object;
     }
 
     @Override

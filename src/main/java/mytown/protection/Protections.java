@@ -60,9 +60,6 @@ public class Protections {
     private int tickerTilesChecksStart = 20;
     private int itemPickupCounter = 0;
 
-    private int lastTick = -1;
-    private int ticked = 0;
-
     // ---- Utility methods for accessing protections ----
 
     public void addProtection(Protection prot) { protectionList.add(prot); }
@@ -119,8 +116,8 @@ public class Protections {
                     if(lastTickPos == null)
                         res.knockbackPlayerToBorder(town);
                     else
-                        if(lastTickPos.x != entity.posX && lastTickPos.y != entity.posY && lastTickPos.z != entity.posZ && lastTickPos.dim != entity.dimension) {
-                            PlayerUtils.teleport((EntityPlayerMP) entity, lastTickPos.dim, lastTickPos.x, lastTickPos.y, lastTickPos.z);
+                        if(lastTickPos.getX() != entity.posX && lastTickPos.getY() != entity.posY && lastTickPos.getZ() != entity.posZ && lastTickPos.getDim() != entity.dimension) {
+                            PlayerUtils.teleport((EntityPlayerMP) entity, lastTickPos.getDim(), lastTickPos.getX(), lastTickPos.getY(), lastTickPos.getZ());
                             MyTown.instance.LOG.info("Teleporting");
                         }
                         else

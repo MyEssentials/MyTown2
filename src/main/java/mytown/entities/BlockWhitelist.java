@@ -7,18 +7,16 @@ import mytown.entities.flag.FlagType;
  */
 public class BlockWhitelist {
 
-    public final int dim;
-    public final int x;
-    public final int y;
-    public final int z;
-    public boolean isDeleted;
-
+    private final int dim;
+    private final int x;
+    private final int y;
+    private final int z;
+    private boolean isDeleted;
     /**
      * Database id used to retain this object in.
      */
     private int dbID;
     private FlagType flagType;
-
 
     public BlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
         this.dim = dim;
@@ -42,5 +40,25 @@ public class BlockWhitelist {
 
     public int getDbID() {
         return this.dbID;
+    }
+
+    public int getDim() {
+        return dim;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
     }
 }

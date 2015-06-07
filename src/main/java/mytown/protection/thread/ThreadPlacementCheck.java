@@ -26,14 +26,14 @@ public class ThreadPlacementCheck extends Thread {
     @Override
     public void run() {
         long startTime = System.currentTimeMillis();
-        World world = DimensionManager.getWorld(position.dim);
+        World world = DimensionManager.getWorld(position.getDim());
         TileEntity te = null;
         while(te == null) {
             if(System.currentTimeMillis() - startTime >= TIMEOUT_IN_MS) {
                 ProtectionUtils.placementThreadTimeout();
                 return;
             }
-            te = world.getTileEntity(position.x, position.y, position.z);
+            te = world.getTileEntity(position.getX(), position.getY(), position.getZ());
         }
         ProtectionUtils.addTileEntity(te, res);
     }

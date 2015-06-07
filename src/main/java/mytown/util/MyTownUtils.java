@@ -90,7 +90,7 @@ public class MyTownUtils {
             return false;
         BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
         if (bw != null) {
-            if (bw.isDeleted) {
+            if (bw.isDeleted()) {
                 getDatasource().deleteBlockWhitelist(bw, town);
                 return false;
             }

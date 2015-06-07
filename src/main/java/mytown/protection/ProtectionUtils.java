@@ -122,14 +122,14 @@ public class ProtectionUtils {
      */
     public static boolean isBlockWhitelistValid(BlockWhitelist bw) {
         // Delete if the town is gone
-        if (MyTownUtils.getTownAtPosition(bw.dim, bw.x >> 4, bw.z >> 4) == null)
+        if (MyTownUtils.getTownAtPosition(bw.getDim(), bw.getX() >> 4, bw.getZ() >> 4) == null)
             return false;
 
         if (bw.getFlagType() == FlagType.ACTIVATE
-                && !checkActivatedBlocks(DimensionManager.getWorld(bw.dim).getBlock(bw.x, bw.y, bw.z), DimensionManager.getWorld(bw.dim).getBlockMetadata(bw.x, bw.y, bw.z)))
+                && !checkActivatedBlocks(DimensionManager.getWorld(bw.getDim()).getBlock(bw.getX(), bw.getY(), bw.getZ()), DimensionManager.getWorld(bw.getDim()).getBlockMetadata(bw.getX(), bw.getY(), bw.getZ())))
             return false;
         if (bw.getFlagType() == FlagType.MODIFY || bw.getFlagType() == FlagType.ACTIVATE || bw.getFlagType() == FlagType.USAGE) {
-            TileEntity te = DimensionManager.getWorld(bw.dim).getTileEntity(bw.x, bw.y, bw.z);
+            TileEntity te = DimensionManager.getWorld(bw.getDim()).getTileEntity(bw.getX(), bw.getY(), bw.getZ());
             if (te == null)
                 return false;
             return getFlagsForTile(te.getClass()).contains(bw.getFlagType());

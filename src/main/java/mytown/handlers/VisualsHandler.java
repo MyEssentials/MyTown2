@@ -36,14 +36,14 @@ public class VisualsHandler {
                     if (!coord.packetSent) {
                         S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
                         packet.field_148883_d = coord.block;
-                        set.getKey().player.playerNetServerHandler.sendPacket(packet);
+                        set.getKey().getPlayer().playerNetServerHandler.sendPacket(packet);
                         coord.packetSent = true;
                     }
                     if (coord.deleted) {
                         S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
                         packet.field_148883_d = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlock(coord.x, coord.y, coord.z);
                         packet.field_148884_e = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockMetadata(coord.x, coord.y, coord.z);
-                        set.getKey().player.playerNetServerHandler.sendPacket(packet);
+                        set.getKey().getPlayer().playerNetServerHandler.sendPacket(packet);
                         iterator.remove();
                     }
                 }
@@ -73,7 +73,7 @@ public class VisualsHandler {
 
     public void unmarkTowns(EntityPlayerMP caller) {
         for(Map.Entry<PlayerObjectPair, List<BlockCoords>> entry : markedBlocks.entrySet()) {
-            if(entry.getKey().player == caller && entry.getKey().object instanceof Town) {
+            if(entry.getKey().getPlayer() == caller && entry.getKey().getObject() instanceof Town) {
                 for(BlockCoords coord : entry.getValue()) {
                     coord.deleted = true;
                 }
@@ -83,7 +83,7 @@ public class VisualsHandler {
 
     public void unmarkPlots(EntityPlayerMP caller) {
         for(Map.Entry<PlayerObjectPair, List<BlockCoords>> entry : markedBlocks.entrySet()) {
-            if(entry.getKey().player == caller && entry.getKey().object instanceof Plot) {
+            if(entry.getKey().getPlayer() == caller && entry.getKey().getObject() instanceof Plot) {
                 for(BlockCoords coord : entry.getValue()) {
                     coord.deleted = true;
                 }
@@ -195,11 +195,11 @@ public class VisualsHandler {
     public void updatePlotBorders(Plot plot) {
         List<EntityPlayerMP> callers = new ArrayList<EntityPlayerMP>();
         for(Map.Entry<PlayerObjectPair, List<BlockCoords>> entry : markedBlocks.entrySet()) {
-            if(entry.getKey().object.equals(plot)) {
+            if(entry.getKey().getObject().equals(plot)) {
                 for(BlockCoords coords : entry.getValue()) {
                     coords.deleted = true;
                 }
-                callers.add(entry.getKey().player);
+                callers.add(entry.getKey().getPlayer());
             }
         }
         for(EntityPlayerMP player : callers) {
@@ -210,11 +210,11 @@ public class VisualsHandler {
     public void updateTownBorders(Town town) {
         List<EntityPlayerMP> callers = new ArrayList<EntityPlayerMP>();
         for(Map.Entry<PlayerObjectPair, List<BlockCoords>> entry : markedBlocks.entrySet()) {
-            if(entry.getKey().object.equals(town)) {
+            if(entry.getKey().getObject().equals(town)) {
                 for(BlockCoords coords : entry.getValue()) {
                     coords.deleted = true;
                 }
-                callers.add(entry.getKey().player);
+                callers.add(entry.getKey().getPlayer());
             }
         }
         for(EntityPlayerMP player : callers) {
@@ -276,12 +276,12 @@ public class VisualsHandler {
      * Class used to store all the blocks that are marked.
      */
     public class BlockCoords {
-        public final int x;
-        public final int y;
-        public final int z;
-        public final int dim;
-        public boolean deleted = false;
-        public boolean packetSent = false;
+        private final int x;
+        private final int y;
+        private final int z;
+        private final int dim;
+        private boolean deleted = false;
+        private boolean packetSent = false;
         /**
          * The block to which the sistem should change
          */

@@ -109,7 +109,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
     /**
      * Wraps around a flagType object.
      */
-    public class Wrapper {
+    protected class Wrapper {
         public final FlagType flagType;
         public final Object defaultState;
         public final boolean isAllowedInTowns;

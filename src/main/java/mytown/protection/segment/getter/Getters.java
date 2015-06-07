@@ -88,20 +88,20 @@ public class Getters {
                 if (lastInstance == null) {
                     return null;
                 }
-                switch (caller.type) {
+                switch (caller.getCallerType()) {
                     case FIELD:
                         try {
-                            Field fieldObject = lastInstance.getClass().getField(caller.element);
+                            Field fieldObject = lastInstance.getClass().getField(caller.getElement());
                             lastInstance = fieldObject.get(lastInstance);
                         } catch (NoSuchFieldException ex) {
-                            Field fieldObject = lastInstance.getClass().getDeclaredField(caller.element);
+                            Field fieldObject = lastInstance.getClass().getDeclaredField(caller.getElement());
                             fieldObject.setAccessible(true);
                             lastInstance = fieldObject.get(lastInstance);
                         }
                         break;
                     case METHOD:
                         try {
-                            Method methodObject = lastInstance.getClass().getMethod(caller.element);
+                            Method methodObject = lastInstance.getClass().getMethod(caller.getElement());
                             try {
                                 lastInstance = methodObject.invoke(lastInstance);
                             } catch (IllegalArgumentException ex) {
@@ -113,7 +113,7 @@ public class Getters {
                                 }
                             }
                         } catch (NoSuchMethodException ex) {
-                            Method methodObject = lastInstance.getClass().getDeclaredMethod(caller.element);
+                            Method methodObject = lastInstance.getClass().getDeclaredMethod(caller.getElement());
                             methodObject.setAccessible(true);
                             try {
                                 lastInstance = methodObject.invoke(lastInstance);
@@ -129,17 +129,17 @@ public class Getters {
                         break;
                     case FORMULA:
                         // Return instantly since it can only be a number
-                        lastInstance = getInfoFromFormula(caller.element, instance, parameter);
+                        lastInstance = getInfoFromFormula(caller.getElement(), instance, parameter);
                         break forLoop;
                     case NBT:
                         if(lastInstance instanceof TileEntity) {
                             NBTTagCompound nbt = new NBTTagCompound();
                             ((TileEntity) lastInstance).writeToNBT(nbt);
-                            lastInstance = nbt.getTag(caller.element);
+                            lastInstance = nbt.getTag(caller.getElement());
                         } else if(lastInstance instanceof Item) {
-                            lastInstance = ((ItemStack)parameter).getTagCompound().getTag(caller.element);
+                            lastInstance = ((ItemStack)parameter).getTagCompound().getTag(caller.getElement());
                         } else if(lastInstance instanceof NBTTagCompound) {
-                            lastInstance = ((NBTTagCompound) lastInstance).getTag(caller.element);
+                            lastInstance = ((NBTTagCompound) lastInstance).getTag(caller.getElement());
 
                             if(lastInstance instanceof NBTTagDouble) {
                                 lastInstance = ((NBTTagDouble) lastInstance).func_150286_g();
@@ -155,7 +155,7 @@ public class Getters {
                             // Getting the id of the list
                             int id = -1;
                             try {
-                                id = Integer.parseInt(caller.element);
+                                id = Integer.parseInt(caller.getElement());
                             } catch (NumberFormatException ex) {
                                 // TODO: Generalise this to be put in the list down below
                                 throw new GetterException("[Segment:"+ segmentName +"] Cannot parse element to Integer for NBTTagList id in getter: " + callerName, ex);
@@ -174,7 +174,7 @@ public class Getters {
             if(returnType == Integer.class)
                 lastInstance = tryConvert(lastInstance);
 
-            if(!returnType.isAssignableFrom(lastInstance.getClass()) || callerList.get(callerList.size() - 1).valueType != null && !callerList.get(callerList.size() - 1).valueType.isAssignableFrom(lastInstance.getClass()))
+            if(!returnType.isAssignableFrom(lastInstance.getClass()) || callerList.get(callerList.size() - 1).getValueType() != null && !callerList.get(callerList.size() - 1).getValueType().isAssignableFrom(lastInstance.getClass()))
                 throw new GetterException("[Segment:"+ segmentName +"] Failed to get " + returnType.getSimpleName() + " type in getter: " + callerName);
             return lastInstance;
         } catch(NoSuchFieldException nfex) {
@@ -213,7 +213,7 @@ public class Getters {
 
         // Replace all the getters with proper numbers, assume getters that are invalid as being numbers
         for(int i = 0 ; i < elements.length; i++) {
-            if(!elements[i].equals("+") && !elements[i].equals("-") && !elements[i].equals("*") && !elements[i].equals("/") && !elements[i].equals("^") && hasValue(elements[i])) {
+            if(!"+".equals(elements[i]) && !"-".equals(elements[i]) && !"*".equals(elements[i]) && !"/".equals(elements[i]) && !"^".equals(elements[i]) && hasValue(elements[i])) {
 
                 Object info = getValue(elements[i], Object.class, instance, parameter);
                 // Replace all occurrences with the value that it got.

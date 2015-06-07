@@ -4,13 +4,13 @@ package mytown.protection.segment.getter;
  * A caller is the information needed to get an object/value
  */
 public class Caller {
-    public final String element;
-    public final CallerType type;
-    public final Class<?> valueType;
+    private final String element;
+    private final CallerType callerType;
+    private final Class<?> valueType;
 
-    public Caller(String element, CallerType type, Class<?> valueType) {
+    public Caller(String element, CallerType callerType, Class<?> valueType) {
         this.element = element;
-        this.type = type;
+        this.callerType = callerType;
         this.valueType = valueType;
     }
 
@@ -18,6 +18,13 @@ public class Caller {
         return valueType == null ? Integer.class : valueType;
     }
 
+    public CallerType getCallerType() {
+        return callerType;
+    }
+
+    public String getElement() {
+        return element;
+    }
 
     public enum CallerType {
         METHOD,

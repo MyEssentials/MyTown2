@@ -13,11 +13,15 @@ import net.minecraft.entity.Entity;
  */
 public class SegmentEntity extends Segment {
 
-    public final EntityType type;
+    private final EntityType type;
 
     public SegmentEntity(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString, EntityType type) {
         super(theClass, getters, flag, denialValue, conditionString);
         this.type = type;
+    }
+
+    public EntityType getType() {
+        return type;
     }
 
     public boolean hasOwner() {
