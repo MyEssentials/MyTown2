@@ -151,8 +151,6 @@ public class ProtectionUtils {
         }
     }
 
-
-
     /**
      * Method called by the ThreadPlacementCheck after it found a TileEntity
      */

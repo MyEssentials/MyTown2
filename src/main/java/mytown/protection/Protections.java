@@ -99,31 +99,29 @@ public class Protections {
             return;
         }
 
-        //MyTown.instance.log.info("Tick number: " + MinecraftServer.getServer().getTickCounter());
+        //MyTown.instance.LOG.info("Tick number: " + MinecraftServer.getServer().getTickCounter());
 
         // Entity check
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
             // Player check, every tick
 
-            Town town = MyTownUtils.getTownAtPosition(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
+            Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) Math.floor(entity.posX) >> 4, (int) Math.floor(entity.posZ) >> 4);
             //MyTown.instance.log.info("Checking player...");
             if (entity instanceof EntityPlayerMP && !(entity instanceof FakePlayer)) {
                 Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
                 if (town != null && !town.checkPermission(res, FlagType.ENTER, false, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                    res.protectionDenial(FlagType.ENTER.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
+                    //res.protectionDenial(FlagType.ENTER.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(town.getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
                     EntityPos lastTickPos = lastTickPlayerPos.get(entity);
                     if(lastTickPos == null)
                         res.knockbackPlayerToBorder(town);
                     else
-                        if(lastTickPos.getX() != entity.posX && lastTickPos.getY() != entity.posY && lastTickPos.getZ() != entity.posZ && lastTickPos.getDim() != entity.dimension) {
+                        if(lastTickPos.getX() != entity.posX || lastTickPos.getY() != entity.posY || lastTickPos.getZ() != entity.posZ || lastTickPos.getDim() != entity.dimension) {
                             PlayerUtils.teleport((EntityPlayerMP) entity, lastTickPos.getDim(), lastTickPos.getX(), lastTickPos.getY(), lastTickPos.getZ());
-                            MyTown.instance.LOG.info("Teleporting");
                         }
-                        else
-                            res.knockbackPlayerToBorder(town);
+                } else {
+                    lastTickPlayerPos.put((EntityPlayer) entity, new EntityPos(entity.posX, entity.posY, entity.posZ, entity.dimension));
                 }
-                lastTickPlayerPos.put((EntityPlayer)entity, new EntityPos(entity.posX, entity.posY, entity.posZ, entity.dimension));
             } else {
                 // Other entity checks
                 if(MinecraftServer.getServer().getTickCounter() % 20 == 0) {
@@ -142,7 +140,6 @@ public class Protections {
             }
         }
 
-        // Ticker will stay at 0 while there are some active placement threads.
         // TileEntity check
         if(MinecraftServer.getServer().getTickCounter() % 20 == 0) {
             if (activePlacementThreads == 0) {
