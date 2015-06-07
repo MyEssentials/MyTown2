@@ -56,12 +56,8 @@ public class Protections {
     private List<Protection> protectionList = new ArrayList<Protection>();
 
     // ---- All the counters/tickers for preventing check every tick ----
-    private int tickerEntityChecks = 20;
-    private int tickerEntityChecksStart = 20;
     private int tickerTilesChecks = 20;
     private int tickerTilesChecksStart = 20;
-    private int tickerWhitelist = 600;
-    private int tickerWhitelistStart = 600;
     private int itemPickupCounter = 0;
 
     private int lastTick = -1;
@@ -78,40 +74,16 @@ public class Protections {
     }
 
     public Resident getOwnerForTileEntity(TileEntity te) {
-        MyTown.instance.LOG.info("Trying to get owner for te: " + te.toString());
-        MyTown.instance.LOG.info("And got " + (this.ownedTileEntities.get(te) == null ? "null" : this.ownedTileEntities.get(te).getPlayerName()));
         return this.ownedTileEntities.get(te);
     }
 
 
     // ---- Main ticking method ----
 
-    @SuppressWarnings("unchecked")
     @SubscribeEvent
-    public void tick(TickEvent.WorldTickEvent ev) {
-        if (ev.side == Side.CLIENT)
-            return;
-        if(ev.phase == TickEvent.Phase.END) {
-            return;
-        }
-
-        /*
-        // Ticking every 4th tick, since that is the one that retains information about the entities
-        if(lastTick != MinecraftServer.getServer().getTickCounter() || lastTick == -1) {
-            lastTick = MinecraftServer.getServer().getTickCounter();
-            ticked = 1;
-        }
-        if(ticked != 4) {
-            ticked++;
-            return;
-        }
-        */
-
-        //MyTown.instance.log.info("Tick number: " + MinecraftServer.getServer().getTickCounter());
-
+    public void serverTick(TickEvent.ServerTickEvent ev) {
         // TODO: Add a command to clean up the block whitelist table periodically
-        // TODO: Revise this code to not check multiple times per tick or check for the ticked world
-        if (MinecraftServer.getServer().getTickCounter() % 20 == 0) {
+        if (MinecraftServer.getServer().getTickCounter() % 600 == 0) {
             for (Town town : MyTownUniverse.instance.getTownsMap().values())
                 for (BlockWhitelist bw : town.getWhitelists()) {
                     if (!ProtectionUtils.isBlockWhitelistValid(bw)) {
@@ -119,6 +91,18 @@ public class Protections {
                     }
                 }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @SubscribeEvent
+    public void worldTick(TickEvent.WorldTickEvent ev) {
+        if (ev.side == Side.CLIENT)
+            return;
+        if(ev.phase == TickEvent.Phase.END) {
+            return;
+        }
+
+        //MyTown.instance.log.info("Tick number: " + MinecraftServer.getServer().getTickCounter());
 
         // Entity check
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
