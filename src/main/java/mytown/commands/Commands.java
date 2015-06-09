@@ -252,7 +252,7 @@ public abstract class Commands {
 
     public static FlagType getFlagTypeFromName(String name) {
         try {
-            return FlagType.valueOf(name);
+            return FlagType.valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", e, name);
         }
