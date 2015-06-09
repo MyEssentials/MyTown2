@@ -40,7 +40,15 @@ repositories {
 		name = "gravity-repo"
 		url = "http://repo.gravitydevelopment.net"
 	}
-	
+
+    maven {
+        name = "SpongePowered"
+        url = "https://repo.spongepowered.org/maven"
+    }
+    maven {
+        name = "sk89q"
+        url = "http://maven.sk89q.com/artifactory/repo/"
+    }
 }
 
 
