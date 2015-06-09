@@ -93,7 +93,6 @@ dependencies {
 	compile 'com.mod-buildcraft:buildcraft:6.4.15:dev'
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     //compile "appeng:appliedenergistics2:rv2-beta-30:dev"
-
 }
 
 // Process Resources, injecting version numbers in

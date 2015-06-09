@@ -25,7 +25,7 @@ public enum FlagType {
     MOBS(String.class, "all", new String[]{"all", "passives", "none"}, true, "all", Property.ALL),
 
     // Allows outsiders to hurt passive and other types of entities.
-    PVE(Boolean.class, false, null, true, false, Property.ALL),
+    PVE(Boolean.class, false, null, true, true, Property.ALL),
 
     // Allows the use of some items such as: Bucket, Spawn Eggs etc.
     USAGE(Boolean.class, false, null, true, true, Property.ALL),

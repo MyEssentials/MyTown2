@@ -85,9 +85,6 @@ public class Formatter {
 
     /**
      * Formats a list of resident in a town to a String that is then sent to the player.
-     *
-     * @param t
-     * @return
      */
     public static String formatResidentsToString(Town t) {
         Collection<Resident> residents = t.getResidents();
@@ -141,9 +138,6 @@ public class Formatter {
 
     /**
      * Formats a rank to String with color
-     *
-     * @param rank
-     * @return
      */
     public static String formatRankToString(Rank rank) {
         String color;
@@ -159,9 +153,6 @@ public class Formatter {
 
     /**
      * Return a formatted string from a list of town blocks
-     *
-     * @param blocks
-     * @return
      */
     public static String formatTownBlocksToString(Collection<TownBlock> blocks) {
         String formattedList = null;
@@ -175,11 +166,12 @@ public class Formatter {
         return formattedList;
     }
 
+    // TODO: Merge all methods that can be merged to check for the IHas... interfaces
+    // TODO: Rename some of the methods to tell exactly what they are doing
+    // TODO: Remove some of the useless methods
+
     /**
      * Returns a formatted string from a list of towns
-     *
-     * @param towns
-     * @return
      */
     public static String formatTownsToString(Collection<Town> towns) {
         String formattedList = null;
