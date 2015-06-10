@@ -1,7 +1,7 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.FlagsContainer;
+import mytown.api.interfaces.IFlagsContainer;
 import mytown.core.Localization;
 import mytown.core.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
@@ -198,14 +198,14 @@ public abstract class Commands {
         return list;
     }
 
-    public static Flag getFlagFromType(FlagsContainer hasFlags, FlagType flagType) {
+    public static Flag getFlagFromType(IFlagsContainer hasFlags, FlagType flagType) {
         Flag flag = hasFlags.getFlag(flagType);
         if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", flagType.toString());
         return flag;
     }
 
-    public static Flag getFlagFromName(FlagsContainer hasFlags, String name) {
+    public static Flag getFlagFromName(IFlagsContainer hasFlags, String name) {
         Flag flag;
         try {
             flag = hasFlags.getFlag(FlagType.valueOf(name.toUpperCase()));

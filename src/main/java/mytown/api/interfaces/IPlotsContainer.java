@@ -6,7 +6,7 @@ import mytown.entities.Plot;
 /**
  * Represents an object that can hold Plots
  */
-public interface PlotsContainer {
+public interface IPlotsContainer {
 
     void addPlot(Plot plot);
 

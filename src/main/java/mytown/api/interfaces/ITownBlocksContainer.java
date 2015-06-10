@@ -3,7 +3,7 @@ package mytown.api.interfaces;
 import com.google.common.collect.ImmutableList;
 import mytown.entities.TownBlock;
 
-public interface TownBlocksContainer {
+public interface ITownBlocksContainer {
     void addBlock(TownBlock block);
 
     void removeBlock(TownBlock block);

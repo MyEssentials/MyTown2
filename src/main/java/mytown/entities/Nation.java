@@ -1,12 +1,12 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.TownsContainer;
+import mytown.api.interfaces.ITownsContainer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Nation implements TownsContainer, Comparable<Nation> {
+public class Nation implements ITownsContainer, Comparable<Nation> {
     private String name;
     private Map<Town, Rank> towns = new HashMap<Town, Rank>();
 

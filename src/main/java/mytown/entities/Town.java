@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
  */
-public class Town implements ResidentsContainer, RanksContainer, TownBlocksContainer, PlotsContainer, FlagsContainer, BlockWhitelistsContainer, Comparable<Town> {
+public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksContainer, IPlotsContainer, IFlagsContainer, IBlockWhitelistsContainer, Comparable<Town> {
     private String name, oldName = null;
 
     private final Map<Resident, Rank> residents = new HashMap<Resident, Rank>();

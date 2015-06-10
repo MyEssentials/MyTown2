@@ -1,7 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.FlagsContainer;
+import mytown.api.interfaces.IFlagsContainer;
 import mytown.core.utils.PlayerUtils;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Wilderness permissions
  */
-public class Wild implements FlagsContainer {
+public class Wild implements IFlagsContainer {
 
     public static final Wild instance = new Wild();
 

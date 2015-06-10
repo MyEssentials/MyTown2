@@ -6,7 +6,7 @@ import mytown.entities.Town;
 /**
  * Represents an object that can hold Towns
  */
-public interface TownsContainer {
+public interface ITownsContainer {
 
     void addTown(Town town);
 

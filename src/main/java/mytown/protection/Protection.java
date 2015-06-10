@@ -208,7 +208,7 @@ public class Protection {
                                 }
                             } else {
                                 if (!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
-                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(bp.getDim(), bp.getX(), bp.getY(), bp.getZ()))));
+                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ()));
                                     return true;
                                 }
                             }
@@ -260,7 +260,7 @@ public class Protection {
                     }
                 } else {
                     if(!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                        res.protectionDenial(FlagType.PVE.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
+                        res.protectionDenial(FlagType.PVE.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)));
                         return true;
                     }
                 }
@@ -286,7 +286,7 @@ public class Protection {
                                 }
                             } else {
                                 if (!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
+                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)));
                                     return true;
                                 }
                             }
@@ -345,7 +345,7 @@ public class Protection {
                                 }
                             } else {
                                 if (!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
+                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)));
                                     return true;
                                 }
                             }
@@ -400,7 +400,7 @@ public class Protection {
                         }
                     } else {
                         if(!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
-                            res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatResidentsToString(block.getTown().getOwnersAtPosition(bp.getDim(), bp.getX(), bp.getY(), bp.getZ()))));
+                            res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ()));
                             return true;
                         }
                     }

@@ -2,8 +2,8 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.MyTown;
-import mytown.api.interfaces.PlotsContainer;
-import mytown.api.interfaces.TownsContainer;
+import mytown.api.interfaces.IPlotsContainer;
+import mytown.api.interfaces.ITownsContainer;
 import mytown.config.Config;
 import mytown.core.utils.ChatUtils;
 import mytown.datasource.MyTownDatasource;
@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class Resident implements PlotsContainer, TownsContainer { // TODO Make Comparable
+public class Resident implements IPlotsContainer, ITownsContainer { // TODO Make Comparable
     private EntityPlayer player;
     private UUID playerUUID;
     private String playerName; // This is only for display purposes when the player is offline
@@ -194,7 +194,7 @@ public class Resident implements PlotsContainer, TownsContainer { // TODO Make C
 
     /**
      * This does NOT perform as well as some other methods of retrieving plots. Please use sparingly and with caution!
-     * @see PlotsContainer
+     * @see IPlotsContainer
      */
     @Override
     public Plot getPlotAtCoords(int dim, int x, int y, int z) {

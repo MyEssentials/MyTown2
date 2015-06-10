@@ -1,8 +1,8 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.FlagsContainer;
-import mytown.api.interfaces.ResidentsContainer;
+import mytown.api.interfaces.IFlagsContainer;
+import mytown.api.interfaces.IResidentsContainer;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Plot implements FlagsContainer, ResidentsContainer {
+public class Plot implements IFlagsContainer, IResidentsContainer {
     private int dbID;
     private final int dim, x1, y1, z1, x2, y2, z2;
     private Town town;

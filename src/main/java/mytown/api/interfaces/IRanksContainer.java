@@ -7,7 +7,7 @@ import mytown.entities.Resident;
 /**
  * Represents an object that can hold Ranks
  */
-public interface RanksContainer {
+public interface IRanksContainer {
 
     void addRank(Rank rank);
 

@@ -1,12 +1,12 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.PlotsContainer;
+import mytown.api.interfaces.IPlotsContainer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TownBlock implements PlotsContainer {
+public class TownBlock implements IPlotsContainer {
     /**
      * Used for storing in database
      */

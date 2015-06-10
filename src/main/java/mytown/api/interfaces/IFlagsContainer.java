@@ -7,7 +7,7 @@ import mytown.entities.flag.FlagType;
 /**
  * Represents an object that can hold Flags
  */
-public interface FlagsContainer {
+public interface IFlagsContainer {
 
     void addFlag(Flag flag);
 
