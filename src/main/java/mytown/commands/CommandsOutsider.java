@@ -99,8 +99,8 @@ public class CommandsOutsider extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
         if (getDatasource().hasBlock(player.dimension, (int) player.posX >> 4, (int) player.posZ >> 4)) // Is the Block already claimed?
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
-        for (int x = (int) player.posX >> 4 - Config.distanceBetweenTowns; x <= (int) player.posX >> 4 + Config.distanceBetweenTowns; x++) {
-            for (int z = (int) player.posZ >> 4 - Config.distanceBetweenTowns; z <= (int) player.posZ >> 4 + Config.distanceBetweenTowns; z++) {
+        for (int x = ((int) player.posX >> 4) - Config.distanceBetweenTowns; x <= ((int) player.posX >> 4) + Config.distanceBetweenTowns; x++) {
+            for (int z = ((int) player.posZ >> 4) - Config.distanceBetweenTowns; z <= ((int) player.posZ >> 4) + Config.distanceBetweenTowns; z++) {
                 Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
                 if (nearbyTown != null && !(Boolean)nearbyTown.getValue(FlagType.NEARBY))
                     throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
