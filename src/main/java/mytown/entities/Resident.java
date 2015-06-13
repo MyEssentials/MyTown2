@@ -8,11 +8,13 @@ import mytown.config.Config;
 import mytown.core.utils.ChatUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.flag.FlagType;
+import mytown.entities.tools.Tool;
 import mytown.handlers.VisualsHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.MyTownUtils;
+import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -43,6 +45,8 @@ public class Resident implements IPlotsContainer, ITownsContainer { // TODO Make
     private Town selectionTown;
     private boolean firstSelectionActive = false, secondSelectionActive = false;
     private boolean mapOn = false;
+
+    private Tool currentTool;
 
     private List<Plot> plots = new ArrayList<Plot>();
     private List<Town> towns = new ArrayList<Town>();
@@ -442,208 +446,26 @@ public class Resident implements IPlotsContainer, ITownsContainer { // TODO Make
 
     /* ----- Plot Selection ----- */
 
-    /**
-     * Gives the player a Selector Tool for selecting plots.
-     */
-    public void startPlotSelection() {
-        ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
-        selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
-        NBTTagList lore = new NBTTagList();
-        lore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_PLOT));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
-        selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
+    public Tool getCurrentTool() {
+        return this.currentTool;
+    }
 
-        boolean ok = !player.inventory.hasItemStack(selectionTool);
-        boolean result = false;
-        if (ok) {
-            result = player.inventory.addItemStackToInventory(selectionTool);
-        }
-        if (result || !ok) {
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.start"));
-        } else {
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.start.failed"));
-        }
+    public boolean hasTool() {
+        return currentTool != null;
     }
 
     /**
-     * Selects a corner of a soon to be plot returns true if the selection is valid.
+     * Intended to only be used when processing a command
      */
-    public boolean selectBlockForPlot(int dim, int x, int y, int z) {
-        TownBlock tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
-        if (firstSelectionActive && selectionDim != dim)
-            return false;
-        if (tb == null || tb.getTown() != getSelectedTown() && !firstSelectionActive || tb.getTown() != selectionTown && firstSelectionActive) {
-            return false;
-        }
-        if (!firstSelectionActive) {
-            secondSelectionActive = false;
-            selectionDim = dim;
-            selectionX1 = x;
-            selectionY1 = y;
-            selectionZ1 = z;
-            selectionTown = tb.getTown();
-            firstSelectionActive = true;
+    public void setCurrentTool(Tool tool) {
+        if(this.currentTool != null)
+            throw new MyTownCommandException("mytown.cmd.err.inventory.tool.already");
 
-            // This is marked twice :P
-            if(getPlayer() instanceof EntityPlayerMP)
-                VisualsHandler.instance.markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP) getPlayer(), null);
-
-        } else {
-
-            selectionX2 = x;
-            selectionY2 = y;
-            selectionZ2 = z;
-            secondSelectionActive = true;
-            if(getPlayer() instanceof EntityPlayerMP)
-                VisualsHandler.instance.markPlotCorners(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP) getPlayer());
-        }
-
-        return true;
+        this.currentTool = tool;
     }
 
-
-    public boolean isFirstPlotSelectionActive() {
-        return firstSelectionActive;
-    }
-
-    public boolean isSecondPlotSelectionActive() {
-        return secondSelectionActive;
-    }
-
-    public Plot makePlotFromSelection(String plotName) {
-        if (!secondSelectionActive || !firstSelectionActive) {
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notSelected"));
-            resetSelection(true);
-            return null;
-        }
-
-        if(!(selectedTown instanceof AdminTown)) {
-            if((Math.abs(selectionX1 - selectionX2) + 1) * (Math.abs(selectionZ1 - selectionZ2) + 1) < Config.minPlotsArea || Math.abs(selectionY1 - selectionY2) + 1 < Config.minPlotsHeight) {
-                sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.tooSmall", Config.minPlotsArea, Config.minPlotsHeight));
-                resetSelection(true);
-                return null;
-            } else if((Math.abs(selectionX1 - selectionX2) + 1) * (Math.abs(selectionZ1 - selectionZ2) + 1) > Config.maxPlotsArea || Math.abs(selectionY1 - selectionY2) + 1 > Config.maxPlotsHeight) {
-                sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.tooLarge", Config.maxPlotsArea, Config.maxPlotsHeight));
-                resetSelection(true);
-                return null;
-            }
-        }
-
-        int x1 = selectionX1, x2 = selectionX2, y1 = selectionY1, y2 = selectionY2, z1 = selectionZ1, z2 = selectionZ2;
-
-        if (x2 < x1) {
-            int aux = x1;
-            x1 = x2;
-            x2 = aux;
-        }
-        if (y2 < y1) {
-            int aux = y1;
-            y1 = y2;
-            y2 = aux;
-        }
-        if (z2 < z1) {
-            int aux = z1;
-            z1 = z2;
-            z2 = aux;
-        }
-
-        int lastX = 1000000, lastZ = 1000000;
-        for (int i = x1; i <= x2; i++) {
-            for (int j = z1; j <= z2; j++) {
-
-                // Verifying if it's in town
-                if (i >> 4 != lastX || j >> 4 != lastZ) {
-                    lastX = i >> 4;
-                    lastZ = j >> 4;
-                    if (!getDatasource().hasBlock(selectionDim, lastX, lastZ, selectionTown)) {
-                        sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.outside"));
-                        resetSelection(true);
-                        return null;
-                    }
-                }
-
-                // Verifying if it's inside another plot
-                for (int k = y1; k <= y2; k++) {
-                    Plot plot = selectionTown.getPlotAtCoords(selectionDim, i, k, j);
-                    if (plot != null) {
-                        sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.insideOther", plot.getName()));
-                        resetSelection(true);
-                        return null;
-                    }
-                }
-            }
-        }
-
-        Plot plot = DatasourceProxy.getDatasource().newPlot(plotName, selectionTown, selectionDim, selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2);
-
-        MyTownUtils.takeSelectorToolFromPlayer(player);
-        resetSelection(true);
-        return plot;
-    }
-
-    /**
-     * Expands the selection vertically, from the bottom of the world (y=0) to the top (y=256 (most of the time))
-     */
-    public void expandSelectionVert() {
-        // When selection is expanded vertically we'll show it's borders... (Temporary solution)
-
-        if(getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.instance.unmarkBlocks(null, (EntityPlayerMP) getPlayer());
-
-        selectionY1 = 1;
-        try {
-            selectionY2 = player.worldObj.getActualHeight() - 1;
-        } catch (NullPointerException e) {
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
-            return;
-        }
-
-        if(getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.instance.markPlotBorders(selectionX1, selectionY1, selectionZ1, selectionX2, selectionY2, selectionZ2, selectionDim, (EntityPlayerMP) getPlayer(), null);
-    }
-
-    public void resetSelection(boolean resetBlocks) {
-        firstSelectionActive = false;
-        secondSelectionActive = false;
-
-        if(resetBlocks && getPlayer() instanceof EntityPlayerMP) {
-            VisualsHandler.instance.unmarkBlocks(null, (EntityPlayerMP)getPlayer());
-        }
-    }
-
-    /* ----- Block Whitelister ----- */
-
-    /**
-     * Starts the block selection by giving the player a Selector Tool for BlockWhitelists
-     */
-    public boolean startBlockSelection(FlagType flagType, String townName) {
-        //Give item to player
-        ItemStack selectionTool = new ItemStack(Items.wooden_hoe);
-        selectionTool.setStackDisplayName(Constants.EDIT_TOOL_NAME);
-        NBTTagList lore = new NBTTagList();
-        lore.appendTag(new NBTTagString(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Flag: " + flagType.toString()));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Town: " + townName));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Uses: 1"));
-        selectionTool.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
-
-        return player.inventory.addItemStackToInventory(selectionTool);
-    }
-
-    /* ----- Plot Selling ----- */
-
-    public boolean startPlotSell(String townName, int price) {
-        ItemStack signShop = new ItemStack(Items.wooden_hoe);
-        signShop.setStackDisplayName(Constants.PLOT_SELL_NAME);
-        NBTTagList lore = new NBTTagList();
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Town: " + townName));
-        lore.appendTag(new NBTTagString(EnumChatFormatting.DARK_AQUA + "Price: " + price));
-        signShop.getTagCompound().getCompoundTag("display").setTag("Lore", lore);
-
-        boolean result = player.inventory.addItemStackToInventory(signShop);
-        if(result)
-            sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.sell.start"));
-        return result;
+    public void removeCurrentTool() {
+        this.currentTool = null;
     }
 
     private MyTownDatasource getDatasource() {

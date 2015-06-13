@@ -9,6 +9,7 @@ import mytown.core.command.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.entities.tools.WhitelisterTool;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsHandler;
 import mytown.proxies.LocalizationProxy;
@@ -502,13 +503,7 @@ public class CommandsAdmin extends Commands {
             throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
 
         Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromName(args.get(0));
-        FlagType flagType = getFlagTypeFromName(args.get(1));
-
-        if (flagType.isWhitelistable())
-            res.startBlockSelection(flagType, town.getName());
-        else
-            throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
+        res.setCurrentTool(new WhitelisterTool(res));
     }
 
     @CommandNode(

@@ -39,7 +39,7 @@ public enum FlagType {
     // ---- Flags that don't go in plots. ----
 
     // Allows modifying blocks.
-    MODIFY(Boolean.class, false, null, true, true, Property.TOWN_ONLY, true),
+    MODIFY(Boolean.class, false, null, true, true, Property.TOWN_ONLY),
 
     // Allows explosions.
     EXPLOSIONS(Boolean.class, false, null, true, true, Property.TOWN_ONLY),

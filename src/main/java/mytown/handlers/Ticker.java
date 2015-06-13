@@ -14,6 +14,7 @@ import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
+import mytown.entities.tools.Tool;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.EconomyProxy;
 import mytown.proxies.LocalizationProxy;
@@ -145,102 +146,14 @@ public class Ticker {
         if (ev.entityPlayer.worldObj.isRemote)
             return;
 
-
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
         if (currentStack == null)
             return;
-        if ((ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) && ev.entityPlayer.isSneaking()) {
-            if (currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
-                // For shift right clicking the selector, we may need it
-            }
-        }
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK ) {
-            if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
-                Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-                Town town;
-                //TODO: Verify permission
-
-                NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-                String description = lore.getStringTagAt(0);
-
-                if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_PLOT)) {
-                    if (res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()) {
-                        ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.alreadySelected");
-                    } else {
-                        boolean result = res.selectBlockForPlot(ev.entityPlayer.dimension, ev.x, ev.y, ev.z);
-                        if (result) {
-                            if (!res.isSecondPlotSelectionActive()) {
-                                ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.plot.selectionStart");
-                            } else {
-                                ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.notification.plot.selectionEnd");
-                            }
-                        } else
-                            ChatUtils.sendLocalizedChat(ev.entityPlayer, LocalizationProxy.getLocalization(), "mytown.cmd.err.plot.selectionFailed");
-
-                    }
-                } else if (description.equals(Constants.EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST)) {
-                    town = MyTownUniverse.instance.getTownsMap().get(MyTownUtils.getTownNameFromLore(ev.entityPlayer));
-                    Town townAt = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
-                    if (town == null || town != townAt) {
-                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
-                    } else {
-                        // If town is found then create of delete the block whitelist
-
-                        FlagType flagType = FlagType.valueOf(MyTownUtils.getFlagNameFromLore(ev.entityPlayer));
-                        ev.entityPlayer.setCurrentItemOrArmor(0, null);
-                        BlockWhitelist bw = town.getBlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
-                        if (bw == null) {
-                            bw = new BlockWhitelist(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, flagType);
-                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
-                            DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
-                        } else {
-                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
-                            DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
-                        }
-                        ev.setCanceled(true);
-                    }
-                }
-            } else if(currentStack.getItem().equals(Items.wooden_hoe) && currentStack.getDisplayName().equals(Constants.PLOT_SELL_NAME)) {
-                ForgeDirection direction = ForgeDirection.getOrientation(ev.face);
-                int x = ev.x + direction.offsetX;
-                int y = ev.y + direction.offsetY;
-                int z = ev.z + direction.offsetZ;
-
-                if(ev.world.getBlock(x, y, z) != Blocks.air)
-                    return;
-
-                NBTTagList tagList = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-                Town town  = MyTownUniverse.instance.getTown(tagList.getStringTagAt(0).split(" ")[1]);
-                if(town == null)
-                    return;
-                Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-                int price = Integer.parseInt(tagList.getStringTagAt(1).split(" ")[1]);
-
-                Plot plot = town.getPlotAtCoords(ev.world.provider.dimensionId, x, y, z);
-                if(plot == null) {
-                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.sell.notInPlot", town.getName()));
-                    return;
-                }
-                if(!plot.hasOwner(res)) {
-                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notOwner"));
-                    return;
-                }
-
-                if(direction == ForgeDirection.DOWN || ev.face == 1) {
-                    int i1 = MathHelper.floor_double((double) ((ev.entityPlayer.rotationYaw + 180.0F) * 16.0F / 360.0F) + 0.5D) & 15;
-                    ev.world.setBlock(x, y, z, Blocks.standing_sign, i1, 3);
-                } else {
-                    ev.world.setBlock(x, y, z, Blocks.wall_sign, ev.face, 3);
-                }
-
-                TileEntitySign te = (TileEntitySign)ev.world.getTileEntity(x, y, z);
-
-                String[] signText = new String[4];
-                signText[0] = "";
-                signText[1] = Constants.PLOT_SELL_IDENTIFIER;
-                signText[2] = "" + EnumChatFormatting.GOLD + price;
-                signText[3] = "";
-                te.signText = signText;
+            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+            Tool currentTool = res.getCurrentTool();
+            if(currentTool.getItemStack() == currentStack) {
+                currentTool.onItemUse(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, ev.face);
             }
         }
     }

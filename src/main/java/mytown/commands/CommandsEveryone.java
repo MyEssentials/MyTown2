@@ -8,6 +8,10 @@ import mytown.core.command.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.entities.tools.PlotSelectionTool;
+import mytown.entities.tools.PlotSellTool;
+import mytown.entities.tools.Tool;
+import mytown.entities.tools.WhitelisterTool;
 import mytown.proxies.EconomyProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Formatter;
@@ -188,21 +192,16 @@ public class CommandsEveryone extends Commands {
         @CommandNode(
                 name = "whitelist",
                 permission = "mytown.cmd.everyone.plot.perm.whitelist",
-                parentName = "mytown.cmd.everyone.plot.perm",
-                completionKeys = {"flagCompletionWhitelist"})
+                parentName = "mytown.cmd.everyone.plot.perm")
         public static void plotPermWhitelistCommand(ICommandSender sender, List<String> args) {
             if (args.size() == 0)
-                throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
+                throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist");
 
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            FlagType flagType = getFlagTypeFromName(args.get(0));
 
-            if (flagType.isWhitelistable()) {
-                res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
-                res.startBlockSelection(flagType, plot.getTown().getName());
-            } else
-                throw new MyTownCommandException("mytown.cmd.err.flag.notForWhitelist");
+            res.setCurrentTool(new WhitelisterTool(res));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
         }
 
         @CommandNode(
@@ -211,36 +210,6 @@ public class CommandsEveryone extends Commands {
                 parentName = "mytown.cmd")
         public static void plotCommand(ICommandSender sender, List<String> args) {
             callSubFunctions(sender, args, "mytown.cmd.everyone.plot");
-        }
-
-        @CommandNode(
-                name = "make",
-                permission = "mytown.cmd.everyone.plot.make",
-                parentName = "mytown.cmd.everyone.plot")
-        public static void plotMakeCommand(ICommandSender sender, List<String> args) {
-            Resident res = getDatasource().getOrMakeResident(sender);
-
-            Town town = getTownFromResident(res);
-            if (!town.canResidentMakePlot(res)) {
-                throw new MyTownCommandException("mytown.cmd.err.plot.limit", town.getMaxPlots());
-            }
-
-            String plotName = "NoName";
-            if (args.size() > 0) {
-                plotName = args.get(0);
-            }
-
-            // This handles all the db stuff... Not sure if I should change :/
-            Plot plot = res.makePlotFromSelection(plotName);
-
-            if (plot != null) {
-                getDatasource().savePlot(plot);
-                getDatasource().linkResidentToPlot(res, plot, true);
-
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.created");
-            } else
-                throw new MyTownCommandException("mytown.cmd.err.plot.failed");
-
         }
 
         @CommandNode(
@@ -262,18 +231,24 @@ public class CommandsEveryone extends Commands {
         }
 
         @CommandNode(
+                name = "new",
+                permission = "mytown.cmd.everyone.plot.new",
+                parentName = "mytown.cmd.everyone.plot")
+        public static void plotNewCommand(ICommandSender sender, List<String> args) {
+            if(args.size() < 1)
+                throw new MyTownWrongUsageException("mytown.cmd.usage.plot.new");
+
+            Resident res = getDatasource().getOrMakeResident(sender);
+            res.setCurrentTool(new PlotSelectionTool(res, args.get(0)));
+            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.start"));
+        }
+
+        @CommandNode(
                 name = "select",
                 permission = "mytown.cmd.everyone.plot.select",
                 parentName = "mytown.cmd.everyone.plot")
         public static void plotSelectCommand(ICommandSender sender, List<String> args) {
-            if (args.size() == 0) {
-                Resident res = getDatasource().getOrMakeResident(sender);
-                if(res.getSelectedTown() == null)
-                    throw new MyTownCommandException("mytown.cmd.err.partOfTown");
-                res.startPlotSelection();
-            } else {
-                callSubFunctions(sender, args, "mytown.cmd.everyone.plot.select");
-            }
+            callSubFunctions(sender, args, "mytown.cmd.everyone.plot.select");
         }
 
         @CommandNode(
@@ -282,13 +257,10 @@ public class CommandsEveryone extends Commands {
                 parentName = "mytown.cmd.everyone.plot.select")
         public static void plotSelectExpandCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
-
-            if (!(res.isFirstPlotSelectionActive() && res.isSecondPlotSelectionActive()))
-                throw new MyTownCommandException("mytown.cmd.err.plot.notSelected");
-
-            res.expandSelectionVert();
-
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.expanded");
+            Tool currentTool = res.getCurrentTool();
+            if(currentTool == null || !(currentTool instanceof PlotSelectionTool) || !((PlotSelectionTool) currentTool).expandVertically())
+                throw new MyTownCommandException("mytown.cmd.err.plot.selection.none");
+            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.expanded"));
         }
 
         @CommandNode(
@@ -297,8 +269,11 @@ public class CommandsEveryone extends Commands {
                 parentName = "mytown.cmd.everyone.plot.select")
         public static void plotSelectResetCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
-            res.resetSelection(true);
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.selectionReset");
+            Tool currentTool = res.getCurrentTool();
+            if(currentTool == null || !(currentTool instanceof PlotSelectionTool))
+                throw new MyTownCommandException("mytown.cmd.err.plot.selection.none");
+            ((PlotSelectionTool) currentTool).resetSelection(true);
+            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.selectionReset"));
         }
 
         @CommandNode(
@@ -451,8 +426,7 @@ public class CommandsEveryone extends Commands {
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
             int price = Integer.parseInt(args.get(0));
-
-            res.startPlotSell(town.getName(), price);
+            res.setCurrentTool(new PlotSellTool(res, price));
         }
     }
 

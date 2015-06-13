@@ -1,5 +1,6 @@
 package mytown.util;
 
+import mytown.entities.flag.FlagType;
 import net.minecraft.util.EnumChatFormatting;
 
 public class Constants {
@@ -12,7 +13,8 @@ public class Constants {
 
     public static final String EDIT_TOOL_NAME = EnumChatFormatting.BLUE + "Selector"; // TODO: Get localization for it, maybe?
     public static final String EDIT_TOOL_DESCRIPTION_PLOT = EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.";
-    public static final String EDIT_TOOL_DESCRIPTION_BLOCK_WHITELIST = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection.";
+    public static final String WHITELISTER_TOOL_DESCRIPTION_HEADER = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection. Shift right-click to change flag.";
+    public static final String WHITELISTER_TOOL_DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: " + FlagType.ACCESS.toString().toLowerCase() + " & " + FlagType.ACTIVATE.toString().toLowerCase();
 
     public static final String SIGN_SHOP_NAME = EnumChatFormatting.BLUE + "Shop Sign";
     public static final String SIGN_ID_TEXT = "" + EnumChatFormatting.ITALIC + EnumChatFormatting.GRAY + "ID: ";
