@@ -1,6 +1,8 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+
+import cpw.mods.fml.common.FMLCommonHandler;
 import mytown.api.interfaces.*;
 import mytown.config.Config;
 import mytown.core.utils.PlayerUtils;
@@ -412,7 +414,7 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
     public void sendToSpawn(Resident res) {
         EntityPlayer pl = res.getPlayer();
         if (pl != null) {
-            spawn.teleport(pl);
+        	PlayerUtils.teleport((EntityPlayerMP)pl, spawn.getDim(), spawn.getX(), spawn.getY(), spawn.getZ());
             res.setTeleportCooldown(Config.teleportCooldown);
         }
     }
