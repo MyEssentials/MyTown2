@@ -38,11 +38,6 @@ public class WhitelisterTool extends Tool {
 
     @Override
     public void onItemUse(int dim, int x, int y, int z, int face) {
-        if(owner.getPlayer().isSneaking()) {
-            changeFlag();
-            return;
-        }
-
         Town town = MyTownUtils.getTownAtPosition(dim, x >> 4, z >> 4);
         if (town == null) {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
@@ -60,6 +55,16 @@ public class WhitelisterTool extends Tool {
                 addWhitelists(flagType, town, dim, x, y, z);
             }
 
+        }
+    }
+
+    @Override
+    public void onShiftRightClick() {
+        FlagType currentFlag = getFlagFromLore();
+        if(currentFlag == whitelistableFlags.get(whitelistableFlags.size() - 1)) {
+            setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 1);
+        } else {
+            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag) + 1).toString().toLowerCase(), 1);
         }
     }
 
@@ -92,14 +97,5 @@ public class WhitelisterTool extends Tool {
             }
         }
         return null;
-    }
-
-    private void changeFlag() {
-        FlagType currentFlag = getFlagFromLore();
-        if(currentFlag == whitelistableFlags.get(whitelistableFlags.size() - 1)) {
-            setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 1);
-        } else {
-            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag) + 1).toString().toLowerCase(), 1);
-        }
     }
 }

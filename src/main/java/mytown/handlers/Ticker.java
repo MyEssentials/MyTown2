@@ -148,13 +148,18 @@ public class Ticker {
         ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
         if (currentStack == null)
             return;
-        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK ) {
+
+        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             Tool currentTool = res.getCurrentTool();
             if(currentTool == null)
                 return;
             if(currentTool.getItemStack() == currentStack) {
-                currentTool.onItemUse(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, ev.face);
+                if (ev.entityPlayer.isSneaking()) {
+                    currentTool.onShiftRightClick();
+                } else if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+                    currentTool.onItemUse(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, ev.face);
+                }
             }
         }
     }

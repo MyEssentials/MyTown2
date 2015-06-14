@@ -41,13 +41,6 @@ public class PlotSelectionTool extends Tool {
 
     @Override
     public void onItemUse(int dim, int x, int y, int z, int face) {
-
-        if(owner.getPlayer().isSneaking()) {
-            expandVertically = !expandVertically;
-            setDescription(DESCRIPTION_MODE + expandVertically, 2);
-            return;
-        }
-
         TownBlock tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
         if (tb == null || tb.getTown() != owner.getSelectedTown() && selectionFirst != null || selectionFirst != null && tb.getTown() != selectionFirst.town) {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selection.outside"));
@@ -76,6 +69,12 @@ public class PlotSelectionTool extends Tool {
             selectionSecond = new Selection(dim, x, y, z);
             createPlotFromSelection();
         }
+    }
+
+    @Override
+    public void onShiftRightClick() {
+        expandVertically = !expandVertically;
+        setDescription(DESCRIPTION_MODE + expandVertically, 2);
     }
 
     public void resetSelection(boolean resetBlocks, int delay) {

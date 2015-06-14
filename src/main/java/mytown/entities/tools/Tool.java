@@ -30,6 +30,10 @@ public abstract class Tool {
 
     public abstract void onItemUse(int dim, int x, int y, int z, int face);
 
+    public void onShiftRightClick() {
+
+    }
+
     public ItemStack getItemStack() {
         return PlayerUtils.getItemStackFromPlayer(owner.getPlayer(), Items.wooden_hoe, toolName);
     }
