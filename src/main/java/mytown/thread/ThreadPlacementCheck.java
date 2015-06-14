@@ -1,4 +1,4 @@
-package mytown.protection.thread;
+package mytown.thread;
 
 import mytown.entities.Resident;
 import mytown.protection.ProtectionUtils;

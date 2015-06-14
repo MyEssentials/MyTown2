@@ -252,18 +252,6 @@ public class CommandsEveryone extends Commands {
         }
 
         @CommandNode(
-                name = "expandVert",
-                permission = "mytown.cmd.everyone.plot.select.expand",
-                parentName = "mytown.cmd.everyone.plot.select")
-        public static void plotSelectExpandCommand(ICommandSender sender, List<String> args) {
-            Resident res = getDatasource().getOrMakeResident(sender);
-            Tool currentTool = res.getCurrentTool();
-            if(currentTool == null || !(currentTool instanceof PlotSelectionTool) || !((PlotSelectionTool) currentTool).expandVertically())
-                throw new MyTownCommandException("mytown.cmd.err.plot.selection.none");
-            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.expanded"));
-        }
-
-        @CommandNode(
                 name = "reset",
                 permission = "mytown.cmd.everyone.plot.select.reset",
                 parentName = "mytown.cmd.everyone.plot.select")
@@ -272,7 +260,7 @@ public class CommandsEveryone extends Commands {
             Tool currentTool = res.getCurrentTool();
             if(currentTool == null || !(currentTool instanceof PlotSelectionTool))
                 throw new MyTownCommandException("mytown.cmd.err.plot.selection.none");
-            ((PlotSelectionTool) currentTool).resetSelection(true);
+            ((PlotSelectionTool) currentTool).resetSelection(true, 0);
             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.selectionReset"));
         }
 

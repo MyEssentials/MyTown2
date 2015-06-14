@@ -62,7 +62,7 @@ public class VisualsHandler {
     /**
      * Unmarks all the blocks that are linked to the player and object key.
      */
-    public void unmarkBlocks(Object key, EntityPlayerMP caller) {
+    public synchronized void unmarkBlocks(Object key, EntityPlayerMP caller) {
         PlayerObjectPair pair = new PlayerObjectPair(caller, key);
         if(markedBlocks.get(pair) == null)
             return;

@@ -1,6 +1,8 @@
 package mytown.entities.tools;
 
+import mytown.MyTown;
 import mytown.config.Config;
+import mytown.core.thread.DelayedThread;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.handlers.VisualsHandler;
@@ -12,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.DimensionManager;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * Tool that selects two corners of a plot and creates it.
@@ -19,23 +22,32 @@ import net.minecraftforge.common.DimensionManager;
 public class PlotSelectionTool extends Tool {
 
     private static final String NAME = EnumChatFormatting.BLUE + "Selector"; // TODO: Get localization for it, maybe?
-    private static final String DESCRIPTION_HEADER = EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.";
+    private static final String DESCRIPTION_HEADER = EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot. Shift right-click to change modes.";
     private static final String DESCRIPTION_NAME = EnumChatFormatting.DARK_AQUA + "Name: ";
+    private static final String DESCRIPTION_MODE = EnumChatFormatting.DARK_AQUA + "Height dependant: ";
 
     /**
      * Using integers instead of BlockPos because we want each plot to have a unique set of coordinates.
      */
     private Selection selectionFirst, selectionSecond;
     private String plotName;
+    private boolean expandVertically = false;
 
     public PlotSelectionTool(Resident owner, String plotName) {
         super(owner, NAME);
         this.plotName = plotName;
-        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER, DESCRIPTION_NAME + plotName));
+        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER, DESCRIPTION_NAME + plotName, DESCRIPTION_MODE + expandVertically));
     }
 
     @Override
     public void onItemUse(int dim, int x, int y, int z, int face) {
+
+        if(owner.getPlayer().isSneaking()) {
+            expandVertically = !expandVertically;
+            setDescription(DESCRIPTION_MODE + expandVertically, 2);
+            return;
+        }
+
         TownBlock tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
         if (tb == null || tb.getTown() != owner.getSelectedTown() && selectionFirst != null || selectionFirst != null && tb.getTown() != selectionFirst.town) {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selection.outside"));
@@ -62,22 +74,28 @@ public class PlotSelectionTool extends Tool {
 
         } else {
             selectionSecond = new Selection(dim, x, y, z);
-            if(owner.getPlayer() instanceof EntityPlayerMP)
-                VisualsHandler.instance.markPlotCorners(selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z, selectionFirst.dim, (EntityPlayerMP) owner.getPlayer());
             createPlotFromSelection();
         }
     }
 
-    public void resetSelection(boolean resetBlocks) {
+    public void resetSelection(boolean resetBlocks, int delay) {
         this.selectionFirst = null;
         this.selectionSecond = null;
 
         if(resetBlocks && owner.getPlayer() instanceof EntityPlayerMP) {
-            VisualsHandler.instance.unmarkBlocks(null, (EntityPlayerMP)owner.getPlayer());
+            if(delay <= 0) {
+                VisualsHandler.instance.unmarkBlocks(null, (EntityPlayerMP) owner.getPlayer());
+            } else {
+                try {
+                    new DelayedThread(delay, VisualsHandler.class.getMethod("unmarkBlocks", Object.class, EntityPlayerMP.class), VisualsHandler.instance, null, owner.getPlayer()).start();
+                } catch (Exception ex) {
+                    MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+                }
+            }
         }
     }
 
-    public boolean expandVertically() {
+    private boolean expandVertically() {
         if(selectionFirst == null || selectionSecond == null)
             return false;
 
@@ -107,7 +125,7 @@ public class PlotSelectionTool extends Tool {
                     lastZ = j >> 4;
                     if (!getDatasource().hasBlock(selectionFirst.dim, lastX, lastZ, selectionFirst.town)) {
                         owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.outside"));
-                        resetSelection(true);
+                        resetSelection(true, 0);
                         return;
                     }
                 }
@@ -117,7 +135,7 @@ public class PlotSelectionTool extends Tool {
                     Plot plot = selectionFirst.town.getPlotAtCoords(selectionFirst.dim, i, k, j);
                     if (plot != null) {
                         owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.insideOther", plot.getName()));
-                        resetSelection(true);
+                        resetSelection(true, 0);
                         return;
                     }
                 }
@@ -125,7 +143,7 @@ public class PlotSelectionTool extends Tool {
         }
 
         Plot plot = DatasourceProxy.getDatasource().newPlot(plotName, selectionFirst.town, selectionFirst.dim, selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z);
-        resetSelection(true);
+        resetSelection(true, 5);
 
         getDatasource().savePlot(plot);
         getDatasource().linkResidentToPlot(owner, plot, true);
@@ -133,6 +151,13 @@ public class PlotSelectionTool extends Tool {
     }
 
     private void normalizeSelection() {
+        if(expandVertically) {
+            expandVertically();
+        } else {
+            if(owner.getPlayer() instanceof EntityPlayerMP)
+                VisualsHandler.instance.markPlotCorners(selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z, selectionFirst.dim, (EntityPlayerMP) owner.getPlayer());
+        }
+
         if (selectionSecond.x < selectionFirst.x) {
             int aux = selectionFirst.x;
             selectionFirst.x = selectionSecond.x;
@@ -154,11 +179,11 @@ public class PlotSelectionTool extends Tool {
         if(!(selectionFirst.town instanceof AdminTown)) {
             if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) < Config.minPlotsArea
                     || Math.abs(selectionFirst.y - selectionSecond.y) + 1 < Config.minPlotsHeight) {
-                resetSelection(true);
+                resetSelection(true, 0);
                 throw new MyTownCommandException("mytown.cmd.err.plot.tooSmall", Config.minPlotsArea, Config.minPlotsHeight);
             } else if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) > Config.maxPlotsArea
                     || Math.abs(selectionFirst.y - selectionSecond.y) + 1 > Config.maxPlotsHeight) {
-                resetSelection(true);
+                resetSelection(true, 0);
                 throw new MyTownCommandException("mytown.cmd.err.plot.tooLarge", Config.maxPlotsArea, Config.maxPlotsHeight);
             }
         }
