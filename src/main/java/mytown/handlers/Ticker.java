@@ -138,7 +138,6 @@ public class Ticker {
         if (ev.current.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
             ev.setCanceled(true);
         }
-
     }
 
     @SubscribeEvent
@@ -152,6 +151,8 @@ public class Ticker {
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK ) {
             Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
             Tool currentTool = res.getCurrentTool();
+            if(currentTool == null)
+                return;
             if(currentTool.getItemStack() == currentStack) {
                 currentTool.onItemUse(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, ev.face);
             }

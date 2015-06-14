@@ -203,9 +203,6 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd.everyone.perm",
             completionKeys = {"flagCompletionWhitelist"})
     public static void permWhitelistCommand(ICommandSender sender, List<String> args) {
-        if (args.size() == 0)
-            throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
-
         Resident res = getDatasource().getOrMakeResident(sender);
         res.setCurrentTool(new WhitelisterTool(res));
     }

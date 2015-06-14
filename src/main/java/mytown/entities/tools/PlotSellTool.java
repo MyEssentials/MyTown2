@@ -23,19 +23,18 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public class PlotSellTool extends Tool {
 
-    private static final String NAME = "Plot Sell";
-    private static final String DESCRIPTION_HEADER = "Right-click in a plot to place a sell sign.";
-    private static final String DESCRIPTION_PRICE = "Price: ";
+    private static final String NAME = EnumChatFormatting.BLUE + "Plot Sell";
+    private static final String DESCRIPTION_HEADER = EnumChatFormatting.DARK_AQUA + "Right-click in a plot to place a sell sign.";
+    private static final String DESCRIPTION_PRICE = EnumChatFormatting.DARK_AQUA + "Price: ";
 
     /**
      * Used for identifying whether or not this is a shop sign or not.
      */
-    private static final String IDENTIFIER = EnumChatFormatting.DARK_BLUE + "Plot Sell";
+    private static final String IDENTIFIER = EnumChatFormatting.DARK_BLUE + "Plot Sale";
 
     public PlotSellTool(Resident owner, int price) {
-        this.owner = owner;
-        createItemStack(Items.wooden_hoe, NAME, DESCRIPTION_HEADER, DESCRIPTION_PRICE + price);
-        giveItemStack();
+        super(owner, NAME);
+        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER, DESCRIPTION_PRICE + price));
     }
 
     @Override
@@ -88,7 +87,7 @@ public class PlotSellTool extends Tool {
     }
 
     private int getPriceFromLore() {
-        String priceLore = getDescription(0);
+        String priceLore = getDescription(1);
         return Integer.parseInt(priceLore.substring(DESCRIPTION_PRICE.length()));
     }
 }

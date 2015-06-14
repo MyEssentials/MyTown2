@@ -32,9 +32,8 @@ public class WhitelisterTool extends Tool {
     }
 
     public WhitelisterTool(Resident owner) {
-        this.owner = owner;
-        createItemStack(Items.wooden_hoe, NAME, DESCRIPTION_HEADER, DESCRIPTION_FLAG);
-        giveItemStack();
+        super(owner, NAME);
+        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER, DESCRIPTION_FLAG));
     }
 
     @Override
@@ -100,7 +99,7 @@ public class WhitelisterTool extends Tool {
         if(currentFlag == whitelistableFlags.get(whitelistableFlags.size() - 1)) {
             setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 1);
         } else {
-            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag)), 1);
+            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag) + 1).toString().toLowerCase(), 1);
         }
     }
 }

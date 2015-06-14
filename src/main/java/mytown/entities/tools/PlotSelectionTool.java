@@ -26,25 +26,24 @@ public class PlotSelectionTool extends Tool {
      * Using integers instead of BlockPos because we want each plot to have a unique set of coordinates.
      */
     private Selection selectionFirst, selectionSecond;
-    private String name;
+    private String plotName;
 
-    public PlotSelectionTool(Resident owner, String name) {
-        this.owner = owner;
-        this.name = name;
-        createItemStack(Items.wooden_hoe, NAME, DESCRIPTION_HEADER, DESCRIPTION_NAME + name);
-        giveItemStack();
+    public PlotSelectionTool(Resident owner, String plotName) {
+        super(owner, NAME);
+        this.plotName = plotName;
+        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER, DESCRIPTION_NAME + plotName));
     }
 
     @Override
     public void onItemUse(int dim, int x, int y, int z, int face) {
         TownBlock tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
-        if (!tb.getTown().canResidentMakePlot(owner)) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", tb.getTown().getMaxPlots()));
+        if (tb == null || tb.getTown() != owner.getSelectedTown() && selectionFirst != null || selectionFirst != null && tb.getTown() != selectionFirst.town) {
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selection.outside"));
             return;
         }
 
-        if (tb == null || tb.getTown() != owner.getSelectedTown() && selectionFirst != null || selectionFirst != null && tb.getTown() != selectionFirst.town) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selection.outside"));
+        if (!tb.getTown().canResidentMakePlot(owner)) {
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", tb.getTown().getMaxPlots()));
             return;
         }
 
@@ -125,7 +124,7 @@ public class PlotSelectionTool extends Tool {
             }
         }
 
-        Plot plot = DatasourceProxy.getDatasource().newPlot(name, selectionFirst.town, selectionFirst.dim, selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z);
+        Plot plot = DatasourceProxy.getDatasource().newPlot(plotName, selectionFirst.town, selectionFirst.dim, selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z);
         resetSelection(true);
 
         getDatasource().savePlot(plot);
