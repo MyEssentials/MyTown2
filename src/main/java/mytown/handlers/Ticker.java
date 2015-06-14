@@ -135,7 +135,16 @@ public class Ticker {
     // Because I can
     @SubscribeEvent
     public void onUseHoe(UseHoeEvent ev) {
-        if (ev.current.getDisplayName().equals(Constants.EDIT_TOOL_NAME)) {
+        ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
+        if (currentStack == null)
+            return;
+
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        Tool currentTool = res.getCurrentTool();
+        if (currentTool == null)
+            return;
+
+        if(currentStack == currentTool.getItemStack()) {
             ev.setCanceled(true);
         }
     }
