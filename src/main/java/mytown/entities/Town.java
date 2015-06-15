@@ -412,7 +412,7 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
     public void sendToSpawn(Resident res) {
         EntityPlayer pl = res.getPlayer();
         if (pl != null) {
-            spawn.teleport(pl);
+            PlayerUtils.teleport((EntityPlayerMP)pl, spawn.getDim(), spawn.getX(), spawn.getY(), spawn.getZ());
             res.setTeleportCooldown(Config.teleportCooldown);
         }
     }
@@ -422,8 +422,6 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
     public void setSpawn(Teleport spawn) { this.spawn = spawn; }
 
     /* ----- Bank ----- */
-
-
 
     public void setBankAmount(int amount) { bankAmount = amount; }
     public int getBankAmount() { return this.bankAmount; }
