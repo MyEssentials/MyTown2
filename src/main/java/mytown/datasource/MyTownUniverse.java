@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
 import mytown.core.command.CommandManager;
 import mytown.entities.*;
+import mytown.handlers.VisualsHandler;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.ArrayList;
@@ -117,6 +118,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public final boolean removeTown(Town town) {
         towns.remove(town.getOldName() != null ? town.getOldName() : town.getName());
+        VisualsHandler.instance.unmarkBlocks(town);
         CommandManager.completionMap.get("townCompletionAndAll").remove(town.getName());
         CommandManager.completionMap.get("townCompletion").remove(town.getName());
         return true;
@@ -140,6 +142,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public final boolean removePlot(Plot plot) {
         plots.remove(plot.getDbID());
+        VisualsHandler.instance.unmarkBlocks(plot);
         return true;
     }
 

@@ -212,7 +212,7 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
 
     public void hideBorders(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.instance.unmarkBlocks(this, (EntityPlayerMP) caller.getPlayer());
+            VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) caller.getPlayer(), this);
     }
 
     /* ----- IHasPlots ----- */
@@ -302,7 +302,7 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
     public void hidePlots(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
             for(Plot plot : plots)
-                VisualsHandler.instance.unmarkBlocks(plot, (EntityPlayerMP)caller.getPlayer());
+                VisualsHandler.instance.unmarkBlocks((EntityPlayerMP)caller.getPlayer(), plot);
     }
 
     /* ----- IHasFlags ------ */

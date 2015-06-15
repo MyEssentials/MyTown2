@@ -62,7 +62,7 @@ public class PlotSelectionTool extends Tool {
             selectionFirst = new Selection(dim, x, y, z);
             // This is marked twice :P
             if(owner.getPlayer() instanceof EntityPlayerMP) {
-                VisualsHandler.instance.markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP) owner.getPlayer(), null);
+                VisualsHandler.instance.markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP) owner.getPlayer(), owner.getPlayer());
             }
 
         } else {
@@ -83,10 +83,10 @@ public class PlotSelectionTool extends Tool {
 
         if(resetBlocks && owner.getPlayer() instanceof EntityPlayerMP) {
             if(delay <= 0) {
-                VisualsHandler.instance.unmarkBlocks(null, (EntityPlayerMP) owner.getPlayer());
+                VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) owner.getPlayer(), owner.getPlayer());
             } else {
                 try {
-                    new DelayedThread(delay, VisualsHandler.class.getMethod("unmarkBlocks", Object.class, EntityPlayerMP.class), VisualsHandler.instance, null, owner.getPlayer()).start();
+                    new DelayedThread(delay, VisualsHandler.class.getMethod("unmarkBlocks", Object.class, EntityPlayerMP.class), VisualsHandler.instance, owner.getPlayer(), owner.getPlayer()).start();
                 } catch (Exception ex) {
                     MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
                 }
@@ -102,7 +102,7 @@ public class PlotSelectionTool extends Tool {
         selectionSecond.y = DimensionManager.getWorld(selectionSecond.dim).getActualHeight() - 1;
 
         if(owner.getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.instance.unmarkBlocks(null, (EntityPlayerMP) owner.getPlayer());
+            VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) owner.getPlayer(), null);
 
         if(owner.getPlayer() instanceof EntityPlayerMP)
             VisualsHandler.instance.markPlotBorders(selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z, selectionFirst.dim, (EntityPlayerMP) owner.getPlayer(), null);
@@ -154,7 +154,7 @@ public class PlotSelectionTool extends Tool {
             expandVertically();
         } else {
             if(owner.getPlayer() instanceof EntityPlayerMP)
-                VisualsHandler.instance.markPlotCorners(selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z, selectionFirst.dim, (EntityPlayerMP) owner.getPlayer());
+                VisualsHandler.instance.markCorners(selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z, selectionFirst.dim, (EntityPlayerMP) owner.getPlayer());
         }
 
         if (selectionSecond.x < selectionFirst.x) {
