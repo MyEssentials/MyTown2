@@ -31,7 +31,7 @@ public class VisualsHandler {
         if (!markedBlocks.isEmpty()) {
             for(Iterator<VisualObject> visualObjectIterator = markedBlocks.iterator(); visualObjectIterator.hasNext(); ) {
                 VisualObject visualObject = visualObjectIterator.next();
-                for (Iterator<BlockCoords> blockCoordsIterator = visualObject.blockCoords.iterator(); visualObjectIterator.hasNext(); ) {
+                for (Iterator<BlockCoords> blockCoordsIterator = visualObject.blockCoords.iterator(); blockCoordsIterator.hasNext(); ) {
                     BlockCoords coord = blockCoordsIterator.next();
                     if (!coord.packetSent) {
                         S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
