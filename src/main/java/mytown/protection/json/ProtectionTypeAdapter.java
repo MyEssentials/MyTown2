@@ -1,5 +1,6 @@
 package mytown.protection.json;
 
+import com.google.common.base.CaseFormat;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -285,7 +286,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
 
                             if ("entity".equals(type)) {
                                 if ("entityType".equals(nextName)) {
-                                    entityType = EntityType.valueOf(in.nextString());
+                                    entityType = EntityType.valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, in.nextString()));
                                     if (entityType == null)
                                         throw new SegmentException("[Segment: " + clazz + "] Invalid entity type.");
                                     continue;
@@ -293,7 +294,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                             }
                             if ("item".equals(type)) {
                                 if ("itemType".equals(nextName)) {
-                                    itemType = ItemType.valueOf(in.nextString());
+                                    itemType = ItemType.valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, in.nextString()));
                                     if (itemType == null)
                                         throw new SegmentException("[Segment: " + clazz + "] Invalid item type.");
                                     continue;
@@ -310,7 +311,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     continue;
                                 }
                                 if("blockType".equals(nextName)) {
-                                    blockType = BlockType.valueOf(in.nextString());
+                                    blockType = BlockType.valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, in.nextString()));
                                     if(blockType == null)
                                         throw new SegmentException("[Segment: " + clazz + "] Invalid block type.");
                                     continue;
