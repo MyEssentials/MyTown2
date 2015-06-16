@@ -46,7 +46,7 @@ public class CommandsEveryone extends Commands {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
-            if (town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
+            if (town.getResidentRank(res) != null && town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
                 res.sendMessage(getLocal().getLocalization("mytown.notification.town.left.asMayor"));
                 return;
             }
