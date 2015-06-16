@@ -8,47 +8,47 @@ import mytown.proxies.LocalizationProxy;
 public enum FlagType {
     // CONSTRUCTOR: class, value, allowedValues, wildPerm, defaultWildPerm, townOnly, isWhitelistable <false>
 
-    // Allows entering the area
-    ENTER(Boolean.class, true, null, false, true, Property.ALL),
+    // allows entering the area
+    ENTER(Boolean.class, true, null, false, true, Property.all),
 
-    // Allows opening GUIs and right-clicking TileEntities
-    ACCESS(Boolean.class, false, null, true, true, Property.ALL, true),
+    // allows opening GUIs and right-clicking TileEntities
+    ACCESS(Boolean.class, false, null, true, true, Property.all, true),
 
-    // Allows pickup of items.
-    PICKUP(Boolean.class, true, null, true, true, Property.ALL),
+    // allows pickup of items.
+    PICKUP(Boolean.class, true, null, true, true, Property.all),
 
-    // Allows pvp
-    PVP(Boolean.class, false, null, true, true, Property.ALL),
+    // allows pvp
+    PVP(Boolean.class, false, null, true, true, Property.all),
 
     // Only the values in the array are allowed
-    // Allows modifying which types of mods are allowed in the town.
-    MOBS(String.class, "all", new String[]{"all", "passives", "none"}, true, "all", Property.ALL),
+    // allows modifying which types of mods are allowed in the town.
+    MOBS(String.class, "all", new String[]{"all", "passives", "none"}, true, "all", Property.all),
 
-    // Allows outsiders to hurt passive and other types of entities.
-    PVE(Boolean.class, false, null, true, true, Property.ALL),
+    // allows outsiders to hurt passive and other types of entities.
+    PVE(Boolean.class, false, null, true, true, Property.all),
 
-    // Allows the use of some items such as: Bucket, Spawn Eggs etc.
-    USAGE(Boolean.class, false, null, true, true, Property.ALL),
+    // allows the use of some items such as: Bucket, Spawn Eggs etc.
+    USAGE(Boolean.class, false, null, true, true, Property.all),
 
-    // Allows to activate blocks such as: Buttons, Doors etc.
-    ACTIVATE(Boolean.class, false, null, true, true, Property.ALL, true),
+    // allows to activate blocks such as: Buttons, Doors etc.
+    ACTIVATE(Boolean.class, false, null, true, true, Property.all, true),
 
-    // Allows fake players to bypass some of the flags (MODIFY, USAGE, PVE)
-    FAKERS(Boolean.class, true, null, true, true, Property.ALL),
+    // allows fake players to bypass some of the flags (MODIFY, USAGE, PVE)
+    FAKERS(Boolean.class, true, null, true, true, Property.all),
 
     // ---- Flags that don't go in plots. ----
 
-    // Allows modifying blocks.
-    MODIFY(Boolean.class, false, null, true, true, Property.TOWN_ONLY),
+    // allows modifying blocks.
+    MODIFY(Boolean.class, false, null, true, true, Property.townOnly),
 
-    // Allows explosions.
-    EXPLOSIONS(Boolean.class, false, null, true, true, Property.TOWN_ONLY),
+    // allows explosions.
+    EXPLOSIONS(Boolean.class, false, null, true, true, Property.townOnly),
 
-    // Allows normal residents to have permission outside their claimed plots.
-    RESTRICTIONS(Boolean.class, false, null, false, false, Property.TOWN_ONLY),
+    // allows normal residents to have permission outside their claimed plots.
+    RESTRICTIONS(Boolean.class, false, null, false, false, Property.townOnly),
 
-    // Allows other nearby towns to be created nearby
-    NEARBY(Boolean.class, false, null, false, false, Property.TOWN_ONLY);
+    // allows other nearby towns to be created nearby
+    NEARBY(Boolean.class, false, null, false, false, Property.townOnly);
 
     private Class<?> type;
     private Object[] allowedValues;
@@ -124,7 +124,7 @@ public enum FlagType {
     }
 
     public boolean isTownOnly() {
-        return property == Property.TOWN_ONLY;
+        return property == Property.townOnly;
     }
 
     /**
@@ -152,7 +152,7 @@ public enum FlagType {
         return isWhitelistable;
     }
 
-    public boolean isValueAllowed(Object value) {
+    public boolean isValueallowed(Object value) {
         if (allowedValues == null)
             return true;
         else {
@@ -166,10 +166,9 @@ public enum FlagType {
     }
 
     public enum Property {
-        ALL,
-        TOWN_ONLY,
-        PLOT_ONLY
+        all,
+        townOnly,
+        plotOnly
     }
 
 }
-
