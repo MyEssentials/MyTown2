@@ -102,7 +102,8 @@ public class Protections {
 
         // Entity check
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
-        for (Entity entity : (List<Entity>) ev.world.loadedEntityList) {
+        for (int i = 0; i < ev.world.loadedEntityList.size(); i++) {
+            Entity entity = (Entity) ev.world.loadedEntityList.get(i);
             // Player check, every tick
 
             Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) Math.floor(entity.posX) >> 4, (int) Math.floor(entity.posZ) >> 4);
