@@ -31,6 +31,7 @@ public class VisualsHandler {
         if (!markedBlocks.isEmpty()) {
             for(Iterator<VisualObject> visualObjectIterator = markedBlocks.iterator(); visualObjectIterator.hasNext(); ) {
                 VisualObject visualObject = visualObjectIterator.next();
+
                 for (Iterator<BlockCoords> blockCoordsIterator = visualObject.blockCoords.iterator(); blockCoordsIterator.hasNext(); ) {
                     BlockCoords coord = blockCoordsIterator.next();
                     if (!coord.packetSent) {
@@ -38,14 +39,12 @@ public class VisualsHandler {
                         packet.field_148883_d = coord.block;
                         visualObject.player.playerNetServerHandler.sendPacket(packet);
                         coord.packetSent = true;
-                        MyTown.instance.LOG.info("Sent packet for key: " + visualObject.object.toString());
                     }
                     if (coord.deleted) {
                         S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
                         packet.field_148883_d = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlock(coord.x, coord.y, coord.z);
                         packet.field_148884_e = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockMetadata(coord.x, coord.y, coord.z);
                         visualObject.player.playerNetServerHandler.sendPacket(packet);
-                        MyTown.instance.LOG.info("Removed coord for key: " + visualObject.object.toString());
                         blockCoordsIterator.remove();
                     }
                 }
@@ -67,6 +66,17 @@ public class VisualsHandler {
         List<BlockCoords> blockCoords = new ArrayList<BlockCoords>();
         blockCoords.add(singleCoord);
         markedBlocks.add(new VisualObject(caller, key, blockCoords));
+    }
+
+    public void markBlocks(EntityPlayerMP caller, Object key, List<BlockCoords> blockList) {
+        for(VisualObject visualObject : markedBlocks) {
+            if(visualObject.player == caller && visualObject.object == key) {
+                visualObject.blockCoords.addAll(blockList);
+                return;
+            }
+        }
+
+        markedBlocks.add(new VisualObject(caller, key, blockList));
     }
 
     public void markCorners(int selectionX1, int selectionY1, int selectionZ1, int selectionX2, int selectionY2, int selectionZ2, int dim, EntityPlayerMP caller) {
@@ -96,8 +106,8 @@ public class VisualsHandler {
             blockList.add(new BlockCoords(selectionX2, selectionY2 + (selectionY1 > selectionY2 ? 2 : -2), selectionZ2, dim, Blocks.redstone_block));
         }
 
-        // Marking it to itself as null would not be possible
-        addMarkedBlocks(caller, caller, blockList);
+        // Marking it to itself since null would not be possible
+        markBlocks(caller, caller, blockList);
     }
 
     public void markPlotBorders(Plot plot, EntityPlayerMP caller) {
@@ -180,7 +190,6 @@ public class VisualsHandler {
      */
     public void addMarkedBlocks(final EntityPlayerMP caller, final Object key, final List<BlockCoords> blockCoords) {
         // Waits 5 milliseconds if there are still blocks to be deleted.
-        MyTown.instance.LOG.info("Marking blocks for " + key.toString());
         Thread t = new Thread() {
             @Override
             public void run() {
@@ -251,11 +260,9 @@ public class VisualsHandler {
     public synchronized void unmarkBlocks(EntityPlayerMP caller, Object key) {
         for(VisualObject visualObject : markedBlocks) {
             if(visualObject.player == caller && visualObject.object == key) {
-                MyTown.instance.LOG.info("Unmarked blocks for key " + key.toString());
                 for(BlockCoords blockCoords : visualObject.blockCoords)
                     blockCoords.deleted = true;
             }
-            MyTown.instance.LOG.info("There is: " + key.toString());
         }
 
     }

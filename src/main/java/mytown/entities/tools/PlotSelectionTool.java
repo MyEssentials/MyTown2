@@ -86,7 +86,7 @@ public class PlotSelectionTool extends Tool {
                 VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) owner.getPlayer(), owner.getPlayer());
             } else {
                 try {
-                    new DelayedThread(delay, VisualsHandler.class.getMethod("unmarkBlocks", Object.class, EntityPlayerMP.class), VisualsHandler.instance, owner.getPlayer(), owner.getPlayer()).start();
+                    new DelayedThread(delay, VisualsHandler.class.getMethod("unmarkBlocks", EntityPlayerMP.class, Object.class), VisualsHandler.instance, owner.getPlayer(), owner.getPlayer()).start();
                 } catch (Exception ex) {
                     MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
                 }
