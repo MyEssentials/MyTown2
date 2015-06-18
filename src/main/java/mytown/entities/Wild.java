@@ -57,6 +57,10 @@ public class Wild implements IFlagsContainer {
         return false;
     }
 
+    public void removeAllFlags() {
+    	flagList.clear();
+    }
+
     /**
      * Checks if Resident is allowed to do the action specified by the FlagType in the Wild
      */
