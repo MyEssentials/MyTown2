@@ -108,6 +108,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
         for(Flag flag : items) {
             Wild.instance.addFlag(flag);
         }
+        
         if(updated)
             write(items);
     }

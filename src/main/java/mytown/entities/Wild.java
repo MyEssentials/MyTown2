@@ -84,5 +84,4 @@ public class Wild implements IFlagsContainer {
     public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
         return getValue(flagType);
     }
-
 }
