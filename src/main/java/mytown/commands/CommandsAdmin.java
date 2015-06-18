@@ -1,7 +1,6 @@
 package mytown.commands;
 
 import mytown.MyTown;
-import mytown.core.Assert;
 import mytown.core.entities.ChunkPos;
 import mytown.core.utils.*;
 import mytown.core.command.Command;
@@ -405,7 +404,7 @@ public class CommandsAdmin extends Commands {
         } else { // Set safemode
             safemode = ChatUtils.equalsOn(args.get(0));
         }
-        Assert.perm(sender, "mytown.adm.cmd.safemode." + (safemode ? "on" : "off"));
+
         SafemodeHandler.setSafemode(safemode);
         SafemodeHandler.kickPlayers();
     }
