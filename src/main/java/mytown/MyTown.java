@@ -13,11 +13,10 @@ import mytown.config.json.JSONConfig;
 import mytown.config.json.RanksConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.core.Localization;
-import mytown.core.utils.ClassUtils;
-import mytown.core.logger.Log;
-import mytown.core.utils.StringUtils;
 import mytown.core.command.CommandManager;
 import mytown.core.config.ConfigProcessor;
+import mytown.core.utils.ClassUtils;
+import mytown.core.utils.StringUtils;
 import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
@@ -35,6 +34,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -47,7 +47,7 @@ import java.util.List;
 public class MyTown {
     @Instance
     public static MyTown instance;
-    public Log LOG;
+    public Logger LOG;
     // ---- Configuration files ----
     private Configuration config;
 
@@ -56,7 +56,7 @@ public class MyTown {
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
         // Setup Loggers
-        LOG = new Log(ev.getModLog());
+        LOG = ev.getModLog();
 
         Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyTown/";
 

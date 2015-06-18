@@ -4,9 +4,7 @@ import com.mojang.authlib.GameProfile;
 import mytown.MyTown;
 import mytown.api.events.*;
 import mytown.config.Config;
-import mytown.core.logger.Log;
 import mytown.core.teleport.Teleport;
-import mytown.crash.DatasourceCrashCallable;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -19,11 +17,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 
 public abstract class MyTownDatasource {
-    protected static Log LOG = MyTown.instance.LOG;
+    protected static Logger LOG = MyTown.instance.LOG;
 
     /**
      * Initialize the Datasource.
