@@ -324,6 +324,8 @@ mytown.notification.plot.buy.newOwner=&aYou have successfully bought plot %s
 mytown.notification.plot.buy.oldOwner=&aThe plot %s has been successfully sold
 mytown.notification.plot.sell.start=&3Right click on a plot with the tool given to put the plot on sale
 mytown.notification.town.renamed=&3Town has been renamed
+mytown.notification.plot.enter=&2~ %s
+
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=&2Everything related to TownBlocks (chunks in town)

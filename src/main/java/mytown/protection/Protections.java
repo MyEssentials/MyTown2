@@ -14,6 +14,7 @@ import mytown.core.utils.*;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
+import mytown.proxies.LocalizationProxy;
 import mytown.thread.ThreadPlacementCheck;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.Formatter;
@@ -30,6 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -109,19 +111,7 @@ public class Protections {
             Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) Math.floor(entity.posX) >> 4, (int) Math.floor(entity.posZ) >> 4);
             //MyTown.instance.log.info("Checking player...");
             if (entity instanceof EntityPlayerMP && !(entity instanceof FakePlayer)) {
-                Resident res = DatasourceProxy.getDatasource().getOrMakeResident(entity);
-                if (town != null && !town.checkPermission(res, FlagType.ENTER, false, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                    //res.protectionDenial(FlagType.ENTER.getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", Formatter.formatOwnersToString(town.getOwnersAtPosition(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))));
-                    EntityPos lastTickPos = lastTickPlayerPos.get(entity);
-                    if(lastTickPos == null)
-                        res.knockbackPlayerToBorder(town);
-                    else
-                        if(lastTickPos.getX() != entity.posX || lastTickPos.getY() != entity.posY || lastTickPos.getZ() != entity.posZ || lastTickPos.getDim() != entity.dimension) {
-                            PlayerUtils.teleport((EntityPlayerMP) entity, lastTickPos.getDim(), lastTickPos.getX(), lastTickPos.getY(), lastTickPos.getZ());
-                        }
-                } else {
-                    lastTickPlayerPos.put((EntityPlayer) entity, new EntityPos(entity.posX, entity.posY, entity.posZ, entity.dimension));
-                }
+                checkPlayer((EntityPlayerMP) entity, town);
             } else {
                 // Other entity checks
                 if(MinecraftServer.getServer().getTickCounter() % 20 == 0) {
@@ -154,6 +144,47 @@ public class Protections {
                     }
                 }
             }
+        }
+    }
+
+    private void checkPlayer(EntityPlayerMP player, Town town) {
+        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+        EntityPos lastTickPos = lastTickPlayerPos.get(player);
+
+        if (town != null && !town.checkPermission(res, FlagType.ENTER, false, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ))) {
+            res.protectionDenial(FlagType.ENTER.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ)));
+            if(lastTickPos == null)
+                res.knockbackPlayerToBorder(town);
+            else
+            if(lastTickPos.getX() != player.posX || lastTickPos.getY() != player.posY || lastTickPos.getZ() != player.posZ || lastTickPos.getDim() != player.dimension) {
+                PlayerUtils.teleport(player, lastTickPos.getDim(), lastTickPos.getX(), lastTickPos.getY(), lastTickPos.getZ());
+            }
+        } else {
+
+
+            // Chunk changed
+            // TODO: Refactor so that it's understandable
+            if(lastTickPos != null && (((int) Math.floor(lastTickPos.getX())) >> 4 != (int)(Math.floor(player.posX)) >> 4 || ((int) Math.floor(lastTickPos.getZ())) >> 4 != (int)(Math.floor(player.posZ)) >> 4)) {
+                if (lastTickPos.getDim() == player.dimension) {
+                    res.checkLocation(((int) Math.floor(lastTickPos.getX())) >> 4, ((int) Math.floor(lastTickPos.getZ())) >> 4,
+                            ((int) Math.floor(player.posX)) >> 4, ((int) (Math.floor(player.posZ))) >> 4, player.dimension);
+                } else {
+                    res.checkLocationOnDimensionChanged((int) (Math.floor(player.posX)), (int) (Math.floor(player.posZ)), player.dimension);
+                }
+            }
+
+            if(lastTickPos != null && town != null) {
+                Plot currentPlot = town.getPlotAtCoords(player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ));
+                Plot lastTickPlot = town.getPlotAtCoords(lastTickPos.getDim(), (int) Math.floor(lastTickPos.getX()), (int) Math.floor(lastTickPos.getY()), (int) Math.floor(lastTickPos.getZ()));
+
+                if(currentPlot != null && (lastTickPlot == null || currentPlot != lastTickPlot)) {
+                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.enter", currentPlot.getName()));
+                } else if(currentPlot == null && lastTickPlot != null) {
+                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.enter", EnumChatFormatting.RED + "NONE"));
+                }
+            }
+
+            lastTickPlayerPos.put(player, new EntityPos(player.posX, player.posY, player.posZ, player.dimension));
         }
     }
 

@@ -98,40 +98,6 @@ public class Ticker {
 
     }
 
-    @SubscribeEvent
-    public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent ev) {
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
-        res.checkLocationOnDimensionChanged(ev.player.chunkCoordX, ev.player.chunkCoordZ, ev.toDim);
-    }
-
-    @SubscribeEvent
-    public void onEnterChunk(EntityEvent.EnteringChunk ev) {
-        if (ev.entity == null || !(ev.entity instanceof EntityPlayer))
-            return;
-        checkLocationAndSendMap(ev);
-    }
-
-    private void checkLocationAndSendMap(EntityEvent.EnteringChunk ev) {
-        if (ev.entity instanceof FakePlayer || ev.entity.worldObj.isRemote)
-            return;
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entity);
-        if (res == null)
-            return; // TODO Log?
-        // TODO Check Resident location
-
-        res.checkLocation(ev.oldChunkX, ev.oldChunkZ, ev.newChunkX, ev.newChunkZ, ev.entity.dimension);
-
-        Town lastTown = MyTownUtils.getTownAtPosition(ev.entity.dimension, ev.oldChunkX, ev.oldChunkZ);
-        Town currTown = MyTownUtils.getTownAtPosition(ev.entity.dimension, ev.newChunkX, ev.newChunkZ);
-
-        if (currTown != null && (lastTown == null || currTown != lastTown))
-            TownEvent.fire(new TownEvent.TownEnterEvent(currTown, res));
-
-        if (res.isMapOn()) {
-            Formatter.sendMap(res);
-        }
-    }
-
     // Because I can
     @SubscribeEvent
     public void onUseHoe(UseHoeEvent ev) {
