@@ -8,6 +8,7 @@ import mytown.entities.TownBlock;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
+import mytown.util.MyTownUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagList;
@@ -44,27 +45,41 @@ public class PlotSellTool extends Tool {
         y = y + direction.offsetY;
         z = z + direction.offsetZ;
 
+        Town town = MyTownUtils.getTownAtPosition(dim, x >> 4, z >> 4);
+        if(!hasPermission(town, dim, x, y, z))
+            return;
+
         World world = DimensionManager.getWorld(dim);
-
-        if(world.getBlock(x, y, z) != Blocks.air)
-            return;
-
-        TownBlock townBlock= MyTownUniverse.instance.getTownBlock(dim, x >> 4, z >> 4);
-        if(townBlock == null)
-            return;
 
         int price = getPriceFromLore();
 
-        Plot plot = townBlock.getTown().getPlotAtCoords(dim, x, y, z);
+        createShopSign(world, x, y, z, face, price);
+        deleteItemStack();
+    }
+
+    @Override
+    protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
+        World world = DimensionManager.getWorld(dim);
+
+        if(world.getBlock(x, y, z) != Blocks.air) {
+            return false;
+        }
+
+        if(town == null) {
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.getSelectedTown().getName()));
+            return false;
+        }
+
+        Plot plot = town.getPlotAtCoords(dim, x, y, z);
         if(plot == null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.sell.notInPlot", townBlock.getTown().getName()));
-            return;
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.sell.notInPlot", town.getName()));
+            return false;
         }
         if(!plot.hasOwner(owner)) {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notOwner"));
-            return;
+            return false;
         }
-        createShopSign(world, x, y, z, face, price);
+        return true;
     }
 
     private void createShopSign(World world, int x, int y, int z, int face, int price) {

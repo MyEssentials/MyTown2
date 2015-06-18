@@ -1,6 +1,7 @@
 package mytown.entities.tools;
 
 import mytown.entities.BlockWhitelist;
+import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
@@ -39,23 +40,20 @@ public class WhitelisterTool extends Tool {
     @Override
     public void onItemUse(int dim, int x, int y, int z, int face) {
         Town town = MyTownUtils.getTownAtPosition(dim, x >> 4, z >> 4);
-        if (town == null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.blockNotInTown"));
+
+        if(!hasPermission(town, dim, x, y, z))
+            return;
+
+        // If town is found then create or delete the block whitelist
+        FlagType flagType = getFlagFromLore();
+        //ev.entityPlayer.setCurrentItemOrArmor(0, null);
+        if (flagType == null) {
+            removeWhitelists(town, dim, x, y, z);
         } else {
-            //TODO: Switch to using proper permission strings
-            if(!(town.getResidentRank(owner).getName().equals("Assistant") || town.getResidentRank(owner).getName().equals("Mayor")))
-                return;
-
-            // If town is found then create or delete the block whitelist
-            FlagType flagType = getFlagFromLore();
-            //ev.entityPlayer.setCurrentItemOrArmor(0, null);
-            if (flagType == null) {
-                removeWhitelists(town, dim, x, y, z);
-            } else {
-                addWhitelists(flagType, town, dim, x, y, z);
-            }
-
+            addWhitelists(flagType, town, dim, x, y, z);
         }
+        deleteItemStack();
+
     }
 
     @Override
@@ -66,6 +64,25 @@ public class WhitelisterTool extends Tool {
         } else {
             setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag) + 1).toString().toLowerCase(), 1);
         }
+    }
+
+    @Override
+    protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
+        if(town == null) {
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.getSelectedTown().getName()));
+            return false;
+        }
+
+        //TODO: Switch to using proper permission strings
+        if(!(town.getResidentRank(owner).getName().equals("Assistant") || town.getResidentRank(owner).getName().equals("Mayor"))) {
+            Plot plot = town.getPlotAtCoords(dim, x, y, z);
+            if(plot == null || !plot.hasOwner(owner)) {
+                owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.whitelist"));
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void removeWhitelists(Town town, int dim, int x, int y, int z) {

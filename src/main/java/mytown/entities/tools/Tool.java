@@ -3,6 +3,7 @@ package mytown.entities.tools;
 import mytown.core.utils.PlayerUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
+import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.init.Items;
@@ -30,8 +31,9 @@ public abstract class Tool {
 
     public abstract void onItemUse(int dim, int x, int y, int z, int face);
 
-    public void onShiftRightClick() {
+    protected abstract boolean hasPermission(Town town, int dim, int x, int y, int z);
 
+    public void onShiftRightClick() {
     }
 
     public ItemStack getItemStack() {

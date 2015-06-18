@@ -8,6 +8,7 @@ import mytown.entities.*;
 import mytown.handlers.VisualsHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
+import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -41,14 +42,10 @@ public class PlotSelectionTool extends Tool {
 
     @Override
     public void onItemUse(int dim, int x, int y, int z, int face) {
-        TownBlock tb = getDatasource().getBlock(dim, x >> 4, z >> 4);
-        if (tb == null || tb.getTown() != owner.getSelectedTown() && selectionFirst != null || selectionFirst != null && tb.getTown() != selectionFirst.town) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selection.outside"));
-            return;
-        }
+        Town town = MyTownUtils.getTownAtPosition(dim, x >> 4, z >> 4);
 
-        if (!tb.getTown().canResidentMakePlot(owner)) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", tb.getTown().getMaxPlots()));
+        if(!hasPermission(town, dim, x, y, z)) {
+            resetSelection(true, 0);
             return;
         }
 
@@ -68,6 +65,7 @@ public class PlotSelectionTool extends Tool {
         } else {
             selectionSecond = new Selection(dim, x, y, z);
             createPlotFromSelection();
+            deleteItemStack();
         }
     }
 
@@ -92,6 +90,19 @@ public class PlotSelectionTool extends Tool {
                 }
             }
         }
+    }
+
+    @Override
+    protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
+        if (town == null || town != owner.getSelectedTown() && selectionFirst != null || selectionFirst != null && town != selectionFirst.town) {
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selection.outside"));
+            return false;
+        }
+        if (!town.canResidentMakePlot(owner)) {
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.getMaxPlots()));
+            return false;
+        }
+        return true;
     }
 
     private boolean expandVertically() {

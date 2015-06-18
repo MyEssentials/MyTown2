@@ -194,11 +194,7 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.plot.perm.whitelist",
                 parentName = "mytown.cmd.everyone.plot.perm")
         public static void plotPermWhitelistCommand(ICommandSender sender, List<String> args) {
-            if (args.size() == 0)
-                throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist");
-
             Resident res = getDatasource().getOrMakeResident(sender);
-            Plot plot = getPlotAtResident(res);
 
             res.setCurrentTool(new WhitelisterTool(res));
             res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
