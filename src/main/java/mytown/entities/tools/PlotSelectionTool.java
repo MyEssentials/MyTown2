@@ -102,6 +102,12 @@ public class PlotSelectionTool extends Tool {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.getMaxPlots()));
             return false;
         }
+        for(Plot plot : town.getPlots()) {
+            if(plot.getName().equals(plotName)) {
+                owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.name", plotName));
+                return false;
+            }
+        }
         return true;
     }
 
