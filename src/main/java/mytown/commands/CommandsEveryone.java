@@ -221,10 +221,9 @@ public class CommandsEveryone extends Commands {
             Plot plot = getPlotAtResident(res);
 
             plot.setName(args.get(0));
-
             getDatasource().savePlot(plot);
 
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.renamed"); // Maybe give more info about the plot?
+            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.renamed"));
         }
 
         @CommandNode(

@@ -131,9 +131,12 @@ public class MyTown {
         CommandManager.registerCommands(CommandsAssistant.class, m);
         if (Config.modifiableRanks)
             CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, m);
-        if(Config.enablePlots)
-            CommandManager.registerCommands(CommandsEveryone.Plots.class, m);
         CommandManager.registerCommands(CommandsAdmin.class);
+        if(Config.enablePlots) {
+            CommandManager.registerCommands(CommandsEveryone.Plots.class, m);
+            CommandManager.registerCommands(CommandsAdmin.Plots.class);
+        }
+
         CommandManager.registerCommands(CommandsOutsider.class, m);
     }
 

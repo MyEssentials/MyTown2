@@ -248,6 +248,13 @@ mytown.adm.cmd.err.item=&cYou need to be holding an item in hand that will be us
 
 # /ta plot
 mytown.adm.cmd.usage.plot.show=&3/ta plot show <townName>
+mytown.adm.cmd.usage.plot.perm.set=&3/ta plot perm set <townName> <plotName> <flag> <value>
+mytown.adm.cmd.usage.plot.perm.list=&3/ta plot perm list <townName> <plotName>
+mytown.adm.cmd.usage.plot.rename=&3/ta plot rename <townName> <plotName> <newName>
+mytown.adm.cmd.usage.plot.add=&3/ta plot add member|owner <townName> <plotName> <resident>
+mytown.adm.cmd.usage.plot.remove=&3/ta plot remove <townName> <plotName> <resident>
+mytown.adm.cmd.usage.plot.info=&3/ta plot info <townName> <plotName>
+mytown.adm.cmd.usage.plot.delete=&3/ta plot delete <townName> <plotName>
 
 # /ta borders
 mytown.adm.cmd.usage.borders.show=&3/ta borders show <townName>
