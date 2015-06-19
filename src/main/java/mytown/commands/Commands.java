@@ -250,6 +250,14 @@ public abstract class Commands {
         return plot;
     }
 
+    public static Plot getPlotFromName(Town town, String name) {
+        Plot plot = town.getPlot(name);
+        if(plot == null)  {
+            throw new MyTownCommandException("mytown.cmd.err.plot.notExists", name);
+        }
+        return plot;
+    }
+
     public static FlagType getFlagTypeFromName(String name) {
         try {
             return FlagType.valueOf(name.toUpperCase());

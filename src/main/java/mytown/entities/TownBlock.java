@@ -109,6 +109,14 @@ public class TownBlock implements IPlotsContainer {
         }
         return null;
     }
+    @Override
+    public Plot getPlot(String name) {
+        for(Plot plot : plots) {
+            if(plot.getName().equals(name))
+                return plot;
+        }
+        return null;
+    }
 
     /* ----- Helpers ----- */
 

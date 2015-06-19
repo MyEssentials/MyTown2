@@ -2,6 +2,7 @@ package mytown.commands;
 
 import mytown.config.Config;
 import mytown.core.utils.ChatUtils;
+import mytown.core.utils.PlayerUtils;
 import mytown.core.utils.StringUtils;
 import mytown.core.command.Command;
 import mytown.core.command.CommandNode;

@@ -20,4 +20,6 @@ public interface IPlotsContainer {
      * Returns the Plot in the dimension, and at the given coords (non-chunk coords)
      */
     Plot getPlotAtCoords(int dim, int x, int y, int z);
+
+    Plot getPlot(String name);
 }

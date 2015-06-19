@@ -283,6 +283,15 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
         return null;
     }
 
+    @Override
+    public Plot getPlot(String name) {
+        for(Plot plot : plots) {
+            if(plot.getName().equals(name))
+                return plot;
+        }
+        return null;
+    }
+
     public Plot getPlotAtResident(Resident res) {
         /*
         MyTown.instance.log.info("Floor: " + Math.floor(res.getPlayer().posX) + ", " + Math.floor(res.getPlayer().posY) + ", " + Math.floor(res.getPlayer().posZ));
