@@ -10,7 +10,9 @@ import mytown.protection.segment.*;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
+import mytown.protection.segment.getter.Caller;
 import mytown.protection.segment.getter.Getters;
+import net.minecraft.entity.EntityLivingBase;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -102,6 +104,10 @@ public class ProtectionParser {
         segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityCreeper.class, getters, FlagType.EXPLOSIONS, false, null, EntityType.TRACKED));
         getters = new Getters();
         getters.addConstant("range", 5);
+        List<Caller> callers = new ArrayList<Caller>();
+        callers.add(new Caller("field_94084_b", Caller.CallerType.FIELD, null));
+        callers.add(new Caller("func_70005_c_", Caller.CallerType.METHOD, null));
+        getters.addCallers("owner", callers);
         segments.add(new SegmentEntity(net.minecraft.entity.item.EntityTNTPrimed.class, getters, FlagType.EXPLOSIONS, false, null, EntityType.TRACKED));
         segments.add(new SegmentEntity(net.minecraft.entity.item.EntityItemFrame.class, new Getters(), FlagType.PVE, false, null, EntityType.PROTECT));
 
