@@ -294,12 +294,14 @@ public class VisualsHandler {
         }
     }
 
-    public boolean isBlockMarked(int x, int y, int z, int dim) {
+    public boolean isBlockMarked(int x, int y, int z, int dim, EntityPlayerMP player) {
         for(VisualObject visualObject : markedBlocks) {
-            for (BlockCoords coord : visualObject.blockCoords) {
-                if (coord.x == x && coord.y == y && coord.z == z && coord.dim == dim) {
-                    coord.packetSent = false;
-                    return true;
+            if(visualObject.player == player) {
+                for (BlockCoords coord : visualObject.blockCoords) {
+                    if (coord.x == x && coord.y == y && coord.z == z && coord.dim == dim) {
+                        coord.packetSent = false;
+                        return true;
+                    }
                 }
             }
         }
