@@ -132,53 +132,55 @@ public class Protection {
         for(SegmentEntity segment : segmentsEntities) {
             if (segment.getCheckClass().isAssignableFrom(entity.getClass())) {
                 if(segment.getType() == EntityType.TRACKED) {
-                    int range = segment.getRange(entity);
-                    TownBlock block;
-                    Resident owner = segment.getOwner(entity);
-                    if(range == 0) {
-                        block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-                        if(block == null) {
-                            if(owner == null) {
-                                if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue()))
-                                    return true;
-                            } else {
-                                if(!Wild.instance.checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
-                                    return true;
-                            }
-                        } else {
-                            if(owner == null) {
-                                if (block.getTown().getValueAtCoords(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ), segment.getFlag()).equals(segment.getDenialValue()))
-                                    return true;
-                            } else {
-                                if(!block.getTown().checkPermission(owner, segment.getFlag(), segment.getDenialValue(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))
-                                    return true;
-                            }
-                        }
-                    } else {
-                        List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
-                        // Just so that it doesn't check more than once for Wild permissions
-                        boolean inWild = false;
-                        for (ChunkPos chunk : chunks) {
-                            block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
+                    if (segment.checkCondition(entity)) {
+                        int range = segment.getRange(entity);
+                        TownBlock block;
+                        Resident owner = segment.getOwner(entity);
+                        if (range == 0) {
+                            block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                             if (block == null) {
-                                inWild = true;
-                            } else {
-                                if(owner == null) {
-                                    if (block.getTown().getValue(segment.getFlag()).equals(segment.getDenialValue()))
+                                if (owner == null) {
+                                    if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue()))
                                         return true;
                                 } else {
-                                    if (!block.getTown().checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
+                                    if (!Wild.instance.checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
+                                        return true;
+                                }
+                            } else {
+                                if (owner == null) {
+                                    if (block.getTown().getValueAtCoords(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ), segment.getFlag()).equals(segment.getDenialValue()))
+                                        return true;
+                                } else {
+                                    if (!block.getTown().checkPermission(owner, segment.getFlag(), segment.getDenialValue(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))
                                         return true;
                                 }
                             }
-                        }
-                        if(inWild) {
-                            if (owner == null) {
-                                if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue()))
-                                    return true;
-                            } else {
-                                if (!Wild.instance.checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
-                                    return true;
+                        } else {
+                            List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
+                            // Just so that it doesn't check more than once for Wild permissions
+                            boolean inWild = false;
+                            for (ChunkPos chunk : chunks) {
+                                block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
+                                if (block == null) {
+                                    inWild = true;
+                                } else {
+                                    if (owner == null) {
+                                        if (block.getTown().getValue(segment.getFlag()).equals(segment.getDenialValue()))
+                                            return true;
+                                    } else {
+                                        if (!block.getTown().checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
+                                            return true;
+                                    }
+                                }
+                            }
+                            if (inWild) {
+                                if (owner == null) {
+                                    if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue()))
+                                        return true;
+                                } else {
+                                    if (!Wild.instance.checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
+                                        return true;
+                                }
                             }
                         }
                     }

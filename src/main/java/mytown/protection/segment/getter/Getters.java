@@ -174,7 +174,7 @@ public class Getters {
             if(returnType == Integer.class)
                 lastInstance = tryConvert(lastInstance);
 
-            if(!returnType.isAssignableFrom(lastInstance.getClass()) || callerList.get(callerList.size() - 1).getValueType() != null && !callerList.get(callerList.size() - 1).getValueType().isAssignableFrom(lastInstance.getClass()))
+            if(returnType != Object.class && (!returnType.isAssignableFrom(lastInstance.getClass()) || callerList.get(callerList.size() - 1).getValueType() != null && !callerList.get(callerList.size() - 1).getValueType().isAssignableFrom(lastInstance.getClass())))
                 throw new GetterException("[Segment:"+ segmentName +"] Failed to get " + returnType.getSimpleName() + " type in getter: " + callerName);
             return lastInstance;
         } catch(NoSuchFieldException nfex) {
