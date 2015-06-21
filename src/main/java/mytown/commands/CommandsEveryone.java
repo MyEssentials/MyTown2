@@ -41,7 +41,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.leave",
             parentName = "mytown.cmd")
     public static void leaveCommand(ICommandSender sender, List<String> args) {
-        if (args.isEmpty())
+        if (!args.isEmpty())
             callSubFunctions(sender, args, "mytown.cmd.everyone.leave");
         else {
             Resident res = getDatasource().getOrMakeResident(sender);
