@@ -178,7 +178,7 @@ public class Protections {
                 if(currentPlot != null && (lastTickPlot == null || currentPlot != lastTickPlot)) {
                     res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.enter", currentPlot.getName()));
                 } else if(currentPlot == null && lastTickPlot != null) {
-                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.enter", EnumChatFormatting.RED + "NONE"));
+                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.enter", EnumChatFormatting.RED + "Unassigned"));
                 }
             }
 
