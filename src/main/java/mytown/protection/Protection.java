@@ -1,6 +1,8 @@
 package mytown.protection;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import mytown.MyTown;
+import mytown.core.entities.Volume;
 import mytown.core.utils.WorldUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
@@ -21,8 +23,11 @@ import mytown.util.exceptions.GetterException;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -191,9 +196,9 @@ public class Protection {
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
             if(segment.getType() == ItemType.RIGHT_CLICK_BLOCK && segment.getCheckClass().isAssignableFrom(item.getItem().getClass())) {
+                ForgeDirection direction = ForgeDirection.getOrientation(face);
                 if(segment.isOnAdjacent()) {
-                    ForgeDirection dir = ForgeDirection.getOrientation(face);
-                    bp = new BlockPos(bp.getX() + dir.offsetX, bp.getY() + dir.offsetY, bp.getZ() + dir.offsetZ, bp.getDim());
+                    bp = new BlockPos(bp.getX() + direction.offsetX, bp.getY() + direction.offsetY, bp.getZ() + direction.offsetZ, bp.getDim());
                 }
                 try {
                     if (segment.checkCondition(item)) {
@@ -204,11 +209,15 @@ public class Protection {
                             if(block == null) {
                                 if (!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                     res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
+                                    if(segment.hasClientUpdate())
+                                        sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
                                     return true;
                                 }
                             } else {
                                 if (!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
                                     res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ()));
+                                    if(segment.hasClientUpdate())
+                                        sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
                                     return true;
                                 }
                             }
@@ -222,12 +231,16 @@ public class Protection {
                                 } else {
                                     if (!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                         res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
+                                        if(segment.hasClientUpdate())
+                                            sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
                                         return true;
                                     }
                                 }
                             }
                             if (inWild && !Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                 res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
+                                if(segment.hasClientUpdate())
+                                    sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
                                 return true;
                             }
                         }
@@ -396,11 +409,15 @@ public class Protection {
                     if(block == null) {
                         if(!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
                             res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
+                            if(segment.hasClientUpdate())
+                                sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
                             return true;
                         }
                     } else {
                         if(!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
                             res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ()));
+                            if(segment.hasClientUpdate())
+                                sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
                             return true;
                         }
                     }
@@ -410,6 +427,56 @@ public class Protection {
 
         return false;
     }
+
+    public void sendClientUpdate(Volume updateVolume, BlockPos center, EntityPlayerMP player, ForgeDirection face) {
+        World world = DimensionManager.getWorld(center.getDim());
+        int x, y, z;
+
+        if(face != null)
+            updateVolume = translateVolume(updateVolume, face);
+
+        for (int i = updateVolume.getMinX(); i <= updateVolume.getMaxX(); i++) {
+            for (int j = updateVolume.getMinY(); j <= updateVolume.getMaxY(); j++) {
+                for (int k = updateVolume.getMinZ(); k <= updateVolume.getMaxZ(); k++) {
+                    x = center.getX() + i;
+                    y = center.getY() + j;
+                    z = center.getZ() + k;
+
+                    S23PacketBlockChange packet = new S23PacketBlockChange(x, y, z, world);
+                    packet.field_148884_e = world.getBlockMetadata(x, y, z);
+                    FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
+                }
+            }
+        }
+    }
+
+    public Volume translateVolume(Volume volume, ForgeDirection direction) {
+        if(direction == ForgeDirection.UNKNOWN)
+            return volume;
+
+        switch (direction) {
+            case DOWN:
+                volume = new Volume(volume.getMinX(), -volume.getMaxZ(), volume.getMinY(), volume.getMaxX(), volume.getMinZ(), volume.getMaxY());
+                break;
+            case UP:
+                volume = new Volume(volume.getMinX(), volume.getMinZ(), volume.getMinY(), volume.getMaxX(), volume.getMaxZ(), volume.getMaxY());
+                break;
+            case NORTH:
+                volume = new Volume(volume.getMinX(), volume.getMinY(), - volume.getMaxZ(), volume.getMaxX(), volume.getMaxY(), volume.getMinZ());
+                break;
+            case WEST:
+                volume = new Volume(- volume.getMaxZ(), volume.getMinY(), volume.getMinX(), volume.getMinZ(), volume.getMaxY(), volume.getMaxX());
+                break;
+            case EAST:
+                volume = new Volume(volume.getMinZ(), volume.getMinY(), volume.getMinX(), volume.getMaxZ(), volume.getMaxY(), volume.getMaxX());
+                break;
+            case SOUTH:
+                // The orientation on South is already the correct one, no translation needed.
+                break;
+        }
+        return volume;
+    }
+
 
     /**
      * Gets the flags which the type of TileEntity is checked against.

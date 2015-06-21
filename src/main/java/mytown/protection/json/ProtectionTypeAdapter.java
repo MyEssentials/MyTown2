@@ -7,6 +7,7 @@ import com.google.gson.stream.JsonWriter;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
+import mytown.core.entities.Volume;
 import mytown.entities.flag.FlagType;
 import mytown.protection.Protection;
 import mytown.protection.segment.*;
@@ -91,6 +92,20 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             }
             if(segment.getConditionString() != null)
                 out.name("condition").value(StringUtils.join(segment.getConditionString(), " "));
+            if(segment.hasClientUpdate()) {
+                out.name("clientUpdate");
+                out.beginObject();
+                out.name("coords");
+                out.beginArray();
+                out.value(segment.getClientUpdateCoords().getMinX());
+                out.value(segment.getClientUpdateCoords().getMinY());
+                out.value(segment.getClientUpdateCoords().getMinZ());
+                out.value(segment.getClientUpdateCoords().getMaxX());
+                out.value(segment.getClientUpdateCoords().getMaxY());
+                out.value(segment.getClientUpdateCoords().getMaxZ());
+                out.endArray();
+                out.endObject();
+            }
             for (Map.Entry<String, List<Caller>> entry : segment.getGetters().getCallersMap().entrySet()) {
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
@@ -150,6 +165,21 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
             out.name("onAdjacent").value(segment.isOnAdjacent());
             if(segment.getConditionString() != null)
                 out.name("condition").value(StringUtils.join(segment.getConditionString(), " "));
+            if(segment.hasClientUpdate()) {
+                out.name("clientUpdate");
+                out.beginObject();
+                out.name("coords");
+                out.beginArray();
+                out.value(segment.getClientUpdateCoords().getMinX());
+                out.value(segment.getClientUpdateCoords().getMinY());
+                out.value(segment.getClientUpdateCoords().getMinZ());
+                out.value(segment.getClientUpdateCoords().getMaxX());
+                out.value(segment.getClientUpdateCoords().getMaxY());
+                out.value(segment.getClientUpdateCoords().getMaxZ());
+                out.endArray();
+                out.name("isDirectional").value(segment.isDirectionalClientUpdate());
+                out.endObject();
+            }
             out.name("flag");
             if(segment.getFlag().getType() == Boolean.class && segment.getDenialValue() == Boolean.FALSE) {
                 out.value(segment.getFlag().toString());
@@ -229,6 +259,9 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                     FlagType flag = null;
                     Object denialValue = null;
 
+                    Volume clientUpdateCoords = null;
+                    boolean directionalClientUpdate = false;
+
                     boolean isAdjacent = false;
                     boolean hasOwner = false;
                     int meta = -1;
@@ -302,6 +335,19 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                     isAdjacent = in.nextBoolean();
                                     continue;
                                 }
+                                if("clientUpdate".equals(nextName)) {
+                                    in.beginObject();
+                                    if("coords".equals(in.nextName())) {
+                                        in.beginArray();
+                                        clientUpdateCoords = new Volume(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt());
+                                        in.endArray();
+                                    }
+                                    if(in.peek() == JsonToken.NAME && "directional".equals(in.nextName())) {
+                                        directionalClientUpdate = in.nextBoolean();
+                                    }
+                                    in.endObject();
+                                    continue;
+                                }
 
                             }
                             if ("block".equals(type)) {
@@ -313,6 +359,16 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 	blockType = BlockType.valueOf(in.nextString());
                                     if(blockType == null)
                                         throw new SegmentException("[Segment: " + clazz + "] Invalid block type.");
+                                    continue;
+                                }
+                                if("clientUpdate".equals(nextName)) {
+                                    in.beginObject();
+                                    if("coords".equals(in.nextName())) {
+                                        in.beginArray();
+                                        clientUpdateCoords = new Volume(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt());
+                                        in.endArray();
+                                    }
+                                    in.endObject();
                                     continue;
                                 }
                             }
@@ -360,13 +416,13 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                         MyTown.instance.LOG.info("   itemType is not specified, defaulting to 'RIGHT_CLICK_BLOCK'.");
                                         itemType = ItemType.RIGHT_CLICK_BLOCK;
                                     }
-                                    segment = new SegmentItem(clazz, getters, flag, denialValue, condition, itemType, isAdjacent);
+                                    segment = new SegmentItem(clazz, getters, flag, denialValue, condition, itemType, isAdjacent, clientUpdateCoords, directionalClientUpdate);
                                 } else if ("block".equals(type)) {
                                     if(blockType == null) {
                                         MyTown.instance.LOG.info("   blockType is not specified, defaulting to 'RIGHT_CLICK'.");
                                         blockType = BlockType.RIGHT_CLICK;
                                     }
-                                    segment = new SegmentBlock(clazz, getters, flag, denialValue, condition, blockType, meta);
+                                    segment = new SegmentBlock(clazz, getters, flag, denialValue, condition, blockType, meta, clientUpdateCoords);
                                 }
                             }
                         } catch (SegmentException ex) {
