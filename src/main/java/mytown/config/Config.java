@@ -5,6 +5,7 @@ import mytown.core.utils.ClassUtils;
 import mytown.core.config.ConfigProperty;
 import net.minecraft.init.Items;
 
+@SuppressWarnings({"squid:S1444"}) // Suppresses SonarQube warnings to mark fields in Config as final.
 public class Config {
 
     /* ----- General Config ----- */
