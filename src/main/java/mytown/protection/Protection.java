@@ -406,22 +406,20 @@ public class Protection {
             if(segment.getCheckClass().isAssignableFrom(blockType.getClass())
                     && (segment.getMeta() == -1 || segment.getMeta() == DimensionManager.getWorld(bp.getDim()).getBlockMetadata(bp.getX(), bp.getY(), bp.getZ()))
                     && (segment.getType() == BlockType.ANY_CLICK || segment.getType() == BlockType.RIGHT_CLICK && action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || segment.getType() == BlockType.LEFT_CLICK && action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)) {
-                if(segment.getFlag() == FlagType.ACCESS || segment.getFlag() == FlagType.ACTIVATE) {
-                    TownBlock block = getDatasource().getBlock(bp.getDim(), bp.getX() >> 4, bp.getZ() >> 4);
-                    if(block == null) {
-                        if(!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                            res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
-                            if(segment.hasClientUpdate())
-                                sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
-                            return true;
-                        }
-                    } else {
-                        if(!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
-                            res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ()));
-                            if(segment.hasClientUpdate())
-                                sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
-                            return true;
-                        }
+                TownBlock block = getDatasource().getBlock(bp.getDim(), bp.getX() >> 4, bp.getZ() >> 4);
+                if(block == null) {
+                    if(!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                        res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
+                        if(segment.hasClientUpdate())
+                            sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
+                        return true;
+                    }
+                } else {
+                    if(!block.getTown().checkPermission(res, segment.getFlag(), segment.getDenialValue(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
+                        res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ()));
+                        if(segment.hasClientUpdate())
+                            sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
+                        return true;
                     }
                 }
             }
