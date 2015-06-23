@@ -123,6 +123,7 @@ public class Protections {
                         for (Protection prot : protectionList) {
                             if (prot.isEntityTracked(entity.getClass()) && prot.checkEntity(entity)) {
                                 entity.setDead();
+                                break;
                             }
                         }
                     }
@@ -140,6 +141,7 @@ public class Protections {
                             te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
                             te.invalidate();
                             MyTown.instance.LOG.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
+                            break;
                         }
                     }
                 }
@@ -209,6 +211,7 @@ public class Protections {
                     if(prot.isEntityProtected(ev.target.getClass())) {
                         ev.setCanceled(true);
                         res.sendMessage(FlagType.PVE.getLocalizedProtectionDenial());
+                        return;
                     }
                 }
             }
@@ -226,6 +229,7 @@ public class Protections {
                     if (prot.isEntityProtected(ev.target.getClass())) {
                         ev.setCanceled(true);
                         res.protectionDenial(FlagType.PVE.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), ev.target.dimension, (int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int) Math.floor(ev.target.posZ)));
+                        return;
                     }
                 }
             }
