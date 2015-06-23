@@ -191,9 +191,7 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerAttackEntityEvent(AttackEntityEvent ev) {
-        if(ev.entity.worldObj.isRemote)
-            return;
-        if (ev.isCanceled())
+        if(ev.entity.worldObj.isRemote || ev.isCanceled())
             return;
         TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.target.dimension, ev.target.chunkCoordX, ev.target.chunkCoordZ);
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
@@ -238,9 +236,7 @@ public class Protections {
 
     @SubscribeEvent
     public void onBlockPlacement(BlockEvent.PlaceEvent ev) {
-        if(ev.world.isRemote)
-            return;
-        if (ev.isCanceled())
+        if(ev.world.isRemote || ev.isCanceled())
             return;
         if(onAnyBlockPlacement(ev.player, ev.itemInHand, ev.placedBlock, ev.world.provider.dimensionId, ev.x, ev.y, ev.z))
             ev.setCanceled(true);
@@ -248,9 +244,7 @@ public class Protections {
 
     @SubscribeEvent
     public void onMultiBlockPlacement(BlockEvent.MultiPlaceEvent ev) {
-        if(ev.world.isRemote)
-            return;
-        if (ev.isCanceled())
+        if(ev.world.isRemote || ev.isCanceled())
             return;
         if(onAnyBlockPlacement(ev.player, ev.itemInHand, ev.placedBlock, ev.world.provider.dimensionId, ev.x, ev.y, ev.z))
             ev.setCanceled(true);
@@ -322,9 +316,7 @@ public class Protections {
 
     @SubscribeEvent
     public void onEntityInteract(EntityInteractEvent ev) {
-        if(ev.entity.worldObj.isRemote)
-            return;
-        if (ev.isCanceled())
+        if(ev.entity.worldObj.isRemote || ev.isCanceled())
             return;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
         ItemStack currStack = ev.entityPlayer.getHeldItem();
@@ -351,9 +343,7 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent ev) {
-        if (ev.entityPlayer.worldObj.isRemote)
-            return;
-        if (ev.isCanceled())
+        if (ev.entityPlayer.worldObj.isRemote || ev.isCanceled())
             return;
 
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
@@ -420,9 +410,7 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
-        if(ev.world.isRemote)
-            return;
-        if (ev.isCanceled())
+        if(ev.world.isRemote || ev.isCanceled())
             return;
         TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer());
@@ -466,9 +454,7 @@ public class Protections {
     @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void onItemPickup(EntityItemPickupEvent ev) {
-        if(ev.entity.worldObj.isRemote)
-            return;
-        if (ev.isCanceled())
+        if(ev.entity.worldObj.isRemote || ev.isCanceled())
             return;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
         TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.entityPlayer.dimension, ev.entityPlayer.chunkCoordX, ev.entityPlayer.chunkCoordZ);
@@ -495,9 +481,7 @@ public class Protections {
 
     @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent ev) {
-        if(ev.entity.worldObj.isRemote)
-            return;
-        if (ev.isCanceled())
+        if(ev.entity.worldObj.isRemote || ev.isCanceled())
             return;
         if(ev.entityLiving instanceof EntityPlayer) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.entityLiving.dimension, ev.entityLiving.chunkCoordX, ev.entityLiving.chunkCoordZ);
@@ -534,9 +518,7 @@ public class Protections {
 
     @SubscribeEvent
     public void onBucketFill(FillBucketEvent ev) {
-        if(ev.entity.worldObj.isRemote)
-            return;
-        if (ev.isCanceled())
+        if(ev.entity.worldObj.isRemote || ev.isCanceled())
             return;
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
         TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
