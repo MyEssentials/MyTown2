@@ -30,6 +30,8 @@ public class ExtraEventsHandler {
     public void onExplosion(ExplosionEvent.Start ev) {
         if(ev.world.isRemote)
             return;
+        if (ev.isCanceled())
+            return;
         List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) (ev.explosion.explosionX - ev.explosion.explosionSize - 2), (int) (ev.explosion.explosionZ - ev.explosion.explosionSize - 2), (int) (ev.explosion.explosionX + ev.explosion.explosionSize + 2), (int) (ev.explosion.explosionZ + ev.explosion.explosionSize + 2));
         for(ChunkPos chunk : chunks) {
             TownBlock block = DatasourceProxy.getDatasource().getBlock(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
