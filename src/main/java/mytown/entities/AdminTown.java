@@ -15,6 +15,6 @@ public class AdminTown extends Town {
 
     @Override
     public int getMaxBlocks() {
-        return 1000;
+        return Integer.MAX_VALUE;
     }
 }
