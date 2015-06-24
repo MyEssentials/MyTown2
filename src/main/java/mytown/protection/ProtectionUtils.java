@@ -70,9 +70,9 @@ public class ProtectionUtils {
      * Checks the item usage with all the protections
      */
     public static boolean checkItemUsage(ItemStack stack, Resident res, BlockPos bp, int face) {
-        for (Protection prot : Protections.instance.getProtectionList())
+/*        for (Protection prot : Protections.instance.getProtectionList())
             if (prot.checkItem(stack, res, bp, face))
-                return true;
+                return true;*/
         return false;
     }
 

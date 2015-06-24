@@ -191,13 +191,13 @@ public class Protection {
     }
 
     /**
-     * Checking item usage for right click on block
+     * Checking item usage for left or right click on block
      */
-    public boolean checkItem(ItemStack item, Resident res, BlockPos bp, int face) {
+    public boolean checkItem(ItemStack item, ItemType type, Resident res, BlockPos bp, int face) {
 
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
-            if(segment.getType() == ItemType.RIGHT_CLICK_BLOCK && segment.getCheckClass().isAssignableFrom(item.getItem().getClass())) {
+            if(segment.getType() == type && segment.getCheckClass().isAssignableFrom(item.getItem().getClass())) {
                 ForgeDirection direction = ForgeDirection.getOrientation(face);
                 if(segment.isOnAdjacent()) {
                     bp = new BlockPos(bp.getX() + direction.offsetX, bp.getY() + direction.offsetY, bp.getZ() + direction.offsetZ, bp.getDim());

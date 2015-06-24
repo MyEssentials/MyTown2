@@ -14,6 +14,7 @@ import mytown.core.utils.*;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
+import mytown.protection.segment.enums.ItemType;
 import mytown.proxies.LocalizationProxy;
 import mytown.thread.ThreadPlacementCheck;
 import mytown.proxies.DatasourceProxy;
@@ -387,8 +388,9 @@ public class Protections {
         // Item usage check here
         if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
             for (Protection protection : protectionList) {
-                if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
-                        ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && protection.checkItem(currentStack, res)) {
+                if (ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && protection.checkItem(currentStack, ItemType.LEFT_CLICK_BLOCK, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
+                		ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, ItemType.RIGHT_CLICK_BLOCK, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
+                		ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && protection.checkItem(currentStack, res)) {
                     ev.setCanceled(true);
                     return;
                 }
