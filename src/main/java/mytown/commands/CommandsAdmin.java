@@ -62,6 +62,7 @@ public class CommandsAdmin extends Commands {
     public static void configReloadCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.start"));
         MyTown.instance.loadConfigs();
+        getDatasource().checkAllOnStart();
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.stop"));
     }
 
