@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
 /**
  * Another attempt at the dreaded town flags :P
  */
-public class Flag<T> {
+public class Flag<T> implements Comparable<Flag<T>>{
 
     private FlagType flagType;
     private T value;
@@ -95,5 +95,10 @@ public class Flag<T> {
 
     public FlagType getFlagType() {
         return flagType;
+    }
+
+    @Override
+    public int compareTo(Flag<T> other) {
+        return this.flagType.toString().compareTo(other.flagType.toString());
     }
 }

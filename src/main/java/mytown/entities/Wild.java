@@ -6,6 +6,7 @@ import mytown.core.utils.PlayerUtils;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class Wild implements IFlagsContainer {
     @Override
     public void addFlag(Flag flag) {
         flagList.add(flag);
+        Collections.sort(flagList);
     }
 
     @Override

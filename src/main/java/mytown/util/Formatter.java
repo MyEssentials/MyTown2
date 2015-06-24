@@ -32,7 +32,7 @@ public class Formatter {
     private static final String colorSelectedTown = EnumChatFormatting.GREEN.toString();
 
     private static final String colorFlag = EnumChatFormatting.GRAY.toString();
-    private static final String colorValueConst = EnumChatFormatting.GREEN.toString();
+    private static final String colorValueConst = EnumChatFormatting.RED.toString();
     private static final String colorValueVar = EnumChatFormatting.GREEN.toString();
     private static final String colorDescription = EnumChatFormatting.GRAY.toString();
 
@@ -269,7 +269,7 @@ public class Formatter {
 
         String unconfigurableFlags = "";
         for(FlagType flagType : FlagType.values()) {
-            if(!container.hasFlag(flagType) && (!(container instanceof Plot) || !flagType.isTownOnly()) && (!(container instanceof Wild) || flagType.isWildPerm())) {
+            if(!container.hasFlag(flagType) && !((container instanceof Plot) && flagType.isTownOnly()) && !((container instanceof Wild) && !flagType.isWildPerm())) {
                 unconfigurableFlags += "\\n" + formatFlagToString(new Flag(flagType, flagType.getDefaultValue()), colorValueConst);
             }
         }
@@ -277,8 +277,10 @@ public class Formatter {
         if(formattedFlagList == null)
             formattedFlagList = "";
 
-        if(!"".equals(unconfigurableFlags))
-            formattedFlagList += "\\n" + colorAdmin + "UNCONFIGURABLE FLAGS: " + unconfigurableFlags;
+
+        //if(!"".equals(unconfigurableFlags))
+        formattedFlagList += unconfigurableFlags;
+
 
         return formattedFlagList;
     }

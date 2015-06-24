@@ -7,6 +7,7 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -142,6 +143,7 @@ public class Plot implements IFlagsContainer, IResidentsContainer {
     @Override
     public void addFlag(Flag flag) {
         flags.add(flag);
+        Collections.sort(flags);
     }
 
     @Override

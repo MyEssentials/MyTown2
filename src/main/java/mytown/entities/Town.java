@@ -317,7 +317,10 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
     /* ----- IHasFlags ------ */
 
     @Override
-    public void addFlag(Flag flag) { flags.add(flag); }
+    public void addFlag(Flag flag) {
+        flags.add(flag);
+        Collections.sort(flags);
+    }
 
     @Override
     public boolean hasFlag(FlagType type) {
