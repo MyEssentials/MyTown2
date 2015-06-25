@@ -511,7 +511,7 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
         if (plot == null || flagType.isTownOnly()) {
             return checkPermission(res, flagType, denialValue);
         } else {
-            if (plot.getValue(flagType).equals(denialValue) && !plot.hasResident(res) && !plot.residentHasFriendInPlot(res))
+            if (plot.getValue(flagType).equals(denialValue) && !plot.hasResident(res))
                 return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
@@ -522,7 +522,7 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
      */
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
-        if(getValue(flagType).equals(denialValue) && !hasResident(res) && !residentHasFriendInTown(res) && (!(Boolean)getValue(FlagType.RESTRICTIONS) || getMayor() == res)) {
+        if(getValue(flagType).equals(denialValue) && !hasResident(res) && (!(Boolean)getValue(FlagType.RESTRICTIONS) || getMayor() == res)) {
             return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
