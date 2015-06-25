@@ -17,8 +17,7 @@ Protections contained at: https://github.com/MyEssentials/MyTown2-Protections
 <h3>Jenkins</h3>
 
 MyTown2 Builds: https://ci.mineguild.net/job/MyTown2/
-
-MyEssentials-Core Builds: Currently broken, please use latest version on CurseForge: http://minecraft.curseforge.com/mc-mods/224243-myessentials-core
+MyEssentials-Core Builds: MyTown2 Builds: https://ci.mineguild.net/job/MyEssentials-Core/ 
 
 (To run this, you need both, MyTown2 and MyEssentials-Core!)
 
