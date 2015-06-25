@@ -60,11 +60,13 @@ public abstract class MyTownDatasource {
                 saveWorld(world.provider.dimensionId);
             }
         }
+        /*
         for (int dim : MyTownUniverse.instance.getWorldsList()) {
             if (DimensionManager.getWorld(dim) == null) {
                 deleteWorld(dim);
             }
         }
+        */
 
         Rank onCreationDefaultRank = null;
 
