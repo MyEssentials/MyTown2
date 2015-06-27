@@ -21,6 +21,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
@@ -658,7 +659,8 @@ public class CommandsAdmin extends Commands {
                     Block block = ((ItemBlock)player.inventory.getCurrentItem().getItem()).field_150939_a;
                     list.add(block.getClass());
                     if(block instanceof ITileEntityProvider) {
-                        list.add(((ITileEntityProvider) block).createNewTileEntity(DimensionManager.getWorld(0), 0).getClass());
+                    	TileEntity te = ((ITileEntityProvider) block).createNewTileEntity(DimensionManager.getWorld(0), 0);
+                        list.add(te == null ? TileEntity.class : te.getClass());
                     }
                 } else {
                     list.add(player.inventory.getCurrentItem().getItem().getClass());
