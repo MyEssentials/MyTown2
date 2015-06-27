@@ -139,11 +139,11 @@ public class CommandsOutsider extends Commands {
         List<Town> invites = getInvitesFromResident(res);
         Town town;
 
-        if (args.size() == 0)
+        if (args.size() == 0) {
             if(invites.size() > 1)
                 throw new MyTownCommandException("mytown.cmd.err.invite.accept");
             town = invites.get(0);
-        else {
+        } else {
             town = getTownFromName(args.get(0));
             // Basically true only if player specifies a town that is not in its invites
             if (!invites.contains(town))
