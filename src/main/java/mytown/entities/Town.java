@@ -522,7 +522,7 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
      */
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
-        if(getValue(flagType).equals(denialValue) && (!hasResident(res) || ((Boolean)getValue(FlagType.RESTRICTIONS) && getMayor() != res))) {
+        if(getValue(flagType).equals(denialValue) && (!hasResident(res) || ((Boolean)getValue(FlagType.RESTRICTIONS) && flagType != FlagType.ENTER && getMayor() != res))) {
             return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
