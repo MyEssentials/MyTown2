@@ -537,9 +537,10 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
         Plot plot = getPlotAtCoords(dim, x, y, z);
         if (plot == null) {
             if (isPointInTown(dim, x, z) && !(this instanceof AdminTown) && !residents.isEmpty()) {
-                list.add(getMayor());
-            } else {
-                return list;
+            	Resident mayor = getMayor();
+                if (mayor != null) {
+                	list.add(mayor);
+                }
             }
         } else {
             for (Resident res : plot.getOwners()) {
