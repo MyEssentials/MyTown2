@@ -287,7 +287,7 @@ public class Protection {
 
         for(Iterator<SegmentItem> it = segmentsItems.iterator(); it.hasNext();) {
             SegmentItem segment = it.next();
-            if(segment.getType() == ItemType.RIGHT_CLICK_BLOCK && segment.getCheckClass().isAssignableFrom(item.getItem().getClass())) {
+            if(segment.getType() == ItemType.RIGHT_CLICK_ENTITY && segment.getCheckClass().isAssignableFrom(item.getItem().getClass())) {
                 try {
                     if (segment.checkCondition(item)) {
                         int range = segment.getRange(item);
