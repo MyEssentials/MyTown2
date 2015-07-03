@@ -15,7 +15,8 @@ public class Caller {
     }
 
     public Class<?> getValueType() {
-        return valueType == null ? Integer.class : valueType;
+        //return valueType == null ? Integer.class : valueType;
+        return valueType;
     }
 
     public CallerType getCallerType() {
