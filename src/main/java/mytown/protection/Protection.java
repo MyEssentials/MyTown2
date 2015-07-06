@@ -202,6 +202,9 @@ public class Protection {
                 if(segment.isOnAdjacent()) {
                     bp = new BlockPos(bp.getX() + direction.offsetX, bp.getY() + direction.offsetY, bp.getZ() + direction.offsetZ, bp.getDim());
                 }
+                if (!segment.isDirectionalClientUpdate()) {
+                	direction = null;
+                }
                 try {
                     if (segment.checkCondition(item)) {
                         int range = segment.getRange(item);
