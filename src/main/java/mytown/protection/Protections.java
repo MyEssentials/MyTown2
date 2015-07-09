@@ -153,6 +153,10 @@ public class Protections {
     private void checkPlayer(EntityPlayerMP player, Town town) {
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
         EntityPos lastTickPos = lastTickPlayerPos.get(player);
+        
+        if (res == null) {
+        	return;
+        }
 
         if (town != null && !town.checkPermission(res, FlagType.ENTER, false, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ))) {
             res.protectionDenial(FlagType.ENTER.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ)));
@@ -386,7 +390,7 @@ public class Protections {
         */
 
         // Item usage check here
-        if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
+        if (currentStack != null/* && !(currentStack.getItem() instanceof ItemBlock)*/) {
             for (Protection protection : protectionList) {
                 if (ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && protection.checkItem(currentStack, ItemType.LEFT_CLICK_BLOCK, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
                 		ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, ItemType.RIGHT_CLICK_BLOCK, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
