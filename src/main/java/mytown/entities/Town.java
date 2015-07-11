@@ -508,10 +508,10 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue, int dim, int x, int y, int z) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
-        if (plot == null || (flagType.isTownOnly() && flagType != FlagType.MODIFY)) {
+        if (plot == null) {
             return checkPermission(res, flagType, denialValue);
-        } else {
-            if (plot.getValue(flagType).equals(denialValue) && !plot.hasResident(res))
+        } else if (flagType.isTownOnly()) {
+            if (checkPermission(res, flagType, denialValue) || plot.hasResident(res))
                 return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
