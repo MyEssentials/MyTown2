@@ -511,10 +511,10 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
         if (plot == null) {
             return checkPermission(res, flagType, denialValue);
         } else if (flagType.isTownOnly()) {
-            if (checkPermission(res, flagType, denialValue) || plot.hasResident(res))
-                return PlayerUtils.isOp(res.getPlayer());
+            return checkPermission(res, flagType, denialValue) || plot.hasResident(res);
+        } else {
+        	return !plot.getValue(flagType).equals(denialValue) || plot.hasResident(res) || PlayerUtils.isOp(res.getPlayer());
         }
-        return true;
     }
 
     /**
