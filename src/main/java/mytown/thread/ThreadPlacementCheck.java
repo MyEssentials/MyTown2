@@ -2,7 +2,7 @@ package mytown.thread;
 
 import mytown.entities.Resident;
 import mytown.protection.ProtectionUtils;
-import mytown.core.entities.BlockPos;
+import myessentials.entities.BlockPos;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;

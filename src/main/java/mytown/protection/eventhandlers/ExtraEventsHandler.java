@@ -1,12 +1,12 @@
 package mytown.protection.eventhandlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import mytown.core.utils.WorldUtils;
+import myessentials.utils.WorldUtils;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.core.entities.ChunkPos;
+import myessentials.entities.ChunkPos;
 import net.minecraftforge.event.world.ExplosionEvent;
 
 import java.util.List;

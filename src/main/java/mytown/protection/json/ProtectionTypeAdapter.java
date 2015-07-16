@@ -7,7 +7,7 @@ import com.google.gson.stream.JsonWriter;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
-import mytown.core.entities.Volume;
+import myessentials.entities.Volume;
 import mytown.entities.flag.FlagType;
 import mytown.protection.Protection;
 import mytown.protection.segment.*;

@@ -1,6 +1,6 @@
 package mytown.protection.segment;
 
-import mytown.core.entities.Volume;
+import myessentials.entities.Volume;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.getter.Getters;

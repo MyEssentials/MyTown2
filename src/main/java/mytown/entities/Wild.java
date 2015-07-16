@@ -2,7 +2,7 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import mytown.api.interfaces.IFlagsContainer;
-import mytown.core.utils.PlayerUtils;
+import myessentials.utils.PlayerUtils;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import java.util.ArrayList;

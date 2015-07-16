@@ -1,10 +1,12 @@
 package mytown.commands;
 
+import myessentials.utils.ChatUtils;
+import myessentials.utils.StringUtils;
+import myessentials.utils.WorldUtils;
 import mytown.MyTown;
-import mytown.core.entities.ChunkPos;
-import mytown.core.utils.*;
-import mytown.core.command.Command;
-import mytown.core.command.CommandNode;
+import myessentials.entities.ChunkPos;
+import myessentials.command.Command;
+import myessentials.command.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;

@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mytown.config.Config;
-import mytown.core.utils.ChatUtils;
-import mytown.core.command.CommandNode;
-import mytown.datasource.MyTownUniverse;
+import myessentials.utils.ChatUtils;
+import myessentials.command.CommandNode;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;

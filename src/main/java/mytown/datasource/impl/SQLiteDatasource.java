@@ -1,6 +1,6 @@
 package mytown.datasource.impl;
 
-import mytown.core.config.ConfigProperty;
+import myessentials.config.ConfigProperty;
 import mytown.datasource.MyTownDatasourceSQL;
 import mytown.util.Constants;
 

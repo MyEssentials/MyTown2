@@ -2,7 +2,7 @@ package mytown.entities.tools;
 
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.core.thread.DelayedThread;
+import myessentials.thread.DelayedThread;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.handlers.VisualsHandler;

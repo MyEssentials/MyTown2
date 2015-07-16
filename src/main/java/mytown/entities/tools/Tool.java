@@ -1,6 +1,6 @@
 package mytown.entities.tools;
 
-import mytown.core.utils.PlayerUtils;
+import myessentials.utils.PlayerUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.Resident;
 import mytown.entities.Town;
