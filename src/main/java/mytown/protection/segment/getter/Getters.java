@@ -2,14 +2,18 @@ package mytown.protection.segment.getter;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
+
 import mytown.MyTown;
 import mytown.util.exceptions.GetterException;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.Field;
@@ -132,7 +136,10 @@ public class Getters {
                         lastInstance = getInfoFromFormula(caller.getElement(), instance, parameter);
                         break forLoop;
                     case NBT:
-                        if(lastInstance instanceof TileEntity) {
+                        if(lastInstance instanceof Entity) {
+                            NBTTagCompound nbt = ((Entity) lastInstance).getEntityData();
+                            lastInstance = nbt.getTag(caller.getElement());
+                        } else if(lastInstance instanceof TileEntity) {
                             NBTTagCompound nbt = new NBTTagCompound();
                             ((TileEntity) lastInstance).writeToNBT(nbt);
                             lastInstance = nbt.getTag(caller.getElement());

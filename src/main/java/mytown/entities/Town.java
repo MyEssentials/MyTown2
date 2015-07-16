@@ -508,13 +508,13 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue, int dim, int x, int y, int z) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
-        if (plot == null || flagType.isTownOnly()) {
+        if (plot == null) {
             return checkPermission(res, flagType, denialValue);
+        } else if (flagType.isTownOnly()) {
+            return checkPermission(res, flagType, denialValue) || plot.hasResident(res);
         } else {
-            if (plot.getValue(flagType).equals(denialValue) && !plot.hasResident(res))
-                return PlayerUtils.isOp(res.getPlayer());
+        	return !plot.getValue(flagType).equals(denialValue) || plot.hasResident(res) || PlayerUtils.isOp(res.getPlayer());
         }
-        return true;
     }
 
     /**
@@ -522,7 +522,7 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
      */
     @SuppressWarnings("unchecked")
     public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
-        if(getValue(flagType).equals(denialValue) && !hasResident(res) && (!(Boolean)getValue(FlagType.RESTRICTIONS) || getMayor() == res)) {
+        if(getValue(flagType).equals(denialValue) && (!hasResident(res) || ((Boolean)getValue(FlagType.RESTRICTIONS) && flagType != FlagType.ENTER && getMayor() != res))) {
             return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
@@ -537,9 +537,10 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
         Plot plot = getPlotAtCoords(dim, x, y, z);
         if (plot == null) {
             if (isPointInTown(dim, x, z) && !(this instanceof AdminTown) && !residents.isEmpty()) {
-                list.add(getMayor());
-            } else {
-                return list;
+            	Resident mayor = getMayor();
+                if (mayor != null) {
+                	list.add(mayor);
+                }
             }
         } else {
             for (Resident res : plot.getOwners()) {

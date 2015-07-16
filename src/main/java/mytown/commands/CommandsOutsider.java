@@ -124,7 +124,7 @@ public class CommandsOutsider extends Commands {
         if (args.size() == 0) {
             Formatter.sendMap(res);
         } else {
-            res.setMapOn(ChatUtils.equalsOn(args.get(0)));
+            res.setMapOn(args.get(0).equals("on"));
         }
     }
 
@@ -137,12 +137,11 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
-        if(invites.size() > 1)
-            throw new MyTownCommandException("mytown.cmd.err.invite.accept");
-
-        if (args.size() == 0)
+        if (args.size() == 0) {
+            if(invites.size() > 1)
+                throw new MyTownCommandException("mytown.cmd.err.invite.accept");
             town = invites.get(0);
-        else {
+        } else {
             town = getTownFromName(args.get(0));
             // Basically true only if player specifies a town that is not in its invites
             if (!invites.contains(town))

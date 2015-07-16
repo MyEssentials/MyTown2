@@ -1,5 +1,7 @@
 package mytown.protection;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.*;
@@ -24,6 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -34,7 +37,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -152,6 +157,10 @@ public class Protections {
     private void checkPlayer(EntityPlayerMP player, Town town) {
         Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
         EntityPos lastTickPos = lastTickPlayerPos.get(player);
+        
+        if (res == null) {
+        	return;
+        }
 
         if (town != null && !town.checkPermission(res, FlagType.ENTER, false, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ))) {
             res.protectionDenial(FlagType.ENTER.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ)));
@@ -385,7 +394,7 @@ public class Protections {
         */
 
         // Item usage check here
-        if (currentStack != null && !(currentStack.getItem() instanceof ItemBlock)) {
+        if (currentStack != null/* && !(currentStack.getItem() instanceof ItemBlock)*/) {
             for (Protection protection : protectionList) {
                 if (ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && protection.checkItem(currentStack, ItemType.LEFT_CLICK_BLOCK, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
                 		ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && protection.checkItem(currentStack, ItemType.RIGHT_CLICK_BLOCK, res, new BlockPos(x, y, z, ev.world.provider.dimensionId), ev.face) ||
@@ -542,6 +551,39 @@ public class Protections {
         }
     }
 
+    @SubscribeEvent
+    public void entityJoinWorld(EntityJoinWorldEvent ev) {
+        if (!(ev.entity instanceof EntityLivingBase) || ev.entity instanceof EntityPlayer)
+            return;
+
+        Town town = MyTownUtils.getTownAtPosition(ev.entity.dimension, (int) Math.floor(ev.entity.posX) >> 4, (int) Math.floor(ev.entity.posZ) >> 4);
+
+        if(town != null && ev.entity instanceof EntityLiving && "none".equals(town.getValueAtCoords(ev.entity.dimension, (int) Math.floor(ev.entity.posX), (int) Math.floor(ev.entity.posY), (int) Math.floor(ev.entity.posZ), FlagType.MOBS))) {
+            ev.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void specialSpawn(LivingSpawnEvent.SpecialSpawn ev) {
+        if (ev.isCanceled()) return;
+
+        Town town = MyTownUtils.getTownAtPosition(ev.entity.dimension, (int) Math.floor(ev.entity.posX) >> 4, (int) Math.floor(ev.entity.posZ) >> 4);
+
+        if(town != null && ev.entity instanceof EntityLiving && "none".equals(town.getValueAtCoords(ev.entity.dimension, (int) Math.floor(ev.entity.posX), (int) Math.floor(ev.entity.posY), (int) Math.floor(ev.entity.posZ), FlagType.MOBS))) {
+            ev.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void checkSpawn(LivingSpawnEvent.CheckSpawn ev) {
+        if (ev.getResult() == Event.Result.DENY) return;
+
+        Town town = MyTownUtils.getTownAtPosition(ev.entity.dimension, (int) Math.floor(ev.entity.posX) >> 4, (int) Math.floor(ev.entity.posZ) >> 4);
+
+        if(town != null && ev.entity instanceof EntityLiving && "none".equals(town.getValueAtCoords(ev.entity.dimension, (int) Math.floor(ev.entity.posX), (int) Math.floor(ev.entity.posY), (int) Math.floor(ev.entity.posZ), FlagType.MOBS))) {
+            ev.setResult(Event.Result.DENY);
+        }
+    }
 
     // Fired AFTER the teleport
     @SubscribeEvent

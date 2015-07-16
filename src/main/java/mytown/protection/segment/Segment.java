@@ -63,11 +63,11 @@ public class Segment {
          */
 
         Object instance;
-        if(object instanceof ItemStack) {
-            instance = ((ItemStack) object).getItem();
-        } else {
+//        if(object instanceof ItemStack) {
+//            instance = ((ItemStack) object).getItem();
+//        } else {
             instance = object;
-        }
+//        }
         for(int i = 0; i < conditionString.length; i += 4) {
 
             // Get the boolean value of each part of the condition.
