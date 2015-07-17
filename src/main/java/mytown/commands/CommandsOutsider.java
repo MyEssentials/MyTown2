@@ -4,8 +4,8 @@ package mytown.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import myessentials.command.CommandManager;
 import mytown.config.Config;
-import myessentials.utils.ChatUtils;
 import myessentials.command.CommandNode;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -186,7 +186,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.friends",
             parentName = "mytown.cmd")
     public static void friendsCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.outsider.friends");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.outsider.friends");
     }
 
     @CommandNode(
@@ -289,7 +289,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
-        sendHelpMessage(sender, "mytown.cmd", args);
+        CommandManager.sendHelpMessage(sender, "mytown.cmd", args);
     }
 
     @CommandNode(

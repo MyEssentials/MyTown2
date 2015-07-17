@@ -1,5 +1,6 @@
 package mytown.commands;
 
+import myessentials.command.CommandManager;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
@@ -45,7 +46,7 @@ public class CommandsAdmin extends Commands {
             alias = {"ta", "townadmin"},
             opsOnlyAccess = true)
     public static void townAdminCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd");
     }
 
     @CommandNode(
@@ -54,7 +55,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
     public static void configCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.config");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.config");
     }
 
     @CommandNode(
@@ -172,7 +173,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
     public static void townCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.town");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.town");
     }
 
     @CommandNode(
@@ -181,7 +182,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
     public static void resCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.res");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.res");
     }
 
     @CommandNode(
@@ -190,7 +191,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.town",
             nonPlayers = true)
     public static void townBlocksCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.town.blocks");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.town.blocks");
     }
 
     @CommandNode(
@@ -199,7 +200,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.town.blocks",
             nonPlayers = true)
     public static void townBlocksMaxCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.town.blocks.extra");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.town.blocks.extra");
     }
 
     @CommandNode(
@@ -263,7 +264,7 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.town.blocks.farClaims",
             parentName = "mytown.adm.cmd.town.blocks")
     public static void townBlocksFarClaimsCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.town.blocks.farClaims");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.town.blocks.farClaims");
     }
 
     @CommandNode(
@@ -327,7 +328,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.res",
             nonPlayers = true)
     public static void resBlocksCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.res.blocks");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.res.blocks");
     }
 
     @CommandNode(
@@ -336,7 +337,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.res.blocks",
             nonPlayers = true)
     public static void resBlocksMaxCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.res.blocks.extra");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.res.blocks.extra");
     }
 
     @CommandNode(
@@ -420,7 +421,7 @@ public class CommandsAdmin extends Commands {
             nonPlayers = true,
             players = false)
     public static void dbCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.db");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.db");
     }
 
     @CommandNode(
@@ -446,7 +447,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
     public static void permCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.perm");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.perm");
     }
 
     @CommandNode(
@@ -455,7 +456,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.perm",
             nonPlayers = true)
     public static void permTownCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.perm.town");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.perm.town");
     }
 
     @CommandNode(
@@ -515,7 +516,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd.perm",
             nonPlayers = true)
     public static void permWildCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.perm.wild");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.perm.wild");
     }
 
     @CommandNode(
@@ -633,7 +634,7 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
-        sendHelpMessage(sender, "mytown.adm.cmd", args);
+        CommandManager.sendHelpMessage(sender, "mytown.adm.cmd", args);
     }
 
 
@@ -643,7 +644,7 @@ public class CommandsAdmin extends Commands {
         parentName = "mytown.adm.cmd",
         nonPlayers = false)
     public static void debugCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.debug");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.debug");
     }
 
     @CommandNode(
@@ -685,7 +686,7 @@ public class CommandsAdmin extends Commands {
                 permission = "mytown.adm.cmd.plot",
                 parentName = "mytown.adm.cmd")
         public static void plotCommand(ICommandSender sender, List<String> args) {
-            callSubFunctions(sender, args, "mytown.adm.cmd.plot");
+            CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.plot");
         }
 
         @CommandNode(
@@ -707,7 +708,7 @@ public class CommandsAdmin extends Commands {
                 permission = "mytown.adm.cmd.plot.perm",
                 parentName = "mytown.adm.cmd.plot")
         public static void plotPermCommand(ICommandSender sender, List<String> args) {
-            callSubFunctions(sender, args, "mytown.adm.cmd.plot.perm");
+            CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.plot.perm");
         }
 
         @CommandNode(
@@ -766,7 +767,7 @@ public class CommandsAdmin extends Commands {
                 permission = "mytown.adm.cmd.plot.add",
                 parentName = "mytown.adm.cmd.plot")
         public static void plotAddCommand(ICommandSender sender, List<String> args) {
-            callSubFunctions(sender, args, "mytown.adm.cmd.plot.add");
+            CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.plot.add");
         }
 
         @CommandNode(
@@ -888,7 +889,7 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.borders",
             parentName = "mytown.adm.cmd")
     public static void bordersCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.adm.cmd.borders");
+        CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.borders");
     }
 
     @CommandNode(

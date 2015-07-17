@@ -41,69 +41,6 @@ public abstract class Commands {
     }
 
     /**
-     * Calls the method to which the set of arguments corresponds to.
-     */
-    public static boolean callSubFunctions(ICommandSender sender, List<String> args, String callersPermNode) {
-        List<String> subCommands = CommandManager.getSubCommandsList(callersPermNode);
-        if (!args.isEmpty()) {
-            for (String s : subCommands) {
-                String name = CommandManager.commandNames.get(s);
-                // Checking if name corresponds and if parent's
-                if (name.equals(args.get(0)) && CommandManager.getParentPermNode(s).equals(callersPermNode)) {
-                    CommandManager.commandCall(s, sender, args.subList(1, args.size()));
-                    return true;
-                }
-            }
-        }
-
-        sendHelpMessage(sender, callersPermNode, null);
-        return false;
-    }
-
-    /**
-     * Sends the help message for the permission node with the arguments.
-     */
-    public static void sendHelpMessage(ICommandSender sender, String permBase, List<String> args) {
-        String node;
-        if (args == null || args.isEmpty()) {
-            //If no arguments are provided then we check for the base permission
-            node = permBase;
-        } else {
-            node = CommandManager.getPermissionNodeFromArgs(args, permBase);
-        }
-
-
-        String command = "/" + CommandManager.commandNames.get(permBase);
-
-        if(args != null) {
-            String prevNode = permBase;
-            for (String s : args) {
-                String t = CommandManager.getSubCommandNode(s, prevNode);
-                if (t != null) {
-                    command += " " + s;
-                    prevNode = t;
-                } else
-                    break;
-            }
-        }
-
-        sendMessageBackToSender(sender, command);
-        List<String> scList = CommandManager.getSubCommandsList(node);
-        if (scList == null || scList.isEmpty()) {
-            sendMessageBackToSender(sender, "   " + getLocal().getLocalization(node + ".help"));
-        } else {
-            List<String> nameList = new ArrayList<String>();
-            for(String s : scList) {
-                nameList.add(CommandManager.commandNames.get(s));
-            }
-            Collections.sort(nameList);
-            for (String s : nameList) {
-                sendMessageBackToSender(sender, "   " + s + ": " + getLocal().getLocalization(CommandManager.getSubCommandNode(s, node) + ".help"));
-            }
-        }
-    }
-
-    /**
      * Custom check for commands which require certain rank permissions.
      */
     public static boolean firstPermissionBreach(String permission, ICommandSender sender) {

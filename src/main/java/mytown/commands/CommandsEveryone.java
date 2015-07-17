@@ -1,5 +1,6 @@
 package mytown.commands;
 
+import myessentials.command.CommandManager;
 import mytown.config.Config;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.StringUtils;
@@ -32,7 +33,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd",
             alias = {"t", "town"})
     public static void townCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd");
     }
 
     @CommandNode(
@@ -41,7 +42,7 @@ public class CommandsEveryone extends Commands {
             parentName = "mytown.cmd")
     public static void leaveCommand(ICommandSender sender, List<String> args) {
         if (!args.isEmpty())
-            callSubFunctions(sender, args, "mytown.cmd.everyone.leave");
+            CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.leave");
         else {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
@@ -112,7 +113,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.blocks",
             parentName = "mytown.cmd")
     public static void blocksCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.everyone.blocks");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.blocks");
     }
 
     @CommandNode(
@@ -132,7 +133,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.perm",
             parentName = "mytown.cmd")
     public static void permCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.everyone.perm");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.perm");
     }
 
     @CommandNode(
@@ -152,7 +153,7 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.plot.perm",
                 parentName = "mytown.cmd.everyone.plot")
         public static void plotPermCommand(ICommandSender sender, List<String> args) {
-            callSubFunctions(sender, args, "mytown.cmd.everyone.plot.perm");
+            CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.plot.perm");
         }
 
         @CommandNode(
@@ -205,7 +206,7 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.plot",
                 parentName = "mytown.cmd")
         public static void plotCommand(ICommandSender sender, List<String> args) {
-            callSubFunctions(sender, args, "mytown.cmd.everyone.plot");
+            CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.plot");
         }
 
         @CommandNode(
@@ -243,7 +244,7 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.plot.select",
                 parentName = "mytown.cmd.everyone.plot")
         public static void plotSelectCommand(ICommandSender sender, List<String> args) {
-            callSubFunctions(sender, args, "mytown.cmd.everyone.plot.select");
+            CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.plot.select");
         }
 
         @CommandNode(
@@ -286,7 +287,7 @@ public class CommandsEveryone extends Commands {
                 permission = "mytown.cmd.everyone.plot.add",
                 parentName = "mytown.cmd.everyone.plot")
         public static void plotAddCommand(ICommandSender sender, List<String> args) {
-            callSubFunctions(sender, args, "mytown.cmd.everyone.plot.add");
+            CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.plot.add");
         }
 
         @CommandNode(
@@ -418,7 +419,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.ranks",
             parentName = "mytown.cmd")
     public static void ranksCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.everyone.ranks");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.ranks");
     }
 
     @CommandNode(
@@ -437,7 +438,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.borders",
             parentName = "mytown.cmd")
     public static void bordersCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.everyone.borders");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.borders");
     }
 
     @CommandNode(
@@ -469,7 +470,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.bank",
             parentName = "mytown.cmd")
     public static void bankCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.everyone.bank");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.bank");
     }
 
     @CommandNode(
@@ -513,7 +514,7 @@ public class CommandsEveryone extends Commands {
             permission = "mytown.cmd.everyone.wild",
             parentName = "mytown.cmd")
     public static void permWildCommand(ICommandSender sender, List<String> args) {
-        callSubFunctions(sender, args, "mytown.cmd.everyone.wild");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.everyone.wild");
     }
 
     @CommandNode(
