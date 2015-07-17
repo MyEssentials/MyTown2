@@ -29,6 +29,12 @@ public abstract class JSONConfig<T> {
      */
     public void init() {
         File file = new File(path);
+
+        File parent = file.getParentFile();
+        if(!parent.exists() && !parent.mkdirs()){
+            throw new IllegalStateException("Couldn't create dir: " + parent);
+        }
+
         if(!file.exists() || file.isDirectory())
             create();
         else {

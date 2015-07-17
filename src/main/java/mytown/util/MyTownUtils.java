@@ -43,26 +43,6 @@ public class MyTownUtils {
     }
 
     /**
-     * Returns the Flag name from the selector's Lore tag
-     */
-    public static String getFlagNameFromLore(EntityPlayer player) {
-        ItemStack currentStack = player.inventory.getCurrentItem();
-        NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-        String flagLore = lore.getStringTagAt(1);
-        return flagLore.substring(8); // We use hacks in here
-    }
-
-    /**
-     * Returns the Town name from the selector's Lore tag
-     */
-    public static String getTownNameFromLore(EntityPlayer player) {
-        ItemStack currentStack = player.inventory.getCurrentItem();
-        NBTTagList lore = currentStack.getTagCompound().getCompoundTag("display").getTagList("Lore", 8);
-        String flagLore = lore.getStringTagAt(2);
-        return flagLore.substring(8);
-    }
-
-    /**
      * Gets the nearby tile entities of the specified tile entity and of the specified type
      */
     public static List<TileEntity> getNearbyTileEntity(TileEntity te, Class<? extends TileEntity> type) {
