@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mytown.config.Config;
-import mytown.core.utils.ChatUtils;
-import mytown.core.command.CommandNode;
-import mytown.datasource.MyTownUniverse;
+import myessentials.utils.ChatUtils;
+import myessentials.command.CommandNode;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
@@ -125,7 +124,7 @@ public class CommandsOutsider extends Commands {
         if (args.size() == 0) {
             Formatter.sendMap(res);
         } else {
-            res.setMapOn(ChatUtils.equalsOn(args.get(0)));
+            res.setMapOn(args.get(0).equals("on"));
         }
     }
 
@@ -138,7 +137,6 @@ public class CommandsOutsider extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
-
         if (args.size() == 0) {
             if(invites.size() > 1)
                 throw new MyTownCommandException("mytown.cmd.err.invite.accept");

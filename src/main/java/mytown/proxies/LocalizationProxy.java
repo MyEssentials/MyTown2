@@ -1,7 +1,7 @@
 package mytown.proxies;
 
 import mytown.config.Config;
-import mytown.core.Localization;
+import myessentials.Localization;
 import mytown.util.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

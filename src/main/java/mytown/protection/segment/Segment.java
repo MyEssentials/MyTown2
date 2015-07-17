@@ -1,6 +1,6 @@
 package mytown.protection.segment;
 
-import mytown.core.utils.StringUtils;
+import myessentials.utils.StringUtils;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.getter.Getters;
 import mytown.util.exceptions.ConditionException;

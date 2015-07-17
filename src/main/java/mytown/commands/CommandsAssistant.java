@@ -1,13 +1,13 @@
 package mytown.commands;
 
 import mytown.config.Config;
-import mytown.core.command.CommandManager;
-import mytown.core.command.CommandNode;
-import mytown.core.entities.ChunkPos;
-import mytown.core.utils.ChatUtils;
-import mytown.core.utils.MathUtils;
-import mytown.core.utils.StringUtils;
-import mytown.core.utils.WorldUtils;
+import myessentials.command.CommandManager;
+import myessentials.command.CommandNode;
+import myessentials.entities.ChunkPos;
+import myessentials.utils.ChatUtils;
+import myessentials.utils.MathUtils;
+import myessentials.utils.StringUtils;
+import myessentials.utils.WorldUtils;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import mytown.entities.Town;

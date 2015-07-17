@@ -5,7 +5,7 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.core.entities.BlockPos;
+import myessentials.entities.BlockPos;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;

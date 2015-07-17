@@ -1,11 +1,10 @@
 package mytown.commands;
 
 import mytown.config.Config;
-import mytown.core.utils.ChatUtils;
-import mytown.core.utils.PlayerUtils;
-import mytown.core.utils.StringUtils;
-import mytown.core.command.Command;
-import mytown.core.command.CommandNode;
+import myessentials.utils.ChatUtils;
+import myessentials.utils.StringUtils;
+import myessentials.command.Command;
+import myessentials.command.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;

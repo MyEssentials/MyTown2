@@ -2,8 +2,8 @@ package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
 import mytown.api.interfaces.IFlagsContainer;
-import mytown.core.Localization;
-import mytown.core.command.CommandManager;
+import myessentials.Localization;
+import myessentials.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;

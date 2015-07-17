@@ -2,7 +2,7 @@ package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
 import mytown.MyTown;
-import mytown.core.command.CommandManager;
+import myessentials.command.CommandManager;
 import mytown.entities.Rank;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

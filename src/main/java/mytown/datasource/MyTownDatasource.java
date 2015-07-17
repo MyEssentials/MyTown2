@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import mytown.MyTown;
 import mytown.api.events.*;
 import mytown.config.Config;
-import mytown.core.teleport.Teleport;
+import myessentials.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -16,7 +16,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;

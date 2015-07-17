@@ -3,7 +3,7 @@ package mytown.protection.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mytown.MyTown;
-import mytown.core.entities.Volume;
+import myessentials.entities.Volume;
 import mytown.entities.flag.FlagType;
 import mytown.protection.Protection;
 import mytown.protection.Protections;
@@ -13,7 +13,6 @@ import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.getter.Caller;
 import mytown.protection.segment.getter.Getters;
-import net.minecraft.entity.EntityLivingBase;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

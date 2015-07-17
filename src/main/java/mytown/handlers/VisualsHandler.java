@@ -4,7 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
-import mytown.core.utils.WorldUtils;
+import myessentials.utils.WorldUtils;
 import mytown.entities.Plot;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;

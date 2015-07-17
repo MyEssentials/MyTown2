@@ -1,11 +1,10 @@
 package mytown.datasource;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mytown.config.Config;
-import mytown.core.config.ConfigProperty;
-import mytown.core.teleport.Teleport;
+import myessentials.config.ConfigProperty;
+import myessentials.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -17,8 +16,6 @@ import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 // TODO Check connection for each command and error out if connection doesn't check out

@@ -3,7 +3,7 @@ package mytown.proxies;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.core.config.ConfigProcessor;
+import myessentials.config.ConfigProcessor;
 import mytown.datasource.InMemoryDatasource;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.impl.MySQLDatasource;
