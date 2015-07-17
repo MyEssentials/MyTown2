@@ -186,7 +186,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.friends",
             parentName = "mytown.cmd")
     public static void friendsCommand(ICommandSender sender, List<String> args) {
-        CommandManager.callSubFunctions(sender, args, "mytown.cmd.outsider.friends");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.outsider.friends", getLocal());
     }
 
     @CommandNode(
@@ -289,7 +289,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
-        CommandManager.sendHelpMessage(sender, "mytown.cmd", args);
+        CommandManager.sendHelpMessage(sender, "mytown.cmd", args, getLocal());
     }
 
     @CommandNode(

@@ -338,7 +338,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.ranks.perm",
             parentName = "mytown.cmd.everyone.ranks")
     public static void ranksPermCommand(ICommandSender sender, List<String> args) {
-        CommandManager.callSubFunctions(sender, args, "mytown.cmd.assistant.ranks.perm");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.assistant.ranks.perm", getLocal());
     }
 
     @CommandNode(
@@ -395,7 +395,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.plot.limit",
             parentName = "mytown.cmd.everyone.plot")
     public static void plotLimitCommand(ICommandSender sender, List<String> args) {
-        CommandManager.callSubFunctions(sender, args, "mytown.cmd.assistant.plot.limit");
+        CommandManager.callSubFunctions(sender, args, "mytown.cmd.assistant.plot.limit", getLocal());
     }
 
     @CommandNode(
