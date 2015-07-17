@@ -8,13 +8,11 @@ import myessentials.utils.ChatUtils;
 import myessentials.utils.MathUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
-import mytown.entities.Rank;
-import mytown.entities.Resident;
-import mytown.entities.Town;
-import mytown.entities.TownBlock;
+import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.entities.tools.WhitelisterTool;
+import mytown.proxies.EconomyProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import mytown.util.exceptions.MyTownWrongUsageException;
@@ -82,7 +80,7 @@ public class CommandsAssistant extends Commands {
 
             int price = (isFarClaim ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.getBlocks().size();
 
-            makePayment(player, price);
+            makeBankPayment(player, town, price);
 
             TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, price, town);
             if (block == null)
@@ -121,7 +119,7 @@ public class CommandsAssistant extends Commands {
             if (isFarClaim && town.getFarClaims() + 1 > town.getMaxFarClaims())
                 throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
 
-            makePayment(player, (isFarClaim ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1) : Config.costAmountClaim * chunks.size())
+            makeBankPayment(player, town, (isFarClaim ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1) : Config.costAmountClaim * chunks.size())
                     + MathUtils.sumFromNtoM(town.getBlocks().size(), town.getBlocks().size() + chunks.size() - 1) * Config.costAdditionClaim);
 
             for (ChunkPos chunk : chunks) {
@@ -140,7 +138,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.unclaim",
             parentName = "mytown.cmd")
     public static void unclaimCommand(ICommandSender sender, List<String> args) {
-        EntityPlayer pl = (EntityPlayer) sender;
+        EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(sender);
         TownBlock block = getBlockAtResident(res);
         Town town = res.getSelectedTown();
@@ -155,7 +153,7 @@ public class CommandsAssistant extends Commands {
 
         getDatasource().deleteBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
-        makeRefund(pl, block.getPricePaid());
+        makeBankRefund(player, town, block.getPricePaid());
     }
 
     @CommandNode(
@@ -494,6 +492,32 @@ public class CommandsAssistant extends Commands {
         getDatasource().saveTown(town);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.renamed"));
     }
+
+    @CommandNode(
+            name = "withdraw",
+            permission = "mytown.cmd.assistant.bank.withdraw",
+            parentName = "mytown.cmd.everyone.bank")
+    public static void bankPayCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1)
+            throw new MyTownWrongUsageException("mytown.cmd.usage.bank.withdraw");
+
+        if(!StringUtils.tryParseInt(args.get(0)))
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
+
+        Resident res = getDatasource().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+
+        if(town instanceof AdminTown)
+            throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
+
+        int amount = Integer.parseInt(args.get(0));
+        if(town.getBankAmount() < amount)
+            throw new MyTownCommandException("mytown.cmd.err.bank.withdraw", EconomyProxy.getCurrency(town.getBankAmount()));
+
+        makeRefund(res.getPlayer(), amount);
+        getDatasource().updateTownBank(town, town.getBankAmount() - amount);
+    }
+
 
 
     // Temporary here, might integrate in the methods

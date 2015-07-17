@@ -5,7 +5,8 @@ mytown.cmd.err.town.notexist=&cThe town %s does not exist
 mytown.cmd.err.resident.notexist=&cThe player %s does not exist
 mytown.cmd.err.resident.notsametown=&cThe player %s is not in the town you've selected(%s)
 mytown.cmd.err.rank.notexist=&cThe rank %s does not exist in %s
-mytown.cmd.err.payment=&cYou need %s in order to pay for this
+mytown.cmd.err.resident.payment=&cYou need %s in order to pay for this
+mytown.cmd.err.town.payment=&cYou need %s in bank to pay for this
 mytown.cmd.err.notPositiveInteger=&cValue '%s' needs to be a positive integer
 mytown.cmd.err.adminTown=&cAction denied because %s is an admin town
 mytown.cmd.err.notInTown=&cYou are not in town %s
@@ -191,7 +192,9 @@ mytown.notification.town.kicked=&cYou have been kicked from %s
 mytown.cmd.usage.leave.pass=&3/t pass <resident>
 
 # /t bank
-mytown.cmd.usage.bank.pay=&3/t pay <amount>
+mytown.cmd.usage.bank.pay=&3/t bank pay <amount>
+mytown.cmd.usage.bank.withdraw=&3/t bank withdraw <amount>
+mytown.cmd.err.bank.withdraw=&cYou only have %s in the bank
 
 # /t ranks
 mytown.notification.town.ranks=&3Ranks: %s
@@ -316,8 +319,10 @@ mytown.notification.friends.refused=&c%s has refused your invitation to be in th
 mytown.notification.friends.gotRefused=&cYou have refused %s's friend invitation
 mytown.notification.resident.noInvites=&cYou don't have any invitations
 mytown.notification.resident.friends.list=&3Friends: %s
-mytown.notification.payment=&3You have paid %s
-mytown.notification.refund=&3You have been refunded %s
+mytown.notification.resident.payment=&3You have paid %s
+mytown.notification.resident.refund=&3You have been refunded %s
+mytown.notification.town.payment=&3%s has been taken from the bank
+mytown.notification.town.refund=&3%s has been refunded to the bank
 mytown.notification.plot.sender.removed=&c%s has been removed from the plot
 mytown.notification.plot.target.removed=&cYou have been removed from plot %s
 mytown.notification.town.bank.info=&aBank balance: &7%s \n&aNext payment: &7%s

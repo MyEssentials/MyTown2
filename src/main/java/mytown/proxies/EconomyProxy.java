@@ -29,9 +29,12 @@ public class EconomyProxy {
         return true;
     }
 
+    /**
+     * Returns a formatted currency string. For example: "32 Diamonds" or "15 $"
+     */
     public static String getCurrency(int amount) {
         String currency = economy.getCurrency(amount);
-        if(Character.isDigit(currency.charAt(0)))
+        if(Character.isDigit(currency.charAt(0)) || Character.isDigit(currency.charAt(currency.length() - 1)))
             return currency;
         else
             return amount + " " + currency;

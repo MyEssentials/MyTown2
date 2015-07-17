@@ -553,6 +553,9 @@ public class Protections {
 
     @SubscribeEvent
     public void entityJoinWorld(EntityJoinWorldEvent ev) {
+        if(DatasourceProxy.getDatasource() == null)
+            return;
+
         if (!(ev.entity instanceof EntityLivingBase) || ev.entity instanceof EntityPlayer)
             return;
 
