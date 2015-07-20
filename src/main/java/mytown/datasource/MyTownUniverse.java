@@ -98,8 +98,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
                 }
             }
         }
-
         plots.put(plot.getDbID(), plot);
+        CommandManager.completionMap.get("plotCompletion").add(plot.getName());
         return true;
     }
 
@@ -142,6 +142,15 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public final boolean removePlot(Plot plot) {
         plots.remove(plot.getDbID());
+
+        boolean removeFromCompletionMap = true;
+        for(Plot p : plots.values()) {
+            if(p.getName().equals(plot.getName()))
+                removeFromCompletionMap = false;
+        }
+        if(removeFromCompletionMap)
+            CommandManager.completionMap.get("plotCompletion").remove(plot.getName());
+
         VisualsHandler.instance.unmarkBlocks(plot);
         return true;
     }

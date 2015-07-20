@@ -1,6 +1,7 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
+import myessentials.command.Command;
 import myessentials.economy.Economy;
 import mytown.api.interfaces.IFlagsContainer;
 import myessentials.Localization;
@@ -93,7 +94,13 @@ public abstract class Commands {
         }
         CommandManager.completionMap.put("flagCompletionWhitelist", populator);
 
-        populator.clear();
+        populator = new ArrayList<String>();
+        for(Plot plot : MyTownUniverse.instance.getPlotsMap().values()) {
+            populator.add(plot.toString());
+        }
+        CommandManager.completionMap.put("plotCompletion", populator);
+
+        populator = new ArrayList<String>();
         populator.addAll(Rank.defaultRanks.keySet());
         CommandManager.completionMap.put("rankCompletion", populator);
     }

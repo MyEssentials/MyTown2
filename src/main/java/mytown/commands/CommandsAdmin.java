@@ -685,7 +685,8 @@ public class CommandsAdmin extends Commands {
         @CommandNode(
                 name = "plot",
                 permission = "mytown.adm.cmd.plot",
-                parentName = "mytown.adm.cmd")
+                parentName = "mytown.adm.cmd",
+                nonPlayers = true)
         public static void plotCommand(ICommandSender sender, List<String> args) {
             CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.plot", getLocal());
         }
@@ -693,7 +694,9 @@ public class CommandsAdmin extends Commands {
         @CommandNode(
                 name = "show",
                 permission = "mytown.adm.cmd.plot.show",
-                parentName = "mytown.adm.cmd.plot")
+                parentName = "mytown.adm.cmd.plot",
+                completionKeys = {"townCompletion"},
+                nonPlayers = true)
         public static void plotShowCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 1)
                 throw new MyTownCommandException("mytown.adm.cmd.usage.plot.show");
@@ -707,7 +710,8 @@ public class CommandsAdmin extends Commands {
         @CommandNode(
                 name = "perm",
                 permission = "mytown.adm.cmd.plot.perm",
-                parentName = "mytown.adm.cmd.plot")
+                parentName = "mytown.adm.cmd.plot",
+                nonPlayers = true)
         public static void plotPermCommand(ICommandSender sender, List<String> args) {
             CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.plot.perm", getLocal());
         }
@@ -716,7 +720,8 @@ public class CommandsAdmin extends Commands {
                 name = "set",
                 permission = "mytown.adm.cmd.plot.perm.set",
                 parentName = "mytown.adm.cmd.plot.perm",
-                completionKeys = {"flagCompletion"})
+                completionKeys = {"flagCompletion"},
+                nonPlayers = true)
         public static void plotPermSetCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 4)
                 throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.perm.set");
@@ -736,7 +741,8 @@ public class CommandsAdmin extends Commands {
         @CommandNode(
                 name = "list",
                 permission = "mytown.adm.cmd.plot.perm.list",
-                parentName = "mytown.adm.cmd.plot.perm")
+                parentName = "mytown.adm.cmd.plot.perm",
+                nonPlayers = true)
         public static void plotPermListCommand(ICommandSender sender, List<String> args) {
             if(args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.perm.list");
@@ -749,7 +755,9 @@ public class CommandsAdmin extends Commands {
         @CommandNode(
                 name = "rename",
                 permission = "mytown.adm.cmd.plot.rename",
-                parentName = "mytown.adm.cmd.plot")
+                parentName = "mytown.adm.cmd.plot",
+                completionKeys = {"townCompletion", "plotCompletion"},
+                nonPlayers = true)
         public static void plotRenameCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 3)
                 throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.rename");
@@ -766,7 +774,8 @@ public class CommandsAdmin extends Commands {
         @CommandNode(
                 name = "add",
                 permission = "mytown.adm.cmd.plot.add",
-                parentName = "mytown.adm.cmd.plot")
+                parentName = "mytown.adm.cmd.plot",
+                nonPlayers = true)
         public static void plotAddCommand(ICommandSender sender, List<String> args) {
             CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd.plot.add", getLocal());
         }
@@ -775,7 +784,8 @@ public class CommandsAdmin extends Commands {
                 name = "owner",
                 permission = "mytown.adm.cmd.plot.add.owner",
                 parentName = "mytown.adm.cmd.plot.add",
-                completionKeys = {"residentCompletion"})
+                completionKeys = {"townCompletion", "plotCompletion", "residentCompletion"},
+                nonPlayers = true)
         public static void plotAddOwnerCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 3)
                 throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.add");
@@ -804,7 +814,8 @@ public class CommandsAdmin extends Commands {
                 name = "member",
                 permission = "mytown.adm.cmd.plot.add.member",
                 parentName = "mytown.adm.cmd.plot.add",
-                completionKeys = {"residentCompletion"})
+                completionKeys = {"townCompletion", "plotCompletion", "residentCompletion"},
+                nonPlayers = true)
         public static void plotAddMemberCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 3)
                 throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.add");
@@ -825,7 +836,9 @@ public class CommandsAdmin extends Commands {
         @CommandNode(
                 name = "remove",
                 permission = "mytown.adm.cmd.plot.remove",
-                parentName = "mytown.adm.cmd.plot")
+                parentName = "mytown.adm.cmd.plot",
+                completionKeys = {"townCompletion", "plotCompletion", "residentCompletion"},
+                nonPlayers = true)
         public static void plotRemoveCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 3)
                 throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.remove");
@@ -837,9 +850,6 @@ public class CommandsAdmin extends Commands {
             if(!plot.hasResident(target))
                 throw new MyTownCommandException("mytown.cmd.err.plot.remove.notInPlot");
 
-            if(plot.hasOwner(target) && plot.getOwners().size() == 1)
-                throw new MyTownCommandException("mytown.cmd.err.plot.remove.onlyOwner");
-
             getDatasource().unlinkResidentFromPlot(target, plot);
 
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.plot.sender.removed", target.getPlayerName(), plot.getName()));
@@ -849,10 +859,12 @@ public class CommandsAdmin extends Commands {
         @CommandNode(
                 name = "info",
                 permission = "mytown.adm.cmd.plot.info",
-                parentName = "mytown.adm.cmd.plot")
+                parentName = "mytown.adm.cmd.plot",
+                completionKeys = {"townCompletion", "plotCompletion"},
+                nonPlayers = true)
         public static void plotInfoCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 2)
-                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.remove");
+                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.info");
 
             Town town = getTownFromName(args.get(0));
             Plot plot = getPlotFromName(town, args.get(1));
@@ -862,7 +874,9 @@ public class CommandsAdmin extends Commands {
         @CommandNode(
                 name = "delete",
                 permission = "mytown.adm.cmd.plot.delete",
-                parentName = "mytown.adm.cmd.plot")
+                parentName = "mytown.adm.cmd.plot",
+                completionKeys = {"townCompletion", "plotCompletion"},
+                nonPlayers = true)
         public static void plotDeleteCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.delete");
