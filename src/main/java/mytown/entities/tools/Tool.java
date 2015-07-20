@@ -41,11 +41,12 @@ public abstract class Tool {
     }
 
     protected void giveItemStack(ItemStack itemStack) {
-        if(owner.getPlayer().inventory.hasItemStack(itemStack)) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.inventory"));
-        } else {
-            PlayerUtils.giveItemToPlayer(owner.getPlayer(), itemStack, 1);
+        if(owner.getPlayer().inventory.hasItemStack(itemStack) && owner.getCurrentTool() != null) {
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.inventory.tool.already"));
+            PlayerUtils.takeItemFromPlayer(owner.getPlayer(), owner.getCurrentTool().getItemStack(), 1);
         }
+
+        PlayerUtils.giveItemToPlayer(owner.getPlayer(), itemStack, 1);
     }
 
     protected void deleteItemStack() {

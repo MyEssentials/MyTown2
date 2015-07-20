@@ -65,7 +65,6 @@ public class PlotSelectionTool extends Tool {
         } else {
             selectionSecond = new Selection(dim, x, y, z);
             createPlotFromSelection();
-            deleteItemStack();
         }
     }
 
@@ -164,6 +163,7 @@ public class PlotSelectionTool extends Tool {
         getDatasource().savePlot(plot);
         getDatasource().linkResidentToPlot(owner, plot, true);
         owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.created"));
+        deleteItemStack();
     }
 
     private void normalizeSelection() {

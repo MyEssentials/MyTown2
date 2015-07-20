@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import myessentials.utils.PlayerUtils;
 import mytown.MyTown;
 import mytown.api.interfaces.IPlotsContainer;
 import mytown.api.interfaces.ITownsContainer;
@@ -9,6 +10,7 @@ import mytown.datasource.MyTownDatasource;
 import mytown.entities.flag.FlagType;
 import mytown.entities.tools.Tool;
 import mytown.proxies.DatasourceProxy;
+import mytown.proxies.LocalizationProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -452,13 +454,7 @@ public class Resident implements IPlotsContainer, ITownsContainer { // TODO Make
         return currentTool != null;
     }
 
-    /**
-     * Intended to only be used when processing a command
-     */
     public void setCurrentTool(Tool tool) {
-        if(this.currentTool != null)
-            throw new MyTownCommandException("mytown.cmd.err.inventory.tool.already");
-
         this.currentTool = tool;
     }
 
