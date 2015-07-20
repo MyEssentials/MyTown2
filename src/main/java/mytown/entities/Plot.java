@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+import myessentials.utils.PlayerUtils;
 import mytown.api.interfaces.IFlagsContainer;
 import mytown.api.interfaces.IResidentsContainer;
 import mytown.entities.flag.Flag;
@@ -184,7 +185,7 @@ public class Plot implements IFlagsContainer, IResidentsContainer {
             if (flag.getFlagType() == type)
                 return flag.getValue();
         }
-        return type.getDefaultValue();
+        return town.getValue(type);
     }
 
     @Override
@@ -241,4 +242,9 @@ public class Plot implements IFlagsContainer, IResidentsContainer {
                 return true;
         return false;
     }
+
+    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
+        return !getValue(flagType).equals(denialValue) || hasResident(res) || PlayerUtils.isOp(res.getPlayer());
+    }
+
 }

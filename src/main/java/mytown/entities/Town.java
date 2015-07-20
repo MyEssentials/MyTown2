@@ -505,15 +505,13 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
      * This method will go through all the plots and prioritize the plot's flags over town flags.
      */
     @SuppressWarnings("unchecked")
-    public boolean checkPermission(Resident res, FlagType flagType, Object denialValue, int dim, int x, int y, int z) {
+    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue, int dim, int x, int y, int z) {
         Plot plot = getPlotAtCoords(dim, x, y, z);
 
         if (plot == null) {
-            return checkPermission(res, flagType, denialValue);
-        } else if (flagType.isTownOnly()) {
-            return checkPermission(res, flagType, denialValue) || plot.hasResident(res);
+            return hasPermission(res, flagType, denialValue);
         } else {
-        	return !plot.getValue(flagType).equals(denialValue) || plot.hasResident(res) || PlayerUtils.isOp(res.getPlayer());
+        	return plot.hasPermission(res, flagType, denialValue);
         }
     }
 
@@ -521,7 +519,7 @@ public class Town implements IResidentsContainer, IRanksContainer, ITownBlocksCo
      * Checks if the Resident is allowed to do the action specified by the FlagType in this town.
      */
     @SuppressWarnings("unchecked")
-    public boolean checkPermission(Resident res, FlagType flagType, Object denialValue) {
+    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
         if(getValue(flagType).equals(denialValue) && (!hasResident(res) || ((Boolean)getValue(FlagType.RESTRICTIONS) && flagType != FlagType.ENTER && getMayor() != res))) {
             return PlayerUtils.isOp(res.getPlayer());
         }

@@ -428,14 +428,14 @@ public class Resident implements IPlotsContainer, ITownsContainer { // TODO Make
             int z = (int) Math.floor(player.posZ);
             boolean ok = false;
             while(!ok) {
-                while (!town.checkPermission(this, FlagType.ENTER, false, player.dimension, x, y, z) && town.isPointInTown(player.dimension, x, z))
+                while (!town.hasPermission(this, FlagType.ENTER, false, player.dimension, x, y, z) && town.isPointInTown(player.dimension, x, z))
                     x++;
                 x += 3;
 
                 while(player.worldObj.getBlock(x, y, z) != Blocks.air && player.worldObj.getBlock(x, y + 1, z) != Blocks.air && y < 256)
                     y++;
 
-                if(town.checkPermission(this, FlagType.ENTER, false, player.dimension, x, y, z) || !town.isPointInTown(player.dimension, x, z))
+                if(town.hasPermission(this, FlagType.ENTER, false, player.dimension, x, y, z) || !town.isPointInTown(player.dimension, x, z))
                     ok = true;
             }
             player.setPositionAndUpdate(x, y, z);

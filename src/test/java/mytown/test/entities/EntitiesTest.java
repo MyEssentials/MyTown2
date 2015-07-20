@@ -6,8 +6,6 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.test.TestMain;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.UUID;
 
@@ -55,17 +53,17 @@ public class EntitiesTest {
 
     //@Test
     public void shouldCheckPermissionsProperly() {
-        Assert.assertTrue(town.checkPermission(resident, FlagType.ACCESS, false));
+        Assert.assertTrue(town.hasPermission(resident, FlagType.ACCESS, false));
         // Inside of TestPlot
-        Assert.assertTrue(town.checkPermission(resident, FlagType.MODIFY, false, 0, 1, 1, 1));
+        Assert.assertTrue(town.hasPermission(resident, FlagType.MODIFY, false, 0, 1, 1, 1));
     }
 
     //@Test
     public void shouldCheckPermissionsWithRestrictionsFlagProperly() {
         // Outside of plot, inside town with Restrictions flag false
-        Assert.assertTrue(town.checkPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
+        Assert.assertTrue(town.hasPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
         town.getFlag(FlagType.RESTRICTIONS).setValueFromString("true");
-        Assert.assertFalse(town.checkPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
+        Assert.assertFalse(town.hasPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
     }
 
 }
