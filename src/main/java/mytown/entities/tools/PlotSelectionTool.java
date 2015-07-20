@@ -122,7 +122,7 @@ public class PlotSelectionTool extends Tool {
             VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) owner.getPlayer(), null);
 
         if(owner.getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.instance.markPlotBorders(selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z, selectionFirst.dim, (EntityPlayerMP) owner.getPlayer(), null);
+            VisualsHandler.instance.markPlotBorders(selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z, selectionFirst.dim, (EntityPlayerMP) owner.getPlayer(), owner.getPlayer());
 
         return true;
     }

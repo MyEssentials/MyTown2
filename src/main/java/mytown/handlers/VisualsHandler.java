@@ -114,7 +114,7 @@ public class VisualsHandler {
         markPlotBorders(plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ(), plot.getDim(), caller, plot);
     }
 
-    public void markPlotBorders(int x1, int y1, int z1, int x2, int y2, int z2, int dim, EntityPlayerMP caller, Plot plot) {
+    public void markPlotBorders(int x1, int y1, int z1, int x2, int y2, int z2, int dim, EntityPlayerMP caller, Object key) {
         // assuming x1 < x2, y1 < y2, z1 < z2
         List<BlockCoords> blockList = new ArrayList<BlockCoords>();
         for (int i = x1; i <= x2; i++) {
@@ -135,7 +135,7 @@ public class VisualsHandler {
             blockList.add(new BlockCoords(x1, y2, i, dim, Blocks.redstone_block));
             blockList.add(new BlockCoords(x2, y2, i, dim, Blocks.redstone_block));
         }
-        addMarkedBlocks(caller, plot, blockList);
+        addMarkedBlocks(caller, key, blockList);
     }
 
 
