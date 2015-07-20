@@ -289,7 +289,8 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
-        CommandManager.sendHelpMessage(sender, "mytown.cmd", args, getLocal());
+        String sendHelpNode = CommandManager.getPermissionNodeFromArgs(args, "mytown.cmd");
+        CommandManager.sendHelpMessage(sender, sendHelpNode, getLocal());
     }
 
     @CommandNode(

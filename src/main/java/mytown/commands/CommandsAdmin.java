@@ -634,7 +634,8 @@ public class CommandsAdmin extends Commands {
             parentName = "mytown.adm.cmd",
             nonPlayers = true)
     public static void helpCommand(ICommandSender sender, List<String> args) {
-        CommandManager.sendHelpMessage(sender, "mytown.adm.cmd", args, getLocal());
+        String sendHelpNode = CommandManager.getPermissionNodeFromArgs(args, "mytown.adm.cmd");
+        CommandManager.sendHelpMessage(sender, sendHelpNode, getLocal());
     }
 
 

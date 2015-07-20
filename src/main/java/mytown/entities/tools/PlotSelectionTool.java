@@ -119,7 +119,7 @@ public class PlotSelectionTool extends Tool {
         selectionSecond.y = DimensionManager.getWorld(selectionSecond.dim).getActualHeight() - 1;
 
         if(owner.getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) owner.getPlayer(), null);
+            VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) owner.getPlayer(), owner.getPlayer());
 
         if(owner.getPlayer() instanceof EntityPlayerMP)
             VisualsHandler.instance.markPlotBorders(selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z, selectionFirst.dim, (EntityPlayerMP) owner.getPlayer(), owner.getPlayer());
