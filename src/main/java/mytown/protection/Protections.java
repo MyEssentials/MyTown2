@@ -30,6 +30,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
@@ -140,7 +141,11 @@ public class Protections {
                 for (TileEntity te : (Iterable<TileEntity>) ev.world.loadedTileEntityList) {
                     for (Protection prot : protectionList) {
                         if (prot.isTileTracked(te.getClass()) && prot.checkTileEntity(te)) {
-                            WorldUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
+                            ItemStack itemStack = new ItemStack(te.getBlockType(), 1, te.getBlockMetadata());
+                            NBTTagCompound nbt = new NBTTagCompound();
+                            te.writeToNBT(nbt);
+                            itemStack.setTagCompound(nbt);
+                            WorldUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, itemStack);
                             te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
                             te.invalidate();
                             MyTown.instance.LOG.info("TileEntity {} was ATOMICALLY DISINTEGRATED!", te.toString());
