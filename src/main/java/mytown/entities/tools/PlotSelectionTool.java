@@ -32,12 +32,12 @@ public class PlotSelectionTool extends Tool {
      */
     private Selection selectionFirst, selectionSecond;
     private String plotName;
-    private boolean expandVertically = false;
+    private boolean heightDependant = true;
 
     public PlotSelectionTool(Resident owner, String plotName) {
         super(owner, NAME);
         this.plotName = plotName;
-        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER, DESCRIPTION_NAME + plotName, DESCRIPTION_MODE + expandVertically));
+        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER, DESCRIPTION_NAME + plotName, DESCRIPTION_MODE + heightDependant));
     }
 
     @Override
@@ -71,8 +71,8 @@ public class PlotSelectionTool extends Tool {
 
     @Override
     public void onShiftRightClick() {
-        expandVertically = !expandVertically;
-        setDescription(DESCRIPTION_MODE + expandVertically, 2);
+        heightDependant = !heightDependant;
+        setDescription(DESCRIPTION_MODE + heightDependant, 2);
     }
 
     public void resetSelection(boolean resetBlocks, int delay) {
@@ -167,7 +167,7 @@ public class PlotSelectionTool extends Tool {
     }
 
     private void normalizeSelection() {
-        if(expandVertically) {
+        if(!heightDependant) {
             expandVertically();
         } else {
             if(owner.getPlayer() instanceof EntityPlayerMP)
