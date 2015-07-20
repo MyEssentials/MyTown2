@@ -256,7 +256,7 @@ public class SQLSchema {
 
             try {
                 // Update!
-                LOG.info("Running update %s - %s", update.id, update.desc);
+                LOG.info("Running update {} - {}", update.id, update.desc);
                 statement = this.sqlDatasource.prepare(update.sql, false);
                 statement.execute();
 
@@ -266,7 +266,7 @@ public class SQLSchema {
                 statement.setString(2, update.desc);
                 statement.executeUpdate();
             } catch (SQLException e) {
-                LOG.error("Update (%s - %s) failed to apply!", update.id, update.desc);
+                LOG.error("Update ({} - {}) failed to apply!", update.id, update.desc);
                 LOG.error(ExceptionUtils.getStackTrace(e));
                 throw e; // Throws back up to force safemode
             }

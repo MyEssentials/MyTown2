@@ -145,7 +145,7 @@ public class Protections {
                             WorldUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()));
                             te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
                             te.invalidate();
-                            MyTown.instance.LOG.info("TileEntity " + te.toString() + " was ATOMICALLY DISINTEGRATED!");
+                            MyTown.instance.LOG.info("TileEntity {} was ATOMICALLY DISINTEGRATED!", te.toString());
                             break;
                         }
                     }
@@ -455,7 +455,7 @@ public class Protections {
             if(te != null && ProtectionUtils.isTileEntityOwnable(te.getClass())) {
                 te = ev.world.getTileEntity(ev.x, ev.y, ev.z);
                 ownedTileEntities.remove(te);
-                MyTown.instance.LOG.info("Removed te " + te.toString());
+                MyTown.instance.LOG.info("Removed te {}", te.toString());
             }
 
         }

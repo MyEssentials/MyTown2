@@ -116,7 +116,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
                         if(!CommandManager.commandList.containsKey(s.substring(1))) {
                             if (ok) {
                                 notExistingPermNodes.add(s);
-                                MyTown.instance.LOG.error("Permission node " + s + " does not exist! Removing...");
+                                MyTown.instance.LOG.error("Permission node {} does not exist! Removing...", s);
                             }
                             it.remove();
                         }
@@ -142,7 +142,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
                             wrapper.type == RankType.ASSISTANT && (node.startsWith("mytown.cmd.assistant") || node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")))
                         if (!wrapper.permissions.contains(node) && !wrapper.permissions.contains("-" + node)) {
                             wrapper.permissions.add(node);
-                            MyTown.instance.LOG.info("Permission node " + node + " is missing from the configs in rank " + wrapper.type);
+                            MyTown.instance.LOG.info("Permission node {} is missing from the configs in rank {}", node, wrapper.type);
                             updated = true;
                         }
                 }

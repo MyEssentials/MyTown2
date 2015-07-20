@@ -231,16 +231,16 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 if (modid == null)
                     throw new IOException("Missing modid for a protection!");
                 if(!Loader.isModLoaded(modid) && !"Minecraft".equals(modid)) {
-                    MyTown.instance.LOG.info("   Skipped protection because the mod " + modid + " wasn't loaded.");
+                    MyTown.instance.LOG.info("   Skipped protection because the mod {} wasn't loaded.", modid);
                     return null;
                 } else if(version != null && !verifyVersion(modid, version)) {
-                    MyTown.instance.LOG.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
+                    MyTown.instance.LOG.info("   Skipped protection because it doesn't support the version loaded of mod: {} ({})", modid, version);
                     return null;
                 }
             } else if("version".equals(nextName)) {
                 version = in.nextString();
                 if(modid != null && !"Vanilla".equals(modid) && !verifyVersion(modid, version)) {
-                    MyTown.instance.LOG.info("   Skipped protection because it doesn't support the version loaded of mod: " + modid + " (" + version + ")");
+                    MyTown.instance.LOG.info("   Skipped protection because it doesn't support the version loaded of mod: {} ({})", modid, version);
                     return null;
                 }
             } else if ("segments".equals(nextName)) {
@@ -396,7 +396,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                                 if ("tileEntity".equals(type)) {
                                     // Log if the segment is using default protection
                                     if (getters.getCallersMap().get("xMin") == null || getters.getCallersMap().get("xMax") == null || getters.getCallersMap().get("zMin") == null || getters.getCallersMap().get("zMax") == null) {
-                                        MyTown.instance.LOG.info("   [Segment: " + clazz + "] Could not find one of the getters (xMin, xMax, zMin, zMax). Using default protection size.");
+                                        MyTown.instance.LOG.info("   [Segment: {}] Could not find one of the getters (xMin, xMax, zMin, zMax). Using default protection size.", clazz);
 
                                         // Removing all of them since it will only create problems if left there
                                         getters.removeGetter("xMin");
@@ -441,13 +441,13 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                         in.endObject();
                     }
                     if (segment == null)
-                        MyTown.instance.LOG.error("  [Segment: " + clazz + "] Segment was not properly initialized!");
+                        MyTown.instance.LOG.error("  [Segment: {}] Segment was not properly initialized!", clazz);
                     else {
                         // Precheck for configurations
                         //if(segment instanceof SegmentEntity && ((SegmentEntity) segment).type == EntityType.explosive && Config.useExtraEvents)
                         //    MyTown.instance.log.info("  [Segment:" + segment.getCheckClass().getName() + "] Omitting segment because use of extra events is enabled.");
                         //else {
-                            MyTown.instance.LOG.info("   Added segment for class: " + segment.getCheckClass().getName());
+                            MyTown.instance.LOG.info("   Added segment for class: {}", segment.getCheckClass().getName());
                             segments.add(segment);
                         //}
                     }

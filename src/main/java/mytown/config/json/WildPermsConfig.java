@@ -97,7 +97,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
                         ok = true;
                 }
                 if (!ok) {
-                    MyTown.instance.LOG.error("FlagType " + type.toString() + " for Wild does not exist in the WildPerms file. Adding...");
+                    MyTown.instance.LOG.error("FlagType {} for Wild does not exist in the WildPerms file. Adding...", type.toString());
                     items.add(new Flag(type, type.getDefaultValue()));
                     updated = true;
                 }

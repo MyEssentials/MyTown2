@@ -112,7 +112,7 @@ public class Protection {
                         }
                     }
                 } catch (Exception ex) {
-                    MyTown.instance.LOG.error("Failed to check tile entity: " + te.getClass().getSimpleName() + "( " + te.xCoord + ", " + te.yCoord + ", " + te.zCoord + " | WorldID: " + te.getWorldObj().provider.dimensionId + " )");
+                    MyTown.instance.LOG.error("Failed to check tile entity: {} ({}, {}, {}, Dim: {})", te.getClass().getSimpleName(), te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().provider.dimensionId);
                     MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
                     // Disabling protection if something errors.
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
@@ -251,8 +251,7 @@ public class Protection {
                         }
                     }
                 } catch (Exception ex) {
-                    MyTown.instance.LOG.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + bp.getX()
-                            + ", " + bp.getY() + ", " + bp.getZ() + " | WorldID: " + bp.getDim() + " )");
+                    MyTown.instance.LOG.error("Failed to check item use on {} at the player {} ({})", item.getDisplayName(), res.getPlayerName(), bp);
                     MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
@@ -329,8 +328,7 @@ public class Protection {
                         }
                     }
                 } catch (Exception ex) {
-                    MyTown.instance.LOG.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( " + (int)entity.posX
-                            + ", " + (int)entity.posY + ", " + (int)entity.posZ + " | WorldID: " + entity.dimension + " )");
+                    MyTown.instance.LOG.error("Failed to check item use on {} at the player {} ({}, {}, {} | Dim: {})", item.getDisplayName(), res.getPlayerName(), entity.posX, entity.posY, entity.posZ, entity.dimension);
                     MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
@@ -388,8 +386,7 @@ public class Protection {
                         }
                     }
                 } catch (Exception ex) {
-                    MyTown.instance.LOG.error("Failed to check item use on " + item.getDisplayName() + " at the player " + res.getPlayerName() + "( "
-                            + ", " + entity.posX + ", " + entity.posY + ", " + entity.posZ + " | WorldID: " + entity.dimension + " )");
+                    MyTown.instance.LOG.error("Failed to check item use on {} at the player {} ({}, {}, {} | Dim: {})", item.getDisplayName(), res.getPlayerName(), entity.posX, entity.posY, entity.posZ, entity.dimension);
 
                     if(ex instanceof GetterException || ex instanceof ConditionException) {
                         this.disableSegment(it, segment, ex.getMessage());
@@ -561,7 +558,7 @@ public class Protection {
     private void disableSegment(Iterator<? extends Segment> it, Segment segment, String message) {
         it.remove();
         MyTown.instance.LOG.error(message);
-        MyTown.instance.LOG.error("Disabling segment for " + segment.getCheckClass().getName() + " in protection " + this.modid + ".");
+        MyTown.instance.LOG.error("Disabling segment for {} in protection {}.", segment.getCheckClass().getName(), this.modid);
         MyTown.instance.LOG.info("Reload protections to enable it again.");
     }
     private void disable() {

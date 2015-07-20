@@ -54,7 +54,7 @@ public class MyTownUtils {
         for (int i = 0; i < 6; i++) {
             TileEntity found = te.getWorldObj().getTileEntity(te.xCoord + dx[i], te.yCoord + dy[i], te.zCoord + dz[i]);
             if (found != null && type.isAssignableFrom(found.getClass())) {
-                MyTown.instance.LOG.info("Found tile entity " + found + " for class " + type.getName());
+                MyTown.instance.LOG.info("Found tile entity {} for class {}", found, type.getName());
                 result.add(found);
             }
         }

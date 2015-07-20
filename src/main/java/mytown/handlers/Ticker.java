@@ -50,7 +50,7 @@ public class Ticker {
                         if (!(town instanceof AdminTown)) {
                             town.payUpkeep();
                             if(town.getDaysNotPaid() == Config.upkeepTownDeletionDays && Config.upkeepTownDeletionDays > 0) {
-                                MyTown.instance.LOG.info("Town " + town.getName() + " has been deleted because it didn't pay upkeep for " + Config.upkeepTownDeletionDays + " days.");
+                                MyTown.instance.LOG.info("Town {} has been deleted because it didn't pay upkeep for {} days.", town.getName(), Config.upkeepTownDeletionDays);
                                 DatasourceProxy.getDatasource().deleteTown(town);
                             } else {
                                 DatasourceProxy.getDatasource().updateTownBank(town, town.getBankAmount());
@@ -73,7 +73,7 @@ public class Ticker {
         if (res != null) {
             res.setPlayer(ev.player);
         } else {
-            MyTown.instance.LOG.error("Didn't create resident for player %s (%s)", ev.player.getCommandSenderName(), ev.player.getPersistentID());
+            MyTown.instance.LOG.error("Didn't create resident for player {} ({})", ev.player.getCommandSenderName(), ev.player.getPersistentID());
         }
     }
 

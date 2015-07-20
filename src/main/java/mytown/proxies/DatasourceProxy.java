@@ -31,7 +31,7 @@ public class DatasourceProxy {
      */
     public static boolean start(Configuration config) {
         if (!dbTypes.containsKey(Config.dbType.toLowerCase())) {
-            MyTown.instance.LOG.error("Unknown Datasource type %s!", Config.dbType.toLowerCase());
+            MyTown.instance.LOG.error("Unknown Datasource type {}!", Config.dbType.toLowerCase());
             return false;
         }
 
@@ -39,7 +39,7 @@ public class DatasourceProxy {
             // Create MyTownDatasource instance
             datasource = (MyTownDatasource) dbTypes.get(Config.dbType.toLowerCase()).newInstance();
         } catch (Exception e) {
-            MyTown.instance.LOG.error("Failed to instantiate the Datasource (%s)!", e, Config.dbType.toLowerCase());
+            MyTown.instance.LOG.error("Failed to instantiate the Datasource ({})!", e, Config.dbType.toLowerCase());
             return false;
         }
 
@@ -92,7 +92,7 @@ public class DatasourceProxy {
      */
     public static void registerType(String name, Class<?> type) {
         if (dbTypes.containsKey(name)) {
-            MyTown.instance.LOG.warn("Type %s already registered!", name);
+            MyTown.instance.LOG.warn("Type {} already registered!", name);
             return;
         }
         dbTypes.put(name, type);
@@ -114,7 +114,7 @@ public class DatasourceProxy {
             try {
                 registerType(datasourceName, Class.forName(datasourceClassName));
             } catch (ClassNotFoundException e) {
-                MyTown.instance.LOG.warn("Failed to register datasource type %s from mod %s", e, datasourceName, msg.getSender());
+                MyTown.instance.LOG.warn("Failed to register datasource type {} from mod {}", e, datasourceName, msg.getSender());
             }
         }
     }

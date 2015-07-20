@@ -106,7 +106,7 @@ public abstract class MyTownDatasource {
             }
             // Linking resident to town
             if (!linkResidentToTown(creator, town, onCreationDefaultRank))
-                MyTown.instance.LOG.error("Problem linking resident " + creator.getPlayerName() + " to town " + town.getName());
+                MyTown.instance.LOG.error("Problem linking resident {} to town {}", creator.getPlayerName(), town.getName());
 
             saveTownBank(town, Config.defaultBankAmount, 0);
         }

@@ -52,20 +52,20 @@ public class ProtectionParser {
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
             try {
                 FileReader reader = new FileReader(file);
-                MyTown.instance.LOG.info("Loading protection file: " + file.getName());
+                MyTown.instance.LOG.info("Loading protection file: {}", file.getName());
                 Protection protection = gson.fromJson(reader, Protection.class);
                 if(protection != null) {
                     if ("Minecraft".equals(protection.modid)) {
                         vanillaProtection = protection;
                     } else {
-                        MyTown.instance.LOG.info("Adding protection for mod: " + protection.modid);
+                        MyTown.instance.LOG.info("Adding protection for mod: {}", protection.modid);
                         Protections.instance.addProtection(protection);
                     }
                 }
                 reader.close();
 
             } catch (Exception ex) {
-                MyTown.instance.LOG.error("Encountered error when parsing protection file: " + file.getName());
+                MyTown.instance.LOG.error("Encountered error when parsing protection file: {}", file.getName());
                 MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
             }
         }
