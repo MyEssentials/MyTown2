@@ -6,8 +6,7 @@ import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
 import myessentials.entities.ChunkPos;
-import myessentials.command.Command;
-import myessentials.command.CommandNode;
+import myessentials.command.annotation.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -40,11 +39,10 @@ public class CommandsAdmin extends Commands {
 
     }
 
-    @Command(
+    @CommandNode(
             name = "mytownadmin",
             permission = "mytown.adm.cmd",
-            alias = {"ta", "townadmin"},
-            opsOnlyAccess = true)
+            alias = {"ta", "townadmin"})
     public static void townAdminCommand(ICommandSender sender, List<String> args) {
         CommandManager.callSubFunctions(sender, args, "mytown.adm.cmd", getLocal());
     }

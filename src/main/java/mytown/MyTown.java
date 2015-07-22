@@ -6,6 +6,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
+import myessentials.command.CommandManagerNew;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
@@ -127,17 +128,17 @@ public class MyTown {
             LOG.error(ExceptionUtils.getStackTrace(e));
         }
 
-        CommandManager.registerCommands(CommandsEveryone.class, m);
-        CommandManager.registerCommands(CommandsAssistant.class, m);
+        CommandManagerNew.registerCommands(CommandsEveryone.class, null);
+        CommandManagerNew.registerCommands(CommandsAssistant.class, "mytown.cmd");
         if (Config.modifiableRanks)
-            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, m);
-        CommandManager.registerCommands(CommandsAdmin.class);
+            CommandManagerNew.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd");
+        CommandManagerNew.registerCommands(CommandsAdmin.class, null);
         if(Config.enablePlots) {
-            CommandManager.registerCommands(CommandsEveryone.Plots.class, m);
-            CommandManager.registerCommands(CommandsAdmin.Plots.class);
+            CommandManagerNew.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd");
+            CommandManagerNew.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd");
         }
 
-        CommandManager.registerCommands(CommandsOutsider.class, m);
+        CommandManagerNew.registerCommands(CommandsOutsider.class, "mytown.cmd");
     }
 
     public WildPermsConfig getWildConfig() {

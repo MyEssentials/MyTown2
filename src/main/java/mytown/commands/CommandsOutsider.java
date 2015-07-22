@@ -6,7 +6,7 @@ import java.util.List;
 
 import myessentials.command.CommandManager;
 import mytown.config.Config;
-import myessentials.command.CommandNode;
+import myessentials.command.annotation.CommandNode;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;

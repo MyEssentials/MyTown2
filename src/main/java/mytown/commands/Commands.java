@@ -1,8 +1,6 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
-import myessentials.command.Command;
-import myessentials.economy.Economy;
 import mytown.api.interfaces.IFlagsContainer;
 import myessentials.Localization;
 import myessentials.command.CommandManager;

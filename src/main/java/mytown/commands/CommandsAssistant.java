@@ -2,7 +2,7 @@ package mytown.commands;
 
 import mytown.config.Config;
 import myessentials.command.CommandManager;
-import myessentials.command.CommandNode;
+import myessentials.command.annotation.CommandNode;
 import myessentials.entities.ChunkPos;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.MathUtils;

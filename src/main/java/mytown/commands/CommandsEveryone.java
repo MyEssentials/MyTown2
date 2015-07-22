@@ -4,8 +4,7 @@ import myessentials.command.CommandManager;
 import mytown.config.Config;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.StringUtils;
-import myessentials.command.Command;
-import myessentials.command.CommandNode;
+import myessentials.command.annotation.CommandNode;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -28,7 +27,7 @@ import java.util.List;
  */
 public class CommandsEveryone extends Commands {
 
-    @Command(
+    @CommandNode(
             name = "mytown",
             permission = "mytown.cmd",
             alias = {"t", "town"})
