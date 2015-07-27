@@ -3,6 +3,7 @@ package mytown.datasource;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
+import myessentials.command.CommandCompletion;
 import myessentials.command.CommandManager;
 import mytown.entities.*;
 import mytown.handlers.VisualsHandler;
@@ -62,14 +63,14 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public final boolean addResident(Resident res) {
         residents.put(res.getUUID().toString(), res);
-        CommandManager.completionMap.get("residentCompletion").add(res.getPlayerName());
+        CommandCompletion.addCompletion("residentCompletion", res.getPlayerName());
         return true;
     }
 
     public final boolean addTown(Town town) {
         towns.put(town.getName(), town);
-        CommandManager.completionMap.get("townCompletionAndAll").add(town.getName());
-        CommandManager.completionMap.get("townCompletion").add(town.getName());
+        CommandCompletion.addCompletion("townCompletionAndAll", town.getName());
+        CommandCompletion.addCompletion("townCompletion", town.getName());
         return true;
     }
 
@@ -85,7 +86,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public final boolean addRank(Rank rank) {
         ranks.put(rank.getKey(), rank);
-        CommandManager.completionMap.get("rankCompletion").add(rank.getName());
+        CommandCompletion.addCompletion("rankCompletion", rank.getName());
         return true;
     }
 
@@ -99,7 +100,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
             }
         }
         plots.put(plot.getDbID(), plot);
-        CommandManager.completionMap.get("plotCompletion").add(plot.getName());
+        CommandCompletion.addCompletion("plotCompletion", plot.getName());
         return true;
     }
 
@@ -112,15 +113,15 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public final boolean removeResident(Resident res) {
         residents.remove(res.getUUID().toString());
-        CommandManager.completionMap.get("residentCompletion").remove(res.getPlayerName());
+        CommandCompletion.removeCompletion("residentCompletion", res.getPlayerName());
         return true;
     }
 
     public final boolean removeTown(Town town) {
         towns.remove(town.getOldName() != null ? town.getOldName() : town.getName());
         VisualsHandler.instance.unmarkBlocks(town);
-        CommandManager.completionMap.get("townCompletionAndAll").remove(town.getName());
-        CommandManager.completionMap.get("townCompletion").remove(town.getName());
+        CommandCompletion.removeCompletion("townCompletionAndAll", town.getName());
+        CommandCompletion.removeCompletion("townCompletion", town.getName());
         return true;
     }
 
@@ -149,7 +150,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
                 removeFromCompletionMap = false;
         }
         if(removeFromCompletionMap)
-            CommandManager.completionMap.get("plotCompletion").remove(plot.getName());
+            CommandCompletion.removeCompletion("plotCompletion", plot.getName());
 
         VisualsHandler.instance.unmarkBlocks(plot);
         return true;

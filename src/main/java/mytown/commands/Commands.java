@@ -1,6 +1,7 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
+import myessentials.command.CommandCompletion;
 import mytown.api.interfaces.IFlagsContainer;
 import myessentials.Localization;
 import myessentials.command.CommandManager;
@@ -64,43 +65,38 @@ public abstract class Commands {
      * Populates the tab completion map.
      */
     public static void populateCompletionMap() {
+
+        CommandCompletion.addCompletions("townCompletionAndAll", getUniverse().getTownsMap().keySet());
+        CommandCompletion.addCompletion("townCompletionAndAll", "@a");
+
+        CommandCompletion.addCompletions("townCompletion", getUniverse().getTownsMap().keySet());
+
         List<String> populator = new ArrayList<String>();
-        populator.addAll(getUniverse().getTownsMap().keySet());
-        populator.add("@a");
-        CommandManager.completionMap.put("townCompletionAndAll", populator);
-
-        populator = new ArrayList<String>();
-        populator.addAll(getUniverse().getTownsMap().keySet());
-        CommandManager.completionMap.put("townCompletion", populator);
-
-        populator = new ArrayList<String>();
         for (Resident res : getUniverse().getResidentsMap().values()) {
             populator.add(res.getPlayerName());
         }
-        CommandManager.completionMap.put("residentCompletion", populator);
+        CommandCompletion.addCompletions("residentCompletion", populator);
 
         populator = new ArrayList<String>();
         for (FlagType flag : FlagType.values()) {
             populator.add(flag.toString().toLowerCase());
         }
-        CommandManager.completionMap.put("flagCompletion", populator);
+        CommandCompletion.addCompletions("flagCompletion", populator);
 
         populator = new ArrayList<String>();
         for (FlagType flag : FlagType.values()) {
             if (flag.isWhitelistable())
                 populator.add(flag.toString().toLowerCase());
         }
-        CommandManager.completionMap.put("flagCompletionWhitelist", populator);
+        CommandCompletion.addCompletions("flagCompletionWhitelist", populator);
 
         populator = new ArrayList<String>();
         for(Plot plot : MyTownUniverse.instance.getPlotsMap().values()) {
             populator.add(plot.toString());
         }
-        CommandManager.completionMap.put("plotCompletion", populator);
+        CommandCompletion.addCompletions("plotCompletion", populator);
 
-        populator = new ArrayList<String>();
-        populator.addAll(Rank.defaultRanks.keySet());
-        CommandManager.completionMap.put("rankCompletion", populator);
+        CommandCompletion.addCompletions("rankCompletion", Rank.defaultRanks.keySet());
     }
 
     /* ---- HELPERS ---- */

@@ -1,8 +1,9 @@
 package mytown.commands;
 
+import myessentials.command.CommandManagerNew;
+import myessentials.command.CommandResponse;
+import myessentials.command.annotation.Command;
 import mytown.config.Config;
-import myessentials.command.CommandManager;
-import myessentials.command.annotation.CommandNode;
 import myessentials.entities.ChunkPos;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.MathUtils;
@@ -27,11 +28,11 @@ import java.util.List;
  */
 public class CommandsAssistant extends Commands {
 
-    @CommandNode(
+    @Command(
             name = "setspawn",
             permission = "mytown.cmd.assistant.setspawn",
             parentName = "mytown.cmd")
-    public static void setSpawnCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse setSpawnCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
@@ -44,13 +45,14 @@ public class CommandsAssistant extends Commands {
         town.getSpawn().setDim(player.dimension).setPosition((float) player.posX, (float) player.posY, (float) player.posZ).setRotation(player.cameraYaw, player.cameraPitch);
         getDatasource().saveTown(town);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.setspawn"));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "claim",
             permission = "mytown.cmd.assistant.claim",
             parentName = "mytown.cmd")
-    public static void claimCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse claimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromResident(res);
@@ -131,13 +133,14 @@ public class CommandsAssistant extends Commands {
                 res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
             }
         }
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "unclaim",
             permission = "mytown.cmd.assistant.unclaim",
             parentName = "mytown.cmd")
-    public static void unclaimCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse unclaimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(sender);
         TownBlock block = getBlockAtResident(res);
@@ -154,14 +157,15 @@ public class CommandsAssistant extends Commands {
         getDatasource().deleteBlock(block);
         res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
         makeBankRefund(player, town, block.getPricePaid());
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "invite",
             permission = "mytown.cmd.assistant.invite",
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion"})
-    public static void inviteCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse inviteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         if (args.size() < 1)
@@ -173,14 +177,15 @@ public class CommandsAssistant extends Commands {
         getDatasource().saveTownInvite(target, town);
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.invited", town.getName()));
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.invite.sent", args.get(0)));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "set",
             permission = "mytown.cmd.assistant.perm.set",
             parentName = "mytown.cmd.everyone.perm",
             completionKeys = "flagCompletion")
-    public static void permSetCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse permSetCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
@@ -193,24 +198,26 @@ public class CommandsAssistant extends Commands {
         } else
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
         getDatasource().saveFlag(flag, town);
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "whitelist",
             permission = "mytown.cmd.assistant.perm.whitelist",
             parentName = "mytown.cmd.everyone.perm",
             completionKeys = {"flagCompletionWhitelist"})
-    public static void permWhitelistCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse permWhitelistCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         res.setCurrentTool(new WhitelisterTool(res));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "promote",
             permission = "mytown.cmd.assistant.promote",
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion", "rankCompletion"})
-    public static void promoteCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse promoteCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
             throw new MyTownWrongUsageException("mytown.cmd.usage.promote");
         Resident resSender = getDatasource().getOrMakeResident(sender);
@@ -227,7 +234,7 @@ public class CommandsAssistant extends Commands {
             resSender.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.sender", resTarget.getPlayerName(), rank.getName()));
             resTarget.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.target", rank.getName(), town.getName()));
         }
-
+        return CommandResponse.DONE;
     }
 
     public static class ModifyRanks {
@@ -235,12 +242,12 @@ public class CommandsAssistant extends Commands {
         private ModifyRanks() {
         }
 
-        @CommandNode(
+        @Command(
                 name = "add",
                 permission = "mytown.cmd.assistant.ranks.add",
                 parentName = "mytown.cmd.everyone.ranks",
                 completionKeys = {"-", "ranksCompletion"})
-        public static void ranksAddCommand(ICommandSender sender, List<String> args) {
+        public static CommandResponse ranksAddCommand(ICommandSender sender, List<String> args) {
 
             if (args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.ranks");
@@ -256,14 +263,15 @@ public class CommandsAssistant extends Commands {
             Rank rank = new Rank(args.get(0), town.getRank(args.get(1)).getPermissions(), town);
             getDatasource().saveRank(rank, false);
             res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(0), town.getName()));
+            return CommandResponse.DONE;
         }
 
-        @CommandNode(
+        @Command(
                 name = "remove",
                 permission = "mytown.cmd.assistant.ranks.remove",
                 parentName = "mytown.cmd.everyone.ranks",
                 completionKeys = {"rankCompletion"})
-        public static void ranksRemoveCommand(ICommandSender sender, List<String> args) {
+        public static CommandResponse ranksRemoveCommand(ICommandSender sender, List<String> args) {
 
             if (args.size() < 1)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.ranks");
@@ -279,14 +287,15 @@ public class CommandsAssistant extends Commands {
             } else {
                 res.sendMessage(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notallowed", args.get(0)));
             }
+            return CommandResponse.DONE;
         }
 
 
-        @CommandNode(
+        @Command(
                 name = "add",
                 permission = "mytown.cmd.assistant.ranks.perm.add",
                 parentName = "mytown.cmd.assistant.ranks.perm")
-        public static void ranksPermAddCommand(ICommandSender sender, List<String> args) {
+        public static CommandResponse ranksPermAddCommand(ICommandSender sender, List<String> args) {
 
             if (args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.ranks.perm");
@@ -295,7 +304,7 @@ public class CommandsAssistant extends Commands {
             Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
 
-            if (!CommandManager.commandList.keySet().contains(args.get(1)))
+            if (!CommandManagerNew.getTree("mytown.cmd").hasCommandNode(args.get(1)))
                 throw new MyTownCommandException("mytown.cmd.err.ranks.perm.notexist", args.get(1));
 
             // Adding permission if everything is alright
@@ -304,13 +313,14 @@ public class CommandsAssistant extends Commands {
                 res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
             } else
                 throw new MyTownCommandException("mytown.cmd.err.ranks.perm.add.failed", args.get(1));
+            return CommandResponse.DONE;
         }
 
-        @CommandNode(
+        @Command(
                 name = "remove",
                 permission = "mytown.cmd.assistant.ranks.perm.remove",
                 parentName = "mytown.cmd.assistant.ranks.perm")
-        public static void ranksPermRemoveCommand(ICommandSender sender, List<String> args) {
+        public static CommandResponse ranksPermRemoveCommand(ICommandSender sender, List<String> args) {
 
             if (args.size() < 2)
                 throw new MyTownWrongUsageException("mytown.cmd.usage.ranks.perm");
@@ -320,7 +330,7 @@ public class CommandsAssistant extends Commands {
 
             Rank rank = getRankFromTown(town, args.get(0));
 
-            if (!CommandManager.commandList.keySet().contains(args.get(1)))
+            if (!CommandManagerNew.getTree("mytown.cmd").hasCommandNode(args.get(1)))
                 throw new MyTownCommandException("mytown.cmd.err.ranks.perm.notexist", args.get(1));
 
             // Removing permission if everything is alright
@@ -329,23 +339,24 @@ public class CommandsAssistant extends Commands {
                 res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
             } else
                 throw new MyTownCommandException("mytown.cmd.err.ranks.perm.remove.failed", args.get(1));
+            return CommandResponse.DONE;
         }
     }
 
 
-    @CommandNode(
+    @Command(
             name = "perm",
             permission = "mytown.cmd.assistant.ranks.perm",
             parentName = "mytown.cmd.everyone.ranks")
-    public static void ranksPermCommand(ICommandSender sender, List<String> args) {
-        CommandManager.callSubFunctions(sender, args, "mytown.cmd.assistant.ranks.perm", getLocal());
+    public static CommandResponse ranksPermCommand(ICommandSender sender, List<String> args) {
+        return CommandResponse.SEND_HELP_MESSAGE;
     }
 
-    @CommandNode(
+    @Command(
             name = "list",
             permission = "mytown.cmd.assistant.ranks.perm.list",
             parentName = "mytown.cmd.assistant.ranks.perm")
-    public static void ranksPermListCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse ranksPermListCommand(ICommandSender sender, List<String> args) {
 
         Rank rank;
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -362,14 +373,15 @@ public class CommandsAssistant extends Commands {
         }
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), rank.getTown().getName(), msg));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "pass",
             permission = "mytown.cmd.mayor.pass",
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion"})
-    public static void passCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse passCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new MyTownCommandException("mytown.cmd.usage.leave.pass");
 
@@ -388,52 +400,57 @@ public class CommandsAssistant extends Commands {
         } else {
             //...
         }
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
-            name = "limit",
-            permission = "mytown.cmd.assistant.plot.limit",
-            parentName = "mytown.cmd.everyone.plot")
-    public static void plotLimitCommand(ICommandSender sender, List<String> args) {
-        CommandManager.callSubFunctions(sender, args, "mytown.cmd.assistant.plot.limit", getLocal());
-    }
-
-    @CommandNode(
-            name = "show",
-            permission = "mytown.cmd.assistant.plot.limit.show",
-            parentName = "mytown.cmd.everyone.plot.limit")
-    public static void plotLimitShowCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));
-    }
-
-
-    @CommandNode(
-            name = "set",
-            permission = "mytown.cmd.assistant.plot.limit.set",
-            parentName = "mytown.cmd.assistant.plot.limit")
-    public static void plotLimitSetCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1) {
-            throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
+    public static class Plots {
+        @Command(
+                name = "limit",
+                permission = "mytown.cmd.assistant.plot.limit",
+                parentName = "mytown.cmd.everyone.plot")
+        public static CommandResponse plotLimitCommand(ICommandSender sender, List<String> args) {
+            return CommandResponse.SEND_HELP_MESSAGE;
         }
-        if (StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger");
+
+        @Command(
+                name = "show",
+                permission = "mytown.cmd.assistant.plot.limit.show",
+                parentName = "mytown.cmd.everyone.plot.limit")
+        public static CommandResponse plotLimitShowCommand(ICommandSender sender, List<String> args) {
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));
+            return CommandResponse.DONE;
         }
-        int limit = Integer.parseInt(args.get(0));
-        Resident res = getDatasource().getOrMakeResident(sender);
-        Town town = getTownFromResident(res);
-        town.setMaxPlots(limit);
-        getDatasource().saveTown(town);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));
+
+
+        @Command(
+                name = "set",
+                permission = "mytown.cmd.assistant.plot.limit.set",
+                parentName = "mytown.cmd.assistant.plot.limit")
+        public static CommandResponse plotLimitSetCommand(ICommandSender sender, List<String> args) {
+            if (args.size() < 1) {
+                throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
+            }
+            if (StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
+                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger");
+            }
+            int limit = Integer.parseInt(args.get(0));
+            Resident res = getDatasource().getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+            town.setMaxPlots(limit);
+            getDatasource().saveTown(town);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.getMaxPlots()));
+            return CommandResponse.DONE;
+        }
     }
 
-    @CommandNode(
+    @Command(
             name = "kick",
             permission = "mytown.cmd.assistant.kick",
             parentName = "mytown.cmd",
             completionKeys = {"residentCompletion"})
-    public static void kickCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse kickCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.kick");
         }
@@ -450,13 +467,14 @@ public class CommandsAssistant extends Commands {
         getDatasource().unlinkResidentFromTown(target, town);
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.kicked", town.getName()));
         town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.left", target.getPlayerName(), town.getName()));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "delete",
             permission = "mytown.cmd.mayor.leave.delete",
             parentName = "mytown.cmd.everyone.leave")
-    public static void leaveDeleteCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse leaveDeleteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         EntityPlayer player = (EntityPlayer) sender;
@@ -471,14 +489,15 @@ public class CommandsAssistant extends Commands {
             makeRefund(player, refund);
             getDatasource().deleteTown(town);
         }
+        return CommandResponse.DONE;
     }
 
 
-    @CommandNode(
+    @Command(
             name = "rename",
             permission = "mytown.cmd.assistant.rename",
             parentName = "mytown.cmd")
-    public static void renameCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse renameCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.rename");
 
@@ -491,13 +510,14 @@ public class CommandsAssistant extends Commands {
         town.rename(args.get(0));
         getDatasource().saveTown(town);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.renamed"));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "withdraw",
             permission = "mytown.cmd.assistant.bank.withdraw",
             parentName = "mytown.cmd.everyone.bank")
-    public static void bankPayCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse bankPayCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.bank.withdraw");
 
@@ -516,9 +536,8 @@ public class CommandsAssistant extends Commands {
 
         makeRefund(res.getPlayer(), amount);
         getDatasource().updateTownBank(town, town.getBankAmount() - amount);
+        return CommandResponse.DONE;
     }
-
-
 
     // Temporary here, might integrate in the methods
     protected static boolean checkNearby(int dim, int x, int z, Town town) {

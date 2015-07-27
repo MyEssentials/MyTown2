@@ -1,6 +1,9 @@
 package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
+import myessentials.command.CommandManagerNew;
+import myessentials.command.CommandTree;
+import myessentials.command.CommandTreeNode;
 import mytown.MyTown;
 import myessentials.command.CommandManager;
 import mytown.entities.Rank;
@@ -13,6 +16,7 @@ import java.util.*;
  * JSON Default ranks config
  */
 public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
+
     public RanksConfig(String path) {
         super(path);
         gsonType = new TypeToken<List<Wrapper>>() {}.getType();
@@ -32,16 +36,14 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             List<String> pResident = new ArrayList<String>();
 
             // Filling arrays
-
-            for (String s : CommandManager.commandList.keySet()) {
-                if (s.startsWith("mytown.cmd")) {
-                    pMayor.add(s);
-                    if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
-                        pAssistant.add(s);
-                    }
-                    if (s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
-                        pResident.add(s);
-                    }
+            for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+                String s = node.getAnnotation().permission();
+                pMayor.add(s);
+                if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
+                    pAssistant.add(s);
+                }
+                if (s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
+                    pResident.add(s);
                 }
             }
 
@@ -107,20 +109,16 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             for (Wrapper w : wrappedObjects) {
                 for (Iterator<String> it = w.permissions.iterator(); it.hasNext(); ) {
                     String s = it.next();
-                    if (!CommandManager.commandList.containsKey(s)) {
+                    if (!CommandManagerNew.getTree("mytown.cmd").hasCommandNode(CommandManagerNew.getTree("mytown.cmd").getRoot(), s) || s.startsWith("-") && !CommandManagerNew.getTree("mytown.cmd").hasCommandNode(s.substring(1))) {
                         // Omitting permissions that don't exist
-                        boolean ok = true;
-                        for(String s1 : notExistingPermNodes)
-                            if(s1.equals(s))
-                                ok = false;
-                        if(!CommandManager.commandList.containsKey(s.substring(1))) {
-                            if (ok) {
-                                notExistingPermNodes.add(s);
-                                MyTown.instance.LOG.error("Permission node {} does not exist! Removing...", s);
-                            }
-                            it.remove();
+                        if(!notExistingPermNodes.contains(s)) {
+                            notExistingPermNodes.add(s);
+                            MyTown.instance.LOG.error("Permission node {} does not exist! Removing...", s);
                         }
+
+                        it.remove();
                     }
+
                 }
             }
             MyTown.instance.LOG.info("Loaded DefaultRanks successfully!");
@@ -134,15 +132,16 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
     @Override
     public void update(List<Wrapper> items) {
         boolean updated = false;
-        for(String node : CommandManager.commandList.keySet()) {
-            if(node.startsWith("mytown.cmd")) {
+        for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+            String perm = node.getAnnotation().permission();
+            if(perm.startsWith("mytown.cmd")) {
                 for (Wrapper wrapper : items) {
                     if(wrapper.type == RankType.MAYOR ||
-                            wrapper.type == RankType.RESIDENT && (node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")) ||
-                            wrapper.type == RankType.ASSISTANT && (node.startsWith("mytown.cmd.assistant") || node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")))
-                        if (!wrapper.permissions.contains(node) && !wrapper.permissions.contains("-" + node)) {
-                            wrapper.permissions.add(node);
-                            MyTown.instance.LOG.info("Permission node {} is missing from the configs in rank {}", node, wrapper.type);
+                            wrapper.type == RankType.RESIDENT && (perm.startsWith("mytown.cmd.everyone") || perm.startsWith("mytown.cmd.outsider")) ||
+                            wrapper.type == RankType.ASSISTANT && (perm.startsWith("mytown.cmd.assistant") || perm.startsWith("mytown.cmd.everyone") || perm.startsWith("mytown.cmd.outsider")))
+                        if (!wrapper.permissions.contains(perm) && !wrapper.permissions.contains("-" + perm)) {
+                            wrapper.permissions.add(perm);
+                            MyTown.instance.LOG.info("Permission node {} is missing from the configs in rank {}", perm, wrapper.type);
                             updated = true;
                         }
                 }
@@ -170,10 +169,8 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
         if(!mayorExists) {
             MyTown.instance.LOG.info("Ranks config is missing Mayor rank. Adding...");
             List<String> permissions = new ArrayList<String>();
-            for(String node : CommandManager.commandList.keySet()) {
-                if(node.startsWith("mytown.cmd")) {
-                    permissions.add(node);
-                }
+            for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+                permissions.add(node.getAnnotation().permission());
             }
             Collections.sort(permissions);
             items.add(new Wrapper("Mayor", permissions, RankType.MAYOR));
@@ -183,9 +180,10 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
         if(!assistantExists) {
             MyTown.instance.LOG.info("Ranks config is missing Assistant rank. Adding...");
             List<String> permissions = new ArrayList<String>();
-            for(String node : CommandManager.commandList.keySet()) {
-                if(node.startsWith("mytown.cmd.assistant") || node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")) {
-                    permissions.add(node);
+            for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+                String perm = node.getAnnotation().permission();
+                if(perm.startsWith("mytown.cmd.assistant") || perm.startsWith("mytown.cmd.everyone") || perm.startsWith("mytown.cmd.outsider")) {
+                    permissions.add(perm);
                 }
             }
             Collections.sort(permissions);
@@ -196,9 +194,10 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
         if(!residentExists) {
             MyTown.instance.LOG.info("Ranks config is missing Resident rank. Adding...");
             List<String> permissions = new ArrayList<String>();
-            for(String node : CommandManager.commandList.keySet()) {
-                if(node.startsWith("mytown.cmd.everyone") || node.startsWith("mytown.cmd.outsider")) {
-                    permissions.add(node);
+            for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+                String perm = node.getAnnotation().permission();
+                if(perm.startsWith("mytown.cmd.everyone") || perm.startsWith("mytown.cmd.outsider")) {
+                    permissions.add(perm);
                 }
             }
             Collections.sort(permissions);

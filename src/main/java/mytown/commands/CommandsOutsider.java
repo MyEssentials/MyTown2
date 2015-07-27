@@ -4,9 +4,10 @@ package mytown.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import myessentials.command.CommandManager;
+import myessentials.command.*;
+import myessentials.command.annotation.Command;
+import myessentials.utils.StringUtils;
 import mytown.config.Config;
-import myessentials.command.annotation.CommandNode;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
@@ -22,13 +23,13 @@ import net.minecraft.util.EnumChatFormatting;
  * All commands that can be accessed by everyone whether or not he's in a town
  */
 public class CommandsOutsider extends Commands {
-    @CommandNode(
+    @Command(
             name = "info",
             permission = "mytown.cmd.outsider.info",
             parentName = "mytown.cmd",
             nonPlayers = true,
             completionKeys = {"townCompletionAndAll"})
-    public static void infoCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse infoCommand(ICommandSender sender, List<String> args) {
         List<Town> towns = new ArrayList<Town>();
 
         if (args.size() < 1) {
@@ -51,15 +52,16 @@ public class CommandsOutsider extends Commands {
         for (Town town : towns) {
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.info", town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getMaxBlocks(), town.getPlots().size(), Formatter.formatResidentsToString(town), Formatter.formatRanksToString(town.getRanks())));
         }
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "res",
             permission = "mytown.cmd.outsider.res",
             parentName = "mytown.cmd",
             nonPlayers = true,
             completionKeys = {"residentCompletion"})
-    public static void resCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse resCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1) {
             throw new MyTownWrongUsageException("mytown.cmd.usage.res");
         }
@@ -68,22 +70,24 @@ public class CommandsOutsider extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
         }
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.resident.info", res.getPlayerName(), Formatter.formatTownsToString(res), Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline())));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "list",
             permission = "mytown.cmd.outsider.list",
             parentName = "mytown.cmd",
             nonPlayers = true)
-    public static void listCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse listCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", Formatter.formatTownsToString(getUniverse().getTownsMap().values())));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "new",
             permission = "mytown.cmd.outsider.new",
             parentName = "mytown.cmd")
-    public static void newTownCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse newTownCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.newtown");
 
@@ -113,27 +117,29 @@ public class CommandsOutsider extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "map",
             permission = "mytown.cmd.outsider.map",
             parentName = "mytown.cmd")
-    public static void mapCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse mapCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         if (args.size() == 0) {
             Formatter.sendMap(res);
         } else {
             res.setMapOn(args.get(0).equals("on"));
         }
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "accept",
             permission = "mytown.cmd.outsider.accept",
             parentName = "mytown.cmd",
             completionKeys = {"townCompletion"})
-    public static void acceptCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse acceptCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
@@ -155,14 +161,15 @@ public class CommandsOutsider extends Commands {
         // Notify everyone
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.accept", town.getName()));
         town.notifyResidentJoin(res);
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "refuse",
             permission = "mytown.cmd.outsider.refuse",
             parentName = "mytown.cmd",
             completionKeys = {"townCompletion"})
-    public static void refuseCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse refuseCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
@@ -179,21 +186,22 @@ public class CommandsOutsider extends Commands {
         getDatasource().deleteTownInvite(res, town, false);
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.refuse", town.getName()));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "friends",
             permission = "mytown.cmd.outsider.friends",
             parentName = "mytown.cmd")
-    public static void friendsCommand(ICommandSender sender, List<String> args) {
-        CommandManager.callSubFunctions(sender, args, "mytown.cmd.outsider.friends", getLocal());
+    public static CommandResponse friendsCommand(ICommandSender sender, List<String> args) {
+        return CommandResponse.SEND_HELP_MESSAGE;
     }
 
-    @CommandNode(
+    @Command(
             name = "list",
             permission = "mytown.cmd.outsider.friends.list",
             parentName = "mytown.cmd.outsider.friends")
-    public static void friendsListCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse friendsListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
 
         String friends = null;
@@ -205,14 +213,15 @@ public class CommandsOutsider extends Commands {
         }
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.resident.friends.list", friends));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "add",
             permission = "mytown.cmd.outsider.friends.add",
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
-    public static void friendsAddCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse friendsAddCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.friends.add");
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -225,14 +234,15 @@ public class CommandsOutsider extends Commands {
         getDatasource().saveFriendRequest(res, toAdd);
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.invitationSent"));
         toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotInvitation", res.getPlayerName()));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "remove",
             permission = "mytown.cmd.outsider.friends.remove",
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
-    public static void friendsRemoveCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse friendsRemoveCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new MyTownWrongUsageException("mytown.cmd.usage.friends.remove");
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -245,14 +255,15 @@ public class CommandsOutsider extends Commands {
         getDatasource().deleteFriendLink(res, toRemove);
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.removed"));
         toRemove.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotRemoved", res.getPlayerName()));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "accept",
             permission = "mytown.cmd.outsider.friends.accept",
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
-    public static void friendsAcceptCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse friendsAcceptCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new MyTownCommandException("mytown.cmd.usage.friends.accept");
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -265,14 +276,15 @@ public class CommandsOutsider extends Commands {
         getDatasource().saveFriendLink(res, toAdd);
         toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.accepted", res.getPlayerName()));
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotAccepted", toAdd.getPlayerName()));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "refuse",
             permission = "mytown.cmd.outsider.friends.refuse",
             parentName = "mytown.cmd.outsider.friends",
             completionKeys = {"residentCompletion"})
-    public static void friendsRefuseCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse friendsRefuseCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             throw new MyTownCommandException("mytown.cmd.usage.friends.refuse");
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -281,23 +293,32 @@ public class CommandsOutsider extends Commands {
         getDatasource().deleteFriendRequest(toAdd, res);
         res.sendMessage(getLocal().getLocalization("mytown.notification.friends.refused", toAdd.getPlayerName()));
         toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotRefused", res.getPlayerName()));
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "help",
             permission = "mytown.cmd.outsider.help",
             parentName = "mytown.cmd",
             nonPlayers = true)
-    public static void helpCommand(ICommandSender sender, List<String> args) {
-        String sendHelpNode = CommandManager.getPermissionNodeFromArgs(args, "mytown.cmd");
-        CommandManager.sendHelpMessage(sender, sendHelpNode, getLocal());
+    public static CommandResponse helpCommand(ICommandSender sender, List<String> args) {
+        int page = 1;
+        if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0))) {
+            page = Integer.parseInt(args.get(0));
+            args = args.subList(1, args.size());
+        }
+
+        CommandTree tree = CommandManagerNew.getTree("mytown.cmd");
+        CommandTreeNode node = tree.getNodeFromArgs(args);
+        node.sendHelpMessage(sender, page);
+        return CommandResponse.DONE;
     }
 
-    @CommandNode(
+    @Command(
             name = "invites",
             permission = "mytown.cmd.outsider.invites",
             parentName = "mytown.cmd")
-    public static void invitesCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse invitesCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         if (res.getInvites().size() == 0)
             res.sendMessage(getLocal().getLocalization("mytown.notification.resident.noInvites"));
@@ -311,5 +332,6 @@ public class CommandsOutsider extends Commands {
             res.sendMessage(getLocal().getLocalization("mytown.notification.resident.invites"));
             res.sendMessage(formattedList);
         }
+        return CommandResponse.DONE;
     }
 }

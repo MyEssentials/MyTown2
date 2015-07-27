@@ -128,17 +128,18 @@ public class MyTown {
             LOG.error(ExceptionUtils.getStackTrace(e));
         }
 
-        CommandManagerNew.registerCommands(CommandsEveryone.class, null);
-        CommandManagerNew.registerCommands(CommandsAssistant.class, "mytown.cmd");
+        CommandManagerNew.registerCommands(CommandsEveryone.class, null, getLocal());
+        CommandManagerNew.registerCommands(CommandsAssistant.class, "mytown.cmd", getLocal());
         if (Config.modifiableRanks)
-            CommandManagerNew.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd");
-        CommandManagerNew.registerCommands(CommandsAdmin.class, null);
+            CommandManagerNew.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", getLocal());
+        CommandManagerNew.registerCommands(CommandsAdmin.class, null, getLocal());
         if(Config.enablePlots) {
-            CommandManagerNew.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd");
-            CommandManagerNew.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd");
+            CommandManagerNew.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", getLocal());
+            CommandManagerNew.registerCommands(CommandsAssistant.Plots.class, "mytown.adm.cmd", getLocal());
+            CommandManagerNew.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", getLocal());
         }
 
-        CommandManagerNew.registerCommands(CommandsOutsider.class, "mytown.cmd");
+        CommandManagerNew.registerCommands(CommandsOutsider.class, "mytown.cmd", getLocal());
     }
 
     public WildPermsConfig getWildConfig() {
