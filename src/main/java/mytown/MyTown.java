@@ -135,7 +135,7 @@ public class MyTown {
         CommandManagerNew.registerCommands(CommandsAdmin.class, null, getLocal());
         if(Config.enablePlots) {
             CommandManagerNew.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", getLocal());
-            CommandManagerNew.registerCommands(CommandsAssistant.Plots.class, "mytown.adm.cmd", getLocal());
+            CommandManagerNew.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", getLocal());
             CommandManagerNew.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", getLocal());
         }
 

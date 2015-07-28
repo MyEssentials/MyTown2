@@ -415,7 +415,7 @@ public class CommandsAssistant extends Commands {
         @Command(
                 name = "show",
                 permission = "mytown.cmd.assistant.plot.limit.show",
-                parentName = "mytown.cmd.everyone.plot.limit")
+                parentName = "mytown.cmd.assistant.plot.limit")
         public static CommandResponse plotLimitShowCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
