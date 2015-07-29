@@ -1,8 +1,7 @@
 package mytown.test.config.json;
 
 import mytown.config.json.FlagsConfig;
-import mytown.config.json.JSONConfig;
-import mytown.config.json.RanksConfig;
+import myessentials.json.JSONConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;

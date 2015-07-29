@@ -2,10 +2,9 @@ package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
 import myessentials.command.CommandManagerNew;
-import myessentials.command.CommandTree;
 import myessentials.command.CommandTreeNode;
+import myessentials.json.JSONConfig;
 import mytown.MyTown;
-import myessentials.command.CommandManager;
 import mytown.entities.Rank;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

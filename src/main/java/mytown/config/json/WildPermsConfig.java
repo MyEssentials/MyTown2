@@ -1,6 +1,7 @@
 package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
+import myessentials.json.JSONConfig;
 import mytown.MyTown;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
