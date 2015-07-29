@@ -64,8 +64,6 @@ public class MyTown {
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
         ConfigProcessor.load(config, Config.class);
 
-        LocalizationProxy.load();
-
         ProtectionParser.setFolderPath(ev.getModConfigurationDirectory() + "/MyTown/protections");
 
         registerHandlers();
