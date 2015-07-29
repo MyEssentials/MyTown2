@@ -83,7 +83,7 @@ public class Protection {
                         int x2 = segment.getX2(te);
                         int z2 = segment.getZ2(te);
 
-                        List<ChunkPos> chunks = WorldUtils.getChunksInBox(x1, z1, x2, z2);
+                        List<ChunkPos> chunks = WorldUtils.getChunksInBox(te.getWorldObj().provider.dimensionId, x1, z1, x2, z2);
                         boolean inWild = false;
                         for (ChunkPos chunk : chunks) {
                             TownBlock block = getDatasource().getBlock(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
@@ -156,7 +156,7 @@ public class Protection {
                                 }
                             }
                         } else {
-                            List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
+                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(entity.dimension, (int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
                             // Just so that it doesn't check more than once for Wild permissions
                             boolean inWild = false;
                             for (ChunkPos chunk : chunks) {
@@ -227,7 +227,7 @@ public class Protection {
                                 }
                             }
                         } else {
-                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(bp.getX() - range, bp.getZ() - range, bp.getX() + range, bp.getZ() + range);
+                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(bp.getDim(), bp.getX() - range, bp.getZ() - range, bp.getX() + range, bp.getZ() + range);
                             boolean inWild = false;
                             for (ChunkPos chunk : chunks) {
                                 block = getDatasource().getBlock(bp.getDim(), chunk.getX(), chunk.getZ());
@@ -308,7 +308,7 @@ public class Protection {
                                 }
                             }
                         } else {
-                            List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
+                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(entity.dimension, (int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
                             boolean inWild = false;
                             for (ChunkPos chunk : chunks) {
                                 block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
@@ -366,7 +366,7 @@ public class Protection {
                                 }
                             }
                         } else {
-                            List<ChunkPos> chunks = WorldUtils.getChunksInBox((int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
+                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(entity.dimension, (int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
                             boolean inWild = false;
                             for (ChunkPos chunk : chunks) {
                                 block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
