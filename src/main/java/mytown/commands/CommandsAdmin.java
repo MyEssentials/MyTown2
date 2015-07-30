@@ -690,6 +690,7 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.help",
             parentName = "mytown.adm.cmd",
             syntax = "/townadmin help <command>",
+            alias = {"?", "h"},
             console = true)
     public static CommandResponse helpCommand(ICommandSender sender, List<String> args) {
         int page = 1;

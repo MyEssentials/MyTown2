@@ -320,6 +320,7 @@ public class CommandsOutsider extends Commands {
             permission = "mytown.cmd.outsider.help",
             parentName = "mytown.cmd",
             syntax = "/town help <command>",
+            alias = {"?", "h"},
             console = true)
     public static CommandResponse helpCommand(ICommandSender sender, List<String> args) {
         int page = 1;
