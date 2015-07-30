@@ -209,9 +209,9 @@ mytown.notification.admtown.created=&aAdmin town %s created!
 mytown.adm.cmd.delete.usage=&3/ta delete <townname> [townname2 townname3...]
 mytown.adm.cmd.delete.success=&cDeleted town with name %s
 
-# /ta rem
+# /ta kick
 mytown.adm.cmd.usage.rem=&3/ta rem <resident> <fromTown>
-mytown.adm.cmd.err.rem.resident=&cPlayer %s is not part of the town %s
+mytown.adm.cmd.err.kick.resident=&cPlayer %s is not part of the town %s
 mytown.notification.town.resident.remove=&aResident %s has been &cremoved&a from town %s
 mytown.notification.town.resident.add=&aResident %s has been added to town %s
 

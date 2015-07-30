@@ -1,10 +1,10 @@
 package mytown.commands;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import myessentials.command.*;
+import myessentials.command.CommandManager;
+import myessentials.command.CommandResponse;
+import myessentials.command.CommandTree;
+import myessentials.command.CommandTreeNode;
 import myessentials.command.annotation.Command;
 import myessentials.utils.StringUtils;
 import mytown.config.Config;
@@ -14,10 +14,12 @@ import mytown.entities.flag.FlagType;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
-import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * All commands that can be accessed by everyone whether or not he's in a town
@@ -27,8 +29,9 @@ public class CommandsOutsider extends Commands {
             name = "info",
             permission = "mytown.cmd.outsider.info",
             parentName = "mytown.cmd",
-            nonPlayers = true,
-            completionKeys = {"townCompletionAndAll"})
+            syntax = "/town info [town]",
+            completionKeys = {"townCompletionAndAll"},
+            console = true)
     public static CommandResponse infoCommand(ICommandSender sender, List<String> args) {
         List<Town> towns = new ArrayList<Town>();
 
@@ -59,12 +62,13 @@ public class CommandsOutsider extends Commands {
             name = "res",
             permission = "mytown.cmd.outsider.res",
             parentName = "mytown.cmd",
-            nonPlayers = true,
-            completionKeys = {"residentCompletion"})
+            syntax = "/town res <resident>",
+            completionKeys = {"residentCompletion"},
+            console = true)
     public static CommandResponse resCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1) {
-            throw new MyTownWrongUsageException("mytown.cmd.usage.res");
-        }
+        if (args.size() < 1)
+            return CommandResponse.SEND_SYNTAX;
+
         Resident res = getResidentFromName(args.get(0));
         if (res == null) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
@@ -77,7 +81,8 @@ public class CommandsOutsider extends Commands {
             name = "list",
             permission = "mytown.cmd.outsider.list",
             parentName = "mytown.cmd",
-            nonPlayers = true)
+            syntax = "/town list",
+            console = true)
     public static CommandResponse listCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", Formatter.formatTownsToString(getUniverse().getTownsMap().values())));
         return CommandResponse.DONE;
@@ -86,10 +91,11 @@ public class CommandsOutsider extends Commands {
     @Command(
             name = "new",
             permission = "mytown.cmd.outsider.new",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            syntax = "/town new <town>")
     public static CommandResponse newTownCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.newtown");
+            return CommandResponse.SEND_SYNTAX;
 
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
@@ -123,7 +129,8 @@ public class CommandsOutsider extends Commands {
     @Command(
             name = "map",
             permission = "mytown.cmd.outsider.map",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            syntax = "/town map [on|off]")
     public static CommandResponse mapCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         if (args.size() == 0) {
@@ -138,6 +145,7 @@ public class CommandsOutsider extends Commands {
             name = "accept",
             permission = "mytown.cmd.outsider.accept",
             parentName = "mytown.cmd",
+            syntax = "/town accept [town]",
             completionKeys = {"townCompletion"})
     public static CommandResponse acceptCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -168,6 +176,7 @@ public class CommandsOutsider extends Commands {
             name = "refuse",
             permission = "mytown.cmd.outsider.refuse",
             parentName = "mytown.cmd",
+            syntax = "/town refuse [town]",
             completionKeys = {"townCompletion"})
     public static CommandResponse refuseCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -192,7 +201,8 @@ public class CommandsOutsider extends Commands {
     @Command(
             name = "friends",
             permission = "mytown.cmd.outsider.friends",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            syntax = "/town friends <command>")
     public static CommandResponse friendsCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -200,7 +210,8 @@ public class CommandsOutsider extends Commands {
     @Command(
             name = "list",
             permission = "mytown.cmd.outsider.friends.list",
-            parentName = "mytown.cmd.outsider.friends")
+            parentName = "mytown.cmd.outsider.friends",
+            syntax = "/town friends list")
     public static CommandResponse friendsListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
 
@@ -220,10 +231,12 @@ public class CommandsOutsider extends Commands {
             name = "add",
             permission = "mytown.cmd.outsider.friends.add",
             parentName = "mytown.cmd.outsider.friends",
+            syntax = "/town friends add <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse friendsAddCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.friends.add");
+            return CommandResponse.SEND_SYNTAX;
+
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
         if (res == toAdd)
@@ -241,10 +254,12 @@ public class CommandsOutsider extends Commands {
             name = "remove",
             permission = "mytown.cmd.outsider.friends.remove",
             parentName = "mytown.cmd.outsider.friends",
+            syntax = "/town friends remove <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse friendsRemoveCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.friends.remove");
+            return CommandResponse.SEND_SYNTAX;
+
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toRemove = getResidentFromName(args.get(0));
         if (!toRemove.removeFriend(res)) {
@@ -262,10 +277,12 @@ public class CommandsOutsider extends Commands {
             name = "accept",
             permission = "mytown.cmd.outsider.friends.accept",
             parentName = "mytown.cmd.outsider.friends",
+            syntax = "/town friends accept <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse friendsAcceptCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownCommandException("mytown.cmd.usage.friends.accept");
+            return CommandResponse.SEND_SYNTAX;
+
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
 
@@ -283,10 +300,12 @@ public class CommandsOutsider extends Commands {
             name = "refuse",
             permission = "mytown.cmd.outsider.friends.refuse",
             parentName = "mytown.cmd.outsider.friends",
+            syntax = "/town friends refuse <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse friendsRefuseCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownCommandException("mytown.cmd.usage.friends.refuse");
+            return CommandResponse.SEND_SYNTAX;
+
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident toAdd = getResidentFromName(args.get(0));
 
@@ -300,7 +319,8 @@ public class CommandsOutsider extends Commands {
             name = "help",
             permission = "mytown.cmd.outsider.help",
             parentName = "mytown.cmd",
-            nonPlayers = true)
+            syntax = "/town help <command>",
+            console = true)
     public static CommandResponse helpCommand(ICommandSender sender, List<String> args) {
         int page = 1;
         if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0))) {
@@ -308,16 +328,30 @@ public class CommandsOutsider extends Commands {
             args = args.subList(1, args.size());
         }
 
-        CommandTree tree = CommandManagerNew.getTree("mytown.cmd");
+        CommandTree tree = CommandManager.getTree("mytown.cmd");
         CommandTreeNode node = tree.getNodeFromArgs(args);
         node.sendHelpMessage(sender, page);
         return CommandResponse.DONE;
     }
 
     @Command(
+            name = "syntax",
+            permission = "mytown.cmd.outsider.syntax",
+            parentName = "mytown.cmd",
+            syntax = "/town syntax <command>",
+            console = true)
+    public static CommandResponse syntaxCommand(ICommandSender sender, List<String> args) {
+        CommandTree tree = CommandManager.getTree("mytown.cmd");
+        CommandTreeNode node = tree.getNodeFromArgs(args);
+        node.sendSyntax(sender);
+        return CommandResponse.DONE;
+    }
+
+    @Command(
             name = "invites",
             permission = "mytown.cmd.outsider.invites",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            syntax = "/town invites")
     public static CommandResponse invitesCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         if (res.getInvites().size() == 0)

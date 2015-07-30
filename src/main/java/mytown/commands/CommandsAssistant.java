@@ -1,14 +1,14 @@
 package mytown.commands;
 
-import myessentials.command.CommandManagerNew;
+import myessentials.command.CommandManager;
 import myessentials.command.CommandResponse;
 import myessentials.command.annotation.Command;
-import mytown.config.Config;
 import myessentials.entities.ChunkPos;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.MathUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
+import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -16,7 +16,6 @@ import mytown.entities.tools.WhitelisterTool;
 import mytown.proxies.EconomyProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
-import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -31,7 +30,8 @@ public class CommandsAssistant extends Commands {
     @Command(
             name = "setspawn",
             permission = "mytown.cmd.assistant.setspawn",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            syntax = "/town setspawn")
     public static CommandResponse setSpawnCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
@@ -51,7 +51,8 @@ public class CommandsAssistant extends Commands {
     @Command(
             name = "claim",
             permission = "mytown.cmd.assistant.claim",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            syntax = "/town claim [range]")
     public static CommandResponse claimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
@@ -139,7 +140,8 @@ public class CommandsAssistant extends Commands {
     @Command(
             name = "unclaim",
             permission = "mytown.cmd.assistant.unclaim",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            syntax = "/town unclaim")
     public static CommandResponse unclaimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(sender);
@@ -164,12 +166,13 @@ public class CommandsAssistant extends Commands {
             name = "invite",
             permission = "mytown.cmd.assistant.invite",
             parentName = "mytown.cmd",
+            syntax = "/town invite <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse inviteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.invite");
+            return CommandResponse.SEND_SYNTAX;
         Resident target = getResidentFromName(args.get(0));
         if (town.hasResident(args.get(0)))
             throw new MyTownCommandException("mytown.cmd.err.invite.already", args.get(0), town.getName());
@@ -184,11 +187,12 @@ public class CommandsAssistant extends Commands {
             name = "set",
             permission = "mytown.cmd.assistant.perm.set",
             parentName = "mytown.cmd.everyone.perm",
+            syntax = "/town perm set <flag> <value>",
             completionKeys = "flagCompletion")
     public static CommandResponse permSetCommand(ICommandSender sender, List<String> args) {
 
         if (args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.cmd.err.perm.set.usage");
+            return CommandResponse.SEND_SYNTAX;
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         Flag flag = getFlagFromName(town, args.get(0));
@@ -205,7 +209,7 @@ public class CommandsAssistant extends Commands {
             name = "whitelist",
             permission = "mytown.cmd.assistant.perm.whitelist",
             parentName = "mytown.cmd.everyone.perm",
-            completionKeys = {"flagCompletionWhitelist"})
+            syntax = "/town perm whitelist")
     public static CommandResponse permWhitelistCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         res.setCurrentTool(new WhitelisterTool(res));
@@ -216,10 +220,11 @@ public class CommandsAssistant extends Commands {
             name = "promote",
             permission = "mytown.cmd.assistant.promote",
             parentName = "mytown.cmd",
+            syntax = "/town promote <resident> <rank>",
             completionKeys = {"residentCompletion", "rankCompletion"})
     public static CommandResponse promoteCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.promote");
+            return CommandResponse.SEND_SYNTAX;
         Resident resSender = getDatasource().getOrMakeResident(sender);
         Resident resTarget = getResidentFromName(args.get(0));
         Town town = getTownFromResident(resSender);
@@ -246,11 +251,12 @@ public class CommandsAssistant extends Commands {
                 name = "add",
                 permission = "mytown.cmd.assistant.ranks.add",
                 parentName = "mytown.cmd.everyone.ranks",
+                syntax = "/town ranks add <rank> <templateRank>",
                 completionKeys = {"-", "ranksCompletion"})
         public static CommandResponse ranksAddCommand(ICommandSender sender, List<String> args) {
-
             if (args.size() < 2)
-                throw new MyTownWrongUsageException("mytown.cmd.usage.ranks");
+                return CommandResponse.SEND_SYNTAX;
+
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
@@ -270,11 +276,12 @@ public class CommandsAssistant extends Commands {
                 name = "remove",
                 permission = "mytown.cmd.assistant.ranks.remove",
                 parentName = "mytown.cmd.everyone.ranks",
+                syntax = "/town ranks remove <rank>",
                 completionKeys = {"rankCompletion"})
         public static CommandResponse ranksRemoveCommand(ICommandSender sender, List<String> args) {
-
             if (args.size() < 1)
-                throw new MyTownWrongUsageException("mytown.cmd.usage.ranks");
+                return CommandResponse.SEND_SYNTAX;
+
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = res.getSelectedTown();
             Rank rank = getRankFromTown(town, args.get(0));
@@ -294,17 +301,18 @@ public class CommandsAssistant extends Commands {
         @Command(
                 name = "add",
                 permission = "mytown.cmd.assistant.ranks.perm.add",
-                parentName = "mytown.cmd.assistant.ranks.perm")
+                parentName = "mytown.cmd.assistant.ranks.perm",
+                syntax = "/town ranks perm add <rank> <perm>",
+                completionKeys = {"rankCompletion"})
         public static CommandResponse ranksPermAddCommand(ICommandSender sender, List<String> args) {
-
             if (args.size() < 2)
-                throw new MyTownWrongUsageException("mytown.cmd.usage.ranks.perm");
+                return CommandResponse.SEND_SYNTAX;
 
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
 
-            if (!CommandManagerNew.getTree("mytown.cmd").hasCommandNode(args.get(1)))
+            if (!CommandManager.getTree("mytown.cmd").hasCommandNode(args.get(1)))
                 throw new MyTownCommandException("mytown.cmd.err.ranks.perm.notexist", args.get(1));
 
             // Adding permission if everything is alright
@@ -319,18 +327,19 @@ public class CommandsAssistant extends Commands {
         @Command(
                 name = "remove",
                 permission = "mytown.cmd.assistant.ranks.perm.remove",
-                parentName = "mytown.cmd.assistant.ranks.perm")
+                parentName = "mytown.cmd.assistant.ranks.perm",
+                syntax = "/town ranks perm remove <rank> <perm>",
+                completionKeys = {"rankCompletion"})
         public static CommandResponse ranksPermRemoveCommand(ICommandSender sender, List<String> args) {
-
             if (args.size() < 2)
-                throw new MyTownWrongUsageException("mytown.cmd.usage.ranks.perm");
+                return CommandResponse.SEND_SYNTAX;
 
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
             Rank rank = getRankFromTown(town, args.get(0));
 
-            if (!CommandManagerNew.getTree("mytown.cmd").hasCommandNode(args.get(1)))
+            if (!CommandManager.getTree("mytown.cmd").hasCommandNode(args.get(1)))
                 throw new MyTownCommandException("mytown.cmd.err.ranks.perm.notexist", args.get(1));
 
             // Removing permission if everything is alright
@@ -343,11 +352,11 @@ public class CommandsAssistant extends Commands {
         }
     }
 
-
     @Command(
             name = "perm",
             permission = "mytown.cmd.assistant.ranks.perm",
-            parentName = "mytown.cmd.everyone.ranks")
+            parentName = "mytown.cmd.everyone.ranks",
+            syntax = "/town ranks perm <command>")
     public static CommandResponse ranksPermCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -355,7 +364,8 @@ public class CommandsAssistant extends Commands {
     @Command(
             name = "list",
             permission = "mytown.cmd.assistant.ranks.perm.list",
-            parentName = "mytown.cmd.assistant.ranks.perm")
+            parentName = "mytown.cmd.assistant.ranks.perm",
+            syntax = "/town ranks perm list")
     public static CommandResponse ranksPermListCommand(ICommandSender sender, List<String> args) {
 
         Rank rank;
@@ -380,10 +390,11 @@ public class CommandsAssistant extends Commands {
             name = "pass",
             permission = "mytown.cmd.mayor.pass",
             parentName = "mytown.cmd",
+            syntax = "/town pass <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse passCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownCommandException("mytown.cmd.usage.leave.pass");
+            return CommandResponse.SEND_SYNTAX;
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
@@ -407,7 +418,8 @@ public class CommandsAssistant extends Commands {
         @Command(
                 name = "limit",
                 permission = "mytown.cmd.assistant.plot.limit",
-                parentName = "mytown.cmd.everyone.plot")
+                parentName = "mytown.cmd.everyone.plot",
+                syntax = "/town plot limit <command>")
         public static CommandResponse plotLimitCommand(ICommandSender sender, List<String> args) {
             return CommandResponse.SEND_HELP_MESSAGE;
         }
@@ -415,7 +427,8 @@ public class CommandsAssistant extends Commands {
         @Command(
                 name = "show",
                 permission = "mytown.cmd.assistant.plot.limit.show",
-                parentName = "mytown.cmd.assistant.plot.limit")
+                parentName = "mytown.cmd.assistant.plot.limit",
+                syntax = "/town plot limit show")
         public static CommandResponse plotLimitShowCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
@@ -427,11 +440,12 @@ public class CommandsAssistant extends Commands {
         @Command(
                 name = "set",
                 permission = "mytown.cmd.assistant.plot.limit.set",
-                parentName = "mytown.cmd.assistant.plot.limit")
+                parentName = "mytown.cmd.assistant.plot.limit",
+                syntax = "/town plot limit set <limit>")
         public static CommandResponse plotLimitSetCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 1) {
-                throw new MyTownWrongUsageException("mytown.cmd.usage.plot.limit.set");
-            }
+            if (args.size() < 1)
+                return CommandResponse.SEND_SYNTAX;
+
             if (StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger");
             }
@@ -449,10 +463,11 @@ public class CommandsAssistant extends Commands {
             name = "kick",
             permission = "mytown.cmd.assistant.kick",
             parentName = "mytown.cmd",
+            syntax = "/town kick <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse kickCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1) {
-            throw new MyTownWrongUsageException("mytown.cmd.usage.kick");
+            return CommandResponse.SEND_SYNTAX;
         }
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
@@ -473,7 +488,8 @@ public class CommandsAssistant extends Commands {
     @Command(
             name = "delete",
             permission = "mytown.cmd.mayor.leave.delete",
-            parentName = "mytown.cmd.everyone.leave")
+            parentName = "mytown.cmd.everyone.leave",
+            syntax = "/town leave delete")
     public static CommandResponse leaveDeleteCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
@@ -496,10 +512,11 @@ public class CommandsAssistant extends Commands {
     @Command(
             name = "rename",
             permission = "mytown.cmd.assistant.rename",
-            parentName = "mytown.cmd")
+            parentName = "mytown.cmd",
+            syntax = "/town rename <name>")
     public static CommandResponse renameCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.rename");
+            return CommandResponse.SEND_SYNTAX;
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
@@ -516,10 +533,11 @@ public class CommandsAssistant extends Commands {
     @Command(
             name = "withdraw",
             permission = "mytown.cmd.assistant.bank.withdraw",
-            parentName = "mytown.cmd.everyone.bank")
+            parentName = "mytown.cmd.everyone.bank",
+            syntax = "/town bank withdraw <amount>")
     public static CommandResponse bankPayCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.bank.withdraw");
+            return CommandResponse.SEND_SYNTAX;
 
         if(!StringUtils.tryParseInt(args.get(0)))
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));

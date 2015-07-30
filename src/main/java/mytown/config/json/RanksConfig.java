@@ -1,7 +1,7 @@
 package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
-import myessentials.command.CommandManagerNew;
+import myessentials.command.CommandManager;
 import myessentials.command.CommandTreeNode;
 import myessentials.json.JSONConfig;
 import mytown.MyTown;
@@ -35,7 +35,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             List<String> pResident = new ArrayList<String>();
 
             // Filling arrays
-            for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+            for(CommandTreeNode node : CommandManager.getTree("mytown.cmd").getRoot().getChildren()) {
                 String s = node.getAnnotation().permission();
                 pMayor.add(s);
                 if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
@@ -108,7 +108,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
             for (Wrapper w : wrappedObjects) {
                 for (Iterator<String> it = w.permissions.iterator(); it.hasNext(); ) {
                     String s = it.next();
-                    if (!CommandManagerNew.getTree("mytown.cmd").hasCommandNode(CommandManagerNew.getTree("mytown.cmd").getRoot(), s) || s.startsWith("-") && !CommandManagerNew.getTree("mytown.cmd").hasCommandNode(s.substring(1))) {
+                    if (!CommandManager.getTree("mytown.cmd").hasCommandNode(CommandManager.getTree("mytown.cmd").getRoot(), s) || s.startsWith("-") && !CommandManager.getTree("mytown.cmd").hasCommandNode(s.substring(1))) {
                         // Omitting permissions that don't exist
                         if(!notExistingPermNodes.contains(s)) {
                             notExistingPermNodes.add(s);
@@ -131,7 +131,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
     @Override
     public void update(List<Wrapper> items) {
         boolean updated = false;
-        for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+        for(CommandTreeNode node : CommandManager.getTree("mytown.cmd").getRoot().getChildren()) {
             String perm = node.getAnnotation().permission();
             if(perm.startsWith("mytown.cmd")) {
                 for (Wrapper wrapper : items) {
@@ -168,7 +168,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
         if(!mayorExists) {
             MyTown.instance.LOG.info("Ranks config is missing Mayor rank. Adding...");
             List<String> permissions = new ArrayList<String>();
-            for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+            for(CommandTreeNode node : CommandManager.getTree("mytown.cmd").getRoot().getChildren()) {
                 permissions.add(node.getAnnotation().permission());
             }
             Collections.sort(permissions);
@@ -179,7 +179,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
         if(!assistantExists) {
             MyTown.instance.LOG.info("Ranks config is missing Assistant rank. Adding...");
             List<String> permissions = new ArrayList<String>();
-            for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+            for(CommandTreeNode node : CommandManager.getTree("mytown.cmd").getRoot().getChildren()) {
                 String perm = node.getAnnotation().permission();
                 if(perm.startsWith("mytown.cmd.assistant") || perm.startsWith("mytown.cmd.everyone") || perm.startsWith("mytown.cmd.outsider")) {
                     permissions.add(perm);
@@ -193,7 +193,7 @@ public class RanksConfig extends JSONConfig<RanksConfig.Wrapper> {
         if(!residentExists) {
             MyTown.instance.LOG.info("Ranks config is missing Resident rank. Adding...");
             List<String> permissions = new ArrayList<String>();
-            for(CommandTreeNode node : CommandManagerNew.getTree("mytown.cmd").getRoot().getChildren()) {
+            for(CommandTreeNode node : CommandManager.getTree("mytown.cmd").getRoot().getChildren()) {
                 String perm = node.getAnnotation().permission();
                 if(perm.startsWith("mytown.cmd.everyone") || perm.startsWith("mytown.cmd.outsider")) {
                     permissions.add(perm);

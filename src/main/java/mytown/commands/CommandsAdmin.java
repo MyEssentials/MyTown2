@@ -1,12 +1,15 @@
 package mytown.commands;
 
-import myessentials.command.*;
+import myessentials.command.CommandManager;
+import myessentials.command.CommandResponse;
+import myessentials.command.CommandTree;
+import myessentials.command.CommandTreeNode;
 import myessentials.command.annotation.Command;
+import myessentials.entities.ChunkPos;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
-import myessentials.entities.ChunkPos;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -16,7 +19,6 @@ import mytown.handlers.VisualsHandler;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.Formatter;
 import mytown.util.exceptions.MyTownCommandException;
-import mytown.util.exceptions.MyTownWrongUsageException;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.command.ICommandSender;
@@ -42,6 +44,7 @@ public class CommandsAdmin extends Commands {
     @Command(
             name = "mytownadmin",
             permission = "mytown.adm.cmd",
+            syntax = "/townadmin <command>",
             alias = {"ta", "townadmin"})
     public static CommandResponse townAdminCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
@@ -51,7 +54,8 @@ public class CommandsAdmin extends Commands {
             name = "config",
             permission = "mytown.adm.cmd.config",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true)
+            syntax = "/townadmin config <command>",
+            console = true)
     public static CommandResponse configCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -60,7 +64,8 @@ public class CommandsAdmin extends Commands {
             name = "reload",
             permission = "mytown.adm.cmd.config.reload",
             parentName = "mytown.adm.cmd.config",
-            nonPlayers = true)
+            syntax = "/townadmin config reload",
+            console = true)
     public static CommandResponse configReloadCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.start"));
         MyTown.instance.loadConfigs();
@@ -73,11 +78,12 @@ public class CommandsAdmin extends Commands {
             name = "add",
             permission = "mytown.adm.cmd.add",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true,
+            syntax = "/townadmin add <resident> <town> [rank]",
+            console = true,
             completionKeys = {"residentCompletion", "townCompletion"})
     public static CommandResponse addCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.add");
+            return CommandResponse.SEND_SYNTAX;
 
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromName(args.get(1));
@@ -105,11 +111,12 @@ public class CommandsAdmin extends Commands {
             name = "delete",
             permission = "mytown.adm.cmd.delete",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true,
+            syntax = "/townadmin delete <town>",
+            console = true,
             completionKeys = {"townCompletion"})
     public static CommandResponse deleteCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.delete.usage");
+            return CommandResponse.SEND_SYNTAX;
 
         for (String s : args) {
             if (!getDatasource().hasTown(s))
@@ -126,10 +133,11 @@ public class CommandsAdmin extends Commands {
     @Command(
             name = "new",
             permission = "mytown.adm.cmd.new",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            syntax = "/townadmin new <town>")
     public static CommandResponse newCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.cmd.usage.newtown");
+            return CommandResponse.SEND_SYNTAX;
 
         Resident res = getDatasource().getOrMakeResident(sender);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
@@ -149,20 +157,21 @@ public class CommandsAdmin extends Commands {
     }
 
     @Command(
-            name = "rem",
-            permission = "mytown.adm.cmd.rem",
+            name = "kick",
+            permission = "mytown.adm.cmd.kick",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true,
+            syntax = "/townadmin kick <resident> <town>",
+            console = true,
             completionKeys = {"residentCompletion", "townCompletion"})
     public static CommandResponse remCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.rem");
+            return CommandResponse.SEND_SYNTAX;
 
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromName(args.get(1));
 
         if (!town.hasResident(target)) {
-            throw new MyTownCommandException("mytown.adm.cmd.err.rem.resident", args.get(0), args.get(1));
+            throw new MyTownCommandException("mytown.adm.cmd.err.kick.resident", args.get(0), args.get(1));
         }
 
         getDatasource().unlinkResidentFromTown(target, town);
@@ -174,7 +183,8 @@ public class CommandsAdmin extends Commands {
             name = "town",
             permission = "mytown.adm.cmd.town",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true)
+            syntax = "/townadmin town <command>",
+            console = true)
     public static CommandResponse townCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -183,7 +193,8 @@ public class CommandsAdmin extends Commands {
             name = "res",
             permission = "mytown.adm.cmd.res",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true)
+            syntax = "/townadmin res <command>",
+            console = true)
     public static CommandResponse resCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -192,7 +203,8 @@ public class CommandsAdmin extends Commands {
             name = "blocks",
             permission = "mytown.adm.cmd.town.blocks",
             parentName = "mytown.adm.cmd.town",
-            nonPlayers = true)
+            syntax = "/townadmin blocks <command>",
+            console = true)
     public static CommandResponse townBlocksCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -201,7 +213,8 @@ public class CommandsAdmin extends Commands {
             name = "extra",
             permission = "mytown.adm.cmd.town.blocks.extra",
             parentName = "mytown.adm.cmd.town.blocks",
-            nonPlayers = true)
+            syntax = "/townadmin blocks extra <command>",
+            console = true)
     public static CommandResponse townBlocksMaxCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -210,11 +223,12 @@ public class CommandsAdmin extends Commands {
             name = "set",
             permission = "mytown.adm.cmd.town.blocks.extra.set",
             parentName = "mytown.adm.cmd.town.blocks.extra",
+            syntax = "/townadmin block extra set <town> <extraBlocks>",
             completionKeys = {"townCompletionAndAll"},
-            nonPlayers = true)
+            console = true)
     public static CommandResponse townBlocksMaxSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.extra.set");
+            return CommandResponse.SEND_SYNTAX;
         if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -229,11 +243,12 @@ public class CommandsAdmin extends Commands {
             name = "add",
             permission = "mytown.adm.cmd.town.blocks.extra.add",
             parentName = "mytown.adm.cmd.town.blocks.extra",
+            syntax = "/townadmin blocks extra add <town> <extraBlocks>",
             completionKeys = {"townCompletionAndAll"},
-            nonPlayers = true)
+            console = true)
     public static CommandResponse townBlocksMaxAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.extra.add");
+            return CommandResponse.SEND_SYNTAX;
         if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -249,11 +264,12 @@ public class CommandsAdmin extends Commands {
             name = "remove",
             permission = "mytown.adm.cmd.town.blocks.extra.remove",
             parentName = "mytown.adm.cmd.town.blocks.extra",
+            syntax = "/townadmin blocks extra remove <town> <extraBlocks>",
             completionKeys = {"townCompletionAndAll"},
-            nonPlayers = true)
+            console = true)
     public static CommandResponse townBlocksMaxRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.extra.remove");
+            return CommandResponse.SEND_SYNTAX;
         if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -266,22 +282,24 @@ public class CommandsAdmin extends Commands {
     }
 
     @Command(
-            name = "farClaims",
-            permission = "mytown.adm.cmd.town.blocks.farClaims",
-            parentName = "mytown.adm.cmd.town.blocks")
+            name = "far",
+            permission = "mytown.adm.cmd.town.blocks.far",
+            parentName = "mytown.adm.cmd.town.blocks",
+            syntax = "/townadmin blocks far <command>")
     public static CommandResponse townBlocksFarClaimsCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
 
     @Command(
             name = "set",
-            permission = "mytown.adm.cmd.town.blocks.farClaims.set",
-            parentName = "mytown.adm.cmd.town.blocks.farClaims",
+            permission = "mytown.adm.cmd.town.blocks.far.set",
+            parentName = "mytown.adm.cmd.town.blocks.far",
+            syntax = "/townadmin blocks far set <town> <farClaims>",
             completionKeys = {"townCompletionAndAll"},
-            nonPlayers = true)
+            console = true)
     public static CommandResponse townBlocksFarclaimsSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.farClaims.set");
+            return CommandResponse.SEND_SYNTAX;
         if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -294,11 +312,14 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "add",
-            permission = "mytown.adm.cmd.town.blocks.farClaims.add",
-            parentName = "mytown.adm.cmd.town.blocks.farClaims")
+            permission = "mytown.adm.cmd.town.blocks.far.add",
+            parentName = "mytown.adm.cmd.town.blocks.far",
+            syntax = "/townadmin blocks far add <town> <farClaims>",
+            completionKeys = {"townCompletionAndAll"},
+            console = true)
     public static CommandResponse townBlocksFarclaimsAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.town.blocks.farClaims.add");
+            return CommandResponse.SEND_SYNTAX;
         if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -312,13 +333,14 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "remove",
-            permission = "mytown.adm.cmd.town.blocks.farClaims.remove",
-            parentName = "mytown.adm.cmd.town.blocks.farClaims",
+            permission = "mytown.adm.cmd.town.blocks.far.remove",
+            parentName = "mytown.adm.cmd.town.blocks.far",
+            syntax = "/townadmin blocks far remove <town> <farClaims>",
             completionKeys = {"townCompletionAndAll"},
-            nonPlayers = true)
+            console = true)
     public static CommandResponse townBlocksFarClaimsRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.town.blocks.farClaims.remove");
+            return CommandResponse.SEND_SYNTAX;
         if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -335,7 +357,8 @@ public class CommandsAdmin extends Commands {
             name = "blocks",
             permission = "mytown.adm.cmd.res.blocks",
             parentName = "mytown.adm.cmd.res",
-            nonPlayers = true)
+            syntax = "/townadmin res blocks <command>",
+            console = true)
     public static CommandResponse resBlocksCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -344,7 +367,8 @@ public class CommandsAdmin extends Commands {
             name = "extra",
             permission = "mytown.adm.cmd.res.blocks.extra",
             parentName = "mytown.adm.cmd.res.blocks",
-            nonPlayers = true)
+            syntax = "/townadmin res blocks extra <command>",
+            console = true)
     public static CommandResponse resBlocksMaxCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -353,11 +377,12 @@ public class CommandsAdmin extends Commands {
             name = "set",
             permission = "mytown.adm.cmd.res.blocks.extra.set",
             parentName = "mytown.adm.cmd.res.blocks.extra",
+            syntax = "/townadmin res blocks extra set <resident> <extraBlocks>",
             completionKeys = {"residentCompletion"},
-            nonPlayers = true)
+            console = true)
     public static CommandResponse resBlocksSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.res.blocks.extra.remove");
+            return CommandResponse.SEND_SYNTAX;
         if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -373,11 +398,12 @@ public class CommandsAdmin extends Commands {
             name = "add",
             permission = "mytown.adm.cmd.res.blocks.extra.add",
             parentName = "mytown.adm.cmd.res.blocks.extra",
+            syntax = "/townadmin res blocks extra add <resident> <extraBlocks>",
             completionKeys = {"residentCompletion"},
-            nonPlayers = true)
+            console = true)
     public static CommandResponse resBlocksAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.res.blocks.extra.remove");
+            return CommandResponse.SEND_SYNTAX;
         if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -393,11 +419,12 @@ public class CommandsAdmin extends Commands {
             name = "remove",
             permission = "mytown.adm.cmd.res.blocks.extra.remove",
             parentName = "mytown.adm.cmd.res.blocks.extra",
+            syntax = "/townadmin res blocks extra remove <resident> <extraBlocks>",
             completionKeys = {"residentCompletion"},
-            nonPlayers = true)
+            console = true)
     public static CommandResponse resBlocksRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.res.blocks.extra.remove");
+            return CommandResponse.SEND_SYNTAX;
         if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
@@ -413,7 +440,8 @@ public class CommandsAdmin extends Commands {
             name = "safemode",
             permission = "mytown.adm.cmd.safemode",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true)
+            syntax = "/townadmin safemode <on|off>",
+            console = true)
     public static CommandResponse safemodeCommand(ICommandSender sender, List<String> args) {
         boolean safemode;
         if (args.size() < 1) { // Toggle safemode
@@ -431,8 +459,8 @@ public class CommandsAdmin extends Commands {
             name = "db",
             permission = "mytown.adm.cmd.db",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true,
-            players = false)
+            syntax = "/townadmin db <command>",
+            console = true)
     public static CommandResponse dbCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -441,8 +469,8 @@ public class CommandsAdmin extends Commands {
             name = "purge",
             permission = "mytown.adm.cmd.db.purge",
             parentName = "mytown.adm.cmd.db",
-            nonPlayers = true,
-            players = false)
+            syntax = "/townadmin db purge",
+            console = true)
     public static CommandResponse dbCommandPurge(ICommandSender sender, List<String> args) {
         for (Town town : getUniverse().getTownsMap().values()) {
             getDatasource().deleteTown(town);
@@ -459,7 +487,8 @@ public class CommandsAdmin extends Commands {
             name = "perm",
             permission = "mytown.adm.cmd.perm",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true)
+            syntax = "/townadmin perm <command>",
+            console = true)
     public static CommandResponse permCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -468,7 +497,8 @@ public class CommandsAdmin extends Commands {
             name = "town",
             permission = "mytown.adm.cmd.perm.town",
             parentName = "mytown.adm.cmd.perm",
-            nonPlayers = true)
+            syntax = "/townadmin perm town <command>",
+            console = true)
     public static CommandResponse permTownCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -477,12 +507,13 @@ public class CommandsAdmin extends Commands {
             name = "list",
             permission = "mytown.adm.cmd.perm.town.list",
             parentName = "mytown.adm.cmd.perm.town",
-            nonPlayers = true,
-            completionKeys = {"townCompletion"})
+            syntax = "/townadmin perm town list <town>",
+            completionKeys = {"townCompletion"},
+            console = true)
     public static CommandResponse permTownListCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1) {
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.list");
-        }
+        if (args.size() < 1)
+            return CommandResponse.SEND_SYNTAX;
+
 
         Town town = getTownFromName(args.get(0));
         sendMessageBackToSender(sender, Formatter.formatFlagsToString(town));
@@ -493,11 +524,12 @@ public class CommandsAdmin extends Commands {
             name = "set",
             permission = "mytown.adm.cmd.perm.town.set",
             parentName = "mytown.adm.cmd.perm.town",
-            nonPlayers = true,
-            completionKeys = {"townCompletion", "flagCompletion"})
+            syntax = "/townadmin perm town set <town> <flag> <value>",
+            completionKeys = {"townCompletion", "flagCompletion"},
+            console = true)
     public static CommandResponse permTownSetCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 3) {
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.town.set");
+            return CommandResponse.SEND_SYNTAX;
         }
 
         Town town = getTownFromName(args.get(0));
@@ -516,10 +548,11 @@ public class CommandsAdmin extends Commands {
             name = "whitelist",
             permission = "mytown.adm.cmd.perm.town.whitelist",
             parentName = "mytown.adm.cmd.perm.town",
-            completionKeys = {"townCompletion", "flagCompletionWhitelist"})
+            syntax = "/townadmin perm town whitelist <town>",
+            completionKeys = {"townCompletion"})
     public static CommandResponse permTownWhitelistCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 2)
-            throw new MyTownCommandException("mytown.cmd.usage.plot.whitelist.add");
+        if (args.size() < 1)
+            return CommandResponse.SEND_SYNTAX;
 
         Resident res = getDatasource().getOrMakeResident(sender);
         res.setCurrentTool(new WhitelisterTool(res));
@@ -530,7 +563,8 @@ public class CommandsAdmin extends Commands {
             name = "wild",
             permission = "mytown.adm.cmd.perm.wild",
             parentName = "mytown.adm.cmd.perm",
-            nonPlayers = true)
+            syntax = "/townadmin perm wild <command>",
+            console = true)
     public static CommandResponse permWildCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -539,8 +573,9 @@ public class CommandsAdmin extends Commands {
             name = "list",
             permission = "mytown.adm.cmd.perm.wild.list",
             parentName = "mytown.adm.cmd.perm.wild",
-            nonPlayers = true,
-            completionKeys = {"flagCompletion"})
+            syntax = "/townadmin perm wild list",
+            completionKeys = {"flagCompletion"},
+            console = true)
     public static CommandResponse permWildListCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, Formatter.formatFlagsToString(Wild.instance));
         return CommandResponse.DONE;
@@ -550,11 +585,12 @@ public class CommandsAdmin extends Commands {
             name = "set",
             permission = "mytown.adm.cmd.perm.wild.set",
             parentName = "mytown.adm.cmd.perm.wild",
-            nonPlayers = true,
-            completionKeys = {"flagCompletion"})
+            syntax = "/townadmin perm wild set <flag> <value>",
+            completionKeys = {"flagCompletion"},
+            console = true)
     public static CommandResponse permWildSetCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2) {
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.perm.wild.set");
+            return CommandResponse.SEND_SYNTAX;
         }
         FlagType type = getFlagTypeFromName(args.get(0));
         Flag flag = getFlagFromType(Wild.instance, type);
@@ -572,10 +608,11 @@ public class CommandsAdmin extends Commands {
             name = "claim",
             permission = "mytown.adm.cmd.claim",
             parentName = "mytown.adm.cmd",
+            syntax = "/townadmin claim <town>",
             completionKeys = {"townCompletion"})
     public static CommandResponse claimCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.claim");
+            return CommandResponse.SEND_SYNTAX;
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(player);
         Town town = getTownFromName(args.get(0));
@@ -632,7 +669,8 @@ public class CommandsAdmin extends Commands {
     @Command(
             name = "unclaim",
             permission = "mytown.adm.cmd.unclaim",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            syntax = "/townadmin unclaim")
     public static CommandResponse unclaimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer pl = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(pl);
@@ -651,7 +689,8 @@ public class CommandsAdmin extends Commands {
             name = "help",
             permission = "mytown.adm.cmd.help",
             parentName = "mytown.adm.cmd",
-            nonPlayers = true)
+            syntax = "/townadmin help <command>",
+            console = true)
     public static CommandResponse helpCommand(ICommandSender sender, List<String> args) {
         int page = 1;
         if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0))) {
@@ -659,18 +698,31 @@ public class CommandsAdmin extends Commands {
             args = args.subList(1, args.size());
         }
 
-        CommandTree tree = CommandManagerNew.getTree("mytown.adm.cmd");
+        CommandTree tree = CommandManager.getTree("mytown.adm.cmd");
         CommandTreeNode node = tree.getNodeFromArgs(args);
-        MyTown.instance.LOG.info(node.getAnnotation().permission());
         node.sendHelpMessage(sender, page);
         return CommandResponse.DONE;
     }
 
     @Command(
-        name = "debug",
-        permission = "mytown.adm.cmd.debug",
-        parentName = "mytown.adm.cmd",
-        nonPlayers = false)
+            name = "syntax",
+            permission = "mytown.adm.cmd.syntax",
+            parentName = "mytown.adm.cmd",
+            syntax = "/townadmin syntax <command>",
+            console = true)
+    public static CommandResponse syntaxCommand(ICommandSender sender, List<String> args) {
+        CommandTree tree = CommandManager.getTree("mytown.adm.cmd");
+        CommandTreeNode node = tree.getNodeFromArgs(args);
+        node.sendSyntax(sender);
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "debug",
+            permission = "mytown.adm.cmd.debug",
+            parentName = "mytown.adm.cmd",
+            syntax = "/townadmin debug <command>",
+            console = false)
     public static CommandResponse debugCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -679,7 +731,8 @@ public class CommandsAdmin extends Commands {
             name = "itemClass",
             permission = "mytown.adm.cmd.debug.item",
             parentName = "mytown.adm.cmd.debug",
-            nonPlayers = false)
+            syntax = "/townadmin debug itemClass",
+            console = false)
     public static CommandResponse debugItemCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer)sender;
@@ -714,7 +767,8 @@ public class CommandsAdmin extends Commands {
                 name = "plot",
                 permission = "mytown.adm.cmd.plot",
                 parentName = "mytown.adm.cmd",
-                nonPlayers = true)
+                syntax = "/townadmin plot <command>",
+                console = true)
         public static CommandResponse plotCommand(ICommandSender sender, List<String> args) {
             return CommandResponse.SEND_HELP_MESSAGE;
         }
@@ -723,11 +777,11 @@ public class CommandsAdmin extends Commands {
                 name = "show",
                 permission = "mytown.adm.cmd.plot.show",
                 parentName = "mytown.adm.cmd.plot",
-                completionKeys = {"townCompletion"},
-                nonPlayers = true)
+                syntax = "/townadmin plot show <town>",
+                completionKeys = {"townCompletion"})
         public static CommandResponse plotShowCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 1)
-                throw new MyTownCommandException("mytown.adm.cmd.usage.plot.show");
+                return CommandResponse.SEND_SYNTAX;
 
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromName(args.get(0));
@@ -740,7 +794,8 @@ public class CommandsAdmin extends Commands {
                 name = "perm",
                 permission = "mytown.adm.cmd.plot.perm",
                 parentName = "mytown.adm.cmd.plot",
-                nonPlayers = true)
+                syntax = "/townadmin plot perm <command>",
+                console = true)
         public static CommandResponse plotPermCommand(ICommandSender sender, List<String> args) {
             return CommandResponse.SEND_HELP_MESSAGE;
         }
@@ -749,11 +804,12 @@ public class CommandsAdmin extends Commands {
                 name = "set",
                 permission = "mytown.adm.cmd.plot.perm.set",
                 parentName = "mytown.adm.cmd.plot.perm",
+                syntax = "/townadmin plot perm set <town> <plot> <flag> <value>",
                 completionKeys = {"flagCompletion"},
-                nonPlayers = true)
+                console = true)
         public static CommandResponse plotPermSetCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 4)
-                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.perm.set");
+                return CommandResponse.SEND_SYNTAX;
 
             Town town = getTownFromName(args.get(0));
             Plot plot = getPlotFromName(town, args.get(1));
@@ -772,10 +828,12 @@ public class CommandsAdmin extends Commands {
                 name = "list",
                 permission = "mytown.adm.cmd.plot.perm.list",
                 parentName = "mytown.adm.cmd.plot.perm",
-                nonPlayers = true)
+                syntax = "/townadmin plot perm list <town> <plot>",
+                completionKeys = {"townCompletion"},
+                console = true)
         public static CommandResponse plotPermListCommand(ICommandSender sender, List<String> args) {
             if(args.size() < 2)
-                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.perm.list");
+                return CommandResponse.SEND_SYNTAX;
 
             Town town = getTownFromName(args.get(0));
             Plot plot = getPlotFromName(town, args.get(1));
@@ -787,16 +845,17 @@ public class CommandsAdmin extends Commands {
                 name = "rename",
                 permission = "mytown.adm.cmd.plot.rename",
                 parentName = "mytown.adm.cmd.plot",
+                syntax = "/townadmin plot rename <town> <plot> <name>",
                 completionKeys = {"townCompletion", "plotCompletion"},
-                nonPlayers = true)
+                console = true)
         public static CommandResponse plotRenameCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 3)
-                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.rename");
+                return CommandResponse.SEND_SYNTAX;
 
             Town town = getTownFromName(args.get(0));
             Plot plot = getPlotFromName(town, args.get(1));
 
-            plot.setName(args.get(0));
+            plot.setName(args.get(2));
             getDatasource().savePlot(plot);
 
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.plot.renamed"));
@@ -807,7 +866,8 @@ public class CommandsAdmin extends Commands {
                 name = "add",
                 permission = "mytown.adm.cmd.plot.add",
                 parentName = "mytown.adm.cmd.plot",
-                nonPlayers = true)
+                syntax = "/townadmin plot add <command>",
+                console = true)
         public static CommandResponse plotAddCommand(ICommandSender sender, List<String> args) {
             return CommandResponse.SEND_HELP_MESSAGE;
         }
@@ -816,11 +876,12 @@ public class CommandsAdmin extends Commands {
                 name = "owner",
                 permission = "mytown.adm.cmd.plot.add.owner",
                 parentName = "mytown.adm.cmd.plot.add",
+                syntax = "/townadmin plot add owner <town> <plot> <resident>",
                 completionKeys = {"townCompletion", "plotCompletion", "residentCompletion"},
-                nonPlayers = true)
+                console = true)
         public static CommandResponse plotAddOwnerCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 3)
-                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.add");
+                return CommandResponse.SEND_SYNTAX;
 
             Resident target = getResidentFromName(args.get(2));
 
@@ -847,11 +908,12 @@ public class CommandsAdmin extends Commands {
                 name = "member",
                 permission = "mytown.adm.cmd.plot.add.member",
                 parentName = "mytown.adm.cmd.plot.add",
+                syntax = "/townadmin plot add member <town> <plot> <resident>",
                 completionKeys = {"townCompletion", "plotCompletion", "residentCompletion"},
-                nonPlayers = true)
+                console = true)
         public static CommandResponse plotAddMemberCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 3)
-                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.add");
+                return CommandResponse.SEND_SYNTAX;
 
             Resident target = getResidentFromName(args.get(2));
             Town town = getTownFromName(args.get(0));
@@ -871,11 +933,12 @@ public class CommandsAdmin extends Commands {
                 name = "remove",
                 permission = "mytown.adm.cmd.plot.remove",
                 parentName = "mytown.adm.cmd.plot",
+                syntax = "/townadmin plot remove <town> <plot> <resident>",
                 completionKeys = {"townCompletion", "plotCompletion", "residentCompletion"},
-                nonPlayers = true)
+                console = true)
         public static CommandResponse plotRemoveCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 3)
-                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.remove");
+                return CommandResponse.SEND_SYNTAX;
 
             Resident target = getResidentFromName(args.get(2));
             Town town = getTownFromName(args.get(0));
@@ -895,11 +958,12 @@ public class CommandsAdmin extends Commands {
                 name = "info",
                 permission = "mytown.adm.cmd.plot.info",
                 parentName = "mytown.adm.cmd.plot",
+                syntax = "/townadmin plot info <town> <plot>",
                 completionKeys = {"townCompletion", "plotCompletion"},
-                nonPlayers = true)
+                console = true)
         public static CommandResponse plotInfoCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 2)
-                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.info");
+                return CommandResponse.SEND_SYNTAX;
 
             Town town = getTownFromName(args.get(0));
             Plot plot = getPlotFromName(town, args.get(1));
@@ -911,11 +975,12 @@ public class CommandsAdmin extends Commands {
                 name = "delete",
                 permission = "mytown.adm.cmd.plot.delete",
                 parentName = "mytown.adm.cmd.plot",
+                syntax = "/townadmin plot delete <town> <plot>",
                 completionKeys = {"townCompletion", "plotCompletion"},
-                nonPlayers = true)
+                console = true)
         public static CommandResponse plotDeleteCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 2)
-                throw new MyTownWrongUsageException("mytown.adm.cmd.usage.plot.delete");
+                return CommandResponse.SEND_SYNTAX;
 
             Town town = getTownFromName(args.get(0));
             Plot plot = getPlotFromName(town, args.get(1));
@@ -927,7 +992,8 @@ public class CommandsAdmin extends Commands {
         @Command(
                 name = "hide",
                 permission = "mytown.adm.cmd.plot.hide",
-                parentName = "mytown.adm.cmd.plot")
+                parentName = "mytown.adm.cmd.plot",
+                syntax = "/townadmin plot hide")
         public static CommandResponse plotHideCommand(ICommandSender sender, List<String> args) {
             if(sender instanceof EntityPlayerMP) {
                 VisualsHandler.instance.unmarkPlots((EntityPlayerMP) sender);
@@ -940,7 +1006,8 @@ public class CommandsAdmin extends Commands {
     @Command(
             name = "borders",
             permission = "mytown.adm.cmd.borders",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            syntax = "/townadmin borders <command>")
     public static CommandResponse bordersCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
     }
@@ -948,10 +1015,12 @@ public class CommandsAdmin extends Commands {
     @Command(
             name = "show",
             permission = "mytown.adm.cmd.borders.show",
-            parentName = "mytown.adm.cmd.borders")
+            parentName = "mytown.adm.cmd.borders",
+            syntax = "/townadmin borders show <town>",
+            completionKeys = {"townCompletion"})
     public static CommandResponse bordersShowCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
-            throw new MyTownCommandException("mytown.adm.cmd.usage.borders.show");
+            return CommandResponse.SEND_SYNTAX;
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
         town.showBorders(res);
@@ -962,7 +1031,8 @@ public class CommandsAdmin extends Commands {
     @Command(
             name = "hide",
             permission = "mytown.adm.cmd.borders.hide",
-            parentName = "mytown.adm.cmd.borders")
+            parentName = "mytown.adm.cmd.borders",
+            syntax = "/townadmin borders hide")
     public static CommandResponse bordersHideCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayerMP) {
             VisualsHandler.instance.unmarkTowns((EntityPlayerMP)sender);
@@ -974,10 +1044,12 @@ public class CommandsAdmin extends Commands {
     @Command(
             name = "rename",
             permission = "mytown.adm.cmd.rename",
-            parentName = "mytown.adm.cmd")
+            parentName = "mytown.adm.cmd",
+            syntax = "/townadmin rename <town> <name>",
+            completionKeys = {"townCompletion"})
     public static CommandResponse renameCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
-            throw new MyTownWrongUsageException("mytown.adm.cmd.usage.rename");
+            return CommandResponse.SEND_SYNTAX;
 
         Town town = getTownFromName(args.get(0));
 

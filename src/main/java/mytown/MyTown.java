@@ -6,7 +6,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
-import myessentials.command.CommandManagerNew;
+import myessentials.command.CommandManager;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
@@ -125,18 +125,18 @@ public class MyTown {
             LOG.error(ExceptionUtils.getStackTrace(e));
         }
 
-        CommandManagerNew.registerCommands(CommandsEveryone.class, null, getLocal());
-        CommandManagerNew.registerCommands(CommandsAssistant.class, "mytown.cmd", getLocal());
+        CommandManager.registerCommands(CommandsEveryone.class, null, getLocal());
+        CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", getLocal());
         if (Config.modifiableRanks)
-            CommandManagerNew.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", getLocal());
-        CommandManagerNew.registerCommands(CommandsAdmin.class, null, getLocal());
+            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", getLocal());
+        CommandManager.registerCommands(CommandsAdmin.class, null, getLocal());
         if(Config.enablePlots) {
-            CommandManagerNew.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", getLocal());
-            CommandManagerNew.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", getLocal());
-            CommandManagerNew.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", getLocal());
+            CommandManager.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", getLocal());
+            CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", getLocal());
+            CommandManager.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", getLocal());
         }
 
-        CommandManagerNew.registerCommands(CommandsOutsider.class, "mytown.cmd", getLocal());
+        CommandManager.registerCommands(CommandsOutsider.class, "mytown.cmd", getLocal());
     }
 
     public WildPermsConfig getWildConfig() {
