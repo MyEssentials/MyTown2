@@ -90,7 +90,7 @@ minecraft {
 dependencies {
     testCompile "junit:junit:4.11"
     compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
-	compile "org.beanshell:bsh:2.0b5"
+    compile "org.beanshell:bsh:2.0b5"
 	
     // Include DB Drivers as deps
     compile "org.xerial:sqlite-jdbc:${config.sqlite_version}"
@@ -98,6 +98,7 @@ dependencies {
 
     // Mod Deps
     compile project(":MyEssentials-Core")
+    compile project(":MyPermissions")
 	compile 'com.mod-buildcraft:buildcraft:6.4.15:dev'
 	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
     //compile "appeng:appliedenergistics2:rv2-beta-30:dev"

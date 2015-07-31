@@ -1,2 +1,3 @@
 rootProject.name = "MyTown2"
 include ":MyEssentials-Core"
+include ":MyPermissions"
