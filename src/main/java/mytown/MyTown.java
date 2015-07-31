@@ -6,17 +6,16 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
+import myessentials.Localization;
 import myessentials.command.CommandManager;
+import myessentials.config.ConfigProcessor;
+import myessentials.json.JSONConfig;
+import myessentials.utils.ClassUtils;
+import myessentials.utils.StringUtils;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
-import myessentials.json.JSONConfig;
-import mytown.config.json.RanksConfig;
 import mytown.config.json.WildPermsConfig;
-import myessentials.Localization;
-import myessentials.config.ConfigProcessor;
-import myessentials.utils.ClassUtils;
-import myessentials.utils.StringUtils;
 import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
@@ -95,7 +94,6 @@ public class MyTown {
         registerCommands();
         Commands.populateCompletionMap();
 
-        jsonConfigs.add(new RanksConfig(Constants.CONFIG_FOLDER + "/DefaultRanks.json"));
         jsonConfigs.add(new WildPermsConfig(Constants.CONFIG_FOLDER + "/WildPerms.json"));
         jsonConfigs.add(new FlagsConfig(Constants.CONFIG_FOLDER + "/DefaultFlags.json"));
         for (JSONConfig jsonConfig : jsonConfigs) {

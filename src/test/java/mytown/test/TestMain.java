@@ -1,5 +1,6 @@
 package mytown.test;
 
+import myessentials.MyEssentialsCore;
 import mytown.MyTown;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.simple.SimpleLogger;
@@ -20,5 +21,9 @@ public class TestMain {
         PrintStream ps = new PrintStream(new FileOutputStream(FileDescriptor.out));
         MyTown.instance = new MyTown();
         MyTown.instance.LOG = new SimpleLogger("MyTown2-Test", Level.INFO, true, true, false, false, "DD/MM/YY", null, PropertiesUtil.getProperties(), ps);
+
+        ps = new PrintStream(new FileOutputStream(FileDescriptor.out));
+        MyEssentialsCore.instance = new MyEssentialsCore();
+        MyEssentialsCore.instance.LOG = new SimpleLogger("MyEssentials-Core-Test", Level.INFO, true, true, false, false, "DD/MM/YY", null, PropertiesUtil.getProperties(), ps);
     }
 }

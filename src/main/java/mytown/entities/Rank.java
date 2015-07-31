@@ -1,6 +1,9 @@
 package mytown.entities;
 
 import com.google.common.base.Joiner;
+import myessentials.command.CommandManager;
+import myessentials.command.CommandTreeNode;
+import mytown.MyTown;
 
 import java.util.*;
 
@@ -13,6 +16,42 @@ public class Rank {
     public static final Map<String, List<String>> defaultRanks = new HashMap<String, List<String>>();
     public static String theDefaultRank;
     public static String theMayorDefaultRank; // ok not the best name
+
+    public static void initDefaultRanks() {
+        String mayorRank = "Mayor";
+        String assistantRank = "Assistant";
+        String residentRank = "Resident";
+        List<String> pMayor = new ArrayList<String>();
+        List<String> pAssistant = new ArrayList<String>();
+        List<String> pResident = new ArrayList<String>();
+
+        // Filling arrays
+        for(CommandTreeNode node : CommandManager.getTree("mytown.cmd").getRoot().getChildren()) {
+            String s = node.getAnnotation().permission();
+            pMayor.add(s);
+            if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
+                pAssistant.add(s);
+            }
+            if (s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
+                pResident.add(s);
+            }
+        }
+
+        // Sorting
+
+        Collections.sort(pMayor);
+        Collections.sort(pAssistant);
+        Collections.sort(pResident);
+
+        // Adding them to the defaults
+
+        Rank.defaultRanks.put(mayorRank, pMayor);
+        Rank.defaultRanks.put(assistantRank, pAssistant);
+        Rank.defaultRanks.put(residentRank, pResident);
+
+        Rank.theDefaultRank = residentRank;
+        Rank.theMayorDefaultRank = mayorRank;
+    }
 
     private String key, name;
     private List<String> permissions;

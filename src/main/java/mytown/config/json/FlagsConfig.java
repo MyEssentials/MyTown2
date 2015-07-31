@@ -1,7 +1,9 @@
 package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
+import myessentials.MyEssentialsCore;
 import myessentials.json.JSONConfig;
+import mypermissions.config.json.GroupConfig;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -16,77 +18,48 @@ import java.util.List;
  */
 public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
     public FlagsConfig(String path) {
-        super(path);
+        super(path, "FlagsConfig");
         gsonType = new TypeToken<List<Wrapper>>() {}.getType();
     }
 
     @Override
-    protected List<Wrapper> create() {
-        List<Wrapper> wrappers = new ArrayList<Wrapper>();
-
+    protected void create(List<Wrapper> items) {
         for (FlagType type : FlagType.values()) {
-            wrappers.add(new Wrapper(type, type.getDefaultValue(), type.canTownsModify()));
+            items.add(new Wrapper(type, type.getDefaultValue(), type.canTownsModify()));
         }
-        try {
-            Writer writer = new FileWriter(path);
-            gson.toJson(wrappers, gsonType, writer);
-            writer.close();
-            MyTown.instance.LOG.info("Created new DefaultFlags file successfully!");
-        } catch (IOException ex) {
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-            MyTown.instance.LOG.error("Failed to create DefaultFlags file!");
-        }
-        return wrappers;
+
+        super.create(items);
     }
 
     @Override
-    public void write(List<Wrapper> items) {
-        try {
-            Writer writer = new FileWriter(path);
-            gson.toJson(items, gsonType, writer);
-            writer.close();
-            MyTown.instance.LOG.info("Updated the DefaultFlags file successfully!");
-        } catch (IOException ex) {
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-            MyTown.instance.LOG.error("Failed to update DefaultFlags file!");
+    protected List<Wrapper> read() {
+        List<Wrapper> items = super.read();
+
+        for(Wrapper item : items) {
+            item.flagType.setDefaultValue(item.defaultState);
+            item.flagType.setModifiableForTowns(item.isAllowedInTowns);
         }
+
+        return items;
     }
 
     @Override
-    public List<Wrapper> read() {
-        List<Wrapper> wrappers = new ArrayList<Wrapper>();
+    protected boolean validate(List<Wrapper> items) {
+        boolean ok, isValid = true;
 
-        try {
-            Reader reader = new FileReader(path);
-            wrappers = gson.fromJson(reader, gsonType);
-            reader.close();
-
-            for(Iterator<Wrapper> it = wrappers.iterator(); it.hasNext();) {
-                Wrapper w = it.next();
-                if(w.flagType == null) {
-                    MyTown.instance.LOG.error("Found a type of flag that does not exist. Removing...");
-                    it.remove();
-                    continue;
-                }
-                if (!w.flagType.getType().isAssignableFrom(w.defaultState.getClass())) {
-                    MyTown.instance.LOG.error("The default value for the flag is of invalid type for flag " + w.flagType.toString() + "! Needed " + w.flagType.getType().getSimpleName() + " Removing...");
-                    it.remove();
-                }
+        for(Iterator<Wrapper> it = items.iterator(); it.hasNext(); ) {
+            Wrapper item = it.next();
+            if(item.flagType == null) {
+                MyEssentialsCore.instance.LOG.error("Found a type of flag that does not exist. Removing...");
+                it.remove();
+                isValid = false;
+                continue;
             }
-            MyTown.instance.LOG.info("Loaded DefaultFlags successfully!");
-        } catch (IOException ex) {
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-            MyTown.instance.LOG.error("Failed to read from DefaultFlags file!");
-        }
-        return wrappers;
-    }
-
-    @Override
-    public void update(List<Wrapper> items) {
-        boolean ok, updated = false;
-        for(Wrapper wrapper : items) {
-            wrapper.flagType.setDefaultValue(wrapper.defaultState);
-            wrapper.flagType.setModifiableForTowns(wrapper.isAllowedInTowns);
+            if(!item.flagType.getType().isAssignableFrom(item.defaultState.getClass())) {
+                MyTown.instance.LOG.error("The default value for the flag is of invalid type for flag " + item.flagType.toString() + "! Needed " + item.flagType.getType().getSimpleName() + " Removing...");
+                it.remove();
+                isValid = false;
+            }
         }
 
         for(FlagType type : FlagType.values()) {
@@ -98,13 +71,10 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             if(!ok) {
                 items.add(new Wrapper(type, type.getDefaultValue(), type.canTownsModify()));
                 MyTown.instance.LOG.error("Flag config is missing (or is an invalid entry) {} flag! Adding with default settings...", type.toString());
-                updated = true;
+                isValid = false;
             }
         }
-
-        // Write the updated list to the file
-        if(updated)
-            write(items);
+        return isValid;
     }
 
     /**
