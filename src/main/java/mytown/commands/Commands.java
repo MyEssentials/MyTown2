@@ -1,10 +1,9 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
-import myessentials.command.CommandCompletion;
+import mypermissions.command.CommandCompletion;
 import mytown.api.interfaces.IFlagsContainer;
 import myessentials.Localization;
-import myessentials.command.CommandManager;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;

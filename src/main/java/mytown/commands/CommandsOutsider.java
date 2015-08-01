@@ -1,11 +1,11 @@
 package mytown.commands;
 
 
-import myessentials.command.CommandManager;
-import myessentials.command.CommandResponse;
-import myessentials.command.CommandTree;
-import myessentials.command.CommandTreeNode;
-import myessentials.command.annotation.Command;
+import mypermissions.command.CommandManager;
+import mypermissions.command.CommandResponse;
+import mypermissions.command.CommandTree;
+import mypermissions.command.CommandTreeNode;
+import mypermissions.command.annotation.Command;
 import myessentials.utils.StringUtils;
 import mytown.config.Config;
 import mytown.entities.Resident;

@@ -1,9 +1,8 @@
 package mytown.entities;
 
 import com.google.common.base.Joiner;
-import myessentials.command.CommandManager;
-import myessentials.command.CommandTreeNode;
-import mytown.MyTown;
+import mypermissions.command.CommandManager;
+import mypermissions.command.CommandTreeNode;
 
 import java.util.*;
 

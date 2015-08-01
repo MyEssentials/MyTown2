@@ -1,8 +1,8 @@
 package mytown.commands;
 
-import myessentials.command.CommandManager;
-import myessentials.command.CommandResponse;
-import myessentials.command.annotation.Command;
+import mypermissions.command.CommandManager;
+import mypermissions.command.CommandResponse;
+import mypermissions.command.annotation.Command;
 import myessentials.entities.ChunkPos;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.MathUtils;
