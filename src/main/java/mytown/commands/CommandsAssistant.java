@@ -365,7 +365,7 @@ public class CommandsAssistant extends Commands {
             name = "list",
             permission = "mytown.cmd.assistant.ranks.perm.list",
             parentName = "mytown.cmd.assistant.ranks.perm",
-            syntax = "/town ranks perm list")
+                syntax = "/town ranks perm list")
     public static CommandResponse ranksPermListCommand(ICommandSender sender, List<String> args) {
 
         Rank rank;
@@ -535,7 +535,7 @@ public class CommandsAssistant extends Commands {
             permission = "mytown.cmd.assistant.bank.withdraw",
             parentName = "mytown.cmd.everyone.bank",
             syntax = "/town bank withdraw <amount>")
-    public static CommandResponse bankPayCommand(ICommandSender sender, List<String> args) {
+    public static CommandResponse bankWithdrawCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
 

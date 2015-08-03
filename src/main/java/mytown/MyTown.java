@@ -17,6 +17,7 @@ import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.crash.DatasourceCrashCallable;
+import mytown.entities.Rank;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
 import mytown.handlers.VisualsHandler;
@@ -92,6 +93,7 @@ public class MyTown {
         checkConfig();
         EconomyProxy.init();
         registerCommands();
+        Rank.initDefaultRanks();
         Commands.populateCompletionMap();
 
         jsonConfigs.add(new WildPermsConfig(Constants.CONFIG_FOLDER + "/WildPerms.json"));
@@ -123,18 +125,18 @@ public class MyTown {
             LOG.error(ExceptionUtils.getStackTrace(e));
         }
 
-        CommandManager.registerCommands(CommandsEveryone.class, null, getLocal());
-        CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", getLocal());
+        CommandManager.registerCommands(CommandsEveryone.class, null, getLocal(), new RankPermissionManager());
+        CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", getLocal(), null);
         if (Config.modifiableRanks)
-            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", getLocal());
-        CommandManager.registerCommands(CommandsAdmin.class, null, getLocal());
+            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", getLocal(), null);
+        CommandManager.registerCommands(CommandsAdmin.class, null, getLocal(), null);
         if(Config.enablePlots) {
-            CommandManager.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", getLocal());
-            CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", getLocal());
-            CommandManager.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", getLocal());
+            CommandManager.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", getLocal(), null);
+            CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", getLocal(), null);
+            CommandManager.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", getLocal(), null);
         }
 
-        CommandManager.registerCommands(CommandsOutsider.class, "mytown.cmd", getLocal());
+        CommandManager.registerCommands(CommandsOutsider.class, "mytown.cmd", getLocal(), null);
     }
 
     public WildPermsConfig getWildConfig() {

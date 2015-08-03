@@ -92,7 +92,7 @@ public class CommandsOutsider extends Commands {
             name = "new",
             permission = "mytown.cmd.outsider.new",
             parentName = "mytown.cmd",
-            syntax = "/town new <town>")
+            syntax = "/town new <name>")
     public static CommandResponse newTownCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             return CommandResponse.SEND_SYNTAX;

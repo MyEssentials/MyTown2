@@ -17,30 +17,9 @@ buildscript {
 
 repositories {
     maven {
-        name = "ic2"
-        url = "http://maven.ic2.player.to/"
+        name = "bukkit-repo"
+        url = "http://repo.bukkit.org/content/groups/public/"
     }
-    ivy {
-        name = 'ThaumCraft 4 API'
-        artifactPattern 'https://dl.dropboxusercontent.com/u/47135879/Thaumcraft-1.7.10-4.2.1.4-api.zip'
-    }
-	maven {
-		name = "pex-repo"
-		url = "http://pex-repo.zachsthings.com"
-	}
-	maven {
-		name = "bukkit-repo"
-		url = "http://repo.bukkit.org/content/groups/public/"
-	}
-    maven {
-        name = "Vault"
-        url = "http://nexus.theyeticave.net/content/repositories/pub_releases"
-    }
-	maven {
-		name = "gravity-repo"
-		url = "http://repo.gravitydevelopment.net"
-	}
-
     maven {
         name = "SpongePowered"
         url = "https://repo.spongepowered.org/maven"
@@ -50,7 +29,6 @@ repositories {
         url = "http://maven.sk89q.com/artifactory/repo/"
     }
 }
-
 
 // Load Configs
 
@@ -73,8 +51,6 @@ if (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty()) {
     ext.config.build_type = "r"
 }
 
-
-
 // Configure Everything
 
 version = "${config.minecraft_version}-${config.build_number}${config.build_type}"
@@ -89,19 +65,14 @@ minecraft {
 // Setup Deps
 dependencies {
     testCompile "junit:junit:4.11"
-    compile "com.esotericsoftware.reflectasm:reflectasm:${config.reflectasm_version}"
-    compile "org.beanshell:bsh:2.0b5"
 	
-    // Include DB Drivers as deps
+    // Database drivers
     compile "org.xerial:sqlite-jdbc:${config.sqlite_version}"
     compile "mysql:mysql-connector-java:${config.mysql_version}"
 
-    // Mod Deps
+    // Subproject deps
     compile project(":MyEssentials-Core")
     compile project(":MyPermissions")
-	compile 'com.mod-buildcraft:buildcraft:6.4.15:dev'
-	compile 'net.industrial-craft:industrialcraft-2:2.2.645-experimental:api'
-    //compile "appeng:appliedenergistics2:rv2-beta-30:dev"
 }
 
 // Process Resources, injecting version numbers in

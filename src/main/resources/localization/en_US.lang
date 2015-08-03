@@ -11,10 +11,12 @@ mytown.cmd.err.notPositiveInteger=&cValue '%s' needs to be a positive integer
 mytown.cmd.err.adminTown=&cAction denied because %s is an admin town
 mytown.cmd.err.notInTown=&cYou are not in town %s
 mytown.cmd.err.inventory=&cYour inventory is full or you already have a tool
-mytown.cmd.err.inventory.tool.already=&cYou already have a tool in your inventory, it will be replaced by the new one.
+mytown.cmd.err.inventory.tool.already=&cYou already have a tool in your inventory, it will be replaced by the new one
+mytown.cmd.err.rankPerm=&cYou do not have the rank required to use this command
 mytown.notification.enter.wild=&2You have just entered the wild
 mytown.notification.enter.town=&2Welcome to %s
 mytown.notification.enter.ownTown=&2Welcome back to %s
+
 
 # Flag based notifications
 
