@@ -154,13 +154,13 @@ public class Protection {
                         int x = bp.getX();
                         int y = bp.getY();
                         int z = bp.getZ();
-                        boolean isProtected = false;
+                        boolean isProtected;
 
                         if(range == 0) {
                             isProtected = !hasPermission(res, segment, dim, x, y, z);
                         } else {                            
                             Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
-                            isProtected =  !hasPermission(res, segment, dim, rangeBox);
+                            isProtected = !hasPermission(res, segment, dim, rangeBox);
                         }
                         
                         if(isProtected) {
@@ -355,25 +355,25 @@ public class Protection {
         TownBlock townBlock = getDatasource().getBlock(dim, x >> 4, z >> 4);
         if(townBlock == null) {
             if (res == null) {
-                return Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue());
+                return !Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue());
             } else {
                 if (!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                     res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
-                    return true;
+                    return false;
                 }
             }
         } else {
             Town town = townBlock.getTown();
             if (res == null) {
-                return town.getValueAtCoords(dim, x, y, z, segment.getFlag()).equals(segment.getDenialValue());
+                return !town.getValueAtCoords(dim, x, y, z, segment.getFlag()).equals(segment.getDenialValue());
             } else {
                 if (!town.hasPermission(res, segment.getFlag(), segment.getDenialValue(), dim, x, y, z)) {
                     res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town, dim, x, y, z));
-                    return true;
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
     public boolean hasPermission(Resident res, Segment segment, int dim, Volume area) {
@@ -396,12 +396,12 @@ public class Protection {
                         if (plotIntersectArea > 0) {
                             if (res == null) {
                                 if (plot.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
-                                    return true;
+                                    return false;
                                 }
                             } else {
                                 if (!plot.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                     res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
-                                    return true;
+                                    return false;
                                 }
                             }
                         }
@@ -411,13 +411,13 @@ public class Protection {
                     // If plot area sum is not equal to range area, check town permission
                     if (totalIntersectArea != getArea(rangeBox)) {
                         if (res == null) {
-                            if (!town.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
-                                return true;
+                            if (town.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
+                                return false;
                             }
                         } else {
                             if (!town.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                 res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
-                                return true;
+                                return false;
                             }
                         }
                     }
@@ -427,18 +427,18 @@ public class Protection {
 
         if (inWild) {
             if (res == null) {
-                if (!Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
-                    return true;
+                if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
+                    return false;
                 }
             } else {
                 if (!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                     res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
-                    return true;
+                    return false;
                 }
             }
         }
         
-        return false;
+        return true;
     }
 
     public int getArea(Volume rangeBox) {
