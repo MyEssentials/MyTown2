@@ -68,7 +68,7 @@ public class Formatter {
 
                 boolean mid = z == cz && x == cx;
                 boolean isTown = b != null && b.getTown() != null;
-                boolean ownTown = isTown && res.hasTown(b.getTown());
+                boolean ownTown = isTown && res.townsContainer.contains(b.getTown());
 
                 if (mid) {
                     extraBuilder.setColor(ownTown ? EnumChatFormatting.GREEN : isTown ? EnumChatFormatting.RED : EnumChatFormatting.WHITE);
@@ -143,7 +143,7 @@ public class Formatter {
             if (container instanceof Town) {
                 toAdd = colorPlayer + r.getPlayerName() + colorComma + " (" + formatRankToString(((Town) container).getResidentRank(r)) + colorComma + ")";
             } else if (container instanceof Plot) {
-                toAdd = (((Plot)container).hasOwner(r) ? colorOwner : colorPlayer) + r.getPlayerName();
+                toAdd = (((Plot)container).ownersContainer.contains(r) ? colorOwner : colorPlayer) + r.getPlayerName();
             } else {
                 toAdd = colorPlayer + r.getPlayerName();
             }
@@ -237,10 +237,9 @@ public class Formatter {
      * Returns a formatted string from the towns the resident given is in.
      */
     public static String formatTownsToString(Resident res) {
-        Collection<Town> towns = res.getTowns();
         String formattedList = null;
-        for(Town town : towns) {
-            String toAdd = (res.getSelectedTown() == town ? colorSelectedTown : colorTown) + town.getName();
+        for(Town town : res.townsContainer.asList()) {
+            String toAdd = (res.townsContainer.getMainTown() == town ? colorSelectedTown : colorTown) + town.getName();
             if(formattedList == null)
                 formattedList = toAdd;
             else

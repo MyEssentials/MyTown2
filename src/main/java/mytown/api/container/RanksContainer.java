@@ -1,42 +1,26 @@
 package mytown.api.container;
 
-import com.google.common.collect.ImmutableList;
+import myessentials.entities.Container;
 import mytown.entities.Rank;
-import mytown.entities.Resident;
 
-import java.util.ArrayList;
+public class RanksContainer extends Container<Rank> {
 
-public class RanksContainer {
-
-    private ArrayList<Rank> ranks = new ArrayList<Rank>();
     private Rank defaultRank;
 
     public RanksContainer(Rank defaultRank) {
         this.defaultRank = defaultRank;
     }
 
-    public void addRank(Rank rank) {
-        ranks.add(rank);
-    }
-
-    public void removeRank(Rank rank) {
-        ranks.remove(rank);
-    }
-
-    public boolean hasRank(Rank rank) {
-        return ranks.contains(rank);
-    }
-
-    public boolean hasRank(String rankName) {
-        for (Rank r : ranks) {
+    public boolean contains(String rankName) {
+        for (Rank r : items) {
             if (r.getName().equals(rankName))
                 return true;
         }
         return false;
     }
 
-    public Rank getRank(String rankName) {
-        for (Rank r : ranks) {
+    public Rank get(String rankName) {
+        for (Rank r : items) {
             if (r.getName().equals(rankName))
                 return r;
         }
@@ -60,9 +44,5 @@ public class RanksContainer {
 
     public Rank getDefaultRank() {
         return defaultRank;
-    }
-
-    public ImmutableList<Rank> getRanks() {
-        return ImmutableList.copyOf(ranks);
     }
 }

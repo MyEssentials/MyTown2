@@ -1,24 +1,14 @@
 package mytown.api.container;
 
-import com.google.common.collect.ImmutableList;
+import myessentials.entities.Container;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 
-public class FlagsContainer {
-
-    private ArrayList<Flag> flags = new ArrayList<Flag>();
-
-    public void addFlag(Flag flag) {
-        flags.add(flag);
-        Collections.sort(flags);
-    }
-
-    public boolean hasFlag(FlagType type) {
-        for (Flag flag : flags) {
+public class FlagsContainer extends Container<Flag> {
+    public boolean contains(FlagType type) {
+        for (Flag flag : items) {
             if (flag.getFlagType() == type) {
                 return true;
             }
@@ -26,15 +16,15 @@ public class FlagsContainer {
         return false;
     }
 
-    public Flag getFlag(FlagType type) {
-        for (Flag flag : flags)
+    public Flag get(FlagType type) {
+        for (Flag flag : items)
             if (flag.getFlagType() == type)
                 return flag;
         return null;
     }
 
-    public void removeFlag(FlagType type) {
-        for (Iterator<Flag> it = flags.iterator(); it.hasNext(); ) {
+    public void remove(FlagType type) {
+        for (Iterator<Flag> it = items.iterator(); it.hasNext(); ) {
             if (it.next().getFlagType() == type) {
                 it.remove();
             }
@@ -42,14 +32,10 @@ public class FlagsContainer {
     }
 
     public Object getValue(FlagType type) {
-        for (Flag flag : flags) {
+        for (Flag flag : items) {
             if (flag.getFlagType() == type)
                 return flag.getValue();
         }
         return type.getDefaultValue();
-    }
-
-    public ImmutableList<Flag> getFlags() {
-        return ImmutableList.copyOf(flags);
     }
 }

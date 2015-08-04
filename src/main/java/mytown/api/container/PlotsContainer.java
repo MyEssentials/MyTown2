@@ -1,6 +1,7 @@
 package mytown.api.container;
 
-import com.google.common.collect.ImmutableList;
+import myessentials.entities.Container;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
@@ -10,41 +11,52 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlotsContainer {
+public class PlotsContainer extends Container<Plot> {
 
-    private ArrayList<Plot> plots = new ArrayList<Plot>();
     private int maxPlots;
 
     public PlotsContainer(int maxPlots) {
         this.maxPlots = maxPlots;
     }
 
-    public void addPlot(Plot plot) {
-        plots.add(plot);
-    }
 
-    /*
-    public void removePlot(Plot plot) {
+    public void remove(Plot plot) {
         for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++) {
             for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++) {
-                TownBlock b = getBlockAtCoords(plot.getDim(), x, z);
+                TownBlock b = MyTownUniverse.instance.getTownBlock(plot.getDim(), x, z);
                 if (b != null) {
-                    b.removePlot(plot);
+                    b.plotsContainer.remove(plot);
                 }
             }
         }
-        plots.remove(plot);
+        items.remove(plot);
     }
-    */
 
-    public boolean hasPlot(Plot plot) {
-        return plots.contains(plot);
+
+    public Plot get(String name) {
+        for(Plot plot : items) {
+            if(plot.getName().equals(name))
+                return plot;
+        }
+        return null;
+    }
+
+    public Plot get(int dim, int x, int y, int z) {
+        TownBlock block = MyTownUniverse.instance.getTownBlock(dim, x >> 4, z >> 4);
+        if (block != null) {
+            return block.plotsContainer.get(dim, x, y, z);
+        }
+        return null;
+    }
+
+    public Plot get(Resident res) {
+        return get(res.getPlayer().dimension, (int) Math.floor(res.getPlayer().posX), (int) Math.floor(res.getPlayer().posY), (int) Math.floor(res.getPlayer().posZ));
     }
 
     public List<Plot> getPlotsOwned(Resident res) {
         List<Plot> list = new ArrayList<Plot>();
-        for (Plot plot : plots) {
-            if (plot.hasOwner(res))
+        for (Plot plot : items) {
+            if (plot.ownersContainer.contains(res))
                 list.add(plot);
         }
         return list;
@@ -52,56 +64,28 @@ public class PlotsContainer {
 
     public int getAmountPlotsOwned(Resident res) {
         int plotsOwned = 0;
-        for (Plot plot : plots) {
-            if (plot.hasOwner(res))
+        for (Plot plot : items) {
+            if (plot.ownersContainer.contains(res))
                 plotsOwned++;
         }
         return plotsOwned;
-    }
-
-    public Plot getPlot(String name) {
-        for(Plot plot : plots) {
-            if(plot.getName().equals(name))
-                return plot;
-        }
-        return null;
-    }
-
-    /*
-    public Plot getPlotAtCoords(int dim, int x, int y, int z) {
-        TownBlock b = getBlockAtCoords(dim, x >> 4, z >> 4);
-        if (b != null) {
-            return b.getPlotAtCoords(dim, x, y, z);
-        }
-
-        return null;
-    }
-
-
-    public Plot getPlotAtResident(Resident res) {
-        return getPlotAtCoords(res.getPlayer().dimension, (int) Math.floor(res.getPlayer().posX), (int) Math.floor(res.getPlayer().posY), (int) Math.floor(res.getPlayer().posZ));
-    }
-    */
-
-    public ImmutableList<Plot> getPlots() {
-        return ImmutableList.copyOf(plots);
     }
 
     public boolean canResidentMakePlot(Resident res) {
         return getAmountPlotsOwned(res) >= maxPlots;
     }
 
-    public void showPlots(Resident res) {
+    public void show(Resident res) {
         if(res.getPlayer() instanceof EntityPlayerMP) {
-            for (Plot plot : plots) {
+            for (Plot plot : items) {
                 VisualsHandler.instance.markPlotBorders(plot, (EntityPlayerMP) res.getPlayer());
             }
         }
     }
 
-    public void hidePlots(Resident res) {
+    public void hide(Resident res) {
         if(res.getPlayer() instanceof EntityPlayerMP) {
-            for (Plot plot : plots) {
+            for (Plot plot : items) {
                 VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) res.getPlayer(), plot);
             }
         }

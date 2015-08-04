@@ -1,20 +1,12 @@
 package mytown.api.container;
 
-import com.google.common.collect.ImmutableList;
+import myessentials.entities.Container;
 import mytown.entities.Resident;
 
-import java.util.ArrayList;
-
-public class ResidentContainer {
-
-    private ArrayList<Resident> residents = new ArrayList<Resident>();
-
-    public void addResident(Resident res) {
-        residents.add(res);
-    }
+public class ResidentsContainer extends Container<Resident> {
 
     /*
-    public void removeResident(Resident res) {
+    public void remove(Resident res) {
         for (Iterator<Plot> it = plots.iterator(); it.hasNext(); ) {
             Plot plot = it.next();
             if (plot.hasOwner(res) && plot.getOwners().size() <= 1) {
@@ -26,12 +18,8 @@ public class ResidentContainer {
     */
 
 
-    public boolean hasResident(Resident res) {
-        return residents.contains(res);
-    }
-
-    public boolean hasResident(String username) {
-        for (Resident res : residents) {
+    public boolean contains(String username) {
+        for (Resident res : items) {
             if (res.getPlayerName().equals(username)) {
                 return true;
             }
@@ -51,8 +39,4 @@ public class ResidentContainer {
         }
     }
     */
-
-    public ImmutableList<Resident> getResidents() {
-        return ImmutableList.copyOf(residents);
-    }
 }

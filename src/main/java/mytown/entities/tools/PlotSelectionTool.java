@@ -93,7 +93,7 @@ public class PlotSelectionTool extends Tool {
 
     @Override
     protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
-        if (town == null || town != owner.getSelectedTown() && selectionFirst != null || selectionFirst != null && town != selectionFirst.town) {
+        if (town == null || town != owner.townsContainer.getMainTown() && selectionFirst != null || selectionFirst != null && town != selectionFirst.town) {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selection.outside"));
             return false;
         }
@@ -101,7 +101,7 @@ public class PlotSelectionTool extends Tool {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.getMaxPlots()));
             return false;
         }
-        for(Plot plot : town.getPlots()) {
+        for(Plot plot : town.plotsContainer.asList()) {
             if(plot.getName().equals(plotName)) {
                 owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.name", plotName));
                 return false;
@@ -147,7 +147,7 @@ public class PlotSelectionTool extends Tool {
 
                 // Verifying if it's inside another plot
                 for (int k = selectionFirst.y; k <= selectionSecond.y; k++) {
-                    Plot plot = selectionFirst.town.getPlotAtCoords(selectionFirst.dim, i, k, j);
+                    Plot plot = selectionFirst.town.plotsContainer.get(selectionFirst.dim, i, k, j);
                     if (plot != null) {
                         owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.insideOther", plot.getName()));
                         resetSelection(true, 0);

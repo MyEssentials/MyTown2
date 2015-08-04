@@ -1,34 +1,15 @@
 package mytown.api.container;
 
-import com.google.common.collect.ImmutableList;
+import myessentials.entities.Container;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.handlers.VisualsHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 
-import java.util.ArrayList;
+public class TownBlocksContainer extends Container<TownBlock> {
 
-public class TownBlocksContainer {
-
-    private ArrayList<TownBlock> townBlocks = new ArrayList<TownBlock>();
-
-    public void addBlock(TownBlock block) {
-        townBlocks.add(block);
-        //VisualsHandler.instance.updateTownBorders(this);
-    }
-
-
-    public void removeBlock(TownBlock block) {
-        townBlocks.remove(block);
-        //VisualsHandler.instance.updateTownBorders(this);
-    }
-
-    public boolean hasBlock(TownBlock block) {
-        return townBlocks.contains(block);
-    }
-
-    public boolean hasBlock(int dim, int x, int z) {
-        for(TownBlock block : townBlocks) {
+    public boolean contains(int dim, int x, int z) {
+        for(TownBlock block : items) {
             if(block.getX() == x && block.getZ() == z && block.getDim() == dim) {
                 return true;
             }
@@ -36,8 +17,8 @@ public class TownBlocksContainer {
         return false;
     }
 
-    public TownBlock getBlockAtCoords(int dim, int x, int z) {
-        for(TownBlock block : townBlocks) {
+    public TownBlock get(int dim, int x, int z) {
+        for(TownBlock block : items) {
             if(block.getX() == x && block.getZ() == z && block.getDim() == dim) {
                 return block;
             }
@@ -62,7 +43,7 @@ public class TownBlocksContainer {
 
     public int getFarClaims() {
         int farClaims = 0;
-        for(TownBlock block : townBlocks) {
+        for(TownBlock block : items) {
             if (block.isFarClaim()) {
                 farClaims++;
             }
@@ -74,13 +55,7 @@ public class TownBlocksContainer {
     public int getMaxFarClaims() { return maxFarClaims; }
 
     public void setMaxFarClaims(int maxFarClaims) { this.maxFarClaims = maxFarClaims; }
-    */
 
-    public ImmutableList<TownBlock> getBlocks() {
-        return ImmutableList.copyOf(townBlocks);
-    }
-
-    /*
     public void showBorders(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
             VisualsHandler.instance.markTownBorders(this, (EntityPlayerMP)caller.getPlayer());

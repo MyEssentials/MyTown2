@@ -1,12 +1,9 @@
 package mytown.entities;
 
-import com.google.common.collect.ImmutableList;
-import mytown.api.container.interfaces.IPlotsContainer;
+import mytown.api.container.PlotsContainer;
+import mytown.config.Config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class TownBlock implements IPlotsContainer {
+public class TownBlock {
     /**
      * Used for storing in database
      */
@@ -20,7 +17,7 @@ public class TownBlock implements IPlotsContainer {
     private final boolean isFarClaim;
     private final int pricePaid;
 
-    private final List<Plot> plots = new ArrayList<Plot>();
+    public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
 
     public TownBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town) {
         this.dim = dim;
@@ -70,63 +67,13 @@ public class TownBlock implements IPlotsContainer {
 
     @Override
     public String toString() {
-        return String.format("Block: {Dim: %s, X: %s, Z: %s, Town: %s, Plots: %s}", dim, x, z, town.getName(), getPlots().size());
-    }
-
-    /* ----- IHasPlots -----
-    This helps improve performance by allowing us to get Plots directly from the Block.
-    Since Blocks are just chunks, its much quicker to grab it and return a Collection of Plots the Block has.
-    */
-
-    @Override
-    public void addPlot(Plot plot) {
-        if (x >= plot.getStartChunkX() && x <= plot.getEndChunkX() && z >= plot.getStartChunkZ() && z <= plot.getEndChunkZ()) {
-            plots.add(plot);
-        }
-    }
-
-    @Override
-    public void removePlot(Plot plot) {
-        plots.remove(plot);
-    }
-
-    @Override
-    public boolean hasPlot(Plot plot) {
-        return plots.contains(plot);
-    }
-
-    @Override
-    public ImmutableList<Plot> getPlots() {
-        return ImmutableList.copyOf(plots);
-    }
-
-    @Override
-    public Plot getPlotAtCoords(int dim, int x, int y, int z) {
-        for (Plot plot : plots) {
-            if (plot.isCoordWithin(dim, x, y, z)) {
-                return plot;
-            }
-        }
-        return null;
-    }
-    @Override
-    public Plot getPlot(String name) {
-        for(Plot plot : plots) {
-            if(plot.getName().equals(name))
-                return plot;
-        }
-        return null;
+        return String.format("Block: {Dim: %s, X: %s, Z: %s, Town: %s, Plots: %s}", dim, x, z, town.getName(), plotsContainer.size());
     }
 
     /* ----- Helpers ----- */
 
     /**
      * Checks if the point is inside this Block
-     *
-     * @param dim
-     * @param x
-     * @param z
-     * @return
      */
     public boolean isPointIn(int dim, float x, float z) {
         return isChunkIn(dim, ((int) x) >> 4, ((int) z) >> 4);
@@ -134,11 +81,6 @@ public class TownBlock implements IPlotsContainer {
 
     /**
      * Checks if the chunk is this Block
-     *
-     * @param dim
-     * @param cx
-     * @param cz
-     * @return
      */
     public boolean isChunkIn(int dim, int cx, int cz) {
         return dim == this.dim && cx == x && cz == z;

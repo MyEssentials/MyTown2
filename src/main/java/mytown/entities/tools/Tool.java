@@ -41,9 +41,9 @@ public abstract class Tool {
     }
 
     protected void giveItemStack(ItemStack itemStack) {
-        if(owner.getPlayer().inventory.hasItemStack(itemStack) && owner.getCurrentTool() != null) {
+        if(owner.getPlayer().inventory.hasItemStack(itemStack) && owner.toolContainer.get() != null) {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.inventory.tool.already"));
-            PlayerUtils.takeItemFromPlayer(owner.getPlayer(), owner.getCurrentTool().getItemStack(), 1);
+            PlayerUtils.takeItemFromPlayer(owner.getPlayer(), owner.toolContainer.get().getItemStack(), 1);
         }
 
         PlayerUtils.giveItemToPlayer(owner.getPlayer(), itemStack, 1);
@@ -51,7 +51,7 @@ public abstract class Tool {
 
     protected void deleteItemStack() {
         PlayerUtils.takeItemFromPlayer(owner.getPlayer(), getItemStack(), 1);
-        owner.removeCurrentTool();
+        owner.toolContainer.remove();
     }
 
     protected ItemStack createItemStack(Item item, String... description) {
