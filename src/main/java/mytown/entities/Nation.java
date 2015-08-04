@@ -1,7 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.ITownsContainer;
+import mytown.api.container.interfaces.ITownsContainer;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.IPlotsContainer;
+import mytown.api.container.interfaces.IPlotsContainer;
 
 import java.util.ArrayList;
 import java.util.List;

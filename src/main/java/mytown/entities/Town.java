@@ -1,7 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.*;
+import mytown.api.container.interfaces.*;
 import mytown.config.Config;
 import myessentials.utils.PlayerUtils;
 import myessentials.teleport.Teleport;

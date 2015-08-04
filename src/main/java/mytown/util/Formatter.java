@@ -1,7 +1,7 @@
 package mytown.util;
 
-import mytown.api.interfaces.IFlagsContainer;
-import mytown.api.interfaces.IResidentsContainer;
+import mytown.api.container.interfaces.IFlagsContainer;
+import mytown.api.container.interfaces.IResidentsContainer;
 import myessentials.chat.JsonMessageBuilder;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;

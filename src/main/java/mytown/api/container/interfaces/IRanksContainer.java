@@ -1,4 +1,4 @@
-package mytown.api.interfaces;
+package mytown.api.container.interfaces;
 
 import com.google.common.collect.ImmutableList;
 import mytown.entities.Rank;

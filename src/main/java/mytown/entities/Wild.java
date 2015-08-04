@@ -1,7 +1,7 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import mytown.api.interfaces.IFlagsContainer;
+import mytown.api.container.interfaces.IFlagsContainer;
 import myessentials.utils.PlayerUtils;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;

@@ -1,17 +1,14 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
-import myessentials.utils.PlayerUtils;
 import mytown.MyTown;
-import mytown.api.interfaces.IPlotsContainer;
-import mytown.api.interfaces.ITownsContainer;
+import mytown.api.container.interfaces.IPlotsContainer;
+import mytown.api.container.interfaces.ITownsContainer;
 import myessentials.utils.ChatUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.entities.flag.FlagType;
 import mytown.entities.tools.Tool;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.LocalizationProxy;
-import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;

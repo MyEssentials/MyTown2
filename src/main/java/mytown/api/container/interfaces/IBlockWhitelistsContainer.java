@@ -1,4 +1,4 @@
-package mytown.api.interfaces;
+package mytown.api.container.interfaces;
 
 import mytown.entities.BlockWhitelist;
 import mytown.entities.flag.FlagType;
