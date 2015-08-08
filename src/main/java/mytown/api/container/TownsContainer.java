@@ -23,9 +23,6 @@ public class TownsContainer extends Container<Town> {
     }
 
     public Town getMainTown() {
-        if(mainTown == null) {
-            mainTown = items.get(0);
-        }
         return mainTown;
     }
 }

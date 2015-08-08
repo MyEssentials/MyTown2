@@ -146,7 +146,7 @@ public class CommandsAssistant extends Commands {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = getDatasource().getOrMakeResident(sender);
         TownBlock block = getBlockAtResident(res);
-        Town town = res.getSelectedTown();
+        Town town = res.getCurrentTown();
 
         if (town != block.getTown())
             throw new MyTownCommandException("mytown.cmd.err.unclaim.notInTown");
@@ -283,7 +283,7 @@ public class CommandsAssistant extends Commands {
                 return CommandResponse.SEND_SYNTAX;
 
             Resident res = getDatasource().getOrMakeResident(sender);
-            Town town = res.getSelectedTown();
+            Town town = res.getCurrentTown();
             Rank rank = getRankFromTown(town, args.get(0));
 
             if (town.getDefaultRank().equals(rank) || Rank.theMayorDefaultRank.equals(rank.getName()))

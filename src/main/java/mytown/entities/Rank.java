@@ -3,6 +3,7 @@ package mytown.entities;
 import com.google.common.base.Joiner;
 import mypermissions.command.CommandManager;
 import mypermissions.command.CommandTreeNode;
+import mytown.api.container.PermissionsContainer;
 
 import java.util.*;
 
@@ -53,57 +54,18 @@ public class Rank {
     }
 
     private String key, name;
-    private List<String> permissions;
     private Town town;
 
-    public Rank(String name, Town town) {
-        this(name, new ArrayList<String>(), town);
-    }
+    public final PermissionsContainer permissionsContainer = new PermissionsContainer();
 
-    public Rank(String name, List<String> permissions, Town town) {
+    public Rank(String name, Town town) {
         this.name = name;
         this.town = town;
-        this.permissions = permissions;
         updateKey();
     }
 
     public String getName() {
         return name;
-    }
-
-    public boolean addPermission(String permission) {
-        return permissions.add(permission);
-    }
-
-    public void addPermissions(Collection<String> permissions) {
-        this.permissions.addAll(permissions);
-    }
-
-    public boolean removePermission(String permission) {
-        return permissions.remove(permission);
-    }
-
-    public boolean hasPermission(String permission) {
-        return permissions.contains(permission);
-    }
-
-    public boolean hasPermissionOrSuperPermission(String permission) {
-        if (hasPermission(permission))
-            return true;
-        for (String p : permissions) {
-            if (permission.contains(p)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public List<String> getPermissions() {
-        return permissions;
-    }
-
-    public String getPermissionsString() {
-        return Joiner.on(", ").join(getPermissions());
     }
 
     public String getKey() {
@@ -120,6 +82,6 @@ public class Rank {
 
     @Override
     public String toString() {
-        return String.format("Rank: {Name: %s, Town: %s, Permissions: [%s]}", getName(), getTown().getName(), Joiner.on(", ").join(getPermissions()));
+        return String.format("Rank: {Name: %s, Town: %s, Permissions: [%s]}", getName(), getTown().getName(), Joiner.on(", ").join(permissionsContainer.asList()));
     }
 }

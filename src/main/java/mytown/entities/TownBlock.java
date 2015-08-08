@@ -14,6 +14,7 @@ public class TownBlock {
     private final int z;
     private final Town town;
     private String key;
+
     private final boolean isFarClaim;
     private final int pricePaid;
 

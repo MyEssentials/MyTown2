@@ -10,9 +10,6 @@ public class Bank {
     private int bankAmount = 0;
     private int daysNotPaid = 0;
 
-    public void setBankAmount(int amount) { bankAmount = amount; }
-    public int getBankAmount() { return this.bankAmount; }
-
     public boolean makePayment(int amount) {
         if (bankAmount >= amount) {
             bankAmount -= amount;
@@ -32,8 +29,20 @@ public class Bank {
         }
     }
 
-    public void setDaysNotPaid(int days) { this.daysNotPaid = days; }
-    public int getDaysNotPaid() { return this.daysNotPaid; }
+    public void setDaysNotPaid(int days) {
+        this.daysNotPaid = days;
+    }
+
+    public int getDaysNotPaid() {
+        return this.daysNotPaid;
+    }
+
+    public void setBankAmount(int amount) {
+        bankAmount = amount;
+    }
+    public int getBankAmount() {
+        return this.bankAmount;
+    }
 
     public int getNextPaymentAmount() {
         return (Config.costTownUpkeep + Config.costAdditionalUpkeep * town.townBlocksContainer.size()) * (1 + daysNotPaid);

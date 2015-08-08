@@ -26,12 +26,12 @@ public class BlockWhitelist {
         this.flagType = flagType;
     }
 
-    public FlagType getFlagType() {
-        return this.flagType;
-    }
-
     public void delete() {
         this.isDeleted = true;
+    }
+
+    public FlagType getFlagType() {
+        return this.flagType;
     }
 
     public void setDbID(int id) {

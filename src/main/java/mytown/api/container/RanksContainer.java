@@ -7,10 +7,6 @@ public class RanksContainer extends Container<Rank> {
 
     private Rank defaultRank;
 
-    public RanksContainer(Rank defaultRank) {
-        this.defaultRank = defaultRank;
-    }
-
     public boolean contains(String rankName) {
         for (Rank r : items) {
             if (r.getName().equals(rankName))
@@ -26,17 +22,6 @@ public class RanksContainer extends Container<Rank> {
         }
         return null;
     }
-
-    /*
-    public boolean promoteResident(Resident res, Rank rank) {
-        if (hasResident(res) && hasRank(rank)) {
-            residents.remove(res);
-            residents.put(res, rank);
-            return true;
-        }
-        return false;
-    }
-    */
 
     public void setDefaultRank(Rank rank) {
         defaultRank = rank;

@@ -1013,7 +1013,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     @Override
     public boolean saveSelectedTown(Resident res, Town town) {
         try {
-            if (res.getSelectedTown() == null) {
+            if (res.getCurrentTown() == null) {
                 PreparedStatement statement = prepare("INSERT INTO " + prefix + "SelectedTown(resident, townName) VALUES(?, ?)", true);
                 statement.setString(1, res.getUUID().toString());
                 statement.setString(2, town.getName());
@@ -1350,7 +1350,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
             for (Resident res : town.getResidents()) {
                 res.removeTown(town);
-                if (res.getSelectedTown() == town)
+                if (res.getCurrentTown() == town)
                     deleteSelectedTown(res);
             }
             // Remove the Town from the Map

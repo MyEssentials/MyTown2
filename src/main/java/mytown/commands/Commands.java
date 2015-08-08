@@ -52,7 +52,7 @@ public abstract class Commands {
 
         Resident res = getDatasource().getOrMakeResident(sender);
         // Get its rank with the permissions
-        Rank rank = res.getTownRank(res.getSelectedTown());
+        Rank rank = res.getTownRank(res.getCurrentTown());
 
         if (rank == null) {
             return true;
@@ -101,7 +101,7 @@ public abstract class Commands {
     /* ---- HELPERS ---- */
 
     public static Town getTownFromResident(Resident res) {
-        Town town = res.getSelectedTown();
+        Town town = res.getCurrentTown();
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.partOfTown");
         return town;
@@ -158,7 +158,7 @@ public abstract class Commands {
     public static TownBlock getBlockAtResident(Resident res) {
         TownBlock block = getDatasource().getBlock(res.getPlayer().dimension, ((int) res.getPlayer().posX) >> 4, ((int) res.getPlayer().posZ >> 4));
         if (block == null)
-            throw new MyTownCommandException("mytown.cmd.err.claim.notexist", res.getSelectedTown());
+            throw new MyTownCommandException("mytown.cmd.err.claim.notexist", res.getCurrentTown());
         return block;
     }
 

@@ -103,7 +103,7 @@ public class Protection {
                         if(inWild && Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
                             if (segment.hasOwner()) {
                                 Resident res = Protections.instance.getOwnerForTileEntity(te);
-                                if (res == null || !Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue()))
+                                if (res == null || !Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue()))
                                     return true;
 
                             } else {
@@ -143,7 +143,7 @@ public class Protection {
                                     if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue()))
                                         return true;
                                 } else {
-                                    if (!Wild.instance.checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
+                                    if (!Wild.instance.hasPermission(owner, segment.getFlag(), segment.getDenialValue()))
                                         return true;
                                 }
                             } else {
@@ -178,7 +178,7 @@ public class Protection {
                                     if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue()))
                                         return true;
                                 } else {
-                                    if (!Wild.instance.checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
+                                    if (!Wild.instance.hasPermission(owner, segment.getFlag(), segment.getDenialValue()))
                                         return true;
                                 }
                             }
@@ -212,7 +212,7 @@ public class Protection {
                         if(range == 0) {
                             block = getDatasource().getBlock(bp.getDim(), bp.getX() >> 4, bp.getZ() >> 4);
                             if(block == null) {
-                                if (!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                                if (!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                     res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
                                     if(segment.hasClientUpdate())
                                         sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
@@ -242,7 +242,7 @@ public class Protection {
                                     }
                                 }
                             }
-                            if (inWild && !Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                            if (inWild && !Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                 res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
                                 if(segment.hasClientUpdate())
                                     sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
@@ -271,7 +271,7 @@ public class Protection {
             if(segment.getType() == EntityType.PROTECT && segment.getCheckClass().isAssignableFrom(entity.getClass())) {
                 TownBlock block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                 if(block == null) {
-                    if(!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                    if(!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                         res.sendMessage(FlagType.PVE.getLocalizedProtectionDenial());
                         return true;
                     }
@@ -297,7 +297,7 @@ public class Protection {
                         if(range == 0) {
                             block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                             if(block == null) {
-                                if (!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                                if (!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                     res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
                                     return true;
                                 }
@@ -321,7 +321,7 @@ public class Protection {
                                     }
                                 }
                             }
-                            if (inWild && !Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                            if (inWild && !Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                 res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
                                 return true;
                             }
@@ -355,7 +355,7 @@ public class Protection {
                         if(range == 0) {
                             block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
                             if(block == null) {
-                                if (!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                                if (!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                     res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
                                     return true;
                                 }
@@ -379,7 +379,7 @@ public class Protection {
                                     }
                                 }
                             }
-                            if (inWild && !Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                            if (inWild && !Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                                 res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
                                 return true;
                             }
@@ -408,7 +408,7 @@ public class Protection {
                     && (segment.getType() == BlockType.ANY_CLICK || segment.getType() == BlockType.RIGHT_CLICK && action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || segment.getType() == BlockType.LEFT_CLICK && action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)) {
                 TownBlock block = getDatasource().getBlock(bp.getDim(), bp.getX() >> 4, bp.getZ() >> 4);
                 if(block == null) {
-                    if(!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                    if(!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                         res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
                         if(segment.hasClientUpdate())
                             sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);

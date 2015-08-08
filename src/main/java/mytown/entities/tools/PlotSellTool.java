@@ -1,17 +1,12 @@
 package mytown.entities.tools;
 
-import mytown.datasource.MyTownUniverse;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.entities.TownBlock;
-import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.Constants;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
@@ -66,7 +61,7 @@ public class PlotSellTool extends Tool {
         }
 
         if(town == null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.getSelectedTown().getName()));
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.getCurrentTown().getName()));
             return false;
         }
 

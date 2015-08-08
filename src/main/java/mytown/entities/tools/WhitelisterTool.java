@@ -69,7 +69,7 @@ public class WhitelisterTool extends Tool {
     @Override
     protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
         if(town == null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.getSelectedTown().getName()));
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.getCurrentTown().getName()));
             return false;
         }
 

@@ -1,22 +1,16 @@
 package mytown.entities;
 
-import com.google.common.collect.ImmutableList;
-import mytown.api.container.FlagsContainer;
-import mytown.api.container.PlotsContainer;
-import mytown.api.container.ResidentsContainer;
-import mytown.api.container.TownBlocksContainer;
-import mytown.api.container.interfaces.*;
-import mytown.config.Config;
-import myessentials.utils.PlayerUtils;
 import myessentials.teleport.Teleport;
-import mytown.entities.flag.Flag;
+import myessentials.utils.PlayerUtils;
+import mytown.api.container.*;
+import mytown.config.Config;
 import mytown.entities.flag.FlagType;
-import mytown.handlers.VisualsHandler;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
@@ -24,84 +18,21 @@ import java.util.*;
 public class Town implements Comparable<Town> {
     private String name, oldName = null;
 
-    private Rank defaultRank = null;
     protected int extraBlocks = 0;
     protected int maxFarClaims = Config.maxFarClaims;
 
-    private int bankAmount = 0;
-    private int daysNotPaid = 0;
-
-    private Nation nation = null;
-    private Teleport spawn = null;
+    private Nation nation;
+    private Teleport spawn;
 
     public final ResidentsContainer residentsContainer = new ResidentsContainer();
+    public final RanksContainer ranksContainer = new RanksContainer();
     public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
     public final FlagsContainer flagsContainer = new FlagsContainer();
     public final TownBlocksContainer townBlocksContainer = new TownBlocksContainer();
+    public final Bank bank = new Bank();
 
     public Town(String name) {
-        setName(name);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
-    }
-
-    public String getOldName() {
-        return oldName;
-    }
-
-    /**
-     * Renames this current Town setting oldName to the previous name. You MUST set oldName to null after saving it in the Datasource
-     */
-    public void rename(String newName) {
-        oldName = name;
-        name = newName;
-    }
-
-    /**
-     * Resets the oldName to null. You MUST call this after a name change in the Datasource!
-     */
-    public void resetOldName() {
-        oldName = null;
-    }
-
-    /* ----- Nation ----- */
-
-    public Nation getNation() { return nation; }
-    public void setNation(Nation nation) { this.nation = nation; }
-
-    /* ----- Spawn ----- */
-
-    public void sendToSpawn(Resident res) {
-        EntityPlayer pl = res.getPlayer();
-        if (pl != null) {
-            PlayerUtils.teleport((EntityPlayerMP)pl, spawn.getDim(), spawn.getX(), spawn.getY(), spawn.getZ());
-            res.setTeleportCooldown(Config.teleportCooldown);
-        }
-    }
-
-    public boolean hasSpawn() { return spawn != null; }
-    public Teleport getSpawn() { return spawn; }
-    public void setSpawn(Teleport spawn) { this.spawn = spawn; }
-
-
-
-    /* ----- Helpers ----- */
-
-    /**
-     * Checks if the given block in non-chunk coordinates is in this Town
-     */
-    public boolean isPointInTown(int dim, int x, int z) {
-        return isChunkInTown(dim, x >> 4, z >> 4);
-    }
-
-    public boolean isChunkInTown(int dim, int chunkX, int chunkZ) {
-        return townBlocksContainer.contains(dim, chunkX, chunkZ);
     }
 
     public void notifyResidentJoin(Resident res) {
@@ -170,15 +101,22 @@ public class Town implements Comparable<Town> {
     /**
      * Gets the resident with the rank of 'Mayor' (or whatever it's named)
      */
-    /*
     public Resident getMayor() {
-        for (Resident res : residents.keySet()) {
-            if (residents.get(res).getName().equals(Rank.theMayorDefaultRank))
+        for (Resident res : residentsContainer.asList()) {
+            if (res.getCurrentRank().getName().equals(Rank.theMayorDefaultRank))
                 return res;
         }
         return null;
     }
-    */
+
+    public void sendToSpawn(Resident res) {
+        EntityPlayer pl = res.getPlayer();
+        if (pl != null) {
+            PlayerUtils.teleport((EntityPlayerMP)pl, spawn.getDim(), spawn.getX(), spawn.getY(), spawn.getZ());
+            res.setTeleportCooldown(Config.teleportCooldown);
+        }
+    }
+
 
     /* ----- Comparable ----- */
 
@@ -195,4 +133,60 @@ public class Town implements Comparable<Town> {
 
         return -1;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getOldName() {
+        return oldName;
+    }
+
+    /**
+     * Renames this current Town setting oldName to the previous name. You MUST set oldName to null after saving it in the Datasource
+     */
+    public void rename(String newName) {
+        oldName = name;
+        name = newName;
+    }
+
+    /**
+     * Resets the oldName to null. You MUST call this after a name change in the Datasource!
+     */
+    public void resetOldName() {
+        oldName = null;
+    }
+
+    public Nation getNation() {
+        return nation;
+    }
+
+    public void setNation(Nation nation) {
+        this.nation = nation;
+    }
+
+    public boolean hasSpawn() {
+        return spawn != null;
+    }
+
+    public Teleport getSpawn() {
+        return spawn;
+    }
+
+    public void setSpawn(Teleport spawn) {
+        this.spawn = spawn;
+    }
+
+    /**
+     * Checks if the given block in non-chunk coordinates is in this Town
+     */
+    public boolean isPointInTown(int dim, int x, int z) {
+        return isChunkInTown(dim, x >> 4, z >> 4);
+    }
+
+    public boolean isChunkInTown(int dim, int chunkX, int chunkZ) {
+        return townBlocksContainer.contains(dim, chunkX, chunkZ);
+    }
+
+
 }

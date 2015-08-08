@@ -1,18 +1,9 @@
 package mytown.entities;
 
-import com.google.common.collect.ImmutableList;
 import myessentials.utils.PlayerUtils;
 import mytown.api.container.FlagsContainer;
 import mytown.api.container.ResidentsContainer;
-import mytown.api.container.interfaces.IFlagsContainer;
-import mytown.api.container.interfaces.IResidentsContainer;
-import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 public class Plot {
     private int dbID;
@@ -55,6 +46,19 @@ public class Plot {
 
 
         updateKey();
+    }
+
+    public boolean isCoordWithin(int dim, int x, int y, int z) {
+        return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
+    }
+
+    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
+        return !flagsContainer.getValue(flagType).equals(denialValue) || membersContainer.contains(res) || ownersContainer.contains(res) || PlayerUtils.isOp(res.getPlayer());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Plot: {Name: %s, Dim: %s, Start: [%s, %s, %s], End: [%s, %s, %s]}", name, dim, x1, y1, z1, x2, y2, z2);
     }
 
     public int getDim() {
@@ -132,16 +136,4 @@ public class Plot {
         return this.dbID;
     }
 
-    public boolean isCoordWithin(int dim, int x, int y, int z) {
-        return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
-    }
-
-    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
-        return !flagsContainer.getValue(flagType).equals(denialValue) || membersContainer.contains(res) || ownersContainer.contains(res) || PlayerUtils.isOp(res.getPlayer());
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Plot: {Name: %s, Dim: %s, Start: [%s, %s, %s], End: [%s, %s, %s]}", name, dim, x1, y1, z1, x2, y2, z2);
-    }
 }

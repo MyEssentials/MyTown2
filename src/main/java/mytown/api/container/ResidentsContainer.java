@@ -1,22 +1,25 @@
 package mytown.api.container;
 
 import myessentials.entities.Container;
+import mytown.entities.Plot;
 import mytown.entities.Resident;
+
+import java.util.Iterator;
 
 public class ResidentsContainer extends Container<Resident> {
 
-    /*
+    @Override
     public void remove(Resident res) {
-        for (Iterator<Plot> it = plots.iterator(); it.hasNext(); ) {
+        /*
+        for (Iterator<Plot> it = res.getCurrentTown().plotsContainer.asList().iterator(); it.hasNext(); ) {
             Plot plot = it.next();
-            if (plot.hasOwner(res) && plot.getOwners().size() <= 1) {
+            if (plot.ownersContainer.contains(res) && plot.ownersContainer.size() <= 1) {
                 it.remove();
             }
         }
-        residents.remove(res);
+        */
+        items.remove(res);
     }
-    */
-
 
     public boolean contains(String username) {
         for (Resident res : items) {
@@ -26,17 +29,4 @@ public class ResidentsContainer extends Container<Resident> {
         }
         return false;
     }
-
-
-    /*
-    public Rank getResidentRank(Resident res) {
-        return residents.get(res);
-    }
-
-    public void setResidentRank(Resident res, Rank rank) {
-        if (residents.containsKey(res)) {
-            residents.put(res, rank);
-        }
-    }
-    */
 }
