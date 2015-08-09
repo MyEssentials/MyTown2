@@ -30,3 +30,5 @@ deploy:
       tags: true
       repo: MyEssentials/MyEssentials-Core
       all_branches: true
+jdk:
+ - oraclejdk8
