@@ -44,7 +44,7 @@ public class Resident {
         this.playerName = playerName;
     }
 
-    public Resident(UUID uuid, String playerName, long joinDate, long lastOnline, int extraBlocks) {
+    public Resident(UUID uuid, String playerName, long joinDate, long lastOnline) {
         this(uuid, playerName);
         this.joinDate.setTime(joinDate * 1000L);
         this.lastOnline.setTime(lastOnline * 1000L);

@@ -210,8 +210,6 @@ public abstract class MyTownDatasource {
 
     protected abstract boolean loadBlockWhitelists();
 
-    protected abstract boolean loadSelectedTowns();
-
     protected abstract boolean loadFriends();
 
     protected abstract boolean loadFriendRequests();
@@ -252,8 +250,6 @@ public abstract class MyTownDatasource {
     public abstract boolean saveFlag(Flag flag, Plot plot);
 
     public abstract boolean saveBlockWhitelist(BlockWhitelist bw, Town town);
-
-    public abstract boolean saveSelectedTown(Resident res, Town town);
 
     public abstract boolean saveFriendLink(Resident res1, Resident res2);
 

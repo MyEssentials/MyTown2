@@ -75,6 +75,14 @@ public class PlotsContainer extends Container<Plot> {
         return plotsOwned;
     }
 
+    public int getMaxPlots() {
+        return this.maxPlots;
+    }
+
+    public void setMaxPlots(int maxPlots) {
+        this.maxPlots = maxPlots;
+    }
+
     public boolean canResidentMakePlot(Resident res) {
         return maxPlots == -1 || getAmountPlotsOwned(res) < maxPlots;
     }
