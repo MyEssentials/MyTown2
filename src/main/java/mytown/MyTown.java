@@ -7,7 +7,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.Localization;
-import mypermissions.command.CommandManager;
+import mypermissions.api.command.CommandManager;
 import myessentials.config.ConfigProcessor;
 import myessentials.json.JSONConfig;
 import myessentials.utils.ClassUtils;

@@ -1,11 +1,11 @@
 package mytown.commands;
 
 
-import mypermissions.command.CommandManager;
-import mypermissions.command.CommandResponse;
+import mypermissions.api.command.CommandManager;
+import mypermissions.api.command.CommandResponse;
 import mypermissions.command.CommandTree;
 import mypermissions.command.CommandTreeNode;
-import mypermissions.command.annotation.Command;
+import mypermissions.api.command.annotation.Command;
 import myessentials.utils.StringUtils;
 import mytown.config.Config;
 import mytown.entities.Resident;

@@ -1,7 +1,7 @@
 package mytown.commands;
 
 import com.google.common.collect.ImmutableList;
-import mypermissions.command.CommandCompletion;
+import mypermissions.api.command.CommandCompletion;
 import mytown.api.interfaces.IFlagsContainer;
 import myessentials.Localization;
 import mytown.datasource.MyTownDatasource;

@@ -1,7 +1,7 @@
 package mytown.entities;
 
 import com.google.common.base.Joiner;
-import mypermissions.command.CommandManager;
+import mypermissions.api.command.CommandManager;
 import mypermissions.command.CommandTreeNode;
 
 import java.util.*;

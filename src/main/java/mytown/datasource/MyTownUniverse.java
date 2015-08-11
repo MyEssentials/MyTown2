@@ -3,7 +3,7 @@ package mytown.datasource;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
-import mypermissions.command.CommandCompletion;
+import mypermissions.api.command.CommandCompletion;
 import mytown.entities.*;
 import mytown.handlers.VisualsHandler;
 import net.minecraft.server.MinecraftServer;
