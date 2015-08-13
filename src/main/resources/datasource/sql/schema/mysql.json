@@ -1,0 +1,147 @@
+[
+  {
+    "id": "07.25.2014.1",
+    "desc": "Add Updates Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$Updates (id VARCHAR(20) NOT NULL, description VARCHAR(50) NOT NULL, PRIMARY KEY(id));"
+  },
+  {
+    "id": "07.25.2014.2",
+    "desc": "Add Residents Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$Residents (uuid CHAR(36) NOT NULL, name VARCHAR(240) NOT NULL, joined BIGINT NOT NULL, lastOnline BIGINT NOT NULL, PRIMARY KEY(uuid));"
+  },
+  {
+    "id": "10.05.2014",
+    "desc": "Add Worlds",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$Worlds(dim INT, PRIMARY KEY(dim))"
+  },
+  {
+    "id": "07.25.2014.3",
+    "desc": "Add Towns Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$Towns (name VARCHAR(32) NOT NULL, isAdminTown BOOLEAN, spawnDim INT NOT NULL, spawnX FLOAT NOT NULL, spawnY FLOAT NOT NULL, spawnZ FLOAT NOT NULL, cameraYaw FLOAT NOT NULL, cameraPitch FLOAT NOT NULL, PRIMARY KEY(name), FOREIGN KEY(spawnDim) REFERENCES $PREFIX$ Worlds(dim) ON DELETE CASCADE);"
+  },
+  {
+    "id": "07.25.2014.4",
+    "desc": "Add Ranks Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$Ranks (name VARCHAR(50) NOT NULL, townName VARCHAR(32) NOT NULL, isDefault BOOLEAN, PRIMARY KEY(name, townName), FOREIGN KEY(townName) REFERENCES $PREFIX$Towns(name) ON DELETE CASCADE ON UPDATE CASCADE);"
+  },
+  {
+    "id": "07.25.2014.5",
+    "desc": "Add RankPermissions Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$RankPermissions (node VARCHAR(100) NOT NULL, rank VARCHAR(50) NOT NULL, townName VARCHAR(32) NOT NULL, PRIMARY KEY(node, rank, townName), FOREIGN KEY(rank, townName) REFERENCES $PREFIX$Ranks(name, townName) ON DELETE CASCADE ON UPDATE CASCADE);"
+  },
+  {
+    "id": "07.25.2014.6",
+    "desc": "Add Blocks Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$Blocks (dim INT NOT NULL, x INT NOT NULL, z INT NOT NULL, townName VARCHAR(32) NOT NULL, PRIMARY KEY(dim, x, z), FOREIGN KEY(townName) REFERENCES $PREFIX$Towns(name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY(dim) REFERENCES $PREFIX$Worlds(dim) ON DELETE CASCADE);"
+  },
+  {
+    "id": "07.25.2014.7",
+    "desc": "Add Plots Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$Plots (ID INTEGER NOT NULL AUTO_INCREMENT, name VARCHAR(50) NOT NULL, dim INT NOT NULL, x1 INT NOT NULL, y1 INT NOT NULL, z1 INT NOT NULL, x2 INT NOT NULL, y2 INT NOT NULL, z2 INT NOT NULL, townName VARCHAR(32) NOT NULL, PRIMARY KEY(ID), FOREIGN KEY(townName) REFERENCES $PREFIX$Towns(name) ON DELETE CASCADE ON UPDATE CASCADE,  FOREIGN KEY(dim) REFERENCES $PREFIX$Worlds(dim) ON DELETE CASCADE);"
+  },
+  {
+    "id": "07.25.2014.8",
+    "desc": "Add Nations Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$Nations (name VARCHAR(32) NOT NULL, PRIMARY KEY(name));"
+  },
+  {
+    "id": "08.07.2014.1",
+    "desc": "Add ResidentsToTowns Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$ResidentsToTowns (resident CHAR(36) NOT NULL, town VARCHAR(32) NOT NULL, rank VARCHAR(50) NOT NULL, PRIMARY KEY(resident, town), FOREIGN KEY(resident) REFERENCES $PREFIX$Residents(uuid) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY(rank, town) REFERENCES $PREFIX$Ranks(name, townName) ON DELETE CASCADE ON UPDATE CASCADE);"
+  },
+  {
+    "id": "08.07.2014.2",
+    "desc": "Add TownsToNations Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$TownsToNations (town VARCHAR(50), nation VARCHAR(50), rank CHAR(1) DEFAULT 'T', PRIMARY KEY(town, nation), FOREIGN KEY(town) REFERENCES $PREFIX$Towns(name) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY(nation) REFERENCES $PREFIX$Nations(name) ON DELETE CASCADE ON UPDATE CASCADE);"
+  },
+  {
+    "id": "08.26.2014.1",
+    "desc": "Add TownFlags Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$TownFlags (name VARCHAR(50) NOT NULL, serializedValue VARCHAR(400), townName VARCHAR(50) NOT NULL, PRIMARY KEY(name, townName), FOREIGN KEY(townName) REFERENCES $PREFIX$Towns(name) ON DELETE CASCADE ON UPDATE CASCADE);"
+  },
+  {
+    "id": "08.30.2014.1",
+    "desc": "Add PlotFlags Table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$PlotFlags (name VARCHAR(50) NOT NULL, serializedValue VARCHAR(400), plotID INT NOT NULL, PRIMARY KEY(name, plotID), FOREIGN KEY(plotID) REFERENCES $PREFIX$Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE);"
+  },
+  {
+    "id": "08.31.2014.1",
+    "desc": "Add ResidentsToPlots",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$ResidentsToPlots(resident varchar(36) NOT NULL, plotID INT NOT NULL, isOwner boolean, PRIMARY KEY(resident, plotID), FOREIGN KEY(resident) REFERENCES $PREFIX$Residents(UUID) ON DELETE CASCADE, FOREIGN KEY(plotID) REFERENCES $PREFIX$Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"
+  },
+  {
+    "id": "09.04.2014.1",
+    "desc": "Add BlockWhitelists",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$BlockWhitelists(ID INTEGER NOT NULL AUTO_INCREMENT, dim INT NOT NULL, x INT NOT NULL, y INT NOT NULL, z INT NOT NULL, townName VARCHAR(50), flagName VARCHAR(50) NOT NULL, PRIMARY KEY(ID), FOREIGN KEY(flagName, townName) REFERENCES $PREFIX$TownFlags(name, townName) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(dim) REFERENCES $PREFIX$Worlds(dim) ON DELETE CASCADE)"
+  },
+  {
+    "id": "09.11.2014.1",
+    "desc": "Add SelectedTown",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$SelectedTown(resident CHAR(36), townName VARCHAR(50),PRIMARY KEY(resident), FOREIGN KEY(resident) REFERENCES $PREFIX$Residents(UUID) ON DELETE CASCADE, FOREIGN KEY(townName) REFERENCES $PREFIX$Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"
+  },
+  {
+    "id": "09.19.2014.1",
+    "desc": "Add Friends",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$Friends(resident1 CHAR(36), resident2 CHAR(36), PRIMARY KEY(resident1, resident2), FOREIGN KEY(resident1) REFERENCES $PREFIX$Residents(UUID) ON DELETE CASCADE, FOREIGN KEY(resident2) REFERENCES $PREFIX$Residents(UUID) ON DELETE CASCADE)"
+  },
+  {
+    "id": "09.19.2014.2",
+    "desc": "Add FriendRequests",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$FriendRequests(resident CHAR(36), residentTarget CHAR(36), PRIMARY KEY(resident, residentTarget), FOREIGN KEY(resident) REFERENCES $PREFIX$Residents(UUID) ON DELETE CASCADE, FOREIGN KEY(residentTarget) REFERENCES $PREFIX$Residents(UUID) ON DELETE CASCADE)"
+  },
+  {
+    "id": "10.02.2014",
+    "desc": "Add TownInvites",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$TownInvites(resident CHAR(36), townName VARCHAR(50), PRIMARY KEY(resident, townName), FOREIGN KEY(resident) REFERENCES $PREFIX$Residents(UUID) ON DELETE CASCADE, FOREIGN KEY(townName) REFERENCES $PREFIX$Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"
+  },
+  {
+    "id": "10.18.2014.1",
+    "desc": "Add 'extraBlocks' to towns",
+    "sql": "ALTER TABLE $PREFIX$Towns ADD extraBlocks INTEGER DEFAULT 0"
+  },
+  {
+    "id": "10.23.2014.1",
+    "desc": "Add 'maxPlots' to towns",
+    "sql": "ALTER TABLE $PREFIX$Towns ADD maxPlots INTEGER DEFAULT $CONFIG:towns.defaultMaxPlotsPerPlayer$"
+  },
+  {
+    "id": "11.4.2014.1",
+    "desc": "Add 'extraBlocks to residents",
+    "sql": "ALTER TABLE $PREFIX$Residents ADD extraBlocks INTEGER DEFAULT 0;"
+  },
+  {
+    "id": "3.22.2014.1",
+    "desc": "Add 'BlockOwners' table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$BlockOwners(resident CHAR(36), dim INT NOT NULL, x INT NOT NULL, y INT NOT NULL, z INT NOT NULL, FOREIGN KEY(resident) REFERENCES $PREFIX$Residents(UUID) ON DELETE CASCADE)"
+  },
+  {
+    "id": "3.27.2014.1",
+    "desc": "Add 'TownBanks' table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$TownBanks(townName VARCHAR(50), amount INT NOT NULL, PRIMARY KEY(townName), FOREIGN KEY(townName) REFERENCES $PREFIX$Towns(name) ON DELETE CASCADE ON UPDATE CASCADE)"
+  },
+  {
+    "id": "3.27.2014.2",
+    "desc": "Add 'PlotBanks' table",
+    "sql": "CREATE TABLE IF NOT EXISTS $PREFIX$PlotBanks(plotID INT NOT NULL, amount INT NOT NULL, PRIMARY KEY(plotID), FOREIGN KEY(plotID) REFERENCES $PREFIX$Plots(ID) ON DELETE CASCADE ON UPDATE CASCADE)"
+  },
+  {
+    "id": "4.1.2015.1",
+    "desc": "Add 'daysNotPaid' to TownBanks",
+    "sql": "ALTER TABLE $PREFIX$TownBanks ADD daysNotPaid INTEGER DEFAULT 0"
+  },
+  {
+    "id": "4.12.2015.1",
+    "desc": "Add 'isFarClaim' to Blocks",
+    "sql": "ALTER TABLE $PREFIX$Blocks ADD isFarClaim boolean DEFAULT false"
+  },
+  {
+    "id": "4.12.2015.2",
+    "desc": "Add 'maxFarClaims' to Towns",
+    "sql": "ALTER TABLE $PREFIX$Towns ADD maxFarClaims INTEGER DEFAULT $CONFIG:towns.maxFarClaims$"
+  },
+  {
+    "id": "4.12.2015.3",
+    "desc": "Add 'pricePaid' to Blocks",
+    "sql": "ALTER TABLE $PREFIX$Blocks ADD pricePaid INTEGER DEFAULT $CONFIG:cost.costAmountClaim$"
+  }
+]
