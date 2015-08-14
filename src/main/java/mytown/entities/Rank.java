@@ -134,6 +134,6 @@ public class Rank {
 
     @Override
     public String toString() {
-        return String.format("Rank: {Name: %s, Town: %s, Permissions: [%s]}", getName(), getTown().getName(), Joiner.on(", ").join(getPermissions()));
+        return String.format("Rank: {Name: %s, Town: %s, Permissions: [%s]}", getName(), getTown(), Joiner.on(", ").join(getPermissions()));
     }
 }
