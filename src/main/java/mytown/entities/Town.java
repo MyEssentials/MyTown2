@@ -11,6 +11,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
@@ -24,11 +26,13 @@ public class Town implements Comparable<Town> {
     private Nation nation;
     private Teleport spawn;
 
-    public final ResidentsContainer residentsContainer = new ResidentsContainer();
+    public final ResidentRankMap residentsMap = new ResidentRankMap();
     public final RanksContainer ranksContainer = new RanksContainer();
     public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
     public final FlagsContainer flagsContainer = new FlagsContainer();
     public final TownBlocksContainer townBlocksContainer = new TownBlocksContainer();
+    public final BlockWhitelistsContainer blockWhitelistsContainer = new BlockWhitelistsContainer();
+
     public final Bank bank = new Bank();
 
     public Town(String name) {
@@ -36,7 +40,7 @@ public class Town implements Comparable<Town> {
     }
 
     public void notifyResidentJoin(Resident res) {
-        for (Resident toRes : residentsContainer.asList()) {
+        for (Resident toRes : residentsMap.keySet()) {
             toRes.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.joined", res.getPlayerName(), getName()));
         }
     }
@@ -45,7 +49,7 @@ public class Town implements Comparable<Town> {
      * Notifies every resident in this town sending a message.
      */
     public void notifyEveryone(String message) {
-        for (Resident r : residentsContainer.asList()) {
+        for (Resident r : residentsMap.keySet()) {
             r.sendMessage(message);
         }
     }
@@ -70,10 +74,19 @@ public class Town implements Comparable<Town> {
      */
     @SuppressWarnings("unchecked")
     public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
-        if(flagsContainer.getValue(flagType).equals(denialValue) && (!residentsContainer.contains(res) || ((Boolean)flagsContainer.getValue(FlagType.RESTRICTIONS) && flagType != FlagType.ENTER && getMayor() != res))) {
+        if(flagsContainer.getValue(flagType).equals(denialValue) && (!residentsMap.containsKey(res) || ((Boolean)flagsContainer.getValue(FlagType.RESTRICTIONS) && flagType != FlagType.ENTER && getMayor() != res))) {
             return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
+    }
+
+    public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
+        Plot plot = plotsContainer.get(dim, x, y, z);
+        if(plot == null || flagType.isTownOnly()) {
+            return flagsContainer.get(flagType);
+        } else {
+            return plot.flagsContainer.get(flagType);
+        }
     }
 
     /**
@@ -84,14 +97,14 @@ public class Town implements Comparable<Town> {
         List<Resident> list = new ArrayList<Resident>();
         Plot plot = plotsContainer.get(dim, x, y, z);
         if (plot == null) {
-            if (isPointInTown(dim, x, z) && !(this instanceof AdminTown) && !residentsContainer.isEmpty()) {
+            if (isPointInTown(dim, x, z) && !(this instanceof AdminTown) && !residentsMap.isEmpty()) {
             	Resident mayor = getMayor();
                 if (mayor != null) {
                 	list.add(mayor);
                 }
             }
         } else {
-            for (Resident res : plot.ownersContainer.asList()) {
+            for (Resident res : plot.ownersContainer) {
                 list.add(res);
             }
         }
@@ -102,9 +115,9 @@ public class Town implements Comparable<Town> {
      * Gets the resident with the rank of 'Mayor' (or whatever it's named)
      */
     public Resident getMayor() {
-        for (Resident res : residentsContainer.asList()) {
-            if (res.getCurrentRank().getName().equals(Rank.theMayorDefaultRank))
-                return res;
+        for (Map.Entry<Resident, Rank> entry : residentsMap.entrySet()) {
+            if (entry.getValue().getName().equals(Rank.theMayorDefaultRank))
+                return entry.getKey();
         }
         return null;
     }
@@ -122,8 +135,8 @@ public class Town implements Comparable<Town> {
 
     @Override
     public int compareTo(Town t) { // TODO Flesh this out more for ranking towns?
-        int thisNumberOfResidents = residentsContainer.size(),
-                thatNumberOfResidents = t.residentsContainer.size();
+        int thisNumberOfResidents = residentsMap.size(),
+                thatNumberOfResidents = t.residentsMap.size();
         if (thisNumberOfResidents > thatNumberOfResidents)
             return -1;
         else if (thisNumberOfResidents == thatNumberOfResidents)

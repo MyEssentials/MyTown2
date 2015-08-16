@@ -97,11 +97,11 @@ public class PlotSelectionTool extends Tool {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.selection.outside"));
             return false;
         }
-        if (!town.canResidentMakePlot(owner)) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.getMaxPlots()));
+        if (!town.plotsContainer.canResidentMakePlot(owner)) {
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.plotsContainer.getMaxPlots()));
             return false;
         }
-        for(Plot plot : town.plotsContainer.asList()) {
+        for(Plot plot : town.plotsContainer) {
             if(plot.getName().equals(plotName)) {
                 owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.name", plotName));
                 return false;
@@ -138,7 +138,8 @@ public class PlotSelectionTool extends Tool {
                 if (i >> 4 != lastX || j >> 4 != lastZ) {
                     lastX = i >> 4;
                     lastZ = j >> 4;
-                    if (!getDatasource().hasBlock(selectionFirst.dim, lastX, lastZ, selectionFirst.town)) {
+                    TownBlock block = MyTownUniverse.instance.blocks.get(selectionFirst.dim, lastX, lastZ);
+                    if (block == null || block.getTown() != selectionFirst.town) {
                         owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.outside"));
                         resetSelection(true, 0);
                         return;
@@ -216,7 +217,7 @@ public class PlotSelectionTool extends Tool {
             this.z = z;
             this.dim = dim;
             // Not checking for null since this should not be created if the town is null.
-            this.town = MyTownUniverse.instance.getTownBlock(dim, x >> 4, z >> 4).getTown();
+            this.town = MyTownUniverse.instance.blocks.get(dim, x >> 4, z >> 4).getTown();
         }
     }
 }

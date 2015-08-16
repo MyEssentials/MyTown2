@@ -37,9 +37,10 @@ public class WildPermsConfig extends JSONConfig<Flag> {
     public List<Flag> read() {
         List<Flag> items = super.read();
 
-        Wild.instance.removeAllFlags();
-        for(Flag item : items)
-            Wild.instance.addFlag(item);
+        Wild.instance.flagsContainer.clear();
+        for(Flag item : items) {
+            Wild.instance.flagsContainer.add(item);
+        }
 
         return items;
     }

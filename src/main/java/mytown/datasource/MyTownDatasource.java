@@ -80,7 +80,7 @@ public abstract class MyTownDatasource {
         TownBlock block = newBlock(creator.getPlayer().dimension, ((int)creator.getPlayer().posX) >> 4, ((int)creator.getPlayer().posZ) >> 4, false, Config.costAmountClaim, town);
 
         // Saving block to db and town
-        if(DatasourceProxy.getDatasource().hasBlock(creator.getPlayer().dimension, ((int)creator.getPlayer().posX) >> 4, ((int)creator.getPlayer().posZ) >> 4)) {
+        if(MyTownUniverse.instance.blocks.contains(creator.getPlayer().dimension, ((int) creator.getPlayer().posX) >> 4, ((int) creator.getPlayer().posZ) >> 4)) {
             throw new MyTownCommandException("mytown.cmd.err.claim.already");
         }
 
@@ -96,7 +96,8 @@ public abstract class MyTownDatasource {
         if (!(town instanceof AdminTown)) {
             // Saving all ranks to database and town
             for (String rankName : Rank.defaultRanks.keySet()) {
-                Rank rank = new Rank(rankName, Rank.defaultRanks.get(rankName), town);
+                Rank rank = new Rank(rankName, town);
+                rank.permissionsContainer.addAll(Rank.defaultRanks.get(rankName));
 
                 saveRank(rank, rankName.equals(Rank.theDefaultRank));
 
@@ -137,7 +138,7 @@ public abstract class MyTownDatasource {
     /**
      * Creates and returns a new Resident, or null if it couldn't be created
      */
-    public final Resident newResident(String uuid, String playerName) {
+    public final Resident newResident(UUID uuid, String playerName) {
         Resident resident = new Resident(uuid, playerName);
 
         if (ResidentEvent.fire(new ResidentEvent.ResidentCreateEvent(resident)))
@@ -181,10 +182,10 @@ public abstract class MyTownDatasource {
      */
     public boolean loadAll() {
         return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() &&
-                loadPlots() && loadNations() && loadTownFlags() && loadPlotFlags() &&
-                loadBlockWhitelists() && loadSelectedTowns() && loadFriends() &&
-                loadFriendRequests() && loadTownInvites() && loadBlockOwners() && loadTownBanks() &&
-                loadRankPermissions() && loadResidentsToTowns() && loadTownsToNations() && loadResidentsToPlots();
+                loadPlots() && /*loadNations() &&*/ loadTownFlags() && loadPlotFlags() &&
+                loadBlockWhitelists() && loadSelectedTowns() &&
+                loadTownInvites() && loadBlockOwners() && loadTownBanks() &&
+                loadRankPermissions() && loadResidentsToTowns() && /*loadTownsToNations() &&*/ loadResidentsToPlots();
     }
 
     /**
@@ -201,18 +202,14 @@ public abstract class MyTownDatasource {
     protected abstract boolean loadResidents();
 
     protected abstract boolean loadPlots();
-
+    /*
     protected abstract boolean loadNations();
-
+    */
     protected abstract boolean loadTownFlags();
 
     protected abstract boolean loadPlotFlags();
 
     protected abstract boolean loadBlockWhitelists();
-
-    protected abstract boolean loadFriends();
-
-    protected abstract boolean loadFriendRequests();
 
     protected abstract boolean loadTownInvites();
 
@@ -223,10 +220,12 @@ public abstract class MyTownDatasource {
     protected abstract boolean loadRankPermissions();
 
     protected abstract boolean loadResidentsToTowns();
-
+    /*
     protected abstract boolean loadTownsToNations();
-
+    */
     protected abstract boolean loadResidentsToPlots();
+
+    protected abstract boolean loadSelectedTowns();
 
 
     /* ----- Save ----- */
@@ -242,18 +241,14 @@ public abstract class MyTownDatasource {
     public abstract boolean saveResident(Resident resident);
 
     public abstract boolean savePlot(Plot plot);
-
+    /*
     public abstract boolean saveNation(Nation nation);
-
+    */
     public abstract boolean saveFlag(Flag flag, Town town);
 
     public abstract boolean saveFlag(Flag flag, Plot plot);
 
     public abstract boolean saveBlockWhitelist(BlockWhitelist bw, Town town);
-
-    public abstract boolean saveFriendLink(Resident res1, Resident res2);
-
-    public abstract boolean saveFriendRequest(Resident res1, Resident res2);
 
     public abstract boolean saveTownInvite(Resident res, Town town);
 
@@ -262,6 +257,8 @@ public abstract class MyTownDatasource {
     public abstract boolean saveBlockOwner(Resident res, int dim, int x, int y, int z);
 
     public abstract boolean saveTownBank(Town town, int amount, int daysNotPaid);
+
+    public abstract boolean saveSelectedTown(Resident res, Town town);
 
     /* ----- Link ----- */
 
@@ -273,22 +270,13 @@ public abstract class MyTownDatasource {
     public abstract boolean unlinkResidentFromTown(Resident res, Town town);
 
     public abstract boolean updateResidentToTownLink(Resident res, Town town, Rank rank);
-
-    /**
-     * Links the Resident to the Town, setting the Rank of the Resident in the Town
-     */
+    /*
     public abstract boolean linkTownToNation(Town town, Nation nation);
 
-    /**
-     * Unlinks the Resident from the Town
-     */
     public abstract boolean unlinkTownFromNation(Town town, Nation nation);
 
-    /**
-     * Updates the link between the Town and Nation
-     */
     public abstract boolean updateTownToNationLink(Town town, Nation nation);
-
+    */
     public abstract boolean linkResidentToPlot(Resident res, Plot plot, boolean isOwner);
 
     public abstract boolean unlinkResidentFromPlot(Resident res, Plot plot);
@@ -308,9 +296,9 @@ public abstract class MyTownDatasource {
     public abstract boolean deleteResident(Resident resident);
 
     public abstract boolean deletePlot(Plot plot);
-
+    /*
     public abstract boolean deleteNation(Nation nation);
-
+    */
     public abstract boolean deleteFlag(Flag flag, Town town);
 
     public abstract boolean deleteFlag(Flag flag, Plot plot);
@@ -322,11 +310,6 @@ public abstract class MyTownDatasource {
      * Not extremely useful, the selected town is changed when saving another on top
      */
     public abstract boolean deleteSelectedTown(Resident res);
-
-    public abstract boolean deleteFriendLink(Resident res1, Resident res2);
-
-    public abstract boolean deleteFriendRequest(Resident res1, Resident res2);
-
     /**
      * Deletes a town invite with the response to whether they should be added to town or not
      */
@@ -359,62 +342,12 @@ public abstract class MyTownDatasource {
      */
     protected abstract boolean checkTowns();
 
-    /* ----- Has ----- */
-
-    public final boolean hasTown(String townName) {
-        return MyTownUniverse.instance.getTown(townName) != null;
-    }
-
-    /**
-     * Checks if the Block exists give the chunk coordonates and dimension
-     */
-    public final boolean hasBlock(int dim, int x, int z) {
-        return MyTownUniverse.instance.getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, x, z)) != null;
-    }
-
-    /**
-     * Checks if the TownBlock with the given coords and dim at the town specified exists
-     */
-    public final boolean hasBlock(int dim, int x, int z, Town town) {
-        String key = String.format(TownBlock.KEY_FORMAT, dim, x, z);
-        TownBlock b = MyTownUniverse.instance.getTownBlock(key);
-        return town != null && b != null && b.getTown() == town;
-
-    }
-
-    public final boolean hasResident(UUID uuid) {
-        return MyTownUniverse.instance.getResident(uuid.toString()) != null;
-    }
-
-    public final boolean hasResident(EntityPlayer pl) {
-        return hasResident(pl.getPersistentID());
-    }
-
-    public final boolean hasResident(ICommandSender sender) {
-        if (sender instanceof EntityPlayer) {
-            return hasResident((EntityPlayer) sender);
-        }
-        return false;
-    }
-
-    public final boolean hasResident(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
-        return profile != null && hasResident(profile.getId());
-    }
-
     /* ----- Helper ----- */
 
-    /**
-     * Gets or makes a new Resident, optionally saving it. CAN return null!
-     *
-     * @param uuid The UUID of the Resident (EntityPlayer#getPersistentID())
-     * @param save Whether to save the newly created Resident
-     * @return The new Resident, or null if it failed
-     */
     public Resident getOrMakeResident(UUID uuid, String playerName, boolean save) {
-        Resident res = MyTownUniverse.instance.getResident(uuid.toString());
+        Resident res = MyTownUniverse.instance.residents.get(uuid);
         if (res == null) {
-            res = newResident(uuid.toString(), playerName);
+            res = newResident(uuid, playerName);
             if (save && res != null && !saveResident(res)) { // Only save if a new Residen
                 return null;
             }
@@ -422,12 +355,6 @@ public abstract class MyTownDatasource {
         return res;
     }
 
-    /**
-     * Gets or makes a new Resident. Does save, and CAN return null!
-     *
-     * @param uuid The UUID of the Resident (EntityPlayer#getPersistentID())
-     * @return The new Resident, or null if it failed
-     */
     public Resident getOrMakeResident(UUID uuid, String playerName) {
         return getOrMakeResident(uuid, playerName, true);
     }
@@ -455,15 +382,7 @@ public abstract class MyTownDatasource {
         return profile == null ? null : getOrMakeResident(profile.getId(), profile.getName());
     }
 
-    public TownBlock getBlock(int dim, int chunkX, int chunkZ) {
-        return MyTownUniverse.instance.getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, chunkX, chunkZ));
-    }
-
-    public Rank getRank(String rankName, Town town) {
-        for (Rank rank : MyTownUniverse.instance.getRanksMap().values()) {
-            if (rank.getName().equals(rankName) && rank.getTown().equals(town))
-                return rank;
-        }
-        return null;
+    public MyTownUniverse getUniverse() {
+        return MyTownUniverse.instance;
     }
 }

@@ -1,9 +1,9 @@
 package mytown.commands;
 
-import mypermissions.command.CommandResponse;
-import mypermissions.command.annotation.Command;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.StringUtils;
+import mypermissions.api.command.CommandResponse;
+import mypermissions.api.command.annotation.Command;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -44,7 +44,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        if (town.getResidentRank(res) != null && town.getResidentRank(res).getName().equals(Rank.theMayorDefaultRank)) {
+        if (town.residentsMap.get(res) != null && town.residentsMap.get(res).getName().equals(Rank.theMayorDefaultRank)) {
             throw new MyTownCommandException("mytown.notification.town.left.asMayor");
         }
 
@@ -100,7 +100,7 @@ public class CommandsEveryone extends Commands {
             return CommandResponse.SEND_SYNTAX;
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
-        if (!town.hasResident(res))
+        if (!town.residentsMap.containsKey(res))
             throw new MyTownCommandException("mytown.cmd.err.select.notpart", args.get(0));
         getDatasource().saveSelectedTown(res, town);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.select", args.get(0)));
@@ -126,7 +126,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.block.list", town.getName(), "\n" + Formatter.formatTownBlocksToString(town.getBlocks())));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.block.list", town.getName(), "\n" + town.townBlocksContainer.toString()));
         return CommandResponse.DONE;
     }
 
@@ -148,7 +148,7 @@ public class CommandsEveryone extends Commands {
     public static CommandResponse permListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        res.sendMessage(Formatter.formatFlagsToString(town));
+        res.sendMessage(town.flagsContainer.toStringForTowns());
         return CommandResponse.DONE;
     }
 
@@ -175,10 +175,10 @@ public class CommandsEveryone extends Commands {
 
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            if (!plot.hasOwner(res))
+            if (!plot.ownersContainer.contains(res))
                 throw new MyTownCommandException("mytown.cmd.err.plot.perm.set.noPermission");
 
-            Flag flag = getFlagFromName(plot, args.get(0));
+            Flag flag = getFlagFromName(plot.flagsContainer, args.get(0));
 
             if (flag.setValueFromString(args.get(1))) {
                 ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
@@ -197,7 +197,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotPermListCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            res.sendMessage(Formatter.formatFlagsToString(plot));
+            res.sendMessage(plot.flagsContainer.toStringForPlot());
             return CommandResponse.DONE;
         }
 
@@ -209,7 +209,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotPermWhitelistCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
 
-            res.setCurrentTool(new WhitelisterTool(res));
+            res.toolContainer.set(new WhitelisterTool(res));
             res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
             return CommandResponse.DONE;
         }
@@ -252,7 +252,7 @@ public class CommandsEveryone extends Commands {
                 return CommandResponse.SEND_SYNTAX;
 
             Resident res = getDatasource().getOrMakeResident(sender);
-            res.setCurrentTool(new PlotSelectionTool(res, args.get(0)));
+            res.toolContainer.set(new PlotSelectionTool(res, args.get(0)));
             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.start"));
             return CommandResponse.DONE;
         }
@@ -273,7 +273,7 @@ public class CommandsEveryone extends Commands {
                 syntax = "/town plot select reset")
         public static CommandResponse plotSelectResetCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
-            Tool currentTool = res.getCurrentTool();
+            Tool currentTool = res.toolContainer.get();
             if(currentTool == null || !(currentTool instanceof PlotSelectionTool))
                 throw new MyTownCommandException("mytown.cmd.err.plot.selection.none");
             ((PlotSelectionTool) currentTool).resetSelection(true, 0);
@@ -289,7 +289,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotShowCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
-            town.showPlots(res);
+            town.plotsContainer.show(res);
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
             return CommandResponse.DONE;
         }
@@ -302,7 +302,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotHideCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Town town = getTownFromResident(res);
-            town.hidePlots(res);
+            town.plotsContainer.hide(res);
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.vanished");
             return CommandResponse.DONE;
         }
@@ -330,18 +330,18 @@ public class CommandsEveryone extends Commands {
             Resident target = getResidentFromName(args.get(0));
 
             Town town = getTownFromResident(res);
-            if (!target.hasTown(town))
+            if (!target.townsContainer.contains(town))
                 throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", target.getPlayerName(), town.getName());
 
             Plot plot = getPlotAtResident(res);
 
-            if(!plot.hasOwner(res))
+            if(!plot.ownersContainer.contains(res))
                 throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
 
-            if(plot.hasResident(target))
+            if(plot.ownersContainer.contains(target) || plot.membersContainer.contains(target))
                 throw new MyTownCommandException("mytown.cmd.err.plot.add.alreadyInPlot");
 
-            if (!town.canResidentMakePlot(target))
+            if (!town.plotsContainer.canResidentMakePlot(target))
                 throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
 
             getDatasource().linkResidentToPlot(target, plot, true);
@@ -364,10 +364,10 @@ public class CommandsEveryone extends Commands {
             Resident target = getResidentFromName(args.get(0));
             Plot plot = getPlotAtResident(res);
 
-            if(!plot.hasOwner(res))
+            if(!plot.ownersContainer.contains(res))
                 throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
 
-            if(plot.hasResident(target))
+            if(plot.ownersContainer.contains(target) || plot.membersContainer.contains(target))
                 throw new MyTownCommandException("mytown.cmd.err.plot.add.alreadyInPlot");
 
             getDatasource().linkResidentToPlot(target, plot, false);
@@ -391,13 +391,13 @@ public class CommandsEveryone extends Commands {
             Resident target = getResidentFromName(args.get(0));
             Plot plot = getPlotAtResident(res);
 
-            if(!plot.hasOwner(res))
+            if(!plot.ownersContainer.contains(res))
                 throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
 
-            if(!plot.hasResident(target))
+            if(!plot.ownersContainer.contains(target) && !plot.membersContainer.contains(target))
                 throw new MyTownCommandException("mytown.cmd.err.plot.remove.notInPlot");
 
-            if(plot.hasOwner(target) && plot.getOwners().size() == 1)
+            if(plot.ownersContainer.contains(target) && plot.ownersContainer.size() == 1)
                 throw new MyTownCommandException("mytown.cmd.err.plot.remove.onlyOwner");
 
             getDatasource().unlinkResidentFromPlot(target, plot);
@@ -416,7 +416,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotInfoCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.info", plot.getName(), Formatter.formatResidentsToString(plot), plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ()));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.info", plot.getName(), plot.membersContainer.toString(), plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ()));
             return CommandResponse.DONE;
         }
 
@@ -428,7 +428,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotDeleteCommand(ICommandSender sender, List<String> args) {
             Resident res = getDatasource().getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            if (!plot.hasOwner(res))
+            if (!plot.ownersContainer.contains(res))
                 throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
 
             getDatasource().deletePlot(plot);
@@ -452,7 +452,7 @@ public class CommandsEveryone extends Commands {
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
             int price = Integer.parseInt(args.get(0));
-            res.setCurrentTool(new PlotSellTool(res, price));
+            res.toolContainer.set(new PlotSellTool(res, price));
             return CommandResponse.DONE;
         }
     }
@@ -475,7 +475,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.ranks", Formatter.formatRanksToString(town.getRanks()));
+        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.ranks", town.ranksContainer.toString());
         return CommandResponse.DONE;
     }
 
@@ -497,7 +497,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        town.showBorders(res);
+        town.townBlocksContainer.show(res);
         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.show", town.getName()));
         return CommandResponse.DONE;
     }
@@ -511,7 +511,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getDatasource().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        town.hideBorders(res);
+        town.townBlocksContainer.hide(res);
         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
         return CommandResponse.DONE;
     }
@@ -537,7 +537,7 @@ public class CommandsEveryone extends Commands {
         if(town instanceof AdminTown)
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
 
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", EconomyProxy.getCurrency(town.getBankAmount()), EconomyProxy.getCurrency(town.getNextPaymentAmount())));
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", EconomyProxy.getCurrency(town.bank.getBankAmount()), EconomyProxy.getCurrency(town.bank.getNextPaymentAmount())));
         return CommandResponse.DONE;
     }
 
@@ -561,7 +561,7 @@ public class CommandsEveryone extends Commands {
 
         int amount = Integer.parseInt(args.get(0));
         makePayment(res.getPlayer(), amount);
-        getDatasource().updateTownBank(town, town.getBankAmount() + amount);
+        getDatasource().updateTownBank(town, town.bank.getBankAmount() + amount);
         return CommandResponse.DONE;
     }
 
@@ -581,7 +581,7 @@ public class CommandsEveryone extends Commands {
             syntax = "/town wild perm")
     public static CommandResponse permWildListCommand(ICommandSender sender, List<String> args) {
         Resident res = getDatasource().getOrMakeResident(sender);
-        res.sendMessage(Formatter.formatFlagsToString(Wild.instance));
+        res.sendMessage(Wild.instance.flagsContainer.toStringForWild());
         return CommandResponse.DONE;
     }
 }

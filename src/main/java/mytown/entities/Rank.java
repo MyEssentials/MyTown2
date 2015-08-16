@@ -1,9 +1,10 @@
 package mytown.entities;
 
 import com.google.common.base.Joiner;
-import mypermissions.command.CommandManager;
+import mypermissions.api.command.CommandManager;
 import mypermissions.command.CommandTreeNode;
 import mytown.api.container.PermissionsContainer;
+import mytown.util.ColorUtils;
 
 import java.util.*;
 
@@ -82,6 +83,15 @@ public class Rank {
 
     @Override
     public String toString() {
-        return String.format("Rank: {Name: %s, Town: %s, Permissions: [%s]}", getName(), getTown().getName(), Joiner.on(", ").join(permissionsContainer.asList()));
+        String color;
+        if (Rank.theMayorDefaultRank.equals(getName())) {
+            color = ColorUtils.colorRankMayor;
+        } else if (Rank.theDefaultRank.equals(getName())) {
+            color = ColorUtils.colorRankDefault;
+        } else {
+            color = ColorUtils.colorRankOther;
+        }
+        return color + getName();
     }
+
 }

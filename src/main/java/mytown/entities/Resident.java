@@ -6,6 +6,7 @@ import mytown.api.container.PlotsContainer;
 import mytown.api.container.ToolContainer;
 import mytown.api.container.TownsContainer;
 import mytown.config.Config;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
@@ -67,8 +68,8 @@ public class Resident {
         if (oldChunkX != newChunkX || oldChunkZ != newChunkZ && player != null) {
             TownBlock oldTownBlock, newTownBlock;
 
-            oldTownBlock = DatasourceProxy.getDatasource().getBlock(dimension, oldChunkX, oldChunkZ);
-            newTownBlock = DatasourceProxy.getDatasource().getBlock(dimension, newChunkX, newChunkZ);
+            oldTownBlock = MyTownUniverse.instance.blocks.get(dimension, oldChunkX, oldChunkZ);
+            newTownBlock = MyTownUniverse.instance.blocks.get(dimension, newChunkX, newChunkZ);
 
             if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
                 if (townsContainer.contains(newTownBlock.getTown())) {
@@ -88,7 +89,7 @@ public class Resident {
     public void checkLocationOnDimensionChanged(int newChunkX, int newChunkZ, int dimension) {
         TownBlock newTownBlock;
 
-        newTownBlock = DatasourceProxy.getDatasource().getBlock(dimension, newChunkX, newChunkZ);
+        newTownBlock = MyTownUniverse.instance.blocks.get(dimension, newChunkX, newChunkZ);
 
         if (newTownBlock == null) {
             sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.wild"));

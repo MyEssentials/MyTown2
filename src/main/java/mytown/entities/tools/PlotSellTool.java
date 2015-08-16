@@ -61,16 +61,16 @@ public class PlotSellTool extends Tool {
         }
 
         if(town == null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.getCurrentTown().getName()));
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.townsContainer.getMainTown().getName()));
             return false;
         }
 
-        Plot plot = town.getPlotAtCoords(dim, x, y, z);
+        Plot plot = town.plotsContainer.get(dim, x, y, z);
         if(plot == null) {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.sell.notInPlot", town.getName()));
             return false;
         }
-        if(!plot.hasOwner(owner)) {
+        if(!plot.ownersContainer.contains(owner)) {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notOwner"));
             return false;
         }

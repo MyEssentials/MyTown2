@@ -26,13 +26,13 @@ public class PlotsContainer extends ArrayList<Plot> {
     public void remove(Plot plot) {
         for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++) {
             for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++) {
-                TownBlock b = MyTownUniverse.instance.getTownBlock(plot.getDim(), x, z);
+                TownBlock b = MyTownUniverse.instance.blocks.get(plot.getDim(), x, z);
                 if (b != null) {
                     b.plotsContainer.remove(plot);
                 }
             }
         }
-        remove(plot);
+        super.remove(plot);
     }
 
 
@@ -45,7 +45,7 @@ public class PlotsContainer extends ArrayList<Plot> {
     }
 
     public Plot get(int dim, int x, int y, int z) {
-        TownBlock block = MyTownUniverse.instance.getTownBlock(dim, x >> 4, z >> 4);
+        TownBlock block = MyTownUniverse.instance.blocks.get(dim, x >> 4, z >> 4);
         if (block != null) {
             return block.plotsContainer.get(dim, x, y, z);
         }

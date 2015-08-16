@@ -147,11 +147,11 @@ public class VisualsHandler {
 
         List<BlockCoords> blockList = new ArrayList<BlockCoords>();
 
-        for (TownBlock block : town.getBlocks()) {
+        for (TownBlock block : town.townBlocksContainer) {
 
             // Showing lines in borders
             for (int i = 0; i < 8; i += 2) {
-                if (town.getBlockAtCoords(block.getDim(), block.getX() + dx[i], block.getZ() + dz[i]) == null) {
+                if (town.townBlocksContainer.get(block.getDim(), block.getX() + dx[i], block.getZ() + dz[i]) == null) {
                     if (dx[i] == 0) {
                         z = dz[i] == -1 ? block.getZ() << 4 : (block.getZ() << 4) + 15;
                         x = block.getX() << 4;

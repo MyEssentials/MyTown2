@@ -1,7 +1,10 @@
 package mytown.api.container;
 
+import mytown.entities.Plot;
+import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.util.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,5 +42,46 @@ public class FlagsContainer extends ArrayList<Flag> {
                 return flag.getValue();
         }
         return type.getDefaultValue();
+    }
+
+    public String toStringForTowns() {
+        String formattedFlagList = "";
+
+        for (Flag flag : this) {
+            if(flag.getFlagType().canTownsModify()) {
+                if (!formattedFlagList.equals("")) {
+                    formattedFlagList += "\\n";
+                }
+                formattedFlagList += flag.toString();
+            }
+        }
+
+        String unconfigurableFlags = "";
+        for(FlagType flagType : FlagType.values()) {
+            if(!contains(flagType)) {
+                unconfigurableFlags += "\\n" + get(flagType).toString(ColorUtils.colorValueConst);
+            }
+        }
+
+        formattedFlagList += unconfigurableFlags;
+
+        return formattedFlagList;
+    }
+
+    public String toStringForPlot() {
+        return toStringForTowns();
+    }
+
+    public String toStringForWild() {
+        String formattedFlagList = "";
+
+        for (Flag flag : this) {
+            if (!formattedFlagList.equals("")) {
+                formattedFlagList += "\\n";
+            }
+            formattedFlagList += flag.toString();
+        }
+
+        return formattedFlagList;
     }
 }

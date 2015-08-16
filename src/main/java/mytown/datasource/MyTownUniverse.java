@@ -3,7 +3,8 @@ package mytown.datasource;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
-import mypermissions.command.CommandCompletion;
+import mypermissions.api.command.CommandCompletion;
+import mytown.api.container.*;
 import mytown.entities.*;
 import mytown.handlers.VisualsHandler;
 import net.minecraft.server.MinecraftServer;
@@ -17,74 +18,47 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public static final MyTownUniverse instance = new MyTownUniverse();
 
-    private final Map<String, Resident> residents = new HashMap<String, Resident>();
-    private final Map<String, Town> towns = new HashMap<String, Town>();
-    private final Map<String, Nation> nations = new HashMap<String, Nation>();
-    private final Map<String, TownBlock> blocks = new HashMap<String, TownBlock>();
-    private final Map<Integer, Plot> plots = new HashMap<Integer, Plot>();
-    private final Map<String, Rank> ranks = new HashMap<String, Rank>();
-    private final List<Integer> worlds = new ArrayList<Integer>();
+    public final ResidentsContainer residents = new ResidentsContainer();
+    public final TownsContainer towns = new TownsContainer();
+    //public final Map<String, Nation> nations = new HashMap<String, Nation>();
+    public final TownBlocksContainer blocks = new TownBlocksContainer();
+    public final PlotsContainer plots = new PlotsContainer();
+    public final RanksContainer ranks = new RanksContainer();
+    public final List<Integer> worlds = new ArrayList<Integer>();
 
     public MyTownUniverse() {
 
     }
 
-    public final ImmutableMap<String, Resident> getResidentsMap() {
-        return ImmutableMap.copyOf(residents);
-    }
-
-    public final ImmutableMap<String, Town> getTownsMap() {
-        return ImmutableMap.copyOf(towns);
-    }
-
-    public final ImmutableMap<String, Nation> getNationsMap() {
-        return ImmutableMap.copyOf(nations);
-    }
-
-    public final ImmutableMap<String, TownBlock> getBlocksMap() {
-        return ImmutableMap.copyOf(blocks);
-    }
-
-    public final ImmutableMap<Integer, Plot> getPlotsMap() {
-        return ImmutableMap.copyOf(plots);
-    }
-
-    public final ImmutableMap<String, Rank> getRanksMap() {
-        return ImmutableMap.copyOf(ranks);
-    }
-
-    public final ImmutableList<Integer> getWorldsList() {
-        return ImmutableList.copyOf(worlds);
-    }
-
-
     /* ----- Add Entity ----- */
 
     public final boolean addResident(Resident res) {
-        residents.put(res.getUUID().toString(), res);
+        residents.add(res);
         CommandCompletion.addCompletion("residentCompletion", res.getPlayerName());
         return true;
     }
 
     public final boolean addTown(Town town) {
-        towns.put(town.getName(), town);
+        towns.add(town);
         CommandCompletion.addCompletion("townCompletionAndAll", town.getName());
         CommandCompletion.addCompletion("townCompletion", town.getName());
         return true;
     }
 
+    /*
     public final boolean addNation(Nation nation) {
         nations.put(nation.getName(), nation);
         return true;
     }
+    */
 
     public final boolean addTownBlock(TownBlock block) {
-        blocks.put(block.getKey(), block);
+        blocks.add(block);
         return true;
     }
 
     public final boolean addRank(Rank rank) {
-        ranks.put(rank.getKey(), rank);
+        ranks.add(rank);
         CommandCompletion.addCompletion("rankCompletion", rank.getName());
         return true;
     }
@@ -92,13 +66,13 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public final boolean addPlot(Plot plot) {
         for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++) {
             for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++) {
-                TownBlock b = getTownBlock(plot.getDim(), x, z);
+                TownBlock b = blocks.get(plot.getDim(), x, z);
                 if (b != null) {
-                    b.addPlot(plot);
+                    b.plotsContainer.add(plot);
                 }
             }
         }
-        plots.put(plot.getDbID(), plot);
+        plots.add(plot);
         CommandCompletion.addCompletion("plotCompletion", plot.getName());
         return true;
     }
@@ -111,31 +85,33 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     /* ----- Remove Entity ----- */
 
     public final boolean removeResident(Resident res) {
-        residents.remove(res.getUUID().toString());
+        residents.remove(res);
         CommandCompletion.removeCompletion("residentCompletion", res.getPlayerName());
         return true;
     }
 
     public final boolean removeTown(Town town) {
-        towns.remove(town.getOldName() != null ? town.getOldName() : town.getName());
+        towns.remove(town);
         VisualsHandler.instance.unmarkBlocks(town);
         CommandCompletion.removeCompletion("townCompletionAndAll", town.getName());
         CommandCompletion.removeCompletion("townCompletion", town.getName());
         return true;
     }
 
+    /*
     public final boolean removeNation(Nation nation) {
         nations.remove(nation.getName());
         return true;
     }
+    */
 
     public final boolean removeTownBlock(TownBlock block) {
-        blocks.remove(block.getKey());
+        blocks.remove(block);
         return true;
     }
 
     public final boolean removeRank(Rank rank) {
-        ranks.remove(rank.getKey());
+        ranks.remove(rank);
         // TODO: Check properly, although it's gonna fix itself on restart
         return true;
     }
@@ -144,7 +120,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         plots.remove(plot.getDbID());
 
         boolean removeFromCompletionMap = true;
-        for(Plot p : plots.values()) {
+        for(Plot p : plots) {
             if(p.getName().equals(plot.getName()))
                 removeFromCompletionMap = false;
         }
@@ -160,66 +136,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return true;
     }
 
-    /* ----- Get Entity ----- */
-
-    public Resident getResident(String key) {
-        return residents.get(key);
-    }
-
-    public Resident getResidentByName(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
-        return getResident(profile.getId().toString());
-    }
-
-    public Town getTown(String key) {
-        return towns.get(key);
-    }
-
-    public Nation getNation(String key) {
-        return nations.get(key);
-    }
-
-    public TownBlock getTownBlock(int dim, int x, int z) {
-        return getTownBlock(String.format(TownBlock.KEY_FORMAT, dim, x, z));
-    }
-
-    public TownBlock getTownBlock(String key) {
-        return blocks.get(key);
-    }
-
-    public Rank getRank(String key) {
-        return ranks.get(key);
-    }
-
-    public Plot getPlot(int key) {
-        return plots.get(key);
-    }
-
     /* ----- Has Entity ----- */
-
-    public boolean hasResident(Resident res) {
-        return residents.containsValue(res);
-    }
-
-    public boolean hasTown(Town town) {
-        return towns.containsValue(town);
-    }
-
-    public boolean hasNation(Nation nation) {
-        return nations.containsValue(nation);
-    }
-
-    public boolean hasTownBlock(TownBlock block) {
-        return blocks.containsValue(block);
-    }
-
-    public boolean hasRank(Rank rank) {
-        return ranks.containsValue(rank);
-    }
-
-    public boolean hasPlot(Plot plot) {
-        return plots.containsValue(plot);
-    }
 
     public boolean hasWorld(int dim) {
         return worlds.contains(dim);

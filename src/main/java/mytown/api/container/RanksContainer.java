@@ -1,8 +1,10 @@
 package mytown.api.container;
 
 import mytown.entities.Rank;
+import mytown.util.ColorUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class RanksContainer extends ArrayList<Rank> {
 
@@ -30,5 +32,22 @@ public class RanksContainer extends ArrayList<Rank> {
 
     public Rank getDefaultRank() {
         return defaultRank;
+    }
+
+    @Override
+    public String toString() {
+        String res = null;
+        for (Rank rank : this) {
+            if (res == null) {
+                res = rank.toString();
+            } else {
+                res += ColorUtils.colorComma + ", " + rank.toString();
+            }
+        }
+
+        if (isEmpty()) {
+            res = ColorUtils.colorEmpty + "NONE";
+        }
+        return res;
     }
 }

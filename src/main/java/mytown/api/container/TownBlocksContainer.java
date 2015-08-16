@@ -3,9 +3,11 @@ package mytown.api.container;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.handlers.VisualsHandler;
+import mytown.util.ColorUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class TownBlocksContainer extends ArrayList<TownBlock> {
 
@@ -66,17 +68,31 @@ public class TownBlocksContainer extends ArrayList<TownBlock> {
         return this.maxClaims;
     }
 
-    /*
-    public void showBorders(Resident caller) {
-        if(caller.getPlayer() instanceof EntityPlayerMP)
-            VisualsHandler.instance.markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
+
+    public void show(Resident caller) {
+        //if(caller.getPlayer() instanceof EntityPlayerMP)
+        //    VisualsHandler.instance.markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
     }
-    */
 
 
-    public void hideBorders(Resident caller) {
+
+    public void hide(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
             VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) caller.getPlayer(), this);
     }
 
+    @Override
+    public String toString() {
+        String formattedList = null;
+        for(TownBlock block : this) {
+            String toAdd = ColorUtils.colorComma + "{"+ ColorUtils.colorCoords + (block.getX() << 4) + ColorUtils.colorComma + ","
+                    + ColorUtils.colorCoords + (block.getZ() << 4) + ColorUtils.colorComma + "}";
+            if(formattedList == null) {
+                formattedList = toAdd;
+            } else {
+                formattedList += ColorUtils.colorComma + "; " + toAdd;
+            }
+        }
+        return formattedList;
+    }
 }
