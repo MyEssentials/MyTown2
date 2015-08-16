@@ -398,6 +398,11 @@ public class CommandsAssistant extends Commands {
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
+
+        if (res == target) {
+            throw new MyTownCommandException("mytown.cmd.err.resident.same");
+        }
+
         Town town = getTownFromResident(res);
 
         if (!town.residentsMap.containsKey(target)) {

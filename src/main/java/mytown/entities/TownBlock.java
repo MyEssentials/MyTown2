@@ -1,5 +1,6 @@
 package mytown.entities;
 
+import myessentials.entities.Volume;
 import mytown.api.container.PlotsContainer;
 import mytown.config.Config;
 
@@ -85,5 +86,29 @@ public class TownBlock {
      */
     public boolean isChunkIn(int dim, int cx, int cz) {
         return dim == this.dim && cx == x && cz == z;
+    }
+    
+    public Volume getAreaLimit(Volume area) {
+    	int minX = this.getX() << 4;
+        int minY = area.getMinY();
+        int minZ = this.getZ() << 4;
+        int maxX = minX + 15;
+        int maxY = area.getMaxY();
+        int maxZ = maxY + 15;
+        
+        if (area.getMinX() > minX) {
+        	minX = area.getMinX();
+        }
+        if (area.getMinZ() > minZ) {
+        	minZ = area.getMinZ();
+        }
+        if (area.getMaxX() < maxX) {
+        	maxX = area.getMaxX();
+        }
+        if (area.getMaxZ() < maxZ) {
+        	maxZ = area.getMaxZ();
+        }
+
+        return new Volume(minX, minY, minZ, maxX, maxY, maxZ);
     }
 }

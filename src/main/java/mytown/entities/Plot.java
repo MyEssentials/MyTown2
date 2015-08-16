@@ -1,5 +1,6 @@
 package mytown.entities;
 
+import myessentials.entities.Volume;
 import myessentials.utils.PlayerUtils;
 import mytown.api.container.FlagsContainer;
 import mytown.api.container.ResidentsContainer;
@@ -89,6 +90,27 @@ public class Plot {
         return z2;
     }
 
+	public int getIntersectingArea(Volume rangeBox) {
+		// Check if ranges max is greater than plots min and ranges min is less than plots max
+        if (rangeBox.getMaxX() >= x1 && rangeBox.getMinX() <= x2 &&
+            rangeBox.getMaxY() >= y1 && rangeBox.getMinY() <= y2 &&
+            rangeBox.getMaxZ() >= z1 && rangeBox.getMinZ() <= z2) {
+
+    		int minX, maxX, minY, maxY, minZ, maxZ;
+
+        	minX = (x1 < rangeBox.getMinX()) ? rangeBox.getMinX() : x1;
+        	minY = (y1 < rangeBox.getMinY()) ? rangeBox.getMinY() : y1;
+        	minZ = (z1 < rangeBox.getMinZ()) ? rangeBox.getMinZ() : z1;
+        	maxX = (x2 > rangeBox.getMaxX()) ? rangeBox.getMaxX() : x2;
+        	maxY = (y2 > rangeBox.getMaxY()) ? rangeBox.getMaxY() : y2;
+        	maxZ = (z2 > rangeBox.getMaxZ()) ? rangeBox.getMaxZ() : z2;
+
+    		return (maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1);
+    	}
+
+        return 0;
+    }
+
     public int getStartChunkX() {
         return x1 >> 4;
     }
@@ -135,5 +157,4 @@ public class Plot {
     public int getDbID() {
         return this.dbID;
     }
-
 }

@@ -26,17 +26,8 @@ public class Rank {
         List<String> pAssistant = new ArrayList<String>();
         List<String> pResident = new ArrayList<String>();
 
-        // Filling arrays
-        for(CommandTreeNode node : CommandManager.getTree("mytown.cmd").getRoot().getChildren()) {
-            String s = node.getAnnotation().permission();
-            pMayor.add(s);
-            if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
-                pAssistant.add(s);
-            }
-            if (s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
-                pResident.add(s);
-            }
-        }
+        // Filling lists
+        fillLists(CommandManager.getTree("mytown.cmd").getRoot().getChildren(), pMayor, pAssistant, pResident);
 
         // Sorting
 
@@ -52,6 +43,25 @@ public class Rank {
 
         Rank.theDefaultRank = residentRank;
         Rank.theMayorDefaultRank = mayorRank;
+    }
+
+    /**
+     * Fills the given permission lists, looping through children of children, etc
+     */
+    private static void fillLists(List<CommandTreeNode> children, List<String> pMayor, List<String> pAssistant, List<String> pResident) {
+        if (children == null || children.size() <= 0) return;
+        for(CommandTreeNode node : children) {
+            String s = node.getAnnotation().permission();
+            pMayor.add(s);
+            if (s.startsWith("mytown.cmd.assistant") || s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
+                pAssistant.add(s);
+            }
+            if (s.startsWith("mytown.cmd.everyone") || s.startsWith("mytown.cmd.outsider")) {
+                pResident.add(s);
+            }
+            // Loop through its children
+            fillLists(node.getChildren(), pMayor, pAssistant, pResident);
+        }
     }
 
     private String key, name;
@@ -93,5 +103,4 @@ public class Rank {
         }
         return color + getName();
     }
-
 }
