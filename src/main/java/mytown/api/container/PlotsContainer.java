@@ -1,6 +1,5 @@
 package mytown.api.container;
 
-import myessentials.entities.Container;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
@@ -11,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlotsContainer extends Container<Plot> {
+public class PlotsContainer extends ArrayList<Plot> {
 
     private int maxPlots;
 
@@ -33,12 +32,12 @@ public class PlotsContainer extends Container<Plot> {
                 }
             }
         }
-        items.remove(plot);
+        remove(plot);
     }
 
 
     public Plot get(String name) {
-        for(Plot plot : items) {
+        for(Plot plot : this) {
             if(plot.getName().equals(name))
                 return plot;
         }
@@ -59,7 +58,7 @@ public class PlotsContainer extends Container<Plot> {
 
     public List<Plot> getPlotsOwned(Resident res) {
         List<Plot> list = new ArrayList<Plot>();
-        for (Plot plot : items) {
+        for (Plot plot : this) {
             if (plot.ownersContainer.contains(res))
                 list.add(plot);
         }
@@ -68,7 +67,7 @@ public class PlotsContainer extends Container<Plot> {
 
     public int getAmountPlotsOwned(Resident res) {
         int plotsOwned = 0;
-        for (Plot plot : items) {
+        for (Plot plot : this) {
             if (plot.ownersContainer.contains(res))
                 plotsOwned++;
         }
@@ -89,7 +88,7 @@ public class PlotsContainer extends Container<Plot> {
 
     public void show(Resident res) {
         if(res.getPlayer() instanceof EntityPlayerMP) {
-            for (Plot plot : items) {
+            for (Plot plot : this) {
                 VisualsHandler.instance.markPlotBorders(plot, (EntityPlayerMP) res.getPlayer());
             }
         }
@@ -97,7 +96,7 @@ public class PlotsContainer extends Container<Plot> {
 
     public void hide(Resident res) {
         if(res.getPlayer() instanceof EntityPlayerMP) {
-            for (Plot plot : items) {
+            for (Plot plot : this) {
                 VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) res.getPlayer(), plot);
             }
         }

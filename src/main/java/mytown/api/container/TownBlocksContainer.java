@@ -1,18 +1,19 @@
 package mytown.api.container;
 
-import myessentials.entities.Container;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.handlers.VisualsHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 
-public class TownBlocksContainer extends Container<TownBlock> {
+import java.util.ArrayList;
+
+public class TownBlocksContainer extends ArrayList<TownBlock> {
 
     private int extraBlocks;
     private int maxClaims, maxFarClaims;
 
     public boolean contains(int dim, int x, int z) {
-        for(TownBlock block : items) {
+        for(TownBlock block : this) {
             if(block.getX() == x && block.getZ() == z && block.getDim() == dim) {
                 return true;
             }
@@ -21,7 +22,7 @@ public class TownBlocksContainer extends Container<TownBlock> {
     }
 
     public TownBlock get(int dim, int x, int z) {
-        for(TownBlock block : items) {
+        for(TownBlock block : this) {
             if(block.getX() == x && block.getZ() == z && block.getDim() == dim) {
                 return block;
             }
@@ -43,7 +44,7 @@ public class TownBlocksContainer extends Container<TownBlock> {
 
     public int getFarClaims() {
         int farClaims = 0;
-        for(TownBlock block : items) {
+        for(TownBlock block : this) {
             if (block.isFarClaim()) {
                 farClaims++;
             }

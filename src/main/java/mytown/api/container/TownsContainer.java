@@ -1,14 +1,15 @@
 package mytown.api.container;
 
-import myessentials.entities.Container;
 import mytown.entities.Town;
 
-public class TownsContainer extends Container<Town> {
+import java.util.ArrayList;
+
+public class TownsContainer extends ArrayList<Town> {
 
     private Town mainTown;
 
     public boolean contains(String name) {
-        for(Town town : items) {
+        for(Town town : this) {
             if(town.getName().equals(name)) {
                 return true;
             }
@@ -17,7 +18,7 @@ public class TownsContainer extends Container<Town> {
     }
 
     public void setMainTown(Town town) {
-        if(items.contains(town)) {
+        if(contains(town)) {
             mainTown = town;
         }
     }

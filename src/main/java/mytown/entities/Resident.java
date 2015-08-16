@@ -25,13 +25,13 @@ public class Resident {
     private Date joinDate = new Date();
     private Date lastOnline = new Date();
 
-    private Town currentTown;
-    private Rank currentRank;
-
     private int teleportCooldown = 0;
+
+    private int extraBlocks = 0;
 
     public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
     public final TownsContainer townInvitesContainer = new TownsContainer();
+    public final TownsContainer townsContainer = new TownsContainer();
     public final ToolContainer toolContainer = new ToolContainer();
 
     public Resident(EntityPlayer pl) {
@@ -71,7 +71,7 @@ public class Resident {
             newTownBlock = DatasourceProxy.getDatasource().getBlock(dimension, newChunkX, newChunkZ);
 
             if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
-                if (currentTown == newTownBlock.getTown()) {
+                if (townsContainer.contains(newTownBlock.getTown())) {
                     sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
                 } else {
                     sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
@@ -92,7 +92,7 @@ public class Resident {
 
         if (newTownBlock == null) {
             sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.wild"));
-        } else if (currentTown == newTownBlock.getTown()) {
+        } else if (townsContainer.contains(newTownBlock.getTown())) {
             sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
         } else {
             sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
@@ -120,10 +120,11 @@ public class Resident {
      * Respawns the player at town's spawn point or, if that doesn't exist, at his own spawn point.
      */
     public void respawnPlayer() {
-        if (currentTown != null) {
-            currentTown.sendToSpawn(this);
+        if (townsContainer.getMainTown() != null) {
+            townsContainer.getMainTown().sendToSpawn(this);
             return;
         }
+
         ChunkCoordinates spawn = player.getBedLocation(player.dimension);
         if (spawn == null)
             spawn = player.worldObj.getSpawnPoint();
@@ -207,19 +208,11 @@ public class Resident {
         return teleportCooldown;
     }
 
-    public Town getCurrentTown() {
-        return currentTown;
+    public int getExtraBlocks() {
+        return extraBlocks;
     }
 
-    public void setCurrentTown(Town currentTown) {
-        this.currentTown = currentTown;
-    }
-
-    public Rank getCurrentRank() {
-        return currentRank;
-    }
-
-    public void setCurrentRank(Rank currentRank) {
-        this.currentRank = currentRank;
+    public void setExtraBlocks(int extraBlocks) {
+        this.extraBlocks = extraBlocks;
     }
 }

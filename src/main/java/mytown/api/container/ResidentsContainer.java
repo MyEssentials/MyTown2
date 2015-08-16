@@ -1,14 +1,11 @@
 package mytown.api.container;
 
-import myessentials.entities.Container;
-import mytown.entities.Plot;
 import mytown.entities.Resident;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 
-public class ResidentsContainer extends Container<Resident> {
+public class ResidentsContainer extends ArrayList<Resident> {
 
-    @Override
     public void remove(Resident res) {
         /*
         for (Iterator<Plot> it = res.getCurrentTown().plotsContainer.asList().iterator(); it.hasNext(); ) {
@@ -18,11 +15,11 @@ public class ResidentsContainer extends Container<Resident> {
             }
         }
         */
-        items.remove(res);
+        super.remove(res);
     }
 
     public boolean contains(String username) {
-        for (Resident res : items) {
+        for (Resident res : this) {
             if (res.getPlayerName().equals(username)) {
                 return true;
             }

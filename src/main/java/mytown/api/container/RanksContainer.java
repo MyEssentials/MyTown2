@@ -1,14 +1,15 @@
 package mytown.api.container;
 
-import myessentials.entities.Container;
 import mytown.entities.Rank;
 
-public class RanksContainer extends Container<Rank> {
+import java.util.ArrayList;
+
+public class RanksContainer extends ArrayList<Rank> {
 
     private Rank defaultRank;
 
     public boolean contains(String rankName) {
-        for (Rank r : items) {
+        for (Rank r : this) {
             if (r.getName().equals(rankName))
                 return true;
         }
@@ -16,7 +17,7 @@ public class RanksContainer extends Container<Rank> {
     }
 
     public Rank get(String rankName) {
-        for (Rank r : items) {
+        for (Rank r : this) {
             if (r.getName().equals(rankName))
                 return r;
         }
