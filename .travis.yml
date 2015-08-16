@@ -14,13 +14,21 @@ cache:
   directories:
   - $HOME/.gradle/caches/
 deploy:
-  provider: releases
-  api_key:
-    secure: Cxqwpgb4XDAsK2lhwrZH3Auo/tDTNaI06ab0jFWWX0Z3cv1Ha88cRoNyVesbiC4eWF8nwldwQf3ulxEUCc1kBvESkArNMIxTEuDqEUcY92dcaPQB01w7G9+vWS6n3ytWV0vqpknKS9Yw5vXOYB8WYMxq4rnPdI/ptCTL1V1rz3E=
-  file: build/libs/*
-  file_glob: true
-  skip_cleanup: true
-  on:
-    tags: true
-    repo: MyEssentials/MyTown2
-    all_branches: true
+  - provider: releases
+    api_key:
+      secure: Cxqwpgb4XDAsK2lhwrZH3Auo/tDTNaI06ab0jFWWX0Z3cv1Ha88cRoNyVesbiC4eWF8nwldwQf3ulxEUCc1kBvESkArNMIxTEuDqEUcY92dcaPQB01w7G9+vWS6n3ytWV0vqpknKS9Yw5vXOYB8WYMxq4rnPdI/ptCTL1V1rz3E=
+    file: build/libs/*
+    file_glob: true
+    skip_cleanup: true
+    on:
+      tags: true
+      repo: MyEssentials/MyTown2
+      all_branches: true
+  - provider: script
+    script: ./gradlew curse
+    on:
+      tags: true
+      repo: MyEssentials/MyEssentials-Core
+      all_branches: true
+jdk:
+ - oraclejdk8
