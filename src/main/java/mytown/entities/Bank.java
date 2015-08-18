@@ -10,6 +10,10 @@ public class Bank {
     private int bankAmount = 0;
     private int daysNotPaid = 0;
 
+    public Bank(Town town) {
+        this.town = town;
+    }
+
     public boolean makePayment(int amount) {
         if (bankAmount >= amount) {
             bankAmount -= amount;

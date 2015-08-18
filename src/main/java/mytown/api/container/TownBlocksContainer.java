@@ -7,12 +7,23 @@ import mytown.util.ColorUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class TownBlocksContainer extends ArrayList<TownBlock> {
 
     private int extraBlocks;
-    private int maxClaims, maxFarClaims;
+    private int maxBlocks, maxFarClaims;
+
+    public boolean add(TownBlock block) {
+        boolean result = super.add(block);
+        VisualsHandler.instance.updateTownBorders(this);
+        return result;
+    }
+
+    public boolean remove(TownBlock block) {
+        boolean result = super.remove(block);
+        VisualsHandler.instance.updateTownBorders(this);
+        return result;
+    }
 
     public boolean contains(int dim, int x, int z) {
         for(TownBlock block : this) {
@@ -37,7 +48,7 @@ public class TownBlocksContainer extends ArrayList<TownBlock> {
     }
 
     public void setExtraBlocks(int extraBlocks) {
-        this.extraBlocks = extraBlocks < 0 ? 0 : extraBlocks;
+        this.extraBlocks = extraBlocks;
     }
 
     public int getMaxFarClaims() {
@@ -65,16 +76,17 @@ public class TownBlocksContainer extends ArrayList<TownBlock> {
             maxBlocks += res.getExtraBlocks();
         }
         */
-        return this.maxClaims;
+        return this.maxBlocks;
     }
 
+    public void setMaxBlocks(int maxClaims) {
+        this.maxBlocks = maxClaims;
+    }
 
     public void show(Resident caller) {
-        //if(caller.getPlayer() instanceof EntityPlayerMP)
-        //    VisualsHandler.instance.markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
+        if(caller.getPlayer() instanceof EntityPlayerMP)
+            VisualsHandler.instance.markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
     }
-
-
 
     public void hide(Resident caller) {
         if(caller.getPlayer() instanceof EntityPlayerMP)
@@ -83,11 +95,11 @@ public class TownBlocksContainer extends ArrayList<TownBlock> {
 
     @Override
     public String toString() {
-        String formattedList = null;
+        String formattedList = "";
         for(TownBlock block : this) {
-            String toAdd = ColorUtils.colorComma + "{"+ ColorUtils.colorCoords + (block.getX() << 4) + ColorUtils.colorComma + ","
+            String toAdd = ColorUtils.colorComma + "{"+ ColorUtils.colorCoords + (block.getX() << 4) + ColorUtils.colorComma + ", "
                     + ColorUtils.colorCoords + (block.getZ() << 4) + ColorUtils.colorComma + "}";
-            if(formattedList == null) {
+            if(formattedList.equals("")) {
                 formattedList = toAdd;
             } else {
                 formattedList += ColorUtils.colorComma + "; " + toAdd;

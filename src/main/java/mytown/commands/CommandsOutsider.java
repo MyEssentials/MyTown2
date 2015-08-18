@@ -8,6 +8,7 @@ import mypermissions.command.CommandTree;
 import mypermissions.command.CommandTreeNode;
 import myessentials.utils.StringUtils;
 import mytown.config.Config;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
@@ -37,7 +38,7 @@ public class CommandsOutsider extends Commands {
 
         if (args.size() < 1) {
             if (sender instanceof EntityPlayer) {
-                Resident res = getDatasource().getOrMakeResident(sender);
+                Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
                 towns.add(getTownFromResident(res));
             } else {
                 throw new MyTownCommandException("You are not a player!");
@@ -98,7 +99,7 @@ public class CommandsOutsider extends Commands {
             return CommandResponse.SEND_SYNTAX;
 
         EntityPlayer player = (EntityPlayer) sender;
-        Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender); // Attempt to get or make the Resident
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
 
@@ -118,7 +119,7 @@ public class CommandsOutsider extends Commands {
 
         makePayment(player, Config.costAmountMakeTown + Config.costAmountClaim);
 
-        Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
+        Town town = getUniverse().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
 
@@ -132,7 +133,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             syntax = "/town map [on|off]")
     public static CommandResponse mapCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         if (args.size() == 0) {
             Formatter.sendMap(res);
         } else {
@@ -148,7 +149,7 @@ public class CommandsOutsider extends Commands {
             syntax = "/town accept [town]",
             completionKeys = {"townCompletion"})
     public static CommandResponse acceptCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
         if (args.size() == 0) {
@@ -179,7 +180,7 @@ public class CommandsOutsider extends Commands {
             syntax = "/town refuse [town]",
             completionKeys = {"townCompletion"})
     public static CommandResponse refuseCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
         if(invites.size() > 1)
@@ -356,7 +357,7 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             syntax = "/town invites")
     public static CommandResponse invitesCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         if (res.townInvitesContainer.size() == 0)
             res.sendMessage(getLocal().getLocalization("mytown.notification.resident.noInvites"));
         else {

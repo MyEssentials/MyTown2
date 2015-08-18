@@ -135,7 +135,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
         }
 
         for (World world : MinecraftServer.getServer().worldServers) {
-            if (!MyTownUniverse.instance.hasWorld(world.provider.dimensionId)) {
+            if (!MyTownUniverse.instance.worlds.contains(world.provider.dimensionId)) {
                 saveWorld(world.provider.dimensionId);
             }
         }
@@ -385,12 +385,13 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                Resident res = getUniverse().residents.get(rs.getString("resident"));
+                Resident res = getUniverse().residents.get(UUID.fromString(rs.getString("resident")));
                 Town town = getUniverse().towns.get(rs.getString("town"));
                 Rank rank = town.ranksContainer.get(rs.getString("rank"));
 
                 town.residentsMap.put(res, rank);
                 res.townsContainer.add(town);
+                town.calculateMaxBlocks();
             }
         } catch (SQLException e) {
             LOG.error("Failed to link Residents to Towns!");
@@ -459,7 +460,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             while (rs.next()) {
                 Plot plot = getUniverse().plots.get(rs.getInt("plotID"));
-                Resident res = getUniverse().residents.get(rs.getString("resident"));
+                Resident res = getUniverse().residents.get(UUID.fromString(rs.getString("resident")));
 
                 if (rs.getBoolean("isOwner")) {
                     plot.ownersContainer.add(res);
@@ -481,7 +482,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             PreparedStatement s = prepare("SELECT * FROM " + prefix + "TownInvites", true);
             ResultSet rs = s.executeQuery();
             while (rs.next()) {
-                Resident res = getUniverse().residents.get(rs.getString("resident"));
+                Resident res = getUniverse().residents.get(UUID.fromString(rs.getString("resident")));
                 Town town = getUniverse().towns.get(rs.getString("townName"));
 
                 res.townInvitesContainer.add(town);
@@ -502,7 +503,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             PreparedStatement s = prepare("SELECT * FROM " + prefix + "BlockOwners", true);
             ResultSet rs = s.executeQuery();
             while(rs.next()) {
-                Resident res = getUniverse().residents.get(rs.getString("resident"));
+                Resident res = getUniverse().residents.get(UUID.fromString(rs.getString("resident")));
                 int dim = rs.getInt("dim");
                 int x = rs.getInt("x");
                 int y = rs.getInt("y");
@@ -549,7 +550,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                Resident res = getUniverse().residents.get(rs.getString("resident"));
+                Resident res = getUniverse().residents.get(UUID.fromString(rs.getString("resident")));
                 Town town = getUniverse().towns.get(rs.getString("townName"));
                 res.townsContainer.setMainTown(town);
             }
@@ -594,6 +595,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     MyTownUniverse.instance.addTown(town);
                 }
                 town.resetOldName();
+
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name, spawnDim, spawnX, spawnY, spawnZ, cameraYaw, cameraPitch, isAdminTown, extraBlocks, maxPlots, maxFarClaims) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, town.getName());
@@ -613,6 +615,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 // Put the Town in the Map
                 MyTownUniverse.instance.addTown(town);
             }
+            town.calculateMaxBlocks();
         } catch (SQLException e) {
             LOG.error("Failed to save Town {}!", town.getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
@@ -1032,6 +1035,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             res.townsContainer.add(town);
             town.residentsMap.put(res, rank);
+            town.calculateMaxBlocks();
         } catch (SQLException e) {
             LOG.error("Failed to link Resident {} ({}) with Town {}", res.getPlayerName(), res.getUUID(), town.getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
@@ -1050,6 +1054,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             res.townsContainer.remove(town);
             town.residentsMap.remove(res);
+            town.calculateMaxBlocks();
         } catch (SQLException e) {
             LOG.error("Failed to unlink Resident {} ({}) with Town {}", e, res.getPlayerName(), res.getUUID(), town.getName());
             LOG.error(ExceptionUtils.getStackTrace(e));

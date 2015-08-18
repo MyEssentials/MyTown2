@@ -8,6 +8,7 @@ import mytown.entities.flag.FlagType;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class Town implements Comparable<Town> {
     public final TownBlocksContainer townBlocksContainer = new TownBlocksContainer();
     public final BlockWhitelistsContainer blockWhitelistsContainer = new BlockWhitelistsContainer();
 
-    public final Bank bank = new Bank();
+    public final Bank bank = new Bank(this);
 
     public Town(String name) {
         this.name = name;
@@ -130,6 +131,36 @@ public class Town implements Comparable<Town> {
         }
     }
 
+    public void calculateMaxBlocks() {
+        int mayorBlocks = Config.blocksMayor;
+        int residentsBlocks = Config.blocksResident * (residentsMap.size() - 1);
+        int residentsExtra = 0;
+        for(Resident res : residentsMap.keySet()) {
+            residentsBlocks += res.getExtraBlocks();
+        }
+        int townExtra = townBlocksContainer.getExtraBlocks();
+
+        townBlocksContainer.setMaxBlocks(mayorBlocks + residentsBlocks + residentsExtra + townExtra);
+    }
+
+    public String formatOwners(int dim, int x, int y, int z) {
+        List<Resident> residents = getOwnersAtPosition(dim, x, y, z);
+        String formattedList = "";
+
+        for (Resident r : residents) {
+            if (formattedList.equals("")) {
+                formattedList = r.getPlayerName();
+            } else {
+                formattedList += ", " + r.getPlayerName();
+            }
+        }
+
+        if(formattedList.equals("")) {
+            formattedList = EnumChatFormatting.RED + "SERVER ADMINS";
+        }
+
+        return formattedList;
+    }
 
     /* ----- Comparable ----- */
 

@@ -2,9 +2,9 @@ package mytown.commands;
 
 import myessentials.utils.PlayerUtils;
 import mypermissions.api.IPermissionManager;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.proxies.DatasourceProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -18,7 +18,7 @@ public class RankPermissionManager implements IPermissionManager {
             return true;
 
         EntityPlayer player = PlayerUtils.getPlayerFromUUID(uuid);
-        Resident resident = DatasourceProxy.getDatasource().getOrMakeResident(player);
+        Resident resident = MyTownUniverse.instance.getOrMakeResident(player);
         Town town = Commands.getTownFromResident(resident);
         if(!town.residentsMap.get(resident).permissionsContainer.hasPermissionOrSuperPermission(permission)) {
             throw new MyTownCommandException("mytown.cmd.err.rankPerm");

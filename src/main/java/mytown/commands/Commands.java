@@ -1,6 +1,5 @@
 package mytown.commands;
 
-import com.google.common.collect.ImmutableList;
 import myessentials.Localization;
 import mypermissions.api.command.CommandCompletion;
 import mytown.api.container.FlagsContainer;
@@ -99,7 +98,7 @@ public abstract class Commands {
     }
 
     public static Resident getResidentFromName(String playerName) {
-        Resident res = getDatasource().getOrMakeResident(playerName);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(playerName);
         if (res == null)
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", playerName);
         return res;
@@ -141,7 +140,7 @@ public abstract class Commands {
     public static TownBlock getBlockAtResident(Resident res) {
         TownBlock block = getUniverse().blocks.get(res.getPlayer().dimension, ((int) res.getPlayer().posX) >> 4, ((int) res.getPlayer().posZ >> 4));
         if (block == null)
-            throw new MyTownCommandException("mytown.cmd.err.claim.notexist", res.townsContainer.getMainTown());
+            throw new MyTownCommandException("mytown.cmd.err.claim.notexist", res.townsContainer.getMainTown().getName());
         return block;
     }
 
@@ -189,7 +188,7 @@ public abstract class Commands {
 
     public static void sendMessageBackToSender(ICommandSender sender, String message) {
         if (sender instanceof EntityPlayer) {
-            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             res.sendMessage(message);
         } else {
             sender.addChatMessage(new ChatComponentText(message));
@@ -199,7 +198,7 @@ public abstract class Commands {
     public static void makePayment(EntityPlayer player, int amount) {
         if(amount == 0)
             return;
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(player);
         if(!EconomyProxy.getEconomy().takeMoneyFromPlayer(player, amount)){
             throw new MyTownCommandException("mytown.cmd.err.resident.payment", EconomyProxy.getCurrency(amount));
         }
@@ -209,7 +208,7 @@ public abstract class Commands {
     public static void makeRefund(EntityPlayer player, int amount) {
         if(amount == 0)
             return;
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(player);
         EconomyProxy.getEconomy().giveMoneyToPlayer(player, amount);
         res.sendMessage(getLocal().getLocalization("mytown.notification.resident.refund", EconomyProxy.getCurrency(amount)));
     }

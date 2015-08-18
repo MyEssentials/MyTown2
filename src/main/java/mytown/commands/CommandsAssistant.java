@@ -9,6 +9,7 @@ import mypermissions.api.command.CommandManager;
 import mypermissions.api.command.CommandResponse;
 import mypermissions.api.command.annotation.Command;
 import mytown.config.Config;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -34,7 +35,7 @@ public class CommandsAssistant extends Commands {
             syntax = "/town setspawn")
     public static CommandResponse setSpawnCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
-        Resident res = getDatasource().getOrMakeResident(player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(player);
         Town town = getTownFromResident(res);
 
         if (!town.isPointInTown(player.dimension, (int) player.posX, (int) player.posZ))
@@ -55,7 +56,7 @@ public class CommandsAssistant extends Commands {
             syntax = "/town claim [range]")
     public static CommandResponse claimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
-        Resident res = getDatasource().getOrMakeResident(player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(player);
         Town town = getTownFromResident(res);
 
         boolean isFarClaim = false;
@@ -85,7 +86,7 @@ public class CommandsAssistant extends Commands {
 
             makeBankPayment(player, town, price);
 
-            TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, price, town);
+            TownBlock block = getUniverse().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, price, town);
             if (block == null)
                 throw new MyTownCommandException("mytown.cmd.err.claim.failed");
 
@@ -127,7 +128,7 @@ public class CommandsAssistant extends Commands {
 
             for (ChunkPos chunk : chunks) {
                 int price = (isFarClaim ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.townBlocksContainer.size();
-                TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), isFarClaim, price, town);
+                TownBlock block = getUniverse().newBlock(player.dimension, chunk.getX(), chunk.getZ(), isFarClaim, price, town);
                 // Only one of the block will be a farClaim, rest will be normal claim
                 isFarClaim = false;
                 getDatasource().saveBlock(block);
@@ -144,9 +145,9 @@ public class CommandsAssistant extends Commands {
             syntax = "/town unclaim")
     public static CommandResponse unclaimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer player = (EntityPlayer) sender;
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         TownBlock block = getBlockAtResident(res);
-        Town town = res.townInvitesContainer.getMainTown();
+        Town town = getTownFromResident(res);
 
         if (town != block.getTown())
             throw new MyTownCommandException("mytown.cmd.err.unclaim.notInTown");
@@ -169,7 +170,7 @@ public class CommandsAssistant extends Commands {
             syntax = "/town invite <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse inviteCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         if (args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
@@ -193,7 +194,7 @@ public class CommandsAssistant extends Commands {
 
         if (args.size() < 2)
             return CommandResponse.SEND_SYNTAX;
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         Flag flag = getFlagFromName(town.flagsContainer, args.get(0));
 
@@ -211,7 +212,7 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd.everyone.perm",
             syntax = "/town perm whitelist")
     public static CommandResponse permWhitelistCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         res.toolContainer.set(new WhitelisterTool(res));
         return CommandResponse.DONE;
     }
@@ -225,7 +226,7 @@ public class CommandsAssistant extends Commands {
     public static CommandResponse promoteCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 2)
             return CommandResponse.SEND_SYNTAX;
-        Resident resSender = getDatasource().getOrMakeResident(sender);
+        Resident resSender = MyTownUniverse.instance.getOrMakeResident(sender);
         Resident resTarget = getResidentFromName(args.get(0));
         Town town = getTownFromResident(resSender);
 
@@ -257,7 +258,7 @@ public class CommandsAssistant extends Commands {
             if (args.size() < 2)
                 return CommandResponse.SEND_SYNTAX;
 
-            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
             if (town.ranksContainer.contains(args.get(0)))
@@ -282,7 +283,7 @@ public class CommandsAssistant extends Commands {
             if (args.size() < 1)
                 return CommandResponse.SEND_SYNTAX;
 
-            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = res.townsContainer.getMainTown();
             Rank rank = getRankFromTown(town, args.get(0));
 
@@ -308,7 +309,7 @@ public class CommandsAssistant extends Commands {
             if (args.size() < 2)
                 return CommandResponse.SEND_SYNTAX;
 
-            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
 
@@ -334,7 +335,7 @@ public class CommandsAssistant extends Commands {
             if (args.size() < 2)
                 return CommandResponse.SEND_SYNTAX;
 
-            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
             Rank rank = getRankFromTown(town, args.get(0));
@@ -367,22 +368,16 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd.assistant.ranks.perm",
                 syntax = "/town ranks perm list")
     public static CommandResponse ranksPermListCommand(ICommandSender sender, List<String> args) {
-
         Rank rank;
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             rank = getRankFromResident(res);
         } else {
             rank = getRankFromTown(town, args.get(0));
         }
 
-        String msg = "";
-        for (String s : rank.permissionsContainer) {
-            msg += '\n' + s;
-        }
-
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), rank.getTown().getName(), msg));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), town.getName(), rank.permissionsContainer.toString()));
         return CommandResponse.DONE;
     }
 
@@ -396,7 +391,7 @@ public class CommandsAssistant extends Commands {
         if (args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
 
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
 
         if (res == target) {
@@ -435,7 +430,7 @@ public class CommandsAssistant extends Commands {
                 parentName = "mytown.cmd.assistant.plot.limit",
                 syntax = "/town plot limit show")
         public static CommandResponse plotLimitShowCommand(ICommandSender sender, List<String> args) {
-            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.plotsContainer.getMaxPlots()));
             return CommandResponse.DONE;
@@ -455,7 +450,7 @@ public class CommandsAssistant extends Commands {
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger");
             }
             int limit = Integer.parseInt(args.get(0));
-            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             town.plotsContainer.setMaxPlots(limit);
             getDatasource().saveTown(town);
@@ -474,7 +469,7 @@ public class CommandsAssistant extends Commands {
         if (args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
         }
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromResident(res);
         if (!target.townsContainer.contains(town)) {
@@ -496,7 +491,7 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd.everyone.leave",
             syntax = "/town leave delete")
     public static CommandResponse leaveDeleteCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         EntityPlayer player = (EntityPlayer) sender;
 
@@ -523,7 +518,7 @@ public class CommandsAssistant extends Commands {
         if (args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
 
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
         if (getUniverse().towns.contains(args.get(0))) // Is the town name already in use?
@@ -547,7 +542,7 @@ public class CommandsAssistant extends Commands {
         if(!StringUtils.tryParseInt(args.get(0)))
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
         if(town instanceof AdminTown)

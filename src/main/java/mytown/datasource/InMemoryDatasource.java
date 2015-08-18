@@ -313,31 +313,36 @@ public class InMemoryDatasource extends MyTownDatasource {
     @Override
     public boolean deleteTown(Town town) {
         LOG.debug("Deleting Town %s", town);
-        return MyTownUniverse.instance.removeTown(town);
+        MyTownUniverse.instance.removeTown(town);
+        return true;
     }
 
     @Override
     public boolean deleteBlock(TownBlock townBlock) {
         LOG.debug("Deleting Block %s", townBlock.getKey());
-        return MyTownUniverse.instance.removeTownBlock(townBlock);
+        MyTownUniverse.instance.removeTownBlock(townBlock);
+        return true;
     }
 
     @Override
     public boolean deleteRank(Rank rank) {
         LOG.debug("Deleting Rank %s", rank.getKey());
-        return MyTownUniverse.instance.removeRank(rank);
+        MyTownUniverse.instance.removeRank(rank);
+        return true;
     }
 
     @Override
     public boolean deleteResident(Resident resident) {
         LOG.debug("Deleting Resident %s (%s)", resident.getPlayerName(), resident.getUUID().toString());
-        return MyTownUniverse.instance.removeResident(resident);
+        MyTownUniverse.instance.removeResident(resident);
+        return true;
     }
 
     @Override
     public boolean deletePlot(Plot plot) {
         LOG.debug("Deleting Plot %s", plot.getKey());
-        return MyTownUniverse.instance.removePlot(plot);
+        MyTownUniverse.instance.removePlot(plot);
+        return true;
     }
 
     /*

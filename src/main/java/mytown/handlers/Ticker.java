@@ -69,7 +69,7 @@ public class Ticker {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent ev) {
         MyTownDatasource ds = DatasourceProxy.getDatasource();
-        Resident res = ds.getOrMakeResident(ev.player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
         if (res != null) {
             res.setPlayer(ev.player);
         } else {
@@ -80,7 +80,7 @@ public class Ticker {
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent ev) {
         MyTownDatasource ds = DatasourceProxy.getDatasource();
-        Resident res = ds.getOrMakeResident(ev.player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
         if (res != null) {
             res.setPlayer(ev.player);
         }
@@ -94,7 +94,7 @@ public class Ticker {
         if (currentStack == null)
             return;
 
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         Tool currentTool = res.toolContainer.get();
         if (currentTool == null)
             return;
@@ -114,7 +114,7 @@ public class Ticker {
             return;
 
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
-            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
             Tool currentTool = res.toolContainer.get();
             if(currentTool == null)
                 return;
@@ -138,7 +138,7 @@ public class Ticker {
 
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent ev) {
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         Block block = ev.world.getBlock(ev.x, ev.y, ev.z);
 
         // Shop and plot sale click verify

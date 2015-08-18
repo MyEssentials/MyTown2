@@ -109,6 +109,11 @@ public class Flag<T> implements Comparable<Flag<T>>{
     }
 
     public String toString(String valueColor) {
-        return String.format(ColorUtils.colorFlag + "%s" + ColorUtils.colorComma + "[" + valueColor+ "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", getFlagType().toString().toLowerCase(), valueToString(), getFlagType().getLocalizedDescription());
+
+        String flagName = flagType.toString().toLowerCase();
+        String value = valueToString();
+        String description = flagType.getLocalizedDescription();
+
+        return String.format(ColorUtils.colorFlag + "%s" + ColorUtils.colorComma + "[" + valueColor+ "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", flagName, value, description);
     }
 }

@@ -113,7 +113,7 @@ public class Resident {
     public void protectionDenial(FlagType flag, String owners) {
         if (getPlayer() != null) {
             ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
-            ChatUtils.sendChat(getPlayer(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.owners", owners));
+            ChatUtils.sendChat(getPlayer(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", owners));
         }
     }
 

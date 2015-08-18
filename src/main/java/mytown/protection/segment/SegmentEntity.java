@@ -1,10 +1,10 @@
 package mytown.protection.segment;
 
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.getter.Getters;
-import mytown.proxies.DatasourceProxy;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.entity.Entity;
 
@@ -34,7 +34,7 @@ public class SegmentEntity extends Segment {
             String name = getters.hasValue("owner") ? (String) getters.getValue("owner", String.class, entity, entity) : null;
             if(name == null)
                 return null;
-            return DatasourceProxy.getDatasource().getOrMakeResident(name);
+            return MyTownUniverse.instance.getOrMakeResident(name);
         } catch (GetterException ex) {
             /*
             String uuid = getters.hasValue("owner") ? (String) getters.getValue("owner", String.class, entity, entity) : null;

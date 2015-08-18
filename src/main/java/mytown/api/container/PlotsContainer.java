@@ -8,6 +8,7 @@ import mytown.handlers.VisualsHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class PlotsContainer extends ArrayList<Plot> {
@@ -22,19 +23,22 @@ public class PlotsContainer extends ArrayList<Plot> {
         this.maxPlots = maxPlots;
     }
 
-
     public void remove(Plot plot) {
         for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++) {
             for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++) {
                 TownBlock b = MyTownUniverse.instance.blocks.get(plot.getDim(), x, z);
                 if (b != null) {
-                    b.plotsContainer.remove(plot);
+                    for(Iterator<Plot> it = b.plotsContainer.iterator(); it.hasNext(); ) {
+                        Plot plotInBlock = it.next();
+                        if(plot == plotInBlock) {
+                            it.remove();
+                        }
+                    }
                 }
             }
         }
         super.remove(plot);
     }
-
 
     public Plot get(String name) {
         for(Plot plot : this) {
@@ -45,15 +49,26 @@ public class PlotsContainer extends ArrayList<Plot> {
     }
 
     public Plot get(int dim, int x, int y, int z) {
-        TownBlock block = MyTownUniverse.instance.blocks.get(dim, x >> 4, z >> 4);
-        if (block != null) {
-            return block.plotsContainer.get(dim, x, y, z);
+        for(Plot plot : this) {
+            if(plot.isCoordWithin(dim, x, y, z)) {
+                return plot;
+            }
         }
         return null;
     }
 
     public Plot get(Resident res) {
         return get(res.getPlayer().dimension, (int) Math.floor(res.getPlayer().posX), (int) Math.floor(res.getPlayer().posY), (int) Math.floor(res.getPlayer().posZ));
+    }
+
+    @Override
+    public Plot get(int plotID) {
+        for(Plot plot : this) {
+            if(plot.getDbID() == plotID) {
+                return plot;
+            }
+        }
+        return null;
     }
 
     public List<Plot> getPlotsOwned(Resident res) {

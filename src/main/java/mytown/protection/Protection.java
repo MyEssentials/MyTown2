@@ -369,7 +369,7 @@ public class Protection {
                 return !town.getValueAtCoords(dim, x, y, z, segment.getFlag()).equals(segment.getDenialValue());
             } else {
                 if (!town.hasPermission(res, segment.getFlag(), segment.getDenialValue(), dim, x, y, z)) {
-                    res.protectionDenial(segment.getFlag(), Formatter.formatOwnersToString(town, dim, x, y, z));
+                    res.protectionDenial(segment.getFlag(), town.formatOwners(dim, x, y, z));
                     return false;
                 }
             }

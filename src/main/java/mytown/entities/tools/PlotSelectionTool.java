@@ -158,7 +158,7 @@ public class PlotSelectionTool extends Tool {
             }
         }
 
-        Plot plot = DatasourceProxy.getDatasource().newPlot(plotName, selectionFirst.town, selectionFirst.dim, selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z);
+        Plot plot = MyTownUniverse.instance.newPlot(plotName, selectionFirst.town, selectionFirst.dim, selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z);
         resetSelection(true, 5);
 
         getDatasource().savePlot(plot);

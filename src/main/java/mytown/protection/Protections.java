@@ -158,7 +158,7 @@ public class Protections {
     }
 
     private void checkPlayer(EntityPlayerMP player, Town town) {
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(player);
         EntityPos lastTickPos = lastTickPlayerPos.get(player);
         
         if (res == null) {
@@ -166,7 +166,7 @@ public class Protections {
         }
 
         if (town != null && !town.hasPermission(res, FlagType.ENTER, false, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ))) {
-            res.protectionDenial(FlagType.ENTER, Formatter.formatOwnersToString(town, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ)));
+            res.protectionDenial(FlagType.ENTER, town.formatOwners(player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ)));
             if(lastTickPos == null)
                 res.knockbackPlayerToBorder(town);
             else
@@ -206,7 +206,7 @@ public class Protections {
         if(ev.entity.worldObj.isRemote || ev.isCanceled())
             return;
         TownBlock block = MyTownUniverse.instance.blocks.get(ev.target.dimension, ev.target.chunkCoordX, ev.target.chunkCoordZ);
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         if (block == null) {
             // Bypass for fakePlayers
             if(ev.entityPlayer instanceof FakePlayer && (Boolean)Wild.instance.flagsContainer.getValue(FlagType.FAKERS))
@@ -238,7 +238,7 @@ public class Protections {
                 for (Protection prot : protectionList) {
                     if (prot.isEntityProtected(ev.target.getClass())) {
                         ev.setCanceled(true);
-                        res.protectionDenial(FlagType.PVE, Formatter.formatOwnersToString(block.getTown(), ev.target.dimension, (int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int) Math.floor(ev.target.posZ)));
+                        res.protectionDenial(FlagType.PVE, block.getTown().formatOwners(ev.target.dimension, (int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int) Math.floor(ev.target.posZ)));
                         return;
                     }
                 }
@@ -267,7 +267,7 @@ public class Protections {
      */
     public boolean onAnyBlockPlacement(EntityPlayer player, ItemStack itemInHand, Block blockType, int dimensionId, int x, int y, int z) {
         TownBlock block = MyTownUniverse.instance.blocks.get(dimensionId, x >> 4, z >> 4);
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(player);
 
 
         if (block == null) {
@@ -283,7 +283,7 @@ public class Protections {
                 List<Town> nearbyTowns = MyTownUtils.getTownsInRange(dimensionId, x, z, Config.placeProtectionRange, Config.placeProtectionRange);
                 for (Town t : nearbyTowns) {
                     if (!t.hasPermission(res, FlagType.MODIFY, false)) {
-                        res.protectionDenial(FlagType.MODIFY, Formatter.formatOwnersToString(t, dimensionId, x, y, z));
+                        res.protectionDenial(FlagType.MODIFY, t.formatOwners(dimensionId, x, y, z));
                         return true;
                     }
                 }
@@ -293,7 +293,7 @@ public class Protections {
                 return false;
 
             if (!block.getTown().hasPermission(res, FlagType.MODIFY, false, dimensionId, x, y, z)) {
-                res.protectionDenial(FlagType.MODIFY, Formatter.formatOwnersToString(block.getTown(), dimensionId, x, y, z));
+                res.protectionDenial(FlagType.MODIFY, block.getTown().formatOwners(dimensionId, x, y, z));
                 return true;
             } else {
                 // If it has permission, then check nearby
@@ -330,7 +330,7 @@ public class Protections {
     public void onEntityInteract(EntityInteractEvent ev) {
         if(ev.entity.worldObj.isRemote || ev.isCanceled())
             return;
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         ItemStack currStack = ev.entityPlayer.getHeldItem();
         TownBlock block = MyTownUniverse.instance.blocks.get(ev.target.dimension, ev.target.chunkCoordX, ev.target.chunkCoordZ);
 
@@ -358,7 +358,7 @@ public class Protections {
         if (ev.entityPlayer.worldObj.isRemote || ev.isCanceled())
             return;
 
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         if (res == null) {
             return;
         }
@@ -426,7 +426,7 @@ public class Protections {
         if(ev.world.isRemote || ev.isCanceled())
             return;
         TownBlock block = MyTownUniverse.instance.blocks.get(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.getPlayer());
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.getPlayer());
         if (block == null) {
             if(ev.getPlayer() instanceof FakePlayer && (Boolean)Wild.instance.flagsContainer.getValue(FlagType.FAKERS))
                 return;
@@ -441,7 +441,7 @@ public class Protections {
                 return;
 
             if (!town.hasPermission(res, FlagType.MODIFY, false, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                res.protectionDenial(FlagType.MODIFY, Formatter.formatOwnersToString(town, ev.world.provider.dimensionId, ev.x, ev.y, ev.z));
+                res.protectionDenial(FlagType.MODIFY, town.formatOwners(ev.world.provider.dimensionId, ev.x, ev.y, ev.z));
                 ev.setCanceled(true);
                 return;
             }
@@ -469,12 +469,12 @@ public class Protections {
     public void onItemPickup(EntityItemPickupEvent ev) {
         if(ev.entity.worldObj.isRemote || ev.isCanceled())
             return;
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         TownBlock block = MyTownUniverse.instance.blocks.get(ev.entityPlayer.dimension, ev.entityPlayer.chunkCoordX, ev.entityPlayer.chunkCoordZ);
         if (block != null) {
             if (!block.getTown().hasPermission(res, FlagType.PICKUP, false, ev.item.dimension, (int) Math.floor(ev.item.posX), (int) Math.floor(ev.item.posY), (int) Math.floor(ev.item.posZ))) {
                 if (itemPickupCounter == 0) {
-                    res.protectionDenial(FlagType.PICKUP, Formatter.formatOwnersToString(block.getTown(), ev.item.dimension, (int) Math.floor(ev.item.posX), (int) Math.floor(ev.item.posY), (int) Math.floor(ev.item.posZ)));
+                    res.protectionDenial(FlagType.PICKUP, block.getTown().formatOwners(ev.item.dimension, (int) Math.floor(ev.item.posX), (int) Math.floor(ev.item.posY), (int) Math.floor(ev.item.posZ)));
                     itemPickupCounter = 100;
                 } else
                     itemPickupCounter--;
@@ -500,11 +500,11 @@ public class Protections {
             TownBlock block = MyTownUniverse.instance.blocks.get(ev.entityLiving.dimension, ev.entityLiving.chunkCoordX, ev.entityLiving.chunkCoordZ);
             // If the entity that "shot" the source of damage is a Player (ex. an arrow shot by player)
             if(ev.source.getEntity() != null && ev.source.getEntity() instanceof EntityPlayer) {
-                Resident source = DatasourceProxy.getDatasource().getOrMakeResident(ev.source.getEntity());
+                Resident source = MyTownUniverse.instance.getOrMakeResident(ev.source.getEntity());
                 if(block != null) {
                     if(!(Boolean)block.getTown().getValueAtCoords(ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ), FlagType.PVP)) {
                         ev.setCanceled(true);
-                        source.protectionDenial(FlagType.PVP, Formatter.formatOwnersToString(block.getTown(), ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ)));
+                        source.protectionDenial(FlagType.PVP, block.getTown().formatOwners(ev.entityLiving.dimension, (int) Math.floor(ev.entityLiving.posX), (int) Math.floor(ev.entityLiving.posY), (int) Math.floor(ev.entityLiving.posZ)));
                     }
                 } else {
                     if(!(Boolean)Wild.instance.flagsContainer.getValue(FlagType.PVP)) {
@@ -533,7 +533,7 @@ public class Protections {
     public void onBucketFill(FillBucketEvent ev) {
         if(ev.entity.worldObj.isRemote || ev.isCanceled())
             return;
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         TownBlock block = MyTownUniverse.instance.blocks.get(ev.world.provider.dimensionId, ev.target.blockX >> 4, ev.target.blockZ >> 4);
         if(block == null) {
             if(ev.entityPlayer instanceof FakePlayer && (Boolean)Wild.instance.flagsContainer.getValue(FlagType.FAKERS))
@@ -548,7 +548,7 @@ public class Protections {
                 return;
 
             if(!block.getTown().hasPermission(res, FlagType.USAGE, false, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
-                res.protectionDenial(FlagType.USAGE, Formatter.formatOwnersToString(block.getTown(), ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ));
+                res.protectionDenial(FlagType.USAGE, block.getTown().formatOwners(ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ));
                 ev.setCanceled(true);
             }
         }
@@ -595,11 +595,11 @@ public class Protections {
     @SubscribeEvent
     public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent ev) {
         TownBlock block = MyTownUniverse.instance.blocks.get(ev.player.dimension, ev.player.chunkCoordX, ev.player.chunkCoordZ);
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
         if(block != null && !block.getTown().hasPermission(res, FlagType.ENTER, false, ev.player.dimension, (int) Math.floor(ev.player.posX), (int) Math.floor(ev.player.posY), (int) Math.floor(ev.player.posZ))) {
             // Because of badly written teleportation code by Mojang we can only send the player back to spawn. :I
             res.respawnPlayer();
-            res.protectionDenial(FlagType.ENTER, Formatter.formatOwnersToString(block.getTown(), ev.player.dimension, (int) Math.floor(ev.player.posX), (int) Math.floor(ev.player.posY), (int) Math.floor(ev.player.posZ)));
+            res.protectionDenial(FlagType.ENTER, block.getTown().formatOwners(ev.player.dimension, (int) Math.floor(ev.player.posX), (int) Math.floor(ev.player.posY), (int) Math.floor(ev.player.posZ)));
         }
     }
 }

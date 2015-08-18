@@ -10,6 +10,14 @@ public class TownsContainer extends ArrayList<Town> {
 
     private Town mainTown;
 
+    @Override
+    public boolean add(Town town) {
+        if(mainTown == null) {
+            mainTown = town;
+        }
+        return super.add(town);
+    }
+
     public Town get(String name) {
         for(Town town : this) {
             if(town.getName().equals(name)) {

@@ -11,6 +11,7 @@ import myessentials.utils.ChatUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -18,7 +19,6 @@ import mytown.entities.tools.WhitelisterTool;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsHandler;
 import mytown.proxies.LocalizationProxy;
-import mytown.util.Formatter;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -140,7 +140,7 @@ public class CommandsAdmin extends Commands {
         if (args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
 
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
 
         EntityPlayer player = (EntityPlayer) sender;
@@ -149,7 +149,7 @@ public class CommandsAdmin extends Commands {
         if (getUniverse().blocks.contains(player.dimension, player.chunkCoordX, player.chunkCoordZ)) // Is the Block already claimed?
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
 
-        Town town = getDatasource().newAdminTown(args.get(0), res); // Attempt to create the Town
+        Town town = getUniverse().newAdminTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
 
@@ -555,7 +555,7 @@ public class CommandsAdmin extends Commands {
         if (args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
 
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         res.toolContainer.set(new WhitelisterTool(res));
         return CommandResponse.DONE;
     }
@@ -615,7 +615,7 @@ public class CommandsAdmin extends Commands {
         if (args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
         EntityPlayer player = (EntityPlayer) sender;
-        Resident res = getDatasource().getOrMakeResident(player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(player);
         Town town = getTownFromName(args.get(0));
 
         boolean isFarClaim = false;
@@ -630,7 +630,7 @@ public class CommandsAdmin extends Commands {
                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
                 isFarClaim = true;
             }
-            TownBlock block = getDatasource().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, 0, town);
+            TownBlock block = getUniverse().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, 0, town);
             if (block == null)
                 throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.claim.failed"));
             getDatasource().saveBlock(block);
@@ -657,7 +657,7 @@ public class CommandsAdmin extends Commands {
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
 
             for(ChunkPos chunk : chunks) {
-                TownBlock block = getDatasource().newBlock(player.dimension, chunk.getX(), chunk.getZ(), isFarClaim, 0, town);
+                TownBlock block = getUniverse().newBlock(player.dimension, chunk.getX(), chunk.getZ(), isFarClaim, 0, town);
                 // Just so that only one of the blocks will be marked as far claim.
                 isFarClaim = false;
                 getDatasource().saveBlock(block);
@@ -674,7 +674,7 @@ public class CommandsAdmin extends Commands {
             syntax = "/townadmin unclaim")
     public static CommandResponse unclaimCommand(ICommandSender sender, List<String> args) {
         EntityPlayer pl = (EntityPlayer) sender;
-        Resident res = getDatasource().getOrMakeResident(pl);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(pl);
         TownBlock block = getBlockAtResident(res);
         Town town = block.getTown();
 
@@ -785,7 +785,7 @@ public class CommandsAdmin extends Commands {
             if (args.size() < 1)
                 return CommandResponse.SEND_SYNTAX;
 
-            Resident res = getDatasource().getOrMakeResident(sender);
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromName(args.get(0));
             town.plotsContainer.show(res);
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
@@ -839,7 +839,7 @@ public class CommandsAdmin extends Commands {
 
             Town town = getTownFromName(args.get(0));
             Plot plot = getPlotFromName(town, args.get(1));
-            sendMessageBackToSender(sender, plot.flagsContainer.toStringForPlot());
+            sendMessageBackToSender(sender, plot.flagsContainer.toStringForPlot(town));
             return CommandResponse.DONE;
         }
 
@@ -1023,7 +1023,7 @@ public class CommandsAdmin extends Commands {
     public static CommandResponse bordersShowCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
         town.townBlocksContainer.show(res);
         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.show", town.getName()));
