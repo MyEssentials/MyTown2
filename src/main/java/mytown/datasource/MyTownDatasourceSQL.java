@@ -1633,7 +1633,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     @Override
     public boolean deleteAllBlockOwners() {
         try {
-            PreparedStatement s = prepare("DELETE FROM BlockOwners", false);
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "BlockOwners", false);
             s.execute();
         } catch (SQLException e) {
             LOG.error("Failed to delete BlockOwners table!");
@@ -1701,7 +1701,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
             if(!(town instanceof AdminTown)) {
                 try {
-                    PreparedStatement s = prepare("SELECT * FROM TownBanks WHERE townName=?", true);
+                    PreparedStatement s = prepare("SELECT * FROM " + prefix + "TownBanks WHERE townName=?", true);
                     s.setString(1, town.getName());
                     ResultSet rs = s.executeQuery();
                     if (!rs.next()) {
