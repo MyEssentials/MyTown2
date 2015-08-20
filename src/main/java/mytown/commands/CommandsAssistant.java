@@ -1,8 +1,8 @@
 package mytown.commands;
 
-import mypermissions.command.CommandManager;
-import mypermissions.command.CommandResponse;
-import mypermissions.command.annotation.Command;
+import mypermissions.api.command.CommandManager;
+import mypermissions.api.command.CommandResponse;
+import mypermissions.api.command.annotation.Command;
 import myessentials.entities.ChunkPos;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.MathUtils;
@@ -398,6 +398,11 @@ public class CommandsAssistant extends Commands {
 
         Resident res = getDatasource().getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
+
+        if (res == target) {
+            throw new MyTownCommandException("mytown.cmd.err.resident.same");
+        }
+
         Town town = getTownFromResident(res);
 
         if (!town.hasResident(target)) {
