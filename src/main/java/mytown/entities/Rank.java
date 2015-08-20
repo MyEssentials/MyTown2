@@ -1,7 +1,7 @@
 package mytown.entities;
 
 import com.google.common.base.Joiner;
-import mypermissions.command.CommandManager;
+import mypermissions.api.command.CommandManager;
 import mypermissions.command.CommandTreeNode;
 
 import java.util.*;
@@ -134,6 +134,6 @@ public class Rank {
 
     @Override
     public String toString() {
-        return String.format("Rank: {Name: %s, Town: %s, Permissions: [%s]}", getName(), getTown().getName(), Joiner.on(", ").join(getPermissions()));
+        return String.format("Rank: {Name: %s, Town: %s, Permissions: [%s]}", getName(), getTown(), Joiner.on(", ").join(getPermissions()));
     }
 }

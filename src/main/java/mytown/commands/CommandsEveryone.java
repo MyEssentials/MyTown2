@@ -1,7 +1,7 @@
 package mytown.commands;
 
-import mypermissions.command.CommandResponse;
-import mypermissions.command.annotation.Command;
+import mypermissions.api.command.CommandResponse;
+import mypermissions.api.command.annotation.Command;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.StringUtils;
 import mytown.config.Config;
