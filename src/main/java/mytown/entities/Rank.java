@@ -1,8 +1,8 @@
 package mytown.entities;
 
 import mypermissions.api.command.CommandManager;
+import mypermissions.api.container.PermissionsContainer;
 import mypermissions.command.CommandTreeNode;
-import mytown.api.container.PermissionsContainer;
 import myessentials.utils.ColorUtils;
 
 import java.util.*;
