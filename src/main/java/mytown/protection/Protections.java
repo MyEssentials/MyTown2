@@ -216,7 +216,7 @@ public class Protections {
             if(ev.target instanceof EntityPlayer && (Boolean)Wild.instance.getValue(FlagType.PVP))
                 return;
 
-            if(!Wild.instance.checkPermission(res, FlagType.PVE, false)) {
+            if(!Wild.instance.hasPermission(res, FlagType.PVE, false)) {
                 for(Protection prot : protectionList) {
                     if(prot.isEntityProtected(ev.target.getClass())) {
                         ev.setCanceled(true);
@@ -275,7 +275,7 @@ public class Protections {
             if(player instanceof FakePlayer && (Boolean)Wild.instance.getValue(FlagType.FAKERS))
                 return false;
 
-            if (!Wild.instance.checkPermission(res, FlagType.MODIFY, false)) {
+            if (!Wild.instance.hasPermission(res, FlagType.MODIFY, false)) {
                 res.sendMessage(FlagType.MODIFY.getLocalizedProtectionDenial());
                 return true;
             } else {
@@ -431,7 +431,7 @@ public class Protections {
             if(ev.getPlayer() instanceof FakePlayer && (Boolean)Wild.instance.getValue(FlagType.FAKERS))
                 return;
 
-            if (!Wild.instance.checkPermission(res, FlagType.MODIFY, false)) {
+            if (!Wild.instance.hasPermission(res, FlagType.MODIFY, false)) {
                 res.sendMessage(FlagType.MODIFY.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
             }
@@ -481,7 +481,7 @@ public class Protections {
                 ev.setCanceled(true);
             }
         } else {
-            if(!Wild.instance.checkPermission(res, FlagType.PICKUP, false)) {
+            if(!Wild.instance.hasPermission(res, FlagType.PICKUP, false)) {
                 if (itemPickupCounter == 0) {
                     res.sendMessage(FlagType.PICKUP.getLocalizedProtectionDenial());
                     itemPickupCounter = 100;
@@ -539,7 +539,7 @@ public class Protections {
             if(ev.entityPlayer instanceof FakePlayer && (Boolean)Wild.instance.getValue(FlagType.FAKERS))
                 return;
 
-            if(!Wild.instance.checkPermission(res, FlagType.USAGE, false)) {
+            if(!Wild.instance.hasPermission(res, FlagType.USAGE, false)) {
                 res.sendMessage(FlagType.USAGE.getLocalizedProtectionDenial());
                 ev.setCanceled(true);
             }

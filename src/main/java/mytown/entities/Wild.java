@@ -66,7 +66,7 @@ public class Wild implements IFlagsContainer {
     /**
      * Checks if Resident is allowed to do the action specified by the FlagType in the Wild
      */
-    public boolean checkPermission(Resident res, FlagType type, Object denialValue) {
+    public boolean hasPermission(Resident res, FlagType type, Object denialValue) {
         if (getFlag(type).getValue() == denialValue) {
             return PlayerUtils.isOp(res.getPlayer());
         }

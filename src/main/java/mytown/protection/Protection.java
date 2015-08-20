@@ -5,7 +5,9 @@ import mytown.MyTown;
 import myessentials.entities.Volume;
 import myessentials.utils.WorldUtils;
 import mytown.datasource.MyTownDatasource;
+import mytown.entities.Plot;
 import mytown.entities.Resident;
+import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
@@ -31,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.ArrayList;
@@ -55,7 +58,6 @@ public class Protection {
     }
 
     public Protection(String modid, String version, List<Segment> segments) {
-
         for(Segment segment : segments) {
             if(segment instanceof SegmentTileEntity)
                 segmentsTiles.add((SegmentTileEntity)segment);
@@ -77,38 +79,11 @@ public class Protection {
             if(segment.getCheckClass().isAssignableFrom(te.getClass())) {
                 try {
                     if(segment.checkCondition(te)) {
-
-                        int x1 = segment.getX1(te);
-                        int z1 = segment.getZ1(te);
-                        int x2 = segment.getX2(te);
-                        int z2 = segment.getZ2(te);
-
-                        List<ChunkPos> chunks = WorldUtils.getChunksInBox(te.getWorldObj().provider.dimensionId, x1, z1, x2, z2);
-                        boolean inWild = false;
-                        for (ChunkPos chunk : chunks) {
-                            TownBlock block = getDatasource().getBlock(te.getWorldObj().provider.dimensionId, chunk.getX(), chunk.getZ());
-                            if(block == null) {
-                                inWild = true;
-                            } else {
-                                if(segment.hasOwner()) {
-                                    Resident res = Protections.instance.getOwnerForTileEntity(te);
-                                    if (res == null || !block.getTown().hasPermission(res, segment.getFlag(), segment.getDenialValue()))
-                                        return true;
-                                } else if (!(Boolean) block.getTown().getValue(segment.getFlag()) && !block.getTown().hasBlockWhitelist(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, FlagType.MODIFY)) {
-                                    block.getTown().notifyEveryone(FlagType.MODIFY.getLocalizedTownNotification());
-                                    return true;
-                                }
-                            }
-                        }
-                        if(inWild && Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
-                            if (segment.hasOwner()) {
-                                Resident res = Protections.instance.getOwnerForTileEntity(te);
-                                if (res == null || !Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue()))
-                                    return true;
-
-                            } else {
-                                return true;
-                            }
+                        Volume teBox = new Volume(segment.getX1(te), segment.getY1(te), segment.getZ1(te), segment.getX2(te), segment.getY2(te), segment.getZ2(te));
+                        int dim = te.getWorldObj().provider.dimensionId;
+                        Resident owner = segment.hasOwner() ? Protections.instance.getOwnerForTileEntity(te) : null;
+                        if (!hasPermission(owner, segment, dim, teBox)) {
+                            return true;
                         }
                     }
                 } catch (Exception ex) {
@@ -134,53 +109,20 @@ public class Protection {
                 if(segment.getType() == EntityType.TRACKED) {
                     if (segment.checkCondition(entity)) {
                         int range = segment.getRange(entity);
-                        TownBlock block;
                         Resident owner = segment.getOwner(entity);
-                        if (range == 0) {
-                            block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-                            if (block == null) {
-                                if (owner == null) {
-                                    if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue()))
-                                        return true;
-                                } else {
-                                    if (!Wild.instance.checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
-                                        return true;
-                                }
-                            } else {
-                                if (owner == null) {
-                                    if (block.getTown().getValueAtCoords(entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ), segment.getFlag()).equals(segment.getDenialValue()))
-                                        return true;
-                                } else {
-                                    if (!block.getTown().hasPermission(owner, segment.getFlag(), segment.getDenialValue(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)))
-                                        return true;
-                                }
+                        int dim = entity.dimension;
+                        int x = (int) Math.floor(entity.posX);
+                        int y = (int) Math.floor(entity.posY);
+                        int z = (int) Math.floor(entity.posZ);
+
+                        if(range == 0) {
+                            if (!hasPermission(owner, segment, dim, x, y, z)) {
+                                return true;
                             }
-                        } else {
-                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(entity.dimension, (int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
-                            // Just so that it doesn't check more than once for Wild permissions
-                            boolean inWild = false;
-                            for (ChunkPos chunk : chunks) {
-                                block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
-                                if (block == null) {
-                                    inWild = true;
-                                } else {
-                                    if (owner == null) {
-                                        if (block.getTown().getValue(segment.getFlag()).equals(segment.getDenialValue()))
-                                            return true;
-                                    } else {
-                                        if (!block.getTown().hasPermission(owner, segment.getFlag(), segment.getDenialValue()))
-                                            return true;
-                                    }
-                                }
-                            }
-                            if (inWild) {
-                                if (owner == null) {
-                                    if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue()))
-                                        return true;
-                                } else {
-                                    if (!Wild.instance.checkPermission(owner, segment.getFlag(), segment.getDenialValue()))
-                                        return true;
-                                }
+                        } else {                            
+                            Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
+                            if (!hasPermission(owner, segment, dim, rangeBox)) {
+                                return true;
                             }
                         }
                     }
@@ -203,51 +145,29 @@ public class Protection {
                     bp = new BlockPos(bp.getX() + direction.offsetX, bp.getY() + direction.offsetY, bp.getZ() + direction.offsetZ, bp.getDim());
                 }
                 if (!segment.isDirectionalClientUpdate()) {
-                	direction = null;
+                    direction = null;
                 }
                 try {
                     if (segment.checkCondition(item)) {
                         int range = segment.getRange(item);
-                        TownBlock block;
+                        int dim = bp.getDim();
+                        int x = bp.getX();
+                        int y = bp.getY();
+                        int z = bp.getZ();
+                        boolean isProtected;
+
                         if(range == 0) {
-                            block = getDatasource().getBlock(bp.getDim(), bp.getX() >> 4, bp.getZ() >> 4);
-                            if(block == null) {
-                                if (!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                    res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
-                                    if(segment.hasClientUpdate())
-                                        sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
-                                    return true;
-                                }
-                            } else {
-                                if (!block.getTown().hasPermission(res, segment.getFlag(), segment.getDenialValue(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
-                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ()));
-                                    if(segment.hasClientUpdate())
-                                        sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
-                                    return true;
-                                }
+                            isProtected = !hasPermission(res, segment, dim, x, y, z);
+                        } else {                            
+                            Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
+                            isProtected = !hasPermission(res, segment, dim, rangeBox);
+                        }
+                        
+                        if(isProtected) {
+                            if (segment.hasClientUpdate()) {
+                                sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
                             }
-                        } else {
-                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(bp.getDim(), bp.getX() - range, bp.getZ() - range, bp.getX() + range, bp.getZ() + range);
-                            boolean inWild = false;
-                            for (ChunkPos chunk : chunks) {
-                                block = getDatasource().getBlock(bp.getDim(), chunk.getX(), chunk.getZ());
-                                if (block == null) {
-                                    inWild = true;
-                                } else {
-                                    if (!block.getTown().hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                        res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
-                                        if(segment.hasClientUpdate())
-                                            sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
-                                        return true;
-                                    }
-                                }
-                            }
-                            if (inWild && !Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
-                                if(segment.hasClientUpdate())
-                                    sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 } catch (Exception ex) {
@@ -269,17 +189,13 @@ public class Protection {
         for(Iterator<SegmentEntity> it = segmentsEntities.iterator(); it.hasNext();) {
             SegmentEntity segment = it.next();
             if(segment.getType() == EntityType.PROTECT && segment.getCheckClass().isAssignableFrom(entity.getClass())) {
-                TownBlock block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-                if(block == null) {
-                    if(!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                        res.sendMessage(FlagType.PVE.getLocalizedProtectionDenial());
-                        return true;
-                    }
-                } else {
-                    if(!block.getTown().hasPermission(res, segment.getFlag(), segment.getDenialValue(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                        res.protectionDenial(FlagType.PVE.getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)));
-                        return true;
-                    }
+                int dim = entity.dimension;
+                int x = (int) Math.floor(entity.posX);
+                int y = (int) Math.floor(entity.posY);
+                int z = (int) Math.floor(entity.posZ);
+                
+                if (!hasPermission(res, segment, dim, x, y, z)) {
+                    return true;
                 }
             }
         }
@@ -293,36 +209,18 @@ public class Protection {
                 try {
                     if (segment.checkCondition(item)) {
                         int range = segment.getRange(item);
-                        TownBlock block;
+                        int dim = entity.dimension;
+                        int x = (int) Math.floor(entity.posX);
+                        int y = (int) Math.floor(entity.posY);
+                        int z = (int) Math.floor(entity.posZ);
+
                         if(range == 0) {
-                            block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-                            if(block == null) {
-                                if (!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                    res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
-                                    return true;
-                                }
-                            } else {
-                                if (!block.getTown().hasPermission(res, segment.getFlag(), segment.getDenialValue(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)));
-                                    return true;
-                                }
+                            if (!hasPermission(res, segment, dim, x, y, z)) {
+                                return true;
                             }
-                        } else {
-                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(entity.dimension, (int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
-                            boolean inWild = false;
-                            for (ChunkPos chunk : chunks) {
-                                block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
-                                if (block == null) {
-                                    inWild = true;
-                                } else {
-                                    if (!block.getTown().hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                        res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
-                                        return true;
-                                    }
-                                }
-                            }
-                            if (inWild && !Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
+                        } else {                            
+                            Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
+                            if (!hasPermission(res, segment, dim, rangeBox)) {
                                 return true;
                             }
                         }
@@ -351,36 +249,18 @@ public class Protection {
                 try {
                     if (segment.checkCondition(item)) {
                         int range = segment.getRange(item);
-                        TownBlock block;
+                        int dim = entity.dimension;
+                        int x = (int) Math.floor(entity.posX);
+                        int y = (int) Math.floor(entity.posY);
+                        int z = (int) Math.floor(entity.posZ);
+
                         if(range == 0) {
-                            block = getDatasource().getBlock(entity.dimension, entity.chunkCoordX, entity.chunkCoordZ);
-                            if(block == null) {
-                                if (!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                    res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
-                                    return true;
-                                }
-                            } else {
-                                if (!block.getTown().hasPermission(res, segment.getFlag(), segment.getDenialValue(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ)));
-                                    return true;
-                                }
+                            if (!hasPermission(res, segment, dim, x, y, z)) {
+                                return true;
                             }
-                        } else {
-                            List<ChunkPos> chunks = WorldUtils.getChunksInBox(entity.dimension, (int) Math.floor(entity.posX - range), (int) Math.floor(entity.posZ - range), (int) Math.floor(entity.posX + range), (int) Math.floor(entity.posZ + range));
-                            boolean inWild = false;
-                            for (ChunkPos chunk : chunks) {
-                                block = getDatasource().getBlock(entity.dimension, chunk.getX(), chunk.getZ());
-                                if (block == null) {
-                                    inWild = true;
-                                } else {
-                                    if (!block.getTown().hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                        res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", block.getTown().getMayor() == null ? "SERVER ADMINS" : block.getTown().getMayor().getPlayerName()));
-                                        return true;
-                                    }
-                                }
-                            }
-                            if (inWild && !Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
+                        } else {                            
+                            Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
+                            if (!hasPermission(res, segment, dim, rangeBox)) {
                                 return true;
                             }
                         }
@@ -406,21 +286,15 @@ public class Protection {
             if(segment.getCheckClass().isAssignableFrom(blockType.getClass())
                     && (segment.getMeta() == -1 || segment.getMeta() == DimensionManager.getWorld(bp.getDim()).getBlockMetadata(bp.getX(), bp.getY(), bp.getZ()))
                     && (segment.getType() == BlockType.ANY_CLICK || segment.getType() == BlockType.RIGHT_CLICK && action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || segment.getType() == BlockType.LEFT_CLICK && action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)) {
-                TownBlock block = getDatasource().getBlock(bp.getDim(), bp.getX() >> 4, bp.getZ() >> 4);
-                if(block == null) {
-                    if(!Wild.instance.checkPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                        res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
-                        if(segment.hasClientUpdate())
-                            sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
-                        return true;
-                    }
-                } else {
-                    if(!block.getTown().hasPermission(res, segment.getFlag(), segment.getDenialValue(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
-                        res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(block.getTown(), bp.getDim(), bp.getX(), bp.getY(), bp.getZ()));
-                        if(segment.hasClientUpdate())
-                            sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
-                        return true;
-                    }
+                int dim = bp.getDim();
+                int x = bp.getX();
+                int y = bp.getY();
+                int z = bp.getZ();
+                
+                if (!hasPermission(res, segment, dim, x, y, z)) {
+                    if(segment.hasClientUpdate())
+                        sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
+                    return true;
                 }
             }
         }
@@ -477,6 +351,101 @@ public class Protection {
         return volume;
     }
 
+    public boolean hasPermission(Resident res, Segment segment, int dim, int x, int y, int z) {
+        TownBlock townBlock = getDatasource().getBlock(dim, x >> 4, z >> 4);
+        if(townBlock == null) {
+            if (res == null) {
+                return !Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue());
+            } else {
+                if (!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                    res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
+                    return false;
+                }
+            }
+        } else {
+            Town town = townBlock.getTown();
+            if (res == null) {
+                return !town.getValueAtCoords(dim, x, y, z, segment.getFlag()).equals(segment.getDenialValue());
+            } else {
+                if (!town.hasPermission(res, segment.getFlag(), segment.getDenialValue(), dim, x, y, z)) {
+                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town, dim, x, y, z));
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean hasPermission(Resident res, Segment segment, int dim, Volume area) {
+        boolean inWild = false;
+
+        for (int townBlockX = area.getMinX() >> 4; townBlockX <= area.getMaxX() >> 4; townBlockX++) {
+            for (int townBlockZ = area.getMinZ() >> 4; townBlockZ <= area.getMaxZ() >> 4; townBlockZ++) {
+                TownBlock townBlock = getDatasource().getBlock(dim, townBlockX, townBlockZ);
+                
+                if (townBlock == null) {
+                    inWild = true;
+                } else {
+                    Town town = townBlock.getTown();
+                    Volume rangeBox = townBlock.getAreaLimit(area);
+                    int totalIntersectArea = 0;
+
+                    // Check every plot in the current TownBlock and sum all plot areas
+                    for (Plot plot : townBlock.getPlots()) {
+                        int plotIntersectArea = plot.getIntersectingArea(rangeBox);
+                        if (plotIntersectArea > 0) {
+                            if (res == null) {
+                                if (plot.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
+                                    return false;
+                                }
+                            } else {
+                                if (!plot.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
+                                    return false;
+                                }
+                            }
+                        }
+                        totalIntersectArea += plotIntersectArea;
+                    }
+
+                    // If plot area sum is not equal to range area, check town permission
+                    if (totalIntersectArea != getArea(rangeBox)) {
+                        if (res == null) {
+                            if (town.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
+                                return false;
+                            }
+                        } else {
+                            if (!town.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                                res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (inWild) {
+            if (res == null) {
+                if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
+                    return false;
+                }
+            } else {
+                if (!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
+                    res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    public int getArea(Volume rangeBox) {
+        return ((rangeBox.getMaxX() - rangeBox.getMinX()) + 1) *
+               ((rangeBox.getMaxY() - rangeBox.getMinY()) + 1) *
+               ((rangeBox.getMaxZ() - rangeBox.getMinZ()) + 1);
+    }
 
     /**
      * Gets the flags which the type of TileEntity is checked against.

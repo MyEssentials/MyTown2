@@ -26,6 +26,14 @@ public class SegmentTileEntity extends Segment {
         }
     }
 
+    public int getY1(TileEntity te) {
+        try {
+            return (Integer) getters.getValue("yMin", Integer.class, te, null);
+        } catch (GetterException ex) {
+            return te.yCoord - Config.defaultProtectionSize;
+        }
+    }
+
     public int getZ1(TileEntity te) {
         try {
             return (Integer) getters.getValue("zMin", Integer.class, te, null);
@@ -39,6 +47,14 @@ public class SegmentTileEntity extends Segment {
             return (Integer) getters.getValue("xMax", Integer.class, te, null);
         } catch (GetterException ex) {
             return te.xCoord + Config.defaultProtectionSize;
+        }
+    }
+
+    public int getY2(TileEntity te) {
+        try {
+            return (Integer) getters.getValue("yMax", Integer.class, te, null);
+        } catch (GetterException ex) {
+            return te.yCoord + Config.defaultProtectionSize;
         }
     }
 

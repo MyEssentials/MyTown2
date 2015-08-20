@@ -1,7 +1,9 @@
 package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
+
 import mytown.api.interfaces.IPlotsContainer;
+import myessentials.entities.Volume;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +111,7 @@ public class TownBlock implements IPlotsContainer {
         }
         return null;
     }
+    
     @Override
     public Plot getPlot(String name) {
         for(Plot plot : plots) {
@@ -142,5 +145,29 @@ public class TownBlock implements IPlotsContainer {
      */
     public boolean isChunkIn(int dim, int cx, int cz) {
         return dim == this.dim && cx == x && cz == z;
+    }
+    
+    public Volume getAreaLimit(Volume area) {
+    	int minX = this.getX() << 4;
+        int minY = area.getMinY();
+        int minZ = this.getZ() << 4;
+        int maxX = minX + 15;
+        int maxY = area.getMaxY();
+        int maxZ = maxY + 15;
+        
+        if (area.getMinX() > minX) {
+        	minX = area.getMinX();
+        }
+        if (area.getMinZ() > minZ) {
+        	minZ = area.getMinZ();
+        }
+        if (area.getMaxX() < maxX) {
+        	maxX = area.getMaxX();
+        }
+        if (area.getMaxZ() < maxZ) {
+        	maxZ = area.getMaxZ();
+        }
+
+        return new Volume(minX, minY, minZ, maxX, maxY, maxZ);
     }
 }
