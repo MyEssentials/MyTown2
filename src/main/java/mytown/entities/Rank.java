@@ -1,10 +1,9 @@
 package mytown.entities;
 
-import com.google.common.base.Joiner;
 import mypermissions.api.command.CommandManager;
 import mypermissions.command.CommandTreeNode;
 import mytown.api.container.PermissionsContainer;
-import mytown.util.ColorUtils;
+import myessentials.utils.ColorUtils;
 
 import java.util.*;
 

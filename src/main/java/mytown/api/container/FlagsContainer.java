@@ -1,15 +1,12 @@
 package mytown.api.container;
 
-import mytown.entities.Plot;
 import mytown.entities.Town;
-import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.util.ColorUtils;
+import myessentials.utils.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class FlagsContainer extends ArrayList<Flag> {
 

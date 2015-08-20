@@ -1,7 +1,7 @@
 package mytown.api.container;
 
 import mytown.entities.Resident;
-import mytown.util.ColorUtils;
+import myessentials.utils.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

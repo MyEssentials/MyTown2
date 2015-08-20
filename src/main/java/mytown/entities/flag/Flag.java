@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import mytown.MyTown;
-import mytown.util.ColorUtils;
+import myessentials.utils.ColorUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.Type;

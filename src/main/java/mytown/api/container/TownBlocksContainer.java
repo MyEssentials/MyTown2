@@ -3,7 +3,7 @@ package mytown.api.container;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;
 import mytown.handlers.VisualsHandler;
-import mytown.util.ColorUtils;
+import myessentials.utils.ColorUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.ArrayList;
