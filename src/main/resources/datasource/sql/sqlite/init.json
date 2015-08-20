@@ -1,0 +1,6 @@
+{
+  "driverClass": "org.sqlite.JDBC",
+  "defaultProperties": {
+    "foreign_keys": "ON"
+  }
+}

@@ -1,27 +1,68 @@
 package mytown.new_datasource.sql;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import mytown.new_datasource.DatasourceBackend;
+import mytown.new_datasource.DatasourceConfig;
 import mytown.new_datasource.operations.BatchOperation;
 import mytown.new_datasource.operations.MultiOperation;
 import mytown.new_datasource.operations.Operation;
+import mytown.util.Constants;
 
+import java.io.*;
+import java.lang.reflect.Type;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class SQLBackend extends DatasourceBackend {
     private final Map<String, String> sqlStatements;
     private Connection conn;
+    private Properties dbProperties = new Properties();
 
     public SQLBackend() {
-        sqlStatements = new HashMap<String, String>();
+        // Load init.json
+        JsonParser parser = new JsonParser();
+        JsonObject rootE = (JsonObject) parser.parse(getFileReader("init.json"));
+        try {
+            Class.forName(rootE.get("driverClass").getAsString());
+        } catch (ClassNotFoundException e) {
+            // TODO This should probably cause a crash or put us into safemode
+            e.printStackTrace();
+        }
+        if (rootE.has("defaultProperties") && rootE.get("defaultProperties").isJsonObject()) {
+            JsonObject defProps = (JsonObject) rootE.get("defaultProperties");
+            for (Map.Entry<String, JsonElement> prop : defProps.entrySet()) {
+                if (!prop.getValue().isJsonPrimitive()) continue;
+                dbProperties.put(prop.getKey(), prop.getValue().getAsString());
+            }
+        }
+
+        // Add user-specified properties
+        for (String prop : DatasourceConfig.SQLConfig.userProperties) {
+            String[] pair = prop.split("=");
+            if (pair.length < 2)
+                continue;
+            dbProperties.put(pair[0], pair[1]);
+        }
+
+        // Load in statements
+        Type stringStringMap = new TypeToken<Map<String, String>>(){}.getType();
+        Gson gson = new Gson();
+        sqlStatements = gson.fromJson(getFileReader("statements.json"), stringStringMap);
     }
 
     @Override
     public void init() {
-        new Schema("mysql", getConn());
+        // Load in Schema
+        new Schema(DatasourceConfig.type.toLowerCase(), getConn());
     }
 
     @Override
@@ -97,5 +138,30 @@ public class SQLBackend extends DatasourceBackend {
     private Connection getConn() {
         // TODO Check that connection is alive and well, reconnecting if necessary
         return conn;
+    }
+
+    private Connection createConnection() throws SQLException {
+        return DriverManager.getConnection(getDSN(), dbProperties);
+    }
+
+    private String getDSN() {
+        return "";
+    }
+
+    private Reader getFileReader(String filename) {
+        Reader reader = null;
+
+        File file = new File(Constants.CONFIG_FOLDER + "/datasource/sql/" + DatasourceConfig.type.toLowerCase() + "/" + filename);
+        if (file.exists()) {
+            try {
+                reader = new FileReader(file);
+            } catch (FileNotFoundException e) {
+            }
+        }
+        if (reader == null) {
+            reader = new InputStreamReader(Schema.class.getResourceAsStream("/datasource/sql/" + DatasourceConfig.type.toLowerCase() + "/" + filename));
+        }
+
+        return reader;
     }
 }

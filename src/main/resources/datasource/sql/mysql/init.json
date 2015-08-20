@@ -1,0 +1,6 @@
+{
+  "driverClass": "com.mysql.jdbc.Driver",
+  "defaultProperties": {
+    "relaxAutoCommit": "true"
+  }
+}

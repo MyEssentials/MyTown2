@@ -77,7 +77,7 @@ public class Schema {
     private Reader getReader(String dbType) {
         Reader reader = null;
 
-        File file = new File(Constants.CONFIG_FOLDER + "/datasource/sql/schema/" + dbType + ".json");
+        File file = new File(Constants.CONFIG_FOLDER + "/datasource/sql/" + dbType + "/schema.json");
         if (file.exists()) {
             try {
                 reader = new FileReader(file);
@@ -85,7 +85,7 @@ public class Schema {
             }
         }
         if (reader == null) {
-            reader = new InputStreamReader(Schema.class.getResourceAsStream("/datasource/sql/schema/" + dbType + ".json"));
+            reader = new InputStreamReader(Schema.class.getResourceAsStream("/datasource/sql/" + dbType + "/schema.json"));
         }
 
         return reader;
