@@ -416,7 +416,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotInfoCommand(ICommandSender sender, List<String> args) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.info", plot.getName(), plot.membersContainer.toString(), plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ()));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.info", plot.getName(), plot.ownersContainer.toString(), plot.membersContainer.toString(), plot.getStartX(), plot.getStartY(), plot.getStartZ(), plot.getEndX(), plot.getEndY(), plot.getEndZ()));
             return CommandResponse.DONE;
         }
 

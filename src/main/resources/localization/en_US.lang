@@ -155,7 +155,7 @@ mytown.cmd.err.plot.insideOther=&cSelection is inside plot %s
 mytown.cmd.err.plot.perm.set.noPermission=&cYou are not this plot's owner
 mytown.cmd.err.plot.name=&cPlot with name %s already exists
 
-mytown.notification.plot.info=&6--------[[&2Plot: &a%s&6]]--------\n&2Residents: &f%s\n&2Borders: &9(%s, %s, %s)&7 --> &9(%s, %s, %s)
+mytown.notification.plot.info=&6--------[[&2Plot: &a%s&6]]--------\n&2Owners: &f%s\n&2Members: &f%s\n&2Borders: &9(%s, %s, %s)&7 --> &9(%s, %s, %s)
 mytown.notification.resident.info=&6--------[[&a%s&6]]--------\n&2Towns: &f%s \n&2Joined: &a%s\n&2Last online: &a%s
 mytown.notification.town.owners=&6 Owners: &c%s
 

@@ -20,7 +20,7 @@ public class RankPermissionManager implements IPermissionManager {
         EntityPlayer player = PlayerUtils.getPlayerFromUUID(uuid);
         Resident resident = MyTownUniverse.instance.getOrMakeResident(player);
         Town town = Commands.getTownFromResident(resident);
-        if(!town.residentsMap.get(resident).permissionsContainer.hasPermissionOrSuperPermission(permission)) {
+        if(!town.residentsMap.get(resident).permissionsContainer.hasSuperPermission(permission)) {
             throw new MyTownCommandException("mytown.cmd.err.rankPerm");
         }
         return true;
