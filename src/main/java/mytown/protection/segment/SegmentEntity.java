@@ -7,6 +7,9 @@ import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.getter.Getters;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+
+import java.util.UUID;
 
 /**
  * Segment that protects against an Entity
@@ -31,10 +34,10 @@ public class SegmentEntity extends Segment {
 
     public Resident getOwner(Entity entity) {
         try {
-            String name = getters.hasValue("owner") ? (String) getters.getValue("owner", String.class, entity, entity) : null;
-            if(name == null)
+            EntityPlayer player = getters.hasValue("owner") ? (EntityPlayer) getters.getValue("owner", EntityPlayer.class, entity, entity) : null;
+            if(player == null)
                 return null;
-            return MyTownUniverse.instance.getOrMakeResident(name);
+            return MyTownUniverse.instance.getOrMakeResident(player);
         } catch (GetterException ex) {
             /*
             String uuid = getters.hasValue("owner") ? (String) getters.getValue("owner", String.class, entity, entity) : null;
