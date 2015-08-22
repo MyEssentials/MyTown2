@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.FakePlayer;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.Date;
 import java.util.UUID;
@@ -103,8 +104,13 @@ public class Resident {
     /* ----- Helpers ----- */
 
     public void sendMessage(String msg) {
-        if (getPlayer() != null && !(getPlayer() instanceof FakePlayer))
-            ChatUtils.sendChat(getPlayer(), msg);
+        try {
+            if (getPlayer() != null && !(getPlayer() instanceof FakePlayer))
+                ChatUtils.sendChat(getPlayer(), msg);
+        } catch (NullPointerException ex) {
+            MyTown.instance.LOG.info("You are probably using a modified server that messes with order of Player joining/leaving. This crash is nothing serious.");
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+        }
     }
 
     /**
