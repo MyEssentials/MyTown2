@@ -254,10 +254,10 @@ public class CommandsAssistant extends Commands {
                 name = "add",
                 permission = "mytown.cmd.assistant.ranks.add",
                 parentName = "mytown.cmd.everyone.ranks",
-                syntax = "/town ranks add <rank> <templateRank>",
+                syntax = "/town ranks add <rank> [templateRank]",
                 completionKeys = {"-", "ranksCompletion"})
         public static CommandResponse ranksAddCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 2)
+            if (args.size() < 1)
                 return CommandResponse.SEND_SYNTAX;
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
@@ -265,12 +265,15 @@ public class CommandsAssistant extends Commands {
 
             if (town.ranksContainer.contains(args.get(0)))
                 throw new MyTownCommandException("mytown.cmd.err.ranks.add.already", args.get(0));
-            if (!town.ranksContainer.contains(args.get(1)))
-                throw new MyTownCommandException("mytown.cmd.err.ranks.add.notexist", args.get(1));
-
 
             Rank rank = new Rank(args.get(0), town, Rank.Type.REGULAR);
+            if(args.size() == 2) {
+                Rank template = getRankFromTown(town, args.get(1));
+                rank.permissionsContainer.addAll(template.permissionsContainer);
+            }
+
             getDatasource().saveRank(rank);
+
             res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(0), town.getName()));
             return CommandResponse.DONE;
         }
