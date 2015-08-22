@@ -538,6 +538,10 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.kick.self");
         }
 
+        if(town.residentsMap.get(target) == town.ranksContainer.getMayorRank()) {
+            throw new MyTownCommandException("mytown.cmd.err.kick.mayor");
+        }
+
         getDatasource().unlinkResidentFromTown(target, town);
         target.sendMessage(getLocal().getLocalization("mytown.notification.town.kicked", town.getName()));
         town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.left", target.getPlayerName(), town.getName()));

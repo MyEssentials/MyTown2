@@ -195,6 +195,7 @@ mytown.cmd.err.spawn.protected=&cYou are not allowed to teleport to the location
 # /t kick
 mytown.cmd.usage.kick=&3/t kick <resident>
 mytown.cmd.err.kick.self=&cNo, you can't kick yourself
+mytown.cmd.err.kick.mayor=&cNo, you can't kick the mayor
 mytown.notification.town.kicked=&cYou have been kicked from %s
 
 # /t pass
