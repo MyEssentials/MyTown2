@@ -544,10 +544,10 @@ public class CommandsEveryone extends Commands {
     }
 
     @Command(
-            name = "pay",
-            permission = "mytown.cmd.everyone.bank.pay",
+            name = "deposit",
+            permission = "mytown.cmd.everyone.bank.deposit",
             parentName = "mytown.cmd.everyone.bank",
-            syntax = "/town bank pay <amount>")
+            syntax = "/town bank deposit <amount>")
     public static CommandResponse bankPayCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
