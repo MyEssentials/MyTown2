@@ -351,12 +351,9 @@ public class CommandsAssistant extends Commands {
             Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
 
-            // Adding permission if everything is alright
-            if (rank.permissionsContainer.add(args.get(1))) {
-                getDatasource().saveRank(rank);
-                res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
-            } else
-                throw new MyTownCommandException("mytown.cmd.err.ranks.perm.add.failed", args.get(1));
+            getDatasource().saveRankPermission(rank, args.get(1));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
+
             return CommandResponse.DONE;
         }
 
@@ -372,18 +369,43 @@ public class CommandsAssistant extends Commands {
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
-
             Rank rank = getRankFromTown(town, args.get(0));
 
-            if (!CommandManager.getTree("mytown.cmd").hasCommandNode(args.get(1)))
-                throw new MyTownCommandException("mytown.cmd.err.ranks.perm.notexist", args.get(1));
+            getDatasource().deleteRankPermission(rank, args.get(1));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
 
-            // Removing permission if everything is alright
-            if (rank.permissionsContainer.remove(args.get(1))) {
+            return CommandResponse.DONE;
+        }
+
+        @Command(
+                name = "reset",
+                permission = "mytown.cmd.assistant.ranks.reset",
+                parentName = "mytown.cmd.everyone.ranks",
+                syntax = "/town ranks reset")
+        public static CommandResponse ranksResetCommand(ICommandSender sender, List<String> args) {
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+            Town town = getTownFromResident(res);
+
+            for(Rank defaultRank : Rank.defaultRanks) {
+                Rank rank = town.ranksContainer.get(defaultRank.getName());
+
+                rank.permissionsContainer.clear();
+                rank.permissionsContainer.addAll(defaultRank.permissionsContainer);
+                rank.setType(defaultRank.getType());
+
                 getDatasource().saveRank(rank);
-                res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
-            } else
-                throw new MyTownCommandException("mytown.cmd.err.ranks.perm.remove.failed", args.get(1));
+            }
+
+            for(int i = 0; i < town.ranksContainer.size(); i++) {
+                Rank rank = town.ranksContainer.get(i);
+                if(!Rank.defaultRanks.contains(rank.getName())) {
+                    getDatasource().deleteRank(rank);
+                    i--;
+                }
+            }
+
+            res.sendMessage(getLocal().getLocalization("mytown.notification.ranks.reset"));
+
             return CommandResponse.DONE;
         }
     }

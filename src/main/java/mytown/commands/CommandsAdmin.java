@@ -202,8 +202,8 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "blocks",
-            permission = "mytown.adm.cmd.town.blocks",
-            parentName = "mytown.adm.cmd.town",
+            permission = "mytown.adm.cmd.blocks",
+            parentName = "mytown.adm.cmd",
             syntax = "/townadmin blocks <command>",
             console = true)
     public static CommandResponse townBlocksCommand(ICommandSender sender, List<String> args) {
@@ -212,8 +212,8 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "extra",
-            permission = "mytown.adm.cmd.town.blocks.extra",
-            parentName = "mytown.adm.cmd.town.blocks",
+            permission = "mytown.adm.cmd.blocks.extra",
+            parentName = "mytown.adm.cmd.blocks",
             syntax = "/townadmin blocks extra <command>",
             console = true)
     public static CommandResponse townBlocksMaxCommand(ICommandSender sender, List<String> args) {
@@ -222,8 +222,8 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "set",
-            permission = "mytown.adm.cmd.town.blocks.extra.set",
-            parentName = "mytown.adm.cmd.town.blocks.extra",
+            permission = "mytown.adm.cmd.blocks.extra.set",
+            parentName = "mytown.adm.cmd.blocks.extra",
             syntax = "/townadmin block extra set <town> <extraBlocks>",
             completionKeys = {"townCompletionAndAll"},
             console = true)
@@ -242,8 +242,8 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "add",
-            permission = "mytown.adm.cmd.town.blocks.extra.add",
-            parentName = "mytown.adm.cmd.town.blocks.extra",
+            permission = "mytown.adm.cmd.blocks.extra.add",
+            parentName = "mytown.adm.cmd.blocks.extra",
             syntax = "/townadmin blocks extra add <town> <extraBlocks>",
             completionKeys = {"townCompletionAndAll"},
             console = true)
@@ -263,8 +263,8 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "remove",
-            permission = "mytown.adm.cmd.town.blocks.extra.remove",
-            parentName = "mytown.adm.cmd.town.blocks.extra",
+            permission = "mytown.adm.cmd.blocks.extra.remove",
+            parentName = "mytown.adm.cmd.blocks.extra",
             syntax = "/townadmin blocks extra remove <town> <extraBlocks>",
             completionKeys = {"townCompletionAndAll"},
             console = true)
@@ -284,8 +284,8 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "far",
-            permission = "mytown.adm.cmd.town.blocks.far",
-            parentName = "mytown.adm.cmd.town.blocks",
+            permission = "mytown.adm.cmd.blocks.far",
+            parentName = "mytown.adm.cmd.blocks",
             syntax = "/townadmin blocks far <command>")
     public static CommandResponse townBlocksFarClaimsCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
@@ -293,8 +293,8 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "set",
-            permission = "mytown.adm.cmd.town.blocks.far.set",
-            parentName = "mytown.adm.cmd.town.blocks.far",
+            permission = "mytown.adm.cmd.blocks.far.set",
+            parentName = "mytown.adm.cmd.blocks.far",
             syntax = "/townadmin blocks far set <town> <farClaims>",
             completionKeys = {"townCompletionAndAll"},
             console = true)
@@ -313,8 +313,8 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "add",
-            permission = "mytown.adm.cmd.town.blocks.far.add",
-            parentName = "mytown.adm.cmd.town.blocks.far",
+            permission = "mytown.adm.cmd.blocks.far.add",
+            parentName = "mytown.adm.cmd.blocks.far",
             syntax = "/townadmin blocks far add <town> <farClaims>",
             completionKeys = {"townCompletionAndAll"},
             console = true)
@@ -334,8 +334,8 @@ public class CommandsAdmin extends Commands {
 
     @Command(
             name = "remove",
-            permission = "mytown.adm.cmd.town.blocks.far.remove",
-            parentName = "mytown.adm.cmd.town.blocks.far",
+            permission = "mytown.adm.cmd.blocks.far.remove",
+            parentName = "mytown.adm.cmd.blocks.far",
             syntax = "/townadmin blocks far remove <town> <farClaims>",
             completionKeys = {"townCompletionAndAll"},
             console = true)
@@ -434,6 +434,53 @@ public class CommandsAdmin extends Commands {
         target.setExtraBlocks(target.getExtraBlocks() - amount);
         getDatasource().saveResident(target);
         sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "ranks",
+            permission = "mytown.adm.cmd.ranks",
+            parentName = "mytown.adm.cmd",
+            syntax = "/townadmin ranks <command>",
+            console = true)
+    public static CommandResponse ranksCommand(ICommandSender sender, List<String> args) {
+        return CommandResponse.SEND_HELP_MESSAGE;
+    }
+
+    @Command(
+            name = "reset",
+            permission = "mytown.adm.cmd.ranks.reset",
+            parentName = "mytown.adm.cmd.ranks",
+            syntax = "/townadmin ranks reset <town>",
+            completionKeys = {"townCompletion"},
+            console = true)
+    public static CommandResponse ranksResetCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+
+        for(Rank defaultRank : Rank.defaultRanks) {
+            Rank rank = town.ranksContainer.get(defaultRank.getName());
+
+            rank.permissionsContainer.clear();
+            rank.permissionsContainer.addAll(defaultRank.permissionsContainer);
+            rank.setType(defaultRank.getType());
+
+            getDatasource().saveRank(rank);
+        }
+
+        for(int i = 0; i < town.ranksContainer.size(); i++) {
+            Rank rank = town.ranksContainer.get(i);
+            if(!Rank.defaultRanks.contains(rank.getName())) {
+                getDatasource().deleteRank(rank);
+                i--;
+            }
+        }
+
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.ranks.reset"));
+
         return CommandResponse.DONE;
     }
 

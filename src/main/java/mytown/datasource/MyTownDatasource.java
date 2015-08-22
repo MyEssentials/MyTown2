@@ -162,7 +162,7 @@ public abstract class MyTownDatasource {
 
     public abstract boolean deleteWorld(int dim);
 
-    public abstract boolean removeRankPermission(Rank rank, String perm);
+    public abstract boolean deleteRankPermission(Rank rank, String perm);
 
     /**
      * Deletes everything from the BlockOwners table. No specific deletion is needed since coordinates are variable.

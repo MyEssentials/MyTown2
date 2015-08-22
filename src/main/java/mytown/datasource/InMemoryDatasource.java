@@ -384,7 +384,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean removeRankPermission(Rank rank, String perm) {
+    public boolean deleteRankPermission(Rank rank, String perm) {
         return false;
     }
 

@@ -655,19 +655,45 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
         LOG.debug("Saving Rank {} in town {}", rank.getName(), rank.getTown().getName());
         try {
             if (getUniverse().ranks.contains(rank)) { // Update
-                // TODO Update
-                PreparedStatement s = prepare("UPDATE " + prefix + "Ranks SET type=?, name=? WHERE name=? AND townName=?", true);
-                s.setString(1, rank.getType().toString());
-                if(rank.getNewName() == null) {
-                    s.setString(2, rank.getName());
-                } else {
-                    s.setString(2, rank.getNewName());
-                    rank.resetNewName();
-                }
-                s.setString(3, rank.getName());
-                s.setString(4, rank.getTown().getName());
-                s.executeUpdate();
+                try {
+                    getConnection().setAutoCommit(false);
 
+                    PreparedStatement s = prepare("UPDATE " + prefix + "Ranks SET type=?, name=? WHERE name=? AND townName=?", true);
+                    s.setString(1, rank.getType().toString());
+                    if (rank.getNewName() == null) {
+                        s.setString(2, rank.getName());
+                    } else {
+                        s.setString(2, rank.getNewName());
+                        rank.resetNewName();
+                    }
+                    s.setString(3, rank.getName());
+                    s.setString(4, rank.getTown().getName());
+                    s.executeUpdate();
+
+                    s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE rank=? AND townName=?", true);
+                    s.setString(1, rank.getName());
+                    s.setString(2, rank.getTown().getName());
+                    s.executeUpdate();
+
+                    if (!rank.permissionsContainer.isEmpty()) {
+                        s = prepare("INSERT INTO " + prefix + "RankPermissions(node, rank, townName) VALUES(?, ?, ?)", true);
+                        for (String perm : rank.permissionsContainer) {
+                            s.setString(1, perm);
+                            s.setString(2, rank.getName());
+                            s.setString(3, rank.getTown().getName());
+                            s.addBatch();
+                        }
+                        s.executeBatch();
+                    }
+                } catch (SQLException e) {
+                    LOG.error("Failed to update Rank {} in town {}", rank.getName(), rank.getTown().getName());
+                    LOG.error(ExceptionUtils.getStackTrace(e));
+                    getConnection().rollback();
+
+                    return false;
+                } finally {
+                    getConnection().setAutoCommit(true);
+                }
             } else { // Insert
                 try {
                     getConnection().setAutoCommit(false);
@@ -718,6 +744,8 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             s.setString(1, perm);
             s.setString(2, rank.getName());
             s.execute();
+
+            rank.permissionsContainer.add(perm);
         } catch (SQLException e) {
             LOG.error("Failed to add permission ({}) to Rank ({})", perm, rank.getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
@@ -1285,6 +1313,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             // Remove Rank from Map
             MyTownUniverse.instance.removeRank(rank);
+            rank.getTown().ranksContainer.remove(rank);
         } catch (SQLException e) {
             LOG.error("Failed to delete Rank {} in Town {}", rank.getName(), rank.getTown().getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
@@ -1452,12 +1481,14 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean removeRankPermission(Rank rank, String perm) {
+    public boolean deleteRankPermission(Rank rank, String perm) {
         try {
             PreparedStatement s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE node = ? AND rank = ?", true);
             s.setString(1, perm);
             s.setString(2, rank.getName());
             s.execute();
+
+            rank.permissionsContainer.remove(perm);
         } catch (SQLException e) {
             LOG.error("Failed to add permission ({}) to Rank ({})", perm, rank.getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
