@@ -125,6 +125,11 @@ mytown.cmd.err.ranks.perm.notexist=&cThe permission %s does not exist
 mytown.cmd.err.ranks.perm.add.already=&cThe rank %s already has permission %s
 mytown.cmd.err.ranks.perm.add.failed=&cFailed to add permission
 mytown.cmd.err.ranks.perm.remove.failed=&cFailed to remove permission
+mytown.notification.town.ranks=&3Ranks: %s
+mytown.cmd.err.ranks.cantDelete=&cYou can't delete this type of rank
+mytown.cmd.err.ranks.set.already=&cThe rank already has type %s
+mytown.notification.ranks.set.successful=&3Rank %s has been set to type %s successfully
+mytown.cmd.err.ranks.typeNotExists=&cRank type %s does not exist
 
 # /t plot
 mytown.cmd.usage.plot.rename=&3/t plot rename <name>
@@ -198,9 +203,6 @@ mytown.cmd.usage.leave.pass=&3/t pass <resident>
 mytown.cmd.usage.bank.pay=&3/t bank pay <amount>
 mytown.cmd.usage.bank.withdraw=&3/t bank withdraw <amount>
 mytown.cmd.err.bank.withdraw=&cYou only have %s in the bank
-
-# /t ranks
-mytown.notification.town.ranks=&3Ranks: %s
 
 # /t rename
 mytown.cmd.usage.rename=&3/t rename <newName>

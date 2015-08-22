@@ -401,7 +401,7 @@ public class Protection {
                                 }
                             } else {
                                 if (!plot.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                    res.protectionDenial(segment.getFlag(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
+                                    res.protectionDenial(segment.getFlag(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.residentsMap.getMayor() == null ? "SERVER ADMINS" : town.residentsMap.getMayor().getPlayerName()));
                                     return false;
                                 }
                             }
@@ -417,7 +417,7 @@ public class Protection {
                             }
                         } else {
                             if (!town.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                res.protectionDenial(segment.getFlag(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
+                                res.protectionDenial(segment.getFlag(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.residentsMap.getMayor() == null ? "SERVER ADMINS" : town.residentsMap.getMayor().getPlayerName()));
                                 return false;
                             }
                         }

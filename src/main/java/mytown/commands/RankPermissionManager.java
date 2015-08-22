@@ -2,6 +2,7 @@ package mytown.commands;
 
 import myessentials.utils.PlayerUtils;
 import mypermissions.api.IPermissionManager;
+import mypermissions.api.entities.PermissionLevel;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -20,7 +21,7 @@ public class RankPermissionManager implements IPermissionManager {
         EntityPlayer player = PlayerUtils.getPlayerFromUUID(uuid);
         Resident resident = MyTownUniverse.instance.getOrMakeResident(player);
         Town town = Commands.getTownFromResident(resident);
-        if(!town.residentsMap.get(resident).permissionsContainer.hasSuperPermission(permission)) {
+        if(town.residentsMap.get(resident).permissionsContainer.hasPermission(permission) != PermissionLevel.ALLOWED) {
             throw new MyTownCommandException("mytown.cmd.err.rankPerm");
         }
         return true;

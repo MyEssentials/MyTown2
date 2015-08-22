@@ -202,15 +202,11 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             ResultSet rs = loadRanksStatement.executeQuery();
             while (rs.next()) {
                 Town town = getUniverse().towns.get(rs.getString("townName"));
-                Rank rank = new Rank(rs.getString("name"), town);
+                Rank rank = new Rank(rs.getString("name"), town, Rank.Type.valueOf(rs.getString("type")));
 
                 LOG.debug("Loading Rank %s for Town {}", rank.getName(), town.getName());
 
                 town.ranksContainer.add(rank);
-                if (rs.getBoolean("isDefault")) {
-                    town.ranksContainer.setDefaultRank(rank);
-                }
-
                 MyTownUniverse.instance.addRank(rank);
             }
         } catch (SQLException e) {
@@ -655,19 +651,31 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveRank(Rank rank, boolean isDefault) { // TODO Insert any new permissions to the RankPermission table
-        LOG.debug("Saving Rank {}", rank.getKey());
+    public boolean saveRank(Rank rank) { // TODO Insert any new permissions to the RankPermission table
+        LOG.debug("Saving Rank {} in town {}", rank.getName(), rank.getTown().getName());
         try {
             if (getUniverse().ranks.contains(rank)) { // Update
                 // TODO Update
+                PreparedStatement s = prepare("UPDATE " + prefix + "Ranks SET type=?, name=? WHERE name=? AND townName=?", true);
+                s.setString(1, rank.getType().toString());
+                if(rank.getNewName() == null) {
+                    s.setString(2, rank.getName());
+                } else {
+                    s.setString(2, rank.getNewName());
+                    rank.resetNewName();
+                }
+                s.setString(3, rank.getName());
+                s.setString(4, rank.getTown().getName());
+                s.executeUpdate();
+
             } else { // Insert
                 try {
                     getConnection().setAutoCommit(false);
 
-                    PreparedStatement insertRankStatement = prepare("INSERT INTO " + prefix + "Ranks (name, townName, isDefault) VALUES(?, ?, ?)", true);
+                    PreparedStatement insertRankStatement = prepare("INSERT INTO " + prefix + "Ranks (name, townName, type) VALUES(?, ?, ?)", true);
                     insertRankStatement.setString(1, rank.getName());
                     insertRankStatement.setString(2, rank.getTown().getName());
-                    insertRankStatement.setBoolean(3, isDefault);
+                    insertRankStatement.setString(3, rank.getType().toString());
                     insertRankStatement.executeUpdate();
 
                     if (!rank.permissionsContainer.isEmpty()) {
@@ -684,12 +692,8 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     // Put the Rank in the Map
                     MyTownUniverse.instance.addRank(rank);
                     rank.getTown().ranksContainer.add(rank);
-
-                    if (isDefault) {
-                        rank.getTown().ranksContainer.setDefaultRank(rank);
-                    }
                 } catch (SQLException e) {
-                    LOG.error("Failed to insert Rank {}", rank.getKey());
+                    LOG.error("Failed to insert Rank {} in town {}", rank.getName(), rank.getTown().getName());
                     LOG.error(ExceptionUtils.getStackTrace(e));
                     getConnection().rollback();
 
@@ -699,7 +703,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 }
             }
         } catch (SQLException e) {
-            LOG.error("Failed to save Rank {}!", rank.getKey());
+            LOG.error("Failed to save Rank {} in Town {}", rank.getName(), rank.getTown().getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
@@ -708,7 +712,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
     @Override
     public boolean saveRankPermission(Rank rank, String perm) {
-        LOG.debug("Saving RankPermission {} for Rank {}", perm, rank.getKey());
+        LOG.debug("Saving RankPermission {} for Rank {} in Town {}", perm, rank.getName(), rank.getTown().getName());
         try {
             PreparedStatement s = prepare("INSERT INTO " + prefix + "RankPermissions (node, rank) VALUES(?, ?)", true);
             s.setString(1, perm);
@@ -1282,7 +1286,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             // Remove Rank from Map
             MyTownUniverse.instance.removeRank(rank);
         } catch (SQLException e) {
-            LOG.error("Failed to delete Rank {}!", rank.getKey());
+            LOG.error("Failed to delete Rank {} in Town {}", rank.getName(), rank.getTown().getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
@@ -1527,11 +1531,32 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
         for(Town town : getUniverse().towns) {
             if(town.ranksContainer.getDefaultRank() == null) {
                 LOG.error("Town {} does not have a default rank set.", town.getName());
-                Rank rank = new Rank(Rank.theDefaultRank, town);
-                rank.permissionsContainer.addAll(Rank.defaultRanks.get(Rank.theDefaultRank));
-                LOG.info("Adding default rank for town.");
-                saveRank(rank, true);
+                Rank rank = town.ranksContainer.get("Resident");
+                if(rank == null) {
+                    rank = new Rank("Resident", town, Rank.Type.DEFAULT);
+                    rank.permissionsContainer.addAll(Rank.defaultRanks.get(Rank.Type.DEFAULT).permissionsContainer);
+                    LOG.info("Adding default rank for town.");
+                } else {
+                    rank.setType(Rank.Type.DEFAULT);
+                    LOG.info("Set 'Resident' as current default rank.");
+                }
+                saveRank(rank);
             }
+
+            if(town.ranksContainer.getMayorRank() == null) {
+                LOG.error("Town {} does not have a mayor rank set.", town.getName());
+                Rank rank = town.ranksContainer.get("Mayor");
+                if(rank == null) {
+                    rank = new Rank("Mayor", town, Rank.Type.MAYOR);
+                    rank.permissionsContainer.addAll(Rank.defaultRanks.get(Rank.Type.MAYOR).permissionsContainer);
+                    LOG.info("Adding mayor rank for town.");
+                } else {
+                    rank.setType(Rank.Type.MAYOR);
+                    LOG.info("Set 'Mayor' as current default rank.");
+                }
+                saveRank(rank);
+            }
+
             if(!(town instanceof AdminTown)) {
                 try {
                     PreparedStatement s = prepare("SELECT * FROM TownBanks WHERE townName=?", true);

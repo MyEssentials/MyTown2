@@ -1,5 +1,6 @@
 package mytown.api.container;
 
+import mytown.entities.Rank;
 import mytown.entities.Town;
 import myessentials.utils.ColorUtils;
 
@@ -52,6 +53,14 @@ public class TownsContainer extends ArrayList<Town> {
     }
 
     public Town getMainTown() {
+        if(!contains(mainTown) || mainTown == null) {
+            if(size() == 0) {
+                return null;
+            } else {
+                mainTown = get(0);
+            }
+        }
+
         return mainTown;
     }
 
@@ -63,10 +72,10 @@ public class TownsContainer extends ArrayList<Town> {
     public String toString(boolean colorMainTown) {
         String formattedList = null;
         for(Town town : this) {
-            String mayorName = town.getMayor() != null ? ColorUtils.colorPlayer + town.getMayor().getPlayerName()
+            String mayorName = town.residentsMap.getMayor() != null ? ColorUtils.colorPlayer + town.residentsMap.getMayor().getPlayerName()
                     : ColorUtils.colorAdmin + "SERVER ADMINS";
             String toAdd = ((colorMainTown && town == mainTown) ? ColorUtils.colorSelectedTown : ColorUtils.colorTown) + town.getName() + ":" + ColorUtils.colorComma +
-                    " { " + ColorUtils.colorRankMayor + "Mayor: " + mayorName + ColorUtils.colorComma + " }";
+                    " { " + Rank.Type.MAYOR.color + "Mayor: " + mayorName + ColorUtils.colorComma + " }";
             if(formattedList == null) {
                 formattedList = toAdd;
             } else {

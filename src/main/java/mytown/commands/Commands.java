@@ -78,7 +78,11 @@ public abstract class Commands {
         }
         CommandCompletion.addCompletions("plotCompletion", populator);
 
-        CommandCompletion.addCompletions("rankCompletion", Rank.defaultRanks.keySet());
+        populator = new ArrayList<String>();
+        for(Rank rank : Rank.defaultRanks) {
+            populator.add(rank.getName());
+        }
+        CommandCompletion.addCompletions("rankCompletion", populator);
     }
 
     /* ---- HELPERS ---- */
@@ -183,6 +187,14 @@ public abstract class Commands {
             return FlagType.valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", e, name);
+        }
+    }
+
+    public static Rank.Type getRankTypeFromString(String name) {
+        try {
+            return Rank.Type.valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new MyTownCommandException("mytown.cmd.err.ranks.typeNotExists", e, name);
         }
     }
 

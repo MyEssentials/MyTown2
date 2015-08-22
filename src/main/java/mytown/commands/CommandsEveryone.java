@@ -44,7 +44,7 @@ public class CommandsEveryone extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        if (town.residentsMap.get(res) != null && town.residentsMap.get(res).getName().equals(Rank.theMayorDefaultRank)) {
+        if (town.residentsMap.get(res) != null && town.residentsMap.get(res).getType() == Rank.Type.MAYOR) {
             throw new MyTownCommandException("mytown.notification.town.left.asMayor");
         }
 

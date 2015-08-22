@@ -29,6 +29,15 @@ public class ResidentRankMap extends HashMap<Resident, Rank> {
         return false;
     }
 
+    public Resident getMayor() {
+        for(Entry<Resident, Rank> entry : entrySet()) {
+            if(entry.getValue().getType() == Rank.Type.MAYOR) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         String formattedList = null;

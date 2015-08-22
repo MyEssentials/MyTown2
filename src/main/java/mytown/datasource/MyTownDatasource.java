@@ -79,7 +79,7 @@ public abstract class MyTownDatasource {
 
     public abstract boolean saveBlock(TownBlock block);
 
-    public abstract boolean saveRank(Rank rank, boolean isDefault);
+    public abstract boolean saveRank(Rank rank);
 
     public abstract boolean saveRankPermission(Rank rank, String perm);
 

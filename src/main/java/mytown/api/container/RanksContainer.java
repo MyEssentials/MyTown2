@@ -7,8 +7,6 @@ import java.util.ArrayList;
 
 public class RanksContainer extends ArrayList<Rank> {
 
-    private Rank defaultRank;
-
     public boolean contains(String rankName) {
         for (Rank r : this) {
             if (r.getName().equals(rankName))
@@ -25,12 +23,35 @@ public class RanksContainer extends ArrayList<Rank> {
         return null;
     }
 
-    public void setDefaultRank(Rank rank) {
-        defaultRank = rank;
+    public Rank get(Rank.Type type) {
+        if(!type.unique) {
+            throw new RuntimeException("The rank you are trying to get is not unique!");
+        }
+
+        for(Rank rank : this) {
+            if(rank.getType() == type) {
+                return rank;
+            }
+        }
+        return null;
+    }
+
+    public Rank getMayorRank() {
+        for(Rank rank : this) {
+            if(rank.getType() == Rank.Type.MAYOR) {
+                return rank;
+            }
+        }
+        return null;
     }
 
     public Rank getDefaultRank() {
-        return defaultRank;
+        for(Rank rank : this) {
+            if(rank.getType() == Rank.Type.DEFAULT) {
+                return rank;
+            }
+        }
+        return null;
     }
 
     @Override

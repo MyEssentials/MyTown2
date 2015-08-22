@@ -40,7 +40,7 @@ public class EntitiesTest {
             }
         }
 
-        Rank rank = new Rank("Test", town);
+        Rank rank = new Rank("Test", town, Rank.Type.REGULAR);
         town.ranksContainer.add(rank);
         town.bank.setBankAmount(100);
 

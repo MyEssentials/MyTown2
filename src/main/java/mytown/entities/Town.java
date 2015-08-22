@@ -75,7 +75,7 @@ public class Town implements Comparable<Town> {
      */
     @SuppressWarnings("unchecked")
     public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
-        if(flagsContainer.getValue(flagType).equals(denialValue) && (!residentsMap.containsKey(res) || ((Boolean)flagsContainer.getValue(FlagType.RESTRICTIONS) && flagType != FlagType.ENTER && getMayor() != res))) {
+        if(flagsContainer.getValue(flagType).equals(denialValue) && (!residentsMap.containsKey(res) || ((Boolean)flagsContainer.getValue(FlagType.RESTRICTIONS) && flagType != FlagType.ENTER && residentsMap.getMayor() != res))) {
             return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
@@ -99,7 +99,7 @@ public class Town implements Comparable<Town> {
         Plot plot = plotsContainer.get(dim, x, y, z);
         if (plot == null) {
             if (isPointInTown(dim, x, z) && !(this instanceof AdminTown) && !residentsMap.isEmpty()) {
-            	Resident mayor = getMayor();
+            	Resident mayor = residentsMap.getMayor();
                 if (mayor != null) {
                 	list.add(mayor);
                 }
@@ -110,17 +110,6 @@ public class Town implements Comparable<Town> {
             }
         }
         return list;
-    }
-
-    /**
-     * Gets the resident with the rank of 'Mayor' (or whatever it's named)
-     */
-    public Resident getMayor() {
-        for (Map.Entry<Resident, Rank> entry : residentsMap.entrySet()) {
-            if (entry.getValue().getName().equals(Rank.theMayorDefaultRank))
-                return entry.getKey();
-        }
-        return null;
     }
 
     public void sendToSpawn(Resident res) {

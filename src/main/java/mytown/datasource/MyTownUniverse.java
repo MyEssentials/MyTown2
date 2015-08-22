@@ -78,8 +78,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         }
         */
 
-        Rank onCreationDefaultRank = null;
-
         // Setting spawn before saving
         town.setSpawn(new Teleport(creator.getPlayer().dimension, (float) creator.getPlayer().posX, (float) creator.getPlayer().posY, (float) creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
 
@@ -106,19 +104,16 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
         if (!(town instanceof AdminTown)) {
             // Saving all ranks to database and town
-            for (String rankName : Rank.defaultRanks.keySet()) {
-                Rank rank = new Rank(rankName, town);
-                rank.permissionsContainer.addAll(Rank.defaultRanks.get(rankName));
+            for (Rank template : Rank.defaultRanks) {
+                Rank rank = new Rank(template.getName(), town, template.getType());
+                rank.permissionsContainer.addAll(template.permissionsContainer);
 
-                getDatasource().saveRank(rank, rankName.equals(Rank.theDefaultRank));
-
-                if (rankName.equals(Rank.theMayorDefaultRank)) {
-                    onCreationDefaultRank = rank;
-                }
+                getDatasource().saveRank(rank);
             }
             // Linking resident to town
-            if (!getDatasource().linkResidentToTown(creator, town, onCreationDefaultRank))
+            if (!getDatasource().linkResidentToTown(creator, town, town.ranksContainer.getMayorRank())) {
                 MyTown.instance.LOG.error("Problem linking resident {} to town {}", creator.getPlayerName(), town.getName());
+            }
 
             getDatasource().saveTownBank(town, Config.defaultBankAmount, 0);
         }
@@ -139,8 +134,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     /**
      * Creates and returns a new Rank, or null if it couldn't be created
      */
-    public final Rank newRank(String name, Town town) {
-        Rank rank = new Rank(name, town);
+    public final Rank newRank(String name, Town town, Rank.Type type) {
+        Rank rank = new Rank(name, town, type);
         if (RankEvent.fire(new RankEvent.RankCreateEvent(rank)))
             return null;
         return rank;

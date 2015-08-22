@@ -15,6 +15,7 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.proxies.EconomyProxy;
+import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
@@ -233,7 +234,8 @@ public class CommandsAssistant extends Commands {
         if (!resTarget.townsContainer.contains(town))
             throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", args.get(0), town.getName());
 
-        if (args.get(1).equalsIgnoreCase(Rank.theMayorDefaultRank))
+        Rank mayorRank = town.ranksContainer.getMayorRank();
+        if (args.get(1).equalsIgnoreCase(mayorRank.getName()))
             throw new MyTownCommandException("mytown.cmd.err.promote.notMayor");
         Rank rank = getRankFromTown(town, args.get(1));
         if (getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
@@ -267,8 +269,8 @@ public class CommandsAssistant extends Commands {
                 throw new MyTownCommandException("mytown.cmd.err.ranks.add.notexist", args.get(1));
 
 
-            Rank rank = new Rank(args.get(0), town);
-            getDatasource().saveRank(rank, false);
+            Rank rank = new Rank(args.get(0), town, Rank.Type.REGULAR);
+            getDatasource().saveRank(rank);
             res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(0), town.getName()));
             return CommandResponse.DONE;
         }
@@ -287,7 +289,7 @@ public class CommandsAssistant extends Commands {
             Town town = res.townsContainer.getMainTown();
             Rank rank = getRankFromTown(town, args.get(0));
 
-            if (town.ranksContainer.getDefaultRank().equals(rank) || Rank.theMayorDefaultRank.equals(rank.getName()))
+            if (rank.getType().unique)
                 throw new MyTownCommandException("mytown.cmd.err.ranks.cantDelete");
 
             if (getDatasource().deleteRank(rank)) {
@@ -295,6 +297,42 @@ public class CommandsAssistant extends Commands {
             } else {
                 res.sendMessage(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notallowed", args.get(0)));
             }
+            return CommandResponse.DONE;
+        }
+
+        @Command(
+                name = "set",
+                permission = "mytown.cmd.assistant.ranks.set",
+                parentName = "mytown.cmd.everyone.ranks",
+                syntax = "/town ranks set <rank> <type>",
+                completionKeys = {"rankCompletion"})
+        public static CommandResponse ranksSetCommand(ICommandSender sender, List<String> args) {
+            if(args.size() < 2) {
+                return CommandResponse.SEND_SYNTAX;
+            }
+
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+            Town town = res.townsContainer.getMainTown();
+            Rank rank = getRankFromTown(town, args.get(0));
+            Rank.Type type = getRankTypeFromString(args.get(1));
+
+            if(type.unique) {
+                Rank fromRank = town.ranksContainer.get(type);
+                if(fromRank == rank) {
+                    throw new MyTownCommandException("mytown.cmd.err.ranks.set.already", type.toString());
+                }
+                fromRank.setType(Rank.Type.REGULAR);
+                rank.setType(type);
+
+                getDatasource().saveRank(rank);
+                getDatasource().saveRank(fromRank);
+            } else {
+                rank.setType(type);
+
+                getDatasource().saveRank(rank);
+            }
+
+            res.sendMessage(getLocal().getLocalization("mytown.notification.ranks.set.successful", rank.getName(), type.toString()));
             return CommandResponse.DONE;
         }
 
@@ -313,12 +351,9 @@ public class CommandsAssistant extends Commands {
             Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
 
-            if (!CommandManager.getTree("mytown.cmd").hasCommandNode(args.get(1)))
-                throw new MyTownCommandException("mytown.cmd.err.ranks.perm.notexist", args.get(1));
-
             // Adding permission if everything is alright
             if (rank.permissionsContainer.add(args.get(1))) {
-                getDatasource().saveRank(rank, rank.getTown().ranksContainer.getDefaultRank().equals(rank));
+                getDatasource().saveRank(rank);
                 res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
             } else
                 throw new MyTownCommandException("mytown.cmd.err.ranks.perm.add.failed", args.get(1));
@@ -345,7 +380,7 @@ public class CommandsAssistant extends Commands {
 
             // Removing permission if everything is alright
             if (rank.permissionsContainer.remove(args.get(1))) {
-                getDatasource().saveRank(rank, rank.getTown().ranksContainer.getDefaultRank().equals(rank));
+                getDatasource().saveRank(rank);
                 res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
             } else
                 throw new MyTownCommandException("mytown.cmd.err.ranks.perm.remove.failed", args.get(1));
@@ -403,8 +438,8 @@ public class CommandsAssistant extends Commands {
         if (!town.residentsMap.containsKey(target)) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", target.getPlayerName(), town.getName());
         }
-        if (town.residentsMap.get(res).getName().equals(Rank.theMayorDefaultRank)) {
-            getDatasource().updateResidentToTownLink(target, town, town.ranksContainer.get(Rank.theMayorDefaultRank));
+        if (town.residentsMap.get(res).getType() == Rank.Type.MAYOR) {
+            getDatasource().updateResidentToTownLink(target, town, town.ranksContainer.getMayorRank());
             target.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.passed"));
             getDatasource().updateResidentToTownLink(res, town, town.ranksContainer.getDefaultRank());
             res.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.taken"));
@@ -495,7 +530,7 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
         EntityPlayer player = (EntityPlayer) sender;
 
-        if (town.residentsMap.get(res).getName().equals(Rank.theMayorDefaultRank)) {
+        if (town.residentsMap.get(res).getType() == Rank.Type.MAYOR) {
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
             int refund = 0;
             for (TownBlock block : town.townBlocksContainer) {

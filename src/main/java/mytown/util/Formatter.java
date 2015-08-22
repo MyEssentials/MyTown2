@@ -93,7 +93,7 @@ public class Formatter {
      * Uses localization
      */
     public static String formatOwnersToString(Town town) {
-        Resident owner = town.getMayor();
+        Resident owner = town.residentsMap.getMayor();
         String ownerName;
         if(owner == null)
             ownerName = "SERVER ADMINS";
