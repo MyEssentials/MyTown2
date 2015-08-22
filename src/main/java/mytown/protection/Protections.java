@@ -110,10 +110,9 @@ public class Protections {
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         for (int i = 0; i < ev.world.loadedEntityList.size(); i++) {
             Entity entity = (Entity) ev.world.loadedEntityList.get(i);
-            // Player check, every tick
-
             Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) Math.floor(entity.posX) >> 4, (int) Math.floor(entity.posZ) >> 4);
             //MyTown.instance.log.info("Checking player...");
+            // Player check, every tick
             if (entity instanceof EntityPlayerMP && !(entity instanceof FakePlayer)) {
                 checkPlayer((EntityPlayerMP) entity, town);
             } else {
@@ -138,7 +137,8 @@ public class Protections {
         // TileEntity check
         if(MinecraftServer.getServer().getTickCounter() % 20 == 0) {
             if (activePlacementThreads == 0) {
-                for (TileEntity te : (Iterable<TileEntity>) ev.world.loadedTileEntityList) {
+                for (int i = 0; i < ev.world.loadedTileEntityList.size(); i++) {
+                    TileEntity te = (TileEntity) ev.world.loadedTileEntityList.get(i);
                     for (Protection prot : protectionList) {
                         if (prot.isTileTracked(te.getClass()) && prot.checkTileEntity(te)) {
                             ItemStack itemStack = new ItemStack(te.getBlockType(), 1, te.getBlockMetadata());
