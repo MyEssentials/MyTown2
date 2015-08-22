@@ -38,22 +38,22 @@ public class Ticker {
             return;
 
 
-        for(Resident res : MyTownUniverse.instance.getResidentsMap().values()) {
+        for(Resident res : MyTownUniverse.instance.residents) {
             res.tick();
         }
 
         if((Config.costTownUpkeep > 0 || Config.costAdditionalUpkeep > 0) && ev.phase == TickEvent.Phase.START) {
             if (ticked) {
                 if(lastCalendarDay != -1 && Calendar.getInstance().get(Calendar.DAY_OF_YEAR) != lastCalendarDay) {
-                    for (int i = 0; i < MyTownUniverse.instance.getTownsMap().size(); i++) {
-                        Town town = MyTownUniverse.instance.getTownsMap().values().asList().get(i);
+                    for (int i = 0; i < MyTownUniverse.instance.towns.size(); i++) {
+                        Town town = MyTownUniverse.instance.towns.get(i);
                         if (!(town instanceof AdminTown)) {
-                            town.payUpkeep();
-                            if(town.getDaysNotPaid() == Config.upkeepTownDeletionDays && Config.upkeepTownDeletionDays > 0) {
+                            town.bank.payUpkeep();
+                            if(town.bank.getDaysNotPaid() == Config.upkeepTownDeletionDays && Config.upkeepTownDeletionDays > 0) {
                                 MyTown.instance.LOG.info("Town {} has been deleted because it didn't pay upkeep for {} days.", town.getName(), Config.upkeepTownDeletionDays);
                                 DatasourceProxy.getDatasource().deleteTown(town);
                             } else {
-                                DatasourceProxy.getDatasource().updateTownBank(town, town.getBankAmount());
+                                DatasourceProxy.getDatasource().updateTownBank(town, town.bank.getBankAmount());
                             }
                         }
                     }
@@ -69,7 +69,7 @@ public class Ticker {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent ev) {
         MyTownDatasource ds = DatasourceProxy.getDatasource();
-        Resident res = ds.getOrMakeResident(ev.player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
         if (res != null) {
             res.setPlayer(ev.player);
         } else {
@@ -80,7 +80,7 @@ public class Ticker {
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent ev) {
         MyTownDatasource ds = DatasourceProxy.getDatasource();
-        Resident res = ds.getOrMakeResident(ev.player);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
         if (res != null) {
             res.setPlayer(ev.player);
         }
@@ -94,8 +94,8 @@ public class Ticker {
         if (currentStack == null)
             return;
 
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-        Tool currentTool = res.getCurrentTool();
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
+        Tool currentTool = res.toolContainer.get();
         if (currentTool == null)
             return;
 
@@ -114,8 +114,8 @@ public class Ticker {
             return;
 
         if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
-            Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
-            Tool currentTool = res.getCurrentTool();
+            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
+            Tool currentTool = res.toolContainer.get();
             if(currentTool == null)
                 return;
             if(currentTool.getItemStack() == currentStack) {
@@ -138,7 +138,7 @@ public class Ticker {
 
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent ev) {
-        Resident res = DatasourceProxy.getDatasource().getOrMakeResident(ev.entityPlayer);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         Block block = ev.world.getBlock(ev.x, ev.y, ev.z);
 
         // Shop and plot sale click verify
@@ -153,17 +153,20 @@ public class Ticker {
                     } else if(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
                         Town town = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
                         if(town != null) {
-                            if(town.hasResident(res)) {
-                                Plot plot = town.getPlotAtCoords(ev.world.provider.dimensionId, ev.x, ev.y, ev.z);
+                            if(town.residentsMap.containsKey(res)) {
+                                Plot plot = town.plotsContainer.get(ev.world.provider.dimensionId, ev.x, ev.y, ev.z);
                                 if(plot != null) {
-                                    if(!plot.hasOwner(res)) {
-                                        if (town.canResidentMakePlot(res)) {
+                                    if(!plot.ownersContainer.contains(res)) {
+                                        if (town.plotsContainer.canResidentMakePlot(res)) {
                                             int price = Integer.parseInt(te.signText[2].substring(2, te.signText[2].length()));
                                             if (EconomyProxy.getEconomy().takeMoneyFromPlayer(ev.entityPlayer, price)) {
-                                                for(Resident resInPlot : plot.getOwners()) {
+                                                for(Resident resInPlot : plot.ownersContainer) {
                                                     resInPlot.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.oldOwner", plot.getName()));
                                                 }
-                                                for(Resident resInPlot : plot.getResidents()) {
+                                                for(Resident resInPlot : plot.membersContainer) {
+                                                    DatasourceProxy.getDatasource().unlinkResidentFromPlot(resInPlot, plot);
+                                                }
+                                                for(Resident resInPlot : plot.ownersContainer) {
                                                     DatasourceProxy.getDatasource().unlinkResidentFromPlot(resInPlot, plot);
                                                 }
                                                 DatasourceProxy.getDatasource().linkResidentToPlot(res, plot, true);
@@ -173,7 +176,7 @@ public class Ticker {
                                                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.failed", EconomyProxy.getCurrency(price)));
                                             }
                                         } else {
-                                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.getMaxPlots()));
+                                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.plotsContainer.getMaxPlots()));
                                         }
                                     } else {
                                         res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.sell.alreadyOwner"));

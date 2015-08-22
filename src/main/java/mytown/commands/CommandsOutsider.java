@@ -3,11 +3,12 @@ package mytown.commands;
 
 import mypermissions.api.command.CommandManager;
 import mypermissions.api.command.CommandResponse;
+import mypermissions.api.command.annotation.Command;
 import mypermissions.command.CommandTree;
 import mypermissions.command.CommandTreeNode;
-import mypermissions.api.command.annotation.Command;
 import myessentials.utils.StringUtils;
 import mytown.config.Config;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
@@ -37,14 +38,14 @@ public class CommandsOutsider extends Commands {
 
         if (args.size() < 1) {
             if (sender instanceof EntityPlayer) {
-                Resident res = getDatasource().getOrMakeResident(sender);
+                Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
                 towns.add(getTownFromResident(res));
             } else {
                 throw new MyTownCommandException("You are not a player!");
             }
         } else {
             if ("@a".equals(args.get(0))) {
-                towns = new ArrayList<Town>(getUniverse().getTownsMap().values());
+                towns = new ArrayList<Town>(getUniverse().towns);
                 // TODO Sort
             } else {
                 if(getTownFromName(args.get(0)) != null)
@@ -53,7 +54,7 @@ public class CommandsOutsider extends Commands {
         }
 
         for (Town town : towns) {
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.info", town.getName(), town.getResidents().size(), town.getBlocks().size(), town.getMaxBlocks(), town.getPlots().size(), Formatter.formatResidentsToString(town), Formatter.formatRanksToString(town.getRanks())));
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.info", town.getName(), town.residentsMap.size(), town.townBlocksContainer.size(), town.townBlocksContainer.getMaxBlocks(), town.plotsContainer.size(), town.residentsMap.toString(), town.ranksContainer.toString()));
         }
         return CommandResponse.DONE;
     }
@@ -73,7 +74,7 @@ public class CommandsOutsider extends Commands {
         if (res == null) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
         }
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.resident.info", res.getPlayerName(), Formatter.formatTownsToString(res), Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline())));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.resident.info", res.getPlayerName(), res.townsContainer.toString(true), Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline())));
         return CommandResponse.DONE;
     }
 
@@ -84,7 +85,7 @@ public class CommandsOutsider extends Commands {
             syntax = "/town list",
             console = true)
     public static CommandResponse listCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", Formatter.formatTownsToString(getUniverse().getTownsMap().values())));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", getUniverse().towns.toString()));
         return CommandResponse.DONE;
     }
 
@@ -98,27 +99,27 @@ public class CommandsOutsider extends Commands {
             return CommandResponse.SEND_SYNTAX;
 
         EntityPlayer player = (EntityPlayer) sender;
-        Resident res = getDatasource().getOrMakeResident(sender); // Attempt to get or make the Resident
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender); // Attempt to get or make the Resident
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
 
-        if (res.getTowns().size() >= Config.maxTowns)
+        if (res.townsContainer.size() >= Config.maxTowns)
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
-         if (getDatasource().hasTown(args.get(0))) // Is the town name already in use?
+         if (getUniverse().towns.contains(args.get(0))) // Is the town name already in use?
             throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
-        if (getDatasource().hasBlock(player.dimension, (int) player.posX >> 4, (int) player.posZ >> 4)) // Is the Block already claimed?
+        if (getUniverse().blocks.contains(player.dimension, (int) player.posX >> 4, (int) player.posZ >> 4)) // Is the Block already claimed?
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
         for (int x = ((int) player.posX >> 4) - Config.distanceBetweenTowns; x <= ((int) player.posX >> 4) + Config.distanceBetweenTowns; x++) {
             for (int z = ((int) player.posZ >> 4) - Config.distanceBetweenTowns; z <= ((int) player.posZ >> 4) + Config.distanceBetweenTowns; z++) {
                 Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                if (nearbyTown != null && !(Boolean)nearbyTown.getValue(FlagType.NEARBY))
+                if (nearbyTown != null && !(Boolean)nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
                     throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
             }
         }
 
         makePayment(player, Config.costAmountMakeTown + Config.costAmountClaim);
 
-        Town town = getDatasource().newTown(args.get(0), res); // Attempt to create the Town
+        Town town = getUniverse().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
             throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
 
@@ -132,11 +133,11 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             syntax = "/town map [on|off]")
     public static CommandResponse mapCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         if (args.size() == 0) {
             Formatter.sendMap(res);
         } else {
-            res.setMapOn(args.get(0).equals("on"));
+            //res.setMapOn(args.get(0).equals("on"));
         }
         return CommandResponse.DONE;
     }
@@ -148,7 +149,7 @@ public class CommandsOutsider extends Commands {
             syntax = "/town accept [town]",
             completionKeys = {"townCompletion"})
     public static CommandResponse acceptCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
         if (args.size() == 0) {
@@ -161,7 +162,7 @@ public class CommandsOutsider extends Commands {
             if (!invites.contains(town))
                 throw new MyTownCommandException("mytown.cmd.err.invite.town.noinvitations");
         }
-        if (res.getTowns().size() >= Config.maxTowns)
+        if (res.townsContainer.size() >= Config.maxTowns)
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
 
         getDatasource().deleteTownInvite(res, town, true);
@@ -179,7 +180,7 @@ public class CommandsOutsider extends Commands {
             syntax = "/town refuse [town]",
             completionKeys = {"townCompletion"})
     public static CommandResponse refuseCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
         if(invites.size() > 1)
@@ -198,6 +199,7 @@ public class CommandsOutsider extends Commands {
         return CommandResponse.DONE;
     }
 
+    /*
     @Command(
             name = "friends",
             permission = "mytown.cmd.outsider.friends",
@@ -314,6 +316,7 @@ public class CommandsOutsider extends Commands {
         toAdd.sendMessage(getLocal().getLocalization("mytown.notification.friends.gotRefused", res.getPlayerName()));
         return CommandResponse.DONE;
     }
+    */
 
     @Command(
             name = "help",
@@ -354,12 +357,12 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             syntax = "/town invites")
     public static CommandResponse invitesCommand(ICommandSender sender, List<String> args) {
-        Resident res = getDatasource().getOrMakeResident(sender);
-        if (res.getInvites().size() == 0)
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+        if (res.townInvitesContainer.size() == 0)
             res.sendMessage(getLocal().getLocalization("mytown.notification.resident.noInvites"));
         else {
             String formattedList = null;
-            for (Town town : res.getInvites())
+            for (Town town : res.townInvitesContainer)
                 if (formattedList == null)
                     formattedList = EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
                 else

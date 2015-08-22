@@ -33,7 +33,7 @@ public class ProtectionUtils {
         for (Protection prot : Protections.instance.getProtectionList()) {
             if (prot.isTileTracked(te))
                 for (FlagType flagType : prot.getFlagsForTile(te)) {
-                    if (!town.hasBlockWhitelist(dim, x, y, z, flagType)) {
+                    if (!town.blockWhitelistsContainer.contains(dim, x, y, z, flagType)) {
                         BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, flagType);
                         DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
                     }
@@ -48,7 +48,7 @@ public class ProtectionUtils {
         for (Protection prot : Protections.instance.getProtectionList()) {
             if (prot.isTileTracked(te))
                 for (FlagType flagType : prot.getFlagsForTile(te)) {
-                    BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
+                    BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
                     if (bw != null) {
                         bw.delete();
                     }

@@ -69,14 +69,14 @@ public class WhitelisterTool extends Tool {
     @Override
     protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
         if(town == null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.getSelectedTown().getName()));
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.townsContainer.getMainTown().getName()));
             return false;
         }
 
         //TODO: Switch to using proper permission strings
-        if(!(town.getResidentRank(owner).getName().equals("Assistant") || town.getResidentRank(owner).getName().equals("Mayor"))) {
-            Plot plot = town.getPlotAtCoords(dim, x, y, z);
-            if(plot == null || !plot.hasOwner(owner)) {
+        if(!(town.residentsMap.get(owner).getName().equals("Assistant") || town.residentsMap.get(owner).getName().equals("Mayor"))) {
+            Plot plot = town.plotsContainer.get(dim, x, y, z);
+            if(plot == null || !plot.ownersContainer.contains(owner)) {
                 owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.whitelist"));
                 return false;
             }
@@ -87,7 +87,7 @@ public class WhitelisterTool extends Tool {
 
     private void removeWhitelists(Town town, int dim, int x, int y, int z) {
         for (FlagType flagType : whitelistableFlags) {
-            BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
+            BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
             if (bw != null) {
                 DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
                 owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
@@ -96,7 +96,7 @@ public class WhitelisterTool extends Tool {
     }
 
     private void addWhitelists(FlagType flagType, Town town, int dim, int x, int y, int z) {
-        BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
+        BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
         if (bw == null) {
             bw = new BlockWhitelist(dim, x, y, z, flagType);
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));

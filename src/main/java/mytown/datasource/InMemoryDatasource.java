@@ -45,11 +45,13 @@ public class InMemoryDatasource extends MyTownDatasource {
         return true;
     }
 
+    /*
     @Override
     protected boolean loadNations() {
         LOG.debug("Loading Nations");
         return true;
     }
+    */
 
     @Override
     protected boolean loadTownFlags() {
@@ -70,16 +72,6 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     protected boolean loadSelectedTowns() {
-        return false;
-    }
-
-    @Override
-    protected boolean loadFriends() {
-        return false;
-    }
-
-    @Override
-    protected boolean loadFriendRequests() {
         return false;
     }
 
@@ -108,11 +100,12 @@ public class InMemoryDatasource extends MyTownDatasource {
         return false;
     }
 
+    /*
     @Override
     protected boolean loadTownsToNations() {
         return false;
     }
-
+    */
     @Override
     protected boolean loadResidentsToPlots() {
         return false;
@@ -120,8 +113,8 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveTown(Town town) {
-        LOG.debug("Saving Town %s", town.getName());
-        if (MyTownUniverse.instance.hasTown(town)) { // Update
+        LOG.debug("Saving Town {}", town.getName());
+        if (getUniverse().towns.contains(town)) { // Update
             if (town.getOldName() != null) { // Rename
                 MyTownUniverse.instance.removeTown(town);
                 MyTownUniverse.instance.addTown(town);
@@ -135,8 +128,8 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveBlock(TownBlock block) {
-        LOG.debug("Saving Block %s", block.getKey());
-        if (MyTownUniverse.instance.hasTownBlock(block)) { // Update
+        LOG.debug("Saving Block {}", block.getKey());
+        if (getUniverse().blocks.contains(block)) { // Update
         } else { // Insert
             MyTownUniverse.instance.addTownBlock(block);
         }
@@ -144,9 +137,9 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveRank(Rank rank, boolean isDefault) {
-        LOG.debug("Saving Rank %s", rank.getKey());
-        if (MyTownUniverse.instance.hasRank(rank)) { // Update
+    public boolean saveRank(Rank rank) {
+        LOG.debug("Saving Rank {};{}", rank.getName(), rank.getTown().getName());
+        if (getUniverse().ranks.contains(rank)) { // Update
         } else { // Insert
             MyTownUniverse.instance.addRank(rank);
         }
@@ -160,8 +153,8 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveResident(Resident resident) {
-        LOG.debug("Saving Resident %s (%s)", resident.getPlayerName(), resident.getUUID().toString());
-        if (MyTownUniverse.instance.hasResident(resident)) { // Update
+        LOG.debug("Saving Resident {} ({})", resident.getPlayerName(), resident.getUUID().toString());
+        if (getUniverse().residents.contains(resident)) { // Update
         } else { // Insert
             MyTownUniverse.instance.addResident(resident);
         }
@@ -170,17 +163,12 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean savePlot(Plot plot) {
-        LOG.debug("Saving Plot %s", plot.getKey());
-        if (MyTownUniverse.instance.hasPlot(plot)) { // Update
+        LOG.debug("Saving Plot {}", plot.getKey());
+        if (getUniverse().plots.contains(plot)) { // Update
         } else { // Insert
             MyTownUniverse.instance.addPlot(plot);
         }
         return true;
-    }
-
-    @Override
-    public boolean saveNation(Nation nation) {
-        return false;
     }
 
     @Override
@@ -200,16 +188,6 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveSelectedTown(Resident res, Town town) {
-        return true;
-    }
-
-    @Override
-    public boolean saveFriendLink(Resident res1, Resident res2) {
-        return true;
-    }
-
-    @Override
-    public boolean saveFriendRequest(Resident res1, Resident res2) {
         return true;
     }
 
@@ -238,7 +216,7 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveNation(Nation nation) {
-        log.debug("Saving Nation %s", nation.getName());
+        log.debug("Saving Nation {}", nation.getName());
         if (MyTownUniverse.instance.nations.containsValue(nation)) { // Update
         } else { // Insert
             MyTownUniverse.instance.nations.put(nation.getName(), nation);
@@ -248,7 +226,7 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Plot plot) {
-        log.debug("Saving Flag %s for plot:", flag.getName(), plot.getKey());
+        log.debug("Saving Flag {} for plot:", flag.getName(), plot.getKey());
         if (plot.hasFlag(flag.getName())) { // Update
         } else { // Insert
             plot.addFlag(flag);
@@ -269,7 +247,7 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Town town) {
-        log.debug("Saving Flag %s for town:", flag.getName(), town.getName());
+        log.debug("Saving Flag {} for town:", flag.getName(), town.getName());
         if (town.hasFlag(flag.getName())) { // Update
         } else { // Insert
             town.addFlag(flag);
@@ -295,6 +273,7 @@ public class InMemoryDatasource extends MyTownDatasource {
         return false;
     }
 
+    /*
     @Override
     public boolean linkTownToNation(Town town, Nation nation) {
         return true;
@@ -309,6 +288,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     public boolean updateTownToNationLink(Town town, Nation nation) {
         return true;
     }
+    */
 
     @Override
     public boolean linkResidentToPlot(Resident res, Plot plot, boolean isOwner) {
@@ -332,39 +312,46 @@ public class InMemoryDatasource extends MyTownDatasource {
 
     @Override
     public boolean deleteTown(Town town) {
-        LOG.debug("Deleting Town %s", town);
-        return MyTownUniverse.instance.removeTown(town);
+        LOG.debug("Deleting Town {}", town);
+        MyTownUniverse.instance.removeTown(town);
+        return true;
     }
 
     @Override
     public boolean deleteBlock(TownBlock townBlock) {
-        LOG.debug("Deleting Block %s", townBlock.getKey());
-        return MyTownUniverse.instance.removeTownBlock(townBlock);
+        LOG.debug("Deleting Block {}", townBlock.getKey());
+        MyTownUniverse.instance.removeTownBlock(townBlock);
+        return true;
     }
 
     @Override
     public boolean deleteRank(Rank rank) {
-        LOG.debug("Deleting Rank %s", rank.getKey());
-        return MyTownUniverse.instance.removeRank(rank);
+        LOG.debug("Deleting Rank {};{}", rank.getName(), rank.getTown().getName());
+        MyTownUniverse.instance.removeRank(rank);
+        return true;
     }
 
     @Override
     public boolean deleteResident(Resident resident) {
-        LOG.debug("Deleting Resident %s (%s)", resident.getPlayerName(), resident.getUUID().toString());
-        return MyTownUniverse.instance.removeResident(resident);
+        LOG.debug("Deleting Resident {} ({})", resident.getPlayerName(), resident.getUUID().toString());
+        MyTownUniverse.instance.removeResident(resident);
+        return true;
     }
 
     @Override
     public boolean deletePlot(Plot plot) {
-        LOG.debug("Deleting Plot %s", plot.getKey());
-        return MyTownUniverse.instance.removePlot(plot);
+        LOG.debug("Deleting Plot {}", plot.getKey());
+        MyTownUniverse.instance.removePlot(plot);
+        return true;
     }
 
+    /*
     @Override
     public boolean deleteNation(Nation nation) {
-        LOG.debug("Deleting Nation %s", nation.getName());
+        LOG.debug("Deleting Nation {}", nation.getName());
         return MyTownUniverse.instance.removeNation(nation);
     }
+    */
 
     @Override
     public boolean deleteFlag(Flag flag, Town town) {
@@ -387,16 +374,6 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean deleteFriendLink(Resident res1, Resident res2) {
-        return true;
-    }
-
-    @Override
-    public boolean deleteFriendRequest(Resident res1, Resident res2) {
-        return true;
-    }
-
-    @Override
     public boolean deleteTownInvite(Resident res, Town town, boolean response) {
         return true;
     }
@@ -407,7 +384,7 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean removeRankPermission(Rank rank, String perm) {
+    public boolean deleteRankPermission(Rank rank, String perm) {
         return false;
     }
 

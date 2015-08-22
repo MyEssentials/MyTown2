@@ -104,6 +104,7 @@ public class MyTown {
 
         ProtectionParser.start();
         SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
+        LOG.info("Started");
     }
 
     @EventHandler
@@ -117,14 +118,6 @@ public class MyTown {
      * Registers all commands
      */
     private void registerCommands() {
-        Method m = null;
-        try {
-            m = Commands.class.getMethod("firstPermissionBreach", String.class, ICommandSender.class);
-        } catch (Exception e) {
-            LOG.info("Failed to get first permission breach method.");
-            LOG.error(ExceptionUtils.getStackTrace(e));
-        }
-
         CommandManager.registerCommands(CommandsEveryone.class, null, getLocal(), new RankPermissionManager());
         CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", getLocal(), null);
         if (Config.modifiableRanks)

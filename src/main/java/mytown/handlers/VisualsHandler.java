@@ -5,8 +5,8 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import myessentials.utils.WorldUtils;
+import mytown.api.container.TownBlocksContainer;
 import mytown.entities.Plot;
-import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -139,7 +139,7 @@ public class VisualsHandler {
     }
 
 
-    public void markTownBorders(Town town, EntityPlayerMP caller) {
+    public void markTownBorders(TownBlocksContainer townBlocksContainer, EntityPlayerMP caller) {
         int[] dx = {-1, -1, 0, 1, 1, 1, 0, -1};
         int[] dz = {0, 1, 1, 1, 0, -1, -1, -1};
 
@@ -147,11 +147,11 @@ public class VisualsHandler {
 
         List<BlockCoords> blockList = new ArrayList<BlockCoords>();
 
-        for (TownBlock block : town.getBlocks()) {
+        for (TownBlock block : townBlocksContainer) {
 
             // Showing lines in borders
             for (int i = 0; i < 8; i += 2) {
-                if (town.getBlockAtCoords(block.getDim(), block.getX() + dx[i], block.getZ() + dz[i]) == null) {
+                if (townBlocksContainer.get(block.getDim(), block.getX() + dx[i], block.getZ() + dz[i]) == null) {
                     if (dx[i] == 0) {
                         z = dz[i] == -1 ? block.getZ() << 4 : (block.getZ() << 4) + 15;
                         x = block.getX() << 4;
@@ -182,7 +182,7 @@ public class VisualsHandler {
             }
         }
 
-        addMarkedBlocks(caller, town, blockList);
+        addMarkedBlocks(caller, townBlocksContainer, blockList);
     }
 
     /**
@@ -239,7 +239,7 @@ public class VisualsHandler {
         }
     }
 
-    public void updateTownBorders(Town town) {
+    public void updateTownBorders(TownBlocksContainer townBlocksContainer) {
         List<EntityPlayerMP> callers = new ArrayList<EntityPlayerMP>();
         for(VisualObject visualObject : markedBlocks) {
             if(visualObject.isTown()) {
@@ -250,7 +250,7 @@ public class VisualsHandler {
             }
         }
         for(EntityPlayerMP player : callers) {
-            markTownBorders(town, player);
+            markTownBorders(townBlocksContainer, player);
         }
     }
 
@@ -344,7 +344,7 @@ public class VisualsHandler {
         }
 
         public boolean isTown() {
-            return object != null && object instanceof Town;
+            return object != null && object instanceof TownBlocksContainer;
         }
 
         public boolean isPlot() {

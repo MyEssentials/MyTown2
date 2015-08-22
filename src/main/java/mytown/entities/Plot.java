@@ -1,27 +1,20 @@
 package mytown.entities;
 
-import com.google.common.collect.ImmutableList;
-import myessentials.utils.PlayerUtils;
 import myessentials.entities.Volume;
-import mytown.api.interfaces.IFlagsContainer;
-import mytown.api.interfaces.IResidentsContainer;
-import mytown.entities.flag.Flag;
+import myessentials.utils.PlayerUtils;
+import mytown.api.container.FlagsContainer;
+import mytown.api.container.ResidentsContainer;
 import mytown.entities.flag.FlagType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-public class Plot implements IFlagsContainer, IResidentsContainer {
+public class Plot {
     private int dbID;
     private final int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
     private String key, name;
 
-    private List<Flag> flags = new ArrayList<Flag>();
-    private List<Resident> whitelist = new ArrayList<Resident>();
-    private List<Resident> owners = new ArrayList<Resident>();
+    public final FlagsContainer flagsContainer = new FlagsContainer();
+    public final ResidentsContainer membersContainer = new ResidentsContainer();
+    public final ResidentsContainer ownersContainer = new ResidentsContainer();
 
     public Plot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         if (x1 > x2) {
@@ -54,6 +47,19 @@ public class Plot implements IFlagsContainer, IResidentsContainer {
 
 
         updateKey();
+    }
+
+    public boolean isCoordWithin(int dim, int x, int y, int z) {
+        return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
+    }
+
+    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
+        return !flagsContainer.getValue(flagType).equals(denialValue) || membersContainer.contains(res) || ownersContainer.contains(res) || PlayerUtils.isOp(res.getPlayer());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Plot: {Name: %s, Dim: %s, Start: [%s, %s, %s], End: [%s, %s, %s]}", name, dim, x1, y1, z1, x2, y2, z2);
     }
 
     public int getDim() {
@@ -151,122 +157,4 @@ public class Plot implements IFlagsContainer, IResidentsContainer {
     public int getDbID() {
         return this.dbID;
     }
-
-    public boolean isCoordWithin(int dim, int x, int y, int z) {
-        return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Plot: {Name: %s, Dim: %s, Start: [%s, %s, %s], End: [%s, %s, %s]}", name, dim, x1, y1, z1, x2, y2, z2);
-    }
-
-    /* ---- IHasFlags ----- */
-
-    @Override
-    public void addFlag(Flag flag) {
-        flags.add(flag);
-        Collections.sort(flags);
-    }
-
-    @Override
-    public boolean hasFlag(FlagType type) {
-        for (Flag flag : flags)
-            if (flag.getFlagType().equals(type))
-                return true;
-        return false;
-    }
-
-    @Override
-    public ImmutableList<Flag> getFlags() {
-        return ImmutableList.copyOf(flags);
-    }
-
-    @Override
-    public Flag getFlag(FlagType type) {
-        for (Flag flag : flags)
-            if (flag.getFlagType().equals(type))
-                return flag;
-        return null;
-    }
-
-    @Override
-    public boolean removeFlag(FlagType type) {
-        for (Iterator<Flag> it = flags.iterator(); it.hasNext(); ) {
-            if (it.next().getFlagType() == type) {
-                it.remove();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public Object getValue(FlagType type) {
-        for (Flag flag : flags) {
-            if (flag.getFlagType() == type)
-                return flag.getValue();
-        }
-        return town.getValue(type);
-    }
-
-    @Override
-    public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
-        if (!isCoordWithin(dim, x, y, z))
-            return null;
-        return getValue(flagType);
-    }
-
-    /* ---- IHasResidents ----- */
-
-    @Override
-    public void addResident(Resident res) {
-        whitelist.add(res);
-    }
-
-    @Override
-    public void removeResident(Resident res) {
-        whitelist.remove(res);
-        owners.remove(res);
-    }
-
-    @Override
-    public boolean hasResident(Resident res) {
-        return whitelist.contains(res) || owners.contains(res);
-    }
-
-    @Override
-    public ImmutableList<Resident> getResidents() {
-        return ImmutableList.copyOf(whitelist);
-    }
-
-    public void addOwner(Resident res) {
-        owners.add(res);
-        whitelist.add(res);
-    }
-
-    public void removeOwner(Resident res) {
-        owners.remove(res);
-        whitelist.remove(res);
-    }
-
-    public boolean hasOwner(Resident res) {
-        return owners.contains(res);
-    }
-
-    public ImmutableList<Resident> getOwners() {
-        return ImmutableList.copyOf(owners);
-    }
-
-    public boolean residentHasFriendInPlot(Resident res) {
-        for (Resident r : owners)
-            if (r.hasFriend(res))
-                return true;
-        return false;
-    }
-
-    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
-        return !getValue(flagType).equals(denialValue) || hasResident(res) || PlayerUtils.isOp(res.getPlayer());
-    }
-
 }

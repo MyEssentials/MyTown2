@@ -125,6 +125,12 @@ mytown.cmd.err.ranks.perm.notexist=&cThe permission %s does not exist
 mytown.cmd.err.ranks.perm.add.already=&cThe rank %s already has permission %s
 mytown.cmd.err.ranks.perm.add.failed=&cFailed to add permission
 mytown.cmd.err.ranks.perm.remove.failed=&cFailed to remove permission
+mytown.notification.town.ranks=&3Ranks: %s
+mytown.cmd.err.ranks.cantDelete=&cYou can't delete this type of rank
+mytown.cmd.err.ranks.set.already=&cThe rank already has type %s
+mytown.notification.ranks.set.successful=&3Rank %s has been set to type %s successfully
+mytown.cmd.err.ranks.typeNotExists=&cRank type %s does not exist
+mytown.notification.ranks.reset=&3Ranks have been reset to their initial state
 
 # /t plot
 mytown.cmd.usage.plot.rename=&3/t plot rename <name>
@@ -155,7 +161,7 @@ mytown.cmd.err.plot.insideOther=&cSelection is inside plot %s
 mytown.cmd.err.plot.perm.set.noPermission=&cYou are not this plot's owner
 mytown.cmd.err.plot.name=&cPlot with name %s already exists
 
-mytown.notification.plot.info=&6--------[[&2Plot: &a%s&6]]--------\n&2Residents: &f%s\n&2Borders: &9(%s, %s, %s)&7 --> &9(%s, %s, %s)
+mytown.notification.plot.info=&6--------[[&2Plot: &a%s&6]]--------\n&2Owners: &f%s\n&2Members: &f%s\n&2Borders: &9(%s, %s, %s)&7 --> &9(%s, %s, %s)
 mytown.notification.resident.info=&6--------[[&a%s&6]]--------\n&2Towns: &f%s \n&2Joined: &a%s\n&2Last online: &a%s
 mytown.notification.town.owners=&6 Owners: &c%s
 
@@ -174,7 +180,7 @@ mytown.cmd.err.perm.whitelist.noPermssion=&cYou do not have permission to whitel
 
 # /t promote
 mytown.cmd.usage.promote=&3/t promote <resident> <rank>
-mytown.cmd.err.promote.notMayor=&cYou cannot promote anyone to mayor. &3Try /t pass <newMFayor>
+mytown.cmd.err.promote.notMayor=&cYou cannot have 2 Mayors in one town. Try passing mayorship with /t pass <resident>
 mytown.cmd.promote.success.sender=&3%s has been &apromoted&3 to rank &f%s
 mytown.cmd.promote.success.target=&aYou have been promoted to rank %s
 
@@ -198,9 +204,6 @@ mytown.cmd.usage.leave.pass=&3/t pass <resident>
 mytown.cmd.usage.bank.pay=&3/t bank pay <amount>
 mytown.cmd.usage.bank.withdraw=&3/t bank withdraw <amount>
 mytown.cmd.err.bank.withdraw=&cYou only have %s in the bank
-
-# /t ranks
-mytown.notification.town.ranks=&3Ranks: %s
 
 # /t rename
 mytown.cmd.usage.rename=&3/t rename <newName>
@@ -275,7 +278,7 @@ mytown.adm.cmd.usage.rename=&3/ta rename <townName> <newName>
 mytown.notification.block.added=&aTown block from (%s, %s) to (%s, %s) has been added to town %s
 mytown.notification.block.removed=&aTown block from (%s, %s) to (%s, %s) has been removed from town %s
 mytown.notification.block.list=Blocks in town %s: %s
-mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s: %s
+mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s: \n%s
 mytown.notification.plot.start=&3Right click 2 corners with the Selector to create a plot. Use "/t plot &3select reset" to reset selection
 mytown.notification.plot.selectionStart=&9First&f corner selected
 mytown.notification.plot.selectionEnd=&9Second&f corner selected
@@ -417,6 +420,7 @@ mytown.cmd.assistant.rename.help=Renames the town
 mytown.cmd.everyone.plot.new.help=Creates new plot
 mytown.cmd.everyone.wild.perm.help=Shows the wilderness permissions
 mytown.cmd.assistant.bank.withdraw.help=Withdraws money from the town bank into your wallet
+mytown.cmd.assistant.ranks.reset.help=Resets all ranks to their initial state. Deletes all extra ranks.
 
 mytown.adm.cmd.config.help=Everything about the configs
 mytown.adm.cmd.config.reload.help=Reloads the config
@@ -449,15 +453,15 @@ mytown.adm.cmd.res.blocks.extra.set.help=Sets the extra amount of blocks for a r
 mytown.adm.cmd.res.blocks.extra.add.help=Adds to the the extra amount of blocks for a resident
 mytown.adm.cmd.res.blocks.extra.remove.help=Subtracts from the extra amount of blocks for a resident
 mytown.adm.cmd.town.help=Everything about a town
-mytown.adm.cmd.town.blocks.help=Shows information about the blocks in a town
-mytown.adm.cmd.town.blocks.extra.help=Shows information about the extra blocks
-mytown.adm.cmd.town.blocks.extra.set.help=Sets the extra amount of blocks for a town
-mytown.adm.cmd.town.blocks.extra.add.help=Adds to the extra amount of blocks for a town
-mytown.adm.cmd.town.blocks.extra.remove.help=Subtracts from the extra amount of blocks for a town
-mytown.adm.cmd.town.blocks.farClaims.help=Shows information about the far claims
-mytown.adm.cmd.town.blocks.farClaims.set.help=Sets the max far claims for a town
-mytown.adm.cmd.town.blocks.farClaims.add.help=Adds to the max far claims of a town
-mytown.adm.cmd.town.blocks.farClaims.remove.help=Subtracts from the max far claims of a town
+mytown.adm.cmd.blocks.help=Shows information about the blocks in a town
+mytown.adm.cmd.blocks.extra.help=Shows information about the extra blocks
+mytown.adm.cmd.blocks.extra.set.help=Sets the extra amount of blocks for a town
+mytown.adm.cmd.blocks.extra.add.help=Adds to the extra amount of blocks for a town
+mytown.adm.cmd.blocks.extra.remove.help=Subtracts from the extra amount of blocks for a town
+mytown.adm.cmd.blocks.farClaims.help=Shows information about the far claims
+mytown.adm.cmd.blocks.farClaims.set.help=Sets the max far claims for a town
+mytown.adm.cmd.blocks.farClaims.add.help=Adds to the max far claims of a town
+mytown.adm.cmd.blocks.farClaims.remove.help=Subtracts from the max far claims of a town
 mytown.adm.cmd.debug.itemClass.help=Shows information about the class of the held item
 mytown.adm.cmd.borders.help=Information about borders of a town
 mytown.adm.cmd.borders.show.help=Visually shows the town borders

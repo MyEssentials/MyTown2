@@ -32,23 +32,23 @@ public class EntitiesTest {
 
         //Claiming first block
         TownBlock block = new TownBlock(0, 0, 0, false, 0, town);
-        town.addBlock(block);
+        town.townBlocksContainer.add(block);
         // Saving and adding all flags to the database
         for (FlagType type : FlagType.values()) {
             if (type.canTownsModify()) {
-                town.addFlag(new Flag(type, type.getDefaultValue()));
+                town.flagsContainer.add(new Flag(type, type.getDefaultValue()));
             }
         }
 
-        Rank rank = new Rank("Test", town);
-        town.addRank(rank);
-        town.setBankAmount(100);
+        Rank rank = new Rank("Test", town, Rank.Type.REGULAR);
+        town.ranksContainer.add(rank);
+        town.bank.setBankAmount(100);
 
-        resident = new Resident(UUID.randomUUID().toString(), "TestPlayer");
-        town.addResident(resident, rank);
+        resident = new Resident(UUID.randomUUID(), "TestPlayer");
+        town.residentsMap.put(resident, rank);
 
         plot = new Plot("TestPlot", town, 0, 0, 0, 0, 14, 90, 14);
-        town.addPlot(plot);
+        town.plotsContainer.add(plot);
     }
 
     //@Test
@@ -62,7 +62,7 @@ public class EntitiesTest {
     public void shouldCheckPermissionsWithRestrictionsFlagProperly() {
         // Outside of plot, inside town with Restrictions flag false
         Assert.assertTrue(town.hasPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
-        town.getFlag(FlagType.RESTRICTIONS).setValueFromString("true");
+        town.flagsContainer.get(FlagType.RESTRICTIONS).setValueFromString("true");
         Assert.assertFalse(town.hasPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
     }
 

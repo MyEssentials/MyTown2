@@ -2,6 +2,7 @@ package mytown.util;
 
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
@@ -29,7 +30,7 @@ public class MyTownUtils {
      * Returns the town at the specified position or null if nothing found.
      */
     public static Town getTownAtPosition(int dim, int x, int z) {
-        TownBlock block = getDatasource().getBlock(dim, x, z);
+        TownBlock block = MyTownUniverse.instance.blocks.get(dim, x, z);
         if (block == null)
             return null;
         return block.getTown();
@@ -68,7 +69,7 @@ public class MyTownUtils {
         Town town = getTownAtPosition(dim, x >> 4, z >> 4);
         if (town == null)
             return false;
-        BlockWhitelist bw = town.getBlockWhitelist(dim, x, y, z, flagType);
+        BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
         if (bw != null) {
             if (bw.isDeleted()) {
                 getDatasource().deleteBlockWhitelist(bw, town);

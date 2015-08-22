@@ -3,6 +3,7 @@ package mytown.datasource;
 import com.google.common.collect.Lists;
 import mytown.MyTown;
 import mytown.config.Config;
+import mytown.entities.Rank;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Logger;
 
@@ -229,6 +230,8 @@ public class SQLSchema {
                 "Towns ADD maxFarClaims INTEGER DEFAULT " + Config.maxFarClaims));
         updates.add(new DBUpdate("4.12.2015.3", "Add 'pricePaid' to Blocks", "ALTER TABLE " + this.sqlDatasource.prefix +
                 "Blocks ADD pricePaid INTEGER DEFAULT " + Config.costAmountClaim));
+        updates.add(new DBUpdate("8.21.2015.1", "Add 'type' to Ranks", "ALTER TABLE " + this.sqlDatasource.prefix +
+                "Ranks ADD type VARCHAR(50) DEFAULT " + Rank.Type.REGULAR));
     }
 
     /**

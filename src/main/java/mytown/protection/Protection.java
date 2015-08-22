@@ -5,6 +5,7 @@ import mytown.MyTown;
 import myessentials.entities.Volume;
 import myessentials.utils.WorldUtils;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -352,10 +353,10 @@ public class Protection {
     }
 
     public boolean hasPermission(Resident res, Segment segment, int dim, int x, int y, int z) {
-        TownBlock townBlock = getDatasource().getBlock(dim, x >> 4, z >> 4);
+        TownBlock townBlock = MyTownUniverse.instance.blocks.get(dim, x >> 4, z >> 4);
         if(townBlock == null) {
             if (res == null) {
-                return !Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue());
+                return !Wild.instance.flagsContainer.get(segment.getFlag()).equals(segment.getDenialValue());
             } else {
                 if (!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                     res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
@@ -368,7 +369,7 @@ public class Protection {
                 return !town.getValueAtCoords(dim, x, y, z, segment.getFlag()).equals(segment.getDenialValue());
             } else {
                 if (!town.hasPermission(res, segment.getFlag(), segment.getDenialValue(), dim, x, y, z)) {
-                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), Formatter.formatOwnersToString(town, dim, x, y, z));
+                    res.protectionDenial(segment.getFlag(), town.formatOwners(dim, x, y, z));
                     return false;
                 }
             }
@@ -381,7 +382,7 @@ public class Protection {
 
         for (int townBlockX = area.getMinX() >> 4; townBlockX <= area.getMaxX() >> 4; townBlockX++) {
             for (int townBlockZ = area.getMinZ() >> 4; townBlockZ <= area.getMaxZ() >> 4; townBlockZ++) {
-                TownBlock townBlock = getDatasource().getBlock(dim, townBlockX, townBlockZ);
+                TownBlock townBlock = MyTownUniverse.instance.blocks.get(dim, townBlockX, townBlockZ);
                 
                 if (townBlock == null) {
                     inWild = true;
@@ -391,16 +392,16 @@ public class Protection {
                     int totalIntersectArea = 0;
 
                     // Check every plot in the current TownBlock and sum all plot areas
-                    for (Plot plot : townBlock.getPlots()) {
+                    for (Plot plot : townBlock.plotsContainer) {
                         int plotIntersectArea = plot.getIntersectingArea(rangeBox);
                         if (plotIntersectArea > 0) {
                             if (res == null) {
-                                if (plot.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
+                                if (plot.flagsContainer.get(segment.getFlag()).equals(segment.getDenialValue())) {
                                     return false;
                                 }
                             } else {
                                 if (!plot.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                    res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
+                                    res.protectionDenial(segment.getFlag(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.residentsMap.getMayor() == null ? "SERVER ADMINS" : town.residentsMap.getMayor().getPlayerName()));
                                     return false;
                                 }
                             }
@@ -411,12 +412,12 @@ public class Protection {
                     // If plot area sum is not equal to range area, check town permission
                     if (totalIntersectArea != getArea(rangeBox)) {
                         if (res == null) {
-                            if (town.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
+                            if (town.flagsContainer.get(segment.getFlag()).equals(segment.getDenialValue())) {
                                 return false;
                             }
                         } else {
                             if (!town.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                res.protectionDenial(segment.getFlag().getLocalizedProtectionDenial(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.getMayor() == null ? "SERVER ADMINS" : town.getMayor().getPlayerName()));
+                                res.protectionDenial(segment.getFlag(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.residentsMap.getMayor() == null ? "SERVER ADMINS" : town.residentsMap.getMayor().getPlayerName()));
                                 return false;
                             }
                         }
@@ -427,7 +428,7 @@ public class Protection {
 
         if (inWild) {
             if (res == null) {
-                if (Wild.instance.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
+                if (Wild.instance.flagsContainer.get(segment.getFlag()).equals(segment.getDenialValue())) {
                     return false;
                 }
             } else {
