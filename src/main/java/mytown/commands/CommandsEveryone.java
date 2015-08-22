@@ -85,6 +85,8 @@ public class CommandsEveryone extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.spawn.cooldown", res.getTeleportCooldown(), res.getTeleportCooldown() / 20);
 
         makePayment(player, amount);
+        town.bank.addAmount(amount);
+        getDatasource().saveTownBank(town.bank);
         town.sendToSpawn(res);
         return CommandResponse.DONE;
     }
