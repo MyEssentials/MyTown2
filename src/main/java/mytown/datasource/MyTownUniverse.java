@@ -34,6 +34,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public final TownBlocksContainer blocks = new TownBlocksContainer();
     public final PlotsContainer plots = new PlotsContainer();
     public final RanksContainer ranks = new RanksContainer();
+    public final BanksContainer banks = new BanksContainer();
     public final List<Integer> worlds = new ArrayList<Integer>();
 
     public MyTownUniverse() {
@@ -115,7 +116,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
                 MyTown.instance.LOG.error("Problem linking resident {} to town {}", creator.getPlayerName(), town.getName());
             }
 
-            getDatasource().saveTownBank(town, Config.defaultBankAmount, 0);
+            getDatasource().saveTownBank(town.bank);
         }
 
         TownEvent.fire(new TownEvent.TownCreateEvent(town));
@@ -279,6 +280,11 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         plots.add(plot);
         CommandCompletion.addCompletion("plotCompletion", plot.getName());
     }
+
+    public final void addBank(Bank bank) {
+        banks.add(bank);
+    }
+
 
     public final void addWorld(int dim) {
         worlds.add(dim);

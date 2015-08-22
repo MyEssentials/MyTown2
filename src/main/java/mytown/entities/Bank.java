@@ -7,7 +7,7 @@ public class Bank {
 
     private Town town;
 
-    private int bankAmount = 0;
+    private int amount = 0;
     private int daysNotPaid = 0;
 
     public Bank(Town town) {
@@ -15,8 +15,8 @@ public class Bank {
     }
 
     public boolean makePayment(int amount) {
-        if (bankAmount >= amount) {
-            bankAmount -= amount;
+        if (this.amount >= amount) {
+            this.amount -= amount;
             return true;
         }
         return false;
@@ -33,6 +33,10 @@ public class Bank {
         }
     }
 
+    public Town getTown() {
+        return town;
+    }
+
     public void setDaysNotPaid(int days) {
         this.daysNotPaid = days;
     }
@@ -41,11 +45,16 @@ public class Bank {
         return this.daysNotPaid;
     }
 
-    public void setBankAmount(int amount) {
-        bankAmount = amount;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
-    public int getBankAmount() {
-        return this.bankAmount;
+
+    public int getAmount() {
+        return this.amount;
+    }
+
+    public void addAmount(int amount) {
+        this.amount += amount;
     }
 
     public int getNextPaymentAmount() {

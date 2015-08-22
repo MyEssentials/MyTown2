@@ -53,7 +53,7 @@ public class Ticker {
                                 MyTown.instance.LOG.info("Town {} has been deleted because it didn't pay upkeep for {} days.", town.getName(), Config.upkeepTownDeletionDays);
                                 DatasourceProxy.getDatasource().deleteTown(town);
                             } else {
-                                DatasourceProxy.getDatasource().updateTownBank(town, town.bank.getBankAmount());
+                                DatasourceProxy.getDatasource().saveTownBank(town.bank);
                             }
                         }
                     }

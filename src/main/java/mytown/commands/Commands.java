@@ -229,10 +229,11 @@ public abstract class Commands {
         if(amount == 0)
             return;
 
-        if(town.bank.getBankAmount() < amount)
+        if(town.bank.getAmount() < amount)
             throw new MyTownCommandException("mytown.cmd.err.town.payment", EconomyProxy.getCurrency(amount));
 
-        getDatasource().updateTownBank(town, town.bank.getBankAmount() - amount);
+        town.bank.addAmount(-amount);
+        getDatasource().saveTownBank(town.bank);
         sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.payment", EconomyProxy.getCurrency(amount)));
     }
 
@@ -240,7 +241,8 @@ public abstract class Commands {
         if(amount == 0)
             return;
 
-        getDatasource().updateTownBank(town, town.bank.getBankAmount() + amount);
+        town.bank.addAmount(amount);
+        getDatasource().saveTownBank(town.bank);
         sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.refund", EconomyProxy.getCurrency(amount)));
     }
 }

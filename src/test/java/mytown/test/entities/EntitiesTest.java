@@ -42,7 +42,7 @@ public class EntitiesTest {
 
         Rank rank = new Rank("Test", town, Rank.Type.REGULAR);
         town.ranksContainer.add(rank);
-        town.bank.setBankAmount(100);
+        town.bank.setAmount(100);
 
         resident = new Resident(UUID.randomUUID(), "TestPlayer");
         town.residentsMap.put(resident, rank);

@@ -5,7 +5,6 @@ import myessentials.utils.ChatUtils;
 import myessentials.utils.MathUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
-import mypermissions.api.command.CommandManager;
 import mypermissions.api.command.CommandResponse;
 import mypermissions.api.command.annotation.Command;
 import mytown.config.Config;
@@ -15,7 +14,6 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.proxies.EconomyProxy;
-import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
@@ -612,11 +610,12 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
 
         int amount = Integer.parseInt(args.get(0));
-        if(town.bank.getBankAmount() < amount)
-            throw new MyTownCommandException("mytown.cmd.err.bank.withdraw", EconomyProxy.getCurrency(town.bank.getBankAmount()));
+        if(town.bank.getAmount() < amount)
+            throw new MyTownCommandException("mytown.cmd.err.bank.withdraw", EconomyProxy.getCurrency(town.bank.getAmount()));
 
         makeRefund(res.getPlayer(), amount);
-        getDatasource().updateTownBank(town, town.bank.getBankAmount() - amount);
+        town.bank.addAmount(-amount);
+        getDatasource().saveTownBank(town.bank);
         return CommandResponse.DONE;
     }
 

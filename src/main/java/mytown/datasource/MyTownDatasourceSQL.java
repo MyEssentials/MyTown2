@@ -528,8 +528,10 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             while(rs.next()) {
                 Town town = getUniverse().towns.get(rs.getString("townName"));
 
-                town.bank.setBankAmount(rs.getInt("amount"));
+                town.bank.setAmount(rs.getInt("amount"));
                 town.bank.setDaysNotPaid(rs.getInt("daysNotPaid"));
+
+                getUniverse().addBank(town.bank);
             }
         } catch (SQLException e) {
             LOG.error("Failed to load town banks.");
@@ -1036,15 +1038,27 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveTownBank(Town town, int amount, int daysNotPaid) {
+    public boolean saveTownBank(Bank bank) {
         try {
-            PreparedStatement s = prepare("INSERT INTO " + prefix + "TownBanks VALUES(?, ?, ?)", false);
-            s.setString(1, town.getName());
-            s.setInt(2, amount);
-            s.setInt(3, daysNotPaid);
-            s.executeUpdate();
-            town.bank.setBankAmount(amount);
-            town.bank.setDaysNotPaid(daysNotPaid);
+            if(getUniverse().banks.contains(bank)) {
+                PreparedStatement s = prepare("UPDATE " + prefix + "TownBanks SET amount=?, daysNotPaid=? WHERE townName=?", false);
+                s.setInt(1, bank.getAmount());
+                s.setInt(2, bank.getDaysNotPaid());
+                s.setString(3, bank.getTown().getName());
+                s.executeUpdate();
+            } else {
+                bank.setAmount(Config.defaultBankAmount);
+                bank.setDaysNotPaid(0);
+
+                PreparedStatement s = prepare("INSERT INTO " + prefix + "TownBanks VALUES(?, ?, ?)", false);
+                s.setString(1, bank.getTown().getName());
+                s.setInt(2, bank.getAmount());
+                s.setInt(3, bank.getDaysNotPaid());
+                s.executeUpdate();
+
+                getUniverse().addBank(bank);
+            }
+
         } catch (SQLException e) {
             LOG.error("Failed to save a town's bank.");
             LOG.error(ExceptionUtils.getStackTrace(e));
@@ -1215,23 +1229,6 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
         } catch (SQLException e) {
             LOG.error("Failed to update link {} to plot {} in town {}", res.getPlayerName(), plot.getName(), plot.getTown().getName());
-            LOG.error(ExceptionUtils.getStackTrace(e));
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean updateTownBank(Town town, int amount) {
-        try {
-            PreparedStatement s = prepare("UPDATE " + prefix + "TownBanks SET amount=?, daysNotPaid=? WHERE townName=?", false);
-            s.setInt(1, amount);
-            s.setInt(2, town.bank.getDaysNotPaid());
-            s.setString(3, town.getName());
-            s.executeUpdate();
-            town.bank.setBankAmount(amount);
-        } catch (SQLException e) {
-            LOG.error("Failed to save a town's bank.");
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
@@ -1590,16 +1587,9 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             }
 
             if(!(town instanceof AdminTown)) {
-                try {
-                    PreparedStatement s = prepare("SELECT * FROM " + prefix + "TownBanks WHERE townName=?", true);
-                    s.setString(1, town.getName());
-                    ResultSet rs = s.executeQuery();
-                    if (!rs.next()) {
-                        saveTownBank(town, Config.defaultBankAmount, 0);
-                        LOG.info("Added bank entry for {}", town.getName());
-                    }
-                } catch (SQLException e) {
-                    LOG.error(ExceptionUtils.getStackTrace(e));
+                if(!getUniverse().banks.contains(town)) {
+                    saveTownBank(town.bank);
+                    LOG.info("Added bank entry for {}", town.getName());
                 }
             }
         }

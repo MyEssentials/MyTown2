@@ -537,7 +537,7 @@ public class CommandsEveryone extends Commands {
         if(town instanceof AdminTown)
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
 
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", EconomyProxy.getCurrency(town.bank.getBankAmount()), EconomyProxy.getCurrency(town.bank.getNextPaymentAmount())));
+        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", EconomyProxy.getCurrency(town.bank.getAmount()), EconomyProxy.getCurrency(town.bank.getNextPaymentAmount())));
         return CommandResponse.DONE;
     }
 
@@ -561,7 +561,8 @@ public class CommandsEveryone extends Commands {
 
         int amount = Integer.parseInt(args.get(0));
         makePayment(res.getPlayer(), amount);
-        getDatasource().updateTownBank(town, town.bank.getBankAmount() + amount);
+        town.bank.addAmount(amount);
+        getDatasource().saveTownBank(town.bank);
         return CommandResponse.DONE;
     }
 

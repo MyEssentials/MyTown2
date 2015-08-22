@@ -207,10 +207,9 @@ public class InMemoryDatasource extends MyTownDatasource {
     }
 
     @Override
-    public boolean saveTownBank(Town town, int amount, int daysNotPaid) {
-        return true;
+    public boolean saveTownBank(Bank bank) {
+        return false;
     }
-
 
     /*
 
@@ -303,11 +302,6 @@ public class InMemoryDatasource extends MyTownDatasource {
     @Override
     public boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner) {
         return false;
-    }
-
-    @Override
-    public boolean updateTownBank(Town town, int amount) {
-        return true;
     }
 
     @Override

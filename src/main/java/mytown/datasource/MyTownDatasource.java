@@ -101,7 +101,7 @@ public abstract class MyTownDatasource {
 
     public abstract boolean saveBlockOwner(Resident res, int dim, int x, int y, int z);
 
-    public abstract boolean saveTownBank(Town town, int amount, int daysNotPaid);
+    public abstract boolean saveTownBank(Bank bank);
 
     public abstract boolean saveSelectedTown(Resident res, Town town);
 
@@ -127,8 +127,6 @@ public abstract class MyTownDatasource {
     public abstract boolean unlinkResidentFromPlot(Resident res, Plot plot);
 
     public abstract boolean updateResidentToPlotLink(Resident res, Plot plot, boolean isOwner);
-
-    public abstract boolean updateTownBank(Town town, int amount);
 
     /* ----- Delete ----- */
 
