@@ -289,17 +289,16 @@ public class CommandsAssistant extends Commands {
                 return CommandResponse.SEND_SYNTAX;
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-            Town town = res.townsContainer.getMainTown();
+            Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
 
-            if (rank.getType().unique)
+            if (rank.getType().unique) {
                 throw new MyTownCommandException("mytown.cmd.err.ranks.cantDelete");
-
-            if (getDatasource().deleteRank(rank)) {
-                res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
-            } else {
-                res.sendMessage(getLocal().getLocalization("mytown.cmd.err.ranks.rem.notallowed", args.get(0)));
             }
+
+            getDatasource().deleteRank(rank);
+            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
+
             return CommandResponse.DONE;
         }
 
@@ -315,7 +314,7 @@ public class CommandsAssistant extends Commands {
             }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-            Town town = res.townsContainer.getMainTown();
+            Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
             Rank.Type type = getRankTypeFromString(args.get(1));
 
@@ -426,7 +425,7 @@ public class CommandsAssistant extends Commands {
             name = "list",
             permission = "mytown.cmd.assistant.ranks.perm.list",
             parentName = "mytown.cmd.assistant.ranks.perm",
-                syntax = "/town ranks perm list")
+            syntax = "/town ranks perm list [rank]")
     public static CommandResponse ranksPermListCommand(ICommandSender sender, List<String> args) {
         Rank rank;
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);

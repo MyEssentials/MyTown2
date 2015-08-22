@@ -448,6 +448,139 @@ public class CommandsAdmin extends Commands {
     }
 
     @Command(
+            name = "add",
+            permission = "mytown.adm.cmd.ranks.add",
+            parentName = "mytown.adm.cmd.ranks",
+            syntax = "/townadmin ranks add <town> <rank> [templateRank]",
+            completionKeys = {"townCompletion", "-", "ranksCompletion"},
+            console = true)
+    public static CommandResponse ranksAddCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 2)
+            return CommandResponse.SEND_SYNTAX;
+
+        Town town = getTownFromName(args.get(0));
+
+        if (town.ranksContainer.contains(args.get(1))) {
+            throw new MyTownCommandException("mytown.cmd.err.ranks.add.already", args.get(1));
+        }
+
+        Rank rank = new Rank(args.get(1), town, Rank.Type.REGULAR);
+        if(args.size() > 2) {
+            Rank template = getRankFromTown(town, args.get(2));
+            rank.permissionsContainer.addAll(template.permissionsContainer);
+        }
+
+        getDatasource().saveRank(rank);
+
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(1), town.getName()));
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "remove",
+            permission = "mytown.adm.cmd.ranks.remove",
+            parentName = "mytown.adm.cmd.ranks",
+            syntax = "/townadmin ranks remove <town> <rank>",
+            completionKeys = {"townCompletion", "rankCompletion"},
+            console = true)
+    public static CommandResponse ranksRemoveCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 2) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+        Rank rank = getRankFromTown(town, args.get(1));
+
+        if (rank.getType().unique) {
+            throw new MyTownCommandException("mytown.cmd.err.ranks.cantDelete");
+        }
+
+        getDatasource().deleteRank(rank);
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(1), town.getName()));
+
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "set",
+            permission = "mytown.adm.cmd.ranks.set",
+            parentName = "mytown.adm.cmd.ranks",
+            syntax = "/townadmin ranks set <town> <rank> <type>",
+            completionKeys = {"townCompletion", "rankCompletion"},
+            console = true)
+    public static CommandResponse ranksSetCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 3) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+        Rank rank = getRankFromTown(town, args.get(1));
+        Rank.Type type = getRankTypeFromString(args.get(2));
+
+        if(type.unique) {
+            Rank fromRank = town.ranksContainer.get(type);
+            if(fromRank == rank) {
+                throw new MyTownCommandException("mytown.cmd.err.ranks.set.already", type.toString());
+            }
+            fromRank.setType(Rank.Type.REGULAR);
+            rank.setType(type);
+
+            getDatasource().saveRank(rank);
+            getDatasource().saveRank(fromRank);
+        } else {
+            rank.setType(type);
+
+            getDatasource().saveRank(rank);
+        }
+
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.ranks.set.successful", rank.getName(), type.toString()));
+        return CommandResponse.DONE;
+    }
+
+
+    @Command(
+            name = "add",
+            permission = "mytown.adm.cmd.ranks.perm.add",
+            parentName = "mytown.adm.cmd.ranks.perm",
+            syntax = "/townadmin ranks perm add <town> <rank> <perm>",
+            completionKeys = {"townCompletion", "rankCompletion"},
+            console = true)
+    public static CommandResponse ranksPermAddCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 3) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+        Rank rank = getRankFromTown(town, args.get(1));
+
+        getDatasource().saveRankPermission(rank, args.get(2));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
+
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "remove",
+            permission = "mytown.adm.cmd.ranks.perm.remove",
+            parentName = "mytown.adm.cmd.ranks.perm",
+            syntax = "/townadmin ranks perm remove <town> <rank> <perm>",
+            completionKeys = {"townCompletion", "rankCompletion"},
+            console = true)
+    public static CommandResponse ranksPermRemoveCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 3) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+        Rank rank = getRankFromTown(town, args.get(1));
+
+        getDatasource().deleteRankPermission(rank, args.get(2));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(2), args.get(1)));
+
+        return CommandResponse.DONE;
+    }
+
+    @Command(
             name = "reset",
             permission = "mytown.adm.cmd.ranks.reset",
             parentName = "mytown.adm.cmd.ranks",
@@ -463,10 +596,13 @@ public class CommandsAdmin extends Commands {
 
         for(Rank defaultRank : Rank.defaultRanks) {
             Rank rank = town.ranksContainer.get(defaultRank.getName());
-
-            rank.permissionsContainer.clear();
+            if(rank == null) {
+                rank = new Rank(defaultRank.getName(), town, defaultRank.getType());
+            } else {
+                rank.permissionsContainer.clear();
+                rank.setType(defaultRank.getType());
+            }
             rank.permissionsContainer.addAll(defaultRank.permissionsContainer);
-            rank.setType(defaultRank.getType());
 
             getDatasource().saveRank(rank);
         }
@@ -481,6 +617,33 @@ public class CommandsAdmin extends Commands {
 
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.ranks.reset"));
 
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "perm",
+            permission = "mytown.adm.cmd.ranks.perm",
+            parentName = "mytown.adm.cmd.ranks",
+            syntax = "/townadmin ranks perm <command>")
+    public static CommandResponse ranksPermCommand(ICommandSender sender, List<String> args) {
+        return CommandResponse.SEND_HELP_MESSAGE;
+    }
+
+    @Command(
+            name = "list",
+            permission = "mytown.adm.cmd.ranks.perm.list",
+            parentName = "mytown.adm.cmd.ranks.perm",
+            syntax = "/townadmin ranks perm list <town> <rank>",
+            completionKeys = {"townCompletion", "rankCompletion"})
+    public static CommandResponse ranksPermListCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 2) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+        Rank rank = getRankFromTown(town, args.get(1));
+
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), town.getName(), rank.permissionsContainer.toString()));
         return CommandResponse.DONE;
     }
 
