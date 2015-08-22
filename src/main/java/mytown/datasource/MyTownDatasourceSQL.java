@@ -1173,8 +1173,9 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             if (isOwner) {
                 plot.ownersContainer.add(res);
+            } else {
+                plot.membersContainer.add(res);
             }
-            plot.membersContainer.add(res);
 
         } catch (SQLException e) {
             LOG.error("Failed to link {} to plot {} in town {}", res.getPlayerName(), plot.getName(), plot.getTown().getName());
