@@ -2,6 +2,7 @@ package mytown.entities;
 
 import myessentials.teleport.Teleport;
 import myessentials.utils.PlayerUtils;
+import mypermissions.api.entities.PermissionLevel;
 import mytown.api.container.*;
 import mytown.config.Config;
 import mytown.entities.flag.FlagType;
@@ -79,6 +80,18 @@ public class Town implements Comparable<Town> {
             return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
+    }
+
+    /**
+     * Permission node check for Residents
+     */
+    public boolean hasPermission(Resident res, String permission) {
+        if(!residentsMap.containsKey(res)) {
+            return false;
+        }
+
+        Rank rank = residentsMap.get(res);
+        return rank.permissionsContainer.hasPermission(permission) == PermissionLevel.ALLOWED;
     }
 
     public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {

@@ -18,8 +18,10 @@ public class Rank {
         Rank residentRank = new Rank("Resident", null, Type.DEFAULT);
 
         mayorRank.permissionsContainer.add("mytown.cmd");
+        mayorRank.permissionsContainer.add("mytown.bypass");
         assistantRank.permissionsContainer.add("mytown.cmd");
         assistantRank.permissionsContainer.add("-mytown.cmd.mayor");
+        assistantRank.permissionsContainer.add("mytown.bypass.plot");
         residentRank.permissionsContainer.add("mytown.cmd.everyone");
         residentRank.permissionsContainer.add("mytown.cmd.outsider");
 

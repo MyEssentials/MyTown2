@@ -172,20 +172,23 @@ public class CommandsEveryone extends Commands {
                 syntax = "/town plot perm set <flag> <value>",
                 completionKeys = {"flagCompletion"})
         public static CommandResponse plotPermSetCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 2)
+            if (args.size() < 2) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            if (!plot.ownersContainer.contains(res))
+            if (!plot.ownersContainer.contains(res) && !plot.getTown().hasPermission(res, "mytown.bypass.plot")) {
                 throw new MyTownCommandException("mytown.cmd.err.plot.perm.set.noPermission");
+            }
 
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(0));
 
             if (flag.setValueFromString(args.get(1))) {
                 ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
-            } else
+            } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+            }
 
             getDatasource().saveFlag(flag, plot);
             return CommandResponse.DONE;
@@ -231,11 +234,16 @@ public class CommandsEveryone extends Commands {
                 parentName = "mytown.cmd.everyone.plot",
                 syntax = "/town plot rename <name>")
         public static CommandResponse plotRenameCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 1)
+            if (args.size() < 1) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
+
+            if (!plot.ownersContainer.contains(res) && !plot.getTown().hasPermission(res, "mytown.bypass.plot")) {
+                throw new MyTownCommandException("mytown.cmd.err.plot.perm.set.noPermission");
+            }
 
             plot.setName(args.get(0));
             getDatasource().savePlot(plot);
@@ -250,8 +258,9 @@ public class CommandsEveryone extends Commands {
                 parentName = "mytown.cmd.everyone.plot",
                 syntax = "/town plot new <plot>")
         public static CommandResponse plotNewCommand(ICommandSender sender, List<String> args) {
-            if(args.size() < 1)
+            if(args.size() < 1) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             res.toolContainer.set(new PlotSelectionTool(res, args.get(0)));
@@ -277,7 +286,7 @@ public class CommandsEveryone extends Commands {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Tool currentTool = res.toolContainer.get();
             if(currentTool == null || !(currentTool instanceof PlotSelectionTool))
-                throw new MyTownCommandException("mytown.cmd.err.plot.selection.none");
+                throw new MyTownCommandException("mytown.cmd.err.plot.noPermission");
             ((PlotSelectionTool) currentTool).resetSelection(true, 0);
             res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.selectionReset"));
             return CommandResponse.DONE;
@@ -325,26 +334,31 @@ public class CommandsEveryone extends Commands {
                 syntax = "/town plot add owner <resident>",
                 completionKeys = {"residentCompletion"})
         public static CommandResponse plotAddOwnerCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 1)
+            if (args.size() < 1) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Resident target = getResidentFromName(args.get(0));
 
             Town town = getTownFromResident(res);
-            if (!target.townsContainer.contains(town))
+            if (!target.townsContainer.contains(town)) {
                 throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", target.getPlayerName(), town.getName());
+            }
 
             Plot plot = getPlotAtResident(res);
 
-            if(!plot.ownersContainer.contains(res))
-                throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
+            if(!plot.ownersContainer.contains(res) && !town.hasPermission(res, "mytown.bypass.plot")) {
+                throw new MyTownCommandException("mytown.cmd.err.plot.noPermission");
+            }
 
-            if(plot.ownersContainer.contains(target) || plot.membersContainer.contains(target))
+            if(plot.ownersContainer.contains(target) || plot.membersContainer.contains(target)) {
                 throw new MyTownCommandException("mytown.cmd.err.plot.add.alreadyInPlot");
+            }
 
-            if (!town.plotsContainer.canResidentMakePlot(target))
+            if (!town.plotsContainer.canResidentMakePlot(target)) {
                 throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
+            }
 
             getDatasource().linkResidentToPlot(target, plot, true);
 
@@ -360,17 +374,21 @@ public class CommandsEveryone extends Commands {
                 syntax = "/town plot add member <resident>",
                 completionKeys = {"residentCompletion"})
         public static CommandResponse plotAddMemberCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 1)
+            if (args.size() < 1) {
                 return CommandResponse.SEND_SYNTAX;
+            }
+
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Resident target = getResidentFromName(args.get(0));
             Plot plot = getPlotAtResident(res);
 
-            if(!plot.ownersContainer.contains(res))
+            if(!plot.ownersContainer.contains(res) && !plot.getTown().hasPermission(res, "mytown.bypass.plot")) {
                 throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
+            }
 
-            if(plot.ownersContainer.contains(target) || plot.membersContainer.contains(target))
+            if(plot.ownersContainer.contains(target) || plot.membersContainer.contains(target)) {
                 throw new MyTownCommandException("mytown.cmd.err.plot.add.alreadyInPlot");
+            }
 
             getDatasource().linkResidentToPlot(target, plot, false);
 
@@ -386,21 +404,25 @@ public class CommandsEveryone extends Commands {
                 syntax = "/town plot remove <resident>",
                 completionKeys = {"residentCompletion"})
         public static CommandResponse plotRemoveCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 1)
+            if (args.size() < 1) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Resident target = getResidentFromName(args.get(0));
             Plot plot = getPlotAtResident(res);
 
-            if(!plot.ownersContainer.contains(res))
-                throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
+            if(!plot.ownersContainer.contains(res) && !plot.getTown().hasPermission(res, "mytown.bypass.plot")) {
+                throw new MyTownCommandException("mytown.cmd.err.plot.noPermission");
+            }
 
-            if(!plot.ownersContainer.contains(target) && !plot.membersContainer.contains(target))
+            if(!plot.ownersContainer.contains(target) && !plot.membersContainer.contains(target)) {
                 throw new MyTownCommandException("mytown.cmd.err.plot.remove.notInPlot");
+            }
 
-            if(plot.ownersContainer.contains(target) && plot.ownersContainer.size() == 1)
+            if(plot.ownersContainer.contains(target) && plot.ownersContainer.size() == 1) {
                 throw new MyTownCommandException("mytown.cmd.err.plot.remove.onlyOwner");
+            }
 
             getDatasource().unlinkResidentFromPlot(target, plot);
 
@@ -430,8 +452,9 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotDeleteCommand(ICommandSender sender, List<String> args) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            if (!plot.ownersContainer.contains(res))
-                throw new MyTownCommandException("mytown.cmd.err.plot.notOwner");
+            if (!plot.ownersContainer.contains(res) && !plot.getTown().hasPermission(res, "mytown.bypass.plot")) {
+                throw new MyTownCommandException("mytown.cmd.err.plot.noPermission");
+            }
 
             getDatasource().deletePlot(plot);
             res.sendMessage(getLocal().getLocalization("mytown.notification.plot.deleted", plot.getName()));
@@ -444,14 +467,16 @@ public class CommandsEveryone extends Commands {
                 parentName = "mytown.cmd.everyone.plot",
                 syntax = "/town plot sell <price>")
         public static CommandResponse plotSellCommand(ICommandSender sender, List<String> args) {
-            if(args.size() < 1)
+            if(args.size() < 1) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
-            if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0)
+            if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0) {
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
+            }
 
             int price = Integer.parseInt(args.get(0));
             res.toolContainer.set(new PlotSellTool(res, price));

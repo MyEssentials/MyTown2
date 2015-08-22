@@ -151,14 +151,13 @@ mytown.cmd.err.plot.selection.none=&cYou haven't selected anything yet
 mytown.cmd.err.plot.notInPlot=&cYou are not standing in a plot
 mytown.cmd.err.plot.sell.notInPlot=&cThe selection is not in a plot in town %s
 mytown.cmd.err.plot.sell.alreadyOwner=&cYou are already an owner of this plot
-mytown.cmd.err.plot.notOwner=&cYou do not have owner permissions for this plot
+mytown.cmd.err.plot.noPermission=&cYou do not have owner permissions for this plot
 mytown.cmd.err.plot.limit=&cYou cannot be owner of more plots than %s
 mytown.cmd.err.plot.limit.toPlayer=&cPlayer %s can't be owner to any more plots
 mytown.cmd.err.plot.tooSmall=&cSelection too small! Minimum area: %s. Minimum height: %s
 mytown.cmd.err.plot.tooLarge=&cSelection too large! Maximum area: %s. Maximum height: %s
 mytown.cmd.err.plot.outside=&cSelection is outside of town
 mytown.cmd.err.plot.insideOther=&cSelection is inside plot %s
-mytown.cmd.err.plot.perm.set.noPermission=&cYou are not this plot's owner
 mytown.cmd.err.plot.name=&cPlot with name %s already exists
 
 mytown.notification.plot.info=&6--------[[&2Plot: &a%s&6]]--------\n&2Owners: &f%s\n&2Members: &f%s\n&2Borders: &9(%s, %s, %s)&7 --> &9(%s, %s, %s)

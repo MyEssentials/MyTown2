@@ -41,8 +41,9 @@ public class PlotSellTool extends Tool {
         z = z + direction.offsetZ;
 
         Town town = MyTownUtils.getTownAtPosition(dim, x >> 4, z >> 4);
-        if(!hasPermission(town, dim, x, y, z))
+        if(!hasPermission(town, dim, x, y, z)) {
             return;
+        }
 
         World world = DimensionManager.getWorld(dim);
 
@@ -70,8 +71,8 @@ public class PlotSellTool extends Tool {
             owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.sell.notInPlot", town.getName()));
             return false;
         }
-        if(!plot.ownersContainer.contains(owner)) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.notOwner"));
+        if(!plot.ownersContainer.contains(owner) && !plot.getTown().hasPermission(owner, "mytown.bypass.plot")) {
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.noPermission"));
             return false;
         }
         return true;
