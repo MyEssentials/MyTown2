@@ -6,7 +6,6 @@ import myessentials.thread.DelayedThread;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.handlers.VisualsHandler;
-import mytown.proxies.DatasourceProxy;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
@@ -129,6 +128,10 @@ public class PlotSelectionTool extends Tool {
 
     private void createPlotFromSelection() {
         normalizeSelection();
+        if(!isProperSize()) {
+            resetSelection(true, 0);
+            return;
+        }
 
         int lastX = 1000000, lastZ = 1000000;
         for (int i = selectionFirst.x; i <= selectionSecond.x; i++) {
@@ -192,16 +195,16 @@ public class PlotSelectionTool extends Tool {
         }
     }
 
-    private boolean verifyDimensions() {
+    private boolean isProperSize() {
         if(!(selectionFirst.town instanceof AdminTown)) {
             if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) < Config.minPlotsArea
                     || Math.abs(selectionFirst.y - selectionSecond.y) + 1 < Config.minPlotsHeight) {
-                resetSelection(true, 0);
-                throw new MyTownCommandException("mytown.cmd.err.plot.tooSmall", Config.minPlotsArea, Config.minPlotsHeight);
+                owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.tooSmall", Config.minPlotsArea, Config.minPlotsHeight));
+                return false;
             } else if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) > Config.maxPlotsArea
                     || Math.abs(selectionFirst.y - selectionSecond.y) + 1 > Config.maxPlotsHeight) {
-                resetSelection(true, 0);
-                throw new MyTownCommandException("mytown.cmd.err.plot.tooLarge", Config.maxPlotsArea, Config.maxPlotsHeight);
+                owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.tooLarge", Config.maxPlotsArea, Config.maxPlotsHeight));
+                return false;
             }
         }
         return true;
