@@ -125,6 +125,10 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
      * Creates and returns a new Block, or null if it couldn't be created
      */
     public final TownBlock newBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town) {
+        if(!worlds.contains(dim)) {
+            getDatasource().saveWorld(dim);
+        }
+
         TownBlock block = new TownBlock(dim, x, z, isFarClaim, pricePaid, town);
         if (TownBlockEvent.fire(new TownBlockEvent.BlockCreateEvent(block)))
             return null;
