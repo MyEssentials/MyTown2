@@ -131,6 +131,7 @@ mytown.cmd.err.ranks.set.already=&cThe rank already has type %s
 mytown.notification.ranks.set.successful=&3Rank %s has been set to type %s successfully
 mytown.cmd.err.ranks.typeNotExists=&cRank type %s does not exist
 mytown.notification.ranks.reset=&3Ranks have been reset to their initial state
+mytown.cmd.err.ranks.set.unique=&cThe rank type of %s is unique. You must set the unique type first.
 
 # /t plot
 mytown.cmd.usage.plot.rename=&3/t plot rename <name>

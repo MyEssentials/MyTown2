@@ -321,12 +321,17 @@ public class CommandsAssistant extends Commands {
                 if(fromRank == rank) {
                     throw new MyTownCommandException("mytown.cmd.err.ranks.set.already", type.toString());
                 }
+
                 fromRank.setType(Rank.Type.REGULAR);
                 rank.setType(type);
 
                 getDatasource().saveRank(rank);
                 getDatasource().saveRank(fromRank);
             } else {
+                if(rank.getType().unique) {
+                    throw new MyTownCommandException("mytown.cmd.err.ranks.set.unique", rank.getName());
+                }
+
                 rank.setType(type);
 
                 getDatasource().saveRank(rank);
