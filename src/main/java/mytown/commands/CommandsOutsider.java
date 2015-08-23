@@ -12,6 +12,7 @@ import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
+import mytown.proxies.EconomyProxy;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
@@ -372,4 +373,18 @@ public class CommandsOutsider extends Commands {
         }
         return CommandResponse.DONE;
     }
+
+    @Command(
+            name = "prices",
+            permission = "mytown.cmd.outsider",
+            parentName = "mytown.cmd",
+            syntax = "/town prices")
+    public static CommandResponse pricesCommand(ICommandSender sender, List<String> args) {
+        Resident res = getUniverse().getOrMakeResident(sender);
+
+        res.sendMessage(getLocal().getLocalization("mytown.notification.prices", EconomyProxy.getCurrency(Config.costAmountMakeTown), EconomyProxy.getCurrency(Config.costAmountClaim), EconomyProxy.getCurrency(Config.costAdditionClaim), EconomyProxy.getCurrency(Config.costAmountClaimFar), EconomyProxy.getCurrency(Config.costAmountSpawn), EconomyProxy.getCurrency(Config.costAmountSetSpawn), EconomyProxy.getCurrency(Config.costAmountOtherSpawn), EconomyProxy.getCurrency(Config.costTownUpkeep), EconomyProxy.getCurrency(Config.costAdditionalUpkeep)));
+
+        return CommandResponse.DONE;
+    }
+
 }

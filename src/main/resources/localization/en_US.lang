@@ -162,6 +162,7 @@ mytown.cmd.err.plot.name=&cPlot with name %s already exists
 
 mytown.notification.plot.info=&6--------[[&2Plot: &a%s&6]]--------\n&2Owners: &f%s\n&2Members: &f%s\n&2Borders: &9(%s, %s, %s)&7 --> &9(%s, %s, %s)
 mytown.notification.resident.info=&6--------[[&a%s&6]]--------\n&2Towns: &f%s \n&2Joined: &a%s\n&2Last online: &a%s
+mytown.notification.prices=&6--------[[&aPRICES&6]]--------\n&2Town creation: &7%s\n&2Claim: &7%s\n&2Additional claim: &7%s\n&2Far claim: &7%s\n&2Spawn: &7%s\n&2Set spawn: &7%s\n&2Other spawn: &7%s\n&2Town upkeep: &7%s\n&2Claim upkeep: &7%s
 mytown.notification.town.owners=&6 Owners: &c%s
 
 
