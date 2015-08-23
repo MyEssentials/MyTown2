@@ -15,6 +15,7 @@ import myessentials.utils.StringUtils;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
+import mytown.config.json.RanksConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.crash.DatasourceCrashCallable;
 import mytown.entities.Rank;
@@ -93,11 +94,11 @@ public class MyTown {
         checkConfig();
         EconomyProxy.init();
         registerCommands();
-        Rank.initDefaultRanks();
         Commands.populateCompletionMap();
 
         jsonConfigs.add(new WildPermsConfig(Constants.CONFIG_FOLDER + "/WildPerms.json"));
         jsonConfigs.add(new FlagsConfig(Constants.CONFIG_FOLDER + "/DefaultFlags.json"));
+        jsonConfigs.add(new RanksConfig(Constants.CONFIG_FOLDER + "/DefaultTownRanks.json"));
         for (JSONConfig jsonConfig : jsonConfigs) {
             jsonConfig.init();
         }
