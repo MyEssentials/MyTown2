@@ -252,7 +252,7 @@ public class CommandsAssistant extends Commands {
                 name = "add",
                 permission = "mytown.cmd.assistant.ranks.add",
                 parentName = "mytown.cmd.everyone.ranks",
-                syntax = "/town ranks add <rank> [templateRank]",
+                syntax = "/town ranks add <name> [templateRank]",
                 completionKeys = {"-", "ranksCompletion"})
         public static CommandResponse ranksAddCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 1)

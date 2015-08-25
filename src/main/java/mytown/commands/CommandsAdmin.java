@@ -135,7 +135,7 @@ public class CommandsAdmin extends Commands {
             name = "new",
             permission = "mytown.adm.cmd.new",
             parentName = "mytown.adm.cmd",
-            syntax = "/townadmin new <town>")
+            syntax = "/townadmin new <name>")
     public static CommandResponse newCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
@@ -181,16 +181,6 @@ public class CommandsAdmin extends Commands {
     }
 
     @Command(
-            name = "town",
-            permission = "mytown.adm.cmd.town",
-            parentName = "mytown.adm.cmd",
-            syntax = "/townadmin town <command>",
-            console = true)
-    public static CommandResponse townCommand(ICommandSender sender, List<String> args) {
-        return CommandResponse.SEND_HELP_MESSAGE;
-    }
-
-    @Command(
             name = "res",
             permission = "mytown.adm.cmd.res",
             parentName = "mytown.adm.cmd",
@@ -224,8 +214,8 @@ public class CommandsAdmin extends Commands {
             name = "set",
             permission = "mytown.adm.cmd.blocks.extra.set",
             parentName = "mytown.adm.cmd.blocks.extra",
-            syntax = "/townadmin block extra set <town> <extraBlocks>",
-            completionKeys = {"townCompletionAndAll"},
+            syntax = "/townadmin blocks extra set <town> <amount>",
+            completionKeys = {"townCompletion"},
             console = true)
     public static CommandResponse townBlocksMaxSetCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
@@ -244,8 +234,8 @@ public class CommandsAdmin extends Commands {
             name = "add",
             permission = "mytown.adm.cmd.blocks.extra.add",
             parentName = "mytown.adm.cmd.blocks.extra",
-            syntax = "/townadmin blocks extra add <town> <extraBlocks>",
-            completionKeys = {"townCompletionAndAll"},
+            syntax = "/townadmin blocks extra add <town> <amount>",
+            completionKeys = {"townCompletion"},
             console = true)
     public static CommandResponse townBlocksMaxAddCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
@@ -265,8 +255,8 @@ public class CommandsAdmin extends Commands {
             name = "remove",
             permission = "mytown.adm.cmd.blocks.extra.remove",
             parentName = "mytown.adm.cmd.blocks.extra",
-            syntax = "/townadmin blocks extra remove <town> <extraBlocks>",
-            completionKeys = {"townCompletionAndAll"},
+            syntax = "/townadmin blocks extra remove <town> <amount>",
+            completionKeys = {"townCompletion"},
             console = true)
     public static CommandResponse townBlocksMaxRemoveCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
@@ -295,7 +285,7 @@ public class CommandsAdmin extends Commands {
             name = "set",
             permission = "mytown.adm.cmd.blocks.far.set",
             parentName = "mytown.adm.cmd.blocks.far",
-            syntax = "/townadmin blocks far set <town> <farClaims>",
+            syntax = "/townadmin blocks far set <town> <amount>",
             completionKeys = {"townCompletionAndAll"},
             console = true)
     public static CommandResponse townBlocksFarclaimsSetCommand(ICommandSender sender, List<String> args) {
@@ -315,7 +305,7 @@ public class CommandsAdmin extends Commands {
             name = "add",
             permission = "mytown.adm.cmd.blocks.far.add",
             parentName = "mytown.adm.cmd.blocks.far",
-            syntax = "/townadmin blocks far add <town> <farClaims>",
+            syntax = "/townadmin blocks far add <town> <amount>",
             completionKeys = {"townCompletionAndAll"},
             console = true)
     public static CommandResponse townBlocksFarclaimsAddCommand(ICommandSender sender, List<String> args) {
@@ -336,7 +326,7 @@ public class CommandsAdmin extends Commands {
             name = "remove",
             permission = "mytown.adm.cmd.blocks.far.remove",
             parentName = "mytown.adm.cmd.blocks.far",
-            syntax = "/townadmin blocks far remove <town> <farClaims>",
+            syntax = "/townadmin blocks far remove <town> <amount>",
             completionKeys = {"townCompletionAndAll"},
             console = true)
     public static CommandResponse townBlocksFarClaimsRemoveCommand(ICommandSender sender, List<String> args) {
@@ -451,7 +441,7 @@ public class CommandsAdmin extends Commands {
             name = "add",
             permission = "mytown.adm.cmd.ranks.add",
             parentName = "mytown.adm.cmd.ranks",
-            syntax = "/townadmin ranks add <town> <rank> [templateRank]",
+            syntax = "/townadmin ranks add <town> <name> [templateRank]",
             completionKeys = {"townCompletion", "-", "ranksCompletion"},
             console = true)
     public static CommandResponse ranksAddCommand(ICommandSender sender, List<String> args) {
@@ -819,7 +809,7 @@ public class CommandsAdmin extends Commands {
             name = "claim",
             permission = "mytown.adm.cmd.claim",
             parentName = "mytown.adm.cmd",
-            syntax = "/townadmin claim <town>",
+            syntax = "/townadmin claim <town> [range]",
             completionKeys = {"townCompletion"})
     public static CommandResponse claimCommand(ICommandSender sender, List<String> args) {
         if (args.size() < 1)
