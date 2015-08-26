@@ -132,6 +132,7 @@ mytown.notification.ranks.set.successful=&3Rank %s has been set to type %s succe
 mytown.cmd.err.ranks.typeNotExists=&cRank type %s does not exist
 mytown.notification.ranks.reset=&3Ranks have been reset to their initial state
 mytown.cmd.err.ranks.set.unique=&cThe rank type of %s is unique. You must set the unique type first.
+mytown.cmd.err.ranks.assigned=&cThis rank is assigned to some residents, change their rank before deleting this
 
 # /t plot
 mytown.cmd.usage.plot.rename=&3/t plot rename <name>

@@ -485,6 +485,12 @@ public class CommandsAdmin extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.ranks.cantDelete");
         }
 
+        for(Rank residentRank : town.residentsMap.values()) {
+            if(residentRank == rank) {
+                throw new MyTownCommandException("mytown.cmd.err.ranks.assigned");
+            }
+        }
+
         getDatasource().deleteRank(rank);
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(1), town.getName()));
 

@@ -294,6 +294,12 @@ public class CommandsAssistant extends Commands {
                 throw new MyTownCommandException("mytown.cmd.err.ranks.cantDelete");
             }
 
+            for(Rank residentRank : town.residentsMap.values()) {
+                if(residentRank == rank) {
+                    throw new MyTownCommandException("mytown.cmd.err.ranks.assigned");
+                }
+            }
+
             getDatasource().deleteRank(rank);
             res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
 
