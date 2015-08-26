@@ -87,7 +87,8 @@ public class Protections {
         // TODO: Add a command to clean up the block whitelist table periodically
         if (MinecraftServer.getServer().getTickCounter() % 600 == 0) {
             for (Town town : MyTownUniverse.instance.towns)
-                for (BlockWhitelist bw : town.blockWhitelistsContainer) {
+                for (int i = 0; i < town.blockWhitelistsContainer.size(); i++) {
+                    BlockWhitelist bw = town.blockWhitelistsContainer.get(i);
                     if (!ProtectionUtils.isBlockWhitelistValid(bw)) {
                         DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
                     }
