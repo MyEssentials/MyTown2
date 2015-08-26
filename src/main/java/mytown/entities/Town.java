@@ -3,6 +3,7 @@ package mytown.entities;
 import myessentials.teleport.Teleport;
 import myessentials.utils.PlayerUtils;
 import mypermissions.api.entities.PermissionLevel;
+import mypermissions.proxies.PermissionProxy;
 import mytown.api.container.*;
 import mytown.config.Config;
 import mytown.entities.flag.FlagType;
@@ -74,11 +75,43 @@ public class Town implements Comparable<Town> {
     /**
      * Checks if the Resident is allowed to do the action specified by the FlagType in this town.
      */
-    @SuppressWarnings("unchecked")
     public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
-        if(flagsContainer.getValue(flagType).equals(denialValue) && (!residentsMap.containsKey(res) || ((Boolean)flagsContainer.getValue(FlagType.RESTRICTIONS) && flagType != FlagType.ENTER && residentsMap.getMayor() != res))) {
-            return PlayerUtils.isOp(res.getPlayer());
+        if(PlayerUtils.isOp(res.getPlayer())) {
+            return true;
         }
+
+        if(!flagsContainer.getValue(flagType).equals(denialValue)) {
+            return true;
+        }
+
+        boolean rankBypass;
+        boolean permissionBypass;
+
+        if(residentsMap.containsKey(res)) {
+            if((Boolean) flagsContainer.getValue(FlagType.RESTRICTIONS)) {
+                rankBypass = hasPermission(res, FlagType.RESTRICTIONS.getBypassPermission());
+                permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), FlagType.RESTRICTIONS.getBypassPermission());
+
+                if(!rankBypass && !permissionBypass) {
+                    return false;
+                }
+            }
+
+            rankBypass = hasPermission(res, flagType.getBypassPermission());
+            permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
+
+            if(!rankBypass && !permissionBypass) {
+                return false;
+            }
+
+        } else {
+            permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
+
+            if(!permissionBypass) {
+                return false;
+            }
+        }
+
         return true;
     }
 

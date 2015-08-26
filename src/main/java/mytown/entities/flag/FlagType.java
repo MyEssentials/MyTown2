@@ -92,7 +92,7 @@ public enum FlagType {
      * Returns the permission needed to bypass the protection.
      */
     public String getBypassPermission() {
-        return "mytown.protection.bypass." + this.toString();
+        return "mytown.bypass.flag." + this.toString().toLowerCase();
     }
 
     /**

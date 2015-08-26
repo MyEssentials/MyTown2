@@ -19,11 +19,16 @@ public class Rank {
 
         mayorRank.permissionsContainer.add("mytown.cmd");
         mayorRank.permissionsContainer.add("mytown.bypass");
+
         assistantRank.permissionsContainer.add("mytown.cmd");
         assistantRank.permissionsContainer.add("-mytown.cmd.mayor");
         assistantRank.permissionsContainer.add("mytown.bypass.plot");
+        assistantRank.permissionsContainer.add("mytown.bypass.flag");
+
         residentRank.permissionsContainer.add("mytown.cmd.everyone");
         residentRank.permissionsContainer.add("mytown.cmd.outsider");
+        residentRank.permissionsContainer.add("mytown.bypass.flag");
+        residentRank.permissionsContainer.add("-mytown.bypass.flag.restrictions");
 
         Rank.defaultRanks.add(mayorRank);
         Rank.defaultRanks.add(assistantRank);
