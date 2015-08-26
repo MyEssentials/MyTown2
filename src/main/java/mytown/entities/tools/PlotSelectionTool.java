@@ -8,7 +8,6 @@ import mytown.entities.*;
 import mytown.handlers.VisualsHandler;
 import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
-import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -22,7 +21,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 public class PlotSelectionTool extends Tool {
 
     private static final String NAME = EnumChatFormatting.BLUE + "Selector"; // TODO: Get localization for it, maybe?
-    private static final String DESCRIPTION_HEADER = EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot. Shift right-click to change modes.";
+    private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.";
+    private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click to change modes.";
     private static final String DESCRIPTION_NAME = EnumChatFormatting.DARK_AQUA + "Name: ";
     private static final String DESCRIPTION_MODE = EnumChatFormatting.DARK_AQUA + "Height dependant: ";
 
@@ -36,7 +36,7 @@ public class PlotSelectionTool extends Tool {
     public PlotSelectionTool(Resident owner, String plotName) {
         super(owner, NAME);
         this.plotName = plotName;
-        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER, DESCRIPTION_NAME + plotName, DESCRIPTION_MODE + heightDependant));
+        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER_1, DESCRIPTION_HEADER_2, DESCRIPTION_NAME + plotName, DESCRIPTION_MODE + heightDependant));
     }
 
     @Override
