@@ -11,6 +11,7 @@ import myessentials.utils.ChatUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
+import mytown.config.json.FlagsConfig;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -72,6 +73,52 @@ public class CommandsAdmin extends Commands {
         MyTown.instance.loadConfigs();
         getDatasource().checkAllOnStart();
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.stop"));
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "reset",
+            permission = "mytown.adm.cmd.config.reset",
+            parentName = "mytown.adm.cmd.config",
+            syntax = "/townadmin config reset <command>",
+            console = true)
+    public static CommandResponse configResetCommand(ICommandSender sender, List<String> args) {
+        return CommandResponse.SEND_HELP_MESSAGE;
+    }
+
+    @Command(
+            name = "defaultRanks",
+            permission = "mytown.adm.cmd.config.reset.defaultRanks",
+            parentName = "mytown.adm.cmd.config.reset",
+            syntax = "/townadmin config reset ranks",
+            console = true)
+    public static CommandResponse configResetRanksCommand(ICommandSender sender, List<String> args) {
+        MyTown.instance.getRanksConfig().create(new ArrayList<Rank>());
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.reset", MyTown.instance.getRanksConfig().getName()));
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "wild",
+            permission = "mytown.adm.cmd.config.reset.wildPerms",
+            parentName = "mytown.adm.cmd.config.reset",
+            syntax = "/townadmin config reset wild",
+            console = true)
+    public static CommandResponse configResetWildCommand(ICommandSender sender, List<String> args) {
+        MyTown.instance.getWildConfig().create(new ArrayList<Flag>());
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.reset", MyTown.instance.getWildConfig().getName()));
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "defaultFlags",
+            permission = "mytown.adm.cmd.config.reset.defaultFlags",
+            parentName = "mytown.adm.cmd.config.reset",
+            syntax = "/townadmin config reset defaultFlags",
+            console = true)
+    public static CommandResponse configResetFlagsCommand(ICommandSender sender, List<String> args) {
+        MyTown.instance.getFlagsConfig().create(new ArrayList<FlagsConfig.Wrapper>());
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.reset", MyTown.instance.getFlagsConfig().getName()));
         return CommandResponse.DONE;
     }
 

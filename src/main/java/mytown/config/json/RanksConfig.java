@@ -23,14 +23,14 @@ public class RanksConfig extends JSONConfig<Rank> {
     }
 
     @Override
-    protected void create(List<Rank> items) {
+    public void create(List<Rank> items) {
         Rank.initDefaultRanks();
         items.addAll(Rank.defaultRanks);
         super.create(items);
     }
 
     @Override
-    protected List<Rank> read() {
+    public List<Rank> read() {
         List<Rank> ranks = super.read();
 
         Rank.defaultRanks.clear();
@@ -40,7 +40,7 @@ public class RanksConfig extends JSONConfig<Rank> {
     }
 
     @Override
-    protected boolean validate(List<Rank> items) {
+    public boolean validate(List<Rank> items) {
         boolean isValid = true;
         for(Rank.Type type : Rank.Type.values()) {
             if(type.unique) {

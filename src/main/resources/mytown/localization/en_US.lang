@@ -55,6 +55,7 @@ mytown.cmd.config.load.start=&3Loading config...
 mytown.cmd.config.load.stop=&aConfig loaded
 mytown.cmd.config.save.start=&3Saving config...
 mytown.cmd.config.save.stop=&aConfig saved
+mytown.cmd.config.reset=&aSuccessfully recreated the %s file!
 
 # /t new [townname]
 mytown.cmd.err.newtown.nameinuse=&cTown name %s already in use

@@ -19,6 +19,7 @@ import mytown.config.json.RanksConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.crash.DatasourceCrashCallable;
 import mytown.entities.Rank;
+import mytown.entities.flag.Flag;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
 import mytown.handlers.VisualsHandler;
@@ -137,6 +138,22 @@ public class MyTown {
         for(JSONConfig jsonConfig : jsonConfigs) {
             if(jsonConfig instanceof WildPermsConfig)
                 return (WildPermsConfig)jsonConfig;
+        }
+        return null;
+    }
+
+    public RanksConfig getRanksConfig() {
+        for(JSONConfig jsonConfig : jsonConfigs) {
+            if(jsonConfig instanceof RanksConfig)
+                return (RanksConfig)jsonConfig;
+        }
+        return null;
+    }
+
+    public FlagsConfig getFlagsConfig() {
+        for(JSONConfig jsonConfig : jsonConfigs) {
+            if(jsonConfig instanceof FlagsConfig)
+                return (FlagsConfig)jsonConfig;
         }
         return null;
     }

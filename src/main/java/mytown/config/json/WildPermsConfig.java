@@ -6,10 +6,7 @@ import mytown.MyTown;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.io.*;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,7 +22,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void create(List<Flag> items) {
+    public void create(List<Flag> items) {
         for (FlagType type : FlagType.values()) {
             if (type.isWildPerm())
                 items.add(new Flag(type, type.getDefaultWildPerm()));

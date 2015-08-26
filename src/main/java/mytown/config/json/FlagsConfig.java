@@ -3,13 +3,9 @@ package mytown.config.json;
 import com.google.common.reflect.TypeToken;
 import myessentials.MyEssentialsCore;
 import myessentials.json.JSONConfig;
-import mypermissions.config.json.GroupConfig;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.io.*;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,7 +19,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
     }
 
     @Override
-    protected void create(List<Wrapper> items) {
+    public void create(List<Wrapper> items) {
         for (FlagType type : FlagType.values()) {
             items.add(new Wrapper(type, type.getDefaultValue(), type.canTownsModify()));
         }
@@ -32,7 +28,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
     }
 
     @Override
-    protected List<Wrapper> read() {
+    public List<Wrapper> read() {
         List<Wrapper> items = super.read();
 
         for(Wrapper item : items) {
@@ -44,7 +40,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
     }
 
     @Override
-    protected boolean validate(List<Wrapper> items) {
+    public boolean validate(List<Wrapper> items) {
         boolean ok, isValid = true;
 
         for(Iterator<Wrapper> it = items.iterator(); it.hasNext(); ) {
@@ -80,7 +76,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
     /**
      * Wraps around a flagType object.
      */
-    protected class Wrapper {
+    public class Wrapper {
         public final FlagType flagType;
         public final Object defaultState;
         public final boolean isAllowedInTowns;

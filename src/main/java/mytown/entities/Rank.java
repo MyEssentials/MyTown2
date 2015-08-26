@@ -30,6 +30,7 @@ public class Rank {
         residentRank.permissionsContainer.add("mytown.bypass.flag");
         residentRank.permissionsContainer.add("-mytown.bypass.flag.restrictions");
 
+        Rank.defaultRanks.clear();
         Rank.defaultRanks.add(mayorRank);
         Rank.defaultRanks.add(assistantRank);
         Rank.defaultRanks.add(residentRank);
