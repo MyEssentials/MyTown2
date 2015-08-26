@@ -97,9 +97,9 @@ public class Town implements Comparable<Town> {
     public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
         Plot plot = plotsContainer.get(dim, x, y, z);
         if(plot == null || flagType.isTownOnly()) {
-            return flagsContainer.get(flagType);
+            return flagsContainer.getValue(flagType);
         } else {
-            return plot.flagsContainer.get(flagType);
+            return plot.flagsContainer.getValue(flagType);
         }
     }
 
