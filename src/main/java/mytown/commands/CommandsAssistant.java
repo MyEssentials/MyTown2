@@ -514,15 +514,15 @@ public class CommandsAssistant extends Commands {
             if (args.size() < 1)
                 return CommandResponse.SEND_SYNTAX;
 
-            if (StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
-                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger");
+            if (!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
+                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
             }
             int limit = Integer.parseInt(args.get(0));
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             town.plotsContainer.setMaxPlots(limit);
             getDatasource().saveTown(town);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.plotsContainer.getMaxPlots()));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit.set", town.plotsContainer.getMaxPlots()));
             return CommandResponse.DONE;
         }
     }
