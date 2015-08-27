@@ -356,7 +356,7 @@ public class Protection {
         TownBlock townBlock = MyTownUniverse.instance.blocks.get(dim, x >> 4, z >> 4);
         if(townBlock == null) {
             if (res == null) {
-                return !Wild.instance.flagsContainer.get(segment.getFlag()).equals(segment.getDenialValue());
+                return !Wild.instance.flagsContainer.getValue(segment.getFlag()).equals(segment.getDenialValue());
             } else {
                 if (!Wild.instance.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
                     res.sendMessage(segment.getFlag().getLocalizedProtectionDenial());
@@ -396,7 +396,7 @@ public class Protection {
                         int plotIntersectArea = plot.getIntersectingArea(rangeBox);
                         if (plotIntersectArea > 0) {
                             if (res == null) {
-                                if (plot.flagsContainer.get(segment.getFlag()).equals(segment.getDenialValue())) {
+                                if (plot.flagsContainer.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
                                     return false;
                                 }
                             } else {
@@ -412,7 +412,7 @@ public class Protection {
                     // If plot area sum is not equal to range area, check town permission
                     if (totalIntersectArea != getArea(rangeBox)) {
                         if (res == null) {
-                            if (town.flagsContainer.get(segment.getFlag()).equals(segment.getDenialValue())) {
+                            if (town.flagsContainer.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
                                 return false;
                             }
                         } else {
@@ -428,7 +428,7 @@ public class Protection {
 
         if (inWild) {
             if (res == null) {
-                if (Wild.instance.flagsContainer.get(segment.getFlag()).equals(segment.getDenialValue())) {
+                if (Wild.instance.flagsContainer.getValue(segment.getFlag()).equals(segment.getDenialValue())) {
                     return false;
                 }
             } else {

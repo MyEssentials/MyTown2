@@ -17,7 +17,7 @@ public class Wild {
      * Checks if Resident is allowed to do the action specified by the FlagType in the Wild
      */
     public boolean hasPermission(Resident res, FlagType type, Object denialValue) {
-        if (flagsContainer.get(type).getValue() == denialValue) {
+        if (flagsContainer.getValue(type).equals(denialValue)) {
             return PlayerUtils.isOp(res.getPlayer());
         }
         return true;
