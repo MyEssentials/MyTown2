@@ -76,7 +76,7 @@ public class Town implements Comparable<Town> {
      * Checks if the Resident is allowed to do the action specified by the FlagType in this town.
      */
     public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
-        if(PlayerUtils.isOp(res.getPlayer())) {
+        if(PlayerUtils.isOp(res.getUUID())) {
             return true;
         }
 
