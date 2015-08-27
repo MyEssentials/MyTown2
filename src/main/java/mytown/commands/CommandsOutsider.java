@@ -376,7 +376,7 @@ public class CommandsOutsider extends Commands {
 
     @Command(
             name = "prices",
-            permission = "mytown.cmd.outsider",
+            permission = "mytown.cmd.outsider.prices",
             parentName = "mytown.cmd",
             syntax = "/town prices")
     public static CommandResponse pricesCommand(ICommandSender sender, List<String> args) {
