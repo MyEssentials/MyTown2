@@ -166,7 +166,7 @@ public class Town implements Comparable<Town> {
         }
     }
 
-    public void calculateMaxBlocks() {
+    public int getMaxBlocks() {
         int mayorBlocks = Config.blocksMayor;
         int residentsBlocks = Config.blocksResident * (residentsMap.size() - 1);
         int residentsExtra = 0;
@@ -175,7 +175,7 @@ public class Town implements Comparable<Town> {
         }
         int townExtra = townBlocksContainer.getExtraBlocks();
 
-        townBlocksContainer.setMaxBlocks(mayorBlocks + residentsBlocks + residentsExtra + townExtra);
+        return mayorBlocks + residentsBlocks + residentsExtra + townExtra;
     }
 
     public String formatOwners(int dim, int x, int y, int z) {

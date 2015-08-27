@@ -243,6 +243,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             while (rs.next()) {
                 Resident res = new Resident(UUID.fromString(rs.getString("uuid")), rs.getString("name"), rs.getLong("joined"), rs.getLong("lastOnline"));
+                res.setExtraBlocks(rs.getInt("extraBlocks"));
 
                 MyTownUniverse.instance.addResident(res);
             }
@@ -387,7 +388,6 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
                 town.residentsMap.put(res, rank);
                 res.townsContainer.add(town);
-                town.calculateMaxBlocks();
             }
         } catch (SQLException e) {
             LOG.error("Failed to link Residents to Towns!");
@@ -613,7 +613,6 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 // Put the Town in the Map
                 MyTownUniverse.instance.addTown(town);
             }
-            town.calculateMaxBlocks();
         } catch (SQLException e) {
             LOG.error("Failed to save Town {}!", town.getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
@@ -1081,7 +1080,6 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             res.townsContainer.add(town);
             town.residentsMap.put(res, rank);
-            town.calculateMaxBlocks();
         } catch (SQLException e) {
             LOG.error("Failed to link Resident {} ({}) with Town {}", res.getPlayerName(), res.getUUID(), town.getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
@@ -1100,7 +1098,6 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             res.townsContainer.remove(town);
             town.residentsMap.remove(res);
-            town.calculateMaxBlocks();
         } catch (SQLException e) {
             LOG.error("Failed to unlink Resident {} ({}) with Town {}", e, res.getPlayerName(), res.getUUID(), town.getName());
             LOG.error(ExceptionUtils.getStackTrace(e));

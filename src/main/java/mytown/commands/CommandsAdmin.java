@@ -875,7 +875,7 @@ public class CommandsAdmin extends Commands {
 
         if(args.size() < 2) {
 
-            if (town.townBlocksContainer.size() >= town.townBlocksContainer.getMaxBlocks())
+            if (town.townBlocksContainer.size() >= town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", 1);
             if (getUniverse().blocks.contains(player.dimension, player.chunkCoordX, player.chunkCoordZ))
                 throw new MyTownCommandException("mytown.cmd.err.claim.already");
@@ -906,7 +906,7 @@ public class CommandsAdmin extends Commands {
             if(isFarClaim)
                 res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
 
-            if (town.townBlocksContainer.size() + chunks.size() > town.townBlocksContainer.getMaxBlocks())
+            if (town.townBlocksContainer.size() + chunks.size() > town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
 
             for(ChunkPos chunk : chunks) {

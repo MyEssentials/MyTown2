@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class TownBlocksContainer extends ArrayList<TownBlock> {
 
     private int extraBlocks;
-    private int maxBlocks, maxFarClaims;
+    private int maxFarClaims;
 
     public boolean add(TownBlock block) {
         boolean result = super.add(block);
@@ -67,20 +67,6 @@ public class TownBlocksContainer extends ArrayList<TownBlock> {
 
     public void setMaxFarClaims(int maxFarClaims) {
         this.maxFarClaims = maxFarClaims;
-    }
-
-    public int getMaxBlocks() {
-        /*
-        int maxBlocks = Config.blocksMayor + (Config.blocksResident * (residents.size() - 1)) + extraBlocks;
-        for (Resident res : getResidents()) {
-            maxBlocks += res.getExtraBlocks();
-        }
-        */
-        return this.maxBlocks;
-    }
-
-    public void setMaxBlocks(int maxClaims) {
-        this.maxBlocks = maxClaims;
     }
 
     public void show(Resident caller) {

@@ -55,7 +55,7 @@ public class CommandsOutsider extends Commands {
         }
 
         for (Town town : towns) {
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.info", town.getName(), town.residentsMap.size(), town.townBlocksContainer.size(), town.townBlocksContainer.getMaxBlocks(), town.plotsContainer.size(), town.residentsMap.toString(), town.ranksContainer.toString()));
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.info", town.getName(), town.residentsMap.size(), town.townBlocksContainer.size(), town.getMaxBlocks(), town.plotsContainer.size(), town.residentsMap.toString(), town.ranksContainer.toString()));
         }
         return CommandResponse.DONE;
     }

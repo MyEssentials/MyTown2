@@ -61,7 +61,7 @@ public class CommandsAssistant extends Commands {
         boolean isFarClaim = false;
 
         if (args.size() < 1) {
-            if (town.townBlocksContainer.size() >= town.townBlocksContainer.getMaxBlocks())
+            if (town.townBlocksContainer.size() >= town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", 1);
             if (getUniverse().blocks.contains(player.dimension, player.chunkCoordX, player.chunkCoordZ))
                 throw new MyTownCommandException("mytown.cmd.err.claim.already");
@@ -116,7 +116,7 @@ public class CommandsAssistant extends Commands {
                 }
             }
 
-            if (town.townBlocksContainer.size() + chunks.size() > town.townBlocksContainer.getMaxBlocks())
+            if (town.townBlocksContainer.size() + chunks.size() > town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
 
             if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.townBlocksContainer.getMaxFarClaims())
