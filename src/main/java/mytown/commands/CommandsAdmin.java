@@ -1339,7 +1339,8 @@ public class CommandsAdmin extends Commands {
             permission = "mytown.adm.cmd.rename",
             parentName = "mytown.adm.cmd",
             syntax = "/townadmin rename <town> <name>",
-            completionKeys = {"townCompletion"})
+            completionKeys = {"townCompletion"},
+            console = true)
     public static CommandResponse renameCommand(ICommandSender sender, List<String> args) {
         if(args.size() < 2)
             return CommandResponse.SEND_SYNTAX;
@@ -1352,6 +1353,24 @@ public class CommandsAdmin extends Commands {
         town.rename(args.get(1));
         getDatasource().saveTown(town);
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.renamed"));
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "spawn",
+            permission = "mytown.adm.cmd.spawn",
+            parentName = "mytown.adm.cmd",
+            syntax = "/townadmin spawn <town>",
+            completionKeys = {"townCompletion"},
+            console = true)
+    public static CommandResponse spawnCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Resident res = getUniverse().getOrMakeResident(sender);
+        Town town = getTownFromName(args.get(0));
+        town.sendToSpawn(res);
         return CommandResponse.DONE;
     }
 }

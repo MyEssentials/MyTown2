@@ -183,7 +183,6 @@ public class Town implements Comparable<Town> {
         for(Resident res : residentsMap.keySet()) {
             residentsExtra += res.getExtraBlocks();
         }
-
         return residentsExtra + townBlocksContainer.getExtraBlocks();
     }
 
