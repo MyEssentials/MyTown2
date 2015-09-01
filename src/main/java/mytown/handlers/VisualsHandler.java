@@ -227,7 +227,7 @@ public class VisualsHandler {
     public void updatePlotBorders(Plot plot) {
         List<EntityPlayerMP> callers = new ArrayList<EntityPlayerMP>();
         for(VisualObject visualObject : markedBlocks) {
-            if(visualObject.isPlot()) {
+            if(visualObject.isPlot() && visualObject.object.equals(plot)) {
                 for(BlockCoords coords : visualObject.blockCoords) {
                     coords.deleted = true;
                 }
@@ -242,7 +242,7 @@ public class VisualsHandler {
     public void updateTownBorders(TownBlocksContainer townBlocksContainer) {
         List<EntityPlayerMP> callers = new ArrayList<EntityPlayerMP>();
         for(VisualObject visualObject : markedBlocks) {
-            if(visualObject.isTown()) {
+            if(visualObject.isTown() && visualObject.object.equals(townBlocksContainer)) {
                 for(BlockCoords coords : visualObject.blockCoords) {
                     coords.deleted = true;
                 }
