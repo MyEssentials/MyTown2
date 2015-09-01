@@ -124,6 +124,31 @@ public class CommandsAdmin extends Commands {
     }
 
     @Command(
+            name = "update",
+            permission = "mytown.adm.cmd.update",
+            parentName = "mytown.adm.cmd",
+            syntax = "/townadmin update <command>",
+            console = true)
+    public static CommandResponse updateCommand(ICommandSender sender, List<String> args) {
+        return CommandResponse.SEND_HELP_MESSAGE;
+    }
+
+    @Command(
+            name = "ranks",
+            permission = "mytown.adm.cmd.update.ranks",
+            parentName = "mytown.adm.cmd.update",
+            syntax = "/townadmin update ranks",
+            console = true)
+    public static CommandResponse updateRanksCommand(ICommandSender sender, List<String> args) {
+        MyTown.instance.getRanksConfig().create(new ArrayList<Rank>());
+        for(Town town : getUniverse().towns) {
+            getDatasource().resetRanks(town);
+        }
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.update.ranks"));
+        return CommandResponse.DONE;
+    }
+
+    @Command(
             name = "add",
             permission = "mytown.adm.cmd.add",
             parentName = "mytown.adm.cmd",
@@ -670,28 +695,7 @@ public class CommandsAdmin extends Commands {
         }
 
         Town town = getTownFromName(args.get(0));
-
-        for(Rank defaultRank : Rank.defaultRanks) {
-            Rank rank = town.ranksContainer.get(defaultRank.getName());
-            if(rank == null) {
-                rank = new Rank(defaultRank.getName(), town, defaultRank.getType());
-            } else {
-                rank.permissionsContainer.clear();
-                rank.setType(defaultRank.getType());
-            }
-            rank.permissionsContainer.addAll(defaultRank.permissionsContainer);
-
-            getDatasource().saveRank(rank);
-        }
-
-        for(int i = 0; i < town.ranksContainer.size(); i++) {
-            Rank rank = town.ranksContainer.get(i);
-            if(!Rank.defaultRanks.contains(rank.getName())) {
-                getDatasource().deleteRank(rank);
-                i--;
-            }
-        }
-
+        getDatasource().resetRanks(town);
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.ranks.reset"));
 
         return CommandResponse.DONE;

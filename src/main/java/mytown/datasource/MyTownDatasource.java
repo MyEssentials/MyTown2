@@ -185,6 +185,10 @@ public abstract class MyTownDatasource {
      */
     protected abstract boolean checkTowns();
 
+    /* ----- Reset ----- */
+
+    public abstract boolean resetRanks(Town town);
+
     /* ----- Helper ----- */
 
     public MyTownUniverse getUniverse() {

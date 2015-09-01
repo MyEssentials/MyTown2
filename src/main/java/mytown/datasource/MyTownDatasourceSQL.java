@@ -1593,6 +1593,39 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
         return true;
     }
 
+    /* ----- Reset ----- */
+
+    public boolean resetRanks(Town town) {
+
+        for(Rank defaultRank : Rank.defaultRanks) {
+            Rank rank = town.ranksContainer.get(defaultRank.getName());
+            if(rank == null) {
+                LOG.info("Adding rank {} to town {}", defaultRank.getName(), town.getName());
+                rank = new Rank(defaultRank.getName(), town, defaultRank.getType());
+            } else  {
+                rank.permissionsContainer.clear();
+                if(rank.getType() != defaultRank.getType()) {
+                    LOG.info("Changing type of rank {} to {}", rank.getName(), defaultRank.getType());
+                    rank.setType(defaultRank.getType());
+                }
+            }
+            rank.permissionsContainer.addAll(defaultRank.permissionsContainer);
+
+            saveRank(rank);
+        }
+
+        for(int i = 0; i < town.ranksContainer.size(); i++) {
+            Rank rank = town.ranksContainer.get(i);
+            if(!Rank.defaultRanks.contains(rank.getName())) {
+                LOG.info("Deleting rank {} from town {}", rank.getName(), town.getName());
+                deleteRank(rank);
+                i--;
+            }
+        }
+
+        return true;
+    }
+
     /* ----- Helpers ----- */
 
     /**

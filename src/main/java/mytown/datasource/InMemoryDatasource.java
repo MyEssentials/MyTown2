@@ -396,4 +396,9 @@ public class InMemoryDatasource extends MyTownDatasource {
     protected boolean checkTowns() {
         return false;
     }
+
+    @Override
+    public boolean resetRanks(Town town) {
+        return false;
+    }
 }

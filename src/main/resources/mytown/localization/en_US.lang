@@ -291,7 +291,7 @@ mytown.notification.plot.buy.oldOwner=&aThe plot %s has been successfully sold
 mytown.notification.plot.sell.start=&3Right click on a plot with the tool given to put the plot on sale
 mytown.notification.town.renamed=&3Town has been renamed
 mytown.notification.plot.enter=&2~ %s
-
+mytown.notification.update.ranks=&aSuccessfully updated all ranks
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=Everything related to TownBlocks (chunks in town)
@@ -453,3 +453,6 @@ mytown.adm.cmd.config.reset.help=Resets a config to its default state (same as d
 mytown.adm.cmd.config.reset.wildPerms.help=Resets the WildPerms.json file
 mytown.adm.cmd.config.reset.defaultRanks.help=Resets the DefaultTownRanks.json file
 mytown.adm.cmd.config.reset.defaultFlags.help=Resets the DefaultFlags.json file
+mytown.adm.cmd.update.help=Everything related to updating information in database
+mytown.adm.cmd.update.ranks.help=Updates all the ranks in all the towns
+mytown.adm.cmd.blocks.info.help=Shows information about the townblocks
