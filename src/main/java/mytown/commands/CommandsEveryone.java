@@ -1,6 +1,7 @@
 package mytown.commands;
 
 import myessentials.utils.ChatUtils;
+import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
 import mypermissions.api.command.CommandResponse;
 import mypermissions.api.command.annotation.Command;
@@ -19,6 +20,7 @@ import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -132,6 +134,33 @@ public class CommandsEveryone extends Commands {
         return CommandResponse.DONE;
     }
 
+    @Command(
+            name = "info",
+            permission = "mytown.cmd.everyone.blocks.info",
+            parentName = "mytown.cmd.everyone.blocks",
+            syntax = "/town blocks info")
+    public static CommandResponse blocksInfoCommand(ICommandSender sender, List<String> args) {
+        Resident res = getUniverse().getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+
+        String blocks = town.townBlocksContainer.size() + "/" + town.getMaxBlocks();
+        String extraBlocks = town.getExtraBlocks() + "\\n";
+        String dash = ColorUtils.colorInfoText + " - ";
+        extraBlocks += dash + "TOWN (" + town.townBlocksContainer.getExtraBlocks() + ")\\n";
+        for(Iterator<Resident> it = town.residentsMap.keySet().iterator(); it.hasNext();) {
+            Resident resInTown = it.next();
+            extraBlocks += dash + ColorUtils.colorInfoText + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
+            if(it.hasNext()) {
+                extraBlocks += "\\n";
+            }
+        }
+
+        String farBlocks = town.townBlocksContainer.getFarClaims() + "/" + town.townBlocksContainer.getMaxFarClaims();
+
+        res.sendMessage(getLocal().getLocalization("mytown.notification.blocks.info", blocks, extraBlocks, farBlocks));
+
+        return CommandResponse.DONE;
+    }
 
     @Command(
             name = "perm",

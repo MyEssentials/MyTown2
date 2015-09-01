@@ -150,7 +150,7 @@ mytown.notification.plot.info=&6--------[[&2Plot: &a%s&6]]--------\n&2Owners: &f
 mytown.notification.resident.info=&6--------[[&a%s&6]]--------\n&2Towns: &f%s \n&2Joined: &a%s\n&2Last online: &a%s\n&2Extra blocks: &a%s
 mytown.notification.prices=&6--------[[&aPRICES&6]]--------\n&2Town creation: &7%s\n&2Claim: &7%s\n&2Additional claim: &7%s\n&2Far claim: &7%s\n&2Spawn: &7%s\n&2Set spawn: &7%s\n&2Other spawn: &7%s\n&2Town upkeep: &7%s\n&2Claim upkeep: &7%s
 mytown.notification.town.owners=&6 Owners: &c%s
-
+mytown.notification.blocks.info=&6--------[[&aBLOCKS&6]]--------\n&2Blocks: &7%s\n&2Extra blocks: &7%s \n&2Far blocks: &7%s
 
 # /t perm
 mytown.cmd.err.flagNotExists=&cThat flag does not exist
@@ -373,6 +373,7 @@ mytown.cmd.outsider.syntax.help=Shows the syntax of a command
 mytown.cmd.outsider.prices.help=Shows prices of everything in MyTown2
 mytown.cmd.everyone.bank.deposit.help=Deposits currency in the bank
 mytown.cmd.assistant.ranks.set.help=Sets the type of a rank
+mytown.cmd.everyone.blocks.info.help=Shows information about the townblocks
 
 mytown.adm.cmd.config.help=Everything about the configs
 mytown.adm.cmd.config.reload.help=Reloads the config

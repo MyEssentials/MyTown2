@@ -171,11 +171,20 @@ public class Town implements Comparable<Town> {
         int residentsBlocks = Config.blocksResident * (residentsMap.size() - 1);
         int residentsExtra = 0;
         for(Resident res : residentsMap.keySet()) {
-            residentsBlocks += res.getExtraBlocks();
+            residentsExtra += res.getExtraBlocks();
         }
         int townExtra = townBlocksContainer.getExtraBlocks();
 
         return mayorBlocks + residentsBlocks + residentsExtra + townExtra;
+    }
+
+    public int getExtraBlocks() {
+        int residentsExtra = 0;
+        for(Resident res : residentsMap.keySet()) {
+            residentsExtra += res.getExtraBlocks();
+        }
+
+        return residentsExtra + townBlocksContainer.getExtraBlocks();
     }
 
     public String formatOwners(int dim, int x, int y, int z) {

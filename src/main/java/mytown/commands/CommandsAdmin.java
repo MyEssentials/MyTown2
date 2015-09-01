@@ -1,5 +1,6 @@
 package mytown.commands;
 
+import myessentials.utils.ColorUtils;
 import mypermissions.api.command.CommandManager;
 import mypermissions.api.command.CommandResponse;
 import mypermissions.api.command.annotation.Command;
@@ -245,6 +246,39 @@ public class CommandsAdmin extends Commands {
             console = true)
     public static CommandResponse townBlocksCommand(ICommandSender sender, List<String> args) {
         return CommandResponse.SEND_HELP_MESSAGE;
+    }
+
+    @Command(
+            name = "info",
+            permission = "mytown.adm.cmd.blocks.info",
+            parentName = "mytown.adm.cmd.blocks",
+            syntax = "/townadmin blocks info <town>",
+            completionKeys = {"townCompletion"},
+            console = true)
+    public static CommandResponse blocksInfoCommand(ICommandSender sender, List<String> args) {
+        if(args.size() < 1) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+
+        String blocks = town.townBlocksContainer.size() + "/" + town.getMaxBlocks();
+        String extraBlocks = town.getExtraBlocks() + "\\n";
+        String dash = ColorUtils.colorInfoText + " - ";
+        extraBlocks += dash + "TOWN (" + town.townBlocksContainer.getExtraBlocks() + ")\\n";
+        for(Iterator<Resident> it = town.residentsMap.keySet().iterator(); it.hasNext();) {
+            Resident resInTown = it.next();
+            extraBlocks += dash + ColorUtils.colorInfoText + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
+            if(it.hasNext()) {
+                extraBlocks += "\\n";
+            }
+        }
+
+        String farBlocks = town.townBlocksContainer.getFarClaims() + "/" + town.townBlocksContainer.getMaxFarClaims();
+
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.blocks.info", blocks, extraBlocks, farBlocks));
+
+        return CommandResponse.DONE;
     }
 
     @Command(
