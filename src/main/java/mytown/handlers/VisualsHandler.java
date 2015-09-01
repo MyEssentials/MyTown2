@@ -196,8 +196,9 @@ public class VisualsHandler {
 
                 VisualObject visualObject = null;
                 for(VisualObject marked : markedBlocks) {
-                    if(marked.player == caller && marked.object == key)
+                    if(marked.player == caller && marked.object == key) {
                         visualObject = marked;
+                    }
                 }
 
                 if (visualObject != null) {
@@ -205,8 +206,9 @@ public class VisualsHandler {
                     while (blocksNotDeleted && markedBlocks.contains(visualObject)) {
                         blocksNotDeleted = false;
                         for (BlockCoords coords : visualObject.blockCoords) {
-                            if (coords.deleted)
+                            if (coords != null && coords.deleted) {
                                 blocksNotDeleted = true;
+                            }
                         }
                         try {
                             Thread.sleep(5);
