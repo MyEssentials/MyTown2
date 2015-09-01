@@ -63,7 +63,6 @@ mytown.cmd.err.newtown.positionError=&cYou cannot make a new town on a claimed c
 mytown.cmd.err.newtown.failed=&cThere was an issue with creating the town
 mytown.cmd.err.newtown.tooClose=&cYou are too close to town %s. Please leave at least %s chunks between the towns
 mytown.cmd.err.claim.tooClose=&cYou are too close to town %s. Please leave at least %s between the towns
-mytown.cmd.usage.newtown=&3/t new <townname>
 mytown.cmd.err.resident.maxTowns=&cYou cannot create/join any more towns, you have hit the maximum amount of towns you can be in
 mytown.notification.town.created=&aTown %s created
 mytown.notification.town.deleted=&cTown %s deleted
@@ -72,7 +71,6 @@ mytown.notification.nation.deleted=Nation %s deleted
 
 
 # /t invite
-mytown.cmd.usage.invite=&3/t invite <resident|accept|refuse> [town-name]
 mytown.cmd.err.invite.already=&cResident %s already exists in town %s
 mytown.cmd.err.invite.noinvitations=&cYou have no invitations
 mytown.cmd.err.resident.notexist=&cThat player does not exist
@@ -83,10 +81,6 @@ mytown.cmd.err.invite.refuse=&cYou have more than one invitation! &3Choose what 
 mytown.cmd.err.friends.add=&c%s is already a friend of yours or you already sent an invitation
 mytown.cmd.err.friends.remove=&c%s is not a friend of yours
 mytown.cmd.err.friends.accept=&c%s has not sent an invitation to you
-mytown.cmd.usage.friends.accept=&c/t friends accept <resident>
-mytown.cmd.usage.friends.refuse=&c/t friends refuse <resident>
-mytown.cmd.usage.friends.add=&c/t friends add <resident>
-mytown.cmd.usage.friends.remove=&c/t friends add <resident>
 
 # /t claim
 mytown.cmd.err.claim.failed=&cFailed to claim chunk
@@ -101,23 +95,18 @@ mytown.cmd.err.unclaim.spawnPoint=&cYou cannot delete the Block containing the s
 mytown.cmd.err.unclaim.lastClaim=&cYour town must at least have 1 chunk. Use "/t leave delete" to remove the town
 
 # /t info
-mytown.cmd.usage.info=&3/t info <townname>
 mytown.cmd.err.info.notpart=&cYou are not part of a town. &3Alternative usage: "/t info <townname>"
 
 mytown.notification.town.list=&6-----[[&aTowns:&6]]----- \n&f%s
 mytown.notification.town.info=&6--------[[&a%s&6]]-------- \n - &2R:%s - C:%s/%s - P:%s -  \n &2Residents:&a %s\n &2Ranks:&f %s
 
 # /t res
-mytown.cmd.usage.res=&3/t res <resident>
 
 # /t select
-mytown.cmd.usage.select=&3/t select <townname>
 mytown.cmd.err.select.notpart=&cYou are not part of town %s. Please choose a town that you are a member of
 mytown.notification.town.select=&3The town %s has been selected as your primary town
 
 # /t ranks
-mytown.cmd.usage.ranks=&3/t ranks <add|remove|perm>
-mytown.cmd.usage.ranks.perm=&3/t ranks perm <add|remove|list> <rank> <permission>
 mytown.cmd.err.ranks.add.already=&cThe rank %s already exists
 mytown.cmd.err.ranks.add.notexist=&cThe template rank %s does not exist
 mytown.cmd.err.ranks.rem.notexist=&cThe rank %s does not exist in town %s
@@ -136,12 +125,6 @@ mytown.cmd.err.ranks.set.unique=&cThe rank type of %s is unique. You must set th
 mytown.cmd.err.ranks.assigned=&cThis rank is assigned to some residents, change their rank before deleting this
 
 # /t plot
-mytown.cmd.usage.plot.rename=&3/t plot rename <name>
-mytown.cmd.usage.plot.add=&3/t plot add <owner|member> <resident>
-mytown.cmd.usage.plot.limit.set=&3/t plot limit set <limitNumber>
-mytown.cmd.usage.plot.remove=&3/t plot remove <resident>
-mytown.cmd.usage.plot.sell=&3/t plot sell <price>
-mytown.cmd.usage.plot.new=&3/t plot new <name>
 mytown.cmd.err.plot.remove.notInPlot=&cResident is not a member/owner of this plot
 mytown.cmd.err.plot.remove.onlyOwner=&cYou are the only owner of this plot, you can only delete the plot
 mytown.cmd.err.plot.add.alreadyInPlot=&cResident is already in plot
@@ -170,10 +153,6 @@ mytown.notification.town.owners=&6 Owners: &c%s
 
 
 # /t perm
-mytown.adm.cmd.usage.perm.list=&3/ta perm list <townname>
-mytown.adm.cmd.usage.perm.set=&3/ta perm set <townname> <flag> <value>
-mytown.cmd.usage.plot.whitelist=&3/t perm plot whitelist
-mytown.cmd.err.perm.set.usage=&3/t perm <town/plot> set <flag-name> <value>
 mytown.cmd.err.flagNotExists=&cThat flag does not exist
 mytown.cmd.err.perm.valueNotValid=&cInvalid value
 mytown.cmd.err.flag.notForWhitelist=&cThe flag you selected is not allowed on block whitelist
@@ -182,7 +161,6 @@ mytown.cmd.err.perm.valueNotValid=&cInvalid value
 mytown.cmd.err.perm.whitelist.noPermssion=&cYou do not have permission to whitelist this!
 
 # /t promote
-mytown.cmd.usage.promote=&3/t promote <resident> <rank>
 mytown.cmd.err.promote.notMayor=&cYou cannot have 2 Mayors in one town. Try passing mayorship with /t pass <resident>
 mytown.cmd.promote.success.sender=&3%s has been &apromoted&3 to rank &f%s
 mytown.cmd.promote.success.target=&aYou have been promoted to rank %s
@@ -196,86 +174,51 @@ mytown.cmd.err.spawn.cooldown=&cYou are still on teleport cooldown please wait &
 mytown.cmd.err.spawn.protected=&cYou are not allowed to teleport to the location of %s's spawn
 
 # /t kick
-mytown.cmd.usage.kick=&3/t kick <resident>
 mytown.cmd.err.kick.self=&cNo, you can't kick yourself
 mytown.cmd.err.kick.mayor=&cNo, you can't kick the mayor
 mytown.notification.town.kicked=&cYou have been kicked from %s
 
 # /t pass
-mytown.cmd.usage.leave.pass=&3/t pass <resident>
+
 
 # /t bank
-mytown.cmd.usage.bank.pay=&3/t bank pay <amount>
-mytown.cmd.usage.bank.withdraw=&3/t bank withdraw <amount>
 mytown.cmd.err.bank.withdraw=&cYou only have %s in the bank
 
 # /t rename
-mytown.cmd.usage.rename=&3/t rename <newName>
 
 # /ta new
 mytown.notification.admtown.created=&aAdmin town %s created!
 
 # /ta delete
-mytown.adm.cmd.delete.usage=&3/ta delete <townname> [townname2 townname3...]
 mytown.adm.cmd.delete.success=&cDeleted town with name %s
 
 # /ta kick
-mytown.adm.cmd.usage.rem=&3/ta rem <resident> <fromTown>
 mytown.adm.cmd.err.kick.resident=&cPlayer %s is not part of the town %s
 mytown.notification.town.resident.remove=&aResident %s has been &cremoved&a from town %s
 mytown.notification.town.resident.add=&aResident %s has been added to town %s
 
 # /ta add
-mytown.adm.cmd.usage.add=&3/ta add <resident> <toTown> [rankName]
 mytown.adm.cmd.err.add.already=&cPlayer %s is already a resident of the town %s
 
 # /ta town
-mytown.adm.cmd.usage.town.blocks.extra.set=&3/ta town blocks extra set <townName> <maxBlocks>
-mytown.adm.cmd.usage.town.blocks.extra.add=&3/ta town blocks extra add <townName> <amount>
-mytown.adm.cmd.usage.town.blocks.extra.remove=&3/ta town blocks extra remove <townName> <amount>
-
-mytown.adm.cmd.usage.town.blocks.farClaims.set=&3/ta town blocks farClaims set <townName> <maxFarClaims>
-mytown.adm.cmd.usage.town.blocks.farClaims.add=&3/ta town blocks farClaims add <townName> <amount>
-mytown.adm.cmd.usage.town.blocks.farClaims.remove=&3/ta town blocks farClaims remove <townName> <amount>
 
 # /ta res
-mytown.adm.cmd.usage.res.blocks.extra.set=&3/ta res blocks extra set <townName> <maxBlocks>
-mytown.adm.cmd.usage.res.blocks.extra.add=&3/ta res blocks extra add <townName> <amount>
-mytown.adm.cmd.usage.res.blocks.extra.remove=&3/ta res blocks extra remove <townName> <amount>
 
 # /ta perm
-mytown.adm.cmd.usage.perm.town.set=&3/ta perm town set <townName> <flag> <value>
-mytown.adm.cmd.usage.perm.wild.set=&3/ta perm wild set <flag> <value>
 
 # /ta claim
-mytown.adm.cmd.usage.claim=&3/ta claim <townName>
+
 mytown.adm.cmd.far.claim=&3You have bypassed far claims
 
 # /ta unclaim
-mytown.adm.cmd.usage.unclaim=&3/ta unclaim
-
-# /ta shop
-mytown.adm.cmd.shop.itemname=&3The unique name of this item is: &c%s\n&3Add this as the costItem in your config to set the cost item
-mytown.adm.cmd.usage.shop.create=&3/ta shop create sell|buy|sellBuy <amount> <price>
-mytown.adm.cmd.err.item=&cYou need to be holding an item in hand that will be used for the shop
 
 # /ta plot
-mytown.adm.cmd.usage.plot.show=&3/ta plot show <townName>
-mytown.adm.cmd.usage.plot.perm.set=&3/ta plot perm set <townName> <plotName> <flag> <value>
-mytown.adm.cmd.usage.plot.perm.list=&3/ta plot perm list <townName> <plotName>
-mytown.adm.cmd.usage.plot.rename=&3/ta plot rename <townName> <plotName> <newName>
-mytown.adm.cmd.usage.plot.add=&3/ta plot add member|owner <townName> <plotName> <resident>
-mytown.adm.cmd.usage.plot.remove=&3/ta plot remove <townName> <plotName> <resident>
-mytown.adm.cmd.usage.plot.info=&3/ta plot info <townName> <plotName>
-mytown.adm.cmd.usage.plot.delete=&3/ta plot delete <townName> <plotName>
 
 # /ta borders
-mytown.adm.cmd.usage.borders.show=&3/ta borders show <townName>
 mytown.notification.town.borders.show=&3Showing borders of town %s. Use /t borders hide to hide them
 mytown.notification.town.borders.hide=&aBorders have been successfully hidden
 
 # /ta rename
-mytown.adm.cmd.usage.rename=&3/ta rename <townName> <newName>
 
 # Notifications
 
