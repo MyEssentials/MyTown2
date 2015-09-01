@@ -75,7 +75,7 @@ public class CommandsOutsider extends Commands {
         if (res == null) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
         }
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.resident.info", res.getPlayerName(), res.townsContainer.toString(true), Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline())));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.resident.info", res.getPlayerName(), res.townsContainer.toString(true), Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline()), res.getExtraBlocks()));
         return CommandResponse.DONE;
     }
 
