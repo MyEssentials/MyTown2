@@ -1,16 +1,15 @@
 package mytown.commands;
 
+import myessentials.entities.ChunkPos;
+import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
+import myessentials.utils.StringUtils;
+import myessentials.utils.WorldUtils;
 import mypermissions.api.command.CommandManager;
 import mypermissions.api.command.CommandResponse;
 import mypermissions.api.command.annotation.Command;
 import mypermissions.command.CommandTree;
 import mypermissions.command.CommandTreeNode;
-
-import myessentials.entities.ChunkPos;
-import myessentials.utils.ChatUtils;
-import myessentials.utils.StringUtils;
-import myessentials.utils.WorldUtils;
 import mytown.MyTown;
 import mytown.config.json.FlagsConfig;
 import mytown.datasource.MyTownUniverse;
@@ -28,8 +27,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1036,7 +1035,7 @@ public class CommandsAdmin extends Commands {
                     Block block = ((ItemBlock)player.inventory.getCurrentItem().getItem()).field_150939_a;
                     list.add(block.getClass());
                     if(block instanceof ITileEntityProvider) {
-                    	TileEntity te = ((ITileEntityProvider) block).createNewTileEntity(DimensionManager.getWorld(0), 0);
+                    	TileEntity te = ((ITileEntityProvider) block).createNewTileEntity(MinecraftServer.getServer().worldServerForDimension(0), 0);
                         list.add(te == null ? TileEntity.class : te.getClass());
                     }
                 } else {

@@ -505,7 +505,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 int y = rs.getInt("y");
                 int z = rs.getInt("z");
 
-                TileEntity te = DimensionManager.getWorld(dim).getTileEntity(x, y, z);
+                TileEntity te = MinecraftServer.getServer().worldServerForDimension(dim).getTileEntity(x, y, z);
                 if(te == null) {
                     LOG.error("Failed to find a TileEntity at position ({}, {}, {}| DIM: {})", x, y, z, dim);
                     continue;

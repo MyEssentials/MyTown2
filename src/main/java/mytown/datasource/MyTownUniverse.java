@@ -73,7 +73,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         }
         /*
         for (int dim : MyTownUniverse.instance.getWorldsList()) {
-            if (DimensionManager.getWorld(dim) == null) {
+            if (MinecraftServer.getServer().worldServerForDimension(dim) == null) {
                 deleteWorld(dim);
             }
         }

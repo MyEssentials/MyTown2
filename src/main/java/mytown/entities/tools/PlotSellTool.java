@@ -7,6 +7,7 @@ import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
@@ -45,7 +46,7 @@ public class PlotSellTool extends Tool {
             return;
         }
 
-        World world = DimensionManager.getWorld(dim);
+        World world = MinecraftServer.getServer().worldServerForDimension(dim);
 
         int price = getPriceFromLore();
 
@@ -55,7 +56,7 @@ public class PlotSellTool extends Tool {
 
     @Override
     protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
-        World world = DimensionManager.getWorld(dim);
+        World world = MinecraftServer.getServer().worldServerForDimension(dim);
 
         if(world.getBlock(x, y, z) != Blocks.air) {
             return false;

@@ -11,6 +11,7 @@ import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -114,7 +115,7 @@ public class PlotSelectionTool extends Tool {
             return false;
 
         selectionFirst.y = 0;
-        selectionSecond.y = DimensionManager.getWorld(selectionSecond.dim).getActualHeight() - 1;
+        selectionSecond.y = MinecraftServer.getServer().worldServerForDimension(selectionSecond.dim).getActualHeight() - 1;
 
         if(owner.getPlayer() instanceof EntityPlayerMP)
             VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) owner.getPlayer(), owner.getPlayer());

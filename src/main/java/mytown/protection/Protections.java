@@ -308,7 +308,7 @@ public class Protections {
             }
 
             if (res.townsContainer.contains(block.getTown()) && blockType instanceof ITileEntityProvider && itemInHand != null) {
-                TileEntity te = ((ITileEntityProvider) blockType).createNewTileEntity(DimensionManager.getWorld(dimensionId), itemInHand.getItemDamage());
+                TileEntity te = ((ITileEntityProvider) blockType).createNewTileEntity(MinecraftServer.getServer().worldServerForDimension(dimensionId), itemInHand.getItemDamage());
                 if (te != null) {
                     Class<? extends TileEntity> clsTe = te.getClass();
                     ProtectionUtils.addToBlockWhitelist(clsTe, dimensionId, x, y, z, block.getTown());
@@ -316,7 +316,7 @@ public class Protections {
             }
         }
         if(blockType instanceof ITileEntityProvider && itemInHand != null) {
-            TileEntity te = ((ITileEntityProvider) blockType).createNewTileEntity(DimensionManager.getWorld(dimensionId), itemInHand.getItemDamage());
+            TileEntity te = ((ITileEntityProvider) blockType).createNewTileEntity(MinecraftServer.getServer().worldServerForDimension(dimensionId), itemInHand.getItemDamage());
             if (te != null && ProtectionUtils.isTileEntityOwnable(te.getClass())) {
                 ThreadPlacementCheck thread = new ThreadPlacementCheck(res, x, y, z, dimensionId);
                 activePlacementThreads++;

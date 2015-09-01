@@ -1,11 +1,11 @@
 package mytown.thread;
 
+import myessentials.entities.BlockPos;
 import mytown.entities.Resident;
 import mytown.protection.ProtectionUtils;
-import myessentials.entities.BlockPos;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 /**
  * A thread which checks if there's TileEntity on given block.
@@ -26,7 +26,7 @@ public class ThreadPlacementCheck extends Thread {
     @Override
     public void run() {
         long startTime = System.currentTimeMillis();
-        World world = DimensionManager.getWorld(position.getDim());
+        World world = MinecraftServer.getServer().worldServerForDimension(position.getDim());
         TileEntity te = null;
         while(te == null) {
             if(System.currentTimeMillis() - startTime >= TIMEOUT_IN_MS) {

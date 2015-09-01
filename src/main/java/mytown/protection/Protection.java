@@ -29,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S23PacketBlockChange;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -282,10 +283,10 @@ public class Protection {
      * Checking right click actions on blocks.
      */
     public boolean checkBlockInteraction(Resident res, BlockPos bp, PlayerInteractEvent.Action action) {
-        Block blockType = DimensionManager.getWorld(bp.getDim()).getBlock(bp.getX(), bp.getY(), bp.getZ());
+        Block blockType = MinecraftServer.getServer().worldServerForDimension(bp.getDim()).getBlock(bp.getX(), bp.getY(), bp.getZ());
         for(SegmentBlock segment : segmentsBlocks) {
             if(segment.getCheckClass().isAssignableFrom(blockType.getClass())
-                    && (segment.getMeta() == -1 || segment.getMeta() == DimensionManager.getWorld(bp.getDim()).getBlockMetadata(bp.getX(), bp.getY(), bp.getZ()))
+                    && (segment.getMeta() == -1 || segment.getMeta() == MinecraftServer.getServer().worldServerForDimension(bp.getDim()).getBlockMetadata(bp.getX(), bp.getY(), bp.getZ()))
                     && (segment.getType() == BlockType.ANY_CLICK || segment.getType() == BlockType.RIGHT_CLICK && action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || segment.getType() == BlockType.LEFT_CLICK && action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK)) {
                 int dim = bp.getDim();
                 int x = bp.getX();
@@ -304,7 +305,7 @@ public class Protection {
     }
 
     public void sendClientUpdate(Volume updateVolume, BlockPos center, EntityPlayerMP player, ForgeDirection face) {
-        World world = DimensionManager.getWorld(center.getDim());
+        World world = MinecraftServer.getServer().worldServerForDimension(center.getDim());
         int x, y, z;
 
         if(face != null)

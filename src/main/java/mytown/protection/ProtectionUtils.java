@@ -1,17 +1,17 @@
 package mytown.protection;
 
+import myessentials.entities.BlockPos;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import myessentials.entities.BlockPos;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,10 +126,10 @@ public class ProtectionUtils {
             return false;
 
         if (bw.getFlagType() == FlagType.ACTIVATE
-                && !checkActivatedBlocks(DimensionManager.getWorld(bw.getDim()).getBlock(bw.getX(), bw.getY(), bw.getZ()), DimensionManager.getWorld(bw.getDim()).getBlockMetadata(bw.getX(), bw.getY(), bw.getZ())))
+                && !checkActivatedBlocks(MinecraftServer.getServer().worldServerForDimension(bw.getDim()).getBlock(bw.getX(), bw.getY(), bw.getZ()), MinecraftServer.getServer().worldServerForDimension(bw.getDim()).getBlockMetadata(bw.getX(), bw.getY(), bw.getZ())))
             return false;
         if (bw.getFlagType() == FlagType.MODIFY || bw.getFlagType() == FlagType.ACTIVATE || bw.getFlagType() == FlagType.USAGE) {
-            TileEntity te = DimensionManager.getWorld(bw.getDim()).getTileEntity(bw.getX(), bw.getY(), bw.getZ());
+            TileEntity te = MinecraftServer.getServer().worldServerForDimension(bw.getDim()).getTileEntity(bw.getX(), bw.getY(), bw.getZ());
             if (te == null)
                 return false;
             return getFlagsForTile(te.getClass()).contains(bw.getFlagType());
