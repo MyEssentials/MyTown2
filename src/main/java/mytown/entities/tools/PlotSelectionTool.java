@@ -71,7 +71,7 @@ public class PlotSelectionTool extends Tool {
     @Override
     public void onShiftRightClick() {
         heightDependant = !heightDependant;
-        setDescription(DESCRIPTION_MODE + heightDependant, 2);
+        setDescription(DESCRIPTION_MODE + heightDependant, 3);
     }
 
     public void resetSelection(boolean resetBlocks, int delay) {

@@ -98,7 +98,7 @@ public class Config {
     public static int maxPlotsArea = 300;
 
     @ConfigProperty(category = "plots", name = "maxPlotsHeight", comment = "The maximum height a plot can have. (Y) [255 for unlimited height.]")
-    public static int maxPlotsHeight = 255;
+    public static int maxPlotsHeight = 256;
 
     @ConfigProperty(category = "plots", name = "enablePlots", comment = "Set this to false to disable all types of plot interaction.")
     public static boolean enablePlots = true;
