@@ -39,13 +39,21 @@ public class SegmentEntity extends Segment {
                 return null;
             return MyTownUniverse.instance.getOrMakeResident(player);
         } catch (GetterException ex) {
-            /*
-            String uuid = getters.hasValue("owner") ? (String) getters.getValue("owner", String.class, entity, entity) : null;
-            if(uuid == null)
-                return null;
-            return DatasourceProxy.getDatasource().getOrMakeResident();
-            */
-            return null;
+            try {
+                String username = getters.hasValue("owner") ? (String) getters.getValue("owner", String.class, entity, entity) : null;
+                if (username == null)
+                    return null;
+                return MyTownUniverse.instance.getOrMakeResident(username);
+            } catch (GetterException ex2) {
+                try {
+                    UUID uuid = getters.hasValue("owner") ? (UUID) getters.getValue("owner", UUID.class, entity, entity) : null;
+                    if (uuid == null)
+                        return null;
+                    return MyTownUniverse.instance.getOrMakeResident(uuid);
+                } catch (GetterException ex3) {
+                    return null;
+                }
+            }
         }
     }
 }

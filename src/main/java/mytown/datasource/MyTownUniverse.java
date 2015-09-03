@@ -2,6 +2,7 @@ package mytown.datasource;
 
 import com.mojang.authlib.GameProfile;
 import myessentials.teleport.Teleport;
+import myessentials.utils.PlayerUtils;
 import mypermissions.api.command.CommandCompletion;
 import mytown.MyTown;
 import mytown.api.container.*;
@@ -200,6 +201,10 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public Resident getOrMakeResident(UUID uuid, String playerName) {
         return getOrMakeResident(uuid, playerName, true);
+    }
+
+    public Resident getOrMakeResident(UUID uuid) {
+        return getOrMakeResident(uuid, PlayerUtils.getUsernameFromUUID(uuid));
     }
 
     public Resident getOrMakeResident(EntityPlayer player) {
