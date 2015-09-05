@@ -2,13 +2,13 @@ package mytown.entities;
 
 import myessentials.utils.ChatUtils;
 import mytown.MyTown;
+import mytown.api.container.GenericContainer;
 import mytown.api.container.PlotsContainer;
-import mytown.api.container.ToolContainer;
 import mytown.api.container.TownsContainer;
 import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.DatasourceProxy;
+import mytown.entities.tools.Tool;
 import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,7 +34,7 @@ public class Resident {
     public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
     public final TownsContainer townInvitesContainer = new TownsContainer();
     public final TownsContainer townsContainer = new TownsContainer();
-    public final ToolContainer toolContainer = new ToolContainer();
+    public final GenericContainer<Tool> toolContainer = new GenericContainer<Tool>();
 
     public Resident(EntityPlayer pl) {
         setPlayer(pl);

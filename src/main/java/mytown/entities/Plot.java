@@ -3,7 +3,9 @@ package mytown.entities;
 import myessentials.entities.Volume;
 import myessentials.utils.PlayerUtils;
 import mytown.api.container.FlagsContainer;
+import mytown.api.container.GenericContainer;
 import mytown.api.container.ResidentsContainer;
+import mytown.entities.blocks.SellSign;
 import mytown.entities.flag.FlagType;
 
 public class Plot {
@@ -15,6 +17,7 @@ public class Plot {
     public final FlagsContainer flagsContainer = new FlagsContainer();
     public final ResidentsContainer membersContainer = new ResidentsContainer();
     public final ResidentsContainer ownersContainer = new ResidentsContainer();
+    public final GenericContainer<SellSign> signContainer = new GenericContainer<SellSign>();
 
     public Plot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         if (x1 > x2) {
