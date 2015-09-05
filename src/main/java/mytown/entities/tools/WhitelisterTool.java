@@ -20,7 +20,8 @@ import java.util.List;
 public class WhitelisterTool extends Tool {
 
     private static final String NAME = EnumChatFormatting.BLUE + "Whitelister";
-    private static final String DESCRIPTION_HEADER = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection. Shift right-click to change flag.";
+    private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection.";
+    private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click air to change flag.";
     private static final String DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: " + FlagType.ACCESS.toString().toLowerCase();
 
     private static final List<FlagType> whitelistableFlags = new ArrayList<FlagType>();
@@ -34,7 +35,7 @@ public class WhitelisterTool extends Tool {
 
     public WhitelisterTool(Resident owner) {
         super(owner, NAME);
-        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER, DESCRIPTION_FLAG));
+        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER_1, DESCRIPTION_HEADER_2, DESCRIPTION_FLAG));
     }
 
     @Override
@@ -60,9 +61,11 @@ public class WhitelisterTool extends Tool {
     public void onShiftRightClick() {
         FlagType currentFlag = getFlagFromLore();
         if(currentFlag == whitelistableFlags.get(whitelistableFlags.size() - 1)) {
-            setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 1);
+            setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 2);
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.tool.mode", "mode", "WHITELIST REMOVAL"));
         } else {
-            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag) + 1).toString().toLowerCase(), 1);
+            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag) + 1).toString().toLowerCase(), 2);
+            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.tool.mode", "flagType", currentFlag));
         }
     }
 

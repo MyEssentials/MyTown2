@@ -292,6 +292,8 @@ mytown.notification.plot.sell.start=&3Right click on a plot with the tool given 
 mytown.notification.town.renamed=&3Town has been renamed
 mytown.notification.plot.enter=&2~ %s
 mytown.notification.update.ranks=&aSuccessfully updated all ranks
+mytown.notification.tool.mode=&3Changed '%s' to %s
+mytown.notification.tool.gained=&3You have been given a tool
 
 # Help for commands
 mytown.cmd.assistant.blocks.help=Everything related to TownBlocks (chunks in town)

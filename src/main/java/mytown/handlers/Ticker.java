@@ -7,21 +7,14 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.config.Config;
-import myessentials.utils.PlayerUtils;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
+import mytown.entities.blocks.Sign;
 import mytown.entities.tools.Tool;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.EconomyProxy;
-import mytown.proxies.LocalizationProxy;
-import mytown.util.Constants;
-import mytown.util.MyTownUtils;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntitySign;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -105,28 +98,17 @@ public class Ticker {
     }
 
     @SubscribeEvent
-    public void onItemUse(PlayerInteractEvent ev) {
-        if (ev.entityPlayer.worldObj.isRemote)
+    public void onPlayerInteract(PlayerInteractEvent ev) {
+        if (ev.entityPlayer.worldObj.isRemote || ev.isCanceled())
             return;
 
-        ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
-        if (currentStack == null)
+        if(Tool.interact(ev))
             return;
 
-        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
-            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-            Tool currentTool = res.toolContainer.get();
-            if(currentTool == null)
-                return;
-            if(currentTool.getItemStack() == currentStack) {
-                if (ev.entityPlayer.isSneaking()) {
-                    currentTool.onShiftRightClick();
-                } else if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-                    currentTool.onItemUse(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, ev.face);
-                }
-            }
-        }
+        if(Sign.interact(ev))
+            return;
     }
+
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
@@ -134,63 +116,11 @@ public class Ticker {
             // Cancel event if it's a border that has been broken
             ev.setCanceled(true);
         }
-    }
-
-    @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent ev) {
-        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        Block block = ev.world.getBlock(ev.x, ev.y, ev.z);
-
-        // Shop and plot sale click verify
-        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK || ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
-
-            if (block == Blocks.wall_sign || block == Blocks.standing_sign) {
-                TileEntitySign te = (TileEntitySign) ev.world.getTileEntity(ev.x, ev.y, ev.z);
-
-                if(te.signText[1].equals(Constants.PLOT_SELL_IDENTIFIER)) {
-                    if (ev.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && ev.entityPlayer.isSneaking() && PlayerUtils.isOp(ev.entityPlayer)) {
-                        ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
-                    } else if(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-                        Town town = MyTownUtils.getTownAtPosition(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4);
-                        if(town != null) {
-                            if(town.residentsMap.containsKey(res)) {
-                                Plot plot = town.plotsContainer.get(ev.world.provider.dimensionId, ev.x, ev.y, ev.z);
-                                if(plot != null) {
-                                    if(!plot.ownersContainer.contains(res)) {
-                                        if (town.plotsContainer.canResidentMakePlot(res)) {
-                                            int price = Integer.parseInt(te.signText[2].substring(2, te.signText[2].length()));
-                                            if (EconomyProxy.getEconomy().takeMoneyFromPlayer(ev.entityPlayer, price)) {
-                                                for(Resident resInPlot : plot.ownersContainer) {
-                                                    resInPlot.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.oldOwner", plot.getName()));
-                                                }
-                                                for(Resident resInPlot : plot.membersContainer) {
-                                                    DatasourceProxy.getDatasource().unlinkResidentFromPlot(resInPlot, plot);
-                                                }
-                                                for(Resident resInPlot : plot.ownersContainer) {
-                                                    DatasourceProxy.getDatasource().unlinkResidentFromPlot(resInPlot, plot);
-                                                }
-                                                DatasourceProxy.getDatasource().linkResidentToPlot(res, plot, true);
-                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.newOwner", plot.getName()));
-                                                ev.world.setBlock(ev.x, ev.y, ev.z, Blocks.air);
-                                            } else {
-                                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.buy.failed", EconomyProxy.getCurrency(price)));
-                                            }
-                                        } else {
-                                            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.limit", town.plotsContainer.getMaxPlots()));
-                                        }
-                                    } else {
-                                        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.sell.alreadyOwner"));
-                                    }
-                                }
-                            } else {
-                                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", town.getName()));
-                            }
-                        }
-                    }
-                    ev.setCanceled(true);
-                }
-            }
+        Sign sign = Sign.getSign(ev.world, ev.x, ev.y, ev.z);
+        if(sign != null) {
+            Resident resisdent = MyTownUniverse.instance.getOrMakeResident(ev.getPlayer());
+            sign.onShiftRightClick(resisdent);
+            ev.setCanceled(true);
         }
     }
-
 }

@@ -7,6 +7,8 @@ import mytown.api.container.GenericContainer;
 import mytown.api.container.ResidentsContainer;
 import mytown.entities.blocks.SellSign;
 import mytown.entities.flag.FlagType;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 
 public class Plot {
     private int dbID;
@@ -48,7 +50,6 @@ public class Plot {
         this.z2 = z2;
         this.dim = dim;
 
-
         updateKey();
     }
 
@@ -58,6 +59,22 @@ public class Plot {
 
     public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
         return !flagsContainer.getValue(flagType).equals(denialValue) || membersContainer.contains(res) || ownersContainer.contains(res) || PlayerUtils.isOp(res.getPlayer());
+    }
+
+    public void checkForSellSign() {
+        World world = MinecraftServer.getServer().worldServerForDimension(dim);
+        SellSign sign;
+        for(int i = x1; i <= x2; i++) {
+            for(int j = y1; j <= y2; j++) {
+                for(int k = z1; k <= z2; k++) {
+                    sign = SellSign.findSignAndCreate(world, i, j, k);
+                    if(sign != null) {
+                        signContainer.set(sign);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     @Override

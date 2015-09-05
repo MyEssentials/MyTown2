@@ -293,7 +293,6 @@ public class CommandsEveryone extends Commands {
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             res.toolContainer.set(new PlotSelectionTool(res, args.get(0)));
-            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.start"));
             return CommandResponse.DONE;
         }
 

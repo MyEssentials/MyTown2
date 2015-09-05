@@ -2,7 +2,7 @@ package mytown.api.container;
 
 public class GenericContainer<T> {
 
-    public T object;
+    private T object;
 
     public boolean exists() {
         return object != null;

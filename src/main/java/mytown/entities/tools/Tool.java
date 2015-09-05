@@ -1,7 +1,9 @@
 package mytown.entities.tools;
 
 import myessentials.utils.PlayerUtils;
+import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
+import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
@@ -11,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 /**
  * A wrapper interface for one of the item class that only executes on the server-side.
@@ -47,6 +50,7 @@ public abstract class Tool {
         }
 
         PlayerUtils.giveItemToPlayer(owner.getPlayer(), itemStack, 1);
+        owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.tool.gained"));
     }
 
     protected void deleteItemStack() {
@@ -93,5 +97,29 @@ public abstract class Tool {
         return DatasourceProxy.getDatasource();
     }
 
+    public static boolean interact(PlayerInteractEvent ev) {
+        if(!(ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR || ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)) {
+            return false;
+        }
 
+        ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
+        if(currentStack == null) {
+            return false;
+        }
+
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
+        Tool currentTool = res.toolContainer.get();
+        if(currentTool == null) {
+            return false;
+        }
+        if(currentTool.getItemStack() == currentStack) {
+            if (ev.entityPlayer.isSneaking() && ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
+                currentTool.onShiftRightClick();
+            } else if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+                currentTool.onItemUse(ev.world.provider.dimensionId, ev.x, ev.y, ev.z, ev.face);
+            }
+            return true;
+        }
+        return false;
+    }
 }

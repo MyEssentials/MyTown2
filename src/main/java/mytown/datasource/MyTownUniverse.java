@@ -283,6 +283,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
             }
         }
         plots.add(plot);
+        plot.checkForSellSign();
         CommandCompletion.addCompletion("plotCompletion", plot.getName());
     }
 

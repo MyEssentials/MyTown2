@@ -13,7 +13,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
@@ -23,21 +22,21 @@ public class PlotSelectionTool extends Tool {
 
     private static final String NAME = EnumChatFormatting.BLUE + "Selector"; // TODO: Get localization for it, maybe?
     private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.";
-    private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click to change modes.";
+    private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click air to change modes.";
     private static final String DESCRIPTION_NAME = EnumChatFormatting.DARK_AQUA + "Name: ";
-    private static final String DESCRIPTION_MODE = EnumChatFormatting.DARK_AQUA + "Height dependant: ";
+    private static final String DESCRIPTION_MODE = EnumChatFormatting.DARK_AQUA + "Height dependent: ";
 
     /**
      * Using integers instead of BlockPos because we want each plot to have a unique set of coordinates.
      */
     private Selection selectionFirst, selectionSecond;
     private String plotName;
-    private boolean heightDependant = true;
+    private boolean heightDependent = true;
 
     public PlotSelectionTool(Resident owner, String plotName) {
         super(owner, NAME);
         this.plotName = plotName;
-        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER_1, DESCRIPTION_HEADER_2, DESCRIPTION_NAME + plotName, DESCRIPTION_MODE + heightDependant));
+        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER_1, DESCRIPTION_HEADER_2, DESCRIPTION_NAME + plotName, DESCRIPTION_MODE + heightDependent));
     }
 
     @Override
@@ -70,8 +69,9 @@ public class PlotSelectionTool extends Tool {
 
     @Override
     public void onShiftRightClick() {
-        heightDependant = !heightDependant;
-        setDescription(DESCRIPTION_MODE + heightDependant, 3);
+        heightDependent = !heightDependent;
+        setDescription(DESCRIPTION_MODE + heightDependent, 3);
+        owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.tool.mode", "heightDependent", heightDependent));
     }
 
     public void resetSelection(boolean resetBlocks, int delay) {
@@ -172,7 +172,7 @@ public class PlotSelectionTool extends Tool {
     }
 
     private void normalizeSelection() {
-        if(!heightDependant) {
+        if(!heightDependent) {
             expandVertically();
         } else {
             if(owner.getPlayer() instanceof EntityPlayerMP)
