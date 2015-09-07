@@ -1,30 +1,38 @@
 package mytown.protection.segment;
 
+import com.google.gson.*;
 import myessentials.utils.StringUtils;
+import mytown.api.container.GettersContainer;
 import mytown.entities.flag.FlagType;
-import mytown.protection.segment.getter.Getters;
 import mytown.util.exceptions.ConditionException;
-import net.minecraft.item.ItemStack;
+
+import java.lang.reflect.Type;
 
 /**
  * A part of the protection that protects against a specific thing.
  */
-public class Segment {
+public class Segment implements JsonSerializer<Segment>, JsonDeserializer<Segment> {
     protected final Class<?> theClass;
     protected final FlagType flag;
     protected final Object denialValue;
-    protected final Getters getters;
     protected final String[] conditionString;
 
-    public Segment(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString) {
+    public final GettersContainer getters = new GettersContainer();
+
+    public Segment(Class<?> theClass, GettersContainer getters, FlagType flag, Object denialValue, String conditionString) {
         this.theClass = theClass;
-        this.getters = getters;
         this.flag = flag;
         this.denialValue = denialValue;
-        if(conditionString != null)
+
+        if(conditionString != null) {
             this.conditionString = conditionString.split(" ");
-        else
+        } else {
             this.conditionString = null;
+        }
+
+        if(getters != null) {
+            this.getters.addAll(getters);
+        }
     }
 
     public Class<?> getCheckClass() {
@@ -33,10 +41,6 @@ public class Segment {
 
     public FlagType getFlag() {
         return flag;
-    }
-
-    public Getters getGetters() {
-        return getters;
     }
 
     public Object getDenialValue() {
@@ -62,7 +66,7 @@ public class Segment {
 
             // Get the boolean value of each part of the condition.
             if(StringUtils.tryParseBoolean(conditionString[i + 2])) {
-                boolean value = (Boolean) getters.getValue(conditionString[i], Boolean.class, instance, object);
+                boolean value = (Boolean) getters.get(conditionString[i]).invoke(Boolean.class, instance, object);
                 if ("==".equals(conditionString[i + 1])) {
                     current = value == Boolean.parseBoolean(conditionString[i + 2]);
                 } else if("!=".equals(conditionString[i + 1])) {
@@ -71,7 +75,7 @@ public class Segment {
                     throw new ConditionException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
             } else if(StringUtils.tryParseInt(conditionString[i + 2])) {
-                int value = (Integer) getters.getValue(conditionString[i], Integer.class, instance, object);
+                int value = (Integer) getters.get(conditionString[i]).invoke(Integer.class, instance, object);
                 if("==".equals(conditionString[i + 1])) {
                     current = value == Integer.parseInt(conditionString[i + 2]);
                 } else if("!=".equals(conditionString[i + 1])) {
@@ -84,7 +88,7 @@ public class Segment {
                     throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + (i / 4) + 1 + " has an invalid condition!");
                 }
             } else if(StringUtils.tryParseFloat(conditionString[i + 2])) {
-                float value = (Integer) getters.getValue(conditionString[i], Integer.class, instance, object);
+                float value = (Integer) getters.get(conditionString[i]).invoke(Integer.class, instance, object);
                 if("==".equals(conditionString[i + 1])) {
                     current = value == Float.parseFloat(conditionString[i + 2]);
                 } else if("!=".equals(conditionString[i + 1])) {
@@ -97,7 +101,7 @@ public class Segment {
                     throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
                 }
             } else if(conditionString[i + 2].startsWith("'") && conditionString[i+2].endsWith("'")){
-                String value = (String) getters.getValue(conditionString[i], String.class, instance, object);
+                String value = (String) getters.get(conditionString[i]).invoke(String.class, instance, object);
                 if("==".equals(conditionString[i + 1])) {
                     current = value.equals(conditionString[i+2].substring(1, conditionString[i+2].length() - 1));
                 } else if("!=".equals(conditionString[i + 1])) {
@@ -122,6 +126,16 @@ public class Segment {
      * Gets the range of the area of effect of this thing, or 0 if none is specified.
      */
     public int getRange(Object object) {
-        return getters.hasValue("range") ? (Integer) getters.getValue("range", Integer.class, object, object) : 0;
+        return getters.contains("range") ? (Integer) getters.get("range").invoke(Integer.class, object, object) : 0;
+    }
+
+    @Override
+    public JsonElement serialize(Segment src, Type typeOfSrc, JsonSerializationContext context) {
+        return null;
+    }
+
+    @Override
+    public Segment deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        return null;
     }
 }

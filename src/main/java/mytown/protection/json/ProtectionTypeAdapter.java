@@ -14,7 +14,7 @@ import mytown.protection.segment.*;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
-import mytown.protection.segment.getter.Caller;
+import mytown.protection.segment.caller.Caller;
 import mytown.protection.segment.getter.Getters;
 import mytown.util.exceptions.SegmentException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -59,7 +59,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
                     out.beginObject();
-                    out.name("element").value(caller.getElement());
+                    out.name("element").value(caller.getName());
                     out.name("type").value(caller.getCallerType().toString());
                     out.endObject();
                 }
@@ -110,7 +110,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
                     out.beginObject();
-                    out.name("element").value(caller.getElement());
+                    out.name("element").value(caller.getName());
                     out.name("type").value(caller.getCallerType().toString());
                     out.endObject();
                 }
@@ -146,7 +146,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
                     out.beginObject();
-                    out.name("element").value(caller.getElement());
+                    out.name("element").value(caller.getName());
                     out.name("type").value(caller.getCallerType().toString());
                     out.endObject();
                 }
@@ -198,7 +198,7 @@ public class ProtectionTypeAdapter extends TypeAdapter<Protection>{
                 out.name(entry.getKey()).beginArray();
                 for(Caller caller : entry.getValue()) {
                     out.beginObject();
-                    out.name("element").value(caller.getElement());
+                    out.name("element").value(caller.getName());
                     out.name("type").value(caller.getCallerType().toString());
                     out.endObject();
                 }
