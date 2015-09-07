@@ -19,7 +19,6 @@ import mytown.entities.flag.FlagType;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsHandler;
-import mytown.proxies.LocalizationProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -331,7 +330,7 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(0));
         town.townBlocksContainer.setExtraBlocks(Integer.parseInt(args.get(1)));
         getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.extra.set", town.townBlocksContainer.getExtraBlocks(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.extra.set", town.townBlocksContainer.getExtraBlocks(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -352,7 +351,7 @@ public class CommandsAdmin extends Commands {
         int amount = Integer.parseInt(args.get(1));
         town.townBlocksContainer.setExtraBlocks(town.townBlocksContainer.getExtraBlocks() + amount);
         getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.extra.set", town.townBlocksContainer.getExtraBlocks(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.extra.set", town.townBlocksContainer.getExtraBlocks(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -373,7 +372,7 @@ public class CommandsAdmin extends Commands {
         int amount = Integer.parseInt(args.get(1));
         town.townBlocksContainer.setExtraBlocks(town.townBlocksContainer.getExtraBlocks() - amount);
         getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.extra.set", town.townBlocksContainer.getExtraBlocks(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.extra.set", town.townBlocksContainer.getExtraBlocks(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -402,7 +401,7 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(0));
         town.townBlocksContainer.setMaxFarClaims(Integer.parseInt(args.get(1)));
         getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getMaxFarClaims(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getMaxFarClaims(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -423,7 +422,7 @@ public class CommandsAdmin extends Commands {
         int amount = Integer.parseInt(args.get(1));
         town.townBlocksContainer.setMaxFarClaims(town.townBlocksContainer.getMaxFarClaims() + amount);
         getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getMaxFarClaims(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getMaxFarClaims(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -444,7 +443,7 @@ public class CommandsAdmin extends Commands {
         int amount = Integer.parseInt(args.get(1));
         town.townBlocksContainer.setMaxFarClaims(town.townBlocksContainer.getMaxFarClaims() - amount);
         getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getMaxFarClaims(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getMaxFarClaims(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -486,7 +485,7 @@ public class CommandsAdmin extends Commands {
         int amount = Integer.parseInt(args.get(1));
         target.setExtraBlocks(amount);
         getDatasource().saveResident(target);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -507,7 +506,7 @@ public class CommandsAdmin extends Commands {
         int amount = Integer.parseInt(args.get(1));
         target.setExtraBlocks(target.getExtraBlocks() + amount);
         getDatasource().saveResident(target);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -528,7 +527,7 @@ public class CommandsAdmin extends Commands {
         int amount = Integer.parseInt(args.get(1));
         target.setExtraBlocks(target.getExtraBlocks() - amount);
         getDatasource().saveResident(target);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.res.blocks.extra.set", target.getExtraBlocks(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -917,7 +916,7 @@ public class CommandsAdmin extends Commands {
             if (getUniverse().blocks.contains(player.dimension, player.chunkCoordX, player.chunkCoordZ))
                 throw new MyTownCommandException("mytown.cmd.err.claim.already");
             if (!CommandsAssistant.checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) { // Checks if the player can claim far
-                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
+                res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.adm.cmd.far.claim"));
                 isFarClaim = true;
             }
             TownBlock block = getUniverse().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, 0, town);
@@ -941,7 +940,7 @@ public class CommandsAdmin extends Commands {
                     it.remove();
             }
             if(isFarClaim)
-                res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.adm.cmd.far.claim"));
+                res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.adm.cmd.far.claim"));
 
             if (town.townBlocksContainer.size() + chunks.size() > town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
@@ -1316,7 +1315,7 @@ public class CommandsAdmin extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
         town.townBlocksContainer.show(res);
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.show", town.getName()));
+        res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.borders.show", town.getName()));
         return CommandResponse.DONE;
     }
 
@@ -1328,7 +1327,7 @@ public class CommandsAdmin extends Commands {
     public static CommandResponse bordersHideCommand(ICommandSender sender, List<String> args) {
         if(sender instanceof EntityPlayerMP) {
             VisualsHandler.instance.unmarkTowns((EntityPlayerMP)sender);
-            sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
+            sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.borders.hide"));
         }
         return CommandResponse.DONE;
     }

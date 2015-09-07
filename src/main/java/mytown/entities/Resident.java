@@ -9,7 +9,6 @@ import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
 import mytown.entities.tools.Tool;
-import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -74,12 +73,12 @@ public class Resident {
 
             if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
                 if (townsContainer.contains(newTownBlock.getTown())) {
-                    sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
+                    sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
                 } else {
-                    sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
+                    sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
                 }
             } else if (oldTownBlock != null && newTownBlock == null) {
-                sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.wild"));
+                sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.wild"));
             }
         }
     }
@@ -93,11 +92,11 @@ public class Resident {
         newTownBlock = MyTownUniverse.instance.blocks.get(dimension, newChunkX, newChunkZ);
 
         if (newTownBlock == null) {
-            sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.wild"));
+            sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.wild"));
         } else if (townsContainer.contains(newTownBlock.getTown())) {
-            sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
+            sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
         } else {
-            sendMessage(MyTown.getLocal().getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
+            sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
         }
     }
 
@@ -119,7 +118,7 @@ public class Resident {
     public void protectionDenial(FlagType flag, String owners) {
         if (getPlayer() != null) {
             ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
-            ChatUtils.sendChat(getPlayer(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", owners));
+            ChatUtils.sendChat(getPlayer(), MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
         }
     }
 

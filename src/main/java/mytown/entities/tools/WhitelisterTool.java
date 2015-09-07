@@ -6,7 +6,6 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Items;
 import net.minecraft.util.EnumChatFormatting;
@@ -62,17 +61,17 @@ public class WhitelisterTool extends Tool {
         FlagType currentFlag = getFlagFromLore();
         if(currentFlag == whitelistableFlags.get(whitelistableFlags.size() - 1)) {
             setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 2);
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.tool.mode", "mode", "WHITELIST REMOVAL"));
+            owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "mode", "WHITELIST REMOVAL"));
         } else {
             setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag) + 1).toString().toLowerCase(), 2);
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.tool.mode", "flagType", currentFlag));
+            owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "flagType", currentFlag));
         }
     }
 
     @Override
     protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
         if(town == null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.townsContainer.getMainTown().getName()));
+            owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.notInTown", owner.townsContainer.getMainTown().getName()));
             return false;
         }
 
@@ -80,7 +79,7 @@ public class WhitelisterTool extends Tool {
         if(!(town.residentsMap.get(owner).getName().equals("Assistant") || town.residentsMap.get(owner).getName().equals("Mayor"))) {
             Plot plot = town.plotsContainer.get(dim, x, y, z);
             if(plot == null || !plot.ownersContainer.contains(owner)) {
-                owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.perm.whitelist"));
+                owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.perm.whitelist"));
                 return false;
             }
         }
@@ -93,7 +92,7 @@ public class WhitelisterTool extends Tool {
             BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
             if (bw != null) {
                 DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
-                owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.removed"));
+                owner.sendMessage(getLocal().getLocalization("mytown.notification.perm.town.whitelist.removed"));
             }
         }
     }
@@ -102,10 +101,10 @@ public class WhitelisterTool extends Tool {
         BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
         if (bw == null) {
             bw = new BlockWhitelist(dim, x, y, z, flagType);
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.added"));
+            owner.sendMessage(getLocal().getLocalization("mytown.notification.perm.town.whitelist.added"));
             DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
         } else {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.perm.town.whitelist.already"));
+            owner.sendMessage(getLocal().getLocalization("mytown.notification.perm.town.whitelist.already"));
         }
     }
 

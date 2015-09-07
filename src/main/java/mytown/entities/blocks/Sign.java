@@ -5,7 +5,6 @@ import mytown.MyTown;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
-import mytown.proxies.LocalizationProxy;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -75,7 +74,7 @@ public abstract class Sign {
     }
 
     public Localization getLocal() {
-        return LocalizationProxy.getLocalization();
+        return MyTown.instance.LOCAL;
     }
 
     public int getX() {

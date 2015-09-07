@@ -1,6 +1,6 @@
 package mytown.entities.flag;
 
-import mytown.proxies.LocalizationProxy;
+import mytown.MyTown;
 
 /**
  * Flags enumeration. Enumerating all flags here
@@ -131,21 +131,21 @@ public enum FlagType {
      * Gets the localized description
      */
     public String getLocalizedDescription() {
-        return LocalizationProxy.getLocalization().getLocalization("mytown.flag." + this.toString());
+        return MyTown.instance.LOCAL.getLocalization("mytown.flag." + this.toString());
     }
 
     /**
      * Gets the localized message of when the flag denies an action of a player
      */
     public String getLocalizedProtectionDenial() {
-        return LocalizationProxy.getLocalization().getLocalization("mytown.protection." + this.toString());
+        return MyTown.instance.LOCAL.getLocalization("mytown.protection." + this.toString());
     }
 
     /**
      * Gets the localized message that is sent to all players on the town when something tried to bypass protection.
      */
     public String getLocalizedTownNotification() {
-        return LocalizationProxy.getLocalization().getLocalization("mytown.protection.notify." + this.toString());
+        return MyTown.instance.LOCAL.getLocalization("mytown.protection.notify." + this.toString());
     }
 
     public boolean isWhitelistable() {

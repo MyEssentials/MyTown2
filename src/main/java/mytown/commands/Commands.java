@@ -2,6 +2,7 @@ package mytown.commands;
 
 import myessentials.Localization;
 import mypermissions.api.command.CommandCompletion;
+import mytown.MyTown;
 import mytown.api.container.FlagsContainer;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
@@ -10,7 +11,6 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.EconomyProxy;
-import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
@@ -35,7 +35,7 @@ public abstract class Commands {
         return MyTownUniverse.instance;
     }
     public static Localization getLocal() {
-        return LocalizationProxy.getLocalization();
+        return MyTown.instance.LOCAL;
     }
 
     /**
@@ -234,7 +234,7 @@ public abstract class Commands {
 
         town.bank.addAmount(-amount);
         getDatasource().saveTownBank(town.bank);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.payment", EconomyProxy.getCurrency(amount)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.payment", EconomyProxy.getCurrency(amount)));
     }
 
     public static void makeBankRefund(ICommandSender sender, Town town, int amount) {
@@ -243,6 +243,6 @@ public abstract class Commands {
 
         town.bank.addAmount(amount);
         getDatasource().saveTownBank(town.bank);
-        sendMessageBackToSender(sender, LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.refund", EconomyProxy.getCurrency(amount)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.refund", EconomyProxy.getCurrency(amount)));
     }
 }

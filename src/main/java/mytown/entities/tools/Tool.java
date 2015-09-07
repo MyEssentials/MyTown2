@@ -1,5 +1,6 @@
 package mytown.entities.tools;
 
+import myessentials.Localization;
 import myessentials.utils.PlayerUtils;
 import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
@@ -7,7 +8,6 @@ import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.LocalizationProxy;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -45,12 +45,12 @@ public abstract class Tool {
 
     protected void giveItemStack(ItemStack itemStack) {
         if(owner.getPlayer().inventory.hasItemStack(itemStack) && owner.toolContainer.get() != null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.inventory.tool.already"));
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.inventory.tool.already"));
             PlayerUtils.takeItemFromPlayer(owner.getPlayer(), owner.toolContainer.get().getItemStack(), 1);
         }
 
         PlayerUtils.giveItemToPlayer(owner.getPlayer(), itemStack, 1);
-        owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.tool.gained"));
+        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.gained"));
     }
 
     protected void deleteItemStack() {
@@ -95,6 +95,10 @@ public abstract class Tool {
 
     protected MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
+    }
+
+    protected Localization getLocal() {
+        return MyTown.instance.LOCAL;
     }
 
     public static boolean interact(PlayerInteractEvent ev) {

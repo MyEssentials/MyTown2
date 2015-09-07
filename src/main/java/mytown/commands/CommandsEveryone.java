@@ -15,7 +15,6 @@ import mytown.entities.tools.PlotSellTool;
 import mytown.entities.tools.Tool;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.proxies.EconomyProxy;
-import mytown.proxies.LocalizationProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -277,7 +276,7 @@ public class CommandsEveryone extends Commands {
             plot.setName(args.get(0));
             getDatasource().savePlot(plot);
 
-            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.renamed"));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.renamed"));
             return CommandResponse.DONE;
         }
 
@@ -316,7 +315,7 @@ public class CommandsEveryone extends Commands {
             if(currentTool == null || !(currentTool instanceof PlotSelectionTool))
                 throw new MyTownCommandException("mytown.cmd.err.plot.noPermission");
             ((PlotSelectionTool) currentTool).resetSelection(true, 0);
-            res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.selectionReset"));
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.selectionReset"));
             return CommandResponse.DONE;
         }
 
@@ -553,7 +552,7 @@ public class CommandsEveryone extends Commands {
         Town town = getTownFromResident(res);
 
         town.townBlocksContainer.show(res);
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.show", town.getName()));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.borders.show", town.getName()));
         return CommandResponse.DONE;
     }
 
@@ -567,7 +566,7 @@ public class CommandsEveryone extends Commands {
         Town town = getTownFromResident(res);
 
         town.townBlocksContainer.hide(res);
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.borders.hide"));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.borders.hide"));
         return CommandResponse.DONE;
     }
 
@@ -592,7 +591,7 @@ public class CommandsEveryone extends Commands {
         if(town instanceof AdminTown)
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
 
-        res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.bank.info", EconomyProxy.getCurrency(town.bank.getAmount()), EconomyProxy.getCurrency(town.bank.getNextPaymentAmount())));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.bank.info", EconomyProxy.getCurrency(town.bank.getAmount()), EconomyProxy.getCurrency(town.bank.getNextPaymentAmount())));
         return CommandResponse.DONE;
     }
 

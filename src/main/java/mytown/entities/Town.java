@@ -4,18 +4,16 @@ import myessentials.teleport.Teleport;
 import myessentials.utils.PlayerUtils;
 import mypermissions.api.entities.PermissionLevel;
 import mypermissions.proxies.PermissionProxy;
+import mytown.MyTown;
 import mytown.api.container.*;
 import mytown.config.Config;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.LocalizationProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
@@ -44,7 +42,7 @@ public class Town implements Comparable<Town> {
 
     public void notifyResidentJoin(Resident res) {
         for (Resident toRes : residentsMap.keySet()) {
-            toRes.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.joined", res.getPlayerName(), getName()));
+            toRes.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.joined", res.getPlayerName(), getName()));
         }
     }
 

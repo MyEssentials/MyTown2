@@ -3,22 +3,21 @@ package mytown.protection;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.*;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import myessentials.entities.BlockPos;
+import myessentials.entities.EntityPos;
 import myessentials.utils.PlayerUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
 import mytown.config.Config;
-import myessentials.entities.BlockPos;
-import myessentials.entities.EntityPos;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.ItemType;
-import mytown.proxies.LocalizationProxy;
-import mytown.thread.ThreadPlacementCheck;
 import mytown.proxies.DatasourceProxy;
+import mytown.thread.ThreadPlacementCheck;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
@@ -34,7 +33,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -42,7 +40,10 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Handles all the protections
@@ -191,9 +192,9 @@ public class Protections {
                 Plot lastTickPlot = town.plotsContainer.get(lastTickPos.getDim(), (int) Math.floor(lastTickPos.getX()), (int) Math.floor(lastTickPos.getY()), (int) Math.floor(lastTickPos.getZ()));
 
                 if(currentPlot != null && (lastTickPlot == null || currentPlot != lastTickPlot)) {
-                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.enter", currentPlot.getName()));
+                    res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.enter", currentPlot.getName()));
                 } else if(currentPlot == null && lastTickPlot != null) {
-                    res.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.plot.enter", EnumChatFormatting.RED + "Unassigned"));
+                    res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.enter", EnumChatFormatting.RED + "Unassigned"));
                 }
             }
 

@@ -1,12 +1,11 @@
 package mytown.util;
 
 import myessentials.chat.JsonMessageBuilder;
+import mytown.MyTown;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
-import mytown.proxies.DatasourceProxy;
-import mytown.proxies.LocalizationProxy;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.text.DateFormat;
@@ -85,7 +84,7 @@ public class Formatter {
                     formatterList += ", " + r.getPlayerName();
                 }
         }
-        return LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", formatterList);
+        return MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", formatterList);
     }
 
     /**
@@ -99,7 +98,7 @@ public class Formatter {
             ownerName = "SERVER ADMINS";
         else
             ownerName = owner.getPlayerName();
-        return LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", ownerName);
+        return MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", ownerName);
     }
 }
 

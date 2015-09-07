@@ -7,19 +7,17 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.Localization;
-import mypermissions.api.command.CommandManager;
 import myessentials.config.ConfigProcessor;
 import myessentials.json.JSONConfig;
 import myessentials.utils.ClassUtils;
 import myessentials.utils.StringUtils;
+import mypermissions.api.command.CommandManager;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
 import mytown.config.json.RanksConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.crash.DatasourceCrashCallable;
-import mytown.entities.Rank;
-import mytown.entities.flag.Flag;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
 import mytown.handlers.VisualsHandler;
@@ -29,17 +27,13 @@ import mytown.protection.eventhandlers.ExtraEventsHandler;
 import mytown.protection.json.ProtectionParser;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.EconomyProxy;
-import mytown.proxies.LocalizationProxy;
 import mytown.util.Constants;
 import mytown.util.exceptions.ConfigException;
-import net.minecraft.command.ICommandSender;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +44,7 @@ public class MyTown {
     @Instance
     public static MyTown instance;
     public Logger LOG;
+    public Localization LOCAL;
     // ---- Configuration files ----
     private Configuration config;
 
@@ -65,7 +60,7 @@ public class MyTown {
         // Read Configs
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
         ConfigProcessor.load(config, Config.class);
-
+        LOCAL = new Localization(Constants.CONFIG_FOLDER, Config.localization, "/mytown/localization/", MyTown.class);
         ProtectionParser.setFolderPath(ev.getModConfigurationDirectory() + "/MyTown/protections");
 
         registerHandlers();
@@ -120,18 +115,18 @@ public class MyTown {
      * Registers all commands
      */
     private void registerCommands() {
-        CommandManager.registerCommands(CommandsEveryone.class, null, getLocal(), new RankPermissionManager());
-        CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", getLocal(), null);
+        CommandManager.registerCommands(CommandsEveryone.class, null, LOCAL, new RankPermissionManager());
+        CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", LOCAL, null);
         if (Config.modifiableRanks)
-            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", getLocal(), null);
-        CommandManager.registerCommands(CommandsAdmin.class, null, getLocal(), null);
+            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", LOCAL, null);
+        CommandManager.registerCommands(CommandsAdmin.class, null, LOCAL, null);
         if(Config.enablePlots) {
-            CommandManager.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", getLocal(), null);
-            CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", getLocal(), null);
-            CommandManager.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", getLocal(), null);
+            CommandManager.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", LOCAL, null);
+            CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", LOCAL, null);
+            CommandManager.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", LOCAL, null);
         }
 
-        CommandManager.registerCommands(CommandsOutsider.class, "mytown.cmd", getLocal(), null);
+        CommandManager.registerCommands(CommandsOutsider.class, "mytown.cmd", LOCAL, null);
     }
 
     public WildPermsConfig getWildConfig() {
@@ -223,13 +218,5 @@ public class MyTown {
      */
     private boolean checkExtraEvents() {
         return ClassUtils.isClassLoaded("net.minecraftforge.event.world.ExplosionEvent");
-    }
-
-    // ////////////////////////////
-    // Helpers
-    // ////////////////////////////
-
-    public static Localization getLocal() {
-        return LocalizationProxy.getLocalization();
     }
 }

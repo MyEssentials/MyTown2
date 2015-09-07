@@ -5,7 +5,6 @@ import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.blocks.SellSign;
-import mytown.proxies.LocalizationProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -64,7 +63,7 @@ public class PlotSellTool extends Tool {
     public void onShiftRightClick() {
         this.restricted = !this.restricted;
         setDescription(DESCRIPTION_MODE + restricted, 3);
-        owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.notification.tool.mode", "Restricted to residents", restricted));
+        owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "Restricted to residents", restricted));
     }
 
     @Override
@@ -76,17 +75,17 @@ public class PlotSellTool extends Tool {
         }
 
         if(town == null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.notInTown", owner.townsContainer.getMainTown().getName()));
+            owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.notInTown", owner.townsContainer.getMainTown().getName()));
             return false;
         }
 
         Plot plot = town.plotsContainer.get(dim, x, y, z);
         if(plot == null) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.sell.notInPlot", town.getName()));
+            owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.plot.sell.notInPlot", town.getName()));
             return false;
         }
         if(!plot.ownersContainer.contains(owner) && !plot.getTown().hasPermission(owner, "mytown.bypass.plot")) {
-            owner.sendMessage(LocalizationProxy.getLocalization().getLocalization("mytown.cmd.err.plot.noPermission"));
+            owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.plot.noPermission"));
             return false;
         }
         return true;

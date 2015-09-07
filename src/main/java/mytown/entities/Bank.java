@@ -1,7 +1,7 @@
 package mytown.entities;
 
+import mytown.MyTown;
 import mytown.config.Config;
-import mytown.proxies.LocalizationProxy;
 
 public class Bank {
 
@@ -26,10 +26,10 @@ public class Bank {
         int amount = getNextPaymentAmount();
         if(makePayment(amount)) {
             daysNotPaid = 0;
-            town.notifyEveryone(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.upkeep"));
+            town.notifyEveryone(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.upkeep"));
         } else {
             daysNotPaid++;
-            town.notifyEveryone(LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.upkeep.failed", Config.upkeepTownDeletionDays - daysNotPaid));
+            town.notifyEveryone(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.upkeep.failed", Config.upkeepTownDeletionDays - daysNotPaid));
         }
     }
 

@@ -1,26 +1,18 @@
 package mytown.protection;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import mytown.MyTown;
+import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
-import myessentials.utils.WorldUtils;
+import mytown.MyTown;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
-import mytown.entities.Plot;
-import mytown.entities.Resident;
-import mytown.entities.Town;
-import mytown.entities.TownBlock;
-import mytown.entities.Wild;
+import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.*;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.proxies.DatasourceProxy;
-import mytown.proxies.LocalizationProxy;
-import myessentials.entities.BlockPos;
-import myessentials.entities.ChunkPos;
-import mytown.util.Formatter;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.block.Block;
@@ -32,10 +24,8 @@ import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.ArrayList;
@@ -402,7 +392,7 @@ public class Protection {
                                 }
                             } else {
                                 if (!plot.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                    res.protectionDenial(segment.getFlag(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.residentsMap.getMayor() == null ? "SERVER ADMINS" : town.residentsMap.getMayor().getPlayerName()));
+                                    res.protectionDenial(segment.getFlag(), MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", town.residentsMap.getMayor() == null ? "SERVER ADMINS" : town.residentsMap.getMayor().getPlayerName()));
                                     return false;
                                 }
                             }
@@ -418,7 +408,7 @@ public class Protection {
                             }
                         } else {
                             if (!town.hasPermission(res, segment.getFlag(), segment.getDenialValue())) {
-                                res.protectionDenial(segment.getFlag(), LocalizationProxy.getLocalization().getLocalization("mytown.notification.town.owners", town.residentsMap.getMayor() == null ? "SERVER ADMINS" : town.residentsMap.getMayor().getPlayerName()));
+                                res.protectionDenial(segment.getFlag(), MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", town.residentsMap.getMayor() == null ? "SERVER ADMINS" : town.residentsMap.getMayor().getPlayerName()));
                                 return false;
                             }
                         }
