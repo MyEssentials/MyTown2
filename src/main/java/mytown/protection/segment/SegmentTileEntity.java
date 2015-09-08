@@ -1,8 +1,8 @@
 package mytown.protection.segment;
 
+import mytown.api.container.GettersContainer;
 import mytown.config.Config;
 import mytown.entities.flag.FlagType;
-import mytown.protection.segment.getter.Getters;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.tileentity.TileEntity;
 
@@ -13,14 +13,24 @@ public class SegmentTileEntity extends Segment {
 
     private boolean hasOwner = false;
 
-    public SegmentTileEntity(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString, boolean hasOwner) {
-        super(theClass, getters, flag, denialValue, conditionString);
+    public SegmentTileEntity(Class<?> clazz, FlagType flagType, Object denialValue, String conditionString, GettersContainer getters, boolean hasOwner) {
+        this(hasOwner);
+        if(getters != null) {
+            this.getters.addAll(getters);
+        }
+        setCheckClass(clazz);
+        setFlag(flagType);
+        setDenialValue(denialValue);
+        setConditionString(conditionString);
+    }
+
+    public SegmentTileEntity(boolean hasOwner) {
         this.hasOwner = hasOwner;
     }
 
     public int getX1(TileEntity te) {
         try {
-            return (Integer) getters.getValue("xMin", Integer.class, te, null);
+            return (Integer) getters.get("xMin").invoke(Integer.class, te);
         } catch (GetterException ex) {
             return te.xCoord - Config.defaultProtectionSize;
         }
@@ -28,7 +38,7 @@ public class SegmentTileEntity extends Segment {
 
     public int getY1(TileEntity te) {
         try {
-            return (Integer) getters.getValue("yMin", Integer.class, te, null);
+            return (Integer) getters.get("yMin").invoke(Integer.class, te);
         } catch (GetterException ex) {
             return te.yCoord - Config.defaultProtectionSize;
         }
@@ -36,7 +46,7 @@ public class SegmentTileEntity extends Segment {
 
     public int getZ1(TileEntity te) {
         try {
-            return (Integer) getters.getValue("zMin", Integer.class, te, null);
+            return (Integer) getters.get("zMin").invoke(Integer.class, te);
         } catch (GetterException ex) {
             return te.zCoord - Config.defaultProtectionSize;
         }
@@ -44,7 +54,7 @@ public class SegmentTileEntity extends Segment {
 
     public int getX2(TileEntity te) {
         try {
-            return (Integer) getters.getValue("xMax", Integer.class, te, null);
+            return (Integer) getters.get("xMax").invoke(Integer.class, te);
         } catch (GetterException ex) {
             return te.xCoord + Config.defaultProtectionSize;
         }
@@ -52,7 +62,7 @@ public class SegmentTileEntity extends Segment {
 
     public int getY2(TileEntity te) {
         try {
-            return (Integer) getters.getValue("yMax", Integer.class, te, null);
+            return (Integer) getters.get("yMax").invoke(Integer.class, te);
         } catch (GetterException ex) {
             return te.yCoord + Config.defaultProtectionSize;
         }
@@ -60,7 +70,7 @@ public class SegmentTileEntity extends Segment {
 
     public int getZ2(TileEntity te) {
         try {
-            return (Integer) getters.getValue("zMax", Integer.class, te, null);
+            return (Integer) getters.get("zMax").invoke(Integer.class, te);
         } catch (GetterException ex) {
             return te.zCoord + Config.defaultProtectionSize;
         }

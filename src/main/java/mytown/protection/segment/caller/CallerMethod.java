@@ -35,9 +35,4 @@ public class CallerMethod extends Caller {
             }
         }
     }
-
-    @Override
-    public String getCallerTypeString() {
-        return "METHOD";
-    }
 }

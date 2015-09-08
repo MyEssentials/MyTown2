@@ -19,9 +19,4 @@ public class CallerField extends Caller {
             return fieldObject.get(instance);
         }
     }
-
-    @Override
-    public String getCallerTypeString() {
-        return "FIELD";
-    }
 }

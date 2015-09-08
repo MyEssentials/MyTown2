@@ -48,9 +48,4 @@ public class CallerFormula extends Caller {
 
         return result;
     }
-
-    @Override
-    public String getCallerTypeString() {
-        return "FORMULA";
-    }
 }

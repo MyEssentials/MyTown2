@@ -1,6 +1,5 @@
 package mytown.protection;
 
-import com.google.gson.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
@@ -29,7 +28,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +35,7 @@ import java.util.List;
 /**
  * An object which offers protection for a specific mod and version
  */
-public class Protection implements JsonSerializer<Protection>, JsonDeserializer<Protection>{
+public class Protection {
 
     public final String modid;
     public final String version;
@@ -530,18 +528,5 @@ public class Protection implements JsonSerializer<Protection>, JsonDeserializer<
 
     public static MyTownDatasource getDatasource() {
         return DatasourceProxy.getDatasource();
-    }
-
-    @Override
-    public JsonElement serialize(Protection src, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject base = new JsonObject();
-
-        return null;
-    }
-
-    @Override
-    public Protection deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-
-        return null;
     }
 }

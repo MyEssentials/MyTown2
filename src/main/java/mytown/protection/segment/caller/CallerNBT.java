@@ -38,11 +38,6 @@ public class CallerNBT extends Caller {
         return null;
     }
 
-    @Override
-    public String getCallerTypeString() {
-        return "NBT";
-    }
-
     private Object getInfoFromNBTBase(NBTBase instance) {
         if(instance instanceof NBTTagDouble) {
             return ((NBTTagDouble) instance).func_150286_g();

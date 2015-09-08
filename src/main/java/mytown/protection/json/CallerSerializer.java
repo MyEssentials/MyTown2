@@ -12,7 +12,7 @@ public class CallerSerializer implements JsonSerializer<Caller>, JsonDeserialize
     public JsonElement serialize(Caller caller, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject json = new JsonObject();
         json.addProperty("name", caller.getName());
-        json.addProperty("type", caller.getCallerTypeString());
+        json.addProperty("type", getTypeFromCaller(caller));
         if(caller.getValueType() != null) {
             json.addProperty("valueType", caller.getValueType().getName());
         }
@@ -38,16 +38,23 @@ public class CallerSerializer implements JsonSerializer<Caller>, JsonDeserialize
             }
         }
 
-        if("METHOD".equals(type)) {
-            caller = new CallerMethod(name, valueType);
-        } else if("FIELD".equals(type)) {
-            caller = new CallerField(name, valueType);
-        } else if("FORMULA".equals(type)) {
-            caller = new CallerFormula(name, valueType);
-        } else if("NBT".equals(type)) {
-            caller = new CallerNBT(name, valueType);
-        }
+        return createCaller(type, name, valueType);
+    }
 
-        return caller;
+    private Caller createCaller(String type, String name, Class<?> valueType) {
+        if("METHOD".equals(type)) {
+            return new CallerMethod(name, valueType);
+        } else if("FIELD".equals(type)) {
+            return new CallerField(name, valueType);
+        } else if("FORMULA".equals(type)) {
+            return new CallerFormula(name, valueType);
+        } else if("NBT".equals(type)) {
+            return new CallerNBT(name, valueType);
+        }
+        return null;
+    }
+
+    private String getTypeFromCaller(Caller caller) {
+        return caller.getClass().getSimpleName().substring(6).toUpperCase();
     }
 }

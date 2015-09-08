@@ -14,8 +14,6 @@ public abstract class Caller {
 
     public abstract Object invoke(Object instance, Object... parameters) throws Exception;
 
-    public abstract String getCallerTypeString();
-
     public Class<?> getValueType() {
         return valueType;
     }

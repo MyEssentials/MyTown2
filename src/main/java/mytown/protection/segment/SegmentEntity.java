@@ -1,10 +1,10 @@
 package mytown.protection.segment;
 
+import mytown.api.container.GettersContainer;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.EntityType;
-import mytown.protection.segment.getter.Getters;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,9 +18,19 @@ public class SegmentEntity extends Segment {
 
     private final EntityType type;
 
-    public SegmentEntity(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString, EntityType type) {
-        super(theClass, getters, flag, denialValue, conditionString);
-        this.type = type;
+    public SegmentEntity(Class<?> clazz, FlagType flagType, Object denialValue, String conditionString, GettersContainer getters, EntityType entityType) {
+        this(entityType);
+        if(getters != null) {
+            this.getters.addAll(getters);
+        }
+        setCheckClass(clazz);
+        setFlag(flagType);
+        setDenialValue(denialValue);
+        setConditionString(conditionString);
+    }
+
+    public SegmentEntity(EntityType entityType) {
+        this.type = entityType;
     }
 
     public EntityType getType() {
@@ -28,25 +38,25 @@ public class SegmentEntity extends Segment {
     }
 
     public boolean hasOwner() {
-        return getters.hasValue("owner");
+        return getters.contains("owner");
     }
 
 
     public Resident getOwner(Entity entity) {
         try {
-            EntityPlayer player = getters.hasValue("owner") ? (EntityPlayer) getters.getValue("owner", EntityPlayer.class, entity, entity) : null;
+            EntityPlayer player = getters.contains("owner") ? (EntityPlayer) getters.get("owner").invoke(EntityPlayer.class, entity, entity) : null;
             if(player == null)
                 return null;
             return MyTownUniverse.instance.getOrMakeResident(player);
         } catch (GetterException ex) {
             try {
-                String username = getters.hasValue("owner") ? (String) getters.getValue("owner", String.class, entity, entity) : null;
+                String username = getters.contains("owner") ? (String) getters.get("owner").invoke(String.class, entity, entity) : null;
                 if (username == null)
                     return null;
                 return MyTownUniverse.instance.getOrMakeResident(username);
             } catch (GetterException ex2) {
                 try {
-                    UUID uuid = getters.hasValue("owner") ? (UUID) getters.getValue("owner", UUID.class, entity, entity) : null;
+                    UUID uuid = getters.contains("owner") ? (UUID) getters.get("owner").invoke(UUID.class, entity, entity) : null;
                     if (uuid == null)
                         return null;
                     return MyTownUniverse.instance.getOrMakeResident(uuid);
