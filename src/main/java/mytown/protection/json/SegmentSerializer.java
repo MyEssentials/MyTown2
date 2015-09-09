@@ -1,4 +1,4 @@
-package mytown.protection.json.segment;
+package mytown.protection.json;
 
 import com.forgeessentials.permissions.persistence.JsonProvider;
 import com.google.common.base.Joiner;
@@ -30,8 +30,8 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
             jsonFlag.addProperty("denialValue", segment.getDenialValue().toString());
             json.add("flag", jsonFlag);
         }
-        if(segment.getConditionString() != null) {
-            json.addProperty("condition", Joiner.on(' ').join(segment.getConditionString()));
+        if(segment.getCondition() != null) {
+            json.addProperty("condition", segment.getCondition().toString());
         }
         for(Getter getter : segment.getters) {
             json.add(getter.getName(), context.serialize(getter));
@@ -88,7 +88,10 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
             throw new ProtectionParseException("One of the segments is invalid");
         }
         JsonObject jsonObject = json.getAsJsonObject();
+
         String type = jsonObject.get("type").getAsString();
+        jsonObject.remove("type");
+
         Segment segment = null;
         if("block".equals(type)) {
             segment = deserializeBlock(jsonObject, context);
@@ -110,6 +113,8 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         } catch (ClassNotFoundException ex) {
             throw new ProtectionParseException("Class identifier is invalid");
         }
+        jsonObject.remove("class");
+
         FlagType flag;
         Object denialValue = Boolean.FALSE;
         if(jsonObject.get("flag").isJsonObject()) {
@@ -118,15 +123,24 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         } else {
             flag = FlagType.valueOf(jsonObject.get("flag").getAsString());
         }
+        jsonObject.remove("flag");
+
         String condition = null;
         if(jsonObject.has("condition")) {
             condition = jsonObject.get("condition").getAsString();
+            jsonObject.remove("condition");
         }
 
         segment.setCheckClass(clazz);
         segment.setFlag(flag);
         segment.setDenialValue(denialValue);
         segment.setConditionString(condition);
+
+        for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+            Getter getter = context.deserialize(entry.getValue(), Getter.class);
+            getter.setName(entry.getKey());
+            segment.getters.add(getter);
+        }
 
         return segment;
     }
@@ -137,15 +151,19 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
 
         BlockType type = BlockType.valueOf(json.get("blockType").getAsString());
+        json.remove("blockType");
+
         int meta = -1;
         Volume clientUpdateCoords = null;
 
         if(json.has("meta")) {
             meta = json.get("meta").getAsInt();
+            json.remove("meta");
         }
 
         if(json.has("clientUpdate")) {
             clientUpdateCoords = context.deserialize(json.get("clientUpdate").getAsJsonObject().get("coords"), Volume.class);
+            json.remove("clientUpdate");
         }
 
         return new SegmentBlock(type, meta, clientUpdateCoords);
@@ -157,6 +175,7 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
 
         EntityType type = EntityType.valueOf(json.get("entityType").getAsString());
+        json.remove("entityType");
         return new SegmentEntity(type);
     }
 
@@ -169,12 +188,17 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
 
         ItemType type = ItemType.valueOf(json.get("itemType").getAsString());
+        json.remove("itemType");
+
         boolean isAdjacent = json.get("isAdjacent").getAsBoolean();
+        json.remove("isAdjacent");
+
         Volume clientUpdate = null;
         boolean isDirectionalUpdate = false;
         if(json.has("clientUpdate")) {
             clientUpdate = context.deserialize(json.get("clientUpdate").getAsJsonObject().get("coords"), Volume.class);
             isDirectionalUpdate = json.get("clientUpdate").getAsJsonObject().get("directional").getAsBoolean();
+            json.remove("clientUpdate");
         }
 
         return new SegmentItem(type, isDirectionalUpdate, clientUpdate, isDirectionalUpdate);
@@ -186,6 +210,7 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
 
         boolean hasOwner = json.getAsJsonObject().get("hasOwner").getAsBoolean();
+        json.remove("hasOwner");
         return new SegmentTileEntity(hasOwner);
     }
 

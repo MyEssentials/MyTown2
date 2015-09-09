@@ -1,5 +1,6 @@
 package mytown.protection.segment;
 
+import com.google.common.base.Joiner;
 import myessentials.utils.StringUtils;
 import mytown.api.container.GettersContainer;
 import mytown.util.exceptions.ConditionException;
@@ -9,9 +10,7 @@ public class Condition {
     private String[] conditionString;
 
     public Condition(String conditionString) {
-        if(conditionString != null) {
-            this.conditionString = conditionString.split(" ");
-        }
+        this.conditionString = conditionString.split(" ");
     }
 
     public boolean execute(Object object, GettersContainer getters) {
@@ -85,4 +84,8 @@ public class Condition {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return Joiner.on(' ').join(conditionString);
+    }
 }

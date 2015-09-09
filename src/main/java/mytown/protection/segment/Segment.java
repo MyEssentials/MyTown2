@@ -10,12 +10,18 @@ public class Segment {
     protected Class<?> checkClass;
     protected FlagType flag;
     protected Object denialValue;
-    public Condition condition;
+    protected Condition condition;
 
     public final GettersContainer getters = new GettersContainer();
 
+    public void setCheckClass(Class<?> checkClass) {
+        this.checkClass = checkClass;
+    }
+
     public void setConditionString(String conditionString) {
-        this.condition = new Condition(conditionString);
+        if(conditionString != null) {
+            this.condition = new Condition(conditionString);
+        }
     }
 
     public void setFlag(FlagType flag) {
@@ -26,12 +32,12 @@ public class Segment {
         this.denialValue = denialValue;
     }
 
-    public void setCheckClass(Class<?> checkClass) {
-        this.checkClass = checkClass;
-    }
-
     public Class<?> getCheckClass() {
         return checkClass;
+    }
+
+    public Condition getCondition() {
+        return condition;
     }
 
     public FlagType getFlag() {
