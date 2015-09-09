@@ -13,7 +13,7 @@ public class Condition {
         this.conditionString = conditionString.split(" ");
     }
 
-    public boolean execute(Object object, GettersContainer getters) {
+    public boolean execute(Object object, GettersContainer getters) throws ConditionException {
         if(conditionString == null) {
             return true;
         }

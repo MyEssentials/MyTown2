@@ -112,6 +112,11 @@ public class Resident {
         }
     }
 
+    public void protectionDenial(FlagType flag) {
+        if (getPlayer() != null) {
+            ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
+        }
+    }
     /**
      * Sends a localized message and a list of owners to which the protection was bypassed
      */

@@ -9,7 +9,7 @@ public class GettersContainer extends ArrayList<Getter> {
 
     public Getter get(String getterName) {
         for(Getter getter : this) {
-            if(getter.name.equals(getterName)) {
+            if(getter.getName().equals(getterName)) {
                 return getter;
             }
         }
@@ -19,7 +19,7 @@ public class GettersContainer extends ArrayList<Getter> {
     public boolean remove(String getterName) {
         for(Iterator<Getter> it = iterator(); it.hasNext(); ) {
             Getter getter = it.next();
-            if(getter.name.equals(getterName)) {
+            if(getter.getName().equals(getterName)) {
                 it.remove();
                 return true;
             }
@@ -29,7 +29,7 @@ public class GettersContainer extends ArrayList<Getter> {
 
     public boolean contains(String getterName) {
         for(Getter getter : this) {
-            if(getter.name.equals(getterName)) {
+            if(getter.getName().equals(getterName)) {
                 return true;
             }
         }

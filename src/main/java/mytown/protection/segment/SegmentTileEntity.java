@@ -1,10 +1,18 @@
 package mytown.protection.segment;
 
+import myessentials.entities.Volume;
+import mytown.MyTown;
 import mytown.api.container.GettersContainer;
 import mytown.config.Config;
+import mytown.entities.Resident;
 import mytown.entities.flag.FlagType;
+import mytown.protection.Protections;
+import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.tileentity.TileEntity;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import java.util.Iterator;
 
 /**
  * Segment that protects against a TileEntity
@@ -26,6 +34,29 @@ public class SegmentTileEntity extends Segment {
 
     public SegmentTileEntity(boolean hasOwner) {
         this.hasOwner = hasOwner;
+    }
+
+    public boolean shouldExist(TileEntity te) {
+        try {
+            if(condition != null && !condition.execute(te, getters)) {
+                return true;
+            }
+        } catch (ConditionException ex) {
+            MyTown.instance.LOG.error("An error occurred while checking condition for tile entity [DIM:{}; {}, {}, {}] of type {}", te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, te.getClass().getName());
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+            disable();
+            return true;
+        }
+
+
+        Volume teBox = new Volume(getX1(te), getY1(te), getZ1(te), getX2(te), getY2(te), getZ2(te));
+        int dim = te.getWorldObj().provider.dimensionId;
+        Resident owner = hasOwner() ? Protections.instance.getOwnerForTileEntity(te) : null;
+        if (!hasPermissionAtLocation(owner, dim, teBox)) {
+            return false;
+        }
+
+        return true;
     }
 
     public int getX1(TileEntity te) {

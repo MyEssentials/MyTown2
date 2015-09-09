@@ -111,7 +111,7 @@ public class Protection {
                             if (!hasPermission(owner, segment, dim, x, y, z)) {
                                 return true;
                             }
-                        } else {                            
+                        } else {
                             Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
                             if (!hasPermission(owner, segment, dim, rangeBox)) {
                                 return true;
@@ -150,11 +150,11 @@ public class Protection {
 
                         if(range == 0) {
                             isProtected = !hasPermission(res, segment, dim, x, y, z);
-                        } else {                            
+                        } else {
                             Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
                             isProtected = !hasPermission(res, segment, dim, rangeBox);
                         }
-                        
+
                         if(isProtected) {
                             if (segment.hasClientUpdate()) {
                                 sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), direction);
@@ -185,7 +185,7 @@ public class Protection {
                 int x = (int) Math.floor(entity.posX);
                 int y = (int) Math.floor(entity.posY);
                 int z = (int) Math.floor(entity.posZ);
-                
+
                 if (!hasPermission(res, segment, dim, x, y, z)) {
                     return true;
                 }
@@ -210,7 +210,7 @@ public class Protection {
                             if (!hasPermission(res, segment, dim, x, y, z)) {
                                 return true;
                             }
-                        } else {                            
+                        } else {
                             Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
                             if (!hasPermission(res, segment, dim, rangeBox)) {
                                 return true;
@@ -250,7 +250,7 @@ public class Protection {
                             if (!hasPermission(res, segment, dim, x, y, z)) {
                                 return true;
                             }
-                        } else {                            
+                        } else {
                             Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
                             if (!hasPermission(res, segment, dim, rangeBox)) {
                                 return true;
@@ -282,7 +282,7 @@ public class Protection {
                 int x = bp.getX();
                 int y = bp.getY();
                 int z = bp.getZ();
-                
+
                 if (!hasPermission(res, segment, dim, x, y, z)) {
                     if(segment.hasClientUpdate())
                         sendClientUpdate(segment.getClientUpdateCoords(), bp, (EntityPlayerMP) res.getPlayer(), null);
@@ -374,7 +374,7 @@ public class Protection {
         for (int townBlockX = area.getMinX() >> 4; townBlockX <= area.getMaxX() >> 4; townBlockX++) {
             for (int townBlockZ = area.getMinZ() >> 4; townBlockZ <= area.getMaxZ() >> 4; townBlockZ++) {
                 TownBlock townBlock = MyTownUniverse.instance.blocks.get(dim, townBlockX, townBlockZ);
-                
+
                 if (townBlock == null) {
                     inWild = true;
                 } else {
@@ -429,14 +429,14 @@ public class Protection {
                 }
             }
         }
-        
+
         return true;
     }
 
     public int getArea(Volume rangeBox) {
         return ((rangeBox.getMaxX() - rangeBox.getMinX()) + 1) *
-               ((rangeBox.getMaxY() - rangeBox.getMinY()) + 1) *
-               ((rangeBox.getMaxZ() - rangeBox.getMinZ()) + 1);
+                ((rangeBox.getMaxY() - rangeBox.getMinY()) + 1) *
+                ((rangeBox.getMaxZ() - rangeBox.getMinZ()) + 1);
     }
 
     /**

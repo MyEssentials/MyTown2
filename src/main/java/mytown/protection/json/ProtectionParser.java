@@ -9,12 +9,15 @@ import mytown.entities.flag.FlagType;
 import mytown.protection.Protection;
 import mytown.protection.Protections;
 import mytown.protection.segment.*;
+import mytown.protection.segment.caller.CallerField;
+import mytown.protection.segment.caller.CallerMethod;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.caller.Caller;
+import mytown.protection.segment.getter.Getter;
 import mytown.protection.segment.getter.GetterConstant;
-import mytown.protection.segment.getter.Getters;
+import mytown.protection.segment.getter.GetterDynamic;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -30,9 +33,15 @@ import java.util.List;
 public class ProtectionParser {
 
     private static String folderPath;
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(Protection.class, new ProtectionTypeAdapter()).setPrettyPrinting().create();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Caller.class, new CallerSerializer()).registerTypeAdapter(Getter.class, new GetterSerializer())
+            .registerTypeAdapter(Protection.class, new ProtectionSerializer())
+            .registerTypeAdapter(Segment.class, new SegmentSerializer())
+            .registerTypeAdapter(Volume.class, new VolumeSerializer())
+            .setPrettyPrinting().create();
 
     private ProtectionParser() {
+
     }
 
     public static void setFolderPath(String folderPath) {
@@ -104,19 +113,19 @@ public class ProtectionParser {
         GettersContainer getters = new GettersContainer();
         getters.add(new GetterConstant(5));
         segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityCreeper.class, FlagType.EXPLOSIONS, false, null, getters, EntityType.TRACKED));
-        getters = new Getters();
-        getters.addConstant("range", 5);
+        getters = new GettersContainer();
+        getters.add(new GetterConstant("range", 5));
         List<Caller> callers = new ArrayList<Caller>();
-        callers.add(new Caller("field_94084_b", Caller.CallerType.FIELD, null));
-        callers.add(new Caller("func_70005_c_", Caller.CallerType.METHOD, null));
-        getters.addCallers("owner", callers);
-        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityTNTPrimed.class, getters, FlagType.EXPLOSIONS, false, null, EntityType.TRACKED));
-        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityItemFrame.class, new Getters(), FlagType.PVE, false, null, EntityType.PROTECT));
+        callers.add(new CallerField("field_94084_b", null));
+        callers.add(new CallerMethod("func_70005_c_", null));
+        getters.add(new GetterDynamic("owner", callers));
+        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityTNTPrimed.class, FlagType.EXPLOSIONS, false, null, getters, EntityType.TRACKED));
+        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityItemFrame.class, FlagType.PVE, false, null, null, EntityType.PROTECT));
 
-        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.USAGE, false, null, ItemType.RIGHT_CLICK_BLOCK, true, null, false));
-        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, new Getters(), FlagType.USAGE, false, null, ItemType.RIGHT_CLICK_ENTITY, false, null, false));
-        segments.add(new SegmentItem(net.minecraft.item.ItemShears.class, new Getters(), FlagType.USAGE, false, null, ItemType.RIGHT_CLICK_ENTITY, false, null, false));
-        segments.add(new SegmentItem(net.minecraft.item.ItemHangingEntity.class, new Getters(), FlagType.USAGE, false, null, ItemType.RIGHT_CLICK_BLOCK, true, null, false));
+        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, FlagType.USAGE, false, null, null, ItemType.RIGHT_CLICK_BLOCK, true, null, false));
+        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, FlagType.USAGE, false, null, null, ItemType.RIGHT_CLICK_ENTITY, false, null, false));
+        segments.add(new SegmentItem(net.minecraft.item.ItemShears.class, FlagType.USAGE, false, null, null, ItemType.RIGHT_CLICK_ENTITY, false, null, false));
+        segments.add(new SegmentItem(net.minecraft.item.ItemHangingEntity.class, FlagType.USAGE, false, null, null, ItemType.RIGHT_CLICK_BLOCK, true, null, false));
 
         Protection protection = new Protection("Minecraft", segments);
         try {

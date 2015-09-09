@@ -203,6 +203,10 @@ public class Town implements Comparable<Town> {
         return formattedList;
     }
 
+    public String formatOwner() {
+        return residentsMap.getMayor() == null ? EnumChatFormatting.RED + "SERVER ADMINS" : residentsMap.getMayor().getPlayerName();
+    }
+
     /* ----- Comparable ----- */
 
     @Override

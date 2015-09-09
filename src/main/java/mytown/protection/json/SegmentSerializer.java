@@ -56,9 +56,9 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
     private void serializeBlock(SegmentBlock segment, JsonObject json, JsonSerializationContext context) {
         json.addProperty("blockType", segment.getType().toString());
         json.addProperty("meta", segment.getMeta());
-        if(segment.hasClientUpdate()) {
+        if(segment.clientUpdate != null) {
             JsonObject jsonUpdate = new JsonObject();
-            jsonUpdate.add("coords", context.serialize(segment.getClientUpdateCoords()));
+            jsonUpdate.add("coords", context.serialize(segment.clientUpdate.relativeCoords));
             json.add("clientUpdate", jsonUpdate);
         }
     }
@@ -70,10 +70,10 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
     private void serializeItem(SegmentItem segment, JsonObject json, JsonSerializationContext context) {
         json.addProperty("itemType", segment.getType().toString());
         json.addProperty("isAdjacent", segment.isOnAdjacent());
-        if(segment.hasClientUpdate()) {
+        if(segment.clientUpdate != null) {
             JsonObject jsonUpdate = new JsonObject();
-            jsonUpdate.add("coords", context.serialize(segment.getClientUpdateCoords()));
-            jsonUpdate.addProperty("directional", segment.isDirectionalClientUpdate());
+            jsonUpdate.add("coords", context.serialize(segment.clientUpdate.relativeCoords));
+            jsonUpdate.addProperty("directional", segment.directionalClientUpdate);
             json.add("clientUpdate", jsonUpdate);
         }
     }

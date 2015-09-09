@@ -1,9 +1,16 @@
 package mytown.protection.segment;
 
+import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
 import mytown.api.container.GettersContainer;
+import mytown.entities.Resident;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.BlockType;
+import mytown.util.exceptions.ConditionException;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 /**
  * Offers protection for blocks
@@ -11,7 +18,8 @@ import mytown.protection.segment.enums.BlockType;
 public class SegmentBlock extends Segment {
     private final int meta;
     private final BlockType type;
-    private Volume clientUpdateCoords;
+
+    public final ClientBlockUpdate clientUpdate;
 
     public SegmentBlock(Class<?> clazz, FlagType flagType, Object denialValue, String conditionString, GettersContainer getters, BlockType blockType, int meta, Volume clientUpdateCoords) {
         this(blockType, meta, clientUpdateCoords);
@@ -27,15 +35,31 @@ public class SegmentBlock extends Segment {
     public SegmentBlock(BlockType blockType, int meta, Volume clientUpdateCoords) {
         this.meta = meta;
         this.type = blockType;
-        this.clientUpdateCoords = clientUpdateCoords;
+        if(clientUpdateCoords != null) {
+            this.clientUpdate = new ClientBlockUpdate(clientUpdateCoords);
+        } else {
+            this.clientUpdate = null;
+        }
     }
 
-    public boolean hasClientUpdate() {
-        return clientUpdateCoords != null;
-    }
+    public boolean shouldInteract(Resident res, BlockPos bp, PlayerInteractEvent.Action action) {
+        if(meta != -1 && meta != MinecraftServer.getServer().worldServerForDimension(bp.getDim()).getBlockMetadata(bp.getX(), bp.getY(), bp.getZ())) {
+            return true;
+        }
 
-    public Volume getClientUpdateCoords() {
-        return clientUpdateCoords;
+        if(type == BlockType.LEFT_CLICK && action != PlayerInteractEvent.Action.LEFT_CLICK_BLOCK
+                || type == BlockType.RIGHT_CLICK && action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+            return true;
+        }
+
+        if (!hasPermissionAtLocation(res, bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
+            if(clientUpdate != null) {
+                clientUpdate.send(bp, (EntityPlayerMP) res.getPlayer());
+            }
+            return false;
+        }
+
+        return true;
     }
 
     public int getMeta() {
