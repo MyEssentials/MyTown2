@@ -5,13 +5,13 @@ import mytown.protection.segment.Segment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SegmentContainer extends ArrayList<Segment> {
+public class SegmentsContainer<T extends Segment> extends ArrayList<T> {
 
-    public List<Segment> get(Class<?> clazz) {
-        List<Segment> usableSegments = new ArrayList<Segment>();
+    public List<T> get(Class<?> clazz) {
+        List<T> usableSegments = new ArrayList<T>();
         for(Segment segment : this) {
             if(segment.shouldCheck(clazz)) {
-                usableSegments.add(segment);
+                usableSegments.add((T)segment);
             }
         }
         return usableSegments;
