@@ -1,6 +1,7 @@
 package mytown.datasource;
 
 import com.mojang.authlib.GameProfile;
+import java.util.*;
 import myessentials.teleport.Teleport;
 import myessentials.utils.PlayerUtils;
 import mypermissions.api.command.CommandCompletion;
@@ -19,332 +20,307 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+// Referenced classes of package mytown.datasource:
+//            MyTownDatasource
 
-public class MyTownUniverse { // TODO Allow migrating between different Datasources
+public class MyTownUniverse
+{
 
-    public static final MyTownUniverse instance = new MyTownUniverse();
-
-    public final ResidentsContainer residents = new ResidentsContainer();
-    public final TownsContainer towns = new TownsContainer();
-    //public final Map<String, Nation> nations = new HashMap<String, Nation>();
-    public final TownBlocksContainer blocks = new TownBlocksContainer();
-    public final PlotsContainer plots = new PlotsContainer();
-    public final RanksContainer ranks = new RanksContainer();
-    public final BanksContainer banks = new BanksContainer();
-    public final List<Integer> worlds = new ArrayList<Integer>();
-
-    public MyTownUniverse() {
-
+    public MyTownUniverse()
+    {
     }
 
-    /* ----- Create Entity ----- */
-
-    /**
-     * Creates and returns a new Town with basic entities saved to db, or null if it couldn't be created
-     */
-    public final Town newTown(String name, Resident creator) {
+    public final Town newTown(String name, Resident creator)
+    {
         Town town = new Town(name);
         configureTown(town, creator);
         return town;
     }
 
-    /**
-     * Creates and returns a new AdminTown and fires event
-     */
-    public final AdminTown newAdminTown(String name, Resident creator) {
+    public final AdminTown newAdminTown(String name, Resident creator)
+    {
         AdminTown town = new AdminTown(name);
         configureTown(town, creator);
         return town;
     }
 
-    /**
-     * Common method for creating any type of town
-     */
-    @SuppressWarnings("unchecked")
-    private void configureTown(Town town, Resident creator) {
-        for (World world : MinecraftServer.getServer().worldServers) {
-            if (!MyTownUniverse.instance.worlds.contains(world.provider.dimensionId)) {
-                getDatasource().saveWorld(world.provider.dimensionId);
-            }
-        }
-        /*
-        for (int dim : MyTownUniverse.instance.getWorldsList()) {
-            if (MinecraftServer.getServer().worldServerForDimension(dim) == null) {
-                deleteWorld(dim);
-            }
-        }
-        */
-
-        // Setting spawn before saving
-        town.setSpawn(new Teleport(creator.getPlayer().dimension, (float) creator.getPlayer().posX, (float) creator.getPlayer().posY, (float) creator.getPlayer().posZ, creator.getPlayer().cameraYaw, creator.getPlayer().cameraPitch));
-
-        // Saving town to database
-        if (!getDatasource().saveTown(town))
-            throw new CommandException("Failed to save Town");
-
-        //Claiming first block
-        TownBlock block = newBlock(creator.getPlayer().dimension, ((int)creator.getPlayer().posX) >> 4, ((int)creator.getPlayer().posZ) >> 4, false, Config.costAmountClaim, town);
-
-        // Saving block to db and town
-        if(MyTownUniverse.instance.blocks.contains(creator.getPlayer().dimension, ((int) creator.getPlayer().posX) >> 4, ((int) creator.getPlayer().posZ) >> 4)) {
-            throw new MyTownCommandException("mytown.cmd.err.claim.already");
+    private void configureTown(Town town, Resident creator)
+    {
+        net.minecraft.world.WorldServer aworldserver[] = MinecraftServer.func_71276_C().field_71305_c;
+        int i = aworldserver.length;
+        for(int j = 0; j < i; j++)
+        {
+            World world = aworldserver[j];
+            if(!instance.worlds.contains(Integer.valueOf(world.field_73011_w.field_76574_g)))
+                getDatasource().saveWorld(world.field_73011_w.field_76574_g);
         }
 
+        town.setSpawn(new Teleport(creator.getPlayer().field_71093_bK, (float)creator.getPlayer().field_70165_t, (float)creator.getPlayer().field_70163_u, (float)creator.getPlayer().field_70161_v, creator.getPlayer().field_71109_bG, creator.getPlayer().field_70726_aT));
+        if(!getDatasource().saveTown(town))
+            throw new CommandException("Failed to save Town", new Object[0]);
+        TownBlock block = newBlock(creator.getPlayer().field_71093_bK, (int)creator.getPlayer().field_70165_t >> 4, (int)creator.getPlayer().field_70161_v >> 4, false, Config.costAmountClaim, town);
+        if(instance.blocks.contains(creator.getPlayer().field_71093_bK, (int)creator.getPlayer().field_70165_t >> 4, (int)creator.getPlayer().field_70161_v >> 4))
+            throw new MyTownCommandException("mytown.cmd.err.claim.already", new Object[0]);
         getDatasource().saveBlock(block);
-
-        // Saving and adding all flags to the database
-        for (FlagType type : FlagType.values()) {
-            if (type.canTownsModify()) {
+        FlagType aflagtype[] = FlagType.values();
+        int k = aflagtype.length;
+        for(int l = 0; l < k; l++)
+        {
+            FlagType type = aflagtype[l];
+            if(type.canTownsModify())
                 getDatasource().saveFlag(new Flag(type, type.getDefaultValue()), town);
-            }
         }
 
-        if (!(town instanceof AdminTown)) {
-            // Saving all ranks to database and town
-            for (Rank template : Rank.defaultRanks) {
-                Rank rank = new Rank(template.getName(), town, template.getType());
+        if(!(town instanceof AdminTown))
+        {
+            Rank rank;
+            for(Iterator iterator = Rank.defaultRanks.iterator(); iterator.hasNext(); getDatasource().saveRank(rank))
+            {
+                Rank template = (Rank)iterator.next();
+                rank = new Rank(template.getName(), town, template.getType());
                 rank.permissionsContainer.addAll(template.permissionsContainer);
-
-                getDatasource().saveRank(rank);
-            }
-            // Linking resident to town
-            if (!getDatasource().linkResidentToTown(creator, town, town.ranksContainer.getMayorRank())) {
-                MyTown.instance.LOG.error("Problem linking resident {} to town {}", creator.getPlayerName(), town.getName());
             }
 
+            if(!getDatasource().linkResidentToTown(creator, town, town.ranksContainer.getMayorRank()))
+                MyTown.instance.LOG.error("Problem linking resident {} to town {}", new Object[] {
+                    creator.getPlayerName(), town.getName()
+                });
             getDatasource().saveTownBank(town.bank);
         }
-
-        TownEvent.fire(new TownEvent.TownCreateEvent(town));
+        TownEvent.fire(new mytown.api.events.TownEvent.TownCreateEvent(town));
     }
 
-    /**
-     * Creates and returns a new Block, or null if it couldn't be created
-     */
-    public final TownBlock newBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town) {
-        if(!worlds.contains(dim)) {
+    public final TownBlock newBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town)
+    {
+        if(!worlds.contains(Integer.valueOf(dim)))
             getDatasource().saveWorld(dim);
-        }
-
         TownBlock block = new TownBlock(dim, x, z, isFarClaim, pricePaid, town);
-        if (TownBlockEvent.fire(new TownBlockEvent.BlockCreateEvent(block)))
+        if(TownBlockEvent.fire(new mytown.api.events.TownBlockEvent.BlockCreateEvent(block)))
             return null;
-        return block;
+        else
+            return block;
     }
 
-    /**
-     * Creates and returns a new Rank, or null if it couldn't be created
-     */
-    public final Rank newRank(String name, Town town, Rank.Type type) {
+    public final Rank newRank(String name, Town town, mytown.entities.Rank.Type type)
+    {
         Rank rank = new Rank(name, town, type);
-        if (RankEvent.fire(new RankEvent.RankCreateEvent(rank)))
+        if(RankEvent.fire(new mytown.api.events.RankEvent.RankCreateEvent(rank)))
             return null;
-        return rank;
+        else
+            return rank;
     }
 
-    /**
-     * Creates and returns a new Resident, or null if it couldn't be created
-     */
-    public final Resident newResident(UUID uuid, String playerName) {
+    public final Resident newResident(UUID uuid, String playerName)
+    {
         Resident resident = new Resident(uuid, playerName);
-
-        if (ResidentEvent.fire(new ResidentEvent.ResidentCreateEvent(resident)))
+        if(ResidentEvent.fire(new mytown.api.events.ResidentEvent.ResidentCreateEvent(resident)))
             return null;
-        return resident;
+        else
+            return resident;
     }
 
-    /**
-     * Creates and returns a new Plot, or null if it couldn't be created
-     */
-    public final Plot newPlot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
+    public final Plot newPlot(String name, Town town, int dim, int x1, int y1, int z1, int x2, 
+            int y2, int z2)
+    {
         Plot plot = new Plot(name, town, dim, x1, y1, z1, x2, y2, z2);
-        if (PlotEvent.fire(new PlotEvent.PlotCreateEvent(plot)))
+        if(PlotEvent.fire(new mytown.api.events.PlotEvent.PlotCreateEvent(plot)))
             return null;
-        return plot;
+        else
+            return plot;
     }
 
-    /**
-     * Creates and returns a new Nation, or null if it couldn't be created
-     */
-    public final Nation newNation(String name) {
+    public final Nation newNation(String name)
+    {
         Nation nation = new Nation(name);
-        if (NationEvent.fire(new NationEvent.NationCreateEvent(nation)))
+        if(NationEvent.fire(new mytown.api.events.NationEvent.NationCreateEvent(nation)))
             return null;
-        return nation;
+        else
+            return nation;
     }
 
-    /**
-     * Creates and returns a new TownFlag or null if it couldn't be created
-     */
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    public final Flag newFlag(FlagType type, Object value) {
-        Flag<Object> flag = new Flag<Object>(type, value);
-        //TODO: Fire event
+    public final Flag newFlag(FlagType type, Object value)
+    {
+        Flag flag = new Flag(type, value);
         return flag;
     }
 
-    public Resident getOrMakeResident(UUID uuid, String playerName, boolean save) {
+    public Resident getOrMakeResident(UUID uuid, String playerName, boolean save)
+    {
         Resident res = instance.residents.get(uuid);
-        if (res == null) {
+        if(res == null)
+        {
             res = instance.newResident(uuid, playerName);
-            if (save && res != null && !getDatasource().saveResident(res)) { // Only save if a new Residen
+            if(save && res != null && !getDatasource().saveResident(res))
                 return null;
-            }
         }
         return res;
     }
 
-    public Resident getOrMakeResident(UUID uuid, String playerName) {
+    public Resident getOrMakeResident(UUID uuid, String playerName)
+    {
         return getOrMakeResident(uuid, playerName, true);
     }
 
-    public Resident getOrMakeResident(UUID uuid) {
+    public Resident getOrMakeResident(UUID uuid)
+    {
         return getOrMakeResident(uuid, PlayerUtils.getUsernameFromUUID(uuid));
     }
 
-    public Resident getOrMakeResident(EntityPlayer player) {
+    public Resident getOrMakeResident(EntityPlayer player)
+    {
         return getOrMakeResident(player.getPersistentID(), player.getDisplayName());
     }
 
-    public Resident getOrMakeResident(Entity e) {
-        if (e instanceof EntityPlayer) {
-            return getOrMakeResident((EntityPlayer) e);
-        }
-        return null;
+    public Resident getOrMakeResident(Entity e)
+    {
+        if(e instanceof EntityPlayer)
+            return getOrMakeResident((EntityPlayer)e);
+        else
+            return null;
     }
 
-    public Resident getOrMakeResident(ICommandSender sender) {
-        if (sender instanceof EntityPlayer) {
-            return getOrMakeResident((EntityPlayer) sender);
-        }
-        return null;
+    public Resident getOrMakeResident(ICommandSender sender)
+    {
+        if(sender instanceof EntityPlayer)
+            return getOrMakeResident((EntityPlayer)sender);
+        else
+            return null;
     }
 
-    public Resident getOrMakeResident(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
-        return profile == null ? null : getOrMakeResident(profile.getId(), profile.getName());
+    public Resident getOrMakeResident(String username)
+    {
+        GameProfile profile = MinecraftServer.func_71276_C().func_152358_ax().func_152655_a(username);
+        return profile != null ? getOrMakeResident(profile.getId(), profile.getName()) : null;
     }
 
-    /* ----- Modifying Entity */
-
-    public final void renameTown(Town town, String newName) {
+    public final void renameTown(Town town, String newName)
+    {
         String oldName = town.getName();
         town.rename(newName);
         getDatasource().saveTown(town);
-
         CommandCompletion.removeCompletion("townCompletion", oldName);
         CommandCompletion.removeCompletion("townCompletionAndAll", oldName);
-
         CommandCompletion.addCompletion("townCompletion", newName);
         CommandCompletion.addCompletion("townCompletionAndAll", newName);
     }
 
-    /* ----- Add Entity ----- */
-
-    public final void addResident(Resident res) {
+    public final void addResident(Resident res)
+    {
         residents.add(res);
         CommandCompletion.addCompletion("residentCompletion", res.getPlayerName());
     }
 
-    public final void addTown(Town town) {
+    public final void addTown(Town town)
+    {
         towns.add(town);
         CommandCompletion.addCompletion("townCompletionAndAll", town.getName());
         CommandCompletion.addCompletion("townCompletion", town.getName());
     }
 
-    /*
-    public final void addNation(Nation nation) {
-        nations.put(nation.getName(), nation);
-        return true;
-    }
-    */
-
-    public final void addTownBlock(TownBlock block) {
+    public final void addTownBlock(TownBlock block)
+    {
         blocks.add(block);
     }
 
-    public final void addRank(Rank rank) {
+    public final void addRank(Rank rank)
+    {
         ranks.add(rank);
         CommandCompletion.addCompletion("rankCompletion", rank.getName());
     }
 
-    public final void addPlot(Plot plot) {
-        for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++) {
-            for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++) {
+    public final void addPlot(Plot plot)
+    {
+        for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++)
+        {
+            for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++)
+            {
                 TownBlock b = blocks.get(plot.getDim(), x, z);
-                if (b != null) {
+                if (b != null)
+                }
                     b.plotsContainer.add(plot);
                 }
             }
         }
+
         plots.add(plot);
         plot.checkForSellSign();
         CommandCompletion.addCompletion("plotCompletion", plot.getName());
     }
 
-    public final void addBank(Bank bank) {
+    public final void addBank(Bank bank)
+    {
         banks.add(bank);
     }
 
-
-    public final void addWorld(int dim) {
-        worlds.add(dim);
+    public final void addWorld(int dim)
+    {
+        worlds.add(Integer.valueOf(dim));
     }
 
-    /* ----- Remove Entity ----- */
-
-    public final void removeResident(Resident res) {
+    public final void removeResident(Resident res)
+    {
         residents.remove(res);
         CommandCompletion.removeCompletion("residentCompletion", res.getPlayerName());
     }
 
-    public final void removeTown(Town town) {
+    public final void removeTown(Town town)
+    {
         towns.remove(town);
         VisualsHandler.instance.unmarkBlocks(town);
         CommandCompletion.removeCompletion("townCompletionAndAll", town.getName());
         CommandCompletion.removeCompletion("townCompletion", town.getName());
     }
 
-    /*
-    public final void removeNation(Nation nation) {
-        nations.remove(nation.getName());
-    }
-    */
-
-    public final void removeTownBlock(TownBlock block) {
+    public final void removeTownBlock(TownBlock block)
+    {
         blocks.remove(block);
     }
 
-    public final void removeRank(Rank rank) {
+    public final void removeRank(Rank rank)
+    {
         ranks.remove(rank);
-        // TODO: Check properly, although it's gonna fix itself on restart
     }
 
-    public final void removePlot(Plot plot) {
+    public final void removePlot(Plot plot)
+    {
         plots.remove(plot);
-
         boolean removeFromCompletionMap = true;
-        for(Plot p : plots) {
+        Iterator iterator = plots.iterator();
+        do
+        {
+            if(!iterator.hasNext())
+                break;
+            Plot p = (Plot)iterator.next();
             if(p.getName().equals(plot.getName()))
                 removeFromCompletionMap = false;
-        }
+        } while(true);
         if(removeFromCompletionMap)
             CommandCompletion.removeCompletion("plotCompletion", plot.getName());
-
         VisualsHandler.instance.unmarkBlocks(plot);
     }
 
-    public final void removeWorld(int dim) {
-        worlds.remove((Integer) dim);
+    public final void removeWorld(int dim)
+    {
+        worlds.remove(Integer.valueOf(dim));
     }
 
-    /* ----- Utils ----- */
-    private MyTownDatasource getDatasource() {
+    private MyTownDatasource getDatasource()
+    {
         return DatasourceProxy.getDatasource();
     }
+
+    public static final MyTownUniverse instance = new MyTownUniverse();
+    public final ResidentsContainer residents = new ResidentsContainer();
+    public final TownsContainer towns = new TownsContainer();
+    public final TownBlocksContainer blocks = new TownBlocksContainer();
+    public final PlotsContainer plots = new PlotsContainer();
+    public final RanksContainer ranks = new RanksContainer();
+    public final BanksContainer banks = new BanksContainer();
+    public final List worlds = new ArrayList();
+
 }
