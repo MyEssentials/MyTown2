@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MyTownUniverse { // TODO Allow migrating between different Datasources
+public class MyTownUniverse 
+{ // TODO Allow migrating between different Datasources
 
     public static final MyTownUniverse instance = new MyTownUniverse();
 
@@ -37,8 +38,9 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     public final RanksContainer ranks = new RanksContainer();
     public final BanksContainer banks = new BanksContainer();
     public final List<Integer> worlds = new ArrayList<Integer>();
-
-    public MyTownUniverse() {
+}
+    public MyTownUniverse() 
+    {
 
     }
 
