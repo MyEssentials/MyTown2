@@ -39,7 +39,7 @@ You are welcome to include MyTown in any modpacks. Credits/links are appriciated
 
 Submitting Pull Requests
 ========================
-Only work against the Master branch, any other branches should be considered unstable and potentially dangerous.
+https://github.com/MyEssentials/MyTown2/wiki/PR-Requirements
 
 License
 =======
