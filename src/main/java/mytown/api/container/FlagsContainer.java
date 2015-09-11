@@ -2,7 +2,7 @@ package mytown.api.container;
 
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import myessentials.utils.ColorUtils;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 public class FlagsContainer extends ArrayList<Flag> {
 
-    public boolean contains(FlagType type) {
+    public boolean contains(ProtectionFlagType type) {
         for (Flag flag : this) {
             if (flag.getFlagType() == type) {
                 return true;
@@ -19,14 +19,14 @@ public class FlagsContainer extends ArrayList<Flag> {
         return false;
     }
 
-    public Flag get(FlagType type) {
+    public Flag get(ProtectionFlagType type) {
         for (Flag flag : this)
             if (flag.getFlagType() == type)
                 return flag;
         return null;
     }
 
-    public void remove(FlagType type) {
+    public void remove(ProtectionFlagType type) {
         for (Iterator<Flag> it = iterator(); it.hasNext(); ) {
             if (it.next().getFlagType() == type) {
                 it.remove();
@@ -34,7 +34,7 @@ public class FlagsContainer extends ArrayList<Flag> {
         }
     }
 
-    public Object getValue(FlagType type) {
+    public Object getValue(ProtectionFlagType type) {
         for (Flag flag : this) {
             if (flag.getFlagType() == type)
                 return flag.getValue();
@@ -55,7 +55,7 @@ public class FlagsContainer extends ArrayList<Flag> {
         }
 
         String unconfigurableFlags = "";
-        for(FlagType flagType : FlagType.values()) {
+        for(ProtectionFlagType flagType : ProtectionFlagType.values()) {
             if(!contains(flagType)) {
                 unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.getDefaultValue())).toString(ColorUtils.colorValueConst);
             }
@@ -79,7 +79,7 @@ public class FlagsContainer extends ArrayList<Flag> {
         }
 
         String unconfigurableFlags = "";
-        for(FlagType flagType : FlagType.values()) {
+        for(ProtectionFlagType flagType : ProtectionFlagType.values()) {
             if(!contains(flagType)) {
                 unconfigurableFlags += "\\n" + (new Flag(flagType, town.flagsContainer.getValue(flagType))).toString(ColorUtils.colorValueConst);
             }

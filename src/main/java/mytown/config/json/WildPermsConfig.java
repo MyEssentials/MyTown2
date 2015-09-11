@@ -5,7 +5,7 @@ import myessentials.json.JSONConfig;
 import mytown.MyTown;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,7 +23,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
     @SuppressWarnings("unchecked")
     @Override
     public void create(List<Flag> items) {
-        for (FlagType type : FlagType.values()) {
+        for (ProtectionFlagType type : ProtectionFlagType.values()) {
             if (type.isWildPerm())
                 items.add(new Flag(type, type.getDefaultWildPerm()));
         }
@@ -62,7 +62,7 @@ public class WildPermsConfig extends JSONConfig<Flag> {
             }
         }
 
-        for (FlagType type : FlagType.values()) {
+        for (ProtectionFlagType type : ProtectionFlagType.values()) {
             if (type.isWildPerm()) {
                 boolean ok = false;
                 for (Flag f : items) {

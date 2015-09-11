@@ -5,8 +5,7 @@ import myessentials.utils.WorldUtils;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
-import mytown.entities.flag.FlagType;
-import mytown.proxies.DatasourceProxy;
+import mytown.entities.flag.ProtectionFlagType;
 import myessentials.entities.ChunkPos;
 import net.minecraftforge.event.world.ExplosionEvent;
 
@@ -37,14 +36,14 @@ public class ExtraEventsHandler {
         for(ChunkPos chunk : chunks) {
             TownBlock block = MyTownUniverse.instance.blocks.get(ev.world.provider.dimensionId, chunk.getX(), chunk.getZ());
             if(block == null) {
-                if(!(Boolean)Wild.instance.flagsContainer.getValue(FlagType.EXPLOSIONS)) {
+                if(!(Boolean)Wild.instance.flagsContainer.getValue(ProtectionFlagType.EXPLOSIONS)) {
                     ev.setCanceled(true);
                     return;
                 }
             } else {
-                if (!(Boolean) block.getTown().flagsContainer.getValue(FlagType.EXPLOSIONS)) {
+                if (!(Boolean) block.getTown().flagsContainer.getValue(ProtectionFlagType.EXPLOSIONS)) {
                     ev.setCanceled(true);
-                    block.getTown().notifyEveryone(FlagType.EXPLOSIONS.getLocalizedTownNotification());
+                    block.getTown().notifyEveryone(ProtectionFlagType.EXPLOSIONS.getLocalizedTownNotification());
                     return;
                 }
             }

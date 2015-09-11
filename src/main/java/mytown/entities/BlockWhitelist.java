@@ -1,6 +1,6 @@
 package mytown.entities;
 
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 
 /**
  * Stores coords and flagname to give whitelist for that block on the flag specified
@@ -16,9 +16,9 @@ public class BlockWhitelist {
      * Database id used to retain this object in.
      */
     private int dbID;
-    private FlagType flagType;
+    private ProtectionFlagType flagType;
 
-    public BlockWhitelist(int dim, int x, int y, int z, FlagType flagType) {
+    public BlockWhitelist(int dim, int x, int y, int z, ProtectionFlagType flagType) {
         this.dim = dim;
         this.x = x;
         this.y = y;
@@ -30,7 +30,7 @@ public class BlockWhitelist {
         this.isDeleted = true;
     }
 
-    public FlagType getFlagType() {
+    public ProtectionFlagType getFlagType() {
         return this.flagType;
     }
 

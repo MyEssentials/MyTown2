@@ -15,7 +15,7 @@ import mytown.config.json.FlagsConfig;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsHandler;
@@ -882,7 +882,7 @@ public class CommandsAdmin extends Commands {
         if (args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        FlagType type = getFlagTypeFromName(args.get(0));
+        ProtectionFlagType type = getFlagTypeFromName(args.get(0));
         Flag flag = getFlagFromType(Wild.instance.flagsContainer, type);
 
         if (flag.setValueFromString(args.get(1))) {

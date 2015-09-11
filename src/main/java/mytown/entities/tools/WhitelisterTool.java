@@ -4,7 +4,7 @@ import mytown.entities.BlockWhitelist;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Items;
@@ -21,12 +21,12 @@ public class WhitelisterTool extends Tool {
     private static final String NAME = EnumChatFormatting.BLUE + "Whitelister";
     private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection.";
     private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click air to change flag.";
-    private static final String DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: " + FlagType.ACCESS.toString().toLowerCase();
+    private static final String DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: " + ProtectionFlagType.ACCESS.toString().toLowerCase();
 
-    private static final List<FlagType> whitelistableFlags = new ArrayList<FlagType>();
+    private static final List<ProtectionFlagType> whitelistableFlags = new ArrayList<ProtectionFlagType>();
 
     static {
-        for(FlagType flagType : FlagType.values()) {
+        for(ProtectionFlagType flagType : ProtectionFlagType.values()) {
             if(flagType.isWhitelistable())
                 whitelistableFlags.add(flagType);
         }
@@ -45,7 +45,7 @@ public class WhitelisterTool extends Tool {
             return;
 
         // If town is found then create or delete the block whitelist
-        FlagType flagType = getFlagFromLore();
+        ProtectionFlagType flagType = getFlagFromLore();
         //ev.entityPlayer.setCurrentItemOrArmor(0, null);
         if (flagType == null) {
             removeWhitelists(town, dim, x, y, z);
@@ -58,7 +58,7 @@ public class WhitelisterTool extends Tool {
 
     @Override
     public void onShiftRightClick() {
-        FlagType currentFlag = getFlagFromLore();
+        ProtectionFlagType currentFlag = getFlagFromLore();
         if(currentFlag == whitelistableFlags.get(whitelistableFlags.size() - 1)) {
             setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 2);
             owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "mode", "WHITELIST REMOVAL"));
@@ -88,7 +88,7 @@ public class WhitelisterTool extends Tool {
     }
 
     private void removeWhitelists(Town town, int dim, int x, int y, int z) {
-        for (FlagType flagType : whitelistableFlags) {
+        for (ProtectionFlagType flagType : whitelistableFlags) {
             BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
             if (bw != null) {
                 DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
@@ -97,7 +97,7 @@ public class WhitelisterTool extends Tool {
         }
     }
 
-    private void addWhitelists(FlagType flagType, Town town, int dim, int x, int y, int z) {
+    private void addWhitelists(ProtectionFlagType flagType, Town town, int dim, int x, int y, int z) {
         BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
         if (bw == null) {
             bw = new BlockWhitelist(dim, x, y, z, flagType);
@@ -108,9 +108,9 @@ public class WhitelisterTool extends Tool {
         }
     }
 
-    private FlagType getFlagFromLore() {
+    private ProtectionFlagType getFlagFromLore() {
         String flagLore = getDescription(1);
-        for(FlagType flagType : whitelistableFlags) {
+        for(ProtectionFlagType flagType : whitelistableFlags) {
             if (flagLore.contains(flagType.toString().toLowerCase())) {
                 return flagType;
             }

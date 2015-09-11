@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import myessentials.MyEssentialsCore;
 import myessentials.json.JSONConfig;
 import mytown.MyTown;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +20,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
 
     @Override
     public void create(List<Wrapper> items) {
-        for (FlagType type : FlagType.values()) {
+        for (ProtectionFlagType type : ProtectionFlagType.values()) {
             items.add(new Wrapper(type, type.getDefaultValue(), type.canTownsModify()));
         }
 
@@ -58,7 +58,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             }
         }
 
-        for(FlagType type : FlagType.values()) {
+        for(ProtectionFlagType type : ProtectionFlagType.values()) {
             ok = false;
             for(Wrapper w : items) {
                 if(w.flagType == type)
@@ -77,11 +77,11 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
      * Wraps around a flagType object.
      */
     public class Wrapper {
-        public final FlagType flagType;
+        public final ProtectionFlagType flagType;
         public final Object defaultState;
         public final boolean isAllowedInTowns;
 
-        public Wrapper(FlagType flagType, Object defaultState, boolean isAllowedInTowns) {
+        public Wrapper(ProtectionFlagType flagType, Object defaultState, boolean isAllowedInTowns) {
             this.flagType = flagType;
             this.defaultState = defaultState;
             this.isAllowedInTowns = isAllowedInTowns;

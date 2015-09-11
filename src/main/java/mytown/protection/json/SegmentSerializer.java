@@ -1,10 +1,8 @@
 package mytown.protection.json;
 
-import com.forgeessentials.permissions.persistence.JsonProvider;
-import com.google.common.base.Joiner;
 import com.google.gson.*;
 import myessentials.entities.Volume;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import mytown.protection.segment.*;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
@@ -115,13 +113,13 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
         jsonObject.remove("class");
 
-        FlagType flag;
+        ProtectionFlagType flag;
         Object denialValue = Boolean.FALSE;
         if(jsonObject.get("flag").isJsonObject()) {
-            flag = FlagType.valueOf(jsonObject.get("flag").getAsJsonObject().get("name").getAsString());
+            flag = ProtectionFlagType.valueOf(jsonObject.get("flag").getAsJsonObject().get("name").getAsString());
             denialValue = getObjectFromPrimitive(jsonObject.get("denialValue").getAsJsonPrimitive());
         } else {
-            flag = FlagType.valueOf(jsonObject.get("flag").getAsString());
+            flag = ProtectionFlagType.valueOf(jsonObject.get("flag").getAsString());
         }
         jsonObject.remove("flag");
 

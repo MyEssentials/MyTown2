@@ -7,12 +7,11 @@ import myessentials.config.ConfigProperty;
 import myessentials.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import mytown.protection.ProtectionUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.sql.*;
@@ -314,8 +313,8 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
                 Gson gson = new GsonBuilder().create();
                 try {
-                    FlagType type = FlagType.valueOf(flagName);
-                    Flag flag = new Flag(type, gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
+                    ProtectionFlagType type = ProtectionFlagType.valueOf(flagName);
+                    Flag flag = new Flag(type, gson.fromJson(rs.getString("serializedValue"), ProtectionFlagType.valueOf(flagName).getType()));
 
                     Town town = getUniverse().towns.get(townName);
                     town.flagsContainer.add(flag);
@@ -348,8 +347,8 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
                 Gson gson = new GsonBuilder().create();
                 try {
-                    FlagType type = FlagType.valueOf(flagName);
-                    Flag flag = new Flag(type, gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
+                    ProtectionFlagType type = ProtectionFlagType.valueOf(flagName);
+                    Flag flag = new Flag(type, gson.fromJson(rs.getString("serializedValue"), ProtectionFlagType.valueOf(flagName).getType()));
 
                     if(type.isTownOnly()) {
                         throw new IllegalArgumentException("FlagType " + type + " can only be used in towns.");
@@ -406,7 +405,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
             while (rs.next()) {
                 // plotID will be 0 if it's a town's whitelist
-                BlockWhitelist bw = new BlockWhitelist(rs.getInt("dim"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), FlagType.valueOf(rs.getString("flagName")));
+                BlockWhitelist bw = new BlockWhitelist(rs.getInt("dim"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), ProtectionFlagType.valueOf(rs.getString("flagName")));
                 bw.setDbID(rs.getInt("ID"));
                 Town town = getUniverse().towns.get(rs.getString("townName"));
                 /*
@@ -1518,7 +1517,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     protected boolean checkFlags() {
         // Checking if flag is supposed to exist and it doesn't or otherwise.
         for (Town town : getUniverse().towns) {
-            for (FlagType type : FlagType.values()) {
+            for (ProtectionFlagType type : ProtectionFlagType.values()) {
                 if (!type.canTownsModify() && town.flagsContainer.contains(type)) {
                     deleteFlag(town.flagsContainer.get(type), town);
                     LOG.info("Flag {} in town {} got deleted because of the settings.", type.toString().toLowerCase(), town.getName());
@@ -1536,7 +1535,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
         }
 
         for (Plot plot : getUniverse().plots) {
-            for (FlagType type : FlagType.values()) {
+            for (ProtectionFlagType type : ProtectionFlagType.values()) {
                 if (!type.isTownOnly()) {
                     if (!type.canTownsModify() && plot.flagsContainer.contains(type)) {
                         deleteFlag(plot.flagsContainer.get(type), plot);

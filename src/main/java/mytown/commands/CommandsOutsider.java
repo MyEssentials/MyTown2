@@ -11,7 +11,7 @@ import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import mytown.proxies.EconomyProxy;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
@@ -113,7 +113,7 @@ public class CommandsOutsider extends Commands {
         for (int x = ((int) player.posX >> 4) - Config.distanceBetweenTowns; x <= ((int) player.posX >> 4) + Config.distanceBetweenTowns; x++) {
             for (int z = ((int) player.posZ >> 4) - Config.distanceBetweenTowns; z <= ((int) player.posZ >> 4) + Config.distanceBetweenTowns; z++) {
                 Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                if (nearbyTown != null && !(Boolean)nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
+                if (nearbyTown != null && !(Boolean)nearbyTown.flagsContainer.getValue(ProtectionFlagType.NEARBY))
                     throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
             }
         }

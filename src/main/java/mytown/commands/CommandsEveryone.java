@@ -9,7 +9,7 @@ import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import mytown.entities.tools.PlotSelectionTool;
 import mytown.entities.tools.PlotSellTool;
 import mytown.entities.tools.Tool;
@@ -79,7 +79,7 @@ public class CommandsEveryone extends Commands {
         if (!town.hasSpawn())
             throw new MyTownCommandException("mytown.cmd.err.spawn.notexist", town.getName());
 
-        if(!town.hasPermission(res, FlagType.ENTER, false, town.getSpawn().getDim(), (int) town.getSpawn().getX(), (int) town.getSpawn().getY(), (int) town.getSpawn().getZ()))
+        if(!town.hasPermission(res, ProtectionFlagType.ENTER, false, town.getSpawn().getDim(), (int) town.getSpawn().getX(), (int) town.getSpawn().getY(), (int) town.getSpawn().getZ()))
             throw new MyTownCommandException("mytown.cmd.err.spawn.protected", town.getName());
 
         if(res.getTeleportCooldown() > 0)

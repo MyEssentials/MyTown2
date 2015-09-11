@@ -7,7 +7,7 @@ import mypermissions.proxies.PermissionProxy;
 import mytown.MyTown;
 import mytown.api.container.*;
 import mytown.config.Config;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
@@ -60,7 +60,7 @@ public class Town implements Comparable<Town> {
      * This method will go through all the plots and prioritize the plot's flags over town flags.
      */
     @SuppressWarnings("unchecked")
-    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue, int dim, int x, int y, int z) {
+    public boolean hasPermission(Resident res, ProtectionFlagType flagType, Object denialValue, int dim, int x, int y, int z) {
         Plot plot = plotsContainer.get(dim, x, y, z);
 
         if (plot == null) {
@@ -73,7 +73,7 @@ public class Town implements Comparable<Town> {
     /**
      * Checks if the Resident is allowed to do the action specified by the FlagType in this town.
      */
-    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
+    public boolean hasPermission(Resident res, ProtectionFlagType flagType, Object denialValue) {
         if(PlayerUtils.isOp(res.getUUID())) {
             return true;
         }
@@ -86,9 +86,9 @@ public class Town implements Comparable<Town> {
         boolean permissionBypass;
 
         if(residentsMap.containsKey(res)) {
-            if((Boolean) flagsContainer.getValue(FlagType.RESTRICTIONS)) {
-                rankBypass = hasPermission(res, FlagType.RESTRICTIONS.getBypassPermission());
-                permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), FlagType.RESTRICTIONS.getBypassPermission());
+            if((Boolean) flagsContainer.getValue(ProtectionFlagType.RESTRICTIONS)) {
+                rankBypass = hasPermission(res, ProtectionFlagType.RESTRICTIONS.getBypassPermission());
+                permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), ProtectionFlagType.RESTRICTIONS.getBypassPermission());
 
                 if(!rankBypass && !permissionBypass) {
                     return false;
@@ -125,7 +125,7 @@ public class Town implements Comparable<Town> {
         return rank.permissionsContainer.hasPermission(permission) == PermissionLevel.ALLOWED;
     }
 
-    public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
+    public Object getValueAtCoords(int dim, int x, int y, int z, ProtectionFlagType flagType) {
         Plot plot = plotsContainer.get(dim, x, y, z);
         if(plot == null || flagType.isTownOnly()) {
             return flagsContainer.getValue(flagType);

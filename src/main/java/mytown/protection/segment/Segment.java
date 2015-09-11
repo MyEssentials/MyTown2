@@ -2,11 +2,13 @@ package mytown.protection.segment;
 
 import myessentials.entities.Volume;
 import mytown.MyTown;
-import mytown.api.container.FlagsContainer;
 import mytown.api.container.GettersContainer;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A part of the protection that protects against a specific thing.
@@ -14,10 +16,10 @@ import mytown.entities.flag.FlagType;
 public abstract class Segment {
     protected boolean isDisabled = false;
     protected Class<?> checkClass;
-    protected FlagType flag;
-    protected Object denialValue;
+    protected ProtectionFlagType flag;
     protected Condition condition;
 
+    public final List<Object> denialValues = new ArrayList<Object>();
     public final GettersContainer getters = new GettersContainer();
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
@@ -74,7 +76,7 @@ public abstract class Segment {
 
     public boolean hasPermission(Resident res, Wild wild) {
         if(res == null) {
-            return !wild.flagsContainer.getValue(flag).equals(denialValue);
+            return !denialValues.contains(wild.flagsContainer.get(flag));
         } else {
             if(!wild.hasPermission(res, flag, denialValue)) {
                 res.protectionDenial(flag);
@@ -134,12 +136,8 @@ public abstract class Segment {
         }
     }
 
-    public void setFlag(FlagType flag) {
+    public void setFlag(ProtectionFlagType flag) {
         this.flag = flag;
-    }
-
-    public void setDenialValue(Object denialValue) {
-        this.denialValue = denialValue;
     }
 
     public Class<?> getCheckClass() {
@@ -150,12 +148,8 @@ public abstract class Segment {
         return condition;
     }
 
-    public FlagType getFlag() {
+    public ProtectionFlagType getFlag() {
         return flag;
-    }
-
-    public Object getDenialValue() {
-        return denialValue;
     }
 
     public int getRange(Object object) {

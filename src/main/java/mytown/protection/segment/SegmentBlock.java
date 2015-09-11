@@ -4,10 +4,8 @@ import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
 import mytown.api.container.GettersContainer;
 import mytown.entities.Resident;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import mytown.protection.segment.enums.BlockType;
-import mytown.util.exceptions.ConditionException;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -21,15 +19,15 @@ public class SegmentBlock extends Segment {
 
     public final ClientBlockUpdate clientUpdate;
 
-    public SegmentBlock(Class<?> clazz, FlagType flagType, Object denialValue, String conditionString, GettersContainer getters, BlockType blockType, int meta, Volume clientUpdateCoords) {
+    public SegmentBlock(Class<?> clazz, ProtectionFlagType flagType, Object denialValue, String conditionString, GettersContainer getters, BlockType blockType, int meta, Volume clientUpdateCoords) {
         this(blockType, meta, clientUpdateCoords);
         if(getters != null) {
             this.getters.addAll(getters);
         }
         setCheckClass(clazz);
         setFlag(flagType);
-        setDenialValue(denialValue);
         setConditionString(conditionString);
+
     }
 
     public SegmentBlock(BlockType blockType, int meta, Volume clientUpdateCoords) {

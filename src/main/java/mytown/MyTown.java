@@ -22,7 +22,7 @@ import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
 import mytown.handlers.VisualsHandler;
 import mytown.protection.ProtectionUtils;
-import mytown.protection.Protections;
+import mytown.protection.ProtectionHandler;
 import mytown.protection.eventhandlers.ExtraEventsHandler;
 import mytown.protection.json.ProtectionParser;
 import mytown.proxies.DatasourceProxy;
@@ -166,8 +166,8 @@ public class MyTown {
 
         FMLCommonHandler.instance().bus().register(VisualsHandler.instance);
 
-        FMLCommonHandler.instance().bus().register(Protections.instance);
-        MinecraftForge.EVENT_BUS.register(Protections.instance);
+        FMLCommonHandler.instance().bus().register(ProtectionHandler.instance);
+        MinecraftForge.EVENT_BUS.register(ProtectionHandler.instance);
 
         if(Config.useExtraEvents)
             MinecraftForge.EVENT_BUS.register(ExtraEventsHandler.getInstance());

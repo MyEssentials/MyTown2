@@ -6,7 +6,7 @@ import mytown.api.container.FlagsContainer;
 import mytown.api.container.GenericContainer;
 import mytown.api.container.ResidentsContainer;
 import mytown.entities.blocks.SellSign;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
@@ -57,7 +57,7 @@ public class Plot {
         return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
     }
 
-    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
+    public boolean hasPermission(Resident res, ProtectionFlagType flagType, Object denialValue) {
         return !flagsContainer.getValue(flagType).equals(denialValue) || membersContainer.contains(res) || ownersContainer.contains(res) || PlayerUtils.isOp(res.getPlayer());
     }
 

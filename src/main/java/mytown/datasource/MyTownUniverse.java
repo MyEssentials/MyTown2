@@ -10,7 +10,7 @@ import mytown.api.events.*;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.FlagType;
+import mytown.entities.flag.ProtectionFlagType;
 import mytown.handlers.VisualsHandler;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.exceptions.MyTownCommandException;
@@ -98,7 +98,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         getDatasource().saveBlock(block);
 
         // Saving and adding all flags to the database
-        for (FlagType type : FlagType.values()) {
+        for (ProtectionFlagType type : ProtectionFlagType.values()) {
             if (type.canTownsModify()) {
                 getDatasource().saveFlag(new Flag(type, type.getDefaultValue()), town);
             }
@@ -182,7 +182,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
      * Creates and returns a new TownFlag or null if it couldn't be created
      */
     @SuppressWarnings("UnnecessaryLocalVariable")
-    public final Flag newFlag(FlagType type, Object value) {
+    public final Flag newFlag(ProtectionFlagType type, Object value) {
         Flag<Object> flag = new Flag<Object>(type, value);
         //TODO: Fire event
         return flag;
