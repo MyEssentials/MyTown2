@@ -28,7 +28,7 @@ public class SellSign extends Sign {
         this.restricted = restricted;
         this.plot = MyTownUniverse.instance.plots.get(dim, x, y, z);
         if(!exists()) {
-            createSignBlock(face, (DESCRIPTION_OWNER + owner.getPlayerName()).substring(0, 15), DESCRIPTION_PRICE + " " + price, restricted ? DESCRIPTION_RESTRICTED : "");
+            createSignBlock(face, (DESCRIPTION_OWNER + owner.getPlayerName()).substring(0, Math.min(15, (DESCRIPTION_OWNER + owner.getPlayerName()).length())), DESCRIPTION_PRICE + " " + price, restricted ? DESCRIPTION_RESTRICTED : "");
         }
     }
 
