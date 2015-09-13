@@ -18,6 +18,7 @@ import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -86,6 +87,12 @@ public class ProtectionUtils {
     }
 
     public static boolean check(Entity entity) {
+        if(entity instanceof EntityLiving) {
+            if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
+                return false;
+            }
+        }
+
         for(Protection protection : protections) {
             for(SegmentEntity segment : protection.segmentsEntities.get(entity.getClass())) {
                 if(!segment.shouldExist(entity)) {
@@ -193,6 +200,15 @@ public class ProtectionUtils {
             return town.hasPermission(res, flagType, dim, x, y, z);
         } else {
             return !flagType.isWildPerm || Wild.instance.hasPermission(res, flagType);
+        }
+    }
+
+    public static <T> T getFlagValueAtLocation(FlagType<T> flagType, int dim, int x, int y, int z) {
+        if(MyTownUniverse.instance.blocks.contains(dim, x >> 4, z >> 4)) {
+            Town town = MyTownUniverse.instance.blocks.get(dim, x >> 4, z >> 4).getTown();
+            return town.getValueAtCoords(dim, x, y, z, flagType);
+        } else {
+            return flagType.isWildPerm ? Wild.instance.flagsContainer.get(flagType).value : null;
         }
     }
 
