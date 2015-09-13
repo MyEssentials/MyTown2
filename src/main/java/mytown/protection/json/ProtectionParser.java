@@ -34,7 +34,8 @@ public class ProtectionParser {
 
     private static String folderPath;
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Caller.class, new CallerSerializer()).registerTypeAdapter(Getter.class, new GetterSerializer())
+            .registerTypeAdapter(Caller.class, new CallerSerializer())
+            .registerTypeAdapter(Getter.class, new GetterSerializer())
             .registerTypeAdapter(Protection.class, new ProtectionSerializer())
             .registerTypeAdapter(Segment.class, new SegmentSerializer())
             .registerTypeAdapter(Volume.class, new VolumeSerializer())
@@ -111,7 +112,7 @@ public class ProtectionParser {
         segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityMob.class, FlagType.MOBS, "passives", null, null, EntityType.TRACKED));
         segments.add(new SegmentEntity(net.minecraft.entity.EntityAgeable.class, FlagType.PVE, false, null, null, EntityType.PROTECT));
         GettersContainer getters = new GettersContainer();
-        getters.add(new GetterConstant(5));
+        getters.add(new GetterConstant("range", 5));
         segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityCreeper.class, FlagType.EXPLOSIONS, false, null, getters, EntityType.TRACKED));
         getters = new GettersContainer();
         getters.add(new GetterConstant("range", 5));

@@ -18,7 +18,7 @@ public class GetterSerializer implements JsonSerializer<Getter>, JsonDeserialize
         if(src instanceof GetterConstant) {
             return context.serialize(((GetterConstant) src).constant);
         } else if(src instanceof GetterDynamic) {
-            return context.serialize(((GetterDynamic) src).callers);
+            return context.serialize(((GetterDynamic) src).callers, new TypeToken<List<Caller>>() {}.getType());
         }
         return null;
     }

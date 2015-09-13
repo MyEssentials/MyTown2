@@ -20,14 +20,6 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         JsonObject json = new JsonObject();
 
         json.addProperty("class", segment.getCheckClass().getName());
-        json.addProperty("flag", segment.getFlag().toString());
-
-        if(segment.getCondition() != null) {
-            json.addProperty("condition", segment.getCondition().toString());
-        }
-        for(Getter getter : segment.getters) {
-            json.add(getter.getName(), context.serialize(getter));
-        }
 
         if(segment instanceof SegmentBlock) {
             json.addProperty("type", "block");
@@ -42,6 +34,16 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
             json.addProperty("type", "tileEntity");
             serializeTileEntity((SegmentTileEntity) segment, json, context);
         }
+
+        json.addProperty("flag", segment.getFlag().name);
+
+        if(segment.getCondition() != null) {
+            json.addProperty("condition", segment.getCondition().toString());
+        }
+        for(Getter getter : segment.getters) {
+            json.add(getter.getName(), context.serialize(getter, Getter.class));
+        }
+
         return json;
     }
 
@@ -107,7 +109,7 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
         jsonObject.remove("class");
 
-        FlagType flag = FlagType.valueOf(jsonObject.get("flag").getAsString());;
+        FlagType flag = FlagType.valueOf(jsonObject.get("flag").getAsString());
         jsonObject.remove("flag");
 
         String condition = null;

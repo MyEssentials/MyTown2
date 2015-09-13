@@ -35,8 +35,8 @@ public class EntitiesTest {
         town.townBlocksContainer.add(block);
         // Saving and adding all flags to the database
         for (FlagType type : FlagType.values()) {
-            if (type.canTownsModify()) {
-                town.flagsContainer.add(new Flag(type, type.getDefaultValue()));
+            if (type.configurable) {
+                town.flagsContainer.add(new Flag(type, type.defaultValue));
             }
         }
 
@@ -53,17 +53,17 @@ public class EntitiesTest {
 
     //@Test
     public void shouldCheckPermissionsProperly() {
-        Assert.assertTrue(town.hasPermission(resident, FlagType.ACCESS, false));
+        Assert.assertTrue(town.hasPermission(resident, FlagType.ACCESS));
         // Inside of TestPlot
-        Assert.assertTrue(town.hasPermission(resident, FlagType.MODIFY, false, 0, 1, 1, 1));
+        Assert.assertTrue(town.hasPermission(resident, FlagType.MODIFY, 0, 1, 1, 1));
     }
 
     //@Test
     public void shouldCheckPermissionsWithRestrictionsFlagProperly() {
         // Outside of plot, inside town with Restrictions flag false
-        Assert.assertTrue(town.hasPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
-        town.flagsContainer.get(FlagType.RESTRICTIONS).setValueFromString("true");
-        Assert.assertFalse(town.hasPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
+        Assert.assertTrue(town.hasPermission(resident, FlagType.PICKUP, 0, 15, 0, 15));
+        town.flagsContainer.get(FlagType.RESTRICTIONS).setValue("true");
+        Assert.assertFalse(town.hasPermission(resident, FlagType.PICKUP, 0, 15, 0, 15));
     }
 
 }

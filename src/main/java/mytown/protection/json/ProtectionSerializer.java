@@ -27,7 +27,7 @@ public class ProtectionSerializer implements JsonSerializer<Protection>, JsonDes
         segments.addAll(protection.segmentsItems);
         segments.addAll(protection.segmentsTiles);
 
-        json.add("segments", context.serialize(segments));
+        json.add("segments", context.serialize(segments, new TypeToken<List<Segment>>() {}.getType()));
 
         return json;
     }

@@ -127,7 +127,7 @@ public class Town implements Comparable<Town> {
         return rank.permissionsContainer.hasPermission(permission) == PermissionLevel.ALLOWED;
     }
 
-    public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
+    public <T> T getValueAtCoords(int dim, int x, int y, int z, FlagType<T> flagType) {
         Plot plot = plotsContainer.get(dim, x, y, z);
         if(plot == null || !flagType.isPlotPerm) {
             return flagsContainer.getValue(flagType);

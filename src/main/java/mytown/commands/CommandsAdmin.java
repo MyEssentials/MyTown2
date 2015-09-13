@@ -12,6 +12,7 @@ import mypermissions.command.CommandTree;
 import mypermissions.command.CommandTreeNode;
 import mytown.MyTown;
 import mytown.config.json.FlagsConfig;
+import mytown.config.json.WildPermsConfig;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;

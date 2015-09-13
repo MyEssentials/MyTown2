@@ -1,5 +1,6 @@
 package mytown.api.container;
 
+import mytown.MyTown;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -38,7 +39,7 @@ public class FlagsContainer extends ArrayList<Flag> {
 
     public <T> T getValue(FlagType<T> flagType) {
         for (Flag flag : this) {
-            if (flag.flagType.equals(flagType)) {
+            if (flag.flagType == flagType) {
                 return (T)flag.value;
             }
         }
@@ -57,7 +58,7 @@ public class FlagsContainer extends ArrayList<Flag> {
 
         String unconfigurableFlags = "";
         for(FlagType flagType : FlagType.values()) {
-            if(!contains(flagType.toString())) {
+            if(!contains(flagType)) {
                 unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.defaultValue)).toString(ColorUtils.colorValueConst);
             }
         }

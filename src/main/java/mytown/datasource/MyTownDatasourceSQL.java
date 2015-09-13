@@ -902,14 +902,14 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 PreparedStatement s = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE plotID=? AND name=?", true);
                 s.setString(1, flag.flagType.serializeValue(flag.value));
                 s.setInt(2, plot.getDbID());
-                s.setString(3, flag.flagType.toString());
+                s.setString(3, flag.flagType.name);
                 s.executeUpdate();
 
 
             } else {
                 // Insert
                 PreparedStatement s = prepare("INSERT INTO " + prefix + "PlotFlags(name, serializedValue, plotID) VALUES(?, ?, ?)", true);
-                s.setString(1, flag.flagType.toString());
+                s.setString(1, flag.flagType.name);
                 s.setString(2, flag.flagType.serializeValue(flag.value));
                 s.setInt(3, plot.getDbID());
                 s.executeUpdate();
@@ -917,7 +917,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 plot.flagsContainer.add(flag);
             }
         } catch (SQLException e) {
-            LOG.error("Failed to save Flag {}!", flag.flagType.toString());
+            LOG.error("Failed to save Flag {}!", flag.flagType.name);
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
@@ -933,13 +933,13 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "TownFlags SET serializedValue=? WHERE townName=? AND name=?", true);
                 updateStatement.setString(1, flag.flagType.serializeValue(flag.value));
                 updateStatement.setString(2, town.getName());
-                updateStatement.setString(3, flag.flagType.toString());
+                updateStatement.setString(3, flag.flagType.name);
                 updateStatement.executeUpdate();
 
             } else {
                 // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "TownFlags(name,  serializedValue, townName) VALUES(?, ?, ?)", true);
-                insertStatement.setString(1, flag.flagType.toString());
+                insertStatement.setString(1, flag.flagType.name);
                 insertStatement.setString(2, flag.flagType.serializeValue(flag.value));
                 insertStatement.setString(3, town.getName());
                 insertStatement.executeUpdate();
@@ -947,7 +947,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 town.flagsContainer.add(flag);
             }
         } catch (SQLException e) {
-            LOG.error("Failed to save Flag {}!", flag.flagType.toString());
+            LOG.error("Failed to save Flag {}!", flag.flagType.name);
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
@@ -1544,7 +1544,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             for (FlagType type : FlagType.values()) {
                 if (type.isTownPerm && !town.flagsContainer.contains(type)) {
                     saveFlag(new Flag(type, type.defaultValue), town);
-                    LOG.info("Flag {} in town {} got created because of the settings.", type.toString().toLowerCase(), town.getName());
+                    LOG.info("Flag {} in town {} got created because of the settings.", type.name.toLowerCase(), town.getName());
                 }
             }
         }
@@ -1553,7 +1553,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             for (FlagType type : FlagType.values()) {
                 if (type.isPlotPerm && !plot.flagsContainer.contains(type)) {
                     saveFlag(new Flag(type, type.defaultValue), plot);
-                    LOG.info("Flag {} in plot {} of town {} got created because of the settings.", type.toString().toLowerCase(), plot.getName(), plot.getTown().getName());
+                    LOG.info("Flag {} in plot {} of town {} got created because of the settings.", type.name.toLowerCase(), plot.getName(), plot.getTown().getName());
                 }
             }
         }

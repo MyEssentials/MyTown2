@@ -48,7 +48,7 @@ public class Flag<T> implements Comparable<Flag>{
         String description = flagType.getLocalizedDescription();
 
 
-        return String.format(ColorUtils.colorFlag + "%s" + ColorUtils.colorComma + "[" + valueColor+ "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", flagType.name, value.toString(), description);
+        return String.format(ColorUtils.colorFlag + "%s" + ColorUtils.colorComma + "[" + valueColor+ "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", flagType.name.toLowerCase(), value.toString(), description);
     }
 
     @Override

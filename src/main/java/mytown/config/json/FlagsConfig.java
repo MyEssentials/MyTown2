@@ -67,7 +67,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
             }
             if(!ok) {
                 items.add(new Wrapper(type.name, type.defaultValue, type.configurable));
-                MyTown.instance.LOG.error("Flag config is missing (or is an invalid entry) {} flag! Adding with default settings...", type.toString());
+                MyTown.instance.LOG.error("Flag config is missing (or is an invalid entry) {} flag! Adding with default settings...", type.name);
                 isValid = false;
             }
         }
