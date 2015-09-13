@@ -246,7 +246,7 @@ public class ProtectionHandler {
 
         if(ev.entity instanceof EntityPlayer) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entity);
-            ProtectionUtils.checkPVP(ev.entity, res, ev);
+            ProtectionUtils.checkPVP(ev.source.getEntity(), res, ev);
         } else {
             Resident res = ProtectionUtils.getOwner(ev.source.getEntity());
             if(res != null) {

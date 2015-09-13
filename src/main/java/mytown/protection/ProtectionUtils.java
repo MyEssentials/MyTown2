@@ -130,7 +130,17 @@ public class ProtectionUtils {
     }
 
     public static void checkPVP(Entity entity, Resident res, Event event) {
+        if(!event.isCancelable()) {
+            return;
+        }
 
+        for(Protection protection : protections) {
+            for(SegmentEntity segment : protection.segmentsEntities.get(entity.getClass())) {
+                if(!segment.shouldAttack(entity, res)) {
+                    event.setCanceled(true);
+                }
+            }
+        }
     }
 
     public static void checkUsage(ItemStack stack, Resident res, PlayerInteractEvent.Action action, BlockPos bp, int face, Event ev) {
