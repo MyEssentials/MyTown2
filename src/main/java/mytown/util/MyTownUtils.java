@@ -6,7 +6,7 @@ import mytown.datasource.MyTownUniverse;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -63,7 +63,7 @@ public class MyTownUtils {
     /**
      * Searches if the specified block is whitelisted in any town
      */
-    public static boolean isBlockWhitelisted(int dim, int x, int y, int z, ProtectionFlagType flagType) {
+    public static boolean isBlockWhitelisted(int dim, int x, int y, int z, FlagType flagType) {
         Town town = getTownAtPosition(dim, x >> 4, z >> 4);
         if (town == null)
             return false;

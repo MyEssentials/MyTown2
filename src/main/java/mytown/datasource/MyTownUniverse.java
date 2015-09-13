@@ -10,8 +10,9 @@ import mytown.api.events.*;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsHandler;
+import mytown.protection.Protection;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.CommandException;
@@ -98,9 +99,9 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         getDatasource().saveBlock(block);
 
         // Saving and adding all flags to the database
-        for (ProtectionFlagType type : ProtectionFlagType.values()) {
-            if (type.canTownsModify()) {
-                getDatasource().saveFlag(new Flag(type, type.getDefaultValue()), town);
+        for (FlagType type : FlagType.values()) {
+            if (type.isTownPerm) {
+                getDatasource().saveFlag(new Flag(type, type.defaultValue), town);
             }
         }
 
@@ -182,8 +183,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
      * Creates and returns a new TownFlag or null if it couldn't be created
      */
     @SuppressWarnings("UnnecessaryLocalVariable")
-    public final Flag newFlag(ProtectionFlagType type, Object value) {
-        Flag<Object> flag = new Flag<Object>(type, value);
+    public final Flag newFlag(FlagType type, boolean value) {
+        Flag flag = new Flag(type, value);
         //TODO: Fire event
         return flag;
     }

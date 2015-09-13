@@ -7,7 +7,7 @@ import mypermissions.proxies.PermissionProxy;
 import mytown.MyTown;
 import mytown.api.container.*;
 import mytown.config.Config;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
@@ -59,26 +59,21 @@ public class Town implements Comparable<Town> {
      * Checks if the Resident is allowed to do the action specified by the FlagType at the coordinates given.
      * This method will go through all the plots and prioritize the plot's flags over town flags.
      */
-    @SuppressWarnings("unchecked")
-    public boolean hasPermission(Resident res, ProtectionFlagType flagType, Object denialValue, int dim, int x, int y, int z) {
+    public boolean hasPermission(Resident res, FlagType<Boolean> flagType, int dim, int x, int y, int z) {
         Plot plot = plotsContainer.get(dim, x, y, z);
 
         if (plot == null) {
-            return hasPermission(res, flagType, denialValue);
+            return hasPermission(res, flagType);
         } else {
-        	return plot.hasPermission(res, flagType, denialValue);
+        	return plot.hasPermission(res, flagType);
         }
     }
 
     /**
      * Checks if the Resident is allowed to do the action specified by the FlagType in this town.
      */
-    public boolean hasPermission(Resident res, ProtectionFlagType flagType, Object denialValue) {
-        if(PlayerUtils.isOp(res.getUUID())) {
-            return true;
-        }
-
-        if(!flagsContainer.getValue(flagType).equals(denialValue)) {
+    public boolean hasPermission(Resident res, FlagType<Boolean> flagType) {
+        if(flagsContainer.getValue(flagType)) {
             return true;
         }
 
@@ -86,11 +81,12 @@ public class Town implements Comparable<Town> {
         boolean permissionBypass;
 
         if(residentsMap.containsKey(res)) {
-            if((Boolean) flagsContainer.getValue(ProtectionFlagType.RESTRICTIONS)) {
-                rankBypass = hasPermission(res, ProtectionFlagType.RESTRICTIONS.getBypassPermission());
-                permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), ProtectionFlagType.RESTRICTIONS.getBypassPermission());
+            if(flagsContainer.getValue(FlagType.RESTRICTIONS)) {
+                rankBypass = hasPermission(res, FlagType.RESTRICTIONS.getBypassPermission());
+                permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), FlagType.RESTRICTIONS.getBypassPermission());
 
                 if(!rankBypass && !permissionBypass) {
+                    res.protectionDenial(FlagType.RESTRICTIONS, formatOwner());
                     return false;
                 }
             }
@@ -99,14 +95,20 @@ public class Town implements Comparable<Town> {
             permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
 
             if(!rankBypass && !permissionBypass) {
+                res.protectionDenial(flagType, formatOwner());
                 return false;
             }
 
         } else {
-            permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
-
-            if(!permissionBypass) {
+            if(res == null) {
                 return false;
+            } else {
+                permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
+
+                if (!permissionBypass) {
+                    res.protectionDenial(flagType, formatOwner());
+                    return false;
+                }
             }
         }
 
@@ -125,9 +127,9 @@ public class Town implements Comparable<Town> {
         return rank.permissionsContainer.hasPermission(permission) == PermissionLevel.ALLOWED;
     }
 
-    public Object getValueAtCoords(int dim, int x, int y, int z, ProtectionFlagType flagType) {
+    public Object getValueAtCoords(int dim, int x, int y, int z, FlagType flagType) {
         Plot plot = plotsContainer.get(dim, x, y, z);
-        if(plot == null || flagType.isTownOnly()) {
+        if(plot == null || !flagType.isPlotPerm) {
             return flagsContainer.getValue(flagType);
         } else {
             return plot.flagsContainer.getValue(flagType);

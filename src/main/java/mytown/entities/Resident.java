@@ -7,7 +7,7 @@ import mytown.api.container.PlotsContainer;
 import mytown.api.container.TownsContainer;
 import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.entities.tools.Tool;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -112,7 +112,7 @@ public class Resident {
         }
     }
 
-    public void protectionDenial(ProtectionFlagType flag) {
+    public void protectionDenial(FlagType flag) {
         if (getPlayer() != null) {
             ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
         }
@@ -120,7 +120,7 @@ public class Resident {
     /**
      * Sends a localized message and a list of owners to which the protection was bypassed
      */
-    public void protectionDenial(ProtectionFlagType flag, String owners) {
+    public void protectionDenial(FlagType flag, String owners) {
         if (getPlayer() != null) {
             ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
             ChatUtils.sendChat(getPlayer(), MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
@@ -161,14 +161,14 @@ public class Resident {
             int z = (int) Math.floor(player.posZ);
             boolean ok = false;
             while(!ok) {
-                while (!town.hasPermission(this, ProtectionFlagType.ENTER, false, player.dimension, x, y, z) && town.isPointInTown(player.dimension, x, z))
+                while (!town.hasPermission(this, FlagType.ENTER, player.dimension, x, y, z) && town.isPointInTown(player.dimension, x, z))
                     x++;
                 x += 3;
 
                 while(player.worldObj.getBlock(x, y, z) != Blocks.air && player.worldObj.getBlock(x, y + 1, z) != Blocks.air && y < 256)
                     y++;
 
-                if(town.hasPermission(this, ProtectionFlagType.ENTER, false, player.dimension, x, y, z) || !town.isPointInTown(player.dimension, x, z))
+                if(town.hasPermission(this, FlagType.ENTER, player.dimension, x, y, z) || !town.isPointInTown(player.dimension, x, z))
                     ok = true;
             }
             player.setPositionAndUpdate(x, y, z);

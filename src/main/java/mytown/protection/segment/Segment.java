@@ -5,7 +5,7 @@ import mytown.MyTown;
 import mytown.api.container.GettersContainer;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,18 +16,17 @@ import java.util.List;
 public abstract class Segment {
     protected boolean isDisabled = false;
     protected Class<?> checkClass;
-    protected ProtectionFlagType flag;
+    protected FlagType<Boolean> flag;
     protected Condition condition;
 
-    public final List<Object> denialValues = new ArrayList<Object>();
     public final GettersContainer getters = new GettersContainer();
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
         if(MyTownUniverse.instance.blocks.contains(dim, x >> 4, z >> 4)) {
             Town town = MyTownUniverse.instance.blocks.get(dim, x >> 4, z >> 4).getTown();
-            return hasPermission(res, town, dim, x, y, z);
+            return town.hasPermission(res, flag, dim, x, y, z);
         } else {
-            return hasPermission(res, Wild.instance);
+            return Wild.instance.hasPermission(res, flag);
         }
     }
 
@@ -51,7 +50,7 @@ public abstract class Segment {
                 for (Plot plot : townBlock.plotsContainer) {
                     Volume plotIntersection = volume.intersect(plot.toVolume());
                     if (plotIntersection != null) {
-                        if(!hasPermission(res, plot)) {
+                        if(!plot.hasPermission(res, flag)) {
                             return false;
                         }
                         totalIntersectArea += plotIntersection.getVolumeAmount();
@@ -60,7 +59,7 @@ public abstract class Segment {
 
                 // If plot area sum is not equal to range area, check town permission
                 if (totalIntersectArea != rangeBox.getVolumeAmount()) {
-                    if(!hasPermission(res, town)) {
+                    if(!town.hasPermission(res, flag)) {
                         return false;
                     }
                 }
@@ -68,57 +67,9 @@ public abstract class Segment {
         }
 
         if (inWild) {
-            return hasPermission(res, Wild.instance);
+            return Wild.instance.hasPermission(res, flag);
         }
 
-        return true;
-    }
-
-    public boolean hasPermission(Resident res, Wild wild) {
-        if(res == null) {
-            return !denialValues.contains(wild.flagsContainer.get(flag));
-        } else {
-            if(!wild.hasPermission(res, flag, denialValue)) {
-                res.protectionDenial(flag);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean hasPermission(Resident res, Town town, int dim, int x, int y, int z) {
-        if(res == null) {
-            return !town.flagsContainer.getValue(flag).equals(denialValue);
-        } else {
-            if(!town.hasPermission(res, flag, denialValue, dim, x, y, z)) {
-                res.protectionDenial(flag, town.formatOwners(dim, x, y, z));
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean hasPermission(Resident res, Town town) {
-        if(res == null) {
-            return !town.flagsContainer.getValue(flag).equals(denialValue);
-        } else {
-            if(!town.hasPermission(res, flag, denialValue)) {
-                res.protectionDenial(flag, town.formatOwner());
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean hasPermission(Resident res, Plot plot) {
-        if(res == null) {
-            return !plot.flagsContainer.getValue(flag).equals(denialValue);
-        } else {
-            if(!plot.hasPermission(res, flag, denialValue)) {
-                res.protectionDenial(flag, plot.ownersContainer.toString());
-                return false;
-            }
-        }
         return true;
     }
 
@@ -136,7 +87,7 @@ public abstract class Segment {
         }
     }
 
-    public void setFlag(ProtectionFlagType flag) {
+    public void setFlag(FlagType<Boolean> flag) {
         this.flag = flag;
     }
 
@@ -148,7 +99,7 @@ public abstract class Segment {
         return condition;
     }
 
-    public ProtectionFlagType getFlag() {
+    public FlagType getFlag() {
         return flag;
     }
 

@@ -2,7 +2,7 @@ package mytown.api.container;
 
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import myessentials.utils.ColorUtils;
 
 import java.util.ArrayList;
@@ -10,54 +10,55 @@ import java.util.Iterator;
 
 public class FlagsContainer extends ArrayList<Flag> {
 
-    public boolean contains(ProtectionFlagType type) {
+    public boolean contains(FlagType<?> flagType) {
         for (Flag flag : this) {
-            if (flag.getFlagType() == type) {
+            if (flag.flagType == flagType) {
                 return true;
             }
         }
         return false;
     }
 
-    public Flag get(ProtectionFlagType type) {
-        for (Flag flag : this)
-            if (flag.getFlagType() == type)
+    public <T> Flag<T> get(FlagType<T> flagType) {
+        for (Flag flag : this) {
+            if (flag.flagType == flagType) {
                 return flag;
+            }
+        }
         return null;
     }
 
-    public void remove(ProtectionFlagType type) {
+    public void remove(FlagType<?> flagType) {
         for (Iterator<Flag> it = iterator(); it.hasNext(); ) {
-            if (it.next().getFlagType() == type) {
+            if (it.next().flagType.equals(flagType)) {
                 it.remove();
             }
         }
     }
 
-    public Object getValue(ProtectionFlagType type) {
+    public <T> T getValue(FlagType<T> flagType) {
         for (Flag flag : this) {
-            if (flag.getFlagType() == type)
-                return flag.getValue();
+            if (flag.flagType.equals(flagType)) {
+                return (T)flag.value;
+            }
         }
-        return type.getDefaultValue();
+        return null;
     }
 
     public String toStringForTowns() {
         String formattedFlagList = "";
 
         for (Flag flag : this) {
-            if(flag.getFlagType().canTownsModify()) {
-                if (!formattedFlagList.equals("")) {
-                    formattedFlagList += "\\n";
-                }
-                formattedFlagList += flag.toString();
+            if (!formattedFlagList.equals("")) {
+                formattedFlagList += "\\n";
             }
+            formattedFlagList += flag.toString();
         }
 
         String unconfigurableFlags = "";
-        for(ProtectionFlagType flagType : ProtectionFlagType.values()) {
-            if(!contains(flagType)) {
-                unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.getDefaultValue())).toString(ColorUtils.colorValueConst);
+        for(FlagType flagType : FlagType.values()) {
+            if(!contains(flagType.toString())) {
+                unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.defaultValue)).toString(ColorUtils.colorValueConst);
             }
         }
 
@@ -70,23 +71,21 @@ public class FlagsContainer extends ArrayList<Flag> {
         String formattedFlagList = "";
 
         for (Flag flag : this) {
-            if(flag.getFlagType().canTownsModify()) {
-                if (!formattedFlagList.equals("")) {
-                    formattedFlagList += "\\n";
-                }
-                formattedFlagList += flag.toString();
+            if (!formattedFlagList.equals("")) {
+                formattedFlagList += "\\n";
             }
+            formattedFlagList += flag.toString();
         }
 
         String unconfigurableFlags = "";
-        for(ProtectionFlagType flagType : ProtectionFlagType.values()) {
+        for(FlagType flagType : FlagType.values()) {
             if(!contains(flagType)) {
-                unconfigurableFlags += "\\n" + (new Flag(flagType, town.flagsContainer.getValue(flagType))).toString(ColorUtils.colorValueConst);
+                Object value = town.flagsContainer.contains(flagType) ? town.flagsContainer.getValue(flagType) : flagType.defaultValue;
+                unconfigurableFlags += "\\n" + (new Flag(flagType, value).toString(ColorUtils.colorValueConst));
             }
         }
 
         formattedFlagList += unconfigurableFlags;
-
         return formattedFlagList;
     }
 

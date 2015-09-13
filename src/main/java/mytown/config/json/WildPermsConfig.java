@@ -5,7 +5,7 @@ import myessentials.json.JSONConfig;
 import mytown.MyTown;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,9 +23,10 @@ public class WildPermsConfig extends JSONConfig<Flag> {
     @SuppressWarnings("unchecked")
     @Override
     public void create(List<Flag> items) {
-        for (ProtectionFlagType type : ProtectionFlagType.values()) {
-            if (type.isWildPerm())
-                items.add(new Flag(type, type.getDefaultWildPerm()));
+        for (FlagType type : FlagType.values()) {
+            if (type.isWildPerm) {
+                items.add(new Flag(type, type.defaultWildValue));
+            }
         }
         super.create(items);
     }
@@ -49,29 +50,33 @@ public class WildPermsConfig extends JSONConfig<Flag> {
 
         for(Iterator<Flag> it = items.iterator(); it.hasNext();) {
             Flag item = it.next();
-            if(item.getFlagType() == null) {
-                MyTown.instance.LOG.error("An unrecognized flagType has been found. Removing...");
-                it.remove();
-                isValid = false;
-                continue;
-            }
-            if (!item.getFlagType().isWildPerm()) {
-                MyTown.instance.LOG.error("A non wild flagType has been found in WildPerms config file. Removing...");
-                it.remove();
-                isValid = false;
+            if(item instanceof Flag) {
+                if (((Flag) item).flagType == null) {
+                    MyTown.instance.LOG.error("An unrecognized flagType has been found. Removing...");
+                    it.remove();
+                    isValid = false;
+                    continue;
+                }
+                if (!((Flag) item).flagType.isWildPerm) {
+                    MyTown.instance.LOG.error("A non wild flagType has been found in WildPerms config file. Removing...");
+                    it.remove();
+                    isValid = false;
+                }
             }
         }
 
-        for (ProtectionFlagType type : ProtectionFlagType.values()) {
-            if (type.isWildPerm()) {
+        for (FlagType type : FlagType.values()) {
+            if (type.isWildPerm) {
                 boolean ok = false;
                 for (Flag f : items) {
-                    if (f.getFlagType() == type)
-                        ok = true;
+                    if(f instanceof Flag) {
+                        if (((Flag) f).flagType == type)
+                            ok = true;
+                    }
                 }
                 if (!ok) {
                     MyTown.instance.LOG.error("FlagType {} for Wild does not exist in the WildPerms file. Adding...", type.toString());
-                    items.add(new Flag(type, type.getDefaultValue()));
+                    items.add(new Flag(type, type.defaultValue));
                     isValid = false;
                 }
             }

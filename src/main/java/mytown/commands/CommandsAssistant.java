@@ -11,7 +11,7 @@ import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.proxies.EconomyProxy;
 import mytown.util.MyTownUtils;
@@ -73,7 +73,7 @@ public class CommandsAssistant extends Commands {
             for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
                 for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
                     Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                    if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(ProtectionFlagType.NEARBY))
+                    if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
                         throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
                 }
             }
@@ -110,7 +110,7 @@ public class CommandsAssistant extends Commands {
                 for (int x = chunk.getX() - Config.distanceBetweenTowns; x <= chunk.getX() + Config.distanceBetweenTowns; x++) {
                     for (int z = chunk.getZ() - Config.distanceBetweenTowns; z <= chunk.getZ() + Config.distanceBetweenTowns; z++) {
                         Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                        if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(ProtectionFlagType.NEARBY))
+                        if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
                             throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
                     }
                 }
@@ -197,10 +197,11 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
         Flag flag = getFlagFromName(town.flagsContainer, args.get(0));
 
-        if (flag.setValueFromString(args.get(1))) {
+        if (flag.setValue(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
-        } else
+        } else {
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+        }
         getDatasource().saveFlag(flag, town);
         return CommandResponse.DONE;
     }

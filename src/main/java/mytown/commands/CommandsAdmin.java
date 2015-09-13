@@ -15,7 +15,7 @@ import mytown.config.json.FlagsConfig;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.VisualsHandler;
@@ -825,11 +825,11 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
 
-        if (flag.setValueFromString(args.get(2))) {
+        if (flag.setValue(args.get(2))) {
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.perm.set.success", args.get(1), args.get(2)));
-        } else
-            // Same here
+        } else {
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(2));
+        }
         getDatasource().saveFlag(flag, town);
         return CommandResponse.DONE;
     }
@@ -882,14 +882,15 @@ public class CommandsAdmin extends Commands {
         if (args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        ProtectionFlagType type = getFlagTypeFromName(args.get(0));
+        FlagType type = getFlagTypeFromName(args.get(0));
         Flag flag = getFlagFromType(Wild.instance.flagsContainer, type);
 
-        if (flag.setValueFromString(args.get(1))) {
+        if (flag.setValue(args.get(1))) {
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.wild.perm.set.success", args.get(0), args.get(1)));
-        } else
+        } else {
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
-        //Saving changes to file
+        }
+
         MyTown.instance.getWildConfig().write(Wild.instance.flagsContainer);
         return CommandResponse.DONE;
     }
@@ -1106,10 +1107,11 @@ public class CommandsAdmin extends Commands {
             Plot plot = getPlotFromName(town, args.get(1));
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
 
-            if (flag.setValueFromString(args.get(3))) {
+            if (flag.setValue(args.get(3))) {
                 ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
-            } else
+            } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+            }
 
             getDatasource().saveFlag(flag, plot);
             return CommandResponse.DONE;

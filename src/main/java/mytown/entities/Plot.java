@@ -1,12 +1,12 @@
 package mytown.entities;
 
 import myessentials.entities.Volume;
-import myessentials.utils.PlayerUtils;
+import mypermissions.proxies.PermissionProxy;
 import mytown.api.container.FlagsContainer;
 import mytown.api.container.GenericContainer;
 import mytown.api.container.ResidentsContainer;
 import mytown.entities.blocks.SellSign;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
@@ -57,8 +57,23 @@ public class Plot {
         return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
     }
 
-    public boolean hasPermission(Resident res, ProtectionFlagType flagType, Object denialValue) {
-        return !flagsContainer.getValue(flagType).equals(denialValue) || membersContainer.contains(res) || ownersContainer.contains(res) || PlayerUtils.isOp(res.getPlayer());
+    public boolean hasPermission(Resident res, FlagType<Boolean> flagType) {
+        if(flagsContainer.getValue(flagType)) {
+            return true;
+        }
+
+        if(res == null) {
+            return false;
+        }
+
+        if(!(membersContainer.contains(res) || ownersContainer.contains(res))) {
+            boolean permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
+            if(!permissionBypass) {
+                res.protectionDenial(flagType, ownersContainer.toString());
+                return false;
+            }
+        }
+        return true;
     }
 
     public void checkForSellSign() {

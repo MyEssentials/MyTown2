@@ -8,7 +8,7 @@ import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.EconomyProxy;
 import mytown.util.MyTownUtils;
@@ -60,14 +60,14 @@ public abstract class Commands {
         CommandCompletion.addCompletions("residentCompletion", populator);
 
         populator = new ArrayList<String>();
-        for (ProtectionFlagType flag : ProtectionFlagType.values()) {
+        for (FlagType flag : FlagType.values()) {
             populator.add(flag.toString().toLowerCase());
         }
         CommandCompletion.addCompletions("flagCompletion", populator);
 
         populator = new ArrayList<String>();
-        for (ProtectionFlagType flag : ProtectionFlagType.values()) {
-            if (flag.isWhitelistable())
+        for (FlagType flag : FlagType.values()) {
+            if (flag.isWhitelistable)
                 populator.add(flag.toString().toLowerCase());
         }
         CommandCompletion.addCompletions("flagCompletionWhitelist", populator);
@@ -122,7 +122,7 @@ public abstract class Commands {
         return res.townInvitesContainer;
     }
 
-    public static Flag getFlagFromType(FlagsContainer flagsContainer, ProtectionFlagType flagType) {
+    public static Flag getFlagFromType(FlagsContainer flagsContainer, FlagType flagType) {
         Flag flag = flagsContainer.get(flagType);
         if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", flagType.toString());
@@ -132,7 +132,7 @@ public abstract class Commands {
     public static Flag getFlagFromName(FlagsContainer flagsContainer, String name) {
         Flag flag;
         try {
-            flag = flagsContainer.get(ProtectionFlagType.valueOf(name.toUpperCase()));
+            flag = flagsContainer.get(FlagType.valueOf(name.toUpperCase()));
         } catch (IllegalArgumentException ex) {
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", ex, name);
         }
@@ -182,9 +182,9 @@ public abstract class Commands {
         return plot;
     }
 
-    public static ProtectionFlagType getFlagTypeFromName(String name) {
+    public static FlagType getFlagTypeFromName(String name) {
         try {
-            return ProtectionFlagType.valueOf(name.toUpperCase());
+            return FlagType.valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", e, name);
         }

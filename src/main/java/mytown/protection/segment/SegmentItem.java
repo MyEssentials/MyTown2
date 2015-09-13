@@ -5,7 +5,7 @@ import myessentials.entities.Volume;
 import mytown.MyTown;
 import mytown.api.container.GettersContainer;
 import mytown.entities.Resident;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.util.exceptions.ConditionException;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -25,14 +25,13 @@ public class SegmentItem extends Segment {
     public final ClientBlockUpdate clientUpdate;
     public final boolean directionalClientUpdate;
 
-    public SegmentItem(Class<?> clazz, ProtectionFlagType flagType, Object denialValue, String conditionString, GettersContainer getters, ItemType type, boolean onAdjacent, Volume clientUpdateCoords, boolean directionalClientUpdate) {
+    public SegmentItem(Class<?> clazz, FlagType<Boolean> flagType, Object denialValue, String conditionString, GettersContainer getters, ItemType type, boolean onAdjacent, Volume clientUpdateCoords, boolean directionalClientUpdate) {
         this(type, onAdjacent, clientUpdateCoords, directionalClientUpdate);
         if(getters != null) {
             this.getters.addAll(getters);
         }
         setCheckClass(clazz);
         setFlag(flagType);
-        setDenialValue(denialValue);
         setConditionString(conditionString);
     }
 

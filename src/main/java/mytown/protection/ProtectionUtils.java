@@ -4,7 +4,7 @@ import myessentials.entities.BlockPos;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
@@ -32,7 +32,7 @@ public class ProtectionUtils {
     public static void addToBlockWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
         for (Protection prot : ProtectionHandler.instance.getProtectionList()) {
             if (prot.isTileTracked(te))
-                for (ProtectionFlagType flagType : prot.getFlagsForTile(te)) {
+                for (FlagType flagType : prot.getFlagsForTile(te)) {
                     if (!town.blockWhitelistsContainer.contains(dim, x, y, z, flagType)) {
                         BlockWhitelist bw = new BlockWhitelist(dim, x, y, z, flagType);
                         DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
@@ -47,7 +47,7 @@ public class ProtectionUtils {
     public static void removeFromWhitelist(Class<? extends TileEntity> te, int dim, int x, int y, int z, Town town) {
         for (Protection prot : ProtectionHandler.instance.getProtectionList()) {
             if (prot.isTileTracked(te))
-                for (ProtectionFlagType flagType : prot.getFlagsForTile(te)) {
+                for (FlagType flagType : prot.getFlagsForTile(te)) {
                     BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
                     if (bw != null) {
                         bw.delete();
@@ -108,8 +108,8 @@ public class ProtectionUtils {
         return false;
     }
 
-    public static List<ProtectionFlagType> getFlagsForTile(Class<? extends TileEntity> te) {
-        List<ProtectionFlagType> flags = new ArrayList<ProtectionFlagType>();
+    public static List<FlagType> getFlagsForTile(Class<? extends TileEntity> te) {
+        List<FlagType> flags = new ArrayList<FlagType>();
         for(Protection protection : ProtectionHandler.instance.getProtectionList()) {
             if(protection.isTileTracked(te))
                 flags.addAll(protection.getFlagsForTile(te));
@@ -125,10 +125,10 @@ public class ProtectionUtils {
         if (MyTownUtils.getTownAtPosition(bw.getDim(), bw.getX() >> 4, bw.getZ() >> 4) == null)
             return false;
 
-        if (bw.getFlagType() == ProtectionFlagType.ACTIVATE
+        if (bw.getFlagType() == FlagType.ACTIVATE
                 && !checkActivatedBlocks(MinecraftServer.getServer().worldServerForDimension(bw.getDim()).getBlock(bw.getX(), bw.getY(), bw.getZ()), MinecraftServer.getServer().worldServerForDimension(bw.getDim()).getBlockMetadata(bw.getX(), bw.getY(), bw.getZ())))
             return false;
-        if (bw.getFlagType() == ProtectionFlagType.MODIFY || bw.getFlagType() == ProtectionFlagType.ACTIVATE || bw.getFlagType() == ProtectionFlagType.USAGE) {
+        if (bw.getFlagType() == FlagType.MODIFY || bw.getFlagType() == FlagType.ACTIVATE || bw.getFlagType() == FlagType.USAGE) {
             TileEntity te = MinecraftServer.getServer().worldServerForDimension(bw.getDim()).getTileEntity(bw.getX(), bw.getY(), bw.getZ());
             if (te == null)
                 return false;

@@ -5,7 +5,7 @@ import mytown.MyTown;
 import mytown.api.container.GettersContainer;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
@@ -22,14 +22,13 @@ public class SegmentEntity extends Segment {
 
     private final EntityType type;
 
-    public SegmentEntity(Class<?> clazz, ProtectionFlagType flagType, Object denialValue, String conditionString, GettersContainer getters, EntityType entityType) {
+    public SegmentEntity(Class<?> clazz, FlagType<Boolean> flagType, Object denialValue, String conditionString, GettersContainer getters, EntityType entityType) {
         this(entityType);
         if(getters != null) {
             this.getters.addAll(getters);
         }
         setCheckClass(clazz);
         setFlag(flagType);
-        setDenialValue(denialValue);
         setConditionString(conditionString);
     }
 

@@ -2,7 +2,7 @@ package mytown.protection.json;
 
 import com.google.gson.*;
 import myessentials.entities.Volume;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.protection.segment.*;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
@@ -20,14 +20,8 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         JsonObject json = new JsonObject();
 
         json.addProperty("class", segment.getCheckClass().getName());
-        if(segment.getDenialValue().equals(Boolean.FALSE)) {
-            json.addProperty("flag", segment.getFlag().toString());
-        } else {
-            JsonObject jsonFlag = new JsonObject();
-            jsonFlag.addProperty("name", segment.getFlag().toString());
-            jsonFlag.addProperty("denialValue", segment.getDenialValue().toString());
-            json.add("flag", jsonFlag);
-        }
+        json.addProperty("flag", segment.getFlag().toString());
+
         if(segment.getCondition() != null) {
             json.addProperty("condition", segment.getCondition().toString());
         }
@@ -113,14 +107,7 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
         jsonObject.remove("class");
 
-        ProtectionFlagType flag;
-        Object denialValue = Boolean.FALSE;
-        if(jsonObject.get("flag").isJsonObject()) {
-            flag = ProtectionFlagType.valueOf(jsonObject.get("flag").getAsJsonObject().get("name").getAsString());
-            denialValue = getObjectFromPrimitive(jsonObject.get("denialValue").getAsJsonPrimitive());
-        } else {
-            flag = ProtectionFlagType.valueOf(jsonObject.get("flag").getAsString());
-        }
+        FlagType flag = FlagType.valueOf(jsonObject.get("flag").getAsString());;
         jsonObject.remove("flag");
 
         String condition = null;
@@ -131,7 +118,6 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
 
         segment.setCheckClass(clazz);
         segment.setFlag(flag);
-        segment.setDenialValue(denialValue);
         segment.setConditionString(condition);
 
         for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {

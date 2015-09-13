@@ -3,7 +3,7 @@ package mytown.test.entities;
 import myessentials.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.test.TestMain;
 import org.junit.Assert;
 
@@ -34,7 +34,7 @@ public class EntitiesTest {
         TownBlock block = new TownBlock(0, 0, 0, false, 0, town);
         town.townBlocksContainer.add(block);
         // Saving and adding all flags to the database
-        for (ProtectionFlagType type : ProtectionFlagType.values()) {
+        for (FlagType type : FlagType.values()) {
             if (type.canTownsModify()) {
                 town.flagsContainer.add(new Flag(type, type.getDefaultValue()));
             }
@@ -53,17 +53,17 @@ public class EntitiesTest {
 
     //@Test
     public void shouldCheckPermissionsProperly() {
-        Assert.assertTrue(town.hasPermission(resident, ProtectionFlagType.ACCESS, false));
+        Assert.assertTrue(town.hasPermission(resident, FlagType.ACCESS, false));
         // Inside of TestPlot
-        Assert.assertTrue(town.hasPermission(resident, ProtectionFlagType.MODIFY, false, 0, 1, 1, 1));
+        Assert.assertTrue(town.hasPermission(resident, FlagType.MODIFY, false, 0, 1, 1, 1));
     }
 
     //@Test
     public void shouldCheckPermissionsWithRestrictionsFlagProperly() {
         // Outside of plot, inside town with Restrictions flag false
-        Assert.assertTrue(town.hasPermission(resident, ProtectionFlagType.PICKUP, false, 0, 15, 0, 15));
-        town.flagsContainer.get(ProtectionFlagType.RESTRICTIONS).setValueFromString("true");
-        Assert.assertFalse(town.hasPermission(resident, ProtectionFlagType.PICKUP, false, 0, 15, 0, 15));
+        Assert.assertTrue(town.hasPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
+        town.flagsContainer.get(FlagType.RESTRICTIONS).setValueFromString("true");
+        Assert.assertFalse(town.hasPermission(resident, FlagType.PICKUP, false, 0, 15, 0, 15));
     }
 
 }

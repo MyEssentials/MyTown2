@@ -4,7 +4,7 @@ import mytown.entities.BlockWhitelist;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Items;
@@ -21,16 +21,7 @@ public class WhitelisterTool extends Tool {
     private static final String NAME = EnumChatFormatting.BLUE + "Whitelister";
     private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection.";
     private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click air to change flag.";
-    private static final String DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: " + ProtectionFlagType.ACCESS.toString().toLowerCase();
-
-    private static final List<ProtectionFlagType> whitelistableFlags = new ArrayList<ProtectionFlagType>();
-
-    static {
-        for(ProtectionFlagType flagType : ProtectionFlagType.values()) {
-            if(flagType.isWhitelistable())
-                whitelistableFlags.add(flagType);
-        }
-    }
+    private static final String DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: " + FlagType.ACCESS.toString().toLowerCase();
 
     public WhitelisterTool(Resident owner) {
         super(owner, NAME);
@@ -45,7 +36,7 @@ public class WhitelisterTool extends Tool {
             return;
 
         // If town is found then create or delete the block whitelist
-        ProtectionFlagType flagType = getFlagFromLore();
+        FlagType flagType = getFlagFromLore();
         //ev.entityPlayer.setCurrentItemOrArmor(0, null);
         if (flagType == null) {
             removeWhitelists(town, dim, x, y, z);
@@ -58,12 +49,12 @@ public class WhitelisterTool extends Tool {
 
     @Override
     public void onShiftRightClick() {
-        ProtectionFlagType currentFlag = getFlagFromLore();
-        if(currentFlag == whitelistableFlags.get(whitelistableFlags.size() - 1)) {
+        FlagType currentFlag = getFlagFromLore();
+        if(currentFlag == FlagType.getWhitelistable().get(FlagType.getWhitelistable().size() - 1)) {
             setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 2);
             owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "mode", "WHITELIST REMOVAL"));
         } else {
-            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag) + 1).toString().toLowerCase(), 2);
+            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + FlagType.getWhitelistable().get(FlagType.getWhitelistable().indexOf(currentFlag) + 1).toString().toLowerCase(), 2);
             owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "flagType", currentFlag));
         }
     }
@@ -88,7 +79,7 @@ public class WhitelisterTool extends Tool {
     }
 
     private void removeWhitelists(Town town, int dim, int x, int y, int z) {
-        for (ProtectionFlagType flagType : whitelistableFlags) {
+        for (FlagType flagType : FlagType.getWhitelistable()) {
             BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
             if (bw != null) {
                 DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
@@ -97,7 +88,7 @@ public class WhitelisterTool extends Tool {
         }
     }
 
-    private void addWhitelists(ProtectionFlagType flagType, Town town, int dim, int x, int y, int z) {
+    private void addWhitelists(FlagType flagType, Town town, int dim, int x, int y, int z) {
         BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
         if (bw == null) {
             bw = new BlockWhitelist(dim, x, y, z, flagType);
@@ -108,9 +99,9 @@ public class WhitelisterTool extends Tool {
         }
     }
 
-    private ProtectionFlagType getFlagFromLore() {
+    private FlagType getFlagFromLore() {
         String flagLore = getDescription(1);
-        for(ProtectionFlagType flagType : whitelistableFlags) {
+        for(FlagType flagType : FlagType.getWhitelistable()) {
             if (flagLore.contains(flagType.toString().toLowerCase())) {
                 return flagType;
             }

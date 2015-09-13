@@ -5,7 +5,7 @@ import mytown.MyTown;
 import mytown.api.container.GettersContainer;
 import mytown.config.Config;
 import mytown.entities.Resident;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
 import mytown.protection.ProtectionHandler;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
@@ -19,14 +19,13 @@ public class SegmentTileEntity extends Segment {
 
     private boolean hasOwner = false;
 
-    public SegmentTileEntity(Class<?> clazz, ProtectionFlagType flagType, Object denialValue, String conditionString, GettersContainer getters, boolean hasOwner) {
+    public SegmentTileEntity(Class<?> clazz, FlagType<Boolean> flagType, Object denialValue, String conditionString, GettersContainer getters, boolean hasOwner) {
         this(hasOwner);
         if(getters != null) {
             this.getters.addAll(getters);
         }
         setCheckClass(clazz);
         setFlag(flagType);
-        setDenialValue(denialValue);
         setConditionString(conditionString);
     }
 

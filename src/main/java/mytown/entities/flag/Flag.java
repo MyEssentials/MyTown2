@@ -2,47 +2,42 @@ package mytown.entities.flag;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import myessentials.Localization;
-import mytown.MyTown;
 import myessentials.utils.ColorUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.lang.reflect.Type;
+public class Flag<T> implements Comparable<Flag>{
+    protected Gson gson = new GsonBuilder().create();
 
-public abstract class Flag<T> implements Comparable<Flag<T>>{
+    public T value;
+    public boolean configurable = true;
+    public final FlagType<T> flagType;
 
-    public static final String DESCRIPTION_KEY = "mytown.flag.";
-
-    protected String name;
-    protected T value;
-    protected Gson gson;
-    protected Type gsonType;
-
-    public Flag(String name, T defaultValue) {
-        this.name = name;
-        this.value = defaultValue;
-        this.gson = new GsonBuilder().setPrettyPrinting().create();
+    public Flag(FlagType<T> flagType, String serializedValue) {
+        this.flagType = flagType;
+        this.value = gson.fromJson(serializedValue, flagType.type);
     }
 
-    public String serializeValue() {
-        return gson.toJson(value, gsonType);
+    public Flag(FlagType<T> flagType, T value) {
+        this.flagType = flagType;
+        this.value = value;
     }
 
-    public abstract boolean setValue(String str);
-
-    public T getValue() {
-        return value;
+    public boolean setValue(String value) {
+        if(flagType.type == Boolean.class) {
+            this.value = (T)Boolean.valueOf(value);
+            return true;
+        } else if(flagType.type == String.class) {
+            this.value = (T)value;
+            return true;
+        } else if(flagType.type == Integer.class) {
+            this.value = (T)Integer.valueOf(value);
+            return true;
+        } else if(flagType.type == Float.class) {
+            this.value = (T)Float.valueOf(value);
+            return true;
+        }
+        return false;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public int compareTo(Flag<T> other) {
-        return name.compareTo(other.getName());
-    }
 
     @Override
     public String toString() {
@@ -50,8 +45,14 @@ public abstract class Flag<T> implements Comparable<Flag<T>>{
     }
 
     public String toString(String valueColor) {
-        String description = MyTown.instance.LOCAL.getLocalization(DESCRIPTION_KEY + name);
+        String description = flagType.getLocalizedDescription();
 
-        return String.format(ColorUtils.colorFlag + "%s" + ColorUtils.colorComma + "[" + valueColor+ "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", name, value.toString(), description);
+
+        return String.format(ColorUtils.colorFlag + "%s" + ColorUtils.colorComma + "[" + valueColor+ "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", flagType.name, value.toString(), description);
+    }
+
+    @Override
+    public int compareTo(Flag other) {
+        return flagType.compareTo(other.flagType);
     }
 }

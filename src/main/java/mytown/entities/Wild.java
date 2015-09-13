@@ -1,8 +1,8 @@
 package mytown.entities;
 
-import myessentials.utils.PlayerUtils;
 import mytown.api.container.FlagsContainer;
-import mytown.entities.flag.ProtectionFlagType;
+import mytown.entities.flag.FlagType;
+import net.minecraft.util.EnumChatFormatting;
 
 /**
  * Wilderness permissions
@@ -16,9 +16,10 @@ public class Wild {
     /**
      * Checks if Resident is allowed to do the action specified by the FlagType in the Wild
      */
-    public boolean hasPermission(Resident res, ProtectionFlagType type, Object denialValue) {
-        if (flagsContainer.getValue(type).equals(denialValue)) {
-            return PlayerUtils.isOp(res.getPlayer());
+    public boolean hasPermission(Resident res, FlagType<Boolean> flagType) {
+        if (flagsContainer.getValue(flagType)) {
+            res.protectionDenial(flagType, EnumChatFormatting.RED + "SERVER OWNERS");
+            return false;
         }
         return true;
     }
