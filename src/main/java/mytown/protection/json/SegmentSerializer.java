@@ -12,6 +12,7 @@ import mytown.protection.segment.getter.Getter;
 import mytown.util.exceptions.ProtectionParseException;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,8 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
             serializeTileEntity((SegmentTileEntity) segment, json, context);
         }
 
-        json.add("flags", context.serialize(segment.flags));
+        //json.add("flags", context.serialize(segment.flags));
+        json.add("flags", serializeAsElementOrArray(segment.flags, context));
 
         if(segment.getCondition() != null) {
             json.addProperty("condition", segment.getCondition().toString());
@@ -49,8 +51,21 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         return json;
     }
 
+    private <T> JsonElement serializeAsElementOrArray(List<T> items, JsonSerializationContext context) {
+        if(items.isEmpty()) {
+            return null;
+        }
+
+        if(items.size() == 1) {
+            return context.serialize(items.get(0));
+        } else {
+            return context.serialize(items);
+        }
+    }
+
     private void serializeBlock(SegmentBlock segment, JsonObject json, JsonSerializationContext context) {
-        json.add("actions", context.serialize(segment.types));
+        //json.add("actions", context.serialize(segment.types));
+        json.add("actions", serializeAsElementOrArray(segment.types, context));
         json.addProperty("meta", segment.getMeta());
         if(segment.clientUpdate != null) {
             JsonObject jsonUpdate = new JsonObject();
@@ -60,11 +75,13 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
     }
 
     private void serializeEntity(SegmentEntity segment, JsonObject json, JsonSerializationContext context) {
-        json.add("actions", context.serialize(segment.types));
+        //json.add("actions", context.serialize(segment.types));
+        json.add("actions", serializeAsElementOrArray(segment.types, context));
     }
 
     private void serializeItem(SegmentItem segment, JsonObject json, JsonSerializationContext context) {
-        json.add("actions", context.serialize(segment.types));
+        //json.add("actions", context.serialize(segment.types));
+        json.add("actions", serializeAsElementOrArray(segment.types, context));
         json.addProperty("isAdjacent", segment.isOnAdjacent());
         if(segment.clientUpdate != null) {
             JsonObject jsonUpdate = new JsonObject();
@@ -111,7 +128,8 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
         jsonObject.remove("class");
 
-        List<FlagType<Boolean>> flags = context.deserialize(jsonObject.get("flags"), new TypeToken<List<FlagType<Boolean>>>() {}.getType());
+        //List<FlagType<Boolean>> flags = context.deserialize(jsonObject.get("flags"), new TypeToken<List<FlagType<Boolean>>>() {}.getType());
+        List<FlagType<Boolean>> flags = deserializeAsArray(jsonObject.get("flags"), context, FlagType.class);
         jsonObject.remove("flags");
 
         String condition = null;
@@ -133,12 +151,23 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         return segment;
     }
 
+    private <T> List<T> deserializeAsArray(JsonElement json, JsonDeserializationContext context, Class<?> typeOfT) {
+        if(json.isJsonPrimitive()) {
+            List<T> list = new ArrayList<T>();
+            list.add((T) context.deserialize(json, typeOfT));
+            return list;
+        } else {
+            return context.deserialize(json, new TypeToken<List<T>>() {}.getType());
+        }
+    }
+
     private SegmentBlock deserializeBlock(JsonObject json, JsonDeserializationContext context) {
         if(!json.has("actions")) {
             throw new ProtectionParseException("Missing actions identifier");
         }
 
-        List<BlockType> types = context.deserialize(json.get("actions"), new TypeToken<List<BlockType>>() {}.getType());
+        //List<BlockType> types = context.deserialize(json.get("actions"), new TypeToken<List<BlockType>>() {}.getType());
+        List<BlockType> types = deserializeAsArray(json.get("actions"), context, BlockType.class);
         json.remove("actions");
 
         int meta = -1;
@@ -163,7 +192,8 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
             throw new ProtectionParseException("Missing actions identifier");
         }
 
-        List<EntityType> types = context.deserialize(json.get("actions"), new TypeToken<List<EntityType>>() {}.getType());
+        //List<EntityType> types = context.deserialize(json.get("actions"), new TypeToken<List<EntityType>>() {}.getType());
+        List<EntityType> types = deserializeAsArray(json.get("actions"), context, EntityType.class);
         json.remove("actions");
         SegmentEntity segment = new SegmentEntity();
         segment.types.addAll(types);
@@ -178,7 +208,8 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
             throw new ProtectionParseException("Missing isAdjacent identifier");
         }
 
-        List<ItemType> types = context.deserialize(json.get("actions"), new TypeToken<List<ItemType>>() {}.getType());
+        //List<ItemType> types = context.deserialize(json.get("actions"), new TypeToken<List<ItemType>>() {}.getType());
+        List<ItemType> types = deserializeAsArray(json.get("actions"), context, ItemType.class);
         json.remove("actions");
 
         boolean isAdjacent = json.get("isAdjacent").getAsBoolean();

@@ -11,7 +11,7 @@ public class CallerSerializer implements JsonSerializer<Caller>, JsonDeserialize
     @Override
     public JsonElement serialize(Caller caller, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject json = new JsonObject();
-        json.addProperty("name", caller.getName());
+        json.addProperty("element", caller.getName());
         json.addProperty("type", getTypeFromCaller(caller));
         if(caller.getValueType() != null) {
             json.addProperty("valueType", caller.getValueType().getName());
