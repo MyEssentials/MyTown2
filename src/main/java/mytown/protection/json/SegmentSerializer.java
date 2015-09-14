@@ -1,5 +1,6 @@
 package mytown.protection.json;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import myessentials.entities.Volume;
 import mytown.entities.flag.FlagType;
@@ -11,6 +12,7 @@ import mytown.protection.segment.getter.Getter;
 import mytown.util.exceptions.ProtectionParseException;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeserializer<Segment>{
@@ -35,7 +37,7 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
             serializeTileEntity((SegmentTileEntity) segment, json, context);
         }
 
-        json.addProperty("flag", segment.getFlag().name);
+        json.add("flags", context.serialize(segment.flags));
 
         if(segment.getCondition() != null) {
             json.addProperty("condition", segment.getCondition().toString());
@@ -48,7 +50,7 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
     }
 
     private void serializeBlock(SegmentBlock segment, JsonObject json, JsonSerializationContext context) {
-        json.addProperty("blockType", segment.getType().toString());
+        json.add("actions", context.serialize(segment.types));
         json.addProperty("meta", segment.getMeta());
         if(segment.clientUpdate != null) {
             JsonObject jsonUpdate = new JsonObject();
@@ -58,11 +60,11 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
     }
 
     private void serializeEntity(SegmentEntity segment, JsonObject json, JsonSerializationContext context) {
-        json.addProperty("entityType", segment.getType().toString());
+        json.add("actions", context.serialize(segment.types));
     }
 
     private void serializeItem(SegmentItem segment, JsonObject json, JsonSerializationContext context) {
-        json.addProperty("itemType", segment.getType().toString());
+        json.add("actions", context.serialize(segment.types));
         json.addProperty("isAdjacent", segment.isOnAdjacent());
         if(segment.clientUpdate != null) {
             JsonObject jsonUpdate = new JsonObject();
@@ -78,7 +80,7 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
 
     @Override
     public Segment deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        if(!json.getAsJsonObject().has("class") || !json.getAsJsonObject().has("type") || !json.getAsJsonObject().has("flag")) {
+        if(!json.getAsJsonObject().has("class") || !json.getAsJsonObject().has("type") || !json.getAsJsonObject().has("flags")) {
             throw new ProtectionParseException("One of the segments is invalid");
         }
         JsonObject jsonObject = json.getAsJsonObject();
@@ -109,8 +111,8 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
         jsonObject.remove("class");
 
-        FlagType flag = FlagType.valueOf(jsonObject.get("flag").getAsString());
-        jsonObject.remove("flag");
+        List<FlagType<Boolean>> flags = context.deserialize(jsonObject.get("flags"), new TypeToken<List<FlagType<Boolean>>>() {}.getType());
+        jsonObject.remove("flags");
 
         String condition = null;
         if(jsonObject.has("condition")) {
@@ -119,7 +121,7 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
         }
 
         segment.setCheckClass(clazz);
-        segment.setFlag(flag);
+        segment.flags.addAll(flags);
         segment.setConditionString(condition);
 
         for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
@@ -132,12 +134,12 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
     }
 
     private SegmentBlock deserializeBlock(JsonObject json, JsonDeserializationContext context) {
-        if(!json.has("blockType")) {
-            throw new ProtectionParseException("Missing blockType identifier");
+        if(!json.has("actions")) {
+            throw new ProtectionParseException("Missing actions identifier");
         }
 
-        BlockType type = BlockType.valueOf(json.get("blockType").getAsString());
-        json.remove("blockType");
+        List<BlockType> types = context.deserialize(json.get("actions"), new TypeToken<List<BlockType>>() {}.getType());
+        json.remove("actions");
 
         int meta = -1;
         Volume clientUpdateCoords = null;
@@ -151,30 +153,33 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
             clientUpdateCoords = context.deserialize(json.get("clientUpdate").getAsJsonObject().get("coords"), Volume.class);
             json.remove("clientUpdate");
         }
-
-        return new SegmentBlock(type, meta, clientUpdateCoords);
+        SegmentBlock block = new SegmentBlock(meta, clientUpdateCoords);
+        block.types.addAll(types);
+        return block;
     }
 
     private SegmentEntity deserializeEntity(JsonObject json, JsonDeserializationContext context) {
-        if(!json.has("entityType")) {
-            throw new ProtectionParseException("Missing entityType identifier");
+        if(!json.has("actions")) {
+            throw new ProtectionParseException("Missing actions identifier");
         }
 
-        EntityType type = EntityType.valueOf(json.get("entityType").getAsString());
-        json.remove("entityType");
-        return new SegmentEntity(type);
+        List<EntityType> types = context.deserialize(json.get("actions"), new TypeToken<List<EntityType>>() {}.getType());
+        json.remove("actions");
+        SegmentEntity segment = new SegmentEntity();
+        segment.types.addAll(types);
+        return segment;
     }
 
     private SegmentItem deserializeItem(JsonObject json, JsonDeserializationContext context) {
-        if(!json.has("itemType")) {
-            throw new ProtectionParseException("Missing itemType identifier");
+        if(!json.has("actions")) {
+            throw new ProtectionParseException("Missing actions identifier");
         }
         if(!json.has("isAdjacent")) {
             throw new ProtectionParseException("Missing isAdjacent identifier");
         }
 
-        ItemType type = ItemType.valueOf(json.get("itemType").getAsString());
-        json.remove("itemType");
+        List<ItemType> types = context.deserialize(json.get("actions"), new TypeToken<List<ItemType>>() {}.getType());
+        json.remove("actions");
 
         boolean isAdjacent = json.get("isAdjacent").getAsBoolean();
         json.remove("isAdjacent");
@@ -187,7 +192,9 @@ public class SegmentSerializer implements JsonSerializer<Segment>, JsonDeseriali
             json.remove("clientUpdate");
         }
 
-        return new SegmentItem(type, isDirectionalUpdate, clientUpdate, isDirectionalUpdate);
+        SegmentItem segment = new SegmentItem(isDirectionalUpdate, clientUpdate, isDirectionalUpdate);
+        segment.types.addAll(types);
+        return segment;
     }
 
     private SegmentTileEntity deserializeTileEntity(JsonObject json, JsonDeserializationContext context) {

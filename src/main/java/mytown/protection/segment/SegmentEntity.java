@@ -13,6 +13,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,24 +22,10 @@ import java.util.UUID;
  */
 public class SegmentEntity extends Segment {
 
-    private final EntityType type;
-
-    public SegmentEntity(Class<?> clazz, FlagType<Boolean> flagType, Object denialValue, String conditionString, GettersContainer getters, EntityType entityType) {
-        this(entityType);
-        if(getters != null) {
-            this.getters.addAll(getters);
-        }
-        setCheckClass(clazz);
-        setFlag(flagType);
-        setConditionString(conditionString);
-    }
-
-    public SegmentEntity(EntityType entityType) {
-        this.type = entityType;
-    }
+    public final List<EntityType> types = new ArrayList<EntityType>();
 
     public boolean shouldExist(Entity entity) {
-        if(type != EntityType.TRACKED) {
+        if(!types.contains(EntityType.TRACKED)) {
             return true;
         }
 
@@ -77,7 +65,7 @@ public class SegmentEntity extends Segment {
     }
 
     public boolean shouldInteract(Entity entity, Resident res) {
-        if(type != EntityType.PROTECT) {
+        if(!types.contains(EntityType.PROTECT)) {
             return true;
         }
 
@@ -105,7 +93,7 @@ public class SegmentEntity extends Segment {
     }
 
     public boolean shouldAttack(Entity entity, Resident res) {
-        if(type != EntityType.PVP) {
+        if(!types.contains(EntityType.PVP)) {
             return true;
         }
 
@@ -132,9 +120,5 @@ public class SegmentEntity extends Segment {
         }
 
         return true;
-    }
-
-    public EntityType getType() {
-        return type;
     }
 }

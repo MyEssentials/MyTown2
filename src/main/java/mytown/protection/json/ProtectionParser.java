@@ -40,6 +40,7 @@ public class ProtectionParser {
             .registerTypeAdapter(Protection.class, new ProtectionSerializer())
             .registerTypeAdapter(Segment.class, new SegmentSerializer())
             .registerTypeAdapter(Volume.class, new VolumeSerializer())
+            .registerTypeAdapter(FlagType.class, new FlagTypeSerializer())
             .setPrettyPrinting().create();
 
     private ProtectionParser() {
@@ -94,40 +95,40 @@ public class ProtectionParser {
     private static void createModel() {
         List<Segment> segments = new ArrayList<Segment>();
 
-        segments.add(new SegmentBlock(net.minecraft.block.BlockButton.class, FlagType.ACTIVATE, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockDoor.class, FlagType.ACTIVATE, false, null, null, BlockType.RIGHT_CLICK, -1, new Volume(0, -1, 0, 0, 1, 0)));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockLever.class, FlagType.ACTIVATE, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockFenceGate.class, FlagType.ACTIVATE, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockDragonEgg.class, FlagType.ACTIVATE, false, null, null, BlockType.ANY_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockCake.class, FlagType.ACTIVATE, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockTrapDoor.class, FlagType.ACTIVATE, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockJukebox.class, FlagType.ACTIVATE, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneRepeater.class, FlagType.ACTIVATE, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockRedstoneComparator.class, FlagType.ACTIVATE, false, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockButton.class, FlagType.ACTIVATE, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockDoor.class, FlagType.ACTIVATE, null, null, BlockType.RIGHT_CLICK, -1, new Volume(0, -1, 0, 0, 1, 0)));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockLever.class, FlagType.ACTIVATE, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockFenceGate.class, FlagType.ACTIVATE, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockDragonEgg.class, FlagType.ACTIVATE, null, null, BlockType.ANY_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockCake.class, FlagType.ACTIVATE, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockTrapDoor.class, FlagType.ACTIVATE, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockJukebox.class, FlagType.ACTIVATE, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockRedstoneRepeater.class, FlagType.ACTIVATE, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockRedstoneComparator.class, FlagType.ACTIVATE, null, null, BlockType.RIGHT_CLICK, -1, null));
 
-        segments.add(new SegmentBlock(net.minecraft.block.BlockAnvil.class, FlagType.ACCESS, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockCauldron.class, FlagType.ACCESS, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockContainer.class, FlagType.ACCESS, false, null, null, BlockType.RIGHT_CLICK, -1, null));
-        segments.add(new SegmentBlock(net.minecraft.block.BlockBed.class, FlagType.ACCESS, false, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockAnvil.class, FlagType.ACCESS, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockCauldron.class, FlagType.ACCESS, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockContainer.class, FlagType.ACCESS, null, null, BlockType.RIGHT_CLICK, -1, null));
+        segments.add(createSegmentBlock(net.minecraft.block.BlockBed.class, FlagType.ACCESS, null, null, BlockType.RIGHT_CLICK, -1, null));
 
-        segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityMob.class, FlagType.MOBS, "passives", null, null, EntityType.TRACKED));
-        segments.add(new SegmentEntity(net.minecraft.entity.EntityAgeable.class, FlagType.PVE, false, null, null, EntityType.PROTECT));
+        segments.add(createSegmentEntity(net.minecraft.entity.monster.EntityMob.class, FlagType.MOBS, null, null, EntityType.TRACKED));
+        segments.add(createSegmentEntity(net.minecraft.entity.EntityAgeable.class, FlagType.PVE, null, null, EntityType.PROTECT));
         GettersContainer getters = new GettersContainer();
         getters.add(new GetterConstant("range", 5));
-        segments.add(new SegmentEntity(net.minecraft.entity.monster.EntityCreeper.class, FlagType.EXPLOSIONS, false, null, getters, EntityType.TRACKED));
+        segments.add(createSegmentEntity(net.minecraft.entity.monster.EntityCreeper.class, FlagType.EXPLOSIONS, null, getters, EntityType.TRACKED));
         getters = new GettersContainer();
         getters.add(new GetterConstant("range", 5));
         List<Caller> callers = new ArrayList<Caller>();
         callers.add(new CallerField("field_94084_b", null));
         callers.add(new CallerMethod("func_70005_c_", null));
         getters.add(new GetterDynamic("owner", callers));
-        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityTNTPrimed.class, FlagType.EXPLOSIONS, false, null, getters, EntityType.TRACKED));
-        segments.add(new SegmentEntity(net.minecraft.entity.item.EntityItemFrame.class, FlagType.PVE, false, null, null, EntityType.PROTECT));
+        segments.add(createSegmentEntity(net.minecraft.entity.item.EntityTNTPrimed.class, FlagType.EXPLOSIONS, null, getters, EntityType.TRACKED));
+        segments.add(createSegmentEntity(net.minecraft.entity.item.EntityItemFrame.class, FlagType.PVE, null, null, EntityType.PROTECT));
 
-        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, FlagType.USAGE, false, null, null, ItemType.RIGHT_CLICK_BLOCK, true, null, false));
-        segments.add(new SegmentItem(net.minecraft.item.ItemMonsterPlacer.class, FlagType.USAGE, false, null, null, ItemType.RIGHT_CLICK_ENTITY, false, null, false));
-        segments.add(new SegmentItem(net.minecraft.item.ItemShears.class, FlagType.USAGE, false, null, null, ItemType.RIGHT_CLICK_ENTITY, false, null, false));
-        segments.add(new SegmentItem(net.minecraft.item.ItemHangingEntity.class, FlagType.USAGE, false, null, null, ItemType.RIGHT_CLICK_BLOCK, true, null, false));
+        segments.add(createSegmentItem(net.minecraft.item.ItemMonsterPlacer.class, FlagType.USAGE, null, null, ItemType.RIGHT_CLICK_BLOCK, true, null, false));
+        segments.add(createSegmentItem(net.minecraft.item.ItemMonsterPlacer.class, FlagType.USAGE, null, null, ItemType.RIGHT_CLICK_ENTITY, false, null, false));
+        segments.add(createSegmentItem(net.minecraft.item.ItemShears.class, FlagType.USAGE, null, null, ItemType.RIGHT_CLICK_ENTITY, false, null, false));
+        segments.add(createSegmentItem(net.minecraft.item.ItemHangingEntity.class, FlagType.USAGE, null, null, ItemType.RIGHT_CLICK_BLOCK, true, null, false));
 
         Protection protection = new Protection("Minecraft", segments);
         try {
@@ -140,4 +141,55 @@ public class ProtectionParser {
             MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
         }
     }
+
+    private static SegmentBlock createSegmentBlock(Class<?> clazz, FlagType<Boolean> flagType, String conditionString, GettersContainer getters, BlockType blockType, int meta, Volume clientUpdateCoords) {
+        SegmentBlock segment = new SegmentBlock(meta, clientUpdateCoords);
+        if(getters != null) {
+            segment.getters.addAll(getters);
+        }
+
+        segment.setCheckClass(clazz);
+        segment.types.add(blockType);
+        segment.flags.add(flagType);
+        segment.setConditionString(conditionString);
+        return segment;
+    }
+
+    private static SegmentEntity createSegmentEntity(Class<?> clazz, FlagType<Boolean> flagType, String conditionString, GettersContainer getters, EntityType entityType) {
+        SegmentEntity segment = new SegmentEntity();
+        if(getters != null) {
+            segment.getters.addAll(getters);
+        }
+        segment.setCheckClass(clazz);
+        segment.types.add(entityType);
+        segment.flags.add(flagType);
+        segment.setConditionString(conditionString);
+        return segment;
+    }
+
+    private static SegmentItem createSegmentItem(Class<?> clazz, FlagType<Boolean> flagType, String conditionString, GettersContainer getters, ItemType itemType, boolean onAdjacent, Volume clientUpdateCoords, boolean directionalClientUpdate) {
+        SegmentItem segment = new SegmentItem(onAdjacent, clientUpdateCoords, directionalClientUpdate);
+        if(getters != null) {
+            segment.getters.addAll(getters);
+        }
+        segment.setCheckClass(clazz);
+        segment.types.add(itemType);
+        segment.flags.add(flagType);
+        segment.setConditionString(conditionString);
+        return segment;
+    }
+
+    private static SegmentTileEntity createSegmentTileEntity(Class<?> clazz, FlagType<Boolean> flagType, String conditionString, GettersContainer getters, boolean hasOwner) {
+        SegmentTileEntity segment = new SegmentTileEntity(hasOwner);
+        if(getters != null) {
+            segment.getters.addAll(getters);
+        }
+        segment.setCheckClass(clazz);
+        segment.flags.add(flagType);
+        segment.setConditionString(conditionString);
+        return segment;
+    }
+
+
+
 }

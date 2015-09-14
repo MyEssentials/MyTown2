@@ -15,29 +15,21 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Segment that protects against an Item
  */
 public class SegmentItem extends Segment {
 
-    private final ItemType type;
+    public final List<ItemType> types = new ArrayList<ItemType>();
     private final boolean onAdjacent;
 
     public final ClientBlockUpdate clientUpdate;
     public final boolean directionalClientUpdate;
 
-    public SegmentItem(Class<?> clazz, FlagType<Boolean> flagType, Object denialValue, String conditionString, GettersContainer getters, ItemType type, boolean onAdjacent, Volume clientUpdateCoords, boolean directionalClientUpdate) {
-        this(type, onAdjacent, clientUpdateCoords, directionalClientUpdate);
-        if(getters != null) {
-            this.getters.addAll(getters);
-        }
-        setCheckClass(clazz);
-        setFlag(flagType);
-        setConditionString(conditionString);
-    }
-
-    public SegmentItem(ItemType type, boolean onAdjacent, Volume clientUpdateCoords, boolean directionalClientUpdate) {
-        this.type = type;
+    public SegmentItem(boolean onAdjacent, Volume clientUpdateCoords, boolean directionalClientUpdate) {
         this.onAdjacent = onAdjacent;
         this.directionalClientUpdate = directionalClientUpdate;
         if(clientUpdateCoords != null) {
@@ -48,11 +40,9 @@ public class SegmentItem extends Segment {
     }
 
     public boolean shouldInteract(ItemStack item, Resident res, PlayerInteractEvent.Action action, BlockPos bp, int face) {
-        if(type == ItemType.RIGHT_CLICK_AIR && action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR
-                || type == ItemType.RIGHT_CLICK_BLOCK && action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK
-                || type == ItemType.RIGHT_CLICK_ENTITY && action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR
-                || type == ItemType.LEFT_CLICK_BLOCK && action != PlayerInteractEvent.Action.LEFT_CLICK_BLOCK
-                || type == ItemType.BREAK_BLOCK) {
+        if(action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && (!types.contains(ItemType.RIGHT_CLICK_AIR) && !types.contains(ItemType.RIGHT_CLICK_ENTITY))
+                || action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && !types.contains(ItemType.RIGHT_CLICK_BLOCK)
+                || action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && !types.contains(ItemType.LEFT_CLICK_BLOCK)) {
             return true;
         }
 
@@ -101,7 +91,7 @@ public class SegmentItem extends Segment {
     }
 
     public boolean shouldBreakBlock(ItemStack item, Resident res, BlockPos bp) {
-        if(type != ItemType.BREAK_BLOCK) {
+        if(!types.contains(ItemType.BREAK_BLOCK)) {
             return true;
         }
 
@@ -139,10 +129,6 @@ public class SegmentItem extends Segment {
             }
         }
         return true;
-    }
-
-    public ItemType getType() {
-        return type;
     }
 
     public boolean isOnAdjacent() {

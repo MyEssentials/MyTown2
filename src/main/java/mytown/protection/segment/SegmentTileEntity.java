@@ -19,16 +19,6 @@ public class SegmentTileEntity extends Segment {
 
     private boolean hasOwner = false;
 
-    public SegmentTileEntity(Class<?> clazz, FlagType<Boolean> flagType, Object denialValue, String conditionString, GettersContainer getters, boolean hasOwner) {
-        this(hasOwner);
-        if(getters != null) {
-            this.getters.addAll(getters);
-        }
-        setCheckClass(clazz);
-        setFlag(flagType);
-        setConditionString(conditionString);
-    }
-
     public SegmentTileEntity(boolean hasOwner) {
         this.hasOwner = hasOwner;
     }

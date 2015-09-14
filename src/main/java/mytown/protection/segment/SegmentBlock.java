@@ -10,28 +10,19 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Offers protection for blocks
  */
 public class SegmentBlock extends Segment {
     private final int meta;
-    private final BlockType type;
-
     public final ClientBlockUpdate clientUpdate;
+    public final List<BlockType> types = new ArrayList<BlockType>();
 
-    public SegmentBlock(Class<?> clazz, FlagType<Boolean> flagType, Object denialValue, String conditionString, GettersContainer getters, BlockType blockType, int meta, Volume clientUpdateCoords) {
-        this(blockType, meta, clientUpdateCoords);
-        if(getters != null) {
-            this.getters.addAll(getters);
-        }
-        setCheckClass(clazz);
-        setFlag(flagType);
-        setConditionString(conditionString);
-    }
-
-    public SegmentBlock(BlockType blockType, int meta, Volume clientUpdateCoords) {
+    public SegmentBlock(int meta, Volume clientUpdateCoords) {
         this.meta = meta;
-        this.type = blockType;
         if(clientUpdateCoords != null) {
             this.clientUpdate = new ClientBlockUpdate(clientUpdateCoords);
         } else {
@@ -44,8 +35,9 @@ public class SegmentBlock extends Segment {
             return true;
         }
 
-        if(type == BlockType.LEFT_CLICK && action != PlayerInteractEvent.Action.LEFT_CLICK_BLOCK
-                || type == BlockType.RIGHT_CLICK && action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+        if((action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && !types.contains(BlockType.LEFT_CLICK)
+                || action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && !types.contains(BlockType.RIGHT_CLICK))
+                && !types.contains(BlockType.ANY_CLICK)) {
             return true;
         }
 
@@ -61,9 +53,5 @@ public class SegmentBlock extends Segment {
 
     public int getMeta() {
         return meta;
-    }
-
-    public BlockType getType() {
-        return type;
     }
 }

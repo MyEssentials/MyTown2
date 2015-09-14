@@ -22,19 +22,28 @@ import java.util.UUID;
 public abstract class Segment {
     protected boolean isDisabled = false;
     protected Class<?> checkClass;
-    protected FlagType<Boolean> flag;
     protected Condition condition;
 
+    public final List<FlagType<Boolean>> flags = new ArrayList<FlagType<Boolean>>();
     public final GettersContainer getters = new GettersContainer();
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
-        return ProtectionUtils.hasPermission(res, flag, dim, x, y, z);
+        for(FlagType<Boolean> flagType : flags) {
+            if(!ProtectionUtils.hasPermission(res, flagType, dim, x, y, z)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
-        return ProtectionUtils.hasPermission(res, flag, dim, volume);
+        for (FlagType<Boolean> flagType : flags) {
+            if(!ProtectionUtils.hasPermission(res, flagType, dim, volume)) {
+                return false;
+            }
+        }
+        return true;
     }
-
 
     public Resident getOwner(Object object) {
         try {
@@ -75,20 +84,12 @@ public abstract class Segment {
         }
     }
 
-    public void setFlag(FlagType<Boolean> flag) {
-        this.flag = flag;
-    }
-
     public Class<?> getCheckClass() {
         return checkClass;
     }
 
     public Condition getCondition() {
         return condition;
-    }
-
-    public FlagType getFlag() {
-        return flag;
     }
 
     public int getRange(Object object) {
