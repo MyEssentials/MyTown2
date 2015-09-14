@@ -8,6 +8,7 @@ import mytown.entities.Resident;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.util.exceptions.ConditionException;
+import mytown.util.exceptions.GetterException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -59,10 +60,15 @@ public class SegmentItem extends Segment {
             if (condition != null && !condition.execute(item, getters)) {
                 return true;
             }
-        } catch (ConditionException ex) {
-            MyTown.instance.LOG.error("An error occurred while checking condition for item interaction with [{}] of type {} by {}", item.toString(), item.getItem().getClass().getName(), res.getPlayerName());
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-            disable();
+        } catch (Exception ex) {
+            if(ex instanceof ConditionException || ex instanceof GetterException) {
+                MyTown.instance.LOG.error("An error occurred while checking condition for item interaction with [{}] of type {} by {}", item.toString(), item.getItem().getClass().getName(), res.getPlayerName());
+                MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+                disable();
+                return true;
+            } else {
+                throw (RuntimeException) ex;
+            }
         }
 
         EntityPlayerMP player = (EntityPlayerMP) res.getPlayer();

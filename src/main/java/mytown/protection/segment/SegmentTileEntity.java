@@ -38,11 +38,15 @@ public class SegmentTileEntity extends Segment {
             if(condition != null && !condition.execute(te, getters)) {
                 return true;
             }
-        } catch (ConditionException ex) {
-            MyTown.instance.LOG.error("An error occurred while checking condition for tile entity [DIM:{}; {}, {}, {}] of type {}", te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, te.getClass().getName());
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-            disable();
-            return true;
+        } catch (Exception ex) {
+            if(ex instanceof ConditionException || ex instanceof GetterException) {
+                MyTown.instance.LOG.error("An error occurred while checking condition for tile entity [DIM:{}; {}, {}, {}] of type {}", te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, te.getClass().getName());
+                MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+                disable();
+                return true;
+            } else {
+                throw (RuntimeException) ex;
+            }
         }
 
 

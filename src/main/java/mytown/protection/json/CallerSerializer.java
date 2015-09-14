@@ -23,12 +23,12 @@ public class CallerSerializer implements JsonSerializer<Caller>, JsonDeserialize
     public Caller deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         Caller caller = null;
         JsonObject jsonObj = json.getAsJsonObject();
-        if(!jsonObj.has("name") || !jsonObj.has("type")) {
+        if(!jsonObj.has("element") || !jsonObj.has("type")) {
             throw new ProtectionParseException("Caller has null element or type field!");
         }
 
         String type = jsonObj.get("type").getAsString();
-        String name = jsonObj.get("name").getAsString();
+        String name = jsonObj.get("element").getAsString();
         Class<?> valueType = null;
         if(jsonObj.has("valueType")) {
             try {

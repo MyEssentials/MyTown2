@@ -1,5 +1,6 @@
 package mytown.protection.segment.getter;
 
+import mytown.MyTown;
 import mytown.protection.segment.caller.Caller;
 import mytown.util.exceptions.GetterException;
 
