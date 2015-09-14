@@ -1,5 +1,6 @@
 package mytown.protection.segment;
 
+import com.google.gson.internal.LazilyParsedNumber;
 import myessentials.entities.Volume;
 import mytown.MyTown;
 import mytown.api.container.GettersContainer;
@@ -61,7 +62,7 @@ public abstract class Segment {
     }
 
     public int getRange(Object object) {
-        return getters.contains("range") ? (Integer) getters.get("range").invoke(Integer.class, object, object) : 0;
+        return getters.contains("range") ? ((LazilyParsedNumber) getters.get("range").invoke(LazilyParsedNumber.class, object, object)).intValue() : 0;
     }
 
     public boolean isDisabled() {

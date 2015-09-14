@@ -52,30 +52,16 @@ public class ProtectionHandler {
     public Map<TileEntity, Resident> ownedTileEntities = new HashMap<TileEntity, Resident>();
 
     public int activePlacementThreads = 0;
-
     public int maximalRange = 0;
-
-    private List<Protection> protectionList = new ArrayList<Protection>();
 
     // ---- All the counters/tickers for preventing check every tick ----
     private int tickerTilesChecks = 20;
     private int tickerTilesChecksStart = 20;
     private int itemPickupCounter = 0;
 
-    // ---- Utility methods for accessing protections ----
-
-    public void addProtection(Protection prot) { protectionList.add(prot); }
-    public void removeProtection(Protection prot) { protectionList.remove(prot); }
-    public List<Protection> getProtectionList() { return this.protectionList; }
-
-    public void reset() {
-        protectionList = new ArrayList<Protection>();
-    }
-
     public Resident getOwnerForTileEntity(TileEntity te) {
         return this.ownedTileEntities.get(te);
     }
-
 
     // ---- Main ticking method ----
 
@@ -185,8 +171,10 @@ public class ProtectionHandler {
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         ProtectionUtils.checkInteraction(ev.target, res, ev);
-        BlockPos bp = new BlockPos((int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int) Math.floor(ev.target.posZ), ev.target.dimension);
-        ProtectionUtils.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
+        if(ev.entityPlayer.getHeldItem() != null) {
+            BlockPos bp = new BlockPos((int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int) Math.floor(ev.target.posZ), ev.target.dimension);
+            ProtectionUtils.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -197,7 +185,9 @@ public class ProtectionHandler {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        ProtectionUtils.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
+        if(ev.entityPlayer.getHeldItem() != null) {
+            ProtectionUtils.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -213,7 +203,9 @@ public class ProtectionHandler {
             return;
         }
 
-        ProtectionUtils.checkBreakWithItem(ev.getPlayer().getHeldItem(), res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev);
+        if(ev.getPlayer().getHeldItem() != null) {
+            ProtectionUtils.checkBreakWithItem(ev.getPlayer().getHeldItem(), res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev);
+        }
 
         if (!ev.isCanceled() && ev.block instanceof ITileEntityProvider) {
             TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata);
@@ -247,7 +239,7 @@ public class ProtectionHandler {
         if(ev.entity instanceof EntityPlayer) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entity);
             ProtectionUtils.checkPVP(ev.source.getEntity(), res, ev);
-        } else {
+        } else if(ev.source.getEntity() != null) {
             Resident res = ProtectionUtils.getOwner(ev.source.getEntity());
             if(res != null) {
                 ProtectionUtils.checkInteraction(ev.entity, res, ev);

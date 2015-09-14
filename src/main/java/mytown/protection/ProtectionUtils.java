@@ -89,7 +89,8 @@ public class ProtectionUtils {
     public static boolean check(Entity entity) {
         if(entity instanceof EntityLiving) {
             if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
-                return false;
+                entity.setDead();
+                return true;
             }
         }
 

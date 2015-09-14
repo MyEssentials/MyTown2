@@ -42,6 +42,6 @@ public class Protection {
     /*  ---- Protection instance utilities ---- */
 
     private void disable() {
-        ProtectionHandler.instance.removeProtection(this);
+        ProtectionUtils.protections.remove(this);
     }
 }

@@ -854,7 +854,9 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     plot.setDbID(generatedKeys.getInt(1));
 
                 for (Flag flag : plot.getTown().flagsContainer) {
-                    saveFlag(flag, plot);
+                    if(flag.flagType.isPlotPerm) {
+                        saveFlag(new Flag(flag.flagType, flag.value), plot);
+                    }
                 }
                 
                 MyTownUniverse.instance.addPlot(plot);

@@ -8,6 +8,7 @@ import mytown.api.container.GettersContainer;
 import mytown.entities.flag.FlagType;
 import mytown.protection.Protection;
 import mytown.protection.ProtectionHandler;
+import mytown.protection.ProtectionUtils;
 import mytown.protection.segment.*;
 import mytown.protection.segment.caller.CallerField;
 import mytown.protection.segment.caller.CallerMethod;
@@ -59,7 +60,7 @@ public class ProtectionParser {
 
         String[] extensions = new String[1];
         extensions[0] = "json";
-        ProtectionHandler.instance.reset();
+        ProtectionUtils.protections.clear();
         Protection vanillaProtection = null;
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
             try {
@@ -71,7 +72,7 @@ public class ProtectionParser {
                         vanillaProtection = protection;
                     } else {
                         MyTown.instance.LOG.info("Adding protection for mod: {}", protection.modid);
-                        ProtectionHandler.instance.addProtection(protection);
+                        ProtectionUtils.protections.add(protection);
                     }
                 }
                 reader.close();
@@ -83,7 +84,7 @@ public class ProtectionParser {
         }
         if(vanillaProtection != null) {
             MyTown.instance.LOG.info("Adding vanilla protection.");
-            ProtectionHandler.instance.addProtection(vanillaProtection);
+            ProtectionUtils.protections.add(vanillaProtection);
         }
 
         return true;
