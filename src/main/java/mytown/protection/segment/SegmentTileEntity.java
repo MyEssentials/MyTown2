@@ -52,7 +52,13 @@ public class SegmentTileEntity extends Segment {
 
         Volume teBox = new Volume(getX1(te), getY1(te), getZ1(te), getX2(te), getY2(te), getZ2(te));
         int dim = te.getWorldObj().provider.dimensionId;
-        Resident owner = hasOwner() ? ProtectionHandler.instance.getOwnerForTileEntity(te) : null;
+        Resident owner;
+        if(hasOwner()) {
+            owner = ProtectionHandler.instance.getOwnerForTileEntity(te);
+        } else {
+            owner = getOwner(te);
+        }
+
         if (!hasPermissionAtLocation(owner, dim, teBox)) {
             return false;
         }
@@ -107,6 +113,8 @@ public class SegmentTileEntity extends Segment {
             return te.zCoord + Config.defaultProtectionSize;
         }
     }
+
+
 
     public boolean hasOwner() {
         return this.hasOwner;

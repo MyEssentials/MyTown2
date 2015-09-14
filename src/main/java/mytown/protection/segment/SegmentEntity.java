@@ -134,33 +134,6 @@ public class SegmentEntity extends Segment {
         return true;
     }
 
-
-    public Resident getOwner(Entity entity) {
-        try {
-            EntityPlayer player = getters.contains("owner") ? (EntityPlayer) getters.get("owner").invoke(EntityPlayer.class, entity, entity) : null;
-            if(player == null)
-                return null;
-            return MyTownUniverse.instance.getOrMakeResident(player);
-        } catch (GetterException ex) {
-            try {
-                String username = getters.contains("owner") ? (String) getters.get("owner").invoke(String.class, entity, entity) : null;
-                if (username == null)
-                    return null;
-                return MyTownUniverse.instance.getOrMakeResident(username);
-            } catch (GetterException ex2) {
-                try {
-                    UUID uuid = getters.contains("owner") ? (UUID) getters.get("owner").invoke(UUID.class, entity, entity) : null;
-                    if (uuid == null)
-                        return null;
-                    return MyTownUniverse.instance.getOrMakeResident(uuid);
-                } catch (GetterException ex3) {
-                    return null;
-                }
-            }
-        }
-    }
-
-
     public EntityType getType() {
         return type;
     }

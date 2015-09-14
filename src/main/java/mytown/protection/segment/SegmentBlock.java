@@ -27,7 +27,6 @@ public class SegmentBlock extends Segment {
         setCheckClass(clazz);
         setFlag(flagType);
         setConditionString(conditionString);
-
     }
 
     public SegmentBlock(BlockType blockType, int meta, Volume clientUpdateCoords) {
