@@ -1,6 +1,6 @@
 package mytown.api.container;
 
-public class GenericContainer<T> {
+public class Container<T> {
 
     private T object;
 

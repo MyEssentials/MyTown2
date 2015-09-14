@@ -2,7 +2,7 @@ package mytown.entities;
 
 import myessentials.utils.ChatUtils;
 import mytown.MyTown;
-import mytown.api.container.GenericContainer;
+import mytown.api.container.Container;
 import mytown.api.container.PlotsContainer;
 import mytown.api.container.TownsContainer;
 import mytown.config.Config;
@@ -33,7 +33,7 @@ public class Resident {
     public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
     public final TownsContainer townInvitesContainer = new TownsContainer();
     public final TownsContainer townsContainer = new TownsContainer();
-    public final GenericContainer<Tool> toolContainer = new GenericContainer<Tool>();
+    public final Container<Tool> toolContainer = new Container<Tool>();
 
     public Resident(EntityPlayer pl) {
         setPlayer(pl);
