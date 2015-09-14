@@ -188,6 +188,7 @@ public class ProtectionHandler {
         if(ev.entityPlayer.getHeldItem() != null) {
             ProtectionUtils.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
         }
+        ProtectionUtils.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
     }
 
     @SuppressWarnings("unchecked")

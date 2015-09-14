@@ -185,7 +185,7 @@ public class ProtectionUtils {
             return;
         }
         World world = MinecraftServer.getServer().worldServerForDimension(bp.getDim());
-        Block block = world.getBlock(bp.getY(), bp.getY(), bp.getZ());
+        Block block = world.getBlock(bp.getX(), bp.getY(), bp.getZ());
         for(Protection protection : protections) {
             for(SegmentBlock segment : protection.segmentsBlocks.get(block.getClass())) {
                 if(!segment.shouldInteract(res, bp, action)) {
