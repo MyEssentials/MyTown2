@@ -61,14 +61,14 @@ public abstract class Commands {
 
         populator = new ArrayList<String>();
         for (FlagType flag : FlagType.values()) {
-            populator.add(flag.toString().toLowerCase());
+            populator.add(flag.name.toLowerCase());
         }
         CommandCompletion.addCompletions("flagCompletion", populator);
 
         populator = new ArrayList<String>();
         for (FlagType flag : FlagType.values()) {
             if (flag.isWhitelistable)
-                populator.add(flag.toString().toLowerCase());
+                populator.add(flag.name.toLowerCase());
         }
         CommandCompletion.addCompletions("flagCompletionWhitelist", populator);
 

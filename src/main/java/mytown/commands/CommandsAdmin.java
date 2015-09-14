@@ -1098,7 +1098,7 @@ public class CommandsAdmin extends Commands {
                 permission = "mytown.adm.cmd.plot.perm.set",
                 parentName = "mytown.adm.cmd.plot.perm",
                 syntax = "/townadmin plot perm set <town> <plot> <flag> <value>",
-                completionKeys = {"flagCompletion"},
+                completionKeys = {"townCompletion", "plotCompletion", "flagCompletion"},
                 console = true)
         public static CommandResponse plotPermSetCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 4)
@@ -1123,7 +1123,7 @@ public class CommandsAdmin extends Commands {
                 permission = "mytown.adm.cmd.plot.perm.list",
                 parentName = "mytown.adm.cmd.plot.perm",
                 syntax = "/townadmin plot perm list <town> <plot>",
-                completionKeys = {"townCompletion"},
+                completionKeys = {"townCompletion", "plotCompletion"},
                 console = true)
         public static CommandResponse plotPermListCommand(ICommandSender sender, List<String> args) {
             if(args.size() < 2)

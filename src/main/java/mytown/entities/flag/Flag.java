@@ -41,14 +41,16 @@ public class Flag<T> implements Comparable<Flag>{
 
     @Override
     public String toString() {
-        return toString(ColorUtils.colorValueVar);
+        return toString(ColorUtils.colorConfigurableFlag);
     }
 
-    public String toString(String valueColor) {
+    public String toString(String nameColor) {
         String description = flagType.getLocalizedDescription();
-
-
-        return String.format(ColorUtils.colorFlag + "%s" + ColorUtils.colorComma + "[" + valueColor+ "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", flagType.name.toLowerCase(), value.toString(), description);
+        String valueColor = ColorUtils.colorValueRegular;
+        if(value instanceof Boolean) {
+            valueColor = (Boolean)value ? ColorUtils.colorValueRegular : ColorUtils.colorValueFalse;
+        }
+        return String.format(nameColor + "%s" + ColorUtils.colorComma + "[" + valueColor + "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", flagType.name.toLowerCase(), value.toString(), description);
     }
 
     @Override

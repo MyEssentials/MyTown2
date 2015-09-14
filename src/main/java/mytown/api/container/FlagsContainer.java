@@ -1,6 +1,5 @@
 package mytown.api.container;
 
-import mytown.MyTown;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -53,13 +52,13 @@ public class FlagsContainer extends ArrayList<Flag> {
             if (!formattedFlagList.equals("")) {
                 formattedFlagList += "\\n";
             }
-            formattedFlagList += flag.toString();
+            formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
         }
 
         String unconfigurableFlags = "";
         for(FlagType flagType : FlagType.values()) {
             if(!contains(flagType)) {
-                unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.defaultValue)).toString(ColorUtils.colorValueConst);
+                unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.defaultValue)).toString(ColorUtils.colorUnconfigurableFlag);
             }
         }
 
@@ -75,14 +74,14 @@ public class FlagsContainer extends ArrayList<Flag> {
             if (!formattedFlagList.equals("")) {
                 formattedFlagList += "\\n";
             }
-            formattedFlagList += flag.toString();
+            formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
         }
 
         String unconfigurableFlags = "";
         for(FlagType flagType : FlagType.values()) {
             if(!contains(flagType)) {
                 Object value = town.flagsContainer.contains(flagType) ? town.flagsContainer.getValue(flagType) : flagType.defaultValue;
-                unconfigurableFlags += "\\n" + (new Flag(flagType, value).toString(ColorUtils.colorValueConst));
+                unconfigurableFlags += "\\n" + (new Flag(flagType, value).toString(ColorUtils.colorUnconfigurableFlag));
             }
         }
 
