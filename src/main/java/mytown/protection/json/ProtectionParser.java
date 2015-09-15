@@ -2,6 +2,8 @@ package mytown.protection.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
 import myessentials.entities.Volume;
 import mytown.api.container.GettersContainer;
@@ -71,7 +73,7 @@ public class ProtectionParser {
                 if(protection != null) {
                     if ("Minecraft".equals(protection.modid)) {
                         vanillaProtection = protection;
-                    } else {
+                    } else if(isModLoaded(protection.modid, protection.version)) {
                         MyTown.instance.LOG.info("Adding protection for mod: {}", protection.modid);
                         ProtectionUtils.protections.add(protection);
                     }
@@ -142,6 +144,15 @@ public class ProtectionParser {
         }
     }
 
+    private static boolean isModLoaded(String modid, String version) {
+        for(ModContainer mod : Loader.instance().getModList()) {
+            if(mod.getModId().equals(modid) && mod.getVersion().startsWith(version)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static SegmentBlock createSegmentBlock(Class<?> clazz, FlagType<Boolean> flagType, String conditionString, GettersContainer getters, BlockType blockType, int meta, Volume clientUpdateCoords) {
         SegmentBlock segment = new SegmentBlock(meta, clientUpdateCoords);
         if(getters != null) {
@@ -189,7 +200,4 @@ public class ProtectionParser {
         segment.setConditionString(conditionString);
         return segment;
     }
-
-
-
 }
