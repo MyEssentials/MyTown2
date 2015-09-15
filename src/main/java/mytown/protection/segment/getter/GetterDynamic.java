@@ -23,11 +23,6 @@ public class GetterDynamic extends Getter {
         }
     }
 
-    public GetterDynamic(String name, List<Caller> callers) {
-        this(callers);
-        setName(name);
-    }
-
     @Override
     public Object invoke(Class<?> returnType, Object instance, Object... parameters) throws GetterException {
         if(instance == null) {

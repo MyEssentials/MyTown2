@@ -3,11 +3,6 @@ package mytown.protection.segment.caller;
 import java.lang.reflect.Field;
 
 public class CallerField extends Caller {
-
-    public CallerField(String element, Class<?> valueType) {
-        super(element, valueType);
-    }
-
     @Override
     public Object invoke(Object instance, Object... parameters) throws Exception {
         try {

@@ -268,7 +268,7 @@ public class ProtectionUtils {
     public static boolean isOwnable(Class<? extends TileEntity> clazz) {
         for(Protection protection : protections) {
             for(SegmentTileEntity segment : protection.segmentsTiles.get(clazz)) {
-                if(segment.hasOwner()) {
+                if(segment.retainsOwner()) {
                     return true;
                 }
             }

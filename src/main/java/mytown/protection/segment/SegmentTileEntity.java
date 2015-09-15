@@ -85,4 +85,8 @@ public class SegmentTileEntity extends Segment {
             return te.zCoord + Config.defaultProtectionSize;
         }
     }
+
+    public boolean retainsOwner() {
+        return retainsOwner;
+    }
 }

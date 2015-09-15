@@ -7,11 +7,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
 
 public class CallerNBT extends Caller {
-
-    public CallerNBT(String element, Class<?> valueType) {
-        super(element, valueType);
-    }
-
     @Override
     public Object invoke(Object instance, Object... parameters) throws Exception {
         if(instance instanceof Entity) {

@@ -8,11 +8,6 @@ public class GetterConstant extends Getter {
         this.constant = constant;
     }
 
-    public GetterConstant(String name, Object constant) {
-        this(constant);
-        setName(name);
-    }
-
     @Override
     public Object invoke(Class<?> returnType, Object instance, Object... parameters) {
         return constant;

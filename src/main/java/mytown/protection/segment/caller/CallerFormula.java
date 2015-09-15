@@ -9,11 +9,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class CallerFormula extends Caller {
 
-    private GettersContainer getters;
-
-    public CallerFormula(String element, Class<?> valueType) {
-        super(element, valueType);
-    }
+    protected GettersContainer getters;
 
     public void setGetters(GettersContainer getters) {
         this.getters = getters;

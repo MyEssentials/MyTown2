@@ -24,7 +24,7 @@ import java.io.*;
 public class ProtectionParser {
 
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Caller.class, new CallerSerializer())
+            .registerTypeAdapter(Caller.class, new Caller.Serializer())
             .registerTypeAdapter(Getter.class, new GetterSerializer())
             .registerTypeAdapter(Protection.class, new ProtectionSerializer())
             .registerTypeAdapter(Segment.class, new Segment.Serializer())
@@ -43,6 +43,7 @@ public class ProtectionParser {
                 return false;
             }
             MyTown.instance.LOG.info("No protection files to load, consider getting them at http://github.com/MyEssentials/MyTown2-Protections");
+            MyTown.instance.LOG.info("Your server will be missing MOST of the protection without it!");
             return true;
         }
 
