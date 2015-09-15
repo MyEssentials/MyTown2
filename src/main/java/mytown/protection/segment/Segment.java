@@ -118,7 +118,7 @@ public abstract class Segment {
         this.isDisabled = true;
     }
 
-    public static class SegmentSerializer implements JsonSerializer<Segment>, JsonDeserializer<Segment> {
+    public static class Serializer implements JsonSerializer<Segment>, JsonDeserializer<Segment> {
 
         @Override
         public JsonElement serialize(Segment segment, Type typeOfSrc, JsonSerializationContext context) {
