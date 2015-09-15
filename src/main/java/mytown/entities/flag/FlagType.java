@@ -1,10 +1,10 @@
 package mytown.entities.flag;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import mytown.MyTown;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,5 +167,17 @@ public class FlagType<T> implements Comparable<FlagType<T>>{
         IN_PLOT,
         IN_WILD,
         WHITELISTABLE
+    }
+
+    public static class Serializer implements JsonSerializer<FlagType>, JsonDeserializer<FlagType> {
+        @Override
+        public JsonElement serialize(FlagType flagType, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(flagType.name);
+        }
+
+        @Override
+        public FlagType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return valueOf(json.getAsString());
+        }
     }
 }

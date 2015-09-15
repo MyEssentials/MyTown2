@@ -25,11 +25,11 @@ public class ProtectionParser {
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Caller.class, new Caller.Serializer())
-            .registerTypeAdapter(Getter.class, new GetterSerializer())
-            .registerTypeAdapter(Protection.class, new ProtectionSerializer())
+            .registerTypeAdapter(Getter.class, new Getter.Serializer())
+            .registerTypeAdapter(Protection.class, new Protection.Serializer())
             .registerTypeAdapter(Segment.class, new Segment.Serializer())
-            .registerTypeAdapter(Volume.class, new VolumeSerializer())
-            .registerTypeAdapter(FlagType.class, new FlagTypeSerializer())
+            .registerTypeAdapter(Volume.class, new Volume.Serializer())
+            .registerTypeAdapter(FlagType.class, new FlagType.Serializer())
             .setPrettyPrinting().create();
 
     private ProtectionParser() {

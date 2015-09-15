@@ -119,7 +119,6 @@ public abstract class Segment {
     }
 
     public static class Serializer implements JsonSerializer<Segment>, JsonDeserializer<Segment> {
-
         @Override
         public JsonElement serialize(Segment segment, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject json = new JsonObject();
