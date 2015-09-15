@@ -36,22 +36,12 @@ public abstract class Segment {
     protected final List<FlagType<Boolean>> flags = new ArrayList<FlagType<Boolean>>();
     protected final GettersContainer getters = new GettersContainer();
 
-    protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
-        for(FlagType<Boolean> flagType : flags) {
-            if(!ProtectionUtils.hasPermission(res, flagType, dim, x, y, z)) {
-                return false;
-            }
-        }
-        return true;
+    public boolean isDisabled() {
+        return isDisabled;
     }
 
-    protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
-        for (FlagType<Boolean> flagType : flags) {
-            if(!ProtectionUtils.hasPermission(res, flagType, dim, volume)) {
-                return false;
-            }
-        }
-        return true;
+    public boolean shouldCheckType(Class<?> clazz) {
+        return checkClass.isAssignableFrom(clazz);
     }
 
     public Resident getOwner(Object object) {
@@ -79,6 +69,24 @@ public abstract class Segment {
         }
     }
 
+    protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
+        for(FlagType<Boolean> flagType : flags) {
+            if(!ProtectionUtils.hasPermission(res, flagType, dim, x, y, z)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
+        for (FlagType<Boolean> flagType : flags) {
+            if(!ProtectionUtils.hasPermission(res, flagType, dim, volume)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     protected boolean shouldCheck(Object object) {
         try {
             if (condition != null && !condition.execute(object, getters)) {
@@ -96,11 +104,7 @@ public abstract class Segment {
         return true;
     }
 
-    public boolean shouldCheck(Class<?> clazz) {
-        return checkClass.isAssignableFrom(clazz);
-    }
-
-    public int getRange(Object object) {
+    protected int getRange(Object object) {
         try {
             return getters.contains("range") ? ((LazilyParsedNumber) getters.get("range").invoke(LazilyParsedNumber.class, object, object)).intValue() : 0;
         } catch (GetterException ex) {
@@ -108,11 +112,7 @@ public abstract class Segment {
         }
     }
 
-    public boolean isDisabled() {
-        return isDisabled;
-    }
-
-    public void disable() {
+    protected void disable() {
         MyTown.instance.LOG.error("Disabling segment for {}", checkClass.getName());
         MyTown.instance.LOG.info("Reload protections to enable it again.");
         this.isDisabled = true;
