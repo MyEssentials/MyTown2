@@ -29,7 +29,7 @@ public class GetterDynamic extends Getter {
     }
 
     @Override
-    public Object invoke(Class<?> returnType, Object instance, Object... parameters) {
+    public Object invoke(Class<?> returnType, Object instance, Object... parameters) throws GetterException {
         if(instance == null) {
             return null;
         }

@@ -17,18 +17,9 @@ import java.util.List;
  * Offers protection for blocks
  */
 public class SegmentBlock extends Segment {
-    private final int meta;
-    public final ClientBlockUpdate clientUpdate;
-    public final List<BlockType> types = new ArrayList<BlockType>();
-
-    public SegmentBlock(int meta, Volume clientUpdateCoords) {
-        this.meta = meta;
-        if(clientUpdateCoords != null) {
-            this.clientUpdate = new ClientBlockUpdate(clientUpdateCoords);
-        } else {
-            this.clientUpdate = null;
-        }
-    }
+    protected int meta = -1;
+    protected ClientBlockUpdate clientUpdate;
+    protected List<BlockType> types = new ArrayList<BlockType>();
 
     public boolean shouldInteract(Resident res, BlockPos bp, PlayerInteractEvent.Action action) {
         if(meta != -1 && meta != MinecraftServer.getServer().worldServerForDimension(bp.getDim()).getBlockMetadata(bp.getX(), bp.getY(), bp.getZ())) {

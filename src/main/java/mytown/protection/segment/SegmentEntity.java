@@ -29,19 +29,8 @@ public class SegmentEntity extends Segment {
             return true;
         }
 
-        try {
-            if (condition != null && !condition.execute(entity, getters)) {
-                return true;
-            }
-        } catch (Exception ex) {
-            if(ex instanceof GetterException || ex instanceof ConditionException) {
-                MyTown.instance.LOG.error("An error occurred while checking condition for entity [DIM:{}; {}, {}, {}] of type {}", entity.dimension, entity.posX, entity.posY, entity.posZ, entity.getClass().getName());
-                MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-                disable();
-                return true;
-            } else {
-                throw (RuntimeException) ex;
-            }
+        if(!shouldCheck(entity)) {
+            return true;
         }
 
         Resident owner = getOwner(entity);
@@ -69,14 +58,7 @@ public class SegmentEntity extends Segment {
             return true;
         }
 
-        try {
-            if (condition != null && !condition.execute(entity, getters)) {
-                return true;
-            }
-        } catch (ConditionException ex) {
-            MyTown.instance.LOG.error("An error occurred while checking condition for entity interaction by {} at [DIM:{}; {}, {}, {}] of type {}", res.getPlayerName(), entity.dimension, entity.posX, entity.posY, entity.posZ, entity.getClass().getName());
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-            disable();
+        if(!shouldCheck(entity)) {
             return true;
         }
 
@@ -97,14 +79,7 @@ public class SegmentEntity extends Segment {
             return true;
         }
 
-        try {
-            if (condition != null && !condition.execute(entity, getters)) {
-                return true;
-            }
-        } catch (ConditionException ex) {
-            MyTown.instance.LOG.error("An error occurred while checking condition for entity [DIM:{}; {}, {}, {}] of type {}", entity.dimension, entity.posX, entity.posY, entity.posZ, entity.getClass().getName());
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-            disable();
+        if(!shouldCheck(entity)) {
             return true;
         }
 

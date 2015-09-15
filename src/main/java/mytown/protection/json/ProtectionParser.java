@@ -9,7 +9,6 @@ import myessentials.entities.Volume;
 import mytown.api.container.GettersContainer;
 import mytown.entities.flag.FlagType;
 import mytown.protection.Protection;
-import mytown.protection.ProtectionHandler;
 import mytown.protection.ProtectionUtils;
 import mytown.protection.segment.*;
 import mytown.protection.segment.caller.CallerField;
@@ -21,12 +20,11 @@ import mytown.protection.segment.caller.Caller;
 import mytown.protection.segment.getter.Getter;
 import mytown.protection.segment.getter.GetterConstant;
 import mytown.protection.segment.getter.GetterDynamic;
+import mytown.util.Constants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,11 +47,8 @@ public class ProtectionParser {
 
     }
 
-    public static void setFolderPath(String folderPath) {
-        ProtectionParser.folderPath = folderPath;
-    }
-
     public static boolean start() {
+        folderPath = Constants.CONFIG_FOLDER + "protections/";
         File folder = new File(folderPath);
         if(!folder.exists()) {
             if(!folder.mkdir())
@@ -66,23 +61,14 @@ public class ProtectionParser {
         ProtectionUtils.protections.clear();
         Protection vanillaProtection = null;
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
-            try {
-                FileReader reader = new FileReader(file);
-                MyTown.instance.LOG.info("Loading protection file: {}", file.getName());
-                Protection protection = gson.fromJson(reader, Protection.class);
-                if(protection != null) {
-                    if ("Minecraft".equals(protection.modid)) {
-                        vanillaProtection = protection;
-                    } else if(isModLoaded(protection.modid, protection.version)) {
-                        MyTown.instance.LOG.info("Adding protection for mod: {}", protection.modid);
-                        ProtectionUtils.protections.add(protection);
-                    }
+            Protection protection = read(file);
+            if (protection != null) {
+                if ("Minecraft".equals(protection.modid)) {
+                    vanillaProtection = protection;
+                } else if (isModLoaded(protection.modid, protection.version)) {
+                    MyTown.instance.LOG.info("Adding protection for mod: {}", protection.modid);
+                    ProtectionUtils.protections.add(protection);
                 }
-                reader.close();
-
-            } catch (Exception ex) {
-                MyTown.instance.LOG.error("Encountered error when parsing protection file: {}", file.getName());
-                MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
             }
         }
         if(vanillaProtection != null) {
@@ -91,6 +77,20 @@ public class ProtectionParser {
         }
 
         return true;
+    }
+
+    private static Protection read(File file) {
+        try {
+            FileReader reader = new FileReader(file);
+            MyTown.instance.LOG.info("Loading protection file: {}", file.getName());
+            Protection protection = gson.fromJson(reader, Protection.class);
+            reader.close();
+            return protection;
+        } catch (IOException ex) {
+            MyTown.instance.LOG.error("Encountered error when parsing protection file: {}", file.getName());
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -162,7 +162,7 @@ public class ProtectionParser {
         segment.setCheckClass(clazz);
         segment.types.add(blockType);
         segment.flags.add(flagType);
-        segment.setConditionString(conditionString);
+        segment.setCondition(conditionString);
         return segment;
     }
 
@@ -174,7 +174,7 @@ public class ProtectionParser {
         segment.setCheckClass(clazz);
         segment.types.add(entityType);
         segment.flags.add(flagType);
-        segment.setConditionString(conditionString);
+        segment.setCondition(conditionString);
         return segment;
     }
 
@@ -186,7 +186,7 @@ public class ProtectionParser {
         segment.setCheckClass(clazz);
         segment.types.add(itemType);
         segment.flags.add(flagType);
-        segment.setConditionString(conditionString);
+        segment.setCondition(conditionString);
         return segment;
     }
 
@@ -197,7 +197,7 @@ public class ProtectionParser {
         }
         segment.setCheckClass(clazz);
         segment.flags.add(flagType);
-        segment.setConditionString(conditionString);
+        segment.setCondition(conditionString);
         return segment;
     }
 }

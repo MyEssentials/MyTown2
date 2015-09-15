@@ -2,10 +2,8 @@ package mytown.protection.segment;
 
 import myessentials.entities.Volume;
 import mytown.MyTown;
-import mytown.api.container.GettersContainer;
 import mytown.config.Config;
 import mytown.entities.Resident;
-import mytown.entities.flag.FlagType;
 import mytown.protection.ProtectionHandler;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
@@ -17,33 +15,17 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class SegmentTileEntity extends Segment {
 
-    private boolean hasOwner = false;
-
-    public SegmentTileEntity(boolean hasOwner) {
-        this.hasOwner = hasOwner;
-    }
+    protected boolean retainsOwner = false;
 
     public boolean shouldExist(TileEntity te) {
-        try {
-            if(condition != null && !condition.execute(te, getters)) {
-                return true;
-            }
-        } catch (Exception ex) {
-            if(ex instanceof ConditionException || ex instanceof GetterException) {
-                MyTown.instance.LOG.error("An error occurred while checking condition for tile entity [DIM:{}; {}, {}, {}] of type {}", te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord, te.getClass().getName());
-                MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-                disable();
-                return true;
-            } else {
-                throw (RuntimeException) ex;
-            }
+        if(!shouldCheck(te)) {
+            return true;
         }
-
 
         Volume teBox = new Volume(getX1(te), getY1(te), getZ1(te), getX2(te), getY2(te), getZ2(te));
         int dim = te.getWorldObj().provider.dimensionId;
         Resident owner;
-        if(hasOwner()) {
+        if(retainsOwner) {
             owner = ProtectionHandler.instance.getOwnerForTileEntity(te);
         } else {
             owner = getOwner(te);
@@ -102,11 +84,5 @@ public class SegmentTileEntity extends Segment {
         } catch (GetterException ex) {
             return te.zCoord + Config.defaultProtectionSize;
         }
-    }
-
-
-
-    public boolean hasOwner() {
-        return this.hasOwner;
     }
 }

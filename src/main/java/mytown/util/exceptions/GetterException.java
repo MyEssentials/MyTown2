@@ -3,7 +3,7 @@ package mytown.util.exceptions;
 /**
  * Exception thrown when getting information from a getter
  */
-public class GetterException extends RuntimeException {
+public class GetterException extends Exception {
     public GetterException(String message) {
         super(message);
     }

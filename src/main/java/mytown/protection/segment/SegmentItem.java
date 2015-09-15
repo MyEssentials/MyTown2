@@ -3,9 +3,7 @@ package mytown.protection.segment;
 import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
 import mytown.MyTown;
-import mytown.api.container.GettersContainer;
 import mytown.entities.Resident;
-import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
@@ -23,21 +21,10 @@ import java.util.List;
  */
 public class SegmentItem extends Segment {
 
-    public final List<ItemType> types = new ArrayList<ItemType>();
-    private final boolean onAdjacent;
-
-    public final ClientBlockUpdate clientUpdate;
-    public final boolean directionalClientUpdate;
-
-    public SegmentItem(boolean onAdjacent, Volume clientUpdateCoords, boolean directionalClientUpdate) {
-        this.onAdjacent = onAdjacent;
-        this.directionalClientUpdate = directionalClientUpdate;
-        if(clientUpdateCoords != null) {
-            this.clientUpdate = new ClientBlockUpdate(clientUpdateCoords);
-        } else {
-            this.clientUpdate = null;
-        }
-    }
+    protected final List<ItemType> types = new ArrayList<ItemType>();
+    protected boolean isAdjacent = false;
+    protected ClientBlockUpdate clientUpdate;
+    protected boolean directionalClientUpdate = false;
 
     public boolean shouldInteract(ItemStack item, Resident res, PlayerInteractEvent.Action action, BlockPos bp, int face) {
         if(action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && (!types.contains(ItemType.RIGHT_CLICK_AIR) && !types.contains(ItemType.RIGHT_CLICK_ENTITY))
@@ -46,19 +33,8 @@ public class SegmentItem extends Segment {
             return true;
         }
 
-        try {
-            if (condition != null && !condition.execute(item, getters)) {
-                return true;
-            }
-        } catch (Exception ex) {
-            if(ex instanceof ConditionException || ex instanceof GetterException) {
-                MyTown.instance.LOG.error("An error occurred while checking condition for item interaction with [{}] of type {} by {}", item.toString(), item.getItem().getClass().getName(), res.getPlayerName());
-                MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-                disable();
-                return true;
-            } else {
-                throw (RuntimeException) ex;
-            }
+        if(!shouldCheck(item)) {
+            return true;
         }
 
         EntityPlayerMP player = (EntityPlayerMP) res.getPlayer();
@@ -95,14 +71,8 @@ public class SegmentItem extends Segment {
             return true;
         }
 
-        try {
-            if (condition != null && !condition.execute(item, getters)) {
-                return true;
-            }
-        } catch (ConditionException ex) {
-            MyTown.instance.LOG.error("An error occurred while checking condition for breaking a block with item [{}] of type {} by {}", item.toString(), item.getItem().getClass().getName(), res.getPlayerName());
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-            disable();
+        if(!shouldCheck(item)) {
+            return true;
         }
 
         EntityPlayerMP player = (EntityPlayerMP) res.getPlayer();
@@ -129,9 +99,5 @@ public class SegmentItem extends Segment {
             }
         }
         return true;
-    }
-
-    public boolean isOnAdjacent() {
-        return onAdjacent;
     }
 }

@@ -8,6 +8,7 @@ import myessentials.utils.WorldUtils;
 import mytown.api.container.TownBlocksContainer;
 import mytown.entities.Plot;
 import mytown.entities.TownBlock;
+import mytown.protection.segment.Segment;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;

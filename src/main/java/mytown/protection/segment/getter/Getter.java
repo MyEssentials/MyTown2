@@ -1,5 +1,7 @@
 package mytown.protection.segment.getter;
 
+import mytown.util.exceptions.GetterException;
+
 public abstract class Getter {
 
     protected String name;
@@ -12,5 +14,5 @@ public abstract class Getter {
         return this.name;
     }
 
-    public abstract Object invoke(Class<?> returnType, Object instance, Object... parameters);
+    public abstract Object invoke(Class<?> returnType, Object instance, Object... parameters) throws GetterException;
 }

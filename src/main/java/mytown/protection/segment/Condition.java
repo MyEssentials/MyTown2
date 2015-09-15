@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import myessentials.utils.StringUtils;
 import mytown.api.container.GettersContainer;
 import mytown.util.exceptions.ConditionException;
+import mytown.util.exceptions.GetterException;
 
 public class Condition {
 
@@ -13,7 +14,7 @@ public class Condition {
         this.conditionString = conditionString.split(" ");
     }
 
-    public boolean execute(Object object, GettersContainer getters) throws ConditionException {
+    public boolean execute(Object object, GettersContainer getters) throws ConditionException, GetterException {
         if(conditionString == null) {
             return true;
         }
