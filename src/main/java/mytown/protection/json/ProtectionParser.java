@@ -42,9 +42,6 @@ public class ProtectionParser {
             if(!folder.mkdir()) {
                 return false;
             }
-            MyTown.instance.LOG.info("No protection files to load, consider getting them at http://github.com/MyEssentials/MyTown2-Protections");
-            MyTown.instance.LOG.info("Your server will be missing MOST of the protection without it!");
-            return true;
         }
 
         String[] extensions = new String[1];
@@ -65,6 +62,11 @@ public class ProtectionParser {
         if(vanillaProtection != null) {
             MyTown.instance.LOG.info("Adding vanilla protection.");
             ProtectionUtils.protections.add(vanillaProtection);
+        }
+
+        if(ProtectionUtils.protections.isEmpty()) {
+            MyTown.instance.LOG.warn("No protection files were loaded, consider getting them at http://github.com/MyEssentials/MyTown2-Protections");
+            MyTown.instance.LOG.warn("Your server will be missing MOST of the protection without it!");
         }
 
         return true;
