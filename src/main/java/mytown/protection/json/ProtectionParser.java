@@ -44,27 +44,34 @@ public class ProtectionParser {
             }
         }
 
+        boolean anyProtectionLoaded = false;
         String[] extensions = new String[1];
         extensions[0] = "json";
-        ProtectionUtils.protections.clear();
+
+        ProtectionUtils.segmentsBlock.clear();
+        ProtectionUtils.segmentsEntity.clear();
+        ProtectionUtils.segmentsItem.clear();
+        ProtectionUtils.segmentsTile.clear();
+
         Protection vanillaProtection = null;
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
             Protection protection = read(file);
             if (protection != null) {
+                anyProtectionLoaded = true;
                 if ("Minecraft".equals(protection.modid)) {
                     vanillaProtection = protection;
                 } else if (isModLoaded(protection.modid, protection.version)) {
                     MyTown.instance.LOG.info("Adding protection for mod: {}", protection.modid);
-                    ProtectionUtils.protections.add(protection);
+                    ProtectionUtils.addProtection(protection);
                 }
             }
         }
         if(vanillaProtection != null) {
             MyTown.instance.LOG.info("Adding vanilla protection.");
-            ProtectionUtils.protections.add(vanillaProtection);
+            ProtectionUtils.addProtection(vanillaProtection);
         }
 
-        if(ProtectionUtils.protections.isEmpty()) {
+        if(!anyProtectionLoaded) {
             MyTown.instance.LOG.warn("No protection files were loaded, consider getting them at http://github.com/MyEssentials/MyTown2-Protections");
             MyTown.instance.LOG.warn("Your server will be missing MOST of the protection without it!");
         }

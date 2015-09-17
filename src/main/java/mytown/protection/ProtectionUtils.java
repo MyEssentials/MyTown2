@@ -7,13 +7,11 @@ import myessentials.entities.Volume;
 import myessentials.utils.PlayerUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
+import mytown.api.container.SegmentsContainer;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
-import mytown.protection.segment.SegmentBlock;
-import mytown.protection.segment.SegmentEntity;
-import mytown.protection.segment.SegmentItem;
-import mytown.protection.segment.SegmentTileEntity;
+import mytown.protection.segment.*;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
@@ -30,7 +28,6 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +37,20 @@ import java.util.Map;
  */
 public class ProtectionUtils {
 
-    public static final List<Protection> protections = new ArrayList<Protection>();
+    public static final SegmentsContainer<SegmentBlock> segmentsBlock = new SegmentsContainer<SegmentBlock>();
+    public static final SegmentsContainer<SegmentEntity> segmentsEntity = new SegmentsContainer<SegmentEntity>();
+    public static final SegmentsContainer<SegmentItem> segmentsItem = new SegmentsContainer<SegmentItem>();
+    public static final SegmentsContainer<SegmentTileEntity> segmentsTile = new SegmentsContainer<SegmentTileEntity>();
     private static final Map<EntityPlayer, EntityPos> lastTickPlayerPos = new HashMap<EntityPlayer, EntityPos>();
 
     private ProtectionUtils() {
+    }
+
+    public static void addProtection(Protection protection) {
+        segmentsBlock.addAll(protection.segmentsBlocks);
+        segmentsEntity.addAll(protection.segmentsEntities);
+        segmentsItem.addAll(protection.segmentsItems);
+        segmentsTile.addAll(protection.segmentsTiles);
     }
 
     public static void check(EntityPlayerMP player) {
@@ -94,31 +101,29 @@ public class ProtectionUtils {
             }
         }
 
-        for(Protection protection : protections) {
-            for(SegmentEntity segment : protection.segmentsEntities.get(entity.getClass())) {
-                if(!segment.shouldExist(entity)) {
-                    entity.setDead();
-                    return true;
-                }
+
+        for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
+            if(!segment.shouldExist(entity)) {
+                entity.setDead();
+                return true;
             }
         }
+
         return false;
     }
 
     public static void check(TileEntity te) {
-        for (Protection protection : protections) {
-            for (SegmentTileEntity segment : protection.segmentsTiles.get(te.getClass())) {
-                if (!segment.shouldExist(te)) {
-                    ItemStack itemStack = new ItemStack(te.getBlockType(), 1, te.getBlockMetadata());
-                    NBTTagCompound nbt = new NBTTagCompound();
-                    te.writeToNBT(nbt);
-                    itemStack.setTagCompound(nbt);
-                    WorldUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, itemStack);
-                    te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
-                    te.invalidate();
-                    MyTown.instance.LOG.info("TileEntity {} was ATOMICALLY DISINTEGRATED!", te.toString());
-                    return;
-                }
+        for (SegmentTileEntity segment : segmentsTile.get(te.getClass())) {
+            if (!segment.shouldExist(te)) {
+                ItemStack itemStack = new ItemStack(te.getBlockType(), 1, te.getBlockMetadata());
+                NBTTagCompound nbt = new NBTTagCompound();
+                te.writeToNBT(nbt);
+                itemStack.setTagCompound(nbt);
+                WorldUtils.dropAsEntity(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord, itemStack);
+                te.getWorldObj().setBlock(te.xCoord, te.yCoord, te.zCoord, Blocks.air);
+                te.invalidate();
+                MyTown.instance.LOG.info("TileEntity {} was ATOMICALLY DISINTEGRATED!", te.toString());
+                return;
             }
         }
     }
@@ -128,11 +133,9 @@ public class ProtectionUtils {
             return;
         }
 
-        for(Protection protection : protections) {
-            for(SegmentEntity segment : protection.segmentsEntities.get(entity.getClass())) {
-                if(!segment.shouldInteract(entity, res)) {
-                    event.setCanceled(true);
-                }
+        for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
+            if(!segment.shouldInteract(entity, res)) {
+                event.setCanceled(true);
             }
         }
     }
@@ -142,11 +145,9 @@ public class ProtectionUtils {
             return;
         }
 
-        for(Protection protection : protections) {
-            for(SegmentEntity segment : protection.segmentsEntities.get(entity.getClass())) {
-                if(!segment.shouldAttack(entity, res)) {
-                    event.setCanceled(true);
-                }
+        for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
+            if(!segment.shouldAttack(entity, res)) {
+                event.setCanceled(true);
             }
         }
     }
@@ -156,11 +157,9 @@ public class ProtectionUtils {
             return;
         }
 
-        for(Protection protection : protections) {
-            for(SegmentItem segment : protection.segmentsItems.get(stack.getItem().getClass())) {
-                if(!segment.shouldInteract(stack, res, action, bp, face)) {
-                    ev.setCanceled(true);
-                }
+        for(SegmentItem segment : segmentsItem.get(stack.getItem().getClass())) {
+            if(!segment.shouldInteract(stack, res, action, bp, face)) {
+                ev.setCanceled(true);
             }
         }
     }
@@ -170,11 +169,9 @@ public class ProtectionUtils {
             return;
         }
 
-        for(Protection protection : protections) {
-            for(SegmentItem segment : protection.segmentsItems.get(stack.getItem().getClass())) {
-                if(!segment.shouldBreakBlock(stack, res, bp)) {
-                    ev.setCanceled(true);
-                }
+        for(SegmentItem segment : segmentsItem.get(stack.getItem().getClass())) {
+            if(!segment.shouldBreakBlock(stack, res, bp)) {
+                ev.setCanceled(true);
             }
         }
     }
@@ -186,11 +183,10 @@ public class ProtectionUtils {
         }
         World world = MinecraftServer.getServer().worldServerForDimension(bp.getDim());
         Block block = world.getBlock(bp.getX(), bp.getY(), bp.getZ());
-        for(Protection protection : protections) {
-            for(SegmentBlock segment : protection.segmentsBlocks.get(block.getClass())) {
-                if(!segment.shouldInteract(res, bp, action)) {
-                    ev.setCanceled(true);
-                }
+
+        for(SegmentBlock segment : segmentsBlock.get(block.getClass())) {
+            if(!segment.shouldInteract(res, bp, action)) {
+                ev.setCanceled(true);
             }
         }
     }
@@ -257,22 +253,19 @@ public class ProtectionUtils {
     }
 
     public static Resident getOwner(Entity entity) {
-        for(Protection protection : protections) {
-            for(SegmentEntity segment : protection.segmentsEntities.get(entity.getClass())) {
-                return segment.getOwner(entity);
-            }
+        for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
+            return segment.getOwner(entity);
         }
         return null;
     }
 
     public static boolean isOwnable(Class<? extends TileEntity> clazz) {
-        for(Protection protection : protections) {
-            for(SegmentTileEntity segment : protection.segmentsTiles.get(clazz)) {
-                if(segment.retainsOwner()) {
-                    return true;
-                }
+        for(SegmentTileEntity segment : segmentsTile.get(clazz)) {
+            if(segment.retainsOwner()) {
+                return true;
             }
         }
+
         return false;
     }
 

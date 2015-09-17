@@ -13,6 +13,7 @@ import mytown.protection.ProtectionUtils;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
+import mytown.protection.segment.enums.Priority;
 import mytown.protection.segment.getter.Getter;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
@@ -31,6 +32,7 @@ import java.util.UUID;
  */
 public abstract class Segment {
     protected boolean isDisabled = false;
+    protected Priority priority = Priority.NORMAL;
     protected Class<?> checkClass;
     protected Condition condition;
     protected final List<FlagType<Boolean>> flags = new ArrayList<FlagType<Boolean>>();
@@ -42,6 +44,14 @@ public abstract class Segment {
 
     public boolean shouldCheckType(Class<?> clazz) {
         return checkClass.isAssignableFrom(clazz);
+    }
+
+    public Class<?> getCheckClass() {
+        return this.checkClass;
+    }
+
+    public Priority getPriority() {
+        return this.priority;
     }
 
     public Resident getOwner(Object object) {
@@ -143,6 +153,9 @@ public abstract class Segment {
             if(segment.condition != null) {
                 json.addProperty("condition", segment.condition.toString());
             }
+            if(segment.priority != Priority.NORMAL) {
+                json.addProperty("priority", segment.priority.toString());
+            }
             for(Getter getter : segment.getters) {
                 json.add(getter.getName(), context.serialize(getter, Getter.class));
             }
@@ -216,27 +229,24 @@ public abstract class Segment {
                 throw new ProtectionParseException("Identifier type is invalid");
             }
 
-            Class<?> clazz;
             try {
-                clazz = Class.forName(jsonObject.get("class").getAsString());
+                segment.checkClass = Class.forName(jsonObject.get("class").getAsString());
             } catch (ClassNotFoundException ex) {
                 throw new ProtectionParseException("Class identifier is invalid");
             }
             jsonObject.remove("class");
 
-            List<FlagType<Boolean>> flags = deserializeAsArray(jsonObject.get("flags"), context, new TypeToken<FlagType<Boolean>>() {}, new TypeToken<List<FlagType<Boolean>>>() {}.getType());
+            segment.flags.addAll(deserializeAsArray(jsonObject.get("flags"), context, new TypeToken<FlagType<Boolean>>() {}, new TypeToken<List<FlagType<Boolean>>>() {}.getType()));
             jsonObject.remove("flags");
 
-            String condition = null;
             if(jsonObject.has("condition")) {
-                condition = jsonObject.get("condition").getAsString();
+                segment.condition = new Condition(jsonObject.get("condition").getAsString());
                 jsonObject.remove("condition");
             }
 
-            segment.checkClass = clazz;
-            segment.flags.addAll(flags);
-            if(condition != null) {
-                segment.condition = new Condition(condition);
+            if(jsonObject.has("priority")) {
+                segment.priority = Priority.valueOf(jsonObject.get("priority").getAsString());
+                jsonObject.remove("priority");
             }
 
             for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
@@ -265,7 +275,6 @@ public abstract class Segment {
             SegmentBlock segment = new SegmentBlock();
             segment.types.addAll(deserializeAsArray(json.get("actions"), context, new TypeToken<BlockType>() {}, new TypeToken<List<BlockType>>() {}.getType()));
             json.remove("actions");
-
 
             if(json.has("meta")) {
                 segment.meta = json.get("meta").getAsInt();
