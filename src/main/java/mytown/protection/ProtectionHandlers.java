@@ -8,27 +8,21 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import myessentials.entities.BlockPos;
 import mytown.MyTown;
-import mytown.config.Config;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
-import mytown.protection.segment.enums.ItemType;
 import mytown.proxies.DatasourceProxy;
 import mytown.thread.ThreadPlacementCheck;
-import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -36,17 +30,15 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Handles all the protections
  */
-public class ProtectionHandler {
+public class ProtectionHandlers {
 
-    public static final ProtectionHandler instance = new ProtectionHandler();
+    public static final ProtectionHandlers instance = new ProtectionHandlers();
 
 
     public Map<TileEntity, Resident> ownedTileEntities = new HashMap<TileEntity, Resident>();
@@ -72,7 +64,7 @@ public class ProtectionHandler {
             for (Town town : MyTownUniverse.instance.towns)
                 for (int i = 0; i < town.blockWhitelistsContainer.size(); i++) {
                     BlockWhitelist bw = town.blockWhitelistsContainer.get(i);
-                    if (!ProtectionUtils.isBlockWhitelistValid(bw)) {
+                    if (!ProtectionManager.isBlockWhitelistValid(bw)) {
                         DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
                     }
                 }
@@ -98,11 +90,11 @@ public class ProtectionHandler {
             //MyTown.instance.log.info("Checking player...");
             // Player check, every tick
             if (entity instanceof EntityPlayerMP && !(entity instanceof FakePlayer)) {
-                ProtectionUtils.check((EntityPlayerMP) entity);
+                ProtectionManager.check((EntityPlayerMP) entity);
             } else {
                 // Other entity checks
                 if(MinecraftServer.getServer().getTickCounter() % 20 == 0) {
-                    ProtectionUtils.check(entity);
+                    ProtectionManager.check(entity);
                 }
             }
         }
@@ -112,7 +104,7 @@ public class ProtectionHandler {
             if (activePlacementThreads == 0) {
                 for (int i = 0; i < ev.world.loadedTileEntityList.size(); i++) {
                     TileEntity te = (TileEntity) ev.world.loadedTileEntityList.get(i);
-                    ProtectionUtils.check(te);
+                    ProtectionManager.check(te);
                 }
             }
         }
@@ -128,7 +120,7 @@ public class ProtectionHandler {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        ProtectionUtils.checkInteraction(ev.target, res, ev);
+        ProtectionManager.checkInteraction(ev.target, res, ev);
     }
 
     @SubscribeEvent
@@ -148,14 +140,14 @@ public class ProtectionHandler {
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(player);
 
-        if(!ProtectionUtils.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+        if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
             ev.setCanceled(true);
             return;
         }
 
         if(ev.block instanceof ITileEntityProvider && ev.itemInHand != null) {
             TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(MinecraftServer.getServer().worldServerForDimension(ev.world.provider.dimensionId), ev.itemInHand.getItemDamage());
-            if (te != null && ProtectionUtils.isOwnable(te.getClass())) {
+            if (te != null && ProtectionManager.isOwnable(te.getClass())) {
                 ThreadPlacementCheck thread = new ThreadPlacementCheck(res, ev.x, ev.y, ev.z, ev.world.provider.dimensionId);
                 activePlacementThreads++;
                 thread.start();
@@ -170,10 +162,10 @@ public class ProtectionHandler {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        ProtectionUtils.checkInteraction(ev.target, res, ev);
+        ProtectionManager.checkInteraction(ev.target, res, ev);
         if(ev.entityPlayer.getHeldItem() != null) {
             BlockPos bp = new BlockPos((int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int) Math.floor(ev.target.posZ), ev.target.dimension);
-            ProtectionUtils.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
+            ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
         }
     }
 
@@ -186,9 +178,9 @@ public class ProtectionHandler {
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
         if(ev.entityPlayer.getHeldItem() != null) {
-            ProtectionUtils.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
+            ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
         }
-        ProtectionUtils.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
+        ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
     }
 
     @SuppressWarnings("unchecked")
@@ -199,18 +191,18 @@ public class ProtectionHandler {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.getPlayer());
-        if(!ProtectionUtils.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+        if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
             ev.setCanceled(true);
             return;
         }
 
         if(ev.getPlayer().getHeldItem() != null) {
-            ProtectionUtils.checkBreakWithItem(ev.getPlayer().getHeldItem(), res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev);
+            ProtectionManager.checkBreakWithItem(ev.getPlayer().getHeldItem(), res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev);
         }
 
         if (!ev.isCanceled() && ev.block instanceof ITileEntityProvider) {
             TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(ev.world, ev.blockMetadata);
-            if(te != null && ProtectionUtils.isOwnable(te.getClass())) {
+            if(te != null && ProtectionManager.isOwnable(te.getClass())) {
                 te = ev.world.getTileEntity(ev.x, ev.y, ev.z);
                 ownedTileEntities.remove(te);
                 MyTown.instance.LOG.info("Removed te {}", te.toString());
@@ -226,7 +218,7 @@ public class ProtectionHandler {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        if(!ProtectionUtils.hasPermission(res, FlagType.PICKUP, ev.item.dimension, (int) Math.floor(ev.item.posX), (int) Math.floor(ev.item.posY), (int) Math.floor(ev.item.posZ))) {
+        if(!ProtectionManager.hasPermission(res, FlagType.PICKUP, ev.item.dimension, (int) Math.floor(ev.item.posX), (int) Math.floor(ev.item.posY), (int) Math.floor(ev.item.posZ))) {
             ev.setCanceled(true);
         }
     }
@@ -239,11 +231,11 @@ public class ProtectionHandler {
 
         if(ev.entity instanceof EntityPlayer) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entity);
-            ProtectionUtils.checkPVP(ev.source.getEntity(), res, ev);
+            ProtectionManager.checkPVP(ev.source.getEntity(), res, ev);
         } else if(ev.source.getEntity() != null) {
-            Resident res = ProtectionUtils.getOwner(ev.source.getEntity());
+            Resident res = ProtectionManager.getOwner(ev.source.getEntity());
             if(res != null) {
-                ProtectionUtils.checkInteraction(ev.entity, res, ev);
+                ProtectionManager.checkInteraction(ev.entity, res, ev);
             }
         }
     }
@@ -255,7 +247,7 @@ public class ProtectionHandler {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        if(ProtectionUtils.hasPermission(res, FlagType.USAGE, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
+        if(ProtectionManager.hasPermission(res, FlagType.USAGE, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
             ev.setCanceled(true);
         }
     }
@@ -270,14 +262,14 @@ public class ProtectionHandler {
             return;
         }
 
-        ProtectionUtils.check(ev.entity);
+        ProtectionManager.check(ev.entity);
     }
 
     @SubscribeEvent
     public void specialSpawn(LivingSpawnEvent.SpecialSpawn ev) {
         if (ev.isCanceled()) return;
 
-        ProtectionUtils.check(ev.entity);
+        ProtectionManager.check(ev.entity);
     }
 
     @SubscribeEvent
@@ -286,7 +278,7 @@ public class ProtectionHandler {
             return;
         }
 
-        if(ProtectionUtils.check(ev.entity)) {
+        if(ProtectionManager.check(ev.entity)) {
             ev.setResult(Event.Result.DENY);
         }
     }
@@ -295,7 +287,7 @@ public class ProtectionHandler {
     @SubscribeEvent
     public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent ev) {
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
-        if(ProtectionUtils.hasPermission(res, FlagType.ENTER, ev.player.dimension, (int) Math.floor(ev.player.posX), (int) Math.floor(ev.player.posY), (int) Math.floor(ev.player.posZ))) {
+        if(ProtectionManager.hasPermission(res, FlagType.ENTER, ev.player.dimension, (int) Math.floor(ev.player.posX), (int) Math.floor(ev.player.posY), (int) Math.floor(ev.player.posZ))) {
             // Because of badly written teleportation code by Mojang we can only send the player back to spawn. :I
             res.respawnPlayer();
         }

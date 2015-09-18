@@ -9,7 +9,7 @@ import mytown.api.container.GettersContainer;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
-import mytown.protection.ProtectionUtils;
+import mytown.protection.ProtectionManager;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
@@ -81,7 +81,7 @@ public abstract class Segment {
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
         for(FlagType<Boolean> flagType : flags) {
-            if(!ProtectionUtils.hasPermission(res, flagType, dim, x, y, z)) {
+            if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
                 return false;
             }
         }
@@ -90,7 +90,7 @@ public abstract class Segment {
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
         for (FlagType<Boolean> flagType : flags) {
-            if(!ProtectionUtils.hasPermission(res, flagType, dim, volume)) {
+            if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
                 return false;
             }
         }

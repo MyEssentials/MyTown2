@@ -7,8 +7,7 @@ import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
 import myessentials.entities.Volume;
 import mytown.entities.flag.FlagType;
-import mytown.protection.Protection;
-import mytown.protection.ProtectionUtils;
+import mytown.protection.ProtectionManager;
 import mytown.protection.segment.*;
 import mytown.protection.segment.caller.Caller;
 import mytown.protection.segment.getter.Getter;
@@ -48,10 +47,10 @@ public class ProtectionParser {
         String[] extensions = new String[1];
         extensions[0] = "json";
 
-        ProtectionUtils.segmentsBlock.clear();
-        ProtectionUtils.segmentsEntity.clear();
-        ProtectionUtils.segmentsItem.clear();
-        ProtectionUtils.segmentsTile.clear();
+        ProtectionManager.segmentsBlock.clear();
+        ProtectionManager.segmentsEntity.clear();
+        ProtectionManager.segmentsItem.clear();
+        ProtectionManager.segmentsTile.clear();
 
         Protection vanillaProtection = null;
         for (File file : FileUtils.listFiles(folder, extensions, true)) {
@@ -62,13 +61,13 @@ public class ProtectionParser {
                     vanillaProtection = protection;
                 } else if (isModLoaded(protection.modid, protection.version)) {
                     MyTown.instance.LOG.info("Adding protection for mod: {}", protection.modid);
-                    ProtectionUtils.addProtection(protection);
+                    ProtectionManager.addProtection(protection);
                 }
             }
         }
         if(vanillaProtection != null) {
             MyTown.instance.LOG.info("Adding vanilla protection.");
-            ProtectionUtils.addProtection(vanillaProtection);
+            ProtectionManager.addProtection(vanillaProtection);
         }
 
         if(!anyProtectionLoaded) {

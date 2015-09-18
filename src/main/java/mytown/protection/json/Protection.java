@@ -1,4 +1,4 @@
-package mytown.protection;
+package mytown.protection.json;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
@@ -7,21 +7,17 @@ import mytown.protection.segment.*;
 import mytown.util.exceptions.ProtectionParseException;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An object which offers protection for a specific mod and version
+ * This object is used only for loading the protection.
  */
 public class Protection {
 
     public final String modid;
     public final String version;
 
-    public final SegmentsContainer<SegmentTileEntity> segmentsTiles = new SegmentsContainer<SegmentTileEntity>();
-    public final SegmentsContainer<SegmentEntity> segmentsEntities = new SegmentsContainer<SegmentEntity>();
-    public final SegmentsContainer<SegmentItem> segmentsItems = new SegmentsContainer<SegmentItem>();
-    public final SegmentsContainer<SegmentBlock> segmentsBlocks = new SegmentsContainer<SegmentBlock>();
+    public final SegmentsContainer<Segment> segments = new SegmentsContainer<Segment>();
 
     public Protection(String modid) {
         this(modid, "");
@@ -30,20 +26,6 @@ public class Protection {
     public Protection(String modid, String version) {
         this.modid = modid;
         this.version = version;
-    }
-
-    private void addSegments(List<Segment> segments) {
-        for(Segment segment : segments) {
-            if(segment instanceof SegmentTileEntity) {
-                segmentsTiles.add((SegmentTileEntity) segment);
-            } else if(segment instanceof SegmentEntity) {
-                segmentsEntities.add((SegmentEntity) segment);
-            } else if(segment instanceof SegmentItem) {
-                segmentsItems.add((SegmentItem) segment);
-            } else if(segment instanceof SegmentBlock) {
-                segmentsBlocks.add((SegmentBlock) segment);
-            }
-        }
     }
 
     public static class Serializer implements JsonSerializer<Protection>, JsonDeserializer<Protection> {
@@ -55,13 +37,8 @@ public class Protection {
             if(!protection.version.equals("")) {
                 json.addProperty("version", protection.version);
             }
-            List<Segment> segments = new ArrayList<Segment>();
-            segments.addAll(protection.segmentsBlocks);
-            segments.addAll(protection.segmentsEntities);
-            segments.addAll(protection.segmentsItems);
-            segments.addAll(protection.segmentsTiles);
 
-            json.add("segments", context.serialize(segments, new TypeToken<List<Segment>>() {}.getType()));
+            json.add("segments", context.serialize(protection.segments, new TypeToken<List<Segment>>() {}.getType()));
 
             return json;
         }
@@ -81,7 +58,8 @@ public class Protection {
             Protection protection = new Protection(modid, version);
 
             if(jsonObject.has("segments")) {
-                protection.addSegments((List<Segment>) context.deserialize(jsonObject.get("segments"), new TypeToken<List<Segment>>() {}.getType()));
+                protection.segments.addAll((List<Segment>) context.deserialize(jsonObject.get("segments"), new TypeToken<List<Segment>>() {
+                }.getType()));
             }
 
             return protection;

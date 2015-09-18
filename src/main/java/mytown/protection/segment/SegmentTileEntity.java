@@ -1,14 +1,11 @@
 package mytown.protection.segment;
 
 import myessentials.entities.Volume;
-import mytown.MyTown;
 import mytown.config.Config;
 import mytown.entities.Resident;
-import mytown.protection.ProtectionHandler;
-import mytown.util.exceptions.ConditionException;
+import mytown.protection.ProtectionHandlers;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.tileentity.TileEntity;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * Segment that protects against a TileEntity
@@ -26,7 +23,7 @@ public class SegmentTileEntity extends Segment {
         int dim = te.getWorldObj().provider.dimensionId;
         Resident owner;
         if(retainsOwner) {
-            owner = ProtectionHandler.instance.getOwnerForTileEntity(te);
+            owner = ProtectionHandlers.instance.getOwnerForTileEntity(te);
         } else {
             owner = getOwner(te);
         }

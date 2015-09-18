@@ -11,6 +11,7 @@ import mytown.api.container.SegmentsContainer;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
+import mytown.protection.json.Protection;
 import mytown.protection.segment.*;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
@@ -29,13 +30,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Utilities for the protections
  */
-public class ProtectionUtils {
+public class ProtectionManager {
 
     public static final SegmentsContainer<SegmentBlock> segmentsBlock = new SegmentsContainer<SegmentBlock>();
     public static final SegmentsContainer<SegmentEntity> segmentsEntity = new SegmentsContainer<SegmentEntity>();
@@ -43,14 +43,21 @@ public class ProtectionUtils {
     public static final SegmentsContainer<SegmentTileEntity> segmentsTile = new SegmentsContainer<SegmentTileEntity>();
     private static final Map<EntityPlayer, EntityPos> lastTickPlayerPos = new HashMap<EntityPlayer, EntityPos>();
 
-    private ProtectionUtils() {
+    private ProtectionManager() {
     }
 
     public static void addProtection(Protection protection) {
-        segmentsBlock.addAll(protection.segmentsBlocks);
-        segmentsEntity.addAll(protection.segmentsEntities);
-        segmentsItem.addAll(protection.segmentsItems);
-        segmentsTile.addAll(protection.segmentsTiles);
+        for(Segment segment : protection.segments) {
+            if(segment instanceof SegmentBlock) {
+                segmentsBlock.add((SegmentBlock) segment);
+            } else if(segment instanceof SegmentEntity) {
+                segmentsEntity.add((SegmentEntity) segment);
+            } else if(segment instanceof SegmentItem) {
+                segmentsItem.add((SegmentItem) segment);
+            } else if(segment instanceof SegmentTileEntity) {
+                segmentsTile.add((SegmentTileEntity) segment);
+            }
+        }
     }
 
     public static void check(EntityPlayerMP player) {
@@ -62,7 +69,7 @@ public class ProtectionUtils {
             return;
         }
 
-        if (!ProtectionUtils.hasPermission(res, FlagType.ENTER, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ))) {
+        if (!ProtectionManager.hasPermission(res, FlagType.ENTER, player.dimension, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ))) {
             if(lastTickPos == null) {
                 res.knockbackPlayerToBorder(town);
             } else if(lastTickPos.getX() != player.posX || lastTickPos.getY() != player.posY || lastTickPos.getZ() != player.posZ || lastTickPos.getDim() != player.dimension) {
@@ -295,7 +302,7 @@ public class ProtectionUtils {
 
 
     public static void saveBlockOwnersToDB() {
-        for(Map.Entry<TileEntity, Resident> set : ProtectionHandler.instance.ownedTileEntities.entrySet()) {
+        for(Map.Entry<TileEntity, Resident> set : ProtectionHandlers.instance.ownedTileEntities.entrySet()) {
             DatasourceProxy.getDatasource().saveBlockOwner(set.getValue(), set.getKey().getWorldObj().provider.dimensionId, set.getKey().xCoord, set.getKey().yCoord, set.getKey().zCoord);
         }
     }
@@ -304,13 +311,13 @@ public class ProtectionUtils {
      * Method called by the ThreadPlacementCheck after it found a TileEntity
      */
     public static synchronized void addTileEntity(TileEntity te, Resident res) {
-        ProtectionHandler.instance.ownedTileEntities.put(te, res);
-        if(ProtectionHandler.instance.activePlacementThreads != 0)
-            ProtectionHandler.instance.activePlacementThreads--;
+        ProtectionHandlers.instance.ownedTileEntities.put(te, res);
+        if(ProtectionHandlers.instance.activePlacementThreads != 0)
+            ProtectionHandlers.instance.activePlacementThreads--;
     }
 
     public static synchronized void placementThreadTimeout() {
-        ProtectionHandler.instance.activePlacementThreads--;
+        ProtectionHandlers.instance.activePlacementThreads--;
     }
 
     private MyTownUniverse getUniverse() {

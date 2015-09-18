@@ -12,7 +12,6 @@ import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsHandler;
-import mytown.protection.Protection;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.CommandException;

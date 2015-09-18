@@ -8,7 +8,7 @@ import myessentials.config.ConfigProperty;
 import myessentials.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.*;
-import mytown.protection.ProtectionUtils;
+import mytown.protection.ProtectionManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -542,7 +542,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     LOG.error("Failed to find a TileEntity at position ({}, {}, {}| DIM: {})", x, y, z, dim);
                     continue;
                 }
-                ProtectionUtils.addTileEntity(te, res);
+                ProtectionManager.addTileEntity(te, res);
             }
         } catch (SQLException e) {
             LOG.error("Failed to load block owners.");
