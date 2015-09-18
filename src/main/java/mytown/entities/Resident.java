@@ -2,7 +2,7 @@ package mytown.entities;
 
 import myessentials.utils.ChatUtils;
 import mytown.MyTown;
-import mytown.api.container.GenericContainer;
+import mytown.api.container.Container;
 import mytown.api.container.PlotsContainer;
 import mytown.api.container.TownsContainer;
 import mytown.config.Config;
@@ -33,7 +33,7 @@ public class Resident {
     public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
     public final TownsContainer townInvitesContainer = new TownsContainer();
     public final TownsContainer townsContainer = new TownsContainer();
-    public final GenericContainer<Tool> toolContainer = new GenericContainer<Tool>();
+    public final Container<Tool> toolContainer = new Container<Tool>();
 
     public Resident(EntityPlayer pl) {
         setPlayer(pl);
@@ -112,6 +112,11 @@ public class Resident {
         }
     }
 
+    public void protectionDenial(FlagType flag) {
+        if (getPlayer() != null) {
+            ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
+        }
+    }
     /**
      * Sends a localized message and a list of owners to which the protection was bypassed
      */
@@ -156,14 +161,14 @@ public class Resident {
             int z = (int) Math.floor(player.posZ);
             boolean ok = false;
             while(!ok) {
-                while (!town.hasPermission(this, FlagType.ENTER, false, player.dimension, x, y, z) && town.isPointInTown(player.dimension, x, z))
+                while (!town.hasPermission(this, FlagType.ENTER, player.dimension, x, y, z) && town.isPointInTown(player.dimension, x, z))
                     x++;
                 x += 3;
 
                 while(player.worldObj.getBlock(x, y, z) != Blocks.air && player.worldObj.getBlock(x, y + 1, z) != Blocks.air && y < 256)
                     y++;
 
-                if(town.hasPermission(this, FlagType.ENTER, false, player.dimension, x, y, z) || !town.isPointInTown(player.dimension, x, z))
+                if(town.hasPermission(this, FlagType.ENTER, player.dimension, x, y, z) || !town.isPointInTown(player.dimension, x, z))
                     ok = true;
             }
             player.setPositionAndUpdate(x, y, z);

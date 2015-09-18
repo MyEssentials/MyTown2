@@ -21,7 +21,7 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
     @Override
     public void create(List<Wrapper> items) {
         for (FlagType type : FlagType.values()) {
-            items.add(new Wrapper(type, type.getDefaultValue(), type.canTownsModify()));
+            items.add(new Wrapper(type.name, type.defaultValue, type.configurable));
         }
 
         super.create(items);
@@ -32,8 +32,8 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
         List<Wrapper> items = super.read();
 
         for(Wrapper item : items) {
-            item.flagType.setDefaultValue(item.defaultState);
-            item.flagType.setModifiableForTowns(item.isAllowedInTowns);
+            item.getFlagType().defaultValue = item.defaultState;
+            item.getFlagType().configurable = item.configurable;
         }
 
         return items;
@@ -45,14 +45,14 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
 
         for(Iterator<Wrapper> it = items.iterator(); it.hasNext(); ) {
             Wrapper item = it.next();
-            if(item.flagType == null) {
+            if(item.flagName == null) {
                 MyEssentialsCore.instance.LOG.error("Found a type of flag that does not exist. Removing...");
                 it.remove();
                 isValid = false;
                 continue;
             }
-            if(!item.flagType.getType().isAssignableFrom(item.defaultState.getClass())) {
-                MyTown.instance.LOG.error("The default value for the flag is of invalid type for flag " + item.flagType.toString() + "! Needed " + item.flagType.getType().getSimpleName() + " Removing...");
+            if(!item.getFlagType().type.isAssignableFrom(item.defaultState.getClass())) {
+                MyTown.instance.LOG.error("The default value for the flag is of invalid type for flag " + item.flagName.toString() + "! Needed " + item.getFlagType().type.getSimpleName() + " Removing...");
                 it.remove();
                 isValid = false;
             }
@@ -61,12 +61,13 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
         for(FlagType type : FlagType.values()) {
             ok = false;
             for(Wrapper w : items) {
-                if(w.flagType == type)
+                if(w.getFlagType() == type) {
                     ok = true;
+                }
             }
             if(!ok) {
-                items.add(new Wrapper(type, type.getDefaultValue(), type.canTownsModify()));
-                MyTown.instance.LOG.error("Flag config is missing (or is an invalid entry) {} flag! Adding with default settings...", type.toString());
+                items.add(new Wrapper(type.name, type.defaultValue, type.configurable));
+                MyTown.instance.LOG.error("Flag config is missing (or is an invalid entry) {} flag! Adding with default settings...", type.name);
                 isValid = false;
             }
         }
@@ -77,14 +78,19 @@ public class FlagsConfig extends JSONConfig<FlagsConfig.Wrapper> {
      * Wraps around a flagType object.
      */
     public class Wrapper {
-        public final FlagType flagType;
+        public final String flagName;
         public final Object defaultState;
-        public final boolean isAllowedInTowns;
+        public final boolean configurable;
 
-        public Wrapper(FlagType flagType, Object defaultState, boolean isAllowedInTowns) {
-            this.flagType = flagType;
+        public Wrapper(String flagType, Object defaultState, boolean configurable) {
+            this.flagName = flagType;
             this.defaultState = defaultState;
-            this.isAllowedInTowns = isAllowedInTowns;
+            this.configurable = configurable;
         }
+
+        public FlagType getFlagType() {
+            return FlagType.valueOf(flagName);
+        }
+
     }
 }

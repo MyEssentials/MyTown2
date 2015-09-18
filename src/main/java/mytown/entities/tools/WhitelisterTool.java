@@ -23,15 +23,6 @@ public class WhitelisterTool extends Tool {
     private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click air to change flag.";
     private static final String DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: " + FlagType.ACCESS.toString().toLowerCase();
 
-    private static final List<FlagType> whitelistableFlags = new ArrayList<FlagType>();
-
-    static {
-        for(FlagType flagType : FlagType.values()) {
-            if(flagType.isWhitelistable())
-                whitelistableFlags.add(flagType);
-        }
-    }
-
     public WhitelisterTool(Resident owner) {
         super(owner, NAME);
         giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER_1, DESCRIPTION_HEADER_2, DESCRIPTION_FLAG));
@@ -59,11 +50,11 @@ public class WhitelisterTool extends Tool {
     @Override
     public void onShiftRightClick() {
         FlagType currentFlag = getFlagFromLore();
-        if(currentFlag == whitelistableFlags.get(whitelistableFlags.size() - 1)) {
+        if(currentFlag == FlagType.getWhitelistable().get(FlagType.getWhitelistable().size() - 1)) {
             setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 2);
             owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "mode", "WHITELIST REMOVAL"));
         } else {
-            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + whitelistableFlags.get(whitelistableFlags.indexOf(currentFlag) + 1).toString().toLowerCase(), 2);
+            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + FlagType.getWhitelistable().get(FlagType.getWhitelistable().indexOf(currentFlag) + 1).toString().toLowerCase(), 2);
             owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "flagType", currentFlag));
         }
     }
@@ -88,7 +79,7 @@ public class WhitelisterTool extends Tool {
     }
 
     private void removeWhitelists(Town town, int dim, int x, int y, int z) {
-        for (FlagType flagType : whitelistableFlags) {
+        for (FlagType flagType : FlagType.getWhitelistable()) {
             BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
             if (bw != null) {
                 DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
@@ -110,7 +101,7 @@ public class WhitelisterTool extends Tool {
 
     private FlagType getFlagFromLore() {
         String flagLore = getDescription(1);
-        for(FlagType flagType : whitelistableFlags) {
+        for(FlagType flagType : FlagType.getWhitelistable()) {
             if (flagLore.contains(flagType.toString().toLowerCase())) {
                 return flagType;
             }

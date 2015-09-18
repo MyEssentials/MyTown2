@@ -197,10 +197,11 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
         Flag flag = getFlagFromName(town.flagsContainer, args.get(0));
 
-        if (flag.setValueFromString(args.get(1))) {
+        if (flag.setValue(args.get(1))) {
             ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
-        } else
+        } else {
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+        }
         getDatasource().saveFlag(flag, town);
         return CommandResponse.DONE;
     }

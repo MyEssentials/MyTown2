@@ -1,14 +1,20 @@
 package mytown.protection.segment;
 
+import myessentials.entities.Volume;
+import mytown.MyTown;
+import mytown.api.container.GettersContainer;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.EntityType;
-import mytown.protection.segment.getter.Getters;
+import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -16,44 +22,78 @@ import java.util.UUID;
  */
 public class SegmentEntity extends Segment {
 
-    private final EntityType type;
+    public final List<EntityType> types = new ArrayList<EntityType>();
 
-    public SegmentEntity(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString, EntityType type) {
-        super(theClass, getters, flag, denialValue, conditionString);
-        this.type = type;
-    }
+    public boolean shouldExist(Entity entity) {
+        if(!types.contains(EntityType.TRACKED)) {
+            return true;
+        }
 
-    public EntityType getType() {
-        return type;
-    }
+        if(!shouldCheck(entity)) {
+            return true;
+        }
 
-    public boolean hasOwner() {
-        return getters.hasValue("owner");
-    }
+        Resident owner = getOwner(entity);
+        int range = getRange(entity);
+        int dim = entity.dimension;
+        int x = (int) Math.floor(entity.posX);
+        int y = (int) Math.floor(entity.posY);
+        int z = (int) Math.floor(entity.posZ);
 
-
-    public Resident getOwner(Entity entity) {
-        try {
-            EntityPlayer player = getters.hasValue("owner") ? (EntityPlayer) getters.getValue("owner", EntityPlayer.class, entity, entity) : null;
-            if(player == null)
-                return null;
-            return MyTownUniverse.instance.getOrMakeResident(player);
-        } catch (GetterException ex) {
-            try {
-                String username = getters.hasValue("owner") ? (String) getters.getValue("owner", String.class, entity, entity) : null;
-                if (username == null)
-                    return null;
-                return MyTownUniverse.instance.getOrMakeResident(username);
-            } catch (GetterException ex2) {
-                try {
-                    UUID uuid = getters.hasValue("owner") ? (UUID) getters.getValue("owner", UUID.class, entity, entity) : null;
-                    if (uuid == null)
-                        return null;
-                    return MyTownUniverse.instance.getOrMakeResident(uuid);
-                } catch (GetterException ex3) {
-                    return null;
-                }
+        if(range == 0) {
+            if (!hasPermissionAtLocation(owner, dim, x, y, z)) {
+                return false;
+            }
+        } else {
+            Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
+            if (!hasPermissionAtLocation(owner, dim, rangeBox)) {
+                return false;
             }
         }
+        return true;
+    }
+
+    public boolean shouldInteract(Entity entity, Resident res) {
+        if(!types.contains(EntityType.PROTECT)) {
+            return true;
+        }
+
+        if(!shouldCheck(entity)) {
+            return true;
+        }
+
+        int dim = entity.dimension;
+        int x = (int) Math.floor(entity.posX);
+        int y = (int) Math.floor(entity.posY);
+        int z = (int) Math.floor(entity.posZ);
+
+        if (!hasPermissionAtLocation(res, dim, x, y, z)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean shouldAttack(Entity entity, Resident res) {
+        if(!types.contains(EntityType.PVP)) {
+            return true;
+        }
+
+        if(!shouldCheck(entity)) {
+            return true;
+        }
+
+        Resident owner = getOwner(entity);
+        EntityPlayer attackedPlayer = res.getPlayer();
+        int dim = attackedPlayer.dimension;
+        int x = (int) Math.floor(attackedPlayer.posX);
+        int y = (int) Math.floor(attackedPlayer.posY);
+        int z = (int) Math.floor(attackedPlayer.posZ);
+
+        if (!hasPermissionAtLocation(owner, dim, x, y, z)) {
+            return false;
+        }
+
+        return true;
     }
 }

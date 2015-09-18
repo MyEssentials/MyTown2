@@ -10,54 +10,55 @@ import java.util.Iterator;
 
 public class FlagsContainer extends ArrayList<Flag> {
 
-    public boolean contains(FlagType type) {
+    public boolean contains(FlagType<?> flagType) {
         for (Flag flag : this) {
-            if (flag.getFlagType() == type) {
+            if (flag.flagType == flagType) {
                 return true;
             }
         }
         return false;
     }
 
-    public Flag get(FlagType type) {
-        for (Flag flag : this)
-            if (flag.getFlagType() == type)
+    public <T> Flag<T> get(FlagType<T> flagType) {
+        for (Flag flag : this) {
+            if (flag.flagType == flagType) {
                 return flag;
+            }
+        }
         return null;
     }
 
-    public void remove(FlagType type) {
+    public void remove(FlagType<?> flagType) {
         for (Iterator<Flag> it = iterator(); it.hasNext(); ) {
-            if (it.next().getFlagType() == type) {
+            if (it.next().flagType.equals(flagType)) {
                 it.remove();
             }
         }
     }
 
-    public Object getValue(FlagType type) {
+    public <T> T getValue(FlagType<T> flagType) {
         for (Flag flag : this) {
-            if (flag.getFlagType() == type)
-                return flag.getValue();
+            if (flag.flagType == flagType) {
+                return (T)flag.value;
+            }
         }
-        return type.getDefaultValue();
+        return null;
     }
 
     public String toStringForTowns() {
         String formattedFlagList = "";
 
         for (Flag flag : this) {
-            if(flag.getFlagType().canTownsModify()) {
-                if (!formattedFlagList.equals("")) {
-                    formattedFlagList += "\\n";
-                }
-                formattedFlagList += flag.toString();
+            if (!formattedFlagList.equals("")) {
+                formattedFlagList += "\\n";
             }
+            formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
         }
 
         String unconfigurableFlags = "";
         for(FlagType flagType : FlagType.values()) {
             if(!contains(flagType)) {
-                unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.getDefaultValue())).toString(ColorUtils.colorValueConst);
+                unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.defaultValue)).toString(ColorUtils.colorUnconfigurableFlag);
             }
         }
 
@@ -70,23 +71,21 @@ public class FlagsContainer extends ArrayList<Flag> {
         String formattedFlagList = "";
 
         for (Flag flag : this) {
-            if(flag.getFlagType().canTownsModify()) {
-                if (!formattedFlagList.equals("")) {
-                    formattedFlagList += "\\n";
-                }
-                formattedFlagList += flag.toString();
+            if (!formattedFlagList.equals("")) {
+                formattedFlagList += "\\n";
             }
+            formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
         }
 
         String unconfigurableFlags = "";
         for(FlagType flagType : FlagType.values()) {
             if(!contains(flagType)) {
-                unconfigurableFlags += "\\n" + (new Flag(flagType, town.flagsContainer.getValue(flagType))).toString(ColorUtils.colorValueConst);
+                Object value = town.flagsContainer.contains(flagType) ? town.flagsContainer.getValue(flagType) : flagType.defaultValue;
+                unconfigurableFlags += "\\n" + (new Flag(flagType, value).toString(ColorUtils.colorUnconfigurableFlag));
             }
         }
 
         formattedFlagList += unconfigurableFlags;
-
         return formattedFlagList;
     }
 

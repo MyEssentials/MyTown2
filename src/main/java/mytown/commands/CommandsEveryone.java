@@ -79,7 +79,7 @@ public class CommandsEveryone extends Commands {
         if (!town.hasSpawn())
             throw new MyTownCommandException("mytown.cmd.err.spawn.notexist", town.getName());
 
-        if(!town.hasPermission(res, FlagType.ENTER, false, town.getSpawn().getDim(), (int) town.getSpawn().getX(), (int) town.getSpawn().getY(), (int) town.getSpawn().getZ()))
+        if(!town.hasPermission(res, FlagType.ENTER, town.getSpawn().getDim(), (int) town.getSpawn().getX(), (int) town.getSpawn().getY(), (int) town.getSpawn().getZ()))
             throw new MyTownCommandException("mytown.cmd.err.spawn.protected", town.getName());
 
         if(res.getTeleportCooldown() > 0)
@@ -212,7 +212,7 @@ public class CommandsEveryone extends Commands {
 
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(0));
 
-            if (flag.setValueFromString(args.get(1))) {
+            if (flag.setValue(args.get(1))) {
                 ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));

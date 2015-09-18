@@ -21,8 +21,8 @@ import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
 import mytown.handlers.VisualsHandler;
-import mytown.protection.ProtectionUtils;
-import mytown.protection.Protections;
+import mytown.protection.ProtectionHandlers;
+import mytown.protection.ProtectionManager;
 import mytown.protection.eventhandlers.ExtraEventsHandler;
 import mytown.protection.json.ProtectionParser;
 import mytown.proxies.DatasourceProxy;
@@ -61,7 +61,6 @@ public class MyTown {
         config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
         ConfigProcessor.load(config, Config.class);
         LOCAL = new Localization(Constants.CONFIG_FOLDER, Config.localization, "/mytown/localization/", MyTown.class);
-        ProtectionParser.setFolderPath(ev.getModConfigurationDirectory() + "/MyTown/protections");
 
         registerHandlers();
 
@@ -107,7 +106,7 @@ public class MyTown {
     @EventHandler
     public void serverStopping(FMLServerStoppingEvent ev) {
         DatasourceProxy.getDatasource().deleteAllBlockOwners();
-        ProtectionUtils.saveBlockOwnersToDB();
+        ProtectionManager.saveBlockOwnersToDB();
         DatasourceProxy.stop();
     }
 
@@ -166,8 +165,8 @@ public class MyTown {
 
         FMLCommonHandler.instance().bus().register(VisualsHandler.instance);
 
-        FMLCommonHandler.instance().bus().register(Protections.instance);
-        MinecraftForge.EVENT_BUS.register(Protections.instance);
+        FMLCommonHandler.instance().bus().register(ProtectionHandlers.instance);
+        MinecraftForge.EVENT_BUS.register(ProtectionHandlers.instance);
 
         if(Config.useExtraEvents)
             MinecraftForge.EVENT_BUS.register(ExtraEventsHandler.getInstance());

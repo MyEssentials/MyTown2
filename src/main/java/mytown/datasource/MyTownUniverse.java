@@ -99,8 +99,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
         // Saving and adding all flags to the database
         for (FlagType type : FlagType.values()) {
-            if (type.canTownsModify()) {
-                getDatasource().saveFlag(new Flag(type, type.getDefaultValue()), town);
+            if (type.isTownPerm) {
+                getDatasource().saveFlag(new Flag(type, type.defaultValue), town);
             }
         }
 
@@ -182,8 +182,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
      * Creates and returns a new TownFlag or null if it couldn't be created
      */
     @SuppressWarnings("UnnecessaryLocalVariable")
-    public final Flag newFlag(FlagType type, Object value) {
-        Flag<Object> flag = new Flag<Object>(type, value);
+    public final Flag newFlag(FlagType type, boolean value) {
+        Flag flag = new Flag(type, value);
         //TODO: Fire event
         return flag;
     }

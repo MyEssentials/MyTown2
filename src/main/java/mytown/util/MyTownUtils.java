@@ -10,8 +10,6 @@ import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;

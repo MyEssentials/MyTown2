@@ -2,17 +2,16 @@ package mytown.datasource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import mytown.config.Config;
 import myessentials.config.ConfigProperty;
 import myessentials.teleport.Teleport;
 import mytown.entities.*;
-import mytown.entities.flag.Flag;
-import mytown.entities.flag.FlagType;
-import mytown.protection.ProtectionUtils;
+import mytown.entities.flag.*;
+import mytown.protection.ProtectionManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.sql.*;
@@ -35,6 +34,8 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     protected Properties dbProperties = new Properties();
     protected String dsn = "";
     protected Connection conn = null;
+
+    private final Gson gson = new GsonBuilder().create();
 
     public boolean initialize() {
         setup();
@@ -311,14 +312,11 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             while (rs.next()) {
                 String townName = rs.getString("townName");
                 String flagName = rs.getString("name");
+                String serializedValue = rs.getString("serializedValue");
 
-                Gson gson = new GsonBuilder().create();
+                FlagType flagType;
                 try {
-                    FlagType type = FlagType.valueOf(flagName);
-                    Flag flag = new Flag(type, gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
-
-                    Town town = getUniverse().towns.get(townName);
-                    town.flagsContainer.add(flag);
+                    flagType = FlagType.valueOf(flagName);
                 } catch (IllegalArgumentException ex) {
                     LOG.error("Flag {} does no longer exist... will be deleted shortly from the database.", flagName);
                     LOG.error(ExceptionUtils.getStackTrace(ex));
@@ -326,7 +324,26 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     removeFlag.setString(1, townName);
                     removeFlag.setString(2, flagName);
                     removeFlag.executeUpdate();
+                    continue;
                 }
+
+                Flag flag;
+                try {
+                    flag = new Flag(flagType, serializedValue);
+                }  catch (JsonSyntaxException ex) {
+                    LOG.error("Flag {} has an invalid value... reverting to default", flagName);
+                    LOG.error(ExceptionUtils.getStackTrace(ex));
+                    PreparedStatement updateFlag = prepare("UPDATE " + prefix + "TownFlags SET serializedValue=? WHERE townName=? AND name=?", false);
+                    updateFlag.setString(1, flagType.serializeValue(flagType.defaultValue));
+                    updateFlag.setString(2, townName);
+                    updateFlag.setString(3, flagName);
+                    updateFlag.executeUpdate();
+
+                    flag = new Flag(flagType, flagType.defaultValue);
+                }
+
+                Town town = getUniverse().towns.get(townName);
+                town.flagsContainer.add(flag);
             }
         } catch (SQLException e) {
             LOG.error(ExceptionUtils.getStackTrace(e));
@@ -345,27 +362,36 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
             while (rs.next()) {
                 int plotID = rs.getInt("plotID");
                 String flagName = rs.getString("name");
+                String serializedValue = rs.getString("serializedValue");
 
-                Gson gson = new GsonBuilder().create();
+                FlagType flagType;
                 try {
-                    FlagType type = FlagType.valueOf(flagName);
-                    Flag flag = new Flag(type, gson.fromJson(rs.getString("serializedValue"), FlagType.valueOf(flagName).getType()));
-
-                    if(type.isTownOnly()) {
-                        throw new IllegalArgumentException("FlagType " + type + " can only be used in towns.");
-                    }
-
-                    Plot plot = getUniverse().plots.get(plotID);
-                    plot.flagsContainer.add(flag);
-
+                    flagType = FlagType.valueOf(flagName);
                 } catch (IllegalArgumentException ex) {
-                    LOG.error("Flag {} does no longer exist. Deleting from database.", flagName);
+                    LOG.error("Flag {} does no longer exist... will be deleted shortly from the database.", flagName);
                     LOG.error(ExceptionUtils.getStackTrace(ex));
                     PreparedStatement removeFlag = prepare("DELETE FROM " + prefix + "PlotFlags WHERE plotID=? AND name=?", true);
                     removeFlag.setInt(1, plotID);
                     removeFlag.setString(2, flagName);
                     removeFlag.executeUpdate();
+                    continue;
                 }
+
+                Flag flag;
+                try {
+                    flag = new Flag(flagType, serializedValue);
+                }  catch (JsonSyntaxException ex) {
+                    LOG.error("Flag {} has an invalid value... reverting to default", flagName);
+                    LOG.error(ExceptionUtils.getStackTrace(ex));
+                    PreparedStatement updateFlag = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE plotID=? AND name=?", false);
+                    updateFlag.setString(1, flagType.serializeValue(flagType.defaultValue));
+                    updateFlag.setInt(2, plotID);
+                    updateFlag.setString(3, flagName);
+                    continue;
+                }
+
+                Plot plot = getUniverse().plots.get(plotID);
+                plot.flagsContainer.add(flag);
             }
         } catch (SQLException e) {
             LOG.error(ExceptionUtils.getStackTrace(e));
@@ -516,7 +542,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     LOG.error("Failed to find a TileEntity at position ({}, {}, {}| DIM: {})", x, y, z, dim);
                     continue;
                 }
-                ProtectionUtils.addTileEntity(te, res);
+                ProtectionManager.addTileEntity(te, res);
             }
         } catch (SQLException e) {
             LOG.error("Failed to load block owners.");
@@ -828,11 +854,11 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                     plot.setDbID(generatedKeys.getInt(1));
 
                 for (Flag flag : plot.getTown().flagsContainer) {
-                    if (!flag.getFlagType().isTownOnly())
-                        saveFlag(new Flag(flag.getFlagType(), flag.getValue()), plot);
+                    if(flag.flagType.isPlotPerm) {
+                        saveFlag(new Flag(flag.flagType, flag.value), plot);
+                    }
                 }
-
-                // Put the Plot in the Map
+                
                 MyTownUniverse.instance.addPlot(plot);
                 plot.getTown().plotsContainer.add(plot);
             }
@@ -871,29 +897,29 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Plot plot) {
-        LOG.debug("Saving Flag {} for Plot {}", flag.getFlagType().name(), plot.getKey());
+        LOG.debug("Saving Flag {} for Plot {}", flag.flagType.name, plot.getKey());
         try {
-            if (plot.flagsContainer.contains(flag.getFlagType())) {
+            if (plot.flagsContainer.contains(flag.flagType)) {
                 // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE plotID=? AND name=?", true);
-                updateStatement.setString(1, flag.serializeValue());
-                updateStatement.setInt(2, plot.getDbID());
-                updateStatement.setString(3, flag.getFlagType().toString());
-                updateStatement.executeUpdate();
+                PreparedStatement s = prepare("UPDATE " + prefix + "PlotFlags SET serializedValue=? WHERE plotID=? AND name=?", true);
+                s.setString(1, flag.flagType.serializeValue(flag.value));
+                s.setInt(2, plot.getDbID());
+                s.setString(3, flag.flagType.name);
+                s.executeUpdate();
 
 
             } else {
                 // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "PlotFlags(name, serializedValue, plotID) VALUES(?, ?, ?)", true);
-                insertStatement.setString(1, flag.getFlagType().toString());
-                insertStatement.setString(2, flag.serializeValue());
-                insertStatement.setInt(3, plot.getDbID());
-                insertStatement.executeUpdate();
+                PreparedStatement s = prepare("INSERT INTO " + prefix + "PlotFlags(name, serializedValue, plotID) VALUES(?, ?, ?)", true);
+                s.setString(1, flag.flagType.name);
+                s.setString(2, flag.flagType.serializeValue(flag.value));
+                s.setInt(3, plot.getDbID());
+                s.executeUpdate();
 
                 plot.flagsContainer.add(flag);
             }
         } catch (SQLException e) {
-            LOG.error("Failed to save Flag {}!", flag.getFlagType().toString());
+            LOG.error("Failed to save Flag {}!", flag.flagType.name);
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
@@ -902,28 +928,28 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
 
     @Override
     public boolean saveFlag(Flag flag, Town town) {
-        LOG.debug("Saving Flag {} for Town {}", flag.getFlagType().name(), town.getName());
+        LOG.debug("Saving Flag {} for Town {}", flag.flagType.name, town.getName());
         try {
-            if (town.flagsContainer.contains(flag.getFlagType())) {
+            if (town.flagsContainer.contains(flag.flagType)) {
                 // Update
                 PreparedStatement updateStatement = prepare("UPDATE " + prefix + "TownFlags SET serializedValue=? WHERE townName=? AND name=?", true);
-                updateStatement.setString(1, flag.serializeValue());
+                updateStatement.setString(1, flag.flagType.serializeValue(flag.value));
                 updateStatement.setString(2, town.getName());
-                updateStatement.setString(3, flag.getFlagType().toString());
+                updateStatement.setString(3, flag.flagType.name);
                 updateStatement.executeUpdate();
 
             } else {
                 // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "TownFlags(name,  serializedValue, townName) VALUES(?, ?, ?)", true);
-                insertStatement.setString(1, flag.getFlagType().toString());
-                insertStatement.setString(2, flag.serializeValue());
+                insertStatement.setString(1, flag.flagType.name);
+                insertStatement.setString(2, flag.flagType.serializeValue(flag.value));
                 insertStatement.setString(3, town.getName());
                 insertStatement.executeUpdate();
 
                 town.flagsContainer.add(flag);
             }
         } catch (SQLException e) {
-            LOG.error("Failed to save Flag {}!", flag.getFlagType().toString());
+            LOG.error("Failed to save Flag {}!", flag.flagType.name);
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
@@ -1435,13 +1461,13 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     public boolean deleteFlag(Flag flag, Town town) {
         try {
             PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "TownFlags WHERE name=? AND townName=?", true);
-            deleteFlagStatement.setString(1, flag.getFlagType().toString());
+            deleteFlagStatement.setString(1, flag.flagType.toString());
             deleteFlagStatement.setString(2, town.getName());
             deleteFlagStatement.execute();
 
-            town.flagsContainer.remove(flag.getFlagType());
+            town.flagsContainer.remove(flag.flagType);
         } catch (SQLException e) {
-            LOG.error("Failed to delete flag {}!", flag.getFlagType().toString());
+            LOG.error("Failed to delete flag {}!", flag.flagType.toString());
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
@@ -1452,13 +1478,13 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     public boolean deleteFlag(Flag flag, Plot plot) {
         try {
             PreparedStatement deleteFlagStatement = prepare("DELETE FROM " + prefix + "PlotFlags WHERE name=? AND plotID=?", true);
-            deleteFlagStatement.setString(1, flag.getFlagType().toString());
+            deleteFlagStatement.setString(1, flag.flagType.toString());
             deleteFlagStatement.setInt(2, plot.getDbID());
             deleteFlagStatement.execute();
 
-            plot.flagsContainer.remove(flag.getFlagType());
+            plot.flagsContainer.remove(flag.flagType);
         } catch (SQLException e) {
-            LOG.error("Failed to delete flag {}!", flag.getFlagType().toString());
+            LOG.error("Failed to delete flag {}!", flag.flagType.toString());
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
@@ -1516,41 +1542,20 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     @SuppressWarnings("unchecked")
     @Override
     protected boolean checkFlags() {
-        // Checking if flag is supposed to exist and it doesn't or otherwise.
         for (Town town : getUniverse().towns) {
             for (FlagType type : FlagType.values()) {
-                if (!type.canTownsModify() && town.flagsContainer.contains(type)) {
-                    deleteFlag(town.flagsContainer.get(type), town);
-                    LOG.info("Flag {} in town {} got deleted because of the settings.", type.toString().toLowerCase(), town.getName());
-                } else if (type.canTownsModify() && !town.flagsContainer.contains(type)) {
-                    saveFlag(new Flag(type, type.getDefaultValue()), town);
-                    LOG.info("Flag {} in town {} got created because of the settings.", type.toString().toLowerCase(), town.getName());
-                } else {
-                    if(!type.isValueAllowed(town.flagsContainer.getValue(type))) {
-                        town.flagsContainer.get(type).setValueFromString(type.getDefaultValue().toString());
-                        saveFlag(town.flagsContainer.get(type), town);
-                        LOG.info("Flag {} in town {} had invalid value and got changed to its default state.", type.toString().toLowerCase(), town.getName());
-                    }
+                if (type.isTownPerm && !town.flagsContainer.contains(type)) {
+                    saveFlag(new Flag(type, type.defaultValue), town);
+                    LOG.info("Flag {} in town {} got created because of the settings.", type.name.toLowerCase(), town.getName());
                 }
             }
         }
 
         for (Plot plot : getUniverse().plots) {
             for (FlagType type : FlagType.values()) {
-                if (!type.isTownOnly()) {
-                    if (!type.canTownsModify() && plot.flagsContainer.contains(type)) {
-                        deleteFlag(plot.flagsContainer.get(type), plot);
-                        LOG.info("Flag {} in a plot in town {} got deleted because of the settings.", type.toString().toLowerCase(), plot.getTown().getName());
-                    } else if (type.canTownsModify() && !plot.flagsContainer.contains(type)) {
-                        saveFlag(new Flag(type, type.getDefaultValue()), plot);
-                        LOG.info("Flag {} in a plot in town {} got created because of the settings.", type.toString().toLowerCase(), plot.getTown().getName());
-                    } else {
-                        if(!type.isValueAllowed(plot.flagsContainer.getValue(type))) {
-                            plot.flagsContainer.get(type).setValueFromString(type.getDefaultValue().toString());
-                            saveFlag(plot.flagsContainer.get(type), plot);
-                            LOG.info("Flag {} in a plot in town {} had invalid value and got changed to its default state.", type.toString().toLowerCase(), plot.getTown().getName());
-                        }
-                    }
+                if (type.isPlotPerm && !plot.flagsContainer.contains(type)) {
+                    saveFlag(new Flag(type, type.defaultValue), plot);
+                    LOG.info("Flag {} in plot {} of town {} got created because of the settings.", type.name.toLowerCase(), plot.getName(), plot.getTown().getName());
                 }
             }
         }

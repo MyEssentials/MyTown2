@@ -12,6 +12,7 @@ import mypermissions.command.CommandTree;
 import mypermissions.command.CommandTreeNode;
 import mytown.MyTown;
 import mytown.config.json.FlagsConfig;
+import mytown.config.json.WildPermsConfig;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -825,11 +826,11 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
 
-        if (flag.setValueFromString(args.get(2))) {
+        if (flag.setValue(args.get(2))) {
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.perm.set.success", args.get(1), args.get(2)));
-        } else
-            // Same here
+        } else {
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(2));
+        }
         getDatasource().saveFlag(flag, town);
         return CommandResponse.DONE;
     }
@@ -885,11 +886,12 @@ public class CommandsAdmin extends Commands {
         FlagType type = getFlagTypeFromName(args.get(0));
         Flag flag = getFlagFromType(Wild.instance.flagsContainer, type);
 
-        if (flag.setValueFromString(args.get(1))) {
+        if (flag.setValue(args.get(1))) {
             sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.wild.perm.set.success", args.get(0), args.get(1)));
-        } else
+        } else {
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
-        //Saving changes to file
+        }
+
         MyTown.instance.getWildConfig().write(Wild.instance.flagsContainer);
         return CommandResponse.DONE;
     }
@@ -1096,7 +1098,7 @@ public class CommandsAdmin extends Commands {
                 permission = "mytown.adm.cmd.plot.perm.set",
                 parentName = "mytown.adm.cmd.plot.perm",
                 syntax = "/townadmin plot perm set <town> <plot> <flag> <value>",
-                completionKeys = {"flagCompletion"},
+                completionKeys = {"townCompletion", "plotCompletion", "flagCompletion"},
                 console = true)
         public static CommandResponse plotPermSetCommand(ICommandSender sender, List<String> args) {
             if (args.size() < 4)
@@ -1106,10 +1108,11 @@ public class CommandsAdmin extends Commands {
             Plot plot = getPlotFromName(town, args.get(1));
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
 
-            if (flag.setValueFromString(args.get(3))) {
+            if (flag.setValue(args.get(3))) {
                 ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
-            } else
+            } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+            }
 
             getDatasource().saveFlag(flag, plot);
             return CommandResponse.DONE;
@@ -1120,7 +1123,7 @@ public class CommandsAdmin extends Commands {
                 permission = "mytown.adm.cmd.plot.perm.list",
                 parentName = "mytown.adm.cmd.plot.perm",
                 syntax = "/townadmin plot perm list <town> <plot>",
-                completionKeys = {"townCompletion"},
+                completionKeys = {"townCompletion", "plotCompletion"},
                 console = true)
         public static CommandResponse plotPermListCommand(ICommandSender sender, List<String> args) {
             if(args.size() < 2)

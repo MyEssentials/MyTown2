@@ -1,5 +1,6 @@
 package mytown.entities;
 
+
 import mytown.entities.flag.FlagType;
 
 /**

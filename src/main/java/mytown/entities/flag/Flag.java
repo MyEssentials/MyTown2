@@ -2,118 +2,59 @@ package mytown.entities.flag;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import mytown.MyTown;
 import myessentials.utils.ColorUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.lang.reflect.Type;
+public class Flag<T> implements Comparable<Flag>{
+    protected Gson gson = new GsonBuilder().create();
 
-/**
- * Another attempt at the dreaded town flags :P
- */
-public class Flag<T> implements Comparable<Flag<T>>{
+    public T value;
+    public boolean configurable = true;
+    public final FlagType<T> flagType;
 
-    private FlagType flagType;
-    private T value;
-
-
-    public Flag(FlagType flagType, T defaultValue) {
+    public Flag(FlagType<T> flagType, String serializedValue) {
         this.flagType = flagType;
-        this.value = defaultValue;
+        this.value = gson.fromJson(serializedValue, flagType.type);
     }
 
-    /**
-     * Serializes the value in a JSON String so that it can be saved to database safely
-     */
-    public String serializeValue() {
-        Gson gson = new GsonBuilder().create();
-        Type type = new TypeToken<T>() { }.getType();
-        return gson.toJson(value, type);
+    public Flag(FlagType<T> flagType, T value) {
+        this.flagType = flagType;
+        this.value = value;
     }
 
-    /**
-     * Gets the String equivalent of the value
-     */
-    public String valueToString() {
-        if (value instanceof String)
-            return (String) value;
-        else if (value instanceof Integer || value instanceof Boolean || value instanceof Float || value instanceof Character) {
-            return String.valueOf(value);
-        } else {
-            return value.toString();
-        }
-    }
-
-    /**
-     * Gets the value from a JSON String.
-     */
-    @SuppressWarnings("unchecked")
-    public T getValueFromString(String str) {
-        try {
-            if (value instanceof String) {
-                return (T) str;
-            } else if (value instanceof Integer) {
-                return (T) (Integer) Integer.parseInt(str); // double cast... lol
-            } else if (value instanceof Boolean) {
-                // Extra check since any String that is not "true" gets converted to false
-                if ("true".equals(str) || "false".equals(str)) {
-                    return (T) (Boolean) Boolean.parseBoolean(str);
-                } else {
-                    return null;
-                }
-            } else if (value instanceof Float) {
-                return (T) (Float) Float.parseFloat(str);
-            } else if (value instanceof Character) {
-                return (T) (Character) str.charAt(0);
-            } else {
-                return null;
-            }
-        } catch (ClassCastException e) {
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(e));
-            return null;
-        }
-    }
-
-    /**
-     * Sets the value of the flag from a String
-     */
-    public boolean setValueFromString(String str) {
-        T val = getValueFromString(str);
-        if (val == null)
-            return false;
-        if (flagType.isValueAllowed(val)) {
-            value = val;
+    public boolean setValue(String value) {
+        if(flagType.type == Boolean.class) {
+            this.value = (T)Boolean.valueOf(value);
+            return true;
+        } else if(flagType.type == String.class) {
+            this.value = (T)value;
+            return true;
+        } else if(flagType.type == Integer.class) {
+            this.value = (T)Integer.valueOf(value);
+            return true;
+        } else if(flagType.type == Float.class) {
+            this.value = (T)Float.valueOf(value);
             return true;
         }
         return false;
     }
 
 
-    public T getValue() {
-        return value;
-    }
-
-    public FlagType getFlagType() {
-        return flagType;
-    }
-
-    @Override
-    public int compareTo(Flag<T> other) {
-        return this.flagType.toString().compareTo(other.flagType.toString());
-    }
-
     @Override
     public String toString() {
-        return toString(ColorUtils.colorValueVar);
+        return toString(ColorUtils.colorConfigurableFlag);
     }
 
-    public String toString(String valueColor) {
-
-        String flagName = flagType.toString().toLowerCase();
-        String value = valueToString();
+    public String toString(String nameColor) {
         String description = flagType.getLocalizedDescription();
+        String valueColor = ColorUtils.colorValueRegular;
+        if(value instanceof Boolean) {
+            valueColor = (Boolean)value ? ColorUtils.colorValueRegular : ColorUtils.colorValueFalse;
+        }
+        return String.format(nameColor + "%s" + ColorUtils.colorComma + "[" + valueColor + "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", flagType.name.toLowerCase(), value.toString(), description);
+    }
 
-        return String.format(ColorUtils.colorFlag + "%s" + ColorUtils.colorComma + "[" + valueColor+ "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", flagName, value, description);
+    @Override
+    public int compareTo(Flag other) {
+        return flagType.compareTo(other.flagType);
     }
 }

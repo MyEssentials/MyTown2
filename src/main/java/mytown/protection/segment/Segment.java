@@ -1,127 +1,352 @@
 package mytown.protection.segment;
 
-import myessentials.utils.StringUtils;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.*;
+import com.google.gson.internal.LazilyParsedNumber;
+import myessentials.entities.Volume;
+import mytown.MyTown;
+import mytown.api.container.GettersContainer;
+import mytown.datasource.MyTownUniverse;
+import mytown.entities.*;
 import mytown.entities.flag.FlagType;
-import mytown.protection.segment.getter.Getters;
+import mytown.protection.ProtectionManager;
+import mytown.protection.segment.enums.BlockType;
+import mytown.protection.segment.enums.EntityType;
+import mytown.protection.segment.enums.ItemType;
+import mytown.protection.segment.enums.Priority;
+import mytown.protection.segment.getter.Getter;
 import mytown.util.exceptions.ConditionException;
-import net.minecraft.item.ItemStack;
+import mytown.util.exceptions.GetterException;
+import mytown.util.exceptions.ProtectionParseException;
+import net.minecraft.entity.player.EntityPlayer;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * A part of the protection that protects against a specific thing.
  */
-public class Segment {
-    protected final Class<?> theClass;
-    protected final FlagType flag;
-    protected final Object denialValue;
-    protected final Getters getters;
-    protected final String[] conditionString;
+public abstract class Segment {
+    protected boolean isDisabled = false;
+    protected Priority priority = Priority.NORMAL;
+    protected Class<?> checkClass;
+    protected Condition condition;
+    protected final List<FlagType<Boolean>> flags = new ArrayList<FlagType<Boolean>>();
+    protected final GettersContainer getters = new GettersContainer();
 
-    public Segment(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString) {
-        this.theClass = theClass;
-        this.getters = getters;
-        this.flag = flag;
-        this.denialValue = denialValue;
-        if(conditionString != null)
-            this.conditionString = conditionString.split(" ");
-        else
-            this.conditionString = null;
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    public boolean shouldCheckType(Class<?> clazz) {
+        return checkClass.isAssignableFrom(clazz);
     }
 
     public Class<?> getCheckClass() {
-        return theClass;
+        return this.checkClass;
     }
 
-    public FlagType getFlag() {
-        return flag;
+    public Priority getPriority() {
+        return this.priority;
     }
 
-    public Getters getGetters() {
-        return getters;
-    }
-
-    public Object getDenialValue() {
-        return denialValue;
-    }
-
-    public String[] getConditionString() {
-        return conditionString;
-    }
-
-    public boolean checkCondition(Object object) {
-
-        if(conditionString == null)
-            return true;
-
-        //MyTown.instance.log.info("Checking condition: " + StringUtils.join(conditionString, " "));
-        boolean current;
-
-        Object instance;
-        instance = object;
-
-        for(int i = 0; i < conditionString.length; i += 4) {
-
-            // Get the boolean value of each part of the condition.
-            if(StringUtils.tryParseBoolean(conditionString[i + 2])) {
-                boolean value = (Boolean) getters.getValue(conditionString[i], Boolean.class, instance, object);
-                if ("==".equals(conditionString[i + 1])) {
-                    current = value == Boolean.parseBoolean(conditionString[i + 2]);
-                } else if("!=".equals(conditionString[i + 1])) {
-                    current = value != Boolean.parseBoolean(conditionString[i + 2]);
-                } else {
-                    throw new ConditionException("[Segment: " + this.theClass.getName() + "] The element number " + (i / 4) + 1 + " has an invalid condition!");
+    public Resident getOwner(Object object) {
+        try {
+            EntityPlayer player = getters.contains("owner") ? (EntityPlayer) getters.get("owner").invoke(EntityPlayer.class, object, object) : null;
+            if(player == null)
+                return null;
+            return MyTownUniverse.instance.getOrMakeResident(player);
+        } catch (GetterException ex) {
+            try {
+                String username = getters.contains("owner") ? (String) getters.get("owner").invoke(String.class, object, object) : null;
+                if (username == null)
+                    return null;
+                return MyTownUniverse.instance.getOrMakeResident(username);
+            } catch (GetterException ex2) {
+                try {
+                    UUID uuid = getters.contains("owner") ? (UUID) getters.get("owner").invoke(UUID.class, object, object) : null;
+                    if (uuid == null)
+                        return null;
+                    return MyTownUniverse.instance.getOrMakeResident(uuid);
+                } catch (GetterException ex3) {
+                    return null;
                 }
-            } else if(StringUtils.tryParseInt(conditionString[i + 2])) {
-                int value = (Integer) getters.getValue(conditionString[i], Integer.class, instance, object);
-                if("==".equals(conditionString[i + 1])) {
-                    current = value == Integer.parseInt(conditionString[i + 2]);
-                } else if("!=".equals(conditionString[i + 1])) {
-                    current = value != Integer.parseInt(conditionString[i + 2]);
-                } else if("<".equals(conditionString[i + 1])) {
-                    current = value < Integer.parseInt(conditionString[i + 2]);
-                } else if(">".equals(conditionString[i + 1])) {
-                    current = value > Integer.parseInt(conditionString[i + 2]);
-                } else {
-                    throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + (i / 4) + 1 + " has an invalid condition!");
-                }
-            } else if(StringUtils.tryParseFloat(conditionString[i + 2])) {
-                float value = (Integer) getters.getValue(conditionString[i], Integer.class, instance, object);
-                if("==".equals(conditionString[i + 1])) {
-                    current = value == Float.parseFloat(conditionString[i + 2]);
-                } else if("!=".equals(conditionString[i + 1])) {
-                    current = value != Float.parseFloat(conditionString[i + 2]);
-                } else if("<".equals(conditionString[i + 1])) {
-                    current = value < Float.parseFloat(conditionString[i + 2]);
-                } else if(">".equals(conditionString[i + 1])) {
-                    current = value > Float.parseFloat(conditionString[i + 2]);
-                } else {
-                    throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
-                }
-            } else if(conditionString[i + 2].startsWith("'") && conditionString[i+2].endsWith("'")){
-                String value = (String) getters.getValue(conditionString[i], String.class, instance, object);
-                if("==".equals(conditionString[i + 1])) {
-                    current = value.equals(conditionString[i+2].substring(1, conditionString[i+2].length() - 1));
-                } else if("!=".equals(conditionString[i + 1])) {
-                    current = !value.equals(conditionString[i+2].substring(1, conditionString[i+2].length() - 1));
-                } else {
-                    throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element number " + ((i/4)+1) + " has an invalid condition!");
-                }
-            } else {
-                throw new ConditionException("[Segment: "+ this.theClass.getName() +"] The element with number " + ((i/4)+1) + " has an invalid type to be checked against!");
+            }
+        }
+    }
+
+    protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
+        for(FlagType<Boolean> flagType : flags) {
+            if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
+        for (FlagType<Boolean> flagType : flags) {
+            if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected boolean shouldCheck(Object object) {
+        try {
+            if (condition != null && !condition.execute(object, getters)) {
+                return false;
+            }
+        } catch (GetterException ex) {
+            MyTown.instance.LOG.error("Encountered error when checking condition for {}", checkClass.getSimpleName());
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+            disable();
+        } catch (ConditionException ex) {
+            MyTown.instance.LOG.error("Encountered error when checking condition for {}", checkClass.getSimpleName());
+            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
+            disable();
+        }
+        return true;
+    }
+
+    protected int getRange(Object object) {
+        try {
+            return getters.contains("range") ? ((LazilyParsedNumber) getters.get("range").invoke(LazilyParsedNumber.class, object, object)).intValue() : 0;
+        } catch (GetterException ex) {
+            return 0;
+        }
+    }
+
+    protected void disable() {
+        MyTown.instance.LOG.error("Disabling segment for {}", checkClass.getName());
+        MyTown.instance.LOG.info("Reload protections to enable it again.");
+        this.isDisabled = true;
+    }
+
+    public static class Serializer implements JsonSerializer<Segment>, JsonDeserializer<Segment> {
+        @Override
+        public JsonElement serialize(Segment segment, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject json = new JsonObject();
+            json.addProperty("class", segment.checkClass.getName());
+
+            if(segment instanceof SegmentBlock) {
+                json.addProperty("type", "block");
+                serializeBlock((SegmentBlock) segment, json, context);
+            } else if(segment instanceof SegmentEntity) {
+                json.addProperty("type", "entity");
+                serializeEntity((SegmentEntity) segment, json, context);
+            } else if(segment instanceof SegmentItem) {
+                json.addProperty("type", "item");
+                serializeItem((SegmentItem) segment, json, context);
+            } else if(segment instanceof SegmentTileEntity) {
+                json.addProperty("type", "tileEntity");
+                serializeTileEntity((SegmentTileEntity) segment, json, context);
             }
 
-            if(conditionString.length <= i + 3 || current && "OR".equals(conditionString[i + 3]) || !current && "AND".equals(conditionString[i + 3]))
-                return current;
+            json.add("flags", serializeAsElementOrArray(segment.flags, context));
 
-            if(!"OR".equals(conditionString[i + 3]) && !"AND".equals(conditionString[i + 3]))
-                throw new ConditionException("[Segment: "+ this.theClass.getName()  +"] Invalid condition element: " + conditionString[i + 3]);
+            if(segment.condition != null) {
+                json.addProperty("condition", segment.condition.toString());
+            }
+            if(segment.priority != Priority.NORMAL) {
+                json.addProperty("priority", segment.priority.toString());
+            }
+            for(Getter getter : segment.getters) {
+                json.add(getter.getName(), context.serialize(getter, Getter.class));
+            }
+
+            return json;
         }
-        return false;
-    }
 
-    /**
-     * Gets the range of the area of effect of this thing, or 0 if none is specified.
-     */
-    public int getRange(Object object) {
-        return getters.hasValue("range") ? (Integer) getters.getValue("range", Integer.class, object, object) : 0;
+        private <T> JsonElement serializeAsElementOrArray(List<T> items, JsonSerializationContext context) {
+            if(items.isEmpty()) {
+                return null;
+            }
+
+            if(items.size() == 1) {
+                return context.serialize(items.get(0));
+            } else {
+                return context.serialize(items);
+            }
+        }
+
+        private void serializeBlock(SegmentBlock segment, JsonObject json, JsonSerializationContext context) {
+            json.add("actions", serializeAsElementOrArray(segment.types, context));
+            json.addProperty("meta", segment.getMeta());
+            if(segment.clientUpdate != null) {
+                JsonObject jsonUpdate = new JsonObject();
+                jsonUpdate.add("coords", context.serialize(segment.clientUpdate.relativeCoords));
+                json.add("clientUpdate", jsonUpdate);
+            }
+        }
+
+        private void serializeEntity(SegmentEntity segment, JsonObject json, JsonSerializationContext context) {
+            json.add("actions", serializeAsElementOrArray(segment.types, context));
+        }
+
+        private void serializeItem(SegmentItem segment, JsonObject json, JsonSerializationContext context) {
+            json.add("actions", serializeAsElementOrArray(segment.types, context));
+            json.addProperty("isAdjacent", segment.isAdjacent);
+            if(segment.clientUpdate != null) {
+                JsonObject jsonUpdate = new JsonObject();
+                jsonUpdate.add("coords", context.serialize(segment.clientUpdate.relativeCoords));
+                jsonUpdate.addProperty("directional", segment.directionalClientUpdate);
+                json.add("clientUpdate", jsonUpdate);
+            }
+        }
+
+        private void serializeTileEntity(SegmentTileEntity segment, JsonObject json, JsonSerializationContext context) {
+            json.addProperty("retainsOwner", segment.retainsOwner);
+        }
+
+        @Override
+        public Segment deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            if(!json.getAsJsonObject().has("class") || !json.getAsJsonObject().has("type") || !json.getAsJsonObject().has("flags")) {
+                throw new ProtectionParseException("One of the segments is invalid");
+            }
+            JsonObject jsonObject = json.getAsJsonObject();
+
+            String type = jsonObject.get("type").getAsString();
+            jsonObject.remove("type");
+
+            Segment segment = null;
+            if("block".equals(type)) {
+                segment = deserializeBlock(jsonObject, context);
+            } else if("entity".equals(type)) {
+                segment = deserializeEntity(jsonObject, context);
+            } else if("item".equals(type)) {
+                segment = deserializeItem(jsonObject, context);
+            } else if("tileEntity".equals(type)) {
+                segment = deserializeTileEntity(jsonObject, context);
+            }
+
+            if(segment == null) {
+                throw new ProtectionParseException("Identifier type is invalid");
+            }
+
+            try {
+                segment.checkClass = Class.forName(jsonObject.get("class").getAsString());
+            } catch (ClassNotFoundException ex) {
+                throw new ProtectionParseException("Class identifier is invalid");
+            }
+            jsonObject.remove("class");
+
+            segment.flags.addAll(deserializeAsArray(jsonObject.get("flags"), context, new TypeToken<FlagType<Boolean>>() {}, new TypeToken<List<FlagType<Boolean>>>() {}.getType()));
+            jsonObject.remove("flags");
+
+            if(jsonObject.has("condition")) {
+                segment.condition = new Condition(jsonObject.get("condition").getAsString());
+                jsonObject.remove("condition");
+            }
+
+            if(jsonObject.has("priority")) {
+                segment.priority = Priority.valueOf(jsonObject.get("priority").getAsString());
+                jsonObject.remove("priority");
+            }
+
+            for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                Getter getter = context.deserialize(entry.getValue(), Getter.class);
+                getter.setName(entry.getKey());
+                segment.getters.add(getter);
+            }
+
+            return segment;
+        }
+
+        private <T> List<T> deserializeAsArray(JsonElement json, JsonDeserializationContext context, TypeToken<T> typeToken, Type listOfT) {
+            if(json.isJsonPrimitive()) {
+                List<T> list = new ArrayList<T>();
+                list.add((T) context.deserialize(json, typeToken.getType()));
+                return list;
+            } else {
+                return context.deserialize(json, listOfT);
+            }
+        }
+
+        private SegmentBlock deserializeBlock(JsonObject json, JsonDeserializationContext context) {
+            if(!json.has("actions")) {
+                throw new ProtectionParseException("Missing actions identifier");
+            }
+            SegmentBlock segment = new SegmentBlock();
+            segment.types.addAll(deserializeAsArray(json.get("actions"), context, new TypeToken<BlockType>() {}, new TypeToken<List<BlockType>>() {}.getType()));
+            json.remove("actions");
+
+            if(json.has("meta")) {
+                segment.meta = json.get("meta").getAsInt();
+                json.remove("meta");
+            }
+
+            if(json.has("clientUpdate")) {
+                segment.clientUpdate = context.deserialize(json.get("clientUpdate").getAsJsonObject().get("coords"), Volume.class);
+                json.remove("clientUpdate");
+            }
+
+            return segment;
+        }
+
+        private SegmentEntity deserializeEntity(JsonObject json, JsonDeserializationContext context) {
+            if(!json.has("actions")) {
+                throw new ProtectionParseException("Missing actions identifier");
+            }
+
+            SegmentEntity segment = new SegmentEntity();
+
+            segment.types.addAll(deserializeAsArray(json.get("actions"), context, new TypeToken<EntityType>() {}, new TypeToken<List<EntityType>>() {}.getType()));
+            json.remove("actions");
+
+            return segment;
+        }
+
+        private SegmentItem deserializeItem(JsonObject json, JsonDeserializationContext context) {
+            if(!json.has("actions")) {
+                throw new ProtectionParseException("Missing actions identifier");
+            }
+
+            SegmentItem segment = new SegmentItem();
+
+            segment.types.addAll(deserializeAsArray(json.get("actions"), context, new TypeToken<ItemType>() {}, new TypeToken<List<ItemType>>() {}.getType()));
+            json.remove("actions");
+
+            if(json.has("isAdjacent")) {
+                segment.isAdjacent = json.get("isAdjacent").getAsBoolean();
+                json.remove("isAdjacent");
+            }
+
+            if(json.has("clientUpdate")) {
+                JsonObject jsonClientUpdate = json.get("clientUpdate").getAsJsonObject();
+                segment.clientUpdate = context.deserialize(jsonClientUpdate.get("coords"), Volume.class);
+                if(jsonClientUpdate.has("directional")) {
+                    segment.directionalClientUpdate = jsonClientUpdate.get("directional").getAsBoolean();
+                }
+                json.remove("clientUpdate");
+            }
+
+            return segment;
+        }
+
+        private SegmentTileEntity deserializeTileEntity(JsonObject json, JsonDeserializationContext context) {
+            SegmentTileEntity segment = new SegmentTileEntity();
+
+            segment.retainsOwner = json.getAsJsonObject().get("retainsOwner").getAsBoolean();
+            json.remove("retainsOwner");
+
+            return segment;
+        }
+
+        private Object getObjectFromPrimitive(JsonPrimitive json) {
+            if(json.isBoolean()) {
+                return json.getAsBoolean();
+            } else if(json.isString()) {
+                return json.getAsString();
+            } else if(json.isNumber()) {
+                return json.getAsNumber();
+            }
+            return null;
+        }
     }
 }

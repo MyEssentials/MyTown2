@@ -1,9 +1,9 @@
 package mytown.entities;
 
 import myessentials.entities.Volume;
-import myessentials.utils.PlayerUtils;
+import mypermissions.proxies.PermissionProxy;
 import mytown.api.container.FlagsContainer;
-import mytown.api.container.GenericContainer;
+import mytown.api.container.Container;
 import mytown.api.container.ResidentsContainer;
 import mytown.entities.blocks.SellSign;
 import mytown.entities.flag.FlagType;
@@ -19,7 +19,7 @@ public class Plot {
     public final FlagsContainer flagsContainer = new FlagsContainer();
     public final ResidentsContainer membersContainer = new ResidentsContainer();
     public final ResidentsContainer ownersContainer = new ResidentsContainer();
-    public final GenericContainer<SellSign> signContainer = new GenericContainer<SellSign>();
+    public final Container<SellSign> signContainer = new Container<SellSign>();
 
     public Plot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         if (x1 > x2) {
@@ -57,8 +57,23 @@ public class Plot {
         return dim == this.dim && x1 <= x && x <= x2 && y1 <= y && y <= y2 && z1 <= z && z <= z2;
     }
 
-    public boolean hasPermission(Resident res, FlagType flagType, Object denialValue) {
-        return !flagsContainer.getValue(flagType).equals(denialValue) || membersContainer.contains(res) || ownersContainer.contains(res) || PlayerUtils.isOp(res.getPlayer());
+    public boolean hasPermission(Resident res, FlagType<Boolean> flagType) {
+        if(flagsContainer.getValue(flagType)) {
+            return true;
+        }
+
+        if(res == null) {
+            return false;
+        }
+
+        if(!(membersContainer.contains(res) || ownersContainer.contains(res))) {
+            boolean permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
+            if(!permissionBypass) {
+                res.protectionDenial(flagType, ownersContainer.toString());
+                return false;
+            }
+        }
+        return true;
     }
 
     public void checkForSellSign() {
@@ -80,6 +95,10 @@ public class Plot {
     @Override
     public String toString() {
         return String.format("Plot: {Name: %s, Dim: %s, Start: [%s, %s, %s], End: [%s, %s, %s]}", name, dim, x1, y1, z1, x2, y2, z2);
+    }
+
+    public Volume toVolume() {
+        return new Volume(x1, y1, z1, x2, y2, z2);
     }
 
     public int getDim() {
@@ -108,27 +127,6 @@ public class Plot {
 
     public int getEndZ() {
         return z2;
-    }
-
-	public int getIntersectingArea(Volume rangeBox) {
-		// Check if ranges max is greater than plots min and ranges min is less than plots max
-        if (rangeBox.getMaxX() >= x1 && rangeBox.getMinX() <= x2 &&
-            rangeBox.getMaxY() >= y1 && rangeBox.getMinY() <= y2 &&
-            rangeBox.getMaxZ() >= z1 && rangeBox.getMinZ() <= z2) {
-
-    		int minX, maxX, minY, maxY, minZ, maxZ;
-
-        	minX = (x1 < rangeBox.getMinX()) ? rangeBox.getMinX() : x1;
-        	minY = (y1 < rangeBox.getMinY()) ? rangeBox.getMinY() : y1;
-        	minZ = (z1 < rangeBox.getMinZ()) ? rangeBox.getMinZ() : z1;
-        	maxX = (x2 > rangeBox.getMaxX()) ? rangeBox.getMaxX() : x2;
-        	maxY = (y2 > rangeBox.getMaxY()) ? rangeBox.getMaxY() : y2;
-        	maxZ = (z2 > rangeBox.getMaxZ()) ? rangeBox.getMaxZ() : z2;
-
-    		return (maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1);
-    	}
-
-        return 0;
     }
 
     public int getStartChunkX() {

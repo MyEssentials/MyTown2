@@ -2,7 +2,7 @@ package mytown.thread;
 
 import myessentials.entities.BlockPos;
 import mytown.entities.Resident;
-import mytown.protection.ProtectionUtils;
+import mytown.protection.ProtectionManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -30,11 +30,11 @@ public class ThreadPlacementCheck extends Thread {
         TileEntity te = null;
         while(te == null) {
             if(System.currentTimeMillis() - startTime >= TIMEOUT_IN_MS) {
-                ProtectionUtils.placementThreadTimeout();
+                ProtectionManager.placementThreadTimeout();
                 return;
             }
             te = world.getTileEntity(position.getX(), position.getY(), position.getZ());
         }
-        ProtectionUtils.addTileEntity(te, res);
+        ProtectionManager.addTileEntity(te, res);
     }
 }

@@ -1,38 +1,48 @@
 package mytown.protection.segment;
 
+import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
+import mytown.api.container.GettersContainer;
+import mytown.entities.Resident;
 import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.BlockType;
-import mytown.protection.segment.getter.Getters;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Offers protection for blocks
  */
 public class SegmentBlock extends Segment {
-    private final int meta;
-    private final BlockType type;
-    private Volume clientUpdateCoords;
+    protected int meta = -1;
+    protected ClientBlockUpdate clientUpdate;
+    protected List<BlockType> types = new ArrayList<BlockType>();
 
-    public SegmentBlock(Class<?> theClass, Getters getters, FlagType flag, Object denialValue, String conditionString, BlockType blockType, int meta, Volume clientUpdateCoords) {
-        super(theClass, getters, flag, denialValue, conditionString);
-        this.meta = meta;
-        this.type = blockType;
-        this.clientUpdateCoords = clientUpdateCoords;
-    }
+    public boolean shouldInteract(Resident res, BlockPos bp, PlayerInteractEvent.Action action) {
+        if(meta != -1 && meta != MinecraftServer.getServer().worldServerForDimension(bp.getDim()).getBlockMetadata(bp.getX(), bp.getY(), bp.getZ())) {
+            return true;
+        }
 
-    public boolean hasClientUpdate() {
-        return clientUpdateCoords != null;
-    }
+        if((action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && !types.contains(BlockType.LEFT_CLICK)
+                || action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && !types.contains(BlockType.RIGHT_CLICK))
+                && !types.contains(BlockType.ANY_CLICK)) {
+            return true;
+        }
 
-    public Volume getClientUpdateCoords() {
-        return clientUpdateCoords;
+        if (!hasPermissionAtLocation(res, bp.getDim(), bp.getX(), bp.getY(), bp.getZ())) {
+            if(clientUpdate != null) {
+                clientUpdate.send(bp, (EntityPlayerMP) res.getPlayer());
+            }
+            return false;
+        }
+
+        return true;
     }
 
     public int getMeta() {
         return meta;
-    }
-
-    public BlockType getType() {
-        return type;
     }
 }

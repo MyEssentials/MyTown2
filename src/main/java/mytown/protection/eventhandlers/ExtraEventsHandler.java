@@ -6,7 +6,6 @@ import mytown.datasource.MyTownUniverse;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.DatasourceProxy;
 import myessentials.entities.ChunkPos;
 import net.minecraftforge.event.world.ExplosionEvent;
 
