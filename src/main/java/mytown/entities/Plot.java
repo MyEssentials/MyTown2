@@ -1,6 +1,8 @@
 package mytown.entities;
 
 import myessentials.entities.Volume;
+import myessentials.entities.sign.Sign;
+import myessentials.entities.sign.SignManager;
 import mypermissions.proxies.PermissionProxy;
 import mytown.api.container.FlagsContainer;
 import myessentials.entities.Container;
@@ -8,7 +10,11 @@ import mytown.api.container.ResidentsContainer;
 import mytown.entities.blocks.SellSign;
 import mytown.entities.flag.FlagType;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.world.World;
+
+import java.util.UUID;
 
 public class Plot {
     private int dbID;
@@ -19,7 +25,6 @@ public class Plot {
     public final FlagsContainer flagsContainer = new FlagsContainer();
     public final ResidentsContainer membersContainer = new ResidentsContainer();
     public final ResidentsContainer ownersContainer = new ResidentsContainer();
-    public final Container<SellSign> signContainer = new Container<SellSign>();
 
     public Plot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         if (x1 > x2) {
@@ -78,14 +83,12 @@ public class Plot {
 
     public void checkForSellSign() {
         World world = MinecraftServer.getServer().worldServerForDimension(dim);
-        SellSign sign;
         for(int i = x1; i <= x2; i++) {
             for(int j = y1; j <= y2; j++) {
                 for(int k = z1; k <= z2; k++) {
-                    sign = SellSign.findSignAndCreate(world, i, j, k);
-                    if(sign != null) {
-                        signContainer.set(sign);
-                        return;
+                    TileEntity te = world.getTileEntity(i, j, k);
+                    if(te != null && te instanceof TileEntitySign && ((TileEntitySign) te).signText[0].startsWith(Sign.IDENTIFIER)) {
+                        SignManager.instance.signs.add(new SellSign((TileEntitySign) te));
                     }
                 }
             }

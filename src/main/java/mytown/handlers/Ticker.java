@@ -12,7 +12,7 @@ import mytown.datasource.MyTownUniverse;
 import mytown.entities.AdminTown;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import mytown.entities.blocks.Sign;
+import myessentials.entities.sign.Sign;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.world.BlockEvent;
@@ -75,19 +75,12 @@ public class Ticker {
         if (res != null) {
             res.setPlayer(ev.player);
         }
-
     }
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {
         if (VisualsHandler.instance.isBlockMarked(ev.x, ev.y, ev.z, ev.world.provider.dimensionId, (EntityPlayerMP) ev.getPlayer())) {
             // Cancel event if it's a border that has been broken
-            ev.setCanceled(true);
-        }
-        Sign sign = Sign.getSign(ev.world, ev.x, ev.y, ev.z);
-        if(sign != null) {
-            Resident resisdent = MyTownUniverse.instance.getOrMakeResident(ev.getPlayer());
-            sign.onShiftRightClick(resisdent);
             ev.setCanceled(true);
         }
     }

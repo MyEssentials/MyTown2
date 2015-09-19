@@ -1,39 +1,50 @@
 package mytown.entities.blocks;
 
+import myessentials.Localization;
+import myessentials.entities.BlockPos;
+import myessentials.entities.sign.Sign;
 import mytown.MyTown;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.proxies.DatasourceProxy;
 import mytown.proxies.EconomyProxy;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.World;
 
 public class SellSign extends Sign {
 
-    private static final String IDENTIFIER = EnumChatFormatting.DARK_BLUE + "Plot Sale";
+    private static final String TITLE = "Plot Sale";
     private static final String DESCRIPTION_OWNER = EnumChatFormatting.BLUE + "by ";
     private static final String DESCRIPTION_PRICE = EnumChatFormatting.GOLD.toString();
     private static final String DESCRIPTION_RESTRICTED = EnumChatFormatting.RED.toString() + "RESTRICTED";
 
     private int price;
     private boolean restricted;
+    private Resident owner;
     private Plot plot;
 
-    public SellSign(int dim, int x, int y, int z, int face, Resident owner, int price, boolean restricted) {
-        super(dim, x, y, z, owner, IDENTIFIER);
+    public SellSign(BlockPos bp, int face, Resident owner, int price, boolean restricted) {
+        this.bp = bp;
         this.price = price;
         this.restricted = restricted;
-        this.plot = MyTownUniverse.instance.plots.get(dim, x, y, z);
-        if(!exists()) {
-            createSignBlock(face, (DESCRIPTION_OWNER + owner.getPlayerName()).substring(0, Math.min(15, (DESCRIPTION_OWNER + owner.getPlayerName()).length())), DESCRIPTION_PRICE + " " + price, restricted ? DESCRIPTION_RESTRICTED : "");
-        }
+        this.plot = MyTownUniverse.instance.plots.get(bp.getDim(), bp.getX(), bp.getY(), bp.getZ());
+        this.owner = owner;
+        createSignBlock(owner.getPlayer(), bp, face);
+    }
+
+    public SellSign(TileEntitySign te) {
+        this.bp = new BlockPos(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().provider.dimensionId);
+        this.owner = getOwnerFromLore();
+        this.price = getPriceFromLore();
+        this.restricted = getRestrictedBooleanFromLore();
+        this.plot = MyTownUniverse.instance.plots.get(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord);
     }
 
     @Override
-    public void onRightClick(Resident resident) {
+    public void onRightClick(EntityPlayer player) {
+        Resident resident = MyTownUniverse.instance.getOrMakeResident(player);
         if(restricted && !plot.getTown().residentsMap.containsKey(resident)) {
             resident.sendMessage(getLocal().getLocalization("mytown.cmd.err.notInTown", plot.getTown().getName()));
             return;
@@ -72,43 +83,37 @@ public class SellSign extends Sign {
     }
 
     @Override
-    public void onShiftRightClick(Resident resident) {
-        if(resident.equals(owner)) {
+    protected String[] getText() {
+        return new String[] {
+                TITLE,
+                DESCRIPTION_OWNER + owner.getPlayerName(),
+                DESCRIPTION_PRICE + price,
+                restricted ? DESCRIPTION_RESTRICTED : ""
+        };
+    }
+
+    @Override
+    public void onShiftRightClick(EntityPlayer player) {
+        if(player.getPersistentID().equals(owner.getUUID())) {
             deleteSignBlock();
         }
     }
 
-    @Override
-    public void deleteSignBlock() {
-        super.deleteSignBlock();
-        plot.signContainer.remove();
+    public Localization getLocal() {
+        return MyTown.instance.LOCAL;
     }
 
-    public static SellSign findSignAndCreate(World world, int x, int y, int z) {
-        TileEntity te = world.getTileEntity(x, y, z);
-        if(te == null || !(te instanceof TileEntitySign)) {
-            return null;
-        }
-        TileEntitySign teSign = (TileEntitySign) te;
-        if(teSign.signText[0].equals(IDENTIFIER)) {
-            return new SellSign(world.provider.dimensionId, x, y, z, 0, getOwnerFromLore(teSign.signText[1]), getPriceFromLore(teSign.signText[2]), getRestrictedBooleanFromLore(teSign.signText[3]));
-        }
-        return null;
-    }
-
-    public static Resident getOwnerFromLore(String lore) {
-        String username = lore.substring(DESCRIPTION_OWNER.length());
-        MyTown.instance.LOG.info("Got: " + username);
+    public Resident getOwnerFromLore() {
+        String username = getTileEntity().signText[1].substring(DESCRIPTION_OWNER.length());
         return MyTownUniverse.instance.getOrMakeResident(username);
     }
 
-    public static int getPriceFromLore(String lore) {
-        String priceString = lore.substring(DESCRIPTION_PRICE.length() + 1);
-        MyTown.instance.LOG.info("Got: " + priceString);
+    public int getPriceFromLore() {
+        String priceString = getTileEntity().signText[2].substring(DESCRIPTION_PRICE.length());
         return Integer.parseInt(priceString);
     }
 
-    public static boolean getRestrictedBooleanFromLore(String lore) {
-        return lore.equals(DESCRIPTION_RESTRICTED);
+    public boolean getRestrictedBooleanFromLore() {
+        return getTileEntity().signText[3].equals(DESCRIPTION_RESTRICTED);
     }
 }
