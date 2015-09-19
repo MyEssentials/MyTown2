@@ -5,16 +5,13 @@ import myessentials.entities.sign.Sign;
 import myessentials.entities.sign.SignManager;
 import mypermissions.proxies.PermissionProxy;
 import mytown.api.container.FlagsContainer;
-import myessentials.entities.Container;
 import mytown.api.container.ResidentsContainer;
-import mytown.entities.blocks.SellSign;
+import mytown.entities.signs.SellSign;
 import mytown.entities.flag.FlagType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.world.World;
-
-import java.util.UUID;
 
 public class Plot {
     private int dbID;

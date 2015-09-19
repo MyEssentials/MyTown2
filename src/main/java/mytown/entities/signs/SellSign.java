@@ -1,4 +1,4 @@
-package mytown.entities.blocks;
+package mytown.entities.signs;
 
 import myessentials.Localization;
 import myessentials.entities.BlockPos;
