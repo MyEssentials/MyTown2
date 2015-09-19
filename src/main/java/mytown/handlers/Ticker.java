@@ -9,14 +9,12 @@ import mytown.MyTown;
 import mytown.config.Config;
 import mytown.datasource.MyTownDatasource;
 import mytown.datasource.MyTownUniverse;
-import mytown.entities.*;
+import mytown.entities.AdminTown;
+import mytown.entities.Resident;
+import mytown.entities.Town;
 import mytown.entities.blocks.Sign;
-import mytown.entities.tools.Tool;
 import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.Calendar;
@@ -79,36 +77,6 @@ public class Ticker {
         }
 
     }
-
-    // Because I can
-    @SubscribeEvent
-    public void onUseHoe(UseHoeEvent ev) {
-        ItemStack currentStack = ev.entityPlayer.inventory.getCurrentItem();
-        if (currentStack == null)
-            return;
-
-        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        Tool currentTool = res.toolContainer.get();
-        if (currentTool == null)
-            return;
-
-        if(currentStack == currentTool.getItemStack()) {
-            ev.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent ev) {
-        if (ev.entityPlayer.worldObj.isRemote || ev.isCanceled())
-            return;
-
-        if(Tool.interact(ev))
-            return;
-
-        if(Sign.interact(ev))
-            return;
-    }
-
 
     @SubscribeEvent
     public void onPlayerBreaksBlock(BlockEvent.BreakEvent ev) {

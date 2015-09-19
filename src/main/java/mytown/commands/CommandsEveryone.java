@@ -1,5 +1,6 @@
 package mytown.commands;
 
+import myessentials.entities.tool.ToolManager;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
@@ -12,7 +13,7 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.entities.tools.PlotSelectionTool;
 import mytown.entities.tools.PlotSellTool;
-import mytown.entities.tools.Tool;
+import myessentials.entities.tool.Tool;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.proxies.EconomyProxy;
 import mytown.util.exceptions.MyTownCommandException;
@@ -242,7 +243,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotPermWhitelistCommand(ICommandSender sender, List<String> args) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
 
-            res.toolContainer.set(new WhitelisterTool(res));
+            ToolManager.instance.register(new WhitelisterTool(res));
             res.sendMessage(getLocal().getLocalization("mytown.notification.perm.whitelist.start"));
             return CommandResponse.DONE;
         }
@@ -291,7 +292,7 @@ public class CommandsEveryone extends Commands {
             }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-            res.toolContainer.set(new PlotSelectionTool(res, args.get(0)));
+            ToolManager.instance.register(new PlotSelectionTool(res, args.get(0)));
             return CommandResponse.DONE;
         }
 
@@ -311,9 +312,10 @@ public class CommandsEveryone extends Commands {
                 syntax = "/town plot select reset")
         public static CommandResponse plotSelectResetCommand(ICommandSender sender, List<String> args) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-            Tool currentTool = res.toolContainer.get();
-            if(currentTool == null || !(currentTool instanceof PlotSelectionTool))
+            Tool currentTool = ToolManager.instance.get(res.getPlayer());
+            if(currentTool == null || !(currentTool instanceof PlotSelectionTool)) {
                 throw new MyTownCommandException("mytown.cmd.err.plot.noPermission");
+            }
             ((PlotSelectionTool) currentTool).resetSelection(true, 0);
             res.sendMessage(getLocal().getLocalization("mytown.notification.plot.selectionReset"));
             return CommandResponse.DONE;
@@ -506,7 +508,7 @@ public class CommandsEveryone extends Commands {
             }
 
             int price = Integer.parseInt(args.get(0));
-            res.toolContainer.set(new PlotSellTool(res, price));
+            ToolManager.instance.register(new PlotSellTool(res, price));
             return CommandResponse.DONE;
         }
     }

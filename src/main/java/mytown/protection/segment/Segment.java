@@ -282,7 +282,7 @@ public abstract class Segment {
             }
 
             if(json.has("clientUpdate")) {
-                segment.clientUpdate = context.deserialize(json.get("clientUpdate").getAsJsonObject().get("coords"), Volume.class);
+                segment.clientUpdate = new ClientBlockUpdate((Volume) context.deserialize(json.get("clientUpdate").getAsJsonObject().get("coords"), Volume.class));
                 json.remove("clientUpdate");
             }
 

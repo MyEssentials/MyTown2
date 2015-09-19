@@ -1,11 +1,15 @@
 package mytown.entities.tools;
 
+import myessentials.entities.BlockPos;
+import myessentials.entities.tool.Tool;
+import myessentials.entities.tool.ToolManager;
 import mytown.MyTown;
 import mytown.config.Config;
 import myessentials.thread.DelayedThread;
 import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.handlers.VisualsHandler;
+import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -19,58 +23,66 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class PlotSelectionTool extends Tool {
 
-    private static final String NAME = EnumChatFormatting.BLUE + "Selector"; // TODO: Get localization for it, maybe?
+    private static final String NAME = "Selector"; // TODO: Get localization for it, maybe?
     private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.";
     private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click air to change modes.";
     private static final String DESCRIPTION_NAME = EnumChatFormatting.DARK_AQUA + "Name: ";
     private static final String DESCRIPTION_MODE = EnumChatFormatting.DARK_AQUA + "Height dependent: ";
 
-    /**
-     * Using integers instead of BlockPos because we want each plot to have a unique set of coordinates.
-     */
     private Selection selectionFirst, selectionSecond;
     private String plotName;
     private boolean heightDependent = true;
+    private Resident owner;
 
     public PlotSelectionTool(Resident owner, String plotName) {
-        super(owner, NAME);
+        super(owner.getPlayer(), NAME);
+        this.owner = owner;
         this.plotName = plotName;
-        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER_1, DESCRIPTION_HEADER_2, DESCRIPTION_NAME + plotName, DESCRIPTION_MODE + heightDependent));
     }
 
     @Override
-    public void onItemUse(int dim, int x, int y, int z, int face) {
-        Town town = MyTownUtils.getTownAtPosition(dim, x >> 4, z >> 4);
+    public void onItemUse(BlockPos bp, int face) {
+        Town town = MyTownUtils.getTownAtPosition(bp.getDim(), bp.getX() >> 4, bp.getZ() >> 4);
 
-        if(!hasPermission(town, dim, x, y, z)) {
+        if(!hasPermission(town)) {
             resetSelection(true, 0);
             return;
         }
 
-        if (selectionFirst != null && selectionFirst.dim != dim) {
-            owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.plot.selection.otherDimension"));
+        if (selectionFirst != null && selectionFirst.dim != bp.getDim()) {
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.selection.otherDimension"));
             return;
         }
 
         if (selectionFirst == null) {
             // selectionSecond = null;
-            selectionFirst = new Selection(dim, x, y, z);
+            selectionFirst = new Selection(bp.getDim(), bp.getX(), bp.getY(), bp.getZ());
             // This is marked twice :P
             if(owner.getPlayer() instanceof EntityPlayerMP) {
-                VisualsHandler.instance.markBlock(x, y, z, dim, Blocks.redstone_block, (EntityPlayerMP) owner.getPlayer(), owner.getPlayer());
+                VisualsHandler.instance.markBlock(bp.getX(), bp.getY(), bp.getZ(), bp.getDim(), Blocks.redstone_block, (EntityPlayerMP) owner.getPlayer(), owner.getPlayer());
             }
 
         } else {
-            selectionSecond = new Selection(dim, x, y, z);
+            selectionSecond = new Selection(bp.getDim(), bp.getX(), bp.getY(), bp.getZ());
             createPlotFromSelection();
         }
     }
 
     @Override
+    protected String[] getDescription() {
+        return new String[] {
+                DESCRIPTION_HEADER_1,
+                DESCRIPTION_HEADER_2,
+                DESCRIPTION_NAME + plotName,
+                DESCRIPTION_MODE + heightDependent
+        };
+    }
+
+    @Override
     public void onShiftRightClick() {
         heightDependent = !heightDependent;
-        setDescription(DESCRIPTION_MODE + heightDependent, 3);
-        owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "heightDependent", heightDependent));
+        updateDescription();
+        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", "heightDependent", heightDependent));
     }
 
     public void resetSelection(boolean resetBlocks, int delay) {
@@ -90,19 +102,18 @@ public class PlotSelectionTool extends Tool {
         }
     }
 
-    @Override
-    protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
+    protected boolean hasPermission(Town town) {
         if (town == null || town != owner.townsContainer.getMainTown() && selectionFirst != null || selectionFirst != null && town != selectionFirst.town) {
-            owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.plot.selection.outside"));
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.selection.outside"));
             return false;
         }
         if (!town.plotsContainer.canResidentMakePlot(owner)) {
-            owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.plot.limit", town.plotsContainer.getMaxPlots()));
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.limit", town.plotsContainer.getMaxPlots()));
             return false;
         }
         for(Plot plot : town.plotsContainer) {
             if(plot.getName().equals(plotName)) {
-                owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.plot.name", plotName));
+                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.name", plotName));
                 return false;
             }
         }
@@ -124,7 +135,6 @@ public class PlotSelectionTool extends Tool {
 
         return true;
     }
-
 
     private void createPlotFromSelection() {
         normalizeSelection();
@@ -164,10 +174,10 @@ public class PlotSelectionTool extends Tool {
         Plot plot = MyTownUniverse.instance.newPlot(plotName, selectionFirst.town, selectionFirst.dim, selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z);
         resetSelection(true, 5);
 
-        getDatasource().savePlot(plot);
-        getDatasource().linkResidentToPlot(owner, plot, true);
+        DatasourceProxy.getDatasource().savePlot(plot);
+        DatasourceProxy.getDatasource().linkResidentToPlot(owner, plot, true);
         owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.created"));
-        deleteItemStack();
+        ToolManager.instance.remove(this);
     }
 
     private void normalizeSelection() {

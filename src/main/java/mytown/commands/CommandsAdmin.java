@@ -1,6 +1,7 @@
 package mytown.commands;
 
 import myessentials.entities.ChunkPos;
+import myessentials.entities.tool.ToolManager;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
@@ -846,7 +847,7 @@ public class CommandsAdmin extends Commands {
             return CommandResponse.SEND_SYNTAX;
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-        res.toolContainer.set(new WhitelisterTool(res));
+        ToolManager.instance.register(new WhitelisterTool(res));
         return CommandResponse.DONE;
     }
 

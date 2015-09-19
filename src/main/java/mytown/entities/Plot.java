@@ -3,7 +3,7 @@ package mytown.entities;
 import myessentials.entities.Volume;
 import mypermissions.proxies.PermissionProxy;
 import mytown.api.container.FlagsContainer;
-import mytown.api.container.Container;
+import myessentials.entities.Container;
 import mytown.api.container.ResidentsContainer;
 import mytown.entities.blocks.SellSign;
 import mytown.entities.flag.FlagType;

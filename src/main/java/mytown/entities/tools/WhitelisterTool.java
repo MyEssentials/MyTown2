@@ -1,5 +1,9 @@
 package mytown.entities.tools;
 
+import myessentials.entities.BlockPos;
+import myessentials.entities.tool.Tool;
+import myessentials.entities.tool.ToolManager;
+import mytown.MyTown;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
@@ -7,70 +11,80 @@ import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
-import net.minecraft.init.Items;
 import net.minecraft.util.EnumChatFormatting;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A tool that selects a block to add it to whitelists for protection.
  */
 public class WhitelisterTool extends Tool {
 
-    private static final String NAME = EnumChatFormatting.BLUE + "Whitelister";
+    private static final String NAME = "Whitelister";
     private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection.";
     private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click air to change flag.";
-    private static final String DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: " + FlagType.ACCESS.toString().toLowerCase();
+    private static final String DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: ";
+    private static final String DESCRIPTION_FLAG_REMOVAL = EnumChatFormatting.RED + "WHITELIST REMOVAL";
+
+    private Resident owner;
+    private FlagType flagType = FlagType.ACCESS;
 
     public WhitelisterTool(Resident owner) {
-        super(owner, NAME);
-        giveItemStack(createItemStack(Items.wooden_hoe, DESCRIPTION_HEADER_1, DESCRIPTION_HEADER_2, DESCRIPTION_FLAG));
+        super(owner.getPlayer(), NAME);
+        this.owner = owner;
     }
 
     @Override
-    public void onItemUse(int dim, int x, int y, int z, int face) {
-        Town town = MyTownUtils.getTownAtPosition(dim, x >> 4, z >> 4);
+    public void onItemUse(BlockPos bp, int face) {
+        Town town = MyTownUtils.getTownAtPosition(bp.getDim(), bp.getX() >> 4, bp.getZ() >> 4);
 
-        if(!hasPermission(town, dim, x, y, z))
+        if(!hasPermission(town, bp)) {
             return;
-
-        // If town is found then create or delete the block whitelist
-        FlagType flagType = getFlagFromLore();
-        //ev.entityPlayer.setCurrentItemOrArmor(0, null);
-        if (flagType == null) {
-            removeWhitelists(town, dim, x, y, z);
-        } else {
-            addWhitelists(flagType, town, dim, x, y, z);
         }
-        deleteItemStack();
 
+        if (flagType == null) {
+            removeWhitelists(town, bp.getDim(), bp.getX(), bp.getY(), bp.getZ());
+        } else {
+            addWhitelists(flagType, town, bp.getDim(), bp.getX(), bp.getY(), bp.getZ());
+        }
+        ToolManager.instance.remove(this);
+    }
+
+    @Override
+    protected String[] getDescription() {
+        return new String[] {
+                DESCRIPTION_HEADER_1,
+                DESCRIPTION_HEADER_2,
+                DESCRIPTION_FLAG + (flagType == null ? DESCRIPTION_FLAG_REMOVAL : flagType.name)
+        };
     }
 
     @Override
     public void onShiftRightClick() {
-        FlagType currentFlag = getFlagFromLore();
-        if(currentFlag == FlagType.getWhitelistable().get(FlagType.getWhitelistable().size() - 1)) {
-            setDescription(EnumChatFormatting.RED + "WHITELIST REMOVAL", 2);
-            owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "mode", "WHITELIST REMOVAL"));
+        if(flagType == FlagType.getWhitelistable().get(FlagType.getWhitelistable().size() - 1)) {
+            flagType = null;
+            updateDescription();
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", "mode", "WHITELIST REMOVAL"));
+        } else if(flagType == null) {
+            flagType = FlagType.getWhitelistable().get(0);
+            updateDescription();
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", "flagType", flagType));
         } else {
-            setDescription(EnumChatFormatting.DARK_AQUA + "Flag: " + FlagType.getWhitelistable().get(FlagType.getWhitelistable().indexOf(currentFlag) + 1).toString().toLowerCase(), 2);
-            owner.sendMessage(getLocal().getLocalization("mytown.notification.tool.mode", "flagType", currentFlag));
+            flagType = FlagType.getWhitelistable().get(FlagType.getWhitelistable().indexOf(flagType) + 1);
+            updateDescription();
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", "flagType", flagType));
         }
     }
 
-    @Override
-    protected boolean hasPermission(Town town, int dim, int x, int y, int z) {
+    protected boolean hasPermission(Town town, BlockPos bp) {
         if(town == null) {
-            owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.notInTown", owner.townsContainer.getMainTown().getName()));
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.notInTown", owner.townsContainer.getMainTown().getName()));
             return false;
         }
 
         //TODO: Switch to using proper permission strings
         if(!(town.residentsMap.get(owner).getName().equals("Assistant") || town.residentsMap.get(owner).getName().equals("Mayor"))) {
-            Plot plot = town.plotsContainer.get(dim, x, y, z);
+            Plot plot = town.plotsContainer.get(bp.getDim(), bp.getX(), bp.getY(), bp.getZ());
             if(plot == null || !plot.ownersContainer.contains(owner)) {
-                owner.sendMessage(getLocal().getLocalization("mytown.cmd.err.perm.whitelist"));
+                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.perm.whitelist"));
                 return false;
             }
         }
@@ -83,7 +97,7 @@ public class WhitelisterTool extends Tool {
             BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
             if (bw != null) {
                 DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
-                owner.sendMessage(getLocal().getLocalization("mytown.notification.perm.town.whitelist.removed"));
+                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.perm.town.whitelist.removed"));
             }
         }
     }
@@ -92,20 +106,10 @@ public class WhitelisterTool extends Tool {
         BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
         if (bw == null) {
             bw = new BlockWhitelist(dim, x, y, z, flagType);
-            owner.sendMessage(getLocal().getLocalization("mytown.notification.perm.town.whitelist.added"));
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.perm.town.whitelist.added"));
             DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
         } else {
-            owner.sendMessage(getLocal().getLocalization("mytown.notification.perm.town.whitelist.already"));
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.perm.town.whitelist.already"));
         }
-    }
-
-    private FlagType getFlagFromLore() {
-        String flagLore = getDescription(1);
-        for(FlagType flagType : FlagType.getWhitelistable()) {
-            if (flagLore.contains(flagType.toString().toLowerCase())) {
-                return flagType;
-            }
-        }
-        return null;
     }
 }
