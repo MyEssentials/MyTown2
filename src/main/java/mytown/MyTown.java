@@ -21,6 +21,7 @@ import mytown.crash.DatasourceCrashCallable;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
 import mytown.handlers.VisualsHandler;
+import mytown.new_datasource.MyTownDatasource;
 import mytown.protection.ProtectionHandlers;
 import mytown.protection.ProtectionManager;
 import mytown.protection.eventhandlers.ExtraEventsHandler;
@@ -45,8 +46,9 @@ public class MyTown {
     public static MyTown instance;
     public Logger LOG;
     public Localization LOCAL;
+    public MyTownDatasource datasource;
     // ---- Configuration files ----
-    private Configuration config;
+    public Configuration config;
 
     private final List<JSONConfig> jsonConfigs =  new ArrayList<JSONConfig>();
 
@@ -99,7 +101,8 @@ public class MyTown {
         }
 
         ProtectionParser.start();
-        SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
+        //SafemodeHandler.setSafemode(!DatasourceProxy.start(config));
+        datasource = new MyTownDatasource();
         LOG.info("Started");
     }
 
