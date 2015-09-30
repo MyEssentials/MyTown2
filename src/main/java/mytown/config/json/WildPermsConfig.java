@@ -2,30 +2,35 @@ package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import myessentials.json.JSONConfig;
+import myessentials.json.JsonConfig;
 import mytown.MyTown;
+import mytown.api.container.FlagsContainer;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 
-import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * Wilderness flags
  */
-public class WildPermsConfig extends JSONConfig<Flag> implements JsonSerializer<Flag>, JsonDeserializer<Flag> {
+public class WildPermsConfig extends JsonConfig<Flag, FlagsContainer> {
 
     public WildPermsConfig(String path) {
         super(path, "WildPermsConfig");
-        gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Flag.class, this).create();
-        gsonType = new TypeToken<List<Flag>>() {}.getType();
+        gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(FlagsContainer.class, new FlagsContainer.Serializer()).create();
+        gsonType = new TypeToken<FlagsContainer>() {}.getType();
+    }
+
+    @Override
+    protected FlagsContainer newList() {
+        return new FlagsContainer();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void create(List<Flag> items) {
+    public void create(FlagsContainer items) {
         for (FlagType type : FlagType.values()) {
             if (type.isWildPerm) {
                 items.add(new Flag(type, type.defaultWildValue));
@@ -35,23 +40,21 @@ public class WildPermsConfig extends JSONConfig<Flag> implements JsonSerializer<
     }
 
     @Override
-    public List<Flag> read() {
-        List<Flag> items = super.read();
+    public FlagsContainer read() {
+        FlagsContainer items = super.read();
 
         Wild.instance.flagsContainer.clear();
-        for(Flag item : items) {
-            Wild.instance.flagsContainer.add(item);
-        }
+        Wild.instance.flagsContainer.addAll(items);
 
         return items;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean validate(List<Flag> items) {
+    public boolean validate(FlagsContainer items) {
         boolean isValid = true;
 
-        for(Iterator<Flag> it = items.iterator(); it.hasNext();) {
+        for (Iterator<Flag> it = items.iterator(); it.hasNext();) {
             Flag item = it.next();
             if (item.flagType == null) {
                 MyTown.instance.LOG.error("An unrecognized flagType has been found. Removing...");
@@ -83,21 +86,4 @@ public class WildPermsConfig extends JSONConfig<Flag> implements JsonSerializer<
         }
         return isValid;
     }
-
-    @Override
-    public JsonElement serialize(Flag flag, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject json = new JsonObject();
-        json.addProperty("flagType", flag.flagType.name);
-        json.addProperty("value", flag.flagType.serializeValue(flag.value));
-        return json;
-    }
-
-    @Override
-    public Flag deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        JsonObject jsonObject = json.getAsJsonObject();
-        FlagType flagType = FlagType.valueOf(jsonObject.get("flagType").getAsString());
-        return new Flag(flagType, jsonObject.get("value").getAsString());
-    }
-
-
 }

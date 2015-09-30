@@ -1,7 +1,7 @@
 package mytown.test.config.json;
 
 import mytown.config.json.FlagsConfig;
-import myessentials.json.JSONConfig;
+import myessentials.json.JsonConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
@@ -18,14 +18,14 @@ import java.util.List;
  */
 public class JsonConfigTest {
 
-    private List<JSONConfig> jsonConfigs;
+    private List<JsonConfig> jsonConfigs;
 
     @Before
     public void shouldInitConfigs() {
 
         TestMain.main();
 
-        jsonConfigs = new ArrayList<JSONConfig>();
+        jsonConfigs = new ArrayList<JsonConfig>();
         //jsonConfigs.add(new RanksConfig(path + "/DefaultRanks.json"));
         jsonConfigs.add(new WildPermsConfig(TestMain.path + "/WildPerms.json"));
         jsonConfigs.add(new FlagsConfig(TestMain.path + "/DefaultFlags.json"));
@@ -33,7 +33,7 @@ public class JsonConfigTest {
 
     @Test
     public void shouldLoadConfigs() {
-        for (JSONConfig jsonConfig : jsonConfigs) {
+        for (JsonConfig jsonConfig : jsonConfigs) {
             jsonConfig.init();
         }
     }

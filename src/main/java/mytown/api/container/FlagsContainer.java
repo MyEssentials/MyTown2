@@ -1,10 +1,12 @@
 package mytown.api.container;
 
+import com.google.gson.*;
 import mytown.entities.Town;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import myessentials.utils.ColorUtils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -100,5 +102,23 @@ public class FlagsContainer extends ArrayList<Flag> {
         }
 
         return formattedFlagList;
+    }
+
+    public static class Serializer implements JsonSerializer<Flag>, JsonDeserializer<Flag> {
+
+        @Override
+        public JsonElement serialize(Flag flag, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject json = new JsonObject();
+            json.addProperty("flagType", flag.flagType.name);
+            json.addProperty("value", flag.flagType.serializeValue(flag.value));
+            return json;
+        }
+
+        @Override
+        public Flag deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject jsonObject = json.getAsJsonObject();
+            FlagType flagType = FlagType.valueOf(jsonObject.get("flagType").getAsString());
+            return new Flag(flagType, jsonObject.get("value").getAsString());
+        }
     }
 }

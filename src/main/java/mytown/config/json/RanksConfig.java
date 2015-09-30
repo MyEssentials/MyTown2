@@ -2,36 +2,37 @@ package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
-import myessentials.json.JSONConfig;
+import myessentials.json.JsonConfig;
 import mytown.MyTown;
+import mytown.api.container.RanksContainer;
 import mytown.entities.Rank;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RanksConfig extends JSONConfig<Rank> {
+public class RanksConfig extends JsonConfig<Rank, RanksContainer> {
 
     public RanksConfig(String path) {
         super(path, "DefaultTownRanks");
-        this.gsonType = new TypeToken<List<Rank>>() {}.getType();
-        this.gson = new GsonBuilder().registerTypeAdapter(gsonType, new RankTypeAdapter()).setPrettyPrinting().create();
+        this.gsonType = new TypeToken<RanksContainer>() {}.getType();
+        this.gson = new GsonBuilder().registerTypeAdapter(gsonType, new RanksContainer.Serializer()).setPrettyPrinting().create();
     }
 
     @Override
-    public void create(List<Rank> items) {
+    protected RanksContainer newList() {
+        return new RanksContainer();
+    }
+
+    @Override
+    public void create(RanksContainer items) {
         Rank.initDefaultRanks();
         items.addAll(Rank.defaultRanks);
         super.create(items);
     }
 
     @Override
-    public List<Rank> read() {
-        List<Rank> ranks = super.read();
+    public RanksContainer read() {
+        RanksContainer ranks = super.read();
 
         Rank.defaultRanks.clear();
         Rank.defaultRanks.addAll(ranks);
@@ -40,7 +41,7 @@ public class RanksConfig extends JSONConfig<Rank> {
     }
 
     @Override
-    public boolean validate(List<Rank> items) {
+    public boolean validate(RanksContainer items) {
         boolean isValid = true;
         for(Rank.Type type : Rank.Type.values()) {
             if(type.unique) {
@@ -66,76 +67,5 @@ public class RanksConfig extends JSONConfig<Rank> {
         }
 
         return isValid;
-    }
-
-    public class RankTypeAdapter extends TypeAdapter<List<Rank>>{
-
-        @Override
-        public void write(JsonWriter out, List<Rank> ranks) throws IOException {
-            out.beginArray();
-            for(Rank rank : ranks) {
-                out.beginObject();
-                out.name("name").value(rank.getName());
-                out.name("type").value(rank.getType().toString());
-                out.name("permissions").beginArray();
-                for(String perm : rank.permissionsContainer) {
-                    out.value(perm);
-                }
-                out.endArray();
-                out.endObject();
-            }
-            out.endArray();
-        }
-
-        @Override
-        public List<Rank> read(JsonReader in) throws IOException {
-            List<Rank> ranks = new ArrayList<Rank>();
-
-            in.beginArray();
-            String nextName;
-            while(in.peek() != JsonToken.END_ARRAY) {
-                List<String> permissionsContainer = new ArrayList<String>();
-                String name = null;
-                Rank.Type type = null;
-
-                in.beginObject();
-                while(in.peek() != JsonToken.END_OBJECT) {
-                    nextName = in.nextName();
-
-                    if ("name".equals(nextName)) {
-                        name = in.nextString();
-                        continue;
-                    }
-
-                    if ("type".equals(nextName)) {
-                        type = Rank.Type.valueOf(in.nextString().toUpperCase());
-                        continue;
-                    }
-
-                    if ("permissions".equals(nextName)) {
-                        in.beginArray();
-                        while (in.peek() != JsonToken.END_ARRAY) {
-                            permissionsContainer.add(in.nextString());
-                        }
-                        in.endArray();
-                    }
-                }
-                in.endObject();
-
-                if(name == null) {
-                    throw new IOException("Rank name cannot be null!");
-                }
-                if(type == null) {
-                    throw new IOException("Rank type cannot be null!");
-                }
-
-                Rank rank = new Rank(name, null, type);
-                rank.permissionsContainer.addAll(permissionsContainer);
-                ranks.add(rank);
-            }
-            in.endArray();
-
-            return ranks;
-        }
     }
 }

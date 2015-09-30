@@ -8,7 +8,7 @@ import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.Localization;
 import myessentials.config.ConfigProcessor;
-import myessentials.json.JSONConfig;
+import myessentials.json.JsonConfig;
 import myessentials.utils.ClassUtils;
 import myessentials.utils.StringUtils;
 import mypermissions.api.command.CommandManager;
@@ -50,7 +50,7 @@ public class MyTown {
     // ---- Configuration files ----
     public Configuration config;
 
-    private final List<JSONConfig> jsonConfigs =  new ArrayList<JSONConfig>();
+    private final List<JsonConfig> jsonConfigs =  new ArrayList<JsonConfig>();
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
@@ -96,7 +96,7 @@ public class MyTown {
         jsonConfigs.add(new WildPermsConfig(Constants.CONFIG_FOLDER + "/WildPerms.json"));
         jsonConfigs.add(new FlagsConfig(Constants.CONFIG_FOLDER + "/DefaultFlags.json"));
         jsonConfigs.add(new RanksConfig(Constants.CONFIG_FOLDER + "/DefaultTownRanks.json"));
-        for (JSONConfig jsonConfig : jsonConfigs) {
+        for (JsonConfig jsonConfig : jsonConfigs) {
             jsonConfig.init();
         }
 
@@ -132,7 +132,7 @@ public class MyTown {
     }
 
     public WildPermsConfig getWildConfig() {
-        for(JSONConfig jsonConfig : jsonConfigs) {
+        for(JsonConfig jsonConfig : jsonConfigs) {
             if(jsonConfig instanceof WildPermsConfig)
                 return (WildPermsConfig)jsonConfig;
         }
@@ -140,7 +140,7 @@ public class MyTown {
     }
 
     public RanksConfig getRanksConfig() {
-        for(JSONConfig jsonConfig : jsonConfigs) {
+        for(JsonConfig jsonConfig : jsonConfigs) {
             if(jsonConfig instanceof RanksConfig)
                 return (RanksConfig)jsonConfig;
         }
@@ -148,7 +148,7 @@ public class MyTown {
     }
 
     public FlagsConfig getFlagsConfig() {
-        for(JSONConfig jsonConfig : jsonConfigs) {
+        for(JsonConfig jsonConfig : jsonConfigs) {
             if(jsonConfig instanceof FlagsConfig)
                 return (FlagsConfig)jsonConfig;
         }
@@ -182,7 +182,7 @@ public class MyTown {
         checkConfig();
         EconomyProxy.init();
 
-        for (JSONConfig jsonConfig : jsonConfigs) {
+        for (JsonConfig jsonConfig : jsonConfigs) {
             jsonConfig.init();
         }
 
