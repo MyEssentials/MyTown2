@@ -207,13 +207,13 @@ public class PlotSelectionTool extends Tool {
 
     private boolean isProperSize() {
         if(!(selectionFirst.town instanceof AdminTown)) {
-            if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) < Config.minPlotsArea
-                    || Math.abs(selectionFirst.y - selectionSecond.y) + 1 < Config.minPlotsHeight) {
-                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.tooSmall", Config.minPlotsArea, Config.minPlotsHeight));
+            if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) < Config.instance.minPlotsArea.get()
+                    || Math.abs(selectionFirst.y - selectionSecond.y) + 1 < Config.instance.minPlotsHeight.get()) {
+                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.tooSmall", Config.instance.minPlotsArea.get(), Config.instance.minPlotsHeight.get()));
                 return false;
-            } else if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) > Config.maxPlotsArea
-                    || Math.abs(selectionFirst.y - selectionSecond.y) + 1 > Config.maxPlotsHeight) {
-                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.tooLarge", Config.maxPlotsArea, Config.maxPlotsHeight));
+            } else if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) > Config.instance.maxPlotsArea.get()
+                    || Math.abs(selectionFirst.y - selectionSecond.y) + 1 > Config.instance.maxPlotsHeight.get()) {
+                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.tooLarge", Config.instance.maxPlotsArea.get(), Config.instance.maxPlotsHeight.get()));
                 return false;
             }
         }

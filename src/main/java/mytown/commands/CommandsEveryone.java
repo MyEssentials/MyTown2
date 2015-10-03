@@ -71,10 +71,10 @@ public class CommandsEveryone extends Commands {
 
         if (args.isEmpty()) {
             town = getTownFromResident(res);
-            amount = Config.costAmountSpawn;
+            amount = Config.instance.costAmountSpawn.get();
         } else {
             town = getTownFromName(args.get(0));
-            amount = Config.costAmountOtherSpawn;
+            amount = Config.instance.costAmountOtherSpawn.get();
         }
 
         if (!town.hasSpawn())

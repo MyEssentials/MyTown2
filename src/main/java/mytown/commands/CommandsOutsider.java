@@ -104,21 +104,21 @@ public class CommandsOutsider extends Commands {
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
 
-        if (res.townsContainer.size() >= Config.maxTowns)
+        if (res.townsContainer.size() >= Config.instance.maxTowns.get())
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
          if (getUniverse().towns.contains(args.get(0))) // Is the town name already in use?
             throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
         if (getUniverse().blocks.contains(player.dimension, (int) player.posX >> 4, (int) player.posZ >> 4)) // Is the Block already claimed?
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
-        for (int x = ((int) player.posX >> 4) - Config.distanceBetweenTowns; x <= ((int) player.posX >> 4) + Config.distanceBetweenTowns; x++) {
-            for (int z = ((int) player.posZ >> 4) - Config.distanceBetweenTowns; z <= ((int) player.posZ >> 4) + Config.distanceBetweenTowns; z++) {
+        for (int x = ((int) player.posX >> 4) - Config.instance.distanceBetweenTowns.get(); x <= ((int) player.posX >> 4) + Config.instance.distanceBetweenTowns.get(); x++) {
+            for (int z = ((int) player.posZ >> 4) - Config.instance.distanceBetweenTowns.get(); z <= ((int) player.posZ >> 4) + Config.instance.distanceBetweenTowns.get(); z++) {
                 Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
                 if (nearbyTown != null && !(Boolean)nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
-                    throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
+                    throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", nearbyTown.getName(), Config.instance.distanceBetweenTowns.get());
             }
         }
 
-        makePayment(player, Config.costAmountMakeTown + Config.costAmountClaim);
+        makePayment(player, Config.instance.costAmountMakeTown.get() + Config.instance.costAmountClaim.get());
 
         Town town = getUniverse().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null)
@@ -163,7 +163,7 @@ public class CommandsOutsider extends Commands {
             if (!invites.contains(town))
                 throw new MyTownCommandException("mytown.cmd.err.invite.town.noinvitations");
         }
-        if (res.townsContainer.size() >= Config.maxTowns)
+        if (res.townsContainer.size() >= Config.instance.maxTowns.get())
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
 
         getDatasource().deleteTownInvite(res, town, true);
@@ -382,7 +382,7 @@ public class CommandsOutsider extends Commands {
     public static CommandResponse pricesCommand(ICommandSender sender, List<String> args) {
         Resident res = getUniverse().getOrMakeResident(sender);
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.prices", EconomyProxy.getCurrency(Config.costAmountMakeTown), EconomyProxy.getCurrency(Config.costAmountClaim), EconomyProxy.getCurrency(Config.costAdditionClaim), EconomyProxy.getCurrency(Config.costAmountClaimFar), EconomyProxy.getCurrency(Config.costAmountSpawn), EconomyProxy.getCurrency(Config.costAmountSetSpawn), EconomyProxy.getCurrency(Config.costAmountOtherSpawn), EconomyProxy.getCurrency(Config.costTownUpkeep), EconomyProxy.getCurrency(Config.costAdditionalUpkeep)));
+        res.sendMessage(getLocal().getLocalization("mytown.notification.prices", EconomyProxy.getCurrency(Config.instance.costAmountMakeTown.get()), EconomyProxy.getCurrency(Config.instance.costAmountClaim.get()), EconomyProxy.getCurrency(Config.instance.costAdditionClaim.get()), EconomyProxy.getCurrency(Config.instance.costAmountClaimFar.get()), EconomyProxy.getCurrency(Config.instance.costAmountSpawn.get()), EconomyProxy.getCurrency(Config.instance.costAmountSetSpawn.get()), EconomyProxy.getCurrency(Config.instance.costAmountOtherSpawn.get()), EconomyProxy.getCurrency(Config.instance.costTownUpkeep.get()), EconomyProxy.getCurrency(Config.instance.costAdditionalUpkeep.get())));
 
         return CommandResponse.DONE;
     }

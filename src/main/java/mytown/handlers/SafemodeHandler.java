@@ -36,7 +36,7 @@ public class SafemodeHandler {
      */
     public static void kickPlayer(EntityPlayerMP pl) {
         if (!(pl instanceof FakePlayer)) {
-            pl.playerNetServerHandler.kickPlayerFromServer(Config.safeModeMsg);
+            pl.playerNetServerHandler.kickPlayerFromServer(Config.instance.safeModeMsg.get());
         }
     }
 

@@ -80,7 +80,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
     // TODO Change this to checkConnection() and call on each command?
     protected boolean createConnection() {
         try {
-            if (conn == null || conn.isClosed() || (!"sqlite".equalsIgnoreCase(Config.dbType) && conn.isValid(1))) {
+            if (conn == null || conn.isClosed() || (!"sqlite".equalsIgnoreCase(Config.instance.dbType.get()) && conn.isValid(1))) {
                 if (conn != null && !conn.isClosed()) {
                     try {
                         conn.close();
@@ -1078,7 +1078,7 @@ public abstract class MyTownDatasourceSQL extends MyTownDatasource {
                 s.setString(3, bank.getTown().getName());
                 s.executeUpdate();
             } else {
-                bank.setAmount(Config.defaultBankAmount);
+                bank.setAmount(Config.instance.defaultBankAmount.get());
                 bank.setDaysNotPaid(0);
 
                 PreparedStatement s = prepare("INSERT INTO " + prefix + "TownBanks VALUES(?, ?, ?)", false);

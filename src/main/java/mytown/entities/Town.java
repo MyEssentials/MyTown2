@@ -22,14 +22,14 @@ public class Town implements Comparable<Town> {
     private String name, oldName = null;
 
     protected int extraBlocks = 0;
-    protected int maxFarClaims = Config.maxFarClaims;
+    protected int maxFarClaims = Config.instance.maxFarClaims.get();
 
     private Nation nation;
     private Teleport spawn;
 
     public final ResidentRankMap residentsMap = new ResidentRankMap();
     public final RanksContainer ranksContainer = new RanksContainer();
-    public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
+    public final PlotsContainer plotsContainer = new PlotsContainer(Config.instance.defaultMaxPlots.get());
     public final FlagsContainer flagsContainer = new FlagsContainer();
     public final TownBlocksContainer townBlocksContainer = new TownBlocksContainer();
     public final BlockWhitelistsContainer blockWhitelistsContainer = new BlockWhitelistsContainer();
@@ -162,13 +162,13 @@ public class Town implements Comparable<Town> {
         EntityPlayer pl = res.getPlayer();
         if (pl != null) {
             PlayerUtils.teleport((EntityPlayerMP)pl, spawn.getDim(), spawn.getX(), spawn.getY(), spawn.getZ());
-            res.setTeleportCooldown(Config.teleportCooldown);
+            res.setTeleportCooldown(Config.instance.teleportCooldown.get());
         }
     }
 
     public int getMaxBlocks() {
-        int mayorBlocks = Config.blocksMayor;
-        int residentsBlocks = Config.blocksResident * (residentsMap.size() - 1);
+        int mayorBlocks = Config.instance.blocksMayor.get();
+        int residentsBlocks = Config.instance.blocksResident.get() * (residentsMap.size() - 1);
         int residentsExtra = 0;
         for(Resident res : residentsMap.keySet()) {
             residentsExtra += res.getExtraBlocks();

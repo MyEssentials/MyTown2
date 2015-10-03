@@ -88,7 +88,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
             throw new CommandException("Failed to save Town");
 
         //Claiming first block
-        TownBlock block = newBlock(creator.getPlayer().dimension, ((int)creator.getPlayer().posX) >> 4, ((int)creator.getPlayer().posZ) >> 4, false, Config.costAmountClaim, town);
+        TownBlock block = newBlock(creator.getPlayer().dimension, ((int)creator.getPlayer().posX) >> 4, ((int)creator.getPlayer().posZ) >> 4, false, Config.instance.costAmountClaim.get(), town);
 
         // Saving block to db and town
         if(MyTownUniverse.instance.blocks.contains(creator.getPlayer().dimension, ((int) creator.getPlayer().posX) >> 4, ((int) creator.getPlayer().posZ) >> 4)) {

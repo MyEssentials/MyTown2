@@ -30,16 +30,16 @@ public class DatasourceProxy {
      * Initializes, configures, and loads the Datasource returning if successful
      */
     public static boolean start(Configuration config) {
-        if (!dbTypes.containsKey(Config.dbType.toLowerCase())) {
-            MyTown.instance.LOG.error("Unknown Datasource type {}!", Config.dbType.toLowerCase());
+        if (!dbTypes.containsKey(Config.instance.dbType.get().toLowerCase())) {
+            MyTown.instance.LOG.error("Unknown Datasource type {}!", Config.instance.dbType.get().toLowerCase());
             return false;
         }
 
         try {
             // Create MyTownDatasource instance
-            datasource = (MyTownDatasource) dbTypes.get(Config.dbType.toLowerCase()).newInstance();
+            datasource = (MyTownDatasource) dbTypes.get(Config.instance.dbType.get().toLowerCase()).newInstance();
         } catch (Exception e) {
-            MyTown.instance.LOG.error("Failed to instantiate the Datasource ({})!", e, Config.dbType.toLowerCase());
+            MyTown.instance.LOG.error("Failed to instantiate the Datasource ({})!", e, Config.instance.dbType.get().toLowerCase());
             return false;
         }
 

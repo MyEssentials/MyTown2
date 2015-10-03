@@ -41,7 +41,7 @@ public class CommandsAssistant extends Commands {
         if (!town.isPointInTown(player.dimension, (int) player.posX, (int) player.posZ))
             throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()));
 
-        makePayment(player, Config.costAmountSetSpawn);
+        makePayment(player, Config.instance.costAmountSetSpawn.get());
 
         town.getSpawn().setDim(player.dimension).setPosition((float) player.posX, (float) player.posY, (float) player.posZ).setRotation(player.cameraYaw, player.cameraPitch);
         getDatasource().saveTown(town);
@@ -71,18 +71,18 @@ public class CommandsAssistant extends Commands {
                     throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
                 isFarClaim = true;
             }
-            for (int x = player.chunkCoordX - Config.distanceBetweenTowns; x <= player.chunkCoordX + Config.distanceBetweenTowns; x++) {
-                for (int z = player.chunkCoordZ - Config.distanceBetweenTowns; z <= player.chunkCoordZ + Config.distanceBetweenTowns; z++) {
+            for (int x = player.chunkCoordX - Config.instance.distanceBetweenTowns.get(); x <= player.chunkCoordX + Config.instance.distanceBetweenTowns.get(); x++) {
+                for (int z = player.chunkCoordZ - Config.instance.distanceBetweenTowns.get(); z <= player.chunkCoordZ + Config.instance.distanceBetweenTowns.get(); z++) {
                     Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
                     if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
-                        throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
+                        throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.instance.distanceBetweenTowns.get());
                 }
             }
 
             if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.townBlocksContainer.getMaxFarClaims())
                 throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
 
-            int price = (isFarClaim ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.townBlocksContainer.size();
+            int price = (isFarClaim ? Config.instance.costAmountClaimFar.get() : Config.instance.costAmountClaim.get()) + Config.instance.costAdditionClaim.get() * town.townBlocksContainer.size();
 
             makeBankPayment(player, town, price);
 
@@ -108,11 +108,11 @@ public class CommandsAssistant extends Commands {
                 if (getUniverse().blocks.contains(player.dimension, chunk.getX(), chunk.getZ()))
                     it.remove();
 
-                for (int x = chunk.getX() - Config.distanceBetweenTowns; x <= chunk.getX() + Config.distanceBetweenTowns; x++) {
-                    for (int z = chunk.getZ() - Config.distanceBetweenTowns; z <= chunk.getZ() + Config.distanceBetweenTowns; z++) {
+                for (int x = chunk.getX() - Config.instance.distanceBetweenTowns.get(); x <= chunk.getX() + Config.instance.distanceBetweenTowns.get(); x++) {
+                    for (int z = chunk.getZ() - Config.instance.distanceBetweenTowns.get(); z <= chunk.getZ() + Config.instance.distanceBetweenTowns.get(); z++) {
                         Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
                         if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
-                            throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.distanceBetweenTowns);
+                            throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.instance.distanceBetweenTowns.get());
                     }
                 }
             }
@@ -123,11 +123,11 @@ public class CommandsAssistant extends Commands {
             if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.townBlocksContainer.getMaxFarClaims())
                 throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
 
-            makeBankPayment(player, town, (isFarClaim ? Config.costAmountClaimFar + Config.costAmountClaim * (chunks.size() - 1) : Config.costAmountClaim * chunks.size())
-                    + MathUtils.sumFromNtoM(town.townBlocksContainer.size(), town.townBlocksContainer.size() + chunks.size() - 1) * Config.costAdditionClaim);
+            makeBankPayment(player, town, (isFarClaim ? Config.instance.costAmountClaimFar.get() + Config.instance.costAmountClaim.get() * (chunks.size() - 1) : Config.instance.costAmountClaim.get() * chunks.size())
+                    + MathUtils.sumFromNtoM(town.townBlocksContainer.size(), town.townBlocksContainer.size() + chunks.size() - 1) * Config.instance.costAdditionClaim.get());
 
             for (ChunkPos chunk : chunks) {
-                int price = (isFarClaim ? Config.costAmountClaimFar : Config.costAmountClaim) + Config.costAdditionClaim * town.townBlocksContainer.size();
+                int price = (isFarClaim ? Config.instance.costAmountClaimFar.get() : Config.instance.costAmountClaim.get()) + Config.instance.costAdditionClaim.get() * town.townBlocksContainer.size();
                 TownBlock block = getUniverse().newBlock(player.dimension, chunk.getX(), chunk.getZ(), isFarClaim, price, town);
                 // Only one of the block will be a farClaim, rest will be normal claim
                 isFarClaim = false;

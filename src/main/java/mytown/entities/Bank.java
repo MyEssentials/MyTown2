@@ -29,7 +29,7 @@ public class Bank {
             town.notifyEveryone(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.upkeep"));
         } else {
             daysNotPaid++;
-            town.notifyEveryone(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.upkeep.failed", Config.upkeepTownDeletionDays - daysNotPaid));
+            town.notifyEveryone(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.upkeep.failed", Config.instance.upkeepTownDeletionDays.get() - daysNotPaid));
         }
     }
 
@@ -58,6 +58,6 @@ public class Bank {
     }
 
     public int getNextPaymentAmount() {
-        return (Config.costTownUpkeep + Config.costAdditionalUpkeep * town.townBlocksContainer.size()) * (1 + daysNotPaid);
+        return (Config.instance.costTownUpkeep.get() + Config.instance.costAdditionalUpkeep.get() * town.townBlocksContainer.size()) * (1 + daysNotPaid);
     }
 }

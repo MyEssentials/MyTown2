@@ -19,7 +19,7 @@ public class TownBlock {
     private final boolean isFarClaim;
     private final int pricePaid;
 
-    public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
+    public final PlotsContainer plotsContainer = new PlotsContainer(Config.instance.defaultMaxPlots.get());
 
     public TownBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town) {
         this.dim = dim;

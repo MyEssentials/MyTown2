@@ -33,15 +33,15 @@ public class Ticker {
             res.tick();
         }
 
-        if((Config.costTownUpkeep > 0 || Config.costAdditionalUpkeep > 0) && ev.phase == TickEvent.Phase.START) {
+        if((Config.instance.costTownUpkeep.get() > 0 || Config.instance.costAdditionalUpkeep.get() > 0) && ev.phase == TickEvent.Phase.START) {
             if (ticked) {
                 if(lastCalendarDay != -1 && Calendar.getInstance().get(Calendar.DAY_OF_YEAR) != lastCalendarDay) {
                     for (int i = 0; i < MyTownUniverse.instance.towns.size(); i++) {
                         Town town = MyTownUniverse.instance.towns.get(i);
                         if (!(town instanceof AdminTown)) {
                             town.bank.payUpkeep();
-                            if(town.bank.getDaysNotPaid() == Config.upkeepTownDeletionDays && Config.upkeepTownDeletionDays > 0) {
-                                MyTown.instance.LOG.info("Town {} has been deleted because it didn't pay upkeep for {} days.", town.getName(), Config.upkeepTownDeletionDays);
+                            if(town.bank.getDaysNotPaid() == Config.instance.upkeepTownDeletionDays.get() && Config.instance.upkeepTownDeletionDays.get() > 0) {
+                                MyTown.instance.LOG.info("Town {} has been deleted because it didn't pay upkeep for {} days.", town.getName(), Config.instance.upkeepTownDeletionDays.get());
                                 DatasourceProxy.getDatasource().deleteTown(town);
                             } else {
                                 DatasourceProxy.getDatasource().saveTownBank(town.bank);

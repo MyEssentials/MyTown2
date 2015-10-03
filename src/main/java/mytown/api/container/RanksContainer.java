@@ -77,10 +77,10 @@ public class RanksContainer extends ArrayList<Rank> {
         return res;
     }
 
-    public static class Serializer extends TypeAdapter<List<Rank>> {
+    public static class Serializer extends TypeAdapter<RanksContainer> {
 
         @Override
-        public void write(JsonWriter out, List<Rank> ranks) throws IOException {
+        public void write(JsonWriter out, RanksContainer ranks) throws IOException {
             out.beginArray();
             for(Rank rank : ranks) {
                 out.beginObject();
@@ -97,8 +97,8 @@ public class RanksContainer extends ArrayList<Rank> {
         }
 
         @Override
-        public List<Rank> read(JsonReader in) throws IOException {
-            List<Rank> ranks = new ArrayList<Rank>();
+        public RanksContainer read(JsonReader in) throws IOException {
+            RanksContainer ranks = new RanksContainer();
 
             in.beginArray();
             String nextName;

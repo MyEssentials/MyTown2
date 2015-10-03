@@ -28,7 +28,7 @@ public class Resident {
 
     private int extraBlocks = 0;
 
-    public final PlotsContainer plotsContainer = new PlotsContainer(Config.defaultMaxPlots);
+    public final PlotsContainer plotsContainer = new PlotsContainer(Config.instance.defaultMaxPlots.get());
     public final TownsContainer townInvitesContainer = new TownsContainer();
     public final TownsContainer townsContainer = new TownsContainer();
 

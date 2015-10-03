@@ -28,18 +28,8 @@ public class MyTownDatasource extends DatasourceSQL {
 
     //public static final MyTownDatasource instance = new MyTownDatasource();
 
-    private static BridgeSQL loadBridge() {
-        BridgeSQL bridge = null;
-        if(Config.dbType.equalsIgnoreCase("sqlite")) {
-            bridge = new BridgeSQLite(MyTown.instance.config);
-        } else if(Config.dbType.equalsIgnoreCase("mysql")) {
-            bridge = new BridgeMySQL(MyTown.instance.config);
-        }
-        return bridge;
-    }
-
     public MyTownDatasource() {
-        super(MyTown.instance.LOG, new MyTownSchema(loadBridge()));
+        super(MyTown.instance.LOG, Config.instance, new MyTownSchema());
     }
 
     @Override
@@ -1012,7 +1002,7 @@ public class MyTownDatasource extends DatasourceSQL {
                 s.setString(3, bank.getTown().getName());
                 s.executeUpdate();
             } else {
-                bank.setAmount(Config.defaultBankAmount);
+                bank.setAmount(Config.instance.defaultBankAmount.get());
                 bank.setDaysNotPaid(0);
 
                 PreparedStatement s = prepare("INSERT INTO " + prefix + "TownBanks VALUES(?, ?, ?)", false);

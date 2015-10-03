@@ -39,7 +39,7 @@ public class SegmentTileEntity extends Segment {
         try {
             return (Integer) getters.get("xMin").invoke(Integer.class, te);
         } catch (GetterException ex) {
-            return te.xCoord - Config.defaultProtectionSize;
+            return te.xCoord - Config.instance.defaultProtectionSize.get();
         }
     }
 
@@ -47,7 +47,7 @@ public class SegmentTileEntity extends Segment {
         try {
             return (Integer) getters.get("yMin").invoke(Integer.class, te);
         } catch (GetterException ex) {
-            return te.yCoord - Config.defaultProtectionSize;
+            return te.yCoord - Config.instance.defaultProtectionSize.get();
         }
     }
 
@@ -55,7 +55,7 @@ public class SegmentTileEntity extends Segment {
         try {
             return (Integer) getters.get("zMin").invoke(Integer.class, te);
         } catch (GetterException ex) {
-            return te.zCoord - Config.defaultProtectionSize;
+            return te.zCoord - Config.instance.defaultProtectionSize.get();
         }
     }
 
@@ -63,7 +63,7 @@ public class SegmentTileEntity extends Segment {
         try {
             return (Integer) getters.get("xMax").invoke(Integer.class, te);
         } catch (GetterException ex) {
-            return te.xCoord + Config.defaultProtectionSize;
+            return te.xCoord + Config.instance.defaultProtectionSize.get();
         }
     }
 
@@ -71,7 +71,7 @@ public class SegmentTileEntity extends Segment {
         try {
             return (Integer) getters.get("yMax").invoke(Integer.class, te);
         } catch (GetterException ex) {
-            return te.yCoord + Config.defaultProtectionSize;
+            return te.yCoord + Config.instance.defaultProtectionSize.get();
         }
     }
 
@@ -79,7 +79,7 @@ public class SegmentTileEntity extends Segment {
         try {
             return (Integer) getters.get("zMax").invoke(Integer.class, te);
         } catch (GetterException ex) {
-            return te.zCoord + Config.defaultProtectionSize;
+            return te.zCoord + Config.instance.defaultProtectionSize.get();
         }
     }
 

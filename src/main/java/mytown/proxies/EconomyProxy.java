@@ -12,7 +12,7 @@ public class EconomyProxy {
     }
 
     public static void init() {
-        economy = new Economy(Config.costItemName);
+        economy = new Economy(Config.instance.costItemName.get());
         MyTown.instance.LOG.info("Successfully initialized economy!");
     }
 
@@ -21,9 +21,9 @@ public class EconomyProxy {
     }
 
     public static boolean isItemEconomy() {
-        if(Config.costItemName.equals(Economy.CURRENCY_FORGE_ESSENTIALS)) {
+        if(Config.instance.costItemName.get().equals(Economy.CURRENCY_FORGE_ESSENTIALS)) {
             return false;
-        } else if(Config.costItemName.equals(Economy.CURRENCY_VAULT)) {
+        } else if(Config.instance.costItemName.get().equals(Economy.CURRENCY_VAULT)) {
             return false;
         }
         return true;

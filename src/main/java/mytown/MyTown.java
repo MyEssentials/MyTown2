@@ -7,7 +7,6 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.Localization;
-import myessentials.config.ConfigProcessor;
 import myessentials.json.JsonConfig;
 import myessentials.utils.ClassUtils;
 import myessentials.utils.StringUtils;
@@ -48,7 +47,6 @@ public class MyTown {
     public Localization LOCAL;
     public MyTownDatasource datasource;
     // ---- Configuration files ----
-    public Configuration config;
 
     private final List<JsonConfig> jsonConfigs =  new ArrayList<JsonConfig>();
 
@@ -60,9 +58,8 @@ public class MyTown {
         Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyTown/";
 
         // Read Configs
-        config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
-        ConfigProcessor.load(config, Config.class);
-        LOCAL = new Localization(Constants.CONFIG_FOLDER, Config.localization, "/mytown/localization/", MyTown.class);
+        Config.instance.init(Constants.CONFIG_FOLDER + "/MyTown.cfg");
+        LOCAL = new Localization(Constants.CONFIG_FOLDER, Config.instance.localization.get(), "/mytown/localization/", MyTown.class);
 
         registerHandlers();
 
@@ -72,7 +69,7 @@ public class MyTown {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent ev) {
-        config.save();
+
     }
 
     @EventHandler
@@ -119,10 +116,10 @@ public class MyTown {
     private void registerCommands() {
         CommandManager.registerCommands(CommandsEveryone.class, null, LOCAL, new RankPermissionManager());
         CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", LOCAL, null);
-        if (Config.modifiableRanks)
+        if (Config.instance.modifiableRanks.get())
             CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", LOCAL, null);
         CommandManager.registerCommands(CommandsAdmin.class, null, LOCAL, null);
-        if(Config.enablePlots) {
+        if(Config.instance.enablePlots.get()) {
             CommandManager.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", LOCAL, null);
             CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", LOCAL, null);
             CommandManager.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", LOCAL, null);
@@ -171,13 +168,12 @@ public class MyTown {
         FMLCommonHandler.instance().bus().register(ProtectionHandlers.instance);
         MinecraftForge.EVENT_BUS.register(ProtectionHandlers.instance);
 
-        if(Config.useExtraEvents)
+        if(Config.instance.useExtraEvents.get())
             MinecraftForge.EVENT_BUS.register(ExtraEventsHandler.getInstance());
     }
 
     public void loadConfigs() {
-        config = new Configuration(new File(Constants.CONFIG_FOLDER, "MyTown.cfg"));
-        ConfigProcessor.load(config, Config.class);
+        Config.instance.reload();
 
         checkConfig();
         EconomyProxy.init();
@@ -196,7 +192,7 @@ public class MyTown {
     private void checkConfig() {
         // Checking cost item
         if(EconomyProxy.isItemEconomy()) {
-            String[] split = Config.costItemName.split(":");
+            String[] split = Config.instance.costItemName.get().split(":");
             if (split.length < 2 || split.length > 3) {
                 throw new ConfigException("Field costItem has an invalid value. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
             }
@@ -210,7 +206,7 @@ public class MyTown {
             }
         }
 
-        if(Config.useExtraEvents && !checkExtraEvents()) {
+        if(Config.instance.useExtraEvents.get() && !checkExtraEvents()) {
             throw new ConfigException("Extra events are enabled but you don't have the minimal forge version needed to load them.");
         }
     }

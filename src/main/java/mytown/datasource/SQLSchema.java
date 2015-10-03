@@ -201,7 +201,7 @@ public class SQLSchema {
                 "Towns ADD extraBlocks INTEGER DEFAULT 0"));
 
         updates.add(new DBUpdate("10.23.2014.1", "Add 'maxPlots' to towns", "ALTER TABLE " + this.sqlDatasource.prefix +
-                "Towns ADD maxPlots INTEGER DEFAULT " + Config.defaultMaxPlots + ""));
+                "Towns ADD maxPlots INTEGER DEFAULT " + Config.instance.defaultMaxPlots.get() + ""));
 
         updates.add(new DBUpdate("11.4.2014.1", "Add 'extraBlocks to residents", "ALTER TABLE " + this.sqlDatasource.prefix +
                 "Residents ADD extraBlocks INTEGER DEFAULT 0;"));
@@ -227,9 +227,9 @@ public class SQLSchema {
         updates.add(new DBUpdate("4.12.2015.1", "Add 'isFarClaim' to Blocks", "ALTER TABLE " + this.sqlDatasource.prefix +
                 "Blocks ADD isFarClaim boolean DEFAULT false"));
         updates.add(new DBUpdate("4.12.2015.2", "Add 'maxFarClaims' to Towns", "ALTER TABLE " + this.sqlDatasource.prefix +
-                "Towns ADD maxFarClaims INTEGER DEFAULT " + Config.maxFarClaims));
+                "Towns ADD maxFarClaims INTEGER DEFAULT " + Config.instance.maxFarClaims.get()));
         updates.add(new DBUpdate("4.12.2015.3", "Add 'pricePaid' to Blocks", "ALTER TABLE " + this.sqlDatasource.prefix +
-                "Blocks ADD pricePaid INTEGER DEFAULT " + Config.costAmountClaim));
+                "Blocks ADD pricePaid INTEGER DEFAULT " + Config.instance.costAmountClaim.get()));
         updates.add(new DBUpdate("8.21.2015.1", "Add 'type' to Ranks", "ALTER TABLE " + this.sqlDatasource.prefix +
                 "Ranks ADD type VARCHAR(50) DEFAULT '" + Rank.Type.REGULAR + "'"));
     }
