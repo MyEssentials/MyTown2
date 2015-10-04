@@ -25,15 +25,12 @@ import mytown.protection.ProtectionHandlers;
 import mytown.protection.ProtectionManager;
 import mytown.protection.eventhandlers.ExtraEventsHandler;
 import mytown.protection.json.ProtectionParser;
-import mytown.proxies.DatasourceProxy;
 import mytown.proxies.EconomyProxy;
 import mytown.util.Constants;
 import mytown.util.exceptions.ConfigException;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +55,7 @@ public class MyTown {
         Constants.CONFIG_FOLDER = ev.getModConfigurationDirectory().getPath() + "/MyTown/";
 
         // Read Configs
-        Config.instance.init(Constants.CONFIG_FOLDER + "/MyTown.cfg");
+        Config.instance.init(Constants.CONFIG_FOLDER + "/MyTown.cfg", Constants.MODID);
         LOCAL = new Localization(Constants.CONFIG_FOLDER, Config.instance.localization.get(), "/mytown/localization/", MyTown.class);
 
         registerHandlers();
@@ -70,17 +67,6 @@ public class MyTown {
     @EventHandler
     public void postInit(FMLPostInitializationEvent ev) {
 
-    }
-
-    @EventHandler
-    public void imcEvent(FMLInterModComms.IMCEvent ev) {
-        for (FMLInterModComms.IMCMessage msg : ev.getMessages()) {
-            String[] keyParts = msg.key.split("|");
-
-            if (keyParts[0].equals("datasource")) {
-                DatasourceProxy.imc(msg);
-            }
-        }
     }
 
     @EventHandler
@@ -105,9 +91,9 @@ public class MyTown {
 
     @EventHandler
     public void serverStopping(FMLServerStoppingEvent ev) {
-        DatasourceProxy.getDatasource().deleteAllBlockOwners();
+        datasource.deleteAllBlockOwners();
         ProtectionManager.saveBlockOwnersToDB();
-        DatasourceProxy.stop();
+        datasource.stop();
     }
 
     /**

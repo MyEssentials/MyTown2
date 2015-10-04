@@ -100,10 +100,10 @@ public class Config extends ConfigTemplate {
     public ConfigProperty<Integer> costAdditionClaim = new ConfigProperty<Integer>(
             "costAdditionClaim", "cost", "The additional amount of the cost item people need to pay for each block already claimed [Ex: if you have 3 chunks in town claiming the next one will cost costAdditionClaim*3 + costAmountClaim]. This can be used with costMultiplicativeClaim.",
             0);
-    public ConfigProperty<Integer> costMultiplicativeClaim = new ConfigProperty<Integer>(
+    public ConfigProperty<Double> costMultiplicativeClaim = new ConfigProperty<Double>(
             "costMultiplicativeClaim", "cost",
             "The multiplicative amount of the cost item people need to pay for each block already claimed [Ex: if you have 2 chunks the next one will cost costMultiplicativeClaim ^ 2 * costAmountClaim]. This can be used with costAdditionClaim.",
-            1);
+            1.0D);
     public ConfigProperty<Integer> defaultBankAmount = new ConfigProperty<Integer>(
             "defaultBankAmount", "cost",
             "The amount of the cost item that the towns are gonna start with in their banks after created.",
@@ -141,7 +141,7 @@ public class Config extends ConfigTemplate {
             "The range that it's going to check in if a protection's segment that has a tileentity does not provide getters for its area of influence.",
             32);
     public ConfigProperty<Boolean> useExtraEvents = new ConfigProperty<Boolean>(
-            "protection", "useExtraEvents",
+            "useExtraEvents", "protection",
             "If you have Forge 1254 or higher you can enable this feature. It provides more accurate protection.",
             ClassUtils.isClassLoaded("net.minecraftforge.event.world.ExplosionEvent"));
 

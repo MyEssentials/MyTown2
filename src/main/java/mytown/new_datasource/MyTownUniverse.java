@@ -1,4 +1,4 @@
-package mytown.datasource;
+package mytown.new_datasource;
 
 import com.mojang.authlib.GameProfile;
 import myessentials.teleport.Teleport;
@@ -12,7 +12,6 @@ import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsHandler;
-import mytown.proxies.DatasourceProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -343,8 +342,18 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         worlds.remove((Integer) dim);
     }
 
+    public final void clear() {
+        banks.clear();
+        towns.clear();
+        plots.clear();
+        residents.clear();
+        blocks.clear();
+        worlds.clear();
+        ranks.clear();
+    }
+
     /* ----- Utils ----- */
     private MyTownDatasource getDatasource() {
-        return DatasourceProxy.getDatasource();
+        return MyTown.instance.datasource;
     }
 }

@@ -9,7 +9,6 @@ import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -96,7 +95,7 @@ public class WhitelisterTool extends Tool {
         for (FlagType flagType : FlagType.getWhitelistable()) {
             BlockWhitelist bw = town.blockWhitelistsContainer.get(dim, x, y, z, flagType);
             if (bw != null) {
-                DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
+                MyTown.instance.datasource.deleteBlockWhitelist(bw, town);
                 owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.perm.town.whitelist.removed"));
             }
         }
@@ -107,7 +106,7 @@ public class WhitelisterTool extends Tool {
         if (bw == null) {
             bw = new BlockWhitelist(dim, x, y, z, flagType);
             owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.perm.town.whitelist.added"));
-            DatasourceProxy.getDatasource().saveBlockWhitelist(bw, town);
+            MyTown.instance.datasource.saveBlockWhitelist(bw, town);
         } else {
             owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.perm.town.whitelist.already"));
         }

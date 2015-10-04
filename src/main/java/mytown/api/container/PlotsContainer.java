@@ -1,6 +1,6 @@
 package mytown.api.container;
 
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.TownBlock;

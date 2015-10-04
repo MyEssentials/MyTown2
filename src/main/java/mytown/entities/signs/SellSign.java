@@ -4,10 +4,9 @@ import myessentials.Localization;
 import myessentials.entities.BlockPos;
 import myessentials.entities.sign.Sign;
 import mytown.MyTown;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
-import mytown.proxies.DatasourceProxy;
 import mytown.proxies.EconomyProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntitySign;
@@ -65,15 +64,15 @@ public class SellSign extends Sign {
                 resInPlot.sendMessage(getLocal().getLocalization("mytown.notification.plot.buy.oldOwner", plot.getName(), EconomyProxy.getCurrency(price)));
             }
             for (Resident resInPlot : plot.membersContainer) {
-                DatasourceProxy.getDatasource().unlinkResidentFromPlot(resInPlot, plot);
+                MyTown.instance.datasource.unlinkResidentFromPlot(resInPlot, plot);
             }
             for (Resident resInPlot : plot.ownersContainer) {
-                DatasourceProxy.getDatasource().unlinkResidentFromPlot(resInPlot, plot);
+                MyTown.instance.datasource.unlinkResidentFromPlot(resInPlot, plot);
             }
             if(!plot.getTown().residentsMap.containsKey(resident)) {
-                DatasourceProxy.getDatasource().linkResidentToTown(resident, plot.getTown(), plot.getTown().ranksContainer.getDefaultRank());
+                MyTown.instance.datasource.linkResidentToTown(resident, plot.getTown(), plot.getTown().ranksContainer.getDefaultRank());
             }
-            DatasourceProxy.getDatasource().linkResidentToPlot(resident, plot, true);
+            MyTown.instance.datasource.linkResidentToPlot(resident, plot, true);
             resident.sendMessage(getLocal().getLocalization("mytown.notification.plot.buy.newOwner", plot.getName()));
             plot.getTown().bank.addAmount(price);
             deleteSignBlock();

@@ -7,13 +7,11 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.datasource.MyTownDatasource;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownDatasource;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.AdminTown;
 import mytown.entities.Resident;
 import mytown.entities.Town;
-import myessentials.entities.sign.Sign;
-import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -42,9 +40,9 @@ public class Ticker {
                             town.bank.payUpkeep();
                             if(town.bank.getDaysNotPaid() == Config.instance.upkeepTownDeletionDays.get() && Config.instance.upkeepTownDeletionDays.get() > 0) {
                                 MyTown.instance.LOG.info("Town {} has been deleted because it didn't pay upkeep for {} days.", town.getName(), Config.instance.upkeepTownDeletionDays.get());
-                                DatasourceProxy.getDatasource().deleteTown(town);
+                                getDatasource().deleteTown(town);
                             } else {
-                                DatasourceProxy.getDatasource().saveTownBank(town.bank);
+                                getDatasource().saveTownBank(town.bank);
                             }
                         }
                     }
@@ -59,7 +57,6 @@ public class Ticker {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent ev) {
-        MyTownDatasource ds = DatasourceProxy.getDatasource();
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
         if (res != null) {
             res.setPlayer(ev.player);
@@ -70,7 +67,6 @@ public class Ticker {
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent ev) {
-        MyTownDatasource ds = DatasourceProxy.getDatasource();
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
         if (res != null) {
             res.setPlayer(ev.player);
@@ -83,5 +79,9 @@ public class Ticker {
             // Cancel event if it's a border that has been broken
             ev.setCanceled(true);
         }
+    }
+
+    private MyTownDatasource getDatasource() {
+        return MyTown.instance.datasource;
     }
 }

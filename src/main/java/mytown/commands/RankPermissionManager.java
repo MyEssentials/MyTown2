@@ -3,7 +3,7 @@ package mytown.commands;
 import myessentials.utils.PlayerUtils;
 import mypermissions.api.IPermissionManager;
 import mypermissions.api.entities.PermissionLevel;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.util.exceptions.MyTownCommandException;

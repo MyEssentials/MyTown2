@@ -2,7 +2,7 @@ package mytown.protection.eventhandlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import myessentials.utils.WorldUtils;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;

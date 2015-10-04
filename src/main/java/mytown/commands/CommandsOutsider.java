@@ -8,7 +8,7 @@ import mypermissions.command.CommandTree;
 import mypermissions.command.CommandTreeNode;
 import myessentials.utils.StringUtils;
 import mytown.config.Config;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;

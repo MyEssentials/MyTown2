@@ -8,10 +8,9 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import myessentials.entities.BlockPos;
 import mytown.MyTown;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.DatasourceProxy;
 import mytown.thread.ThreadPlacementCheck;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
@@ -65,7 +64,7 @@ public class ProtectionHandlers {
                 for (int i = 0; i < town.blockWhitelistsContainer.size(); i++) {
                     BlockWhitelist bw = town.blockWhitelistsContainer.get(i);
                     if (!ProtectionManager.isBlockWhitelistValid(bw)) {
-                        DatasourceProxy.getDatasource().deleteBlockWhitelist(bw, town);
+                        MyTown.instance.datasource.deleteBlockWhitelist(bw, town);
                     }
                 }
         }
@@ -254,7 +253,7 @@ public class ProtectionHandlers {
 
     @SubscribeEvent
     public void entityJoinWorld(EntityJoinWorldEvent ev) {
-        if(DatasourceProxy.getDatasource() == null) {
+        if(MyTown.instance.datasource == null) {
             return;
         }
 

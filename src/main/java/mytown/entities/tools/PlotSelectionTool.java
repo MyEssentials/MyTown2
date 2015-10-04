@@ -6,14 +6,12 @@ import myessentials.entities.tool.ToolManager;
 import mytown.MyTown;
 import mytown.config.Config;
 import myessentials.thread.DelayedThread;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.handlers.VisualsHandler;
-import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -174,8 +172,8 @@ public class PlotSelectionTool extends Tool {
         Plot plot = MyTownUniverse.instance.newPlot(plotName, selectionFirst.town, selectionFirst.dim, selectionFirst.x, selectionFirst.y, selectionFirst.z, selectionSecond.x, selectionSecond.y, selectionSecond.z);
         resetSelection(true, 5);
 
-        DatasourceProxy.getDatasource().savePlot(plot);
-        DatasourceProxy.getDatasource().linkResidentToPlot(owner, plot, true);
+        MyTown.instance.datasource.savePlot(plot);
+        MyTown.instance.datasource.linkResidentToPlot(owner, plot, true);
         owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.created"));
         ToolManager.instance.remove(this);
     }

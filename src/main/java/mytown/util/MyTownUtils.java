@@ -1,13 +1,12 @@
 package mytown.util;
 
 import mytown.MyTown;
-import mytown.datasource.MyTownDatasource;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownDatasource;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Town;
 import mytown.entities.TownBlock;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.DatasourceProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -105,10 +104,7 @@ public class MyTownUtils {
         }
     }
 
-    /**
-     * Gets the datasource
-     */
     public static MyTownDatasource getDatasource() {
-        return DatasourceProxy.getDatasource();
+        return MyTown.instance.datasource;
     }
 }

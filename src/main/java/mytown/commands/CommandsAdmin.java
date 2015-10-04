@@ -15,8 +15,8 @@ import mytown.MyTown;
 import mytown.api.container.FlagsContainer;
 import mytown.api.container.RanksContainer;
 import mytown.config.json.FlagsConfig;
-import mytown.config.json.WildPermsConfig;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownDatasource;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -74,7 +74,7 @@ public class CommandsAdmin extends Commands {
     public static CommandResponse configReloadCommand(ICommandSender sender, List<String> args) {
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.start"));
         MyTown.instance.loadConfigs();
-        getDatasource().checkAllOnStart();
+        getDatasource().checkAll();
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.load.stop"));
         return CommandResponse.DONE;
     }
@@ -774,6 +774,19 @@ public class CommandsAdmin extends Commands {
         }
 
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.db.purging"));
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "reload",
+            permission = "mytown.adm.cmd.db.reload",
+            parentName = "mytown.adm.cmd.db",
+            syntax = "/townadmin db reload",
+            console = true)
+    public static CommandResponse dbReloadCommand(ICommandSender sender, List<String> args) {
+        MyTownUniverse.instance.clear();
+        MyTown.instance.datasource = new MyTownDatasource();
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.db.reloaded"));
         return CommandResponse.DONE;
     }
 

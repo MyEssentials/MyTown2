@@ -4,12 +4,11 @@ import myessentials.Localization;
 import mypermissions.api.command.CommandCompletion;
 import mytown.MyTown;
 import mytown.api.container.FlagsContainer;
-import mytown.datasource.MyTownDatasource;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownDatasource;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.proxies.DatasourceProxy;
 import mytown.proxies.EconomyProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
@@ -29,7 +28,7 @@ public abstract class Commands {
     }
 
     public static MyTownDatasource getDatasource() {
-        return DatasourceProxy.getDatasource();
+        return MyTown.instance.datasource;
     }
     public static MyTownUniverse getUniverse() {
         return MyTownUniverse.instance;

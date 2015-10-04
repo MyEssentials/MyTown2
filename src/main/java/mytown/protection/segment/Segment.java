@@ -6,7 +6,7 @@ import com.google.gson.internal.LazilyParsedNumber;
 import myessentials.entities.Volume;
 import mytown.MyTown;
 import mytown.api.container.GettersContainer;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.protection.ProtectionManager;
@@ -80,6 +80,10 @@ public abstract class Segment {
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
+        if (res == null) {
+            return false;
+        }
+
         for(FlagType<Boolean> flagType : flags) {
             if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
                 return false;
@@ -89,6 +93,10 @@ public abstract class Segment {
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
+        if (res == null) {
+            return false;
+        }
+
         for (FlagType<Boolean> flagType : flags) {
             if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
                 return false;
@@ -319,7 +327,7 @@ public abstract class Segment {
 
             if(json.has("clientUpdate")) {
                 JsonObject jsonClientUpdate = json.get("clientUpdate").getAsJsonObject();
-                segment.clientUpdate = context.deserialize(jsonClientUpdate.get("coords"), Volume.class);
+                segment.clientUpdate = new ClientBlockUpdate((Volume) context.deserialize(jsonClientUpdate.get("coords"), Volume.class));
                 if(jsonClientUpdate.has("directional")) {
                     segment.directionalClientUpdate = jsonClientUpdate.get("directional").getAsBoolean();
                 }

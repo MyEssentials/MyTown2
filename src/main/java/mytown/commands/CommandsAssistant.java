@@ -9,7 +9,7 @@ import myessentials.utils.WorldUtils;
 import mypermissions.api.command.CommandResponse;
 import mypermissions.api.command.annotation.Command;
 import mytown.config.Config;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;

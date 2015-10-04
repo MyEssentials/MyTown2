@@ -8,12 +8,11 @@ import myessentials.utils.PlayerUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
 import mytown.api.container.SegmentsContainer;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.protection.json.Protection;
 import mytown.protection.segment.*;
-import mytown.proxies.DatasourceProxy;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -303,7 +302,7 @@ public class ProtectionManager {
 
     public static void saveBlockOwnersToDB() {
         for(Map.Entry<TileEntity, Resident> set : ProtectionHandlers.instance.ownedTileEntities.entrySet()) {
-            DatasourceProxy.getDatasource().saveBlockOwner(set.getValue(), set.getKey().getWorldObj().provider.dimensionId, set.getKey().xCoord, set.getKey().yCoord, set.getKey().zCoord);
+            MyTown.instance.datasource.saveBlockOwner(set.getValue(), set.getKey().getWorldObj().provider.dimensionId, set.getKey().xCoord, set.getKey().yCoord, set.getKey().zCoord);
         }
     }
 

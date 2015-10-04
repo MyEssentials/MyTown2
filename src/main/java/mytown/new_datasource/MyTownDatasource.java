@@ -1,14 +1,11 @@
 package mytown.new_datasource;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonSyntaxException;
-import myessentials.datasource.bridge.BridgeMySQL;
 import myessentials.datasource.DatasourceSQL;
-import myessentials.datasource.bridge.BridgeSQL;
-import myessentials.datasource.bridge.BridgeSQLite;
 import myessentials.teleport.Teleport;
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -17,7 +14,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.core.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1240,7 +1236,7 @@ public class MyTownDatasource extends DatasourceSQL {
             block.getTown().townBlocksContainer.remove(block);
 
             // Delete Plots contained in the Block
-            for (Plot p : block.plotsContainer) {
+            for (Plot p : ImmutableList.copyOf(block.plotsContainer)) {
                 deletePlot(p);
             }
             // Remove Block from Map

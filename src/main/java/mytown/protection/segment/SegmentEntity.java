@@ -1,21 +1,13 @@
 package mytown.protection.segment;
 
 import myessentials.entities.Volume;
-import mytown.MyTown;
-import mytown.api.container.GettersContainer;
-import mytown.datasource.MyTownUniverse;
 import mytown.entities.Resident;
-import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.EntityType;
-import mytown.util.exceptions.ConditionException;
-import mytown.util.exceptions.GetterException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Segment that protects against an Entity

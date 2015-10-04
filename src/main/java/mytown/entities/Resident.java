@@ -5,16 +5,18 @@ import mytown.MyTown;
 import mytown.api.container.PlotsContainer;
 import mytown.api.container.TownsContainer;
 import mytown.config.Config;
-import mytown.datasource.MyTownUniverse;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.FakePlayer;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class Resident {
@@ -40,12 +42,21 @@ public class Resident {
     public Resident(UUID uuid, String playerName) {
         this.playerUUID = uuid;
         this.playerName = playerName;
+        tryLoadPlayer();
     }
 
     public Resident(UUID uuid, String playerName, long joinDate, long lastOnline) {
         this(uuid, playerName);
         this.joinDate.setTime(joinDate * 1000L);
         this.lastOnline.setTime(lastOnline * 1000L);
+    }
+
+    private void tryLoadPlayer() {
+        for (EntityPlayer player : (List<EntityPlayer>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+            if(player.getPersistentID().equals(playerUUID)) {
+                this.player = player;
+            }
+        }
     }
 
     /**
