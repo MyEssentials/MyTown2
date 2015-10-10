@@ -1,8 +1,8 @@
 package mytown.config;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import myessentials.simple_config.ConfigProperty;
-import myessentials.simple_config.ConfigTemplate;
+import myessentials.config.ConfigProperty;
+import myessentials.config.ConfigTemplate;
 import myessentials.utils.ClassUtils;
 import net.minecraft.init.Items;
 
