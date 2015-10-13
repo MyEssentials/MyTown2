@@ -2,6 +2,7 @@ package mytown.entities.flag;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
+import myessentials.json.SerializerTemplate;
 import mytown.MyTown;
 
 import java.lang.reflect.Type;
@@ -169,7 +170,13 @@ public class FlagType<T> implements Comparable<FlagType<T>>{
         WHITELISTABLE
     }
 
-    public static class Serializer implements JsonSerializer<FlagType>, JsonDeserializer<FlagType> {
+    public static class Serializer extends SerializerTemplate<FlagType> {
+
+        @Override
+        public void register(GsonBuilder builder) {
+            builder.registerTypeAdapter(FlagType.class, this);
+        }
+
         @Override
         public JsonElement serialize(FlagType flagType, Type typeOfSrc, JsonSerializationContext context) {
             return new JsonPrimitive(flagType.name);

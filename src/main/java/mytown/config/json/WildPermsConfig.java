@@ -17,7 +17,7 @@ public class WildPermsConfig extends JsonConfig<Flag, Flag.Container> {
     public WildPermsConfig(String path) {
         super(path, "WildPermsConfig");
         this.gsonType = Flag.Container.class;
-        this.gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Flag.class, new Flag.Serializer()).create();
+        this.gson = new Flag.Serializer().createBuilder().setPrettyPrinting().create();
     }
 
     @Override
