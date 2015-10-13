@@ -1,8 +1,12 @@
 package mytown.entities;
 
+import com.google.common.collect.ImmutableList;
+import com.google.gson.*;
 import mypermissions.api.container.PermissionsContainer;
 import mytown.api.container.RanksContainer;
 import net.minecraft.util.EnumChatFormatting;
+
+import java.lang.reflect.Type;
 
 public class Rank {
 
@@ -104,6 +108,33 @@ public class Rank {
         Type(String color, boolean unique) {
             this.color = color;
             this.unique = unique;
+        }
+    }
+
+    public static class Serializer implements JsonSerializer<Rank>, JsonDeserializer<Rank> {
+
+        @Override
+        public Rank deserialize(JsonElement json, java.lang.reflect.Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject jsonObject = json.getAsJsonObject();
+
+            String name = jsonObject.get("name").getAsString();
+            Rank.Type rankType = Type.valueOf(jsonObject.get("type").getAsString());
+            Rank rank = new Rank(name, null, rankType);
+            if (jsonObject.has("permissions")) {
+                rank.permissionsContainer.addAll(ImmutableList.copyOf(context.<String[]>deserialize(jsonObject.get("permissions"), String[].class)));
+            }
+            return rank;
+        }
+
+        @Override
+        public JsonElement serialize(Rank rank, java.lang.reflect.Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject json = new JsonObject();
+
+            json.addProperty("name", rank.name);
+            json.addProperty("type", rank.type.toString());
+            json.add("permissions", context.serialize(rank.permissionsContainer, String[].class));
+
+            return json;
         }
     }
 }

@@ -1,6 +1,5 @@
 package mytown.config.json;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import myessentials.json.JsonConfig;
 import mytown.MyTown;
@@ -14,8 +13,8 @@ public class RanksConfig extends JsonConfig<Rank, RanksContainer> {
 
     public RanksConfig(String path) {
         super(path, "DefaultTownRanks");
-        this.gsonType = new TypeToken<RanksContainer>() {}.getType();
-        this.gson = new GsonBuilder().registerTypeAdapter(gsonType, new RanksContainer.Serializer()).setPrettyPrinting().create();
+        this.gsonType = RanksContainer.class;
+        this.gson = new GsonBuilder().registerTypeAdapter(Rank.class, new Rank.Serializer()).setPrettyPrinting().create();
     }
 
     @Override
