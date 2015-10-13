@@ -1,8 +1,10 @@
 package mytown.entities.flag;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import myessentials.utils.ColorUtils;
+import mytown.api.container.FlagsContainer;
+
+import java.lang.reflect.Type;
 
 public class Flag<T> implements Comparable<Flag>{
     protected Gson gson = new GsonBuilder().create();
@@ -56,5 +58,30 @@ public class Flag<T> implements Comparable<Flag>{
     @Override
     public int compareTo(Flag other) {
         return flagType.compareTo(other.flagType);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static class Serializer implements JsonSerializer<Flag>, JsonDeserializer<Flag> {
+
+
+        @Override
+        public JsonElement serialize(Flag flag, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject json = new JsonObject();
+
+            json.addProperty("flagType", flag.flagType.name);
+            json.addProperty("value", flag.flagType.serializeValue(flag.value));
+
+            return json;
+        }
+
+        @Override
+        public Flag deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject jsonObject = json.getAsJsonObject();
+
+            FlagType flagType = FlagType.valueOf(jsonObject.get("flagType").getAsString());
+            Flag flag = new Flag(flagType, jsonObject.get("value").getAsString());
+
+            return flag;
+        }
     }
 }

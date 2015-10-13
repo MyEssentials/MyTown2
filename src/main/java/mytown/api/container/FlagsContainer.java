@@ -103,32 +103,4 @@ public class FlagsContainer extends ArrayList<Flag> {
 
         return formattedFlagList;
     }
-
-    public static class Serializer implements JsonSerializer<FlagsContainer>, JsonDeserializer<FlagsContainer> {
-
-        @Override
-        public JsonElement serialize(FlagsContainer container, Type typeOfSrc, JsonSerializationContext context) {
-            JsonArray array = new JsonArray();
-            for (Flag flag : container) {
-                JsonObject json = new JsonObject();
-                json.addProperty("flagType", flag.flagType.name);
-                json.addProperty("value", flag.flagType.serializeValue(flag.value));
-                array.add(json);
-            }
-            return array;
-        }
-
-        @Override
-        public FlagsContainer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            FlagsContainer container = new FlagsContainer();
-            JsonArray array = json.getAsJsonArray();
-
-            for (JsonElement element : array) {
-                FlagType flagType = FlagType.valueOf(element.getAsJsonObject().get("flagType").getAsString());
-                container.add(new Flag(flagType, element.getAsJsonObject().get("value").getAsString()));
-            }
-
-            return container;
-        }
-    }
 }

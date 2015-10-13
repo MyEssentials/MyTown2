@@ -1,7 +1,6 @@
 package mytown.config.json;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.*;
+import com.google.gson.GsonBuilder;
 import myessentials.json.JsonConfig;
 import mytown.MyTown;
 import mytown.api.container.FlagsContainer;
@@ -10,7 +9,6 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Wilderness flags
@@ -19,8 +17,8 @@ public class WildPermsConfig extends JsonConfig<Flag, FlagsContainer> {
 
     public WildPermsConfig(String path) {
         super(path, "WildPermsConfig");
-        gsonType = new TypeToken<FlagsContainer>() {}.getType();
-        gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(gsonType, new FlagsContainer.Serializer()).create();
+        this.gsonType = FlagsContainer.class;
+        this.gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Flag.class, new Flag.Serializer()).create();
     }
 
     @Override
