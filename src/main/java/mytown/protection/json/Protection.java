@@ -2,7 +2,6 @@ package mytown.protection.json;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import mytown.api.container.SegmentsContainer;
 import mytown.protection.segment.*;
 import mytown.util.exceptions.ProtectionParseException;
 
@@ -17,7 +16,7 @@ public class Protection {
     public final String modid;
     public final String version;
 
-    public final SegmentsContainer<Segment> segments = new SegmentsContainer<Segment>();
+    public final Segment.Container<Segment> segments = new Segment.Container<Segment>();
 
     public Protection(String modid) {
         this(modid, "");

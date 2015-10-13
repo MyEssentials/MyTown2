@@ -4,14 +4,14 @@ import bsh.EvalError;
 import bsh.Interpreter;
 import com.google.common.base.Joiner;
 import mytown.MyTown;
-import mytown.api.container.GettersContainer;
+import mytown.protection.segment.getter.Getter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class CallerFormula extends Caller {
 
-    protected GettersContainer getters;
+    protected Getter.Container getters;
 
-    public void setGetters(GettersContainer getters) {
+    public void setGetters(Getter.Container getters) {
         this.getters = getters;
     }
 

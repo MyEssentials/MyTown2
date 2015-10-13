@@ -1,18 +1,21 @@
 package mytown.entities;
 
 import myessentials.teleport.Teleport;
+import myessentials.utils.ColorUtils;
 import myessentials.utils.PlayerUtils;
 import mypermissions.api.entities.PermissionLevel;
 import mypermissions.proxies.PermissionProxy;
 import mytown.MyTown;
 import mytown.api.container.*;
 import mytown.config.Config;
+import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -28,11 +31,11 @@ public class Town implements Comparable<Town> {
     private Teleport spawn;
 
     public final ResidentRankMap residentsMap = new ResidentRankMap();
-    public final RanksContainer ranksContainer = new RanksContainer();
-    public final PlotsContainer plotsContainer = new PlotsContainer(Config.instance.defaultMaxPlots.get());
-    public final FlagsContainer flagsContainer = new FlagsContainer();
-    public final TownBlocksContainer townBlocksContainer = new TownBlocksContainer();
-    public final BlockWhitelistsContainer blockWhitelistsContainer = new BlockWhitelistsContainer();
+    public final Rank.Container ranksContainer = new Rank.Container();
+    public final Plot.Container plotsContainer = new Plot.Container(Config.instance.defaultMaxPlots.get());
+    public final Flag.Container flagsContainer = new Flag.Container();
+    public final TownBlock.Container townBlocksContainer = new TownBlock.Container();
+    public final BlockWhitelist.Container blockWhitelistsContainer = new BlockWhitelist.Container();
 
     public final Bank bank = new Bank(this);
 
@@ -279,5 +282,82 @@ public class Town implements Comparable<Town> {
         return townBlocksContainer.contains(dim, chunkX, chunkZ);
     }
 
+    public static class Container extends ArrayList<Town> {
 
+        private Town mainTown;
+
+        @Override
+        public boolean add(Town town) {
+            if(mainTown == null) {
+                mainTown = town;
+            }
+            return super.add(town);
+        }
+
+        public Town get(String name) {
+            for(Town town : this) {
+                if(town.getName().equals(name)) {
+                    return town;
+                }
+            }
+            return null;
+        }
+
+        public void remove(String name) {
+            for(Iterator<Town> it = iterator(); it.hasNext(); ) {
+                Town town = it.next();
+                if(town.getName().equals(name)) {
+                    it.remove();
+                }
+            }
+        }
+
+        public boolean contains(String name) {
+            for(Town town : this) {
+                if(town.getName().equals(name)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void setMainTown(Town town) {
+            if(contains(town)) {
+                mainTown = town;
+            }
+        }
+
+        public Town getMainTown() {
+            if(!contains(mainTown) || mainTown == null) {
+                if(size() == 0) {
+                    return null;
+                } else {
+                    mainTown = get(0);
+                }
+            }
+
+            return mainTown;
+        }
+
+        @Override
+        public String toString() {
+            return toString(false);
+        }
+
+        public String toString(boolean colorMainTown) {
+            String formattedList = null;
+            for(Town town : this) {
+                String mayorName = town.residentsMap.getMayor() != null ? ColorUtils.colorPlayer + town.residentsMap.getMayor().getPlayerName()
+                        : ColorUtils.colorAdmin + "SERVER ADMINS";
+                String toAdd = ((colorMainTown && town == mainTown) ? ColorUtils.colorSelectedTown : ColorUtils.colorTown) + town.getName() + ":" + ColorUtils.colorComma +
+                        " { " + Rank.Type.MAYOR.color + "Mayor: " + mayorName + ColorUtils.colorComma + " }";
+                if(formattedList == null) {
+                    formattedList = toAdd;
+                } else {
+                    formattedList += "\\n" + toAdd;
+                }
+            }
+            return formattedList;
+        }
+    }
 }

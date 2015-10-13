@@ -1,10 +1,7 @@
 package mytown.protection.segment;
 
 import myessentials.entities.BlockPos;
-import myessentials.entities.Volume;
-import mytown.api.container.GettersContainer;
 import mytown.entities.Resident;
-import mytown.entities.flag.FlagType;
 import mytown.protection.segment.enums.BlockType;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;

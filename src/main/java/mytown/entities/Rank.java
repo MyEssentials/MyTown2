@@ -2,18 +2,18 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
+import myessentials.utils.ColorUtils;
 import mypermissions.api.container.PermissionsContainer;
-import mytown.api.container.RanksContainer;
 import net.minecraft.util.EnumChatFormatting;
 
-import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class Rank {
 
     /**
      * All the default ranks that are added to each town on creation (except AdminTowns)
      */
-    public static final RanksContainer defaultRanks = new RanksContainer();
+    public static final Container defaultRanks = new Container();
 
     public static void initDefaultRanks() {
 
@@ -135,6 +135,73 @@ public class Rank {
             json.add("permissions", context.serialize(rank.permissionsContainer, String[].class));
 
             return json;
+        }
+    }
+
+    public static class Container extends ArrayList<Rank> {
+
+        public boolean contains(String rankName) {
+            for (Rank r : this) {
+                if (r.getName().equals(rankName))
+                    return true;
+            }
+            return false;
+        }
+
+        public Rank get(String rankName) {
+            for (Rank r : this) {
+                if (r.getName().equals(rankName))
+                    return r;
+            }
+            return null;
+        }
+
+        public Rank get(Type type) {
+            if(!type.unique) {
+                throw new RuntimeException("The rank you are trying to get is not unique!");
+            }
+
+            for(Rank rank : this) {
+                if(rank.getType() == type) {
+                    return rank;
+                }
+            }
+            return null;
+        }
+
+        public Rank getMayorRank() {
+            for(Rank rank : this) {
+                if(rank.getType() == Type.MAYOR) {
+                    return rank;
+                }
+            }
+            return null;
+        }
+
+        public Rank getDefaultRank() {
+            for(Rank rank : this) {
+                if(rank.getType() == Type.DEFAULT) {
+                    return rank;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            String res = null;
+            for (Rank rank : this) {
+                if (res == null) {
+                    res = rank.toString();
+                } else {
+                    res += ColorUtils.colorComma + ", " + rank.toString();
+                }
+            }
+
+            if (isEmpty()) {
+                res = ColorUtils.colorEmpty + "NONE";
+            }
+            return res;
         }
     }
 }

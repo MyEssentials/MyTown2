@@ -3,7 +3,6 @@ package mytown.config.json;
 import com.google.gson.GsonBuilder;
 import myessentials.json.JsonConfig;
 import mytown.MyTown;
-import mytown.api.container.FlagsContainer;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -13,22 +12,22 @@ import java.util.Iterator;
 /**
  * Wilderness flags
  */
-public class WildPermsConfig extends JsonConfig<Flag, FlagsContainer> {
+public class WildPermsConfig extends JsonConfig<Flag, Flag.Container> {
 
     public WildPermsConfig(String path) {
         super(path, "WildPermsConfig");
-        this.gsonType = FlagsContainer.class;
+        this.gsonType = Flag.Container.class;
         this.gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Flag.class, new Flag.Serializer()).create();
     }
 
     @Override
-    protected FlagsContainer newList() {
-        return new FlagsContainer();
+    protected Flag.Container newList() {
+        return new Flag.Container();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void create(FlagsContainer items) {
+    public void create(Flag.Container items) {
         for (FlagType type : FlagType.values()) {
             if (type.isWildPerm) {
                 items.add(new Flag(type, type.defaultWildValue));
@@ -38,8 +37,8 @@ public class WildPermsConfig extends JsonConfig<Flag, FlagsContainer> {
     }
 
     @Override
-    public FlagsContainer read() {
-        FlagsContainer items = super.read();
+    public Flag.Container read() {
+        Flag.Container items = super.read();
 
         Wild.instance.flagsContainer.clear();
         Wild.instance.flagsContainer.addAll(items);
@@ -49,7 +48,7 @@ public class WildPermsConfig extends JsonConfig<Flag, FlagsContainer> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean validate(FlagsContainer items) {
+    public boolean validate(Flag.Container items) {
         boolean isValid = true;
 
         for (Iterator<Flag> it = items.iterator(); it.hasNext();) {

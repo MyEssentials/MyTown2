@@ -5,7 +5,6 @@ import com.google.gson.*;
 import com.google.gson.internal.LazilyParsedNumber;
 import myessentials.entities.Volume;
 import mytown.MyTown;
-import mytown.api.container.GettersContainer;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
@@ -22,10 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * A part of the protection that protects against a specific thing.
@@ -36,7 +32,7 @@ public abstract class Segment {
     protected Class<?> checkClass;
     protected Condition condition;
     protected final List<FlagType<Boolean>> flags = new ArrayList<FlagType<Boolean>>();
-    protected final GettersContainer getters = new GettersContainer();
+    protected final Getter.Container getters = new Getter.Container();
 
     public boolean isDisabled() {
         return isDisabled;
@@ -355,6 +351,34 @@ public abstract class Segment {
                 return json.getAsNumber();
             }
             return null;
+        }
+    }
+
+    public static class Container<T extends Segment> extends ArrayList<T> {
+
+        public List<T> get(Class<?> clazz) {
+            List<T> usableSegments = new ArrayList<T>();
+            for(Segment segment : this) {
+                if(!segment.isDisabled() && segment.shouldCheckType(clazz)) {
+                    usableSegments.add((T)segment);
+                }
+            }
+            if(usableSegments.size() > 1) {
+                Priority highestPriority = Priority.LOWEST;
+                for(Segment segment : usableSegments) {
+                    if(highestPriority.ordinal() < segment.getPriority().ordinal()) {
+                        highestPriority = segment.getPriority();
+                    }
+                }
+
+                for(Iterator<T> it = usableSegments.iterator(); it.hasNext();) {
+                    Segment segment = it.next();
+                    if(segment.getPriority() != highestPriority) {
+                        it.remove();
+                    }
+                }
+            }
+            return usableSegments;
         }
     }
 }

@@ -4,14 +4,20 @@ import myessentials.entities.Volume;
 import myessentials.entities.sign.Sign;
 import myessentials.entities.sign.SignManager;
 import mypermissions.proxies.PermissionProxy;
-import mytown.api.container.FlagsContainer;
-import mytown.api.container.ResidentsContainer;
+import mytown.entities.flag.Flag;
 import mytown.entities.signs.SellSign;
 import mytown.entities.flag.FlagType;
+import mytown.handlers.VisualsHandler;
+import mytown.new_datasource.MyTownUniverse;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Plot {
     private int dbID;
@@ -19,9 +25,9 @@ public class Plot {
     private Town town;
     private String key, name;
 
-    public final FlagsContainer flagsContainer = new FlagsContainer();
-    public final ResidentsContainer membersContainer = new ResidentsContainer();
-    public final ResidentsContainer ownersContainer = new ResidentsContainer();
+    public final Flag.Container flagsContainer = new Flag.Container();
+    public final Resident.Container membersContainer = new Resident.Container();
+    public final Resident.Container ownersContainer = new Resident.Container();
 
     public Plot(String name, Town town, int dim, int x1, int y1, int z1, int x2, int y2, int z2) {
         if (x1 > x2) {
@@ -174,5 +180,112 @@ public class Plot {
 
     public int getDbID() {
         return this.dbID;
+    }
+
+    public static class Container extends ArrayList<Plot> {
+
+        private int maxPlots;
+
+        public Container() {
+            this.maxPlots = -1;
+        }
+
+        public Container(int maxPlots) {
+            this.maxPlots = maxPlots;
+        }
+
+        public void remove(Plot plot) {
+            for (int x = plot.getStartChunkX(); x <= plot.getEndChunkX(); x++) {
+                for (int z = plot.getStartChunkZ(); z <= plot.getEndChunkZ(); z++) {
+                    TownBlock b = MyTownUniverse.instance.blocks.get(plot.getDim(), x, z);
+                    if (b != null) {
+                        for(Iterator<Plot> it = b.plotsContainer.iterator(); it.hasNext(); ) {
+                            Plot plotInBlock = it.next();
+                            if(plot == plotInBlock) {
+                                it.remove();
+                            }
+                        }
+                    }
+                }
+            }
+            super.remove(plot);
+        }
+
+        public Plot get(String name) {
+            for(Plot plot : this) {
+                if(plot.getName().equals(name))
+                    return plot;
+            }
+            return null;
+        }
+
+        public Plot get(int dim, int x, int y, int z) {
+            for(Plot plot : this) {
+                if(plot.isCoordWithin(dim, x, y, z)) {
+                    return plot;
+                }
+            }
+            return null;
+        }
+
+        public Plot get(Resident res) {
+            return get(res.getPlayer().dimension, (int) Math.floor(res.getPlayer().posX), (int) Math.floor(res.getPlayer().posY), (int) Math.floor(res.getPlayer().posZ));
+        }
+
+        @Override
+        public Plot get(int plotID) {
+            for(Plot plot : this) {
+                if(plot.getDbID() == plotID) {
+                    return plot;
+                }
+            }
+            return null;
+        }
+
+        public List<Plot> getPlotsOwned(Resident res) {
+            List<Plot> list = new ArrayList<Plot>();
+            for (Plot plot : this) {
+                if (plot.ownersContainer.contains(res))
+                    list.add(plot);
+            }
+            return list;
+        }
+
+        public int getAmountPlotsOwned(Resident res) {
+            int plotsOwned = 0;
+            for (Plot plot : this) {
+                if (plot.ownersContainer.contains(res))
+                    plotsOwned++;
+            }
+            return plotsOwned;
+        }
+
+        public int getMaxPlots() {
+            return this.maxPlots;
+        }
+
+        public void setMaxPlots(int maxPlots) {
+            this.maxPlots = maxPlots;
+        }
+
+        public boolean canResidentMakePlot(Resident res) {
+            return maxPlots == -1 || getAmountPlotsOwned(res) < maxPlots;
+        }
+
+        public void show(Resident res) {
+            if(res.getPlayer() instanceof EntityPlayerMP) {
+                for (Plot plot : this) {
+                    VisualsHandler.instance.markPlotBorders(plot, (EntityPlayerMP) res.getPlayer());
+                }
+            }
+        }
+
+        public void hide(Resident res) {
+            if(res.getPlayer() instanceof EntityPlayerMP) {
+                for (Plot plot : this) {
+                    VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) res.getPlayer(), plot);
+                }
+            }
+        }
     }
 }

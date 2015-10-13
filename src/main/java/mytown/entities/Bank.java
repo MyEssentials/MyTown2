@@ -3,6 +3,8 @@ package mytown.entities;
 import mytown.MyTown;
 import mytown.config.Config;
 
+import java.util.ArrayList;
+
 public class Bank {
 
     private Town town;
@@ -59,5 +61,26 @@ public class Bank {
 
     public int getNextPaymentAmount() {
         return (Config.instance.costTownUpkeep.get() + Config.instance.costAdditionalUpkeep.get() * town.townBlocksContainer.size()) * (1 + daysNotPaid);
+    }
+
+    public static class Container extends ArrayList<Bank> {
+
+        public Bank get(Town town) {
+            for(Bank bank : this) {
+                if(bank.getTown() == town) {
+                    return bank;
+                }
+            }
+            return null;
+        }
+
+        public boolean contains(Town town) {
+            for(Bank bank : this) {
+                if(bank.getTown() == town) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

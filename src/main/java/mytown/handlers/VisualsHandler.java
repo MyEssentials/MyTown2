@@ -5,10 +5,8 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import mytown.MyTown;
 import myessentials.utils.WorldUtils;
-import mytown.api.container.TownBlocksContainer;
 import mytown.entities.Plot;
 import mytown.entities.TownBlock;
-import mytown.protection.segment.Segment;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -140,7 +138,7 @@ public class VisualsHandler {
     }
 
 
-    public void markTownBorders(TownBlocksContainer townBlocksContainer, EntityPlayerMP caller) {
+    public void markTownBorders(TownBlock.Container townBlocksContainer, EntityPlayerMP caller) {
         int[] dx = {-1, -1, 0, 1, 1, 1, 0, -1};
         int[] dz = {0, 1, 1, 1, 0, -1, -1, -1};
 
@@ -242,7 +240,7 @@ public class VisualsHandler {
         }
     }
 
-    public void updateTownBorders(TownBlocksContainer townBlocksContainer) {
+    public void updateTownBorders(TownBlock.Container townBlocksContainer) {
         List<EntityPlayerMP> callers = new ArrayList<EntityPlayerMP>();
         for(VisualObject visualObject : markedBlocks) {
             if(visualObject.isTown() && visualObject.object.equals(townBlocksContainer)) {
@@ -347,7 +345,7 @@ public class VisualsHandler {
         }
 
         public boolean isTown() {
-            return object != null && object instanceof TownBlocksContainer;
+            return object != null && object instanceof TownBlock.Container;
         }
 
         public boolean isPlot() {

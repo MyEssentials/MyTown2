@@ -1,9 +1,8 @@
 package mytown.entities;
 
 import myessentials.utils.ChatUtils;
+import myessentials.utils.ColorUtils;
 import mytown.MyTown;
-import mytown.api.container.PlotsContainer;
-import mytown.api.container.TownsContainer;
 import mytown.config.Config;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
@@ -15,9 +14,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.common.util.FakePlayer;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Resident {
     private EntityPlayer player;
@@ -30,9 +27,9 @@ public class Resident {
 
     private int extraBlocks = 0;
 
-    public final PlotsContainer plotsContainer = new PlotsContainer(Config.instance.defaultMaxPlots.get());
-    public final TownsContainer townInvitesContainer = new TownsContainer();
-    public final TownsContainer townsContainer = new TownsContainer();
+    public final Plot.Container plotsContainer = new Plot.Container(Config.instance.defaultMaxPlots.get());
+    public final Town.Container townInvitesContainer = new Town.Container();
+    public final Town.Container townsContainer = new Town.Container();
 
     public Resident(EntityPlayer pl) {
         setPlayer(pl);
@@ -233,5 +230,83 @@ public class Resident {
 
     public void setExtraBlocks(int extraBlocks) {
         this.extraBlocks = extraBlocks;
+    }
+
+    public static class Container extends ArrayList<Resident> {
+
+        public Resident get(UUID uuid) {
+            for (Resident res : this) {
+                if (res.getUUID().equals(uuid)) {
+                    return res;
+                }
+            }
+            return null;
+        }
+
+        public Resident get(String username) {
+            for (Resident res : this) {
+                if (res.getPlayerName().equals(username)) {
+                    return res;
+                }
+            }
+            return null;
+        }
+
+        public void remove(Resident res) {
+            /*
+            for (Iterator<Plot> it = res.getCurrentTown().plotsContainer.asList().iterator(); it.hasNext(); ) {
+                Plot plot = it.next();
+                if (plot.ownersContainer.contains(res) && plot.ownersContainer.size() <= 1) {
+                    it.remove();
+                }
+            }
+            */
+            super.remove(res);
+        }
+
+        public void remove(UUID uuid) {
+            for(Iterator<Resident> it = iterator(); it.hasNext();) {
+                Resident res = it.next();
+                if(res.getUUID().equals(uuid)) {
+                    it.remove();
+                }
+            }
+        }
+
+        public boolean contains(String username) {
+            for (Resident res : this) {
+                if (res.getPlayerName().equals(username)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean contains(UUID uuid) {
+            for (Resident res : this) {
+                if (res.getUUID().equals(uuid)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            String formattedList = null;
+
+            for (Resident res : this) {
+                String toAdd = ColorUtils.colorPlayer + res.getPlayerName();
+                if (formattedList == null) {
+                    formattedList = toAdd;
+                } else {
+                    formattedList += ColorUtils.colorComma + ", " + toAdd;
+                }
+            }
+            if (isEmpty()) {
+                formattedList = ColorUtils.colorEmpty + "NONE";
+            }
+            return formattedList;
+        }
     }
 }

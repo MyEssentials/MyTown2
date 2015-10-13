@@ -1,8 +1,12 @@
 package mytown.entities;
 
 import myessentials.entities.Volume;
-import mytown.api.container.PlotsContainer;
+import myessentials.utils.ColorUtils;
 import mytown.config.Config;
+import mytown.handlers.VisualsHandler;
+import net.minecraft.entity.player.EntityPlayerMP;
+
+import java.util.ArrayList;
 
 public class TownBlock {
     /**
@@ -19,7 +23,7 @@ public class TownBlock {
     private final boolean isFarClaim;
     private final int pricePaid;
 
-    public final PlotsContainer plotsContainer = new PlotsContainer(Config.instance.defaultMaxPlots.get());
+    public final Plot.Container plotsContainer = new Plot.Container(Config.instance.defaultMaxPlots.get());
 
     public TownBlock(int dim, int x, int z, boolean isFarClaim, int pricePaid, Town town) {
         this.dim = dim;
@@ -92,4 +96,90 @@ public class TownBlock {
         return dim == this.dim && cx == x && cz == z;
     }
 
+    public static class Container extends ArrayList<TownBlock> {
+
+        private int extraBlocks;
+        private int maxFarClaims;
+
+        public boolean add(TownBlock block) {
+            boolean result = super.add(block);
+            VisualsHandler.instance.updateTownBorders(this);
+            return result;
+        }
+
+        public boolean remove(TownBlock block) {
+            boolean result = super.remove(block);
+            VisualsHandler.instance.updateTownBorders(this);
+            return result;
+        }
+
+        public boolean contains(int dim, int x, int z) {
+            for(TownBlock block : this) {
+                if(block.getX() == x && block.getZ() == z && block.getDim() == dim) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public TownBlock get(int dim, int x, int z) {
+            for(TownBlock block : this) {
+                if(block.getX() == x && block.getZ() == z && block.getDim() == dim) {
+                    return block;
+                }
+            }
+            return null;
+        }
+
+        public int getExtraBlocks() {
+            return extraBlocks;
+        }
+
+        public void setExtraBlocks(int extraBlocks) {
+            this.extraBlocks = extraBlocks;
+        }
+
+        public int getMaxFarClaims() {
+            return maxFarClaims;
+        }
+
+        public int getFarClaims() {
+            int farClaims = 0;
+            for(TownBlock block : this) {
+                if (block.isFarClaim()) {
+                    farClaims++;
+                }
+            }
+            return farClaims;
+        }
+
+        public void setMaxFarClaims(int maxFarClaims) {
+            this.maxFarClaims = maxFarClaims;
+        }
+
+        public void show(Resident caller) {
+            if(caller.getPlayer() instanceof EntityPlayerMP)
+                VisualsHandler.instance.markTownBorders(this, (EntityPlayerMP)caller.getPlayer());
+        }
+
+        public void hide(Resident caller) {
+            if(caller.getPlayer() instanceof EntityPlayerMP)
+                VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) caller.getPlayer(), this);
+        }
+
+        @Override
+        public String toString() {
+            String formattedList = "";
+            for(TownBlock block : this) {
+                String toAdd = ColorUtils.colorComma + "{"+ ColorUtils.colorCoords + (block.getX() << 4) + ColorUtils.colorComma + ", "
+                        + ColorUtils.colorCoords + (block.getZ() << 4) + ColorUtils.colorComma + "}";
+                if(formattedList.equals("")) {
+                    formattedList = toAdd;
+                } else {
+                    formattedList += ColorUtils.colorComma + "; " + toAdd;
+                }
+            }
+            return formattedList;
+        }
+    }
 }

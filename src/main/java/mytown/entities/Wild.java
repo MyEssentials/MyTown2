@@ -1,6 +1,6 @@
 package mytown.entities;
 
-import mytown.api.container.FlagsContainer;
+import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -11,7 +11,7 @@ public class Wild {
 
     public static final Wild instance = new Wild();
 
-    public final FlagsContainer flagsContainer = new FlagsContainer();
+    public final Flag.Container flagsContainer = new Flag.Container();
 
     /**
      * Checks if Resident is allowed to do the action specified by the FlagType in the Wild

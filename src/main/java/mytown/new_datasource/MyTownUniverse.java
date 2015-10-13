@@ -5,7 +5,6 @@ import myessentials.teleport.Teleport;
 import myessentials.utils.PlayerUtils;
 import mypermissions.api.command.CommandCompletion;
 import mytown.MyTown;
-import mytown.api.container.*;
 import mytown.api.events.*;
 import mytown.config.Config;
 import mytown.entities.*;
@@ -28,13 +27,13 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
 
     public static final MyTownUniverse instance = new MyTownUniverse();
 
-    public final ResidentsContainer residents = new ResidentsContainer();
-    public final TownsContainer towns = new TownsContainer();
+    public final Resident.Container residents = new Resident.Container();
+    public final Town.Container towns = new Town.Container();
     //public final Map<String, Nation> nations = new HashMap<String, Nation>();
-    public final TownBlocksContainer blocks = new TownBlocksContainer();
-    public final PlotsContainer plots = new PlotsContainer();
-    public final RanksContainer ranks = new RanksContainer();
-    public final BanksContainer banks = new BanksContainer();
+    public final TownBlock.Container blocks = new TownBlock.Container();
+    public final Plot.Container plots = new Plot.Container();
+    public final Rank.Container ranks = new Rank.Container();
+    public final Bank.Container banks = new Bank.Container();
     public final List<Integer> worlds = new ArrayList<Integer>();
 
     public MyTownUniverse() {

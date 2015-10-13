@@ -7,7 +7,6 @@ import myessentials.entities.Volume;
 import myessentials.utils.PlayerUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
-import mytown.api.container.SegmentsContainer;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
@@ -36,10 +35,10 @@ import java.util.Map;
  */
 public class ProtectionManager {
 
-    public static final SegmentsContainer<SegmentBlock> segmentsBlock = new SegmentsContainer<SegmentBlock>();
-    public static final SegmentsContainer<SegmentEntity> segmentsEntity = new SegmentsContainer<SegmentEntity>();
-    public static final SegmentsContainer<SegmentItem> segmentsItem = new SegmentsContainer<SegmentItem>();
-    public static final SegmentsContainer<SegmentTileEntity> segmentsTile = new SegmentsContainer<SegmentTileEntity>();
+    public static final Segment.Container<SegmentBlock> segmentsBlock = new Segment.Container<SegmentBlock>();
+    public static final Segment.Container<SegmentEntity> segmentsEntity = new Segment.Container<SegmentEntity>();
+    public static final Segment.Container<SegmentItem> segmentsItem = new Segment.Container<SegmentItem>();
+    public static final Segment.Container<SegmentTileEntity> segmentsTile = new Segment.Container<SegmentTileEntity>();
     private static final Map<EntityPlayer, EntityPos> lastTickPlayerPos = new HashMap<EntityPlayer, EntityPos>();
 
     private ProtectionManager() {

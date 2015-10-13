@@ -1,11 +1,9 @@
 package mytown.entities;
 
-import mytown.api.container.TownsContainer;
-
 public class Nation implements Comparable<Nation> {
     private String name;
 
-    public final TownsContainer townsContainer = new TownsContainer();
+    public final Town.Container townsContainer = new Town.Container();
 
     public Nation(String name) {
         this.name = name;

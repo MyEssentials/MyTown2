@@ -3,35 +3,34 @@ package mytown.config.json;
 import com.google.gson.GsonBuilder;
 import myessentials.json.JsonConfig;
 import mytown.MyTown;
-import mytown.api.container.RanksContainer;
 import mytown.entities.Rank;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RanksConfig extends JsonConfig<Rank, RanksContainer> {
+public class RanksConfig extends JsonConfig<Rank, Rank.Container> {
 
     public RanksConfig(String path) {
         super(path, "DefaultTownRanks");
-        this.gsonType = RanksContainer.class;
+        this.gsonType = Rank.Container.class;
         this.gson = new GsonBuilder().registerTypeAdapter(Rank.class, new Rank.Serializer()).setPrettyPrinting().create();
     }
 
     @Override
-    protected RanksContainer newList() {
-        return new RanksContainer();
+    protected Rank.Container newList() {
+        return new Rank.Container();
     }
 
     @Override
-    public void create(RanksContainer items) {
+    public void create(Rank.Container items) {
         Rank.initDefaultRanks();
         items.addAll(Rank.defaultRanks);
         super.create(items);
     }
 
     @Override
-    public RanksContainer read() {
-        RanksContainer ranks = super.read();
+    public Rank.Container read() {
+        Rank.Container ranks = super.read();
 
         Rank.defaultRanks.clear();
         Rank.defaultRanks.addAll(ranks);
@@ -40,7 +39,7 @@ public class RanksConfig extends JsonConfig<Rank, RanksContainer> {
     }
 
     @Override
-    public boolean validate(RanksContainer items) {
+    public boolean validate(Rank.Container items) {
         boolean isValid = true;
         for(Rank.Type type : Rank.Type.values()) {
             if(type.unique) {

@@ -12,8 +12,6 @@ import mypermissions.api.command.annotation.Command;
 import mypermissions.command.CommandTree;
 import mypermissions.command.CommandTreeNode;
 import mytown.MyTown;
-import mytown.api.container.FlagsContainer;
-import mytown.api.container.RanksContainer;
 import mytown.config.json.FlagsConfig;
 import mytown.new_datasource.MyTownDatasource;
 import mytown.new_datasource.MyTownUniverse;
@@ -96,7 +94,7 @@ public class CommandsAdmin extends Commands {
             syntax = "/townadmin config reset ranks",
             console = true)
     public static CommandResponse configResetRanksCommand(ICommandSender sender, List<String> args) {
-        MyTown.instance.getRanksConfig().create(new RanksContainer());
+        MyTown.instance.getRanksConfig().create(new Rank.Container());
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.reset", MyTown.instance.getRanksConfig().getName()));
         return CommandResponse.DONE;
     }
@@ -108,7 +106,7 @@ public class CommandsAdmin extends Commands {
             syntax = "/townadmin config reset wild",
             console = true)
     public static CommandResponse configResetWildCommand(ICommandSender sender, List<String> args) {
-        MyTown.instance.getWildConfig().create(new FlagsContainer());
+        MyTown.instance.getWildConfig().create(new Flag.Container());
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.cmd.config.reset", MyTown.instance.getWildConfig().getName()));
         return CommandResponse.DONE;
     }
@@ -142,7 +140,7 @@ public class CommandsAdmin extends Commands {
             syntax = "/townadmin update ranks",
             console = true)
     public static CommandResponse updateRanksCommand(ICommandSender sender, List<String> args) {
-        MyTown.instance.getRanksConfig().create(new RanksContainer());
+        MyTown.instance.getRanksConfig().create(new Rank.Container());
         for(Town town : getUniverse().towns) {
             getDatasource().resetRanks(town);
         }

@@ -3,7 +3,6 @@ package mytown.commands;
 import myessentials.Localization;
 import mypermissions.api.command.CommandCompletion;
 import mytown.MyTown;
-import mytown.api.container.FlagsContainer;
 import mytown.new_datasource.MyTownDatasource;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
@@ -121,14 +120,14 @@ public abstract class Commands {
         return res.townInvitesContainer;
     }
 
-    public static Flag getFlagFromType(FlagsContainer flagsContainer, FlagType flagType) {
+    public static Flag getFlagFromType(Flag.Container flagsContainer, FlagType flagType) {
         Flag flag = flagsContainer.get(flagType);
         if (flag == null)
             throw new MyTownCommandException("mytown.cmd.err.flagNotExists", flagType.toString());
         return flag;
     }
 
-    public static Flag getFlagFromName(FlagsContainer flagsContainer, String name) {
+    public static Flag getFlagFromName(Flag.Container flagsContainer, String name) {
         Flag flag;
         try {
             flag = flagsContainer.get(FlagType.valueOf(name.toUpperCase()));

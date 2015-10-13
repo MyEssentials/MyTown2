@@ -2,7 +2,7 @@ package mytown.protection.segment;
 
 import com.google.common.base.Joiner;
 import myessentials.utils.StringUtils;
-import mytown.api.container.GettersContainer;
+import mytown.protection.segment.getter.Getter;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 
@@ -14,7 +14,7 @@ public class Condition {
         this.conditionString = conditionString.split(" ");
     }
 
-    public boolean execute(Object object, GettersContainer getters) throws ConditionException, GetterException {
+    public boolean execute(Object object, Getter.Container getters) throws ConditionException, GetterException {
         if(conditionString == null) {
             return true;
         }
