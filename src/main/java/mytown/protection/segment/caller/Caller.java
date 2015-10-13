@@ -1,6 +1,7 @@
 package mytown.protection.segment.caller;
 
 import com.google.gson.*;
+import myessentials.json.SerializerTemplate;
 import mytown.util.exceptions.ProtectionParseException;
 
 import java.lang.reflect.Type;
@@ -22,7 +23,12 @@ public abstract class Caller {
         return name;
     }
 
-    public static class Serializer implements JsonSerializer<Caller>, JsonDeserializer<Caller> {
+    public static class Serializer extends SerializerTemplate<Caller> {
+
+        @Override
+        public void register(GsonBuilder builder) {
+            builder.registerTypeAdapter(Caller.class, this);
+        }
 
         @Override
         public JsonElement serialize(Caller caller, Type typeOfSrc, JsonSerializationContext context) {

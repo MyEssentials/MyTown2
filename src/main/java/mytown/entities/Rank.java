@@ -2,6 +2,7 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
+import myessentials.json.SerializerTemplate;
 import myessentials.utils.ColorUtils;
 import mypermissions.api.container.PermissionsContainer;
 import net.minecraft.util.EnumChatFormatting;
@@ -111,7 +112,12 @@ public class Rank {
         }
     }
 
-    public static class Serializer implements JsonSerializer<Rank>, JsonDeserializer<Rank> {
+    public static class Serializer extends SerializerTemplate<Rank> {
+
+        @Override
+        public void register(GsonBuilder builder) {
+            builder.registerTypeAdapter(Rank.class, this);
+        }
 
         @Override
         public Rank deserialize(JsonElement json, java.lang.reflect.Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

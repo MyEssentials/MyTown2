@@ -2,6 +2,7 @@ package mytown.protection.json;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
+import myessentials.json.SerializerTemplate;
 import mytown.protection.segment.*;
 import mytown.util.exceptions.ProtectionParseException;
 
@@ -27,7 +28,13 @@ public class Protection {
         this.version = version;
     }
 
-    public static class Serializer implements JsonSerializer<Protection>, JsonDeserializer<Protection> {
+    public static class Serializer extends SerializerTemplate<Protection> {
+
+        @Override
+        public void register(GsonBuilder builder) {
+
+        }
+
         @Override
         public JsonElement serialize(Protection protection, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject json = new JsonObject();

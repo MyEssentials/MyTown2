@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.google.gson.internal.LazilyParsedNumber;
 import myessentials.entities.Volume;
+import myessentials.json.SerializerTemplate;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
@@ -132,7 +133,16 @@ public abstract class Segment {
         this.isDisabled = true;
     }
 
-    public static class Serializer implements JsonSerializer<Segment>, JsonDeserializer<Segment> {
+    public static class Serializer extends SerializerTemplate<Segment> {
+
+        @Override
+        public void register(GsonBuilder builder) {
+            builder.registerTypeAdapter(Segment.class, this);
+            new Getter.Serializer().register(builder);
+            new Volume.Serializer().register(builder);
+            new FlagType.Serializer().register(builder);
+        }
+
         @Override
         public JsonElement serialize(Segment segment, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject json = new JsonObject();
