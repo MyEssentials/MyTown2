@@ -76,12 +76,10 @@ processResources {
     inputs.property "mod_version", project.version
     inputs.property "minecraft_version", project.minecraft.version
     inputs.property "reflectasm_version", config.reflectasm_version
-    inputs.property "mysql_version", config.mysql_version
-    inputs.property "sqlite_version", config.sqlite_version
 
     from(sourceSets.main.resources.srcDirs) {
         include '*.info', 'plugin.yml'
-        expand 'mod_version': project.version, 'minecraft_version': project.minecraft.version, 'reflectasm_version': config.reflectasm_version, 'mysql_version': config.mysql_version, 'sqlite_version': config.sqlite_version
+        expand 'mod_version': project.version, 'minecraft_version': project.minecraft.version, 'reflectasm_version': config.reflectasm_version
     }
     from(sourceSets.main.resources.srcDirs) {
         exclude '*.info', 'plugin.yml'
