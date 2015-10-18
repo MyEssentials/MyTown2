@@ -2,6 +2,9 @@ package mytown.protection.json;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
+
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import myessentials.json.SerializerTemplate;
 import mytown.protection.segment.*;
 import mytown.util.exceptions.ProtectionParseException;
@@ -61,6 +64,11 @@ public class Protection {
             if(jsonObject.has("version")) {
                 version = jsonObject.get("version").getAsString();
             }
+            
+            if (!isModLoaded(modid, version)) {
+            	return null;
+            }
+
             Protection protection = new Protection(modid, version);
 
             if(jsonObject.has("segments")) {
@@ -69,6 +77,18 @@ public class Protection {
             }
 
             return protection;
+        }
+        
+        private static boolean isModLoaded(String modid, String version) {
+        	if ("Minecraft".equals(modid)) {
+        		return true;
+        	}
+            for(ModContainer mod : Loader.instance().getModList()) {
+                if(mod.getModId().equals(modid) && mod.getVersion().startsWith(version)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
