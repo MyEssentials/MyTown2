@@ -30,6 +30,11 @@ public class FlagsConfig extends JsonConfig<FlagsConfig.Wrapper, List<FlagsConfi
             items.add(new Wrapper(type.name, type.defaultValue, type.configurable));
         }
 
+        for (Wrapper item : items) {
+            item.getFlagType().defaultValue = item.defaultState;
+            item.getFlagType().configurable = item.configurable;
+        }
+
         super.create(items);
     }
 
