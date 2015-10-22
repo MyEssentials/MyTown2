@@ -41,7 +41,7 @@ public class JsonConfigTest {
     @Test
     public void shouldWildHaveProperValues() {
         for(Flag flag : Wild.instance.flagsContainer) {
-            Assert.assertEquals(flag.value, flag.flagType.defaultValue);
+            Assert.assertEquals(flag.value, flag.flagType.defaultWildValue);
         }
     }
 }
