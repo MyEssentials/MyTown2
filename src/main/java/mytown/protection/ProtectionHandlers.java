@@ -228,13 +228,15 @@ public class ProtectionHandlers {
             return;
         }
 
-        if(ev.entity instanceof EntityPlayer) {
-            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entity);
-            ProtectionManager.checkPVP(ev.source.getEntity(), res, ev);
-        } else if(ev.source.getEntity() != null) {
-            Resident res = ProtectionManager.getOwner(ev.source.getEntity());
-            if(res != null) {
-                ProtectionManager.checkInteraction(ev.entity, res, ev);
+        if(ev.source.getEntity() != null) {
+            if(ev.entity instanceof EntityPlayer) {
+                Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entity);
+                ProtectionManager.checkPVP(ev.source.getEntity(), res, ev);
+            } else {
+                Resident res = ProtectionManager.getOwner(ev.source.getEntity());
+                if(res != null) {
+                    ProtectionManager.checkInteraction(ev.entity, res, ev);
+                }
             }
         }
     }
@@ -286,7 +288,7 @@ public class ProtectionHandlers {
     @SubscribeEvent
     public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent ev) {
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
-        if(ProtectionManager.hasPermission(res, FlagType.ENTER, ev.player.dimension, (int) Math.floor(ev.player.posX), (int) Math.floor(ev.player.posY), (int) Math.floor(ev.player.posZ))) {
+        if(!ProtectionManager.hasPermission(res, FlagType.ENTER, ev.player.dimension, (int) Math.floor(ev.player.posX), (int) Math.floor(ev.player.posY), (int) Math.floor(ev.player.posZ))) {
             // Because of badly written teleportation code by Mojang we can only send the player back to spawn. :I
             res.respawnPlayer();
         }

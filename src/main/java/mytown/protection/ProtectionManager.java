@@ -100,17 +100,20 @@ public class ProtectionManager {
 
     public static boolean check(Entity entity) {
         if(entity instanceof EntityLiving) {
-            if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
+            int X = (int) Math.floor(entity.posX);
+            int Y = (int) Math.floor(entity.posY);
+            int Z = (int) Math.floor(entity.posZ);
+            if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, X, Y, Z) ||
+               !getFlagValueAtLocation(FlagType.MOBS, entity.dimension, X, Y, Z)) {
                 entity.setDead();
                 return true;
             }
-        }
-
-
-        for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
-            if(!segment.shouldExist(entity)) {
-                entity.setDead();
-                return true;
+        } else {
+            for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
+                if(!segment.shouldExist(entity)) {
+                    entity.setDead();
+                    return true;
+                }
             }
         }
 
