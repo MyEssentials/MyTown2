@@ -4,6 +4,7 @@ import myessentials.entities.Volume;
 import mytown.config.Config;
 import mytown.entities.Resident;
 import mytown.protection.ProtectionHandlers;
+import mytown.protection.segment.getter.Getter;
 import mytown.util.exceptions.GetterException;
 import net.minecraft.tileentity.TileEntity;
 
@@ -37,50 +38,62 @@ public class SegmentTileEntity extends Segment {
 
     public int getX1(TileEntity te) {
         try {
-            return (Integer) getters.get("xMin").invoke(Integer.class, te);
-        } catch (GetterException ex) {
-            return te.xCoord - Config.instance.defaultProtectionSize.get();
-        }
+            Getter xMinGetter = getters.get("xMin");
+            if (xMinGetter != null) {
+                return (Integer) (xMinGetter.invoke(Integer.class, te));
+            }
+        } catch (GetterException ex) {}
+        return te.xCoord - Config.instance.defaultProtectionSize.get();
     }
 
     public int getY1(TileEntity te) {
         try {
-            return (Integer) getters.get("yMin").invoke(Integer.class, te);
-        } catch (GetterException ex) {
-            return te.yCoord - Config.instance.defaultProtectionSize.get();
-        }
+            Getter yMinGetter = getters.get("yMin");
+            if (yMinGetter != null) {
+                return (Integer) (yMinGetter.invoke(Integer.class, te));
+            }
+        } catch (GetterException ex) {}
+        return te.yCoord - Config.instance.defaultProtectionSize.get();
     }
 
     public int getZ1(TileEntity te) {
         try {
-            return (Integer) getters.get("zMin").invoke(Integer.class, te);
-        } catch (GetterException ex) {
-            return te.zCoord - Config.instance.defaultProtectionSize.get();
-        }
+            Getter zMinGetter = getters.get("zMin");
+            if (zMinGetter != null) {
+                return (Integer) (zMinGetter.invoke(Integer.class, te));
+            }
+        } catch (GetterException ex) {}
+        return te.zCoord - Config.instance.defaultProtectionSize.get();
     }
 
     public int getX2(TileEntity te) {
         try {
-            return (Integer) getters.get("xMax").invoke(Integer.class, te);
-        } catch (GetterException ex) {
-            return te.xCoord + Config.instance.defaultProtectionSize.get();
-        }
+            Getter xMaxGetter = getters.get("xMax");
+            if (xMaxGetter != null) {
+                return (Integer) (xMaxGetter.invoke(Integer.class, te));
+            }
+        } catch (GetterException ex) {}
+        return te.xCoord + Config.instance.defaultProtectionSize.get();
     }
 
     public int getY2(TileEntity te) {
         try {
-            return (Integer) getters.get("yMax").invoke(Integer.class, te);
-        } catch (GetterException ex) {
-            return te.yCoord + Config.instance.defaultProtectionSize.get();
-        }
+            Getter yMaxGetter = getters.get("yMax");
+            if (yMaxGetter != null) {
+                return (Integer) (yMaxGetter.invoke(Integer.class, te));
+            }
+        } catch (GetterException ex) {}
+        return te.yCoord + Config.instance.defaultProtectionSize.get();
     }
 
     public int getZ2(TileEntity te) {
         try {
-            return (Integer) getters.get("zMax").invoke(Integer.class, te);
-        } catch (GetterException ex) {
-            return te.zCoord + Config.instance.defaultProtectionSize.get();
-        }
+            Getter zMaxGetter = getters.get("zMax");
+            if (zMaxGetter != null) {
+                return (Integer) (zMaxGetter.invoke(Integer.class, te));
+            }
+        } catch (GetterException ex) {}
+        return te.xCoord + Config.instance.defaultProtectionSize.get();
     }
 
     public boolean retainsOwner() {
