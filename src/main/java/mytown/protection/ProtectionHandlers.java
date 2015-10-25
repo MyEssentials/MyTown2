@@ -248,7 +248,7 @@ public class ProtectionHandlers {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        if(ProtectionManager.hasPermission(res, FlagType.USAGE, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
+        if(!ProtectionManager.hasPermission(res, FlagType.USAGE, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
             ev.setCanceled(true);
         }
     }

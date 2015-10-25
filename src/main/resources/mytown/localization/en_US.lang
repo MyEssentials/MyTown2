@@ -42,7 +42,8 @@ mytown.flag.ACCESS=&3Allows right-clicking of blocks
 mytown.flag.MODIFY=&3Allows modifying land
 mytown.flag.PICKUP=&3Allows item pickup
 mytown.flag.EXPLOSIONS=&3Allows explosions
-mytown.flag.MOBS=&3Controls what mobs can exist here.
+mytown.flag.MOBS=&3Controls whether mobs can exist here.
+mytown.flag.ENTITIES=&3Controls whether entities can exist here.
 mytown.flag.PVE=&3Allows interacting with entities
 mytown.flag.USAGE=&3Allows usage of items (eggs, buckets etc.)
 mytown.flag.PVP=&3Allows PVP - Player vs. Player
@@ -155,6 +156,7 @@ mytown.notification.blocks.info=&6--------[[&aBLOCKS&6]]--------\n&2Blocks: &7%s
 # /t perm
 mytown.cmd.err.flagNotExists=&cThat flag does not exist
 mytown.cmd.err.perm.valueNotValid=&cInvalid value
+mytown.cmd.err.flag.unconfigurable=&cThat flag can not be changed
 mytown.cmd.err.flag.notForWhitelist=&cThe flag you selected is not allowed on block whitelist
 mytown.cmd.err.flag.list=&cThere's no flag in this town
 mytown.cmd.err.perm.valueNotValid=&cInvalid value
