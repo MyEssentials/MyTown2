@@ -840,10 +840,14 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
 
-        if (flag.setValue(args.get(2))) {
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.perm.set.success", args.get(1), args.get(2)));
+        if (!flag.flagType.configurable) {
+            throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(1));
         } else {
-            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(2));
+            if (flag.setValue(args.get(2))) {
+                sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.perm.set.success", args.get(1), args.get(2)));
+            } else {
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(2));
+            }
         }
         getDatasource().saveFlag(flag, town);
         return CommandResponse.DONE;

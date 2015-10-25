@@ -7,8 +7,10 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import myessentials.entities.BlockPos;
+import myessentials.entities.Volume;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
+import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.thread.ThreadPlacementCheck;
@@ -138,8 +140,10 @@ public class ProtectionHandlers {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(player);
+        int range = Config.instance.placeProtectionRange.get();
+        Volume placeBox = new Volume(ev.x-range, ev.y-range, ev.z-range, ev.x+range, ev.y+range, ev.z+range);
 
-        if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+        if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, placeBox)) {
             ev.setCanceled(true);
             return;
         }

@@ -15,6 +15,7 @@ import mytown.protection.segment.*;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -100,20 +101,16 @@ public class ProtectionManager {
 
     public static boolean check(Entity entity) {
         if(entity instanceof EntityLiving) {
-            int X = (int) Math.floor(entity.posX);
-            int Y = (int) Math.floor(entity.posY);
-            int Z = (int) Math.floor(entity.posZ);
-            if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, X, Y, Z) ||
-               !getFlagValueAtLocation(FlagType.MOBS, entity.dimension, X, Y, Z)) {
+            if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
                 entity.setDead();
                 return true;
             }
-        } else {
-            for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
-                if(!segment.shouldExist(entity)) {
-                    entity.setDead();
-                    return true;
-                }
+        }
+
+        for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
+            if(!segment.shouldExist(entity)) {
+                entity.setDead();
+                return true;
             }
         }
 
