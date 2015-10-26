@@ -1,6 +1,8 @@
 package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import myessentials.MyEssentialsCore;
 import myessentials.json.JsonConfig;
 import mytown.MyTown;
@@ -17,6 +19,7 @@ public class FlagsConfig extends JsonConfig<FlagsConfig.Wrapper, List<FlagsConfi
     public FlagsConfig(String path) {
         super(path, "FlagsConfig");
         gsonType = new TypeToken<List<Wrapper>>() {}.getType();
+        gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     @Override

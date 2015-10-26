@@ -71,8 +71,8 @@ public class MyTown {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent ev) {
-        checkConfig();
         EconomyProxy.init();
+        checkConfig();
         registerCommands();
         Commands.populateCompletionMap();
 
@@ -161,8 +161,8 @@ public class MyTown {
     public void loadConfigs() {
         Config.instance.reload();
 
-        checkConfig();
         EconomyProxy.init();
+        checkConfig();
 
         for (JsonConfig jsonConfig : jsonConfigs) {
             jsonConfig.init();
