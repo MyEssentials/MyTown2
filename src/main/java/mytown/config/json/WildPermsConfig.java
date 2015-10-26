@@ -33,6 +33,7 @@ public class WildPermsConfig extends JsonConfig<Flag, Flag.Container> {
                 items.add(new Flag(type, type.defaultWildValue));
             }
         }
+        Wild.instance.flagsContainer.addAll(items);
         super.create(items);
     }
 

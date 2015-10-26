@@ -66,7 +66,7 @@ public class Plot {
     }
 
     public boolean hasPermission(Resident res, FlagType<Boolean> flagType) {
-        if(flagsContainer.getValue(flagType)) {
+        if(flagType.configurable ? flagsContainer.getValue(flagType) : flagType.defaultValue) {
             return true;
         }
 

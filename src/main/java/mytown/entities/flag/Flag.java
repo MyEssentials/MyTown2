@@ -134,15 +134,17 @@ public class Flag<T> implements Comparable<Flag>{
             String formattedFlagList = "";
 
             for (Flag flag : this) {
-                if (!formattedFlagList.equals("")) {
-                    formattedFlagList += "\\n";
+                if (flag.flagType.configurable) {
+                    if (!formattedFlagList.equals("")) {
+                        formattedFlagList += "\\n";
+                    }
+                    formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
                 }
-                formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
             }
 
             String unconfigurableFlags = "";
             for(FlagType flagType : FlagType.values()) {
-                if(!contains(flagType)) {
+                if(!flagType.configurable) {
                     unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.defaultValue)).toString(ColorUtils.colorUnconfigurableFlag);
                 }
             }
@@ -156,15 +158,17 @@ public class Flag<T> implements Comparable<Flag>{
             String formattedFlagList = "";
 
             for (Flag flag : this) {
-                if (!formattedFlagList.equals("")) {
-                    formattedFlagList += "\\n";
+                if (flag.flagType.configurable) {
+                    if (!formattedFlagList.equals("")) {
+                        formattedFlagList += "\\n";
+                    }
+                    formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
                 }
-                formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
             }
 
             String unconfigurableFlags = "";
             for(FlagType flagType : FlagType.values()) {
-                if(!contains(flagType)) {
+                if(!flagType.configurable) {
                     Object value = town.flagsContainer.contains(flagType) ? town.flagsContainer.getValue(flagType) : flagType.defaultValue;
                     unconfigurableFlags += "\\n" + (new Flag(flagType, value).toString(ColorUtils.colorUnconfigurableFlag));
                 }

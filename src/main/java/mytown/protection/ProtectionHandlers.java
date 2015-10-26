@@ -7,8 +7,10 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import myessentials.entities.BlockPos;
+import myessentials.entities.Volume;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
+import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.thread.ThreadPlacementCheck;
@@ -138,8 +140,10 @@ public class ProtectionHandlers {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(player);
+        int range = Config.instance.placeProtectionRange.get();
+        Volume placeBox = new Volume(ev.x-range, ev.y-range, ev.z-range, ev.x+range, ev.y+range, ev.z+range);
 
-        if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+        if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, placeBox)) {
             ev.setCanceled(true);
             return;
         }
@@ -228,13 +232,15 @@ public class ProtectionHandlers {
             return;
         }
 
-        if(ev.entity instanceof EntityPlayer) {
-            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entity);
-            ProtectionManager.checkPVP(ev.source.getEntity(), res, ev);
-        } else if(ev.source.getEntity() != null) {
-            Resident res = ProtectionManager.getOwner(ev.source.getEntity());
-            if(res != null) {
-                ProtectionManager.checkInteraction(ev.entity, res, ev);
+        if(ev.source.getEntity() != null) {
+            if(ev.entity instanceof EntityPlayer) {
+                Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entity);
+                ProtectionManager.checkPVP(ev.source.getEntity(), res, ev);
+            } else {
+                Resident res = ProtectionManager.getOwner(ev.source.getEntity());
+                if(res != null) {
+                    ProtectionManager.checkInteraction(ev.entity, res, ev);
+                }
             }
         }
     }
@@ -246,7 +252,7 @@ public class ProtectionHandlers {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        if(ProtectionManager.hasPermission(res, FlagType.USAGE, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
+        if(!ProtectionManager.hasPermission(res, FlagType.USAGE, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
             ev.setCanceled(true);
         }
     }
@@ -286,7 +292,7 @@ public class ProtectionHandlers {
     @SubscribeEvent
     public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent ev) {
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
-        if(ProtectionManager.hasPermission(res, FlagType.ENTER, ev.player.dimension, (int) Math.floor(ev.player.posX), (int) Math.floor(ev.player.posY), (int) Math.floor(ev.player.posZ))) {
+        if(!ProtectionManager.hasPermission(res, FlagType.ENTER, ev.player.dimension, (int) Math.floor(ev.player.posX), (int) Math.floor(ev.player.posY), (int) Math.floor(ev.player.posZ))) {
             // Because of badly written teleportation code by Mojang we can only send the player back to spawn. :I
             res.respawnPlayer();
         }

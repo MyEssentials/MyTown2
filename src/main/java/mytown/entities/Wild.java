@@ -18,7 +18,9 @@ public class Wild {
      */
     public boolean hasPermission(Resident res, FlagType<Boolean> flagType) {
         if (!flagsContainer.getValue(flagType)) {
-            res.protectionDenial(flagType, EnumChatFormatting.RED + "SERVER OWNERS");
+            if (res != null) {
+                res.protectionDenial(flagType, EnumChatFormatting.RED + "SERVER OWNERS");
+            }
             return false;
         }
         return true;

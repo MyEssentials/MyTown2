@@ -15,6 +15,7 @@ import mytown.protection.segment.*;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -105,7 +106,6 @@ public class ProtectionManager {
                 return true;
             }
         }
-
 
         for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
             if(!segment.shouldExist(entity)) {

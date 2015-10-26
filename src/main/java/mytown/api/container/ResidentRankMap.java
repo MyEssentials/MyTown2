@@ -5,6 +5,7 @@ import mytown.entities.Resident;
 import myessentials.utils.ColorUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ResidentRankMap extends HashMap<Resident, Rank> {
 
@@ -30,7 +31,7 @@ public class ResidentRankMap extends HashMap<Resident, Rank> {
     }
 
     public Resident getMayor() {
-        for(Entry<Resident, Rank> entry : entrySet()) {
+        for(Map.Entry<Resident, Rank> entry : entrySet()) {
             if(entry.getValue().getType() == Rank.Type.MAYOR) {
                 return entry.getKey();
             }
@@ -42,7 +43,7 @@ public class ResidentRankMap extends HashMap<Resident, Rank> {
     public String toString() {
         String formattedList = null;
 
-        for (Entry<Resident, Rank> entry : entrySet()) {
+        for (Map.Entry<Resident, Rank> entry : entrySet()) {
             String toAdd = ColorUtils.colorPlayer + entry.getKey().getPlayerName() + ColorUtils.colorComma + " (" + entry.getValue().toString() + ColorUtils.colorComma + ")";
             if (formattedList == null) {
                 formattedList = toAdd;

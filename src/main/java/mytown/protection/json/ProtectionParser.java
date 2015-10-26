@@ -59,7 +59,7 @@ public class ProtectionParser {
                 anyProtectionLoaded = true;
                 if ("Minecraft".equals(protection.modid)) {
                     vanillaProtection = protection;
-                } else if (isModLoaded(protection.modid, protection.version)) {
+                } else {
                     MyTown.instance.LOG.info("Adding protection for mod: {}", protection.modid);
                     ProtectionManager.addProtection(protection);
                 }
@@ -81,7 +81,7 @@ public class ProtectionParser {
     private static Protection read(File file) {
         try {
             FileReader reader = new FileReader(file);
-            MyTown.instance.LOG.info("Loading protection file: {}", file.getName());
+            // MyTown.instance.LOG.info("Loading protection file: {}", file.getName());
             Protection protection = gson.fromJson(reader, Protection.class);
             reader.close();
             return protection;
@@ -90,14 +90,5 @@ public class ProtectionParser {
             MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
             return null;
         }
-    }
-
-    private static boolean isModLoaded(String modid, String version) {
-        for(ModContainer mod : Loader.instance().getModList()) {
-            if(mod.getModId().equals(modid) && mod.getVersion().startsWith(version)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

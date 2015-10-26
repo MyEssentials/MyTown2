@@ -77,10 +77,6 @@ public abstract class Segment {
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
-        if (res == null) {
-            return false;
-        }
-
         for(FlagType<Boolean> flagType : flags) {
             if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
                 return false;
@@ -90,10 +86,6 @@ public abstract class Segment {
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
-        if (res == null) {
-            return false;
-        }
-
         for (FlagType<Boolean> flagType : flags) {
             if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
                 return false;
