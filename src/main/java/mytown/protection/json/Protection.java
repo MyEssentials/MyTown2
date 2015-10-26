@@ -18,16 +18,18 @@ import java.util.List;
 public class Protection {
 
     public final String modid;
+    public final String name;
     public final String version;
 
     public final Segment.Container<Segment> segments = new Segment.Container<Segment>();
 
     public Protection(String modid) {
-        this(modid, "");
+        this(modid, "", "");
     }
 
-    public Protection(String modid, String version) {
+    public Protection(String modid, String name, String version) {
         this.modid = modid;
+        this.name = name;
         this.version = version;
     }
 
@@ -43,6 +45,9 @@ public class Protection {
             JsonObject json = new JsonObject();
 
             json.addProperty("modid", protection.modid);
+            if(!protection.name.equals("")) {
+                json.addProperty("name", protection.name);
+            }
             if(!protection.version.equals("")) {
                 json.addProperty("version", protection.version);
             }
@@ -60,16 +65,21 @@ public class Protection {
             }
 
             String modid = jsonObject.get("modid").getAsString();
+            String name = "";
             String version = "";
+
+            if(jsonObject.has("name")) {
+                name = jsonObject.get("name").getAsString();
+            }
             if(jsonObject.has("version")) {
                 version = jsonObject.get("version").getAsString();
             }
             
-            if (!isModLoaded(modid, version)) {
+            if (!isModLoaded(modid, name, version)) {
             	return null;
             }
 
-            Protection protection = new Protection(modid, version);
+            Protection protection = new Protection(modid, name, version);
 
             if(jsonObject.has("segments")) {
                 protection.segments.addAll((List<Segment>) context.deserialize(jsonObject.get("segments"), new TypeToken<List<Segment>>() {
@@ -79,12 +89,12 @@ public class Protection {
             return protection;
         }
         
-        private static boolean isModLoaded(String modid, String version) {
+        private static boolean isModLoaded(String modid, String name, String version) {
         	if ("Minecraft".equals(modid)) {
         		return true;
         	}
             for(ModContainer mod : Loader.instance().getModList()) {
-                if(mod.getModId().equals(modid) && mod.getVersion().startsWith(version)) {
+                if(mod.getModId().equals(modid) && mod.getName().startsWith(name) && mod.getVersion().startsWith(version)) {
                     return true;
                 }
             }
