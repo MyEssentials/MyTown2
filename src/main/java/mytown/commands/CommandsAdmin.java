@@ -905,7 +905,7 @@ public class CommandsAdmin extends Commands {
         Flag flag = getFlagFromType(Wild.instance.flagsContainer, type);
 
         if (flag.setValue(args.get(1))) {
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.wild.perm.set.success", args.get(0), args.get(1)));
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.perm.set.success", args.get(0), args.get(1)));
         } else {
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
         }

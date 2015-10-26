@@ -202,7 +202,7 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(0));
         } else {
             if (flag.setValue(args.get(1))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.set.success", args.get(0), args.get(1));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }

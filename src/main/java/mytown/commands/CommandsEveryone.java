@@ -214,7 +214,7 @@ public class CommandsEveryone extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(0));
 
             if (flag.setValue(args.get(1))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.set.success", args.get(0), args.get(1));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
