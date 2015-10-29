@@ -139,21 +139,27 @@ public class ProtectionHandlers {
             return;
         }
 
-        Resident res = MyTownUniverse.instance.getOrMakeResident(player);
-        int range = Config.instance.placeProtectionRange.get();
-        Volume placeBox = new Volume(ev.x-range, ev.y-range, ev.z-range, ev.x+range, ev.y+range, ev.z+range);
+        if(player instanceof FakePlayer) {
+            if(!ProtectionManager.getFlagValueAtLocation(FlagType.FAKERS, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                ev.setCanceled(true);
+            }
+        } else {
+            Resident res = MyTownUniverse.instance.getOrMakeResident(player);
+            int range = Config.instance.placeProtectionRange.get();
+            Volume placeBox = new Volume(ev.x-range, ev.y-range, ev.z-range, ev.x+range, ev.y+range, ev.z+range);
 
-        if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, placeBox)) {
-            ev.setCanceled(true);
-            return;
-        }
+            if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, placeBox)) {
+                ev.setCanceled(true);
+                return;
+            }
 
-        if(ev.block instanceof ITileEntityProvider && ev.itemInHand != null) {
-            TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(MinecraftServer.getServer().worldServerForDimension(ev.world.provider.dimensionId), ev.itemInHand.getItemDamage());
-            if (te != null && ProtectionManager.isOwnable(te.getClass())) {
-                ThreadPlacementCheck thread = new ThreadPlacementCheck(res, ev.x, ev.y, ev.z, ev.world.provider.dimensionId);
-                activePlacementThreads++;
-                thread.start();
+            if(ev.block instanceof ITileEntityProvider && ev.itemInHand != null) {
+                TileEntity te = ((ITileEntityProvider) ev.block).createNewTileEntity(MinecraftServer.getServer().worldServerForDimension(ev.world.provider.dimensionId), ev.itemInHand.getItemDamage());
+                if (te != null && ProtectionManager.isOwnable(te.getClass())) {
+                    ThreadPlacementCheck thread = new ThreadPlacementCheck(res, ev.x, ev.y, ev.z, ev.world.provider.dimensionId);
+                    activePlacementThreads++;
+                    thread.start();
+                }
             }
         }
     }
@@ -163,12 +169,21 @@ public class ProtectionHandlers {
         if(ev.entity.worldObj.isRemote || ev.isCanceled()) {
             return;
         }
+        int x = (int) Math.floor(ev.target.posX);
+        int y = (int) Math.floor(ev.target.posY);
+        int z = (int) Math.floor(ev.target.posZ);
 
-        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        ProtectionManager.checkInteraction(ev.target, res, ev);
-        if(ev.entityPlayer.getHeldItem() != null) {
-            BlockPos bp = new BlockPos((int) Math.floor(ev.target.posX), (int) Math.floor(ev.target.posY), (int) Math.floor(ev.target.posZ), ev.target.dimension);
-            ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
+        if(ev.entityPlayer instanceof FakePlayer) {
+            if(!ProtectionManager.getFlagValueAtLocation(FlagType.FAKERS, ev.target.dimension, x, y, z)) {
+                ev.setCanceled(true);
+            }
+        } else {
+            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
+            ProtectionManager.checkInteraction(ev.target, res, ev);
+            if(ev.entityPlayer.getHeldItem() != null) {
+                BlockPos bp = new BlockPos(x, y, z, ev.target.dimension);
+                ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
+            }
         }
     }
 
@@ -179,11 +194,17 @@ public class ProtectionHandlers {
             return;
         }
 
-        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        if(ev.entityPlayer.getHeldItem() != null) {
-            ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
+        if(ev.entityPlayer instanceof FakePlayer) {
+            if(!ProtectionManager.getFlagValueAtLocation(FlagType.FAKERS, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                ev.setCanceled(true);
+            }
+        } else {
+            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
+            if(ev.entityPlayer.getHeldItem() != null) {
+                ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
+            }
+            ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
         }
-        ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
     }
 
     @SuppressWarnings("unchecked")
@@ -193,14 +214,20 @@ public class ProtectionHandlers {
             return;
         }
 
-        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.getPlayer());
-        if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-            ev.setCanceled(true);
-            return;
-        }
+        if(ev.getPlayer() instanceof FakePlayer) {
+            if(!ProtectionManager.getFlagValueAtLocation(FlagType.FAKERS, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                ev.setCanceled(true);
+            }
+        } else {
+            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.getPlayer());
+            if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                ev.setCanceled(true);
+                return;
+            }
 
-        if(ev.getPlayer().getHeldItem() != null) {
-            ProtectionManager.checkBreakWithItem(ev.getPlayer().getHeldItem(), res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev);
+            if(ev.getPlayer().getHeldItem() != null) {
+                ProtectionManager.checkBreakWithItem(ev.getPlayer().getHeldItem(), res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev);
+            }
         }
 
         if (!ev.isCanceled() && ev.block instanceof ITileEntityProvider) {
@@ -251,9 +278,19 @@ public class ProtectionHandlers {
             return;
         }
 
-        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-        if(!ProtectionManager.hasPermission(res, FlagType.USAGE, ev.world.provider.dimensionId, ev.target.blockX, ev.target.blockY, ev.target.blockZ)) {
-            ev.setCanceled(true);
+        int x = (int) Math.floor(ev.target.blockX);
+        int y = (int) Math.floor(ev.target.blockY);
+        int z = (int) Math.floor(ev.target.blockZ);
+
+        if(ev.entityPlayer instanceof FakePlayer) {
+            if(!ProtectionManager.getFlagValueAtLocation(FlagType.FAKERS, ev.world.provider.dimensionId, x, y, z)) {
+                ev.setCanceled(true);
+            }
+        } else {
+            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
+            if(!ProtectionManager.hasPermission(res, FlagType.USAGE, ev.world.provider.dimensionId, x, y, z)) {
+                ev.setCanceled(true);
+            }
         }
     }
 
