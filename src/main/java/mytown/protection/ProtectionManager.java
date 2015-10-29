@@ -228,25 +228,29 @@ public class ProtectionManager {
 
                 Town town = townBlock.getTown();
                 Volume rangeBox = volume.intersect(townBlock.toVolume());
-                int totalIntersectArea = 0;
+                
+                // If the range volume intersects the TownBlock, check Town/Plot permissions
+                if (rangeBox != null) {
+                    int totalIntersectArea = 0;
 
-                // Check every plot in the current TownBlock and sum all plot areas
-                for (Plot plot : townBlock.plotsContainer) {
-                    Volume plotIntersection = volume.intersect(plot.toVolume());
-                    if (plotIntersection != null) {
-                        if(!plot.hasPermission(res, flagType)) {
+                    // Check every plot in the current TownBlock and sum all plot areas
+                    for (Plot plot : townBlock.plotsContainer) {
+                        Volume plotIntersection = volume.intersect(plot.toVolume());
+                        if (plotIntersection != null) {
+                            if(!plot.hasPermission(res, flagType)) {
+                                return false;
+                            }
+                            totalIntersectArea += plotIntersection.getVolumeAmount();
+                        }
+                    }
+
+                    // If plot area sum is not equal to range area, check town permission
+                    if (totalIntersectArea != rangeBox.getVolumeAmount()) {
+                        if(!town.hasPermission(res, flagType)) {
                             return false;
                         }
-                        totalIntersectArea += plotIntersection.getVolumeAmount();
                     }
-                }
-
-                // If plot area sum is not equal to range area, check town permission
-                if (totalIntersectArea != rangeBox.getVolumeAmount()) {
-                    if(!town.hasPermission(res, flagType)) {
-                        return false;
-                    }
-                }
+                }    
             }
         }
 
