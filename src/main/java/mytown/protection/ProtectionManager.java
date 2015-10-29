@@ -250,7 +250,7 @@ public class ProtectionManager {
                             return false;
                         }
                     }
-                }    
+                }
             }
         }
 
