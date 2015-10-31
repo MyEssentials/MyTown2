@@ -117,12 +117,17 @@ public class SellSign extends Sign {
         return getTileEntity().signText[3].equals(DESCRIPTION_RESTRICTED);
     }
 
-    @Override
-    protected boolean isValid() {
+    public static boolean isTileValid(TileEntitySign te) {
+        if (!te.signText[0].startsWith(Sign.IDENTIFIER)) {
+            return false;
+        }
+
         try {
-            getOwnerFromLore();
-            getPriceFromLore();
-            getRestrictedBooleanFromLore();
+            String username = te.signText[1].substring(DESCRIPTION_OWNER.length());
+            MyTownUniverse.instance.getOrMakeResident(username);
+            String priceString = te.signText[2].substring(DESCRIPTION_PRICE.length());
+            Integer.parseInt(priceString);
+            boolean b = te.signText[3].equals(DESCRIPTION_RESTRICTED);
             return true;
         } catch (Exception ex) {
             return false;

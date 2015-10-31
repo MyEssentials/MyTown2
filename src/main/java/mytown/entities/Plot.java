@@ -90,7 +90,7 @@ public class Plot {
             for(int j = y1; j <= y2; j++) {
                 for(int k = z1; k <= z2; k++) {
                     TileEntity te = world.getTileEntity(i, j, k);
-                    if(te != null && te instanceof TileEntitySign && ((TileEntitySign) te).signText[0].startsWith(Sign.IDENTIFIER)) {
+                    if(te != null && te instanceof TileEntitySign && SellSign.isTileValid((TileEntitySign) te)) {
                         SignManager.instance.signs.add(new SellSign((TileEntitySign) te));
                     }
                 }
