@@ -285,6 +285,7 @@ public class Town implements Comparable<Town> {
     public static class Container extends ArrayList<Town> {
 
         private Town mainTown;
+        public boolean isSelectedTownSaved = false;
 
         @Override
         public boolean add(Town town) {
