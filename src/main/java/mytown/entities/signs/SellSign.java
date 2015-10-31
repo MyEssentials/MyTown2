@@ -3,6 +3,7 @@ package mytown.entities.signs;
 import myessentials.Localization;
 import myessentials.entities.BlockPos;
 import myessentials.entities.sign.Sign;
+import myessentials.utils.StringUtils;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Plot;
@@ -114,5 +115,17 @@ public class SellSign extends Sign {
 
     public boolean getRestrictedBooleanFromLore() {
         return getTileEntity().signText[3].equals(DESCRIPTION_RESTRICTED);
+    }
+
+    @Override
+    protected boolean isValid() {
+        try {
+            getOwnerFromLore();
+            getPriceFromLore();
+            getRestrictedBooleanFromLore();
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 }

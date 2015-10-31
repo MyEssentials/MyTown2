@@ -32,9 +32,9 @@ public class MyTownDatasource extends DatasourceSQL {
     public boolean loadAll() {
         return loadWorlds() && loadTowns() && loadRanks() && loadBlocks() && loadResidents() &&
                 loadPlots() && /*loadNations() &&*/ loadTownFlags() && loadPlotFlags() &&
-                loadBlockWhitelists() && loadSelectedTowns() &&
-                loadTownInvites() && loadBlockOwners() && loadTownBanks() &&
-                loadRankPermissions() && loadResidentsToTowns() && /*loadTownsToNations() &&*/ loadResidentsToPlots();
+                loadBlockWhitelists() &&  loadTownInvites() && loadBlockOwners() && loadTownBanks() &&
+                loadRankPermissions() && loadResidentsToTowns() && /*loadTownsToNations() &&*/
+                loadResidentsToPlots() && loadSelectedTowns();
     }
 
     @Override
@@ -504,6 +504,7 @@ public class MyTownDatasource extends DatasourceSQL {
             while (rs.next()) {
                 Resident res = getUniverse().residents.get(UUID.fromString(rs.getString("resident")));
                 Town town = getUniverse().towns.get(rs.getString("townName"));
+                res.townsContainer.isSelectedTownSaved = true;
                 res.townsContainer.setMainTown(town);
             }
         } catch (SQLException e) {
@@ -910,16 +911,17 @@ public class MyTownDatasource extends DatasourceSQL {
     
     public boolean saveSelectedTown(Resident res, Town town) {
         try {
-            if (res.townsContainer.getMainTown() == null) {
-                PreparedStatement statement = prepare("INSERT INTO " + prefix + "SelectedTown(resident, townName) VALUES(?, ?)", true);
-                statement.setString(1, res.getUUID().toString());
-                statement.setString(2, town.getName());
-                statement.executeUpdate();
-            } else {
+            if (res.townsContainer.isSelectedTownSaved) {
                 PreparedStatement statement = prepare("UPDATE " + prefix + "SelectedTown SET townName=? WHERE resident=?", true);
                 statement.setString(1, town.getName());
                 statement.setString(2, res.getUUID().toString());
                 statement.executeUpdate();
+            } else {
+                PreparedStatement statement = prepare("INSERT INTO " + prefix + "SelectedTown(resident, townName) VALUES(?, ?)", true);
+                statement.setString(1, res.getUUID().toString());
+                statement.setString(2, town.getName());
+                statement.executeUpdate();
+                res.townsContainer.isSelectedTownSaved = true;
             }
             res.townsContainer.setMainTown(town);
 
@@ -1029,6 +1031,8 @@ public class MyTownDatasource extends DatasourceSQL {
             // You need rank since this method is the one that adds the resident to the town and vice-versa
             s.setString(3, rank.getName());
             s.execute();
+            
+            LOG.error("Linked Resident {} ({}) with Town {} Rank {}", res.getPlayerName(), res.getUUID().toString(), town.getName(), rank.getName());
 
             res.townsContainer.add(town);
             town.residentsMap.put(res, rank);
@@ -1354,6 +1358,7 @@ public class MyTownDatasource extends DatasourceSQL {
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
+        res.townsContainer.isSelectedTownSaved = false;
         return true;
     }
 

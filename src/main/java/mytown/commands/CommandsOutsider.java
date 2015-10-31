@@ -106,7 +106,7 @@ public class CommandsOutsider extends Commands {
 
         if (res.townsContainer.size() >= Config.instance.maxTowns.get())
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
-         if (getUniverse().towns.contains(args.get(0))) // Is the town name already in use?
+        if (getUniverse().towns.contains(args.get(0))) // Is the town name already in use?
             throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
         if (getUniverse().blocks.contains(player.dimension, (int) player.posX >> 4, (int) player.posZ >> 4)) // Is the Block already claimed?
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
