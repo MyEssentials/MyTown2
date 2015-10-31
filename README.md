@@ -17,7 +17,9 @@ Protections contained at: https://github.com/MyEssentials/MyTown2-Protections
 <h3>Jenkins</h3>
 
 MyTown2 Builds: https://ci.mineguild.net/job/MyTown2/
-MyEssentials-Core Builds: https://ci.mineguild.net/job/MyEssentials-Core/ 
+
+MyEssentials-Core Builds: https://ci.mineguild.net/job/MyEssentials-Core/
+
 MyPermission Builds: https://ci.mineguild.net/job/MyPermissions/
 
 (To run this, you need MyTown2, MyEssentials-Core and MyPermissions!)
