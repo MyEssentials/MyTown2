@@ -110,10 +110,22 @@ public class SellSign extends Sign {
 
     public int getPriceFromLore() {
         String priceString = getTileEntity().signText[2].substring(DESCRIPTION_PRICE.length());
-        return StringUtils.tryParseInt(priceString) ? Integer.parseInt(priceString) : 1;
+        return Integer.parseInt(priceString);
     }
 
     public boolean getRestrictedBooleanFromLore() {
         return getTileEntity().signText[3].equals(DESCRIPTION_RESTRICTED);
+    }
+
+    @Override
+    protected boolean isValid() {
+        try {
+            getOwnerFromLore();
+            getPriceFromLore();
+            getRestrictedBooleanFromLore();
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 }
