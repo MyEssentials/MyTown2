@@ -346,12 +346,16 @@ public class ProtectionHandlers {
     }
 
     private BlockPos createBlockPos(PlayerInteractEvent ev) {
-        Block block = ev.world.getBlock(ev.x, ev.y, ev.z);
-        int x = ev.x, y = ev.y, z = ev.z;
-        if(block == Blocks.air) {
+        int x, y, z;
+
+        if (ev.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
             x = (int) Math.floor(ev.entityPlayer.posX);
             y = (int) Math.floor(ev.entityPlayer.posY);
             z = (int) Math.floor(ev.entityPlayer.posZ);
+        } else {
+            x = ev.x;
+            y = ev.y;
+            z = ev.z;
         }
         return new BlockPos(x, y, z, ev.world.provider.dimensionId);
     }

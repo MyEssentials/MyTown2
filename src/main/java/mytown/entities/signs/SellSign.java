@@ -3,6 +3,7 @@ package mytown.entities.signs;
 import myessentials.Localization;
 import myessentials.entities.BlockPos;
 import myessentials.entities.sign.Sign;
+import myessentials.utils.StringUtils;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Plot;
@@ -109,7 +110,7 @@ public class SellSign extends Sign {
 
     public int getPriceFromLore() {
         String priceString = getTileEntity().signText[2].substring(DESCRIPTION_PRICE.length());
-        return Integer.parseInt(priceString);
+        return StringUtils.tryParseInt(priceString) ? Integer.parseInt(priceString) : 1;
     }
 
     public boolean getRestrictedBooleanFromLore() {
