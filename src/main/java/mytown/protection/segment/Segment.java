@@ -235,10 +235,11 @@ public abstract class Segment {
                 throw new ProtectionParseException("Identifier type is invalid");
             }
 
+            String classString = jsonObject.get("class").getAsString();
             try {
-                segment.checkClass = Class.forName(jsonObject.get("class").getAsString());
+                segment.checkClass = Class.forName(classString);
             } catch (ClassNotFoundException ex) {
-                throw new ProtectionParseException("Class identifier is invalid");
+                throw new ProtectionParseException("Invalid class identifier: " + classString);
             }
             jsonObject.remove("class");
 
