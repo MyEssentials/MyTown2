@@ -64,12 +64,16 @@ public class SellSign extends Sign {
             for (Resident resInPlot : plot.ownersContainer) {
                 resInPlot.sendMessage(getLocal().getLocalization("mytown.notification.plot.buy.oldOwner", plot.getName(), EconomyProxy.getCurrency(price)));
             }
-            for (Resident resInPlot : plot.membersContainer) {
+
+            Resident.Container residentsToRemove = new Resident.Container();
+
+            residentsToRemove.addAll(plot.membersContainer);
+            residentsToRemove.addAll(plot.ownersContainer);
+
+            for (Resident resInPlot : residentsToRemove) {
                 MyTown.instance.datasource.unlinkResidentFromPlot(resInPlot, plot);
             }
-            for (Resident resInPlot : plot.ownersContainer) {
-                MyTown.instance.datasource.unlinkResidentFromPlot(resInPlot, plot);
-            }
+
             if(!plot.getTown().residentsMap.containsKey(resident)) {
                 MyTown.instance.datasource.linkResidentToTown(resident, plot.getTown(), plot.getTown().ranksContainer.getDefaultRank());
             }
