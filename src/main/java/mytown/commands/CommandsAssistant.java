@@ -202,7 +202,34 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(0));
         } else {
             if (flag.setValue(args.get(1))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.set.success", args.get(0), args.get(1));
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.success");
+            } else {
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+            }
+        }
+        getDatasource().saveFlag(flag, town);
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "toggle",
+            permission = "mytown.cmd.assistant.perm.toggle",
+            parentName = "mytown.cmd.everyone.perm",
+            syntax = "/town perm toggle <flag>",
+            completionKeys = "flagCompletion")
+    public static CommandResponse permToggleCommand(ICommandSender sender, List<String> args) {
+
+        if (args.size() < 1)
+            return CommandResponse.SEND_SYNTAX;
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+        Flag flag = getFlagFromName(town.flagsContainer, args.get(0));
+
+        if (!flag.flagType.configurable) {
+            throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(0));
+        } else {
+            if (flag.toggle()) {
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.success");
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -579,13 +606,12 @@ public class CommandsAssistant extends Commands {
             for (TownBlock block : town.townBlocksContainer) {
                 refund += block.getPricePaid();
             }
-
+            refund += town.bank.getAmount();
             makeRefund(player, refund);
             getDatasource().deleteTown(town);
         }
         return CommandResponse.DONE;
     }
-
 
     @Command(
             name = "rename",

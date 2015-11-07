@@ -844,7 +844,35 @@ public class CommandsAdmin extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(1));
         } else {
             if (flag.setValue(args.get(2))) {
-                sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.perm.set.success", args.get(1), args.get(2)));
+                sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.perm.success"));
+            } else {
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(2));
+            }
+        }
+        getDatasource().saveFlag(flag, town);
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "toggle",
+            permission = "mytown.adm.cmd.perm.town.toggle",
+            parentName = "mytown.adm.cmd.perm.town",
+            syntax = "/townadmin perm town toggle <town> <flag>",
+            completionKeys = {"townCompletion", "flagCompletion"},
+            console = true)
+    public static CommandResponse permTownToggleCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 2) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+        Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
+
+        if (!flag.flagType.configurable) {
+            throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(1));
+        } else {
+            if (flag.toggle()) {
+                sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(2));
             }
@@ -905,7 +933,31 @@ public class CommandsAdmin extends Commands {
         Flag flag = getFlagFromType(Wild.instance.flagsContainer, type);
 
         if (flag.setValue(args.get(1))) {
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.perm.set.success", args.get(0), args.get(1)));
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.perm.success"));
+        } else {
+            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+        }
+
+        MyTown.instance.getWildConfig().write(Wild.instance.flagsContainer);
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "toggle",
+            permission = "mytown.adm.cmd.perm.wild.toggle",
+            parentName = "mytown.adm.cmd.perm.wild",
+            syntax = "/townadmin perm wild toggle <flag>",
+            completionKeys = {"flagCompletion"},
+            console = true)
+    public static CommandResponse permWildToggleCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 1) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+        FlagType type = getFlagTypeFromName(args.get(0));
+        Flag flag = getFlagFromType(Wild.instance.flagsContainer, type);
+
+        if (flag.toggle()) {
+            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.perm.success"));
         } else {
             throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
         }
@@ -1127,7 +1179,32 @@ public class CommandsAdmin extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
 
             if (flag.setValue(args.get(3))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.set.success", args.get(0), args.get(1));
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.success");
+            } else {
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+            }
+
+            getDatasource().saveFlag(flag, plot);
+            return CommandResponse.DONE;
+        }
+
+        @Command(
+                name = "toggle",
+                permission = "mytown.adm.cmd.plot.perm.toggle",
+                parentName = "mytown.adm.cmd.plot.perm",
+                syntax = "/townadmin plot perm toggle <town> <plot> <flag>",
+                completionKeys = {"townCompletion", "plotCompletion", "flagCompletion"},
+                console = true)
+        public static CommandResponse plotPermToggleCommand(ICommandSender sender, List<String> args) {
+            if (args.size() < 3)
+                return CommandResponse.SEND_SYNTAX;
+
+            Town town = getTownFromName(args.get(0));
+            Plot plot = getPlotFromName(town, args.get(1));
+            Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
+
+            if (flag.toggle()) {
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.success");
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }

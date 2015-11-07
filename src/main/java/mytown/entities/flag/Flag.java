@@ -1,6 +1,7 @@
 package mytown.entities.flag;
 
 import com.google.gson.*;
+
 import myessentials.json.SerializerTemplate;
 import myessentials.utils.ColorUtils;
 import mytown.entities.Town;
@@ -43,6 +44,13 @@ public class Flag<T> implements Comparable<Flag>{
         return false;
     }
 
+    public boolean toggle() {
+        if (flagType.type != Boolean.class) {
+            return false;
+        }
+        this.value = (T)Boolean.valueOf(!((Boolean)this.value));
+        return true;
+    }
 
     @Override
     public String toString() {

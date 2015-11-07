@@ -214,7 +214,36 @@ public class CommandsEveryone extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(0));
 
             if (flag.setValue(args.get(1))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.set.success", args.get(0), args.get(1));
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.success");
+            } else {
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+            }
+
+            getDatasource().saveFlag(flag, plot);
+            return CommandResponse.DONE;
+        }
+
+        @Command(
+                name = "toggle",
+                permission = "mytown.cmd.everyone.plot.perm.toggle",
+                parentName = "mytown.cmd.everyone.plot.perm",
+                syntax = "/town plot perm set <flag>",
+                completionKeys = {"flagCompletion"})
+        public static CommandResponse plotPermToggleCommand(ICommandSender sender, List<String> args) {
+            if (args.size() < 1) {
+                return CommandResponse.SEND_SYNTAX;
+            }
+
+            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+            Plot plot = getPlotAtResident(res);
+            if (!plot.ownersContainer.contains(res) && !plot.getTown().hasPermission(res, "mytown.bypass.plot")) {
+                throw new MyTownCommandException("mytown.cmd.err.plot.perm.set.noPermission");
+            }
+
+            Flag flag = getFlagFromName(plot.flagsContainer, args.get(0));
+
+            if (flag.toggle()) {
+                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.success");
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
