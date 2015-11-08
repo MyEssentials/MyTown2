@@ -71,7 +71,6 @@ public class MyTownDatasource extends DatasourceSQL {
         try {
             PreparedStatement loadTownsStatement = prepare("SELECT * FROM " + prefix + "Towns", true);
             ResultSet rs = loadTownsStatement.executeQuery();
-            int maxFarClaims = Config.instance.maxFarClaims.get();
 
             while (rs.next()) {
                 Town town;
@@ -82,7 +81,7 @@ public class MyTownDatasource extends DatasourceSQL {
                 }
                 town.setSpawn(new Teleport(rs.getInt("spawnDim"), rs.getFloat("spawnX"), rs.getFloat("spawnY"), rs.getFloat("spawnZ"), rs.getFloat("cameraYaw"), rs.getFloat("cameraPitch")));
                 town.townBlocksContainer.setExtraBlocks(rs.getInt("extraBlocks"));
-                town.townBlocksContainer.setMaxFarClaims(maxFarClaims);
+                town.townBlocksContainer.setMaxFarClaims(rs.getInt("maxFarClaims"));
                 town.plotsContainer.setMaxPlots(rs.getInt("maxPlots"));
 
                 MyTownUniverse.instance.addTown(town);

@@ -25,7 +25,6 @@ public class Town implements Comparable<Town> {
     private String name, oldName = null;
 
     protected int extraBlocks = 0;
-    protected int maxFarClaims = Config.instance.maxFarClaims.get();
 
     private Nation nation;
     private Teleport spawn;

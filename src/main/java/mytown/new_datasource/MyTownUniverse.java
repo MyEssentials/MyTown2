@@ -47,6 +47,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
      */
     public final Town newTown(String name, Resident creator) {
         Town town = new Town(name);
+        town.townBlocksContainer.setMaxFarClaims(Config.instance.maxFarClaims.get());
         configureTown(town, creator);
         return town;
     }
