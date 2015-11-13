@@ -155,7 +155,7 @@ public class CommandsEveryone extends Commands {
             }
         }
 
-        String farBlocks = town.townBlocksContainer.getFarClaims() + "/" + town.townBlocksContainer.getMaxFarClaims();
+        String farBlocks = town.townBlocksContainer.getFarClaims() + "/" + town.getMaxFarClaims();
 
         res.sendMessage(getLocal().getLocalization("mytown.notification.blocks.info", blocks, extraBlocks, farBlocks));
 

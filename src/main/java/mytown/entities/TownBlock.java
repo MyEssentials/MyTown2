@@ -98,8 +98,8 @@ public class TownBlock {
 
     public static class Container extends ArrayList<TownBlock> {
 
-        private int extraBlocks;
-        private int maxFarClaims;
+        private int extraBlocks = 0;
+        private int extraFarClaims = 0;
 
         public boolean add(TownBlock block) {
             boolean result = super.add(block);
@@ -139,8 +139,8 @@ public class TownBlock {
             this.extraBlocks = extraBlocks;
         }
 
-        public int getMaxFarClaims() {
-            return maxFarClaims;
+        public int getExtraFarClaims() {
+            return extraFarClaims;
         }
 
         public int getFarClaims() {
@@ -153,8 +153,8 @@ public class TownBlock {
             return farClaims;
         }
 
-        public void setMaxFarClaims(int maxFarClaims) {
-            this.maxFarClaims = maxFarClaims;
+        public void setExtraFarClaims(int extraFarClaims) {
+            this.extraFarClaims = extraFarClaims;
         }
 
         public void show(Resident caller) {

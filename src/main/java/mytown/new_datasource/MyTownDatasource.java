@@ -81,7 +81,7 @@ public class MyTownDatasource extends DatasourceSQL {
                 }
                 town.setSpawn(new Teleport(rs.getInt("spawnDim"), rs.getFloat("spawnX"), rs.getFloat("spawnY"), rs.getFloat("spawnZ"), rs.getFloat("cameraYaw"), rs.getFloat("cameraPitch")));
                 town.townBlocksContainer.setExtraBlocks(rs.getInt("extraBlocks"));
-                town.townBlocksContainer.setMaxFarClaims(rs.getInt("maxFarClaims"));
+                town.townBlocksContainer.setExtraFarClaims(rs.getInt("extraFarClaims"));
                 town.plotsContainer.setMaxPlots(rs.getInt("maxPlots"));
 
                 MyTownUniverse.instance.addTown(town);
@@ -522,7 +522,7 @@ public class MyTownDatasource extends DatasourceSQL {
         LOG.debug("Saving Town {}", town.getName());
         try {
             if (getUniverse().towns.contains(town)) { // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=?, spawnDim=?, spawnX=?, spawnY=?, spawnZ=?, cameraYaw=?, cameraPitch=?, extraBlocks=?, maxPlots=?, maxFarClaims=? WHERE name=?", true);
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Towns SET name=?, spawnDim=?, spawnX=?, spawnY=?, spawnZ=?, cameraYaw=?, cameraPitch=?, extraBlocks=?, maxPlots=?, extraFarClaims=? WHERE name=?", true);
                 updateStatement.setString(1, town.getName());
                 updateStatement.setInt(2, town.getSpawn().getDim());
                 updateStatement.setFloat(3, town.getSpawn().getX());
@@ -532,7 +532,7 @@ public class MyTownDatasource extends DatasourceSQL {
                 updateStatement.setFloat(7, town.getSpawn().getPitch());
                 updateStatement.setInt(8, town.townBlocksContainer.getExtraBlocks());
                 updateStatement.setInt(9, town.plotsContainer.getMaxPlots());
-                updateStatement.setInt(10, town.townBlocksContainer.getMaxFarClaims());
+                updateStatement.setInt(10, town.townBlocksContainer.getExtraFarClaims());
 
                 if (town.getOldName() == null)
                     updateStatement.setString(11, town.getName());
@@ -550,7 +550,7 @@ public class MyTownDatasource extends DatasourceSQL {
                 town.resetOldName();
 
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name, spawnDim, spawnX, spawnY, spawnZ, cameraYaw, cameraPitch, isAdminTown, extraBlocks, maxPlots, maxFarClaims) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Towns (name, spawnDim, spawnX, spawnY, spawnZ, cameraYaw, cameraPitch, isAdminTown, extraBlocks, maxPlots, extraFarClaims) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, town.getName());
                 insertStatement.setInt(2, town.getSpawn().getDim());
                 insertStatement.setFloat(3, town.getSpawn().getX());
@@ -561,7 +561,7 @@ public class MyTownDatasource extends DatasourceSQL {
                 insertStatement.setBoolean(8, town instanceof AdminTown);
                 insertStatement.setInt(9, town.townBlocksContainer.getExtraBlocks());
                 insertStatement.setInt(10, town.plotsContainer.getMaxPlots());
-                insertStatement.setInt(11, town.townBlocksContainer.getMaxFarClaims());
+                insertStatement.setInt(11, town.townBlocksContainer.getExtraFarClaims());
 
                 insertStatement.executeUpdate();
 

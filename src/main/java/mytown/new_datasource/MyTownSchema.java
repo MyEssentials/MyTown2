@@ -191,5 +191,7 @@ public class MyTownSchema extends Schema {
                 "Blocks ADD pricePaid INTEGER DEFAULT " + Config.instance.costAmountClaim.get()));
         updates.add(new DBUpdate("8.21.2015.1", "Add 'type' to Ranks", "ALTER TABLE " + bridge.prefix +
                 "Ranks ADD type VARCHAR(50) DEFAULT '" + Rank.Type.REGULAR + "'"));
+        updates.add(new DBUpdate("11.11.2015.1", "Add 'extraFarClaims' to Towns", "ALTER TABLE " + bridge.prefix +
+                "Towns ADD extraFarClaims INTEGER DEFAULT 0"));
     }
 }

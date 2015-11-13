@@ -67,7 +67,7 @@ public class CommandsAssistant extends Commands {
             if (getUniverse().blocks.contains(player.dimension, player.chunkCoordX, player.chunkCoordZ))
                 throw new MyTownCommandException("mytown.cmd.err.claim.already");
             if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) {
-                if (town.townBlocksContainer.getFarClaims() >= town.townBlocksContainer.getMaxFarClaims())
+                if (town.townBlocksContainer.getFarClaims() >= town.getMaxFarClaims())
                     throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
                 isFarClaim = true;
             }
@@ -79,7 +79,7 @@ public class CommandsAssistant extends Commands {
                 }
             }
 
-            if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.townBlocksContainer.getMaxFarClaims())
+            if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.getMaxFarClaims())
                 throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
 
             int price = (isFarClaim ? Config.instance.costAmountClaimFar.get() : Config.instance.costAmountClaim.get()) + Config.instance.costAdditionClaim.get() * town.townBlocksContainer.size();
@@ -120,7 +120,7 @@ public class CommandsAssistant extends Commands {
             if (town.townBlocksContainer.size() + chunks.size() > town.getMaxBlocks())
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
 
-            if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.townBlocksContainer.getMaxFarClaims())
+            if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.getMaxFarClaims())
                 throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
 
             makeBankPayment(player, town, (isFarClaim ? Config.instance.costAmountClaimFar.get() + Config.instance.costAmountClaim.get() * (chunks.size() - 1) : Config.instance.costAmountClaim.get() * chunks.size())

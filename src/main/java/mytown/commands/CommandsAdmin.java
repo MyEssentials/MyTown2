@@ -299,7 +299,7 @@ public class CommandsAdmin extends Commands {
             }
         }
 
-        String farBlocks = town.townBlocksContainer.getFarClaims() + "/" + town.townBlocksContainer.getMaxFarClaims();
+        String farBlocks = town.townBlocksContainer.getFarClaims() + "/" + town.getMaxFarClaims();
 
         sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.blocks.info", blocks, extraBlocks, farBlocks));
 
@@ -401,9 +401,9 @@ public class CommandsAdmin extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
         Town town = getTownFromName(args.get(0));
-        town.townBlocksContainer.setMaxFarClaims(Integer.parseInt(args.get(1)));
+        town.townBlocksContainer.setExtraFarClaims(Integer.parseInt(args.get(1)));
         getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getMaxFarClaims(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getExtraFarClaims(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -422,9 +422,9 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
         int amount = Integer.parseInt(args.get(1));
-        town.townBlocksContainer.setMaxFarClaims(town.townBlocksContainer.getMaxFarClaims() + amount);
+        town.townBlocksContainer.setExtraFarClaims(town.townBlocksContainer.getExtraFarClaims() + amount);
         getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getMaxFarClaims(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getExtraFarClaims(), args.get(0)));
         return CommandResponse.DONE;
     }
 
@@ -443,9 +443,9 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
         int amount = Integer.parseInt(args.get(1));
-        town.townBlocksContainer.setMaxFarClaims(town.townBlocksContainer.getMaxFarClaims() - amount);
+        town.townBlocksContainer.setExtraFarClaims(town.townBlocksContainer.getExtraFarClaims() - amount);
         getDatasource().saveTown(town);
-        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getMaxFarClaims(), args.get(0)));
+        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.blocks.farClaims.set", town.townBlocksContainer.getExtraFarClaims(), args.get(0)));
         return CommandResponse.DONE;
     }
 

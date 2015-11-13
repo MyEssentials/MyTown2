@@ -24,7 +24,7 @@ import java.util.List;
 public class Town implements Comparable<Town> {
     private String name, oldName = null;
 
-    protected int extraBlocks = 0;
+    protected int maxFarClaims = Config.instance.maxFarClaims.get();
 
     private Nation nation;
     private Teleport spawn;
@@ -166,6 +166,10 @@ public class Town implements Comparable<Town> {
             PlayerUtils.teleport((EntityPlayerMP)pl, spawn.getDim(), spawn.getX(), spawn.getY(), spawn.getZ());
             res.setTeleportCooldown(Config.instance.teleportCooldown.get());
         }
+    }
+
+    public int getMaxFarClaims() {
+        return maxFarClaims + townBlocksContainer.getExtraFarClaims();
     }
 
     public int getMaxBlocks() {
