@@ -86,6 +86,9 @@ public class Plot {
 
     public void checkForSellSign() {
         World world = MinecraftServer.getServer().worldServerForDimension(dim);
+        if (world == null) {
+            return;
+        }
         for(int i = x1; i <= x2; i++) {
             for(int j = y1; j <= y2; j++) {
                 for(int k = z1; k <= z2; k++) {
