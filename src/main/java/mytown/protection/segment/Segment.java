@@ -140,30 +140,35 @@ public abstract class Segment {
             JsonObject json = new JsonObject();
             json.addProperty("class", segment.checkClass.getName());
 
-            if(segment instanceof SegmentBlock) {
-                json.addProperty("type", "block");
-                serializeBlock((SegmentBlock) segment, json, context);
-            } else if(segment instanceof SegmentEntity) {
-                json.addProperty("type", "entity");
-                serializeEntity((SegmentEntity) segment, json, context);
-            } else if(segment instanceof SegmentItem) {
-                json.addProperty("type", "item");
-                serializeItem((SegmentItem) segment, json, context);
-            } else if(segment instanceof SegmentTileEntity) {
-                json.addProperty("type", "tileEntity");
-                serializeTileEntity((SegmentTileEntity) segment, json, context);
-            }
+            if (segment instanceof SegmentSpecialBlock) {
+                json.addProperty("type", "specialBlock");
+                serializeSpecialBlock((SegmentSpecialBlock) segment, json, context);
+            } else {
+                if(segment instanceof SegmentBlock) {
+                    json.addProperty("type", "block");
+                    serializeBlock((SegmentBlock) segment, json, context);
+                } else if(segment instanceof SegmentEntity) {
+                    json.addProperty("type", "entity");
+                    serializeEntity((SegmentEntity) segment, json, context);
+                } else if(segment instanceof SegmentItem) {
+                    json.addProperty("type", "item");
+                    serializeItem((SegmentItem) segment, json, context);
+                } else if(segment instanceof SegmentTileEntity) {
+                    json.addProperty("type", "tileEntity");
+                    serializeTileEntity((SegmentTileEntity) segment, json, context);
+                }
 
-            json.add("flags", serializeAsElementOrArray(segment.flags, context));
+                json.add("flags", serializeAsElementOrArray(segment.flags, context));
 
-            if(segment.condition != null) {
-                json.addProperty("condition", segment.condition.toString());
-            }
-            if(segment.priority != Priority.NORMAL) {
-                json.addProperty("priority", segment.priority.toString());
-            }
-            for(Getter getter : segment.getters) {
-                json.add(getter.getName(), context.serialize(getter, Getter.class));
+                if(segment.condition != null) {
+                    json.addProperty("condition", segment.condition.toString());
+                }
+                if(segment.priority != Priority.NORMAL) {
+                    json.addProperty("priority", segment.priority.toString());
+                }
+                for(Getter getter : segment.getters) {
+                    json.add(getter.getName(), context.serialize(getter, Getter.class));
+                }
             }
 
             return json;
@@ -191,6 +196,11 @@ public abstract class Segment {
             }
         }
 
+        private void serializeSpecialBlock(SegmentSpecialBlock segment, JsonObject json, JsonSerializationContext context) {
+            json.addProperty("meta", segment.getMeta());
+            json.addProperty("isAlwaysBreakable", segment.isAlwaysBreakable);
+        }
+
         private void serializeEntity(SegmentEntity segment, JsonObject json, JsonSerializationContext context) {
             json.add("actions", serializeAsElementOrArray(segment.types, context));
         }
@@ -212,16 +222,23 @@ public abstract class Segment {
 
         @Override
         public Segment deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            if(!json.getAsJsonObject().has("class") || !json.getAsJsonObject().has("type") || !json.getAsJsonObject().has("flags")) {
-                throw new ProtectionParseException("One of the segments is invalid");
+            if(!json.getAsJsonObject().has("class")) {
+                throw new ProtectionParseException("One of the segments is missing a class identifier");
             }
-            JsonObject jsonObject = json.getAsJsonObject();
 
+            JsonObject jsonObject = json.getAsJsonObject();
+            String classString = jsonObject.get("class").getAsString();
+
+            if(!json.getAsJsonObject().has("type")) {
+                throw new ProtectionParseException("Segment for " + classString + " is missing a type");
+            }
             String type = jsonObject.get("type").getAsString();
             jsonObject.remove("type");
 
             Segment segment = null;
-            if("block".equals(type)) {
+            if ("specialBlock".equals(type)) {
+                segment = deserializeSpecialBlock(jsonObject, context);
+            } else if("block".equals(type)) {
                 segment = deserializeBlock(jsonObject, context);
             } else if("entity".equals(type)) {
                 segment = deserializeEntity(jsonObject, context);
@@ -235,7 +252,6 @@ public abstract class Segment {
                 throw new ProtectionParseException("Identifier type is invalid");
             }
 
-            String classString = jsonObject.get("class").getAsString();
             try {
                 segment.checkClass = Class.forName(classString);
             } catch (ClassNotFoundException ex) {
@@ -243,23 +259,28 @@ public abstract class Segment {
             }
             jsonObject.remove("class");
 
-            segment.flags.addAll(deserializeAsArray(jsonObject.get("flags"), context, new TypeToken<FlagType<Boolean>>() {}, new TypeToken<List<FlagType<Boolean>>>() {}.getType()));
-            jsonObject.remove("flags");
+            if (!(segment instanceof SegmentSpecialBlock)) {
+                if(!json.getAsJsonObject().has("flags")) {
+                    throw new ProtectionParseException("Segment for " + classString + " is missing flags");
+                }
+                segment.flags.addAll(deserializeAsArray(jsonObject.get("flags"), context, new TypeToken<FlagType<Boolean>>() {}, new TypeToken<List<FlagType<Boolean>>>() {}.getType()));
+                jsonObject.remove("flags");
 
-            if(jsonObject.has("condition")) {
-                segment.condition = new Condition(jsonObject.get("condition").getAsString());
-                jsonObject.remove("condition");
-            }
+                if(jsonObject.has("condition")) {
+                    segment.condition = new Condition(jsonObject.get("condition").getAsString());
+                    jsonObject.remove("condition");
+                }
 
-            if(jsonObject.has("priority")) {
-                segment.priority = Priority.valueOf(jsonObject.get("priority").getAsString());
-                jsonObject.remove("priority");
-            }
+                if(jsonObject.has("priority")) {
+                    segment.priority = Priority.valueOf(jsonObject.get("priority").getAsString());
+                    jsonObject.remove("priority");
+                }
 
-            for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                Getter getter = context.deserialize(entry.getValue(), Getter.class);
-                getter.setName(entry.getKey());
-                segment.getters.add(getter);
+                for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+                    Getter getter = context.deserialize(entry.getValue(), Getter.class);
+                    getter.setName(entry.getKey());
+                    segment.getters.add(getter);
+                }
             }
 
             return segment;
@@ -291,6 +312,22 @@ public abstract class Segment {
             if(json.has("clientUpdate")) {
                 segment.clientUpdate = new ClientBlockUpdate((Volume) context.deserialize(json.get("clientUpdate").getAsJsonObject().get("coords"), Volume.class));
                 json.remove("clientUpdate");
+            }
+
+            return segment;
+        }
+
+        private SegmentSpecialBlock deserializeSpecialBlock(JsonObject json, JsonDeserializationContext context) {
+            SegmentSpecialBlock segment = new SegmentSpecialBlock();
+
+            if(json.has("meta")) {
+                segment.meta = json.get("meta").getAsInt();
+                json.remove("meta");
+            }
+
+            if(json.has("isAlwaysBreakable")) {
+                segment.isAlwaysBreakable = json.get("isAlwaysBreakable").getAsBoolean();
+                json.remove("isAlwaysBreakable");
             }
 
             return segment;

@@ -220,9 +220,11 @@ public class ProtectionHandlers {
             }
         } else {
             Resident res = MyTownUniverse.instance.getOrMakeResident(ev.getPlayer());
-            if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                ev.setCanceled(true);
-                return;
+            if (!ProtectionManager.checkBlockBreak(ev.block)) {
+                if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                    ev.setCanceled(true);
+                    return;
+                }
             }
 
             if(ev.getPlayer().getHeldItem() != null) {

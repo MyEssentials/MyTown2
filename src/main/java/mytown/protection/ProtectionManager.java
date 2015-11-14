@@ -37,6 +37,7 @@ import java.util.Map;
 public class ProtectionManager {
 
     public static final Segment.Container<SegmentBlock> segmentsBlock = new Segment.Container<SegmentBlock>();
+    public static final Segment.Container<SegmentSpecialBlock> segmentsSpecialBlock = new Segment.Container<SegmentSpecialBlock>();
     public static final Segment.Container<SegmentEntity> segmentsEntity = new Segment.Container<SegmentEntity>();
     public static final Segment.Container<SegmentItem> segmentsItem = new Segment.Container<SegmentItem>();
     public static final Segment.Container<SegmentTileEntity> segmentsTile = new Segment.Container<SegmentTileEntity>();
@@ -47,7 +48,9 @@ public class ProtectionManager {
 
     public static void addProtection(Protection protection) {
         for(Segment segment : protection.segments) {
-            if(segment instanceof SegmentBlock) {
+            if(segment instanceof SegmentSpecialBlock) {
+                segmentsSpecialBlock.add((SegmentSpecialBlock) segment);
+            } else if(segment instanceof SegmentBlock) {
                 segmentsBlock.add((SegmentBlock) segment);
             } else if(segment instanceof SegmentEntity) {
                 segmentsEntity.add((SegmentEntity) segment);
@@ -181,7 +184,6 @@ public class ProtectionManager {
         }
     }
 
-
     public static void checkBlockInteraction(Resident res, BlockPos bp, PlayerInteractEvent.Action action, Event ev) {
         if(!ev.isCancelable()) {
             return;
@@ -194,6 +196,16 @@ public class ProtectionManager {
                 ev.setCanceled(true);
             }
         }
+    }
+
+    public static boolean checkBlockBreak(Block block) {
+        for(SegmentSpecialBlock segment : segmentsSpecialBlock.get(block.getClass())) {
+            if(segment.isAlwaysBreakable()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static boolean hasPermission(Resident res, FlagType<Boolean> flagType, int dim, int x, int y, int z) {
