@@ -85,12 +85,18 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         if (!getDatasource().saveTown(town))
             throw new CommandException("Failed to save Town");
 
+        int chunkX = ((int)creator.getPlayer().posX) >> 4;
+        int chunkZ = ((int)creator.getPlayer().posZ) >> 4;
+        int dim = creator.getPlayer().dimension;
+
         //Claiming first block
-        TownBlock block = newBlock(creator.getPlayer().dimension, ((int)creator.getPlayer().posX) >> 4, ((int)creator.getPlayer().posZ) >> 4, false, Config.instance.costAmountClaim.get(), town);
+        TownBlock block = newBlock(dim, chunkX, chunkZ, false, Config.instance.costAmountClaim.get(), town);
 
         // Saving block to db and town
-        if(MyTownUniverse.instance.blocks.contains(creator.getPlayer().dimension, ((int) creator.getPlayer().posX) >> 4, ((int) creator.getPlayer().posZ) >> 4)) {
-            throw new MyTownCommandException("mytown.cmd.err.claim.already");
+        if(MyTownUniverse.instance.blocks.contains(dim, chunkX, chunkZ)) {
+            getDatasource().deleteTown(town);
+            throw new CommandException("Chunk at (" + dim + "," + chunkX + "," + chunkZ + ") is already claimed");
+            //throw new MyTownCommandException("mytown.cmd.err.claim.already");
         }
 
         getDatasource().saveBlock(block);

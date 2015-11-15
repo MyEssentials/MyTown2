@@ -111,8 +111,6 @@ public class ProtectionHandlers {
         }
     }
 
-
-
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPlayerAttackEntityEvent(AttackEntityEvent ev) {

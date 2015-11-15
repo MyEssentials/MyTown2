@@ -1032,8 +1032,6 @@ public class MyTownDatasource extends DatasourceSQL {
             s.setString(3, rank.getName());
             s.execute();
             
-            LOG.error("Linked Resident {} ({}) with Town {} Rank {}", res.getPlayerName(), res.getUUID().toString(), town.getName(), rank.getName());
-
             res.townsContainer.add(town);
             town.residentsMap.put(res, rank);
         } catch (SQLException e) {
