@@ -2,6 +2,8 @@ package mytown.protection.segment;
 
 import myessentials.entities.Volume;
 import mytown.entities.Resident;
+import mytown.entities.flag.FlagType;
+import mytown.protection.ProtectionManager;
 import mytown.protection.segment.enums.EntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -82,7 +84,7 @@ public class SegmentEntity extends Segment {
         int y = (int) Math.floor(attackedPlayer.posY);
         int z = (int) Math.floor(attackedPlayer.posZ);
 
-        if (!hasPermissionAtLocation(owner, dim, x, y, z)) {
+        if(owner != null && !ProtectionManager.getFlagValueAtLocation(FlagType.PVP, dim, x, y, z)) {
             return false;
         }
 

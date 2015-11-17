@@ -37,7 +37,6 @@ public class ClientBlockUpdate {
                     z = center.getZ() + k;
 
                     S23PacketBlockChange packet = new S23PacketBlockChange(x, y, z, world);
-                    packet.field_148884_e = world.getBlockMetadata(x, y, z);
                     FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendPacketToAllPlayers(packet);
                 }
             }

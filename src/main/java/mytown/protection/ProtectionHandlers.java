@@ -262,23 +262,29 @@ public class ProtectionHandlers {
         if(ev.source.getEntity() != null) {
             if(ev.entity instanceof EntityPlayer) {
                 if (ev.source.getEntity() instanceof EntityPlayer) {
-                    Resident res = MyTownUniverse.instance.getOrMakeResident(ev.source.getEntity());
+                    // Player vs Player
                     int x = (int) Math.floor(ev.entityLiving.posX);
                     int y = (int) Math.floor(ev.entityLiving.posY);
                     int z = (int) Math.floor(ev.entityLiving.posZ);
-                    if(!ProtectionManager.hasPermission(res, FlagType.PVP, ev.entityLiving.dimension, x, y, z)) {
+                    if(!ProtectionManager.getFlagValueAtLocation(FlagType.PVP, ev.entityLiving.dimension, x, y, z)) {
                         ev.setCanceled(true);
                     }
                 } else {
+                    // Entity vs Player (Check for Player owned Entity)
                     Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entity);
                     ProtectionManager.checkPVP(ev.source.getEntity(), res, ev);
                 }
             } else {
-                Resident res = ProtectionManager.getOwner(ev.source.getEntity());
-                if(res != null) {
+                if (ev.source.getEntity() instanceof EntityPlayer) {
+                    // Player vs Living Entity
+                    Resident res = MyTownUniverse.instance.getOrMakeResident(ev.source.getEntity());
                     ProtectionManager.checkInteraction(ev.entity, res, ev);
+                } else {
+                    // Entity vs Living Entity
                 }
             }
+        } else {
+            // Non-Entity Damage
         }
     }
 
