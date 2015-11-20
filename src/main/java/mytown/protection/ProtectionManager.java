@@ -95,7 +95,7 @@ public class ProtectionManager {
                 if(currentPlot != null && (lastTickPlot == null || currentPlot != lastTickPlot)) {
                     res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.enter", currentPlot.getName()));
                 } else if(currentPlot == null && lastTickPlot != null) {
-                    res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.enter", EnumChatFormatting.RED + "Unassigned"));
+                    res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.enter", MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.enter.unassigned")));
                 }
             }
             lastTickPlayerPos.put(player, new EntityPos(player.posX, player.posY, player.posZ, player.dimension));
