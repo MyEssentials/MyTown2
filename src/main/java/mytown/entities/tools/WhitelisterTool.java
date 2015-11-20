@@ -92,7 +92,7 @@ public class WhitelisterTool extends Tool {
         if(!(town.residentsMap.get(owner).getName().equals("Assistant") || town.residentsMap.get(owner).getName().equals("Mayor"))) {
             Plot plot = town.plotsContainer.get(bp.getDim(), bp.getX(), bp.getY(), bp.getZ());
             if(plot == null || !plot.ownersContainer.contains(owner)) {
-                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.perm.whitelist"));
+                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.perm.whitelist.noPermssion"));
                 return false;
             }
         }
