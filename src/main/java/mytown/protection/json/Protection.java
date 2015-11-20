@@ -94,7 +94,7 @@ public class Protection {
         		return true;
         	}
             for(ModContainer mod : Loader.instance().getModList()) {
-                if(mod.getModId().equals(modid) && mod.getName().startsWith(name) && mod.getVersion().startsWith(version)) {
+                if(mod.getModId().equals(modid) && (name.length() == 0 || mod.getName().equals(name)) && mod.getVersion().startsWith(version)) {
                     return true;
                 }
             }

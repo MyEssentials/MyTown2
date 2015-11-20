@@ -60,7 +60,7 @@ public class ProtectionParser {
                 if ("Minecraft".equals(protection.modid)) {
                     vanillaProtection = protection;
                 } else {
-                    MyTown.instance.LOG.info("Adding protection for mod: {}", protection.modid);
+                    MyTown.instance.LOG.info("Adding protection for mod: {}", protection.name.length() > 0 ? protection.name : protection.modid);
                     ProtectionManager.addProtection(protection);
                 }
             }
