@@ -51,6 +51,30 @@ mytown.flag.RESTRICTIONS=&3Gives permission outside player's plots
 mytown.flag.FAKERS=&3Allows fake players to bypass (ex: TCGolems)
 mytown.flag.NEARBY=&3Allows towns to be made near this town.
 
+# Tools
+mytown.tool.plot.sell.name=Plot Sell
+mytown.tool.plot.sell.description.header1=&3Right-click in a plot to place a sell sign.
+mytown.tool.plot.sell.description.header2=&3Shift-right-click air to change modes.
+mytown.tool.plot.sell.description.price=&3Price:
+mytown.tool.plot.sell.description.mode=&3Restricted to residents:
+mytown.tool.plot.sell.mode=Restricted to residents
+
+mytown.tool.plot.selection.name=Selector
+mytown.tool.plot.selection.description.header1=&3Select 2 blocks to make a plot.
+mytown.tool.plot.selection.description.header2=&3Shift right-click air to change modes.
+mytown.tool.plot.selection.description.price=&3Name:
+mytown.tool.plot.selection.description.mode=&3Height dependent:
+mytown.tool.plot.description.mode=Height dependent
+
+mytown.tool.whitelister.name=Whitelister
+mytown.tool.whitelister.description.header1=&3Select block for bypassing protection.
+mytown.tool.whitelister.description.header2=&3Shift right-click air to change flag.
+mytown.tool.whitelister.description.flag=&3Flag:
+mytown.tool.whitelister.description.removal=&cWHITELIST REMOVAL
+mytown.tool.whitelister.mode=mode
+mytown.tool.whitelister.mode.removal=WHITELIST REMOVAL
+mytown.tool.whitelister.mode.flagType=flag type
+
 # /ta config [load|save]
 mytown.cmd.config.load.start=&3Loading config...
 mytown.cmd.config.load.stop=&aConfig loaded

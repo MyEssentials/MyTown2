@@ -17,11 +17,11 @@ import net.minecraft.util.EnumChatFormatting;
  */
 public class WhitelisterTool extends Tool {
 
-    private static final String NAME = "Whitelister";
-    private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Select block for bypassing protection.";
-    private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click air to change flag.";
-    private static final String DESCRIPTION_FLAG = EnumChatFormatting.DARK_AQUA + "Flag: ";
-    private static final String DESCRIPTION_FLAG_REMOVAL = EnumChatFormatting.RED + "WHITELIST REMOVAL";
+    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.name");
+    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header1");
+    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header2");
+    private static final String DESCRIPTION_FLAG = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.flag")+" ";
+    private static final String DESCRIPTION_FLAG_REMOVAL = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.removal");
 
     private Resident owner;
     private FlagType flagType = FlagType.ACCESS;
@@ -61,15 +61,24 @@ public class WhitelisterTool extends Tool {
         if(flagType == FlagType.getWhitelistable().get(FlagType.getWhitelistable().size() - 1)) {
             flagType = null;
             updateDescription();
-            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", "mode", "WHITELIST REMOVAL"));
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode",
+                    MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.mode"),
+                    MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.mode.removal")
+            ));
         } else if(flagType == null) {
             flagType = FlagType.getWhitelistable().get(0);
             updateDescription();
-            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", "flagType", flagType));
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode",
+                    MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.mode.flagType"),
+                    flagType.name
+            ));
         } else {
             flagType = FlagType.getWhitelistable().get(FlagType.getWhitelistable().indexOf(flagType) + 1);
             updateDescription();
-            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", "flagType", flagType));
+            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode",
+                    MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.mode.flagType"),
+                    flagType.name
+            ));
         }
     }
 
