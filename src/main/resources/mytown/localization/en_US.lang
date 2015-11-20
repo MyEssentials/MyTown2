@@ -75,6 +75,12 @@ mytown.tool.whitelister.mode=mode
 mytown.tool.whitelister.mode.removal=WHITELIST REMOVAL
 mytown.tool.whitelister.mode.flagType=flag type
 
+# Sell Sign
+mytown.sign.sell.title=Plot Sale
+mytown.sign.sell.description.owner=&9by
+mytown.sign.sell.description.price=&6
+mytown.sign.sell.description.restricted=&cRESTRICTED
+
 # /ta config [load|save]
 mytown.cmd.config.load.start=&3Loading config...
 mytown.cmd.config.load.stop=&aConfig loaded
