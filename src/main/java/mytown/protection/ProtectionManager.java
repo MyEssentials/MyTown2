@@ -7,15 +7,15 @@ import myessentials.entities.Volume;
 import myessentials.utils.PlayerUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
+import mytown.entities.signs.SellSign;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.protection.json.Protection;
 import mytown.protection.segment.*;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,7 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -188,8 +188,15 @@ public class ProtectionManager {
         if(!ev.isCancelable()) {
             return;
         }
+
         World world = MinecraftServer.getServer().worldServerForDimension(bp.getDim());
         Block block = world.getBlock(bp.getX(), bp.getY(), bp.getZ());
+
+        // Bypass for SellSign
+        TileEntity te = world.getTileEntity(bp.getX(), bp.getY(), bp.getZ());
+        if(te instanceof TileEntitySign && SellSign.isTileValid((TileEntitySign) te)) {
+            return;
+        }
 
         for(SegmentBlock segment : segmentsBlock.get(block.getClass())) {
             if(!segment.shouldInteract(res, bp, action)) {
