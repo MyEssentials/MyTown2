@@ -296,6 +296,7 @@ mytown.notification.db.reloaded=&3The database has been reloaded into memory
 mytown.notification.town.ranks.perm.remove=&aThe permission has been successfully &cremoved&a
 mytown.notification.perm.whitelist.start=&3Right-Click a block to change his flag value, depending on what flag you choosed, that flag will be changed for the block you selected.\nShift & Right-Click to change the mode from &9Town&3 to &9Plot&3 or from &9Plot&3 to &9Town&3
 mytown.notification.perm.town.whitelist.already=&3Block whitelist already exists for that flag
+mytown.notification.perm.town.whitelist.added=&aThe blocks was successfully added to whitelist for that flag
 mytown.notification.friends.invitationSent=&aInvitation has been sent
 mytown.notification.friends.gotInvitation=&aYou've got a new friend invite from %s!
 mytown.notification.friends.removed=&aPlayer has been removed from the friends list
