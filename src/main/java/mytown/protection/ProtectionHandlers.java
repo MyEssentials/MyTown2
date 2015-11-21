@@ -143,12 +143,20 @@ public class ProtectionHandlers {
             }
         } else {
             Resident res = MyTownUniverse.instance.getOrMakeResident(player);
-            int range = Config.instance.placeProtectionRange.get();
-            Volume placeBox = new Volume(ev.x-range, ev.y-range, ev.z-range, ev.x+range, ev.y+range, ev.z+range);
 
-            if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, placeBox)) {
-                ev.setCanceled(true);
-                return;
+            if (!MyTownUniverse.instance.blocks.contains(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4)) {
+                int range = Config.instance.placeProtectionRange.get();
+                Volume placeBox = new Volume(ev.x-range, ev.y-range, ev.z-range, ev.x+range, ev.y+range, ev.z+range);
+
+                if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, placeBox)) {
+                    ev.setCanceled(true);
+                    return;
+                }
+            } else {
+                if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                    ev.setCanceled(true);
+                    return;
+                }
             }
 
             if(ev.block instanceof ITileEntityProvider && ev.itemInHand != null) {

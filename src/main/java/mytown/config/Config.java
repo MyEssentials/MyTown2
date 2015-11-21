@@ -48,7 +48,7 @@ public class Config extends ConfigTemplate {
             3);
     public ConfigProperty<Integer> placeProtectionRange = new ConfigProperty<Integer>(
             "placeProtectionRange", "towns",
-            "The amount of blocks from the town in which the place protection is applied.",
+            "The distance in blocks from a protected town where you can't place a block in the Wild.",
             1);
     public ConfigProperty<Boolean> modifiableRanks = new ConfigProperty<Boolean>(
             "modifiableRanks", "towns",

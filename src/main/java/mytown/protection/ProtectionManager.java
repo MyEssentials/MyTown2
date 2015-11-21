@@ -15,6 +15,7 @@ import mytown.protection.json.Protection;
 import mytown.protection.segment.*;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSign;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -193,9 +194,11 @@ public class ProtectionManager {
         Block block = world.getBlock(bp.getX(), bp.getY(), bp.getZ());
 
         // Bypass for SellSign
-        TileEntity te = world.getTileEntity(bp.getX(), bp.getY(), bp.getZ());
-        if(te instanceof TileEntitySign && SellSign.isTileValid((TileEntitySign) te)) {
-            return;
+        if (block instanceof BlockSign) {
+            TileEntity te = world.getTileEntity(bp.getX(), bp.getY(), bp.getZ());
+            if(te instanceof TileEntitySign && SellSign.isTileValid((TileEntitySign) te)) {
+                return;
+            }
         }
 
         for(SegmentBlock segment : segmentsBlock.get(block.getClass())) {
