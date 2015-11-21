@@ -3,6 +3,7 @@ package mytown.protection.segment;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.google.gson.internal.LazilyParsedNumber;
+
 import myessentials.entities.Volume;
 import myessentials.json.SerializerTemplate;
 import mytown.MyTown;
@@ -19,6 +20,7 @@ import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import mytown.util.exceptions.ProtectionParseException;
 import net.minecraft.entity.player.EntityPlayer;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.lang.reflect.Type;
@@ -62,6 +64,10 @@ public abstract class Segment {
                 String username = getters.contains("owner") ? (String) getters.get("owner").invoke(String.class, object, object) : null;
                 if (username == null)
                     return null;
+                if (username.length() == 36 && (username.split("-", -1).length - 1) == 4) {
+                    UUID uuid = UUID.fromString(username);
+                    return MyTownUniverse.instance.getOrMakeResident(uuid);
+                }
                 return MyTownUniverse.instance.getOrMakeResident(username);
             } catch (GetterException ex2) {
                 try {

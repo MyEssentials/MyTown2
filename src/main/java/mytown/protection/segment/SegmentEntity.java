@@ -56,10 +56,15 @@ public class SegmentEntity extends Segment {
             return true;
         }
 
+        Resident owner = getOwner(entity);
         int dim = entity.dimension;
         int x = (int) Math.floor(entity.posX);
         int y = (int) Math.floor(entity.posY);
         int z = (int) Math.floor(entity.posZ);
+
+        if (owner != null && res.getUUID().equals(owner.getUUID())) {
+            return true;
+        }
 
         if (!hasPermissionAtLocation(res, dim, x, y, z)) {
             return false;
