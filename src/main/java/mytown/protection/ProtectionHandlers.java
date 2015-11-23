@@ -8,6 +8,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
+import myessentials.event.BlockTrampleEvent;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.config.Config;
@@ -210,6 +211,47 @@ public class ProtectionHandlers {
                 ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
             }
             ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
+        }
+    }
+
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onBlockTrample(BlockTrampleEvent ev) {
+        if(ev.world.isRemote || ev.isCanceled())
+            return;
+
+        Entity entity = ev.entity;
+        Resident res = null;
+
+        if(!(entity instanceof EntityPlayer)) {
+            // Protect from players ridding any entity
+            if(entity.riddenByEntity != null && (entity.riddenByEntity instanceof EntityPlayer))
+                entity = entity.riddenByEntity;
+            // Protect from players jumping and leaving the horse in mid-air
+            else
+                res = ProtectionManager.getOwner(entity);
+        }
+
+        // Fake players are special
+        if(entity instanceof FakePlayer) {
+            if(!ProtectionManager.getFlagValueAtLocation(FlagType.FAKERS, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                ev.setCanceled(true);
+            }
+        } else {
+            // Will be null if we didn't find the player responsible for this trampling
+            if(res == null) {
+                res = MyTownUniverse.instance.getOrMakeResident(entity);
+                // Will be null if it wasn't caused by a known player
+                if(res == null)
+                    return;
+            }
+
+            // Trampling crops will break them and will modify the terrain
+            if (!ProtectionManager.checkBlockBreak(ev.block)) {
+                if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                    ev.setCanceled(true);
+                }
+            }
         }
     }
 
