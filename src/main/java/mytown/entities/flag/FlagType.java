@@ -163,6 +163,12 @@ public class FlagType<T> implements Comparable<FlagType<T>>{
         return gson.toJson(value, type);
     }
 
+    @Override
+    public String toString()
+    {
+        return name;
+    }
+
     private enum Property {
         IN_TOWN,
         IN_PLOT,
