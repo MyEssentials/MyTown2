@@ -3,42 +3,47 @@ package mytown.entities.signs;
 import myessentials.Localization;
 import myessentials.entities.BlockPos;
 import myessentials.entities.sign.Sign;
-import myessentials.utils.StringUtils;
+import myessentials.entities.sign.SignClassTransformer;
+import myessentials.entities.sign.SignType;
 import mytown.MyTown;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.proxies.EconomyProxy;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntitySign;
-import net.minecraft.util.EnumChatFormatting;
+
+import java.util.UUID;
 
 public class SellSign extends Sign {
-
-    private static final String TITLE = "Plot Sale";
-    private static final String DESCRIPTION_OWNER = EnumChatFormatting.BLUE + "by ";
-    private static final String DESCRIPTION_PRICE = EnumChatFormatting.GOLD.toString();
-    private static final String DESCRIPTION_RESTRICTED = EnumChatFormatting.RED.toString() + "RESTRICTED";
-
     private int price;
     private boolean restricted;
     private Resident owner;
     private Plot plot;
 
     public SellSign(BlockPos bp, int face, Resident owner, int price, boolean restricted) {
+        super(SellSignType.instance);
         this.bp = bp;
         this.price = price;
         this.restricted = restricted;
         this.plot = MyTownUniverse.instance.plots.get(bp.getDim(), bp.getX(), bp.getY(), bp.getZ());
         this.owner = owner;
+        NBTTagCompound data = new NBTTagCompound();
+        data.setString("Owner", owner.getUUID().toString());
+        data.setInteger("Price", price);
+        data.setBoolean("Restricted", restricted);
+        this.data = data;
         createSignBlock(owner.getPlayer(), bp, face);
     }
 
-    public SellSign(TileEntitySign te) {
+    public SellSign(TileEntitySign te, NBTTagCompound signData) {
+        super(SellSignType.instance);
         this.bp = new BlockPos(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().provider.dimensionId);
-        this.owner = getOwnerFromLore();
-        this.price = getPriceFromLore();
-        this.restricted = getRestrictedBooleanFromLore();
+        this.owner = MyTownUniverse.instance.getOrMakeResident(UUID.fromString(signData.getString("Owner")));
+        this.price = signData.getInteger("Price");
+        this.restricted = signData.getBoolean("Restricted");
         this.plot = MyTownUniverse.instance.plots.get(te.getWorldObj().provider.dimensionId, te.xCoord, te.yCoord, te.zCoord);
     }
 
@@ -89,10 +94,10 @@ public class SellSign extends Sign {
     @Override
     protected String[] getText() {
         return new String[] {
-                TITLE,
-                DESCRIPTION_OWNER + owner.getPlayerName(),
-                DESCRIPTION_PRICE + price,
-                restricted ? DESCRIPTION_RESTRICTED : ""
+                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.title"),
+                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.owner")+" " + owner.getPlayerName(),
+                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.price") + price,
+                restricted ? MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.restricted") : ""
         };
     }
 
@@ -107,34 +112,43 @@ public class SellSign extends Sign {
         return MyTown.instance.LOCAL;
     }
 
-    public Resident getOwnerFromLore() {
-        String username = getTileEntity().signText[1].substring(DESCRIPTION_OWNER.length());
-        return MyTownUniverse.instance.getOrMakeResident(username);
-    }
+    public static class SellSignType extends SignType {
+        public static final SellSignType instance = new SellSignType();
 
-    public int getPriceFromLore() {
-        String priceString = getTileEntity().signText[2].substring(DESCRIPTION_PRICE.length());
-        return Integer.parseInt(priceString);
-    }
-
-    public boolean getRestrictedBooleanFromLore() {
-        return getTileEntity().signText[3].equals(DESCRIPTION_RESTRICTED);
-    }
-
-    public static boolean isTileValid(TileEntitySign te) {
-        if (!te.signText[0].startsWith(Sign.IDENTIFIER)) {
-            return false;
+        @Override
+        public String getTypeID() {
+            return "MyTown:SellSign";
         }
 
-        try {
-            String username = te.signText[1].substring(DESCRIPTION_OWNER.length());
-            MyTownUniverse.instance.getOrMakeResident(username);
-            String priceString = te.signText[2].substring(DESCRIPTION_PRICE.length());
-            Integer.parseInt(priceString);
-            boolean b = te.signText[3].equals(DESCRIPTION_RESTRICTED);
-            return true;
-        } catch (Exception ex) {
-            return false;
+        @Override
+        public Sign loadData(TileEntitySign tileEntity, NBTBase signData) {
+            return new SellSign(tileEntity, (NBTTagCompound) signData);
+        }
+
+        public boolean isTileValid(TileEntitySign te) {
+            if (!te.signText[0].startsWith(Sign.IDENTIFIER)) {
+                return false;
+            }
+
+            try {
+                NBTTagCompound rootTag = SignClassTransformer.getMyEssentialsDataValue(te);
+                if (rootTag == null)
+                    return false;
+
+                if (!rootTag.getString("Type").equals(SellSignType.instance.getTypeID()))
+                    return false;
+
+                NBTBase data = rootTag.getTag("Value");
+                if (!(data instanceof NBTTagCompound))
+                    return false;
+
+                NBTTagCompound signData = (NBTTagCompound) data;
+
+                MyTownUniverse.instance.getOrMakeResident(signData.getString("Owner"));
+                return true;
+            } catch (Exception ex) {
+                return false;
+            }
         }
     }
 }

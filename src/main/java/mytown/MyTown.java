@@ -4,7 +4,10 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.Localization;
 import myessentials.json.JsonConfig;
@@ -17,6 +20,7 @@ import mytown.config.json.FlagsConfig;
 import mytown.config.json.RanksConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.crash.DatasourceCrashCallable;
+import mytown.entities.signs.SellSign;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
 import mytown.handlers.VisualsHandler;
@@ -66,7 +70,7 @@ public class MyTown {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent ev) {
-
+        SellSign.SellSignType.instance.register();
     }
 
     @EventHandler

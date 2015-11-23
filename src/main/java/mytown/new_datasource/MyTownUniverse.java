@@ -11,7 +11,6 @@ import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsHandler;
-import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -287,7 +286,6 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
             }
         }
         plots.add(plot);
-        plot.checkForSellSign();
         CommandCompletion.addCompletion("plotCompletion", plot.getName());
     }
 

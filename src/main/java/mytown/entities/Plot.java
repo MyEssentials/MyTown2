@@ -1,19 +1,12 @@
 package mytown.entities;
 
 import myessentials.entities.Volume;
-import myessentials.entities.sign.Sign;
-import myessentials.entities.sign.SignManager;
 import mypermissions.proxies.PermissionProxy;
 import mytown.entities.flag.Flag;
-import mytown.entities.signs.SellSign;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsHandler;
 import mytown.new_datasource.MyTownUniverse;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySign;
-import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -82,23 +75,6 @@ public class Plot {
             }
         }
         return true;
-    }
-
-    public void checkForSellSign() {
-        World world = MinecraftServer.getServer().worldServerForDimension(dim);
-        if (world == null) {
-            return;
-        }
-        for(int i = x1; i <= x2; i++) {
-            for(int j = y1; j <= y2; j++) {
-                for(int k = z1; k <= z2; k++) {
-                    TileEntity te = world.getTileEntity(i, j, k);
-                    if(te != null && te instanceof TileEntitySign && SellSign.isTileValid((TileEntitySign) te)) {
-                        SignManager.instance.signs.add(new SellSign((TileEntitySign) te));
-                    }
-                }
-            }
-        }
     }
 
     @Override
