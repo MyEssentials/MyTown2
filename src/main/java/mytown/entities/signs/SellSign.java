@@ -144,7 +144,7 @@ public class SellSign extends Sign {
 
                 NBTTagCompound signData = (NBTTagCompound) data;
 
-                MyTownUniverse.instance.getOrMakeResident(signData.getString("Owner"));
+                MyTownUniverse.instance.getOrMakeResident(UUID.fromString(signData.getString("Owner")));
                 return true;
             } catch (Exception ex) {
                 return false;
