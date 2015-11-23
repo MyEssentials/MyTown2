@@ -15,10 +15,10 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class SellSign extends Sign {
 
-    private static final String TITLE = "Plot Sale";
-    private static final String DESCRIPTION_OWNER = EnumChatFormatting.BLUE + "by ";
-    private static final String DESCRIPTION_PRICE = EnumChatFormatting.GOLD.toString();
-    private static final String DESCRIPTION_RESTRICTED = EnumChatFormatting.RED.toString() + "RESTRICTED";
+    private static final String TITLE = MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.title");
+    private static final String DESCRIPTION_OWNER = MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.owner")+" ";
+    private static final String DESCRIPTION_PRICE = MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.price");
+    private static final String DESCRIPTION_RESTRICTED = MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.restricted");
 
     private int price;
     private boolean restricted;

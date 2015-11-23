@@ -51,6 +51,36 @@ mytown.flag.RESTRICTIONS=&3Gives permission outside player's plots
 mytown.flag.FAKERS=&3Allows fake players to bypass (ex: TCGolems)
 mytown.flag.NEARBY=&3Allows towns to be made near this town.
 
+# Tools
+mytown.tool.plot.sell.name=Plot Sell
+mytown.tool.plot.sell.description.header1=&3Right-click in a plot to place a sell sign.
+mytown.tool.plot.sell.description.header2=&3Shift-right-click air to change modes.
+mytown.tool.plot.sell.description.price=&3Price:
+mytown.tool.plot.sell.description.mode=&3Restricted to residents:
+mytown.tool.plot.sell.mode=Restricted to residents
+
+mytown.tool.plot.selection.name=Selector
+mytown.tool.plot.selection.description.header1=&3Select 2 blocks to make a plot.
+mytown.tool.plot.selection.description.header2=&3Shift right-click air to change modes.
+mytown.tool.plot.selection.description.price=&3Name:
+mytown.tool.plot.selection.description.mode=&3Height dependent:
+mytown.tool.plot.description.mode=Height dependent
+
+mytown.tool.whitelister.name=Whitelister
+mytown.tool.whitelister.description.header1=&3Select block for bypassing protection.
+mytown.tool.whitelister.description.header2=&3Shift right-click air to change flag.
+mytown.tool.whitelister.description.flag=&3Flag:
+mytown.tool.whitelister.description.removal=&cWHITELIST REMOVAL
+mytown.tool.whitelister.mode=mode
+mytown.tool.whitelister.mode.removal=WHITELIST REMOVAL
+mytown.tool.whitelister.mode.flagType=flag type
+
+# Sell Sign
+mytown.sign.sell.title=Plot Sale
+mytown.sign.sell.description.owner=&9by
+mytown.sign.sell.description.price=&6
+mytown.sign.sell.description.restricted=&cRESTRICTED
+
 # /ta config [load|save]
 mytown.cmd.config.load.start=&3Loading config...
 mytown.cmd.config.load.stop=&aConfig loaded
@@ -266,6 +296,7 @@ mytown.notification.db.reloaded=&3The database has been reloaded into memory
 mytown.notification.town.ranks.perm.remove=&aThe permission has been successfully &cremoved&a
 mytown.notification.perm.whitelist.start=&3Right-Click a block to change his flag value, depending on what flag you choosed, that flag will be changed for the block you selected.\nShift & Right-Click to change the mode from &9Town&3 to &9Plot&3 or from &9Plot&3 to &9Town&3
 mytown.notification.perm.town.whitelist.already=&3Block whitelist already exists for that flag
+mytown.notification.perm.town.whitelist.added=&aThe blocks was successfully added to whitelist for that flag
 mytown.notification.friends.invitationSent=&aInvitation has been sent
 mytown.notification.friends.gotInvitation=&aYou've got a new friend invite from %s!
 mytown.notification.friends.removed=&aPlayer has been removed from the friends list

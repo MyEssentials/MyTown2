@@ -13,7 +13,6 @@ import mytown.util.MyTownUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumChatFormatting;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
@@ -21,11 +20,11 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class PlotSelectionTool extends Tool {
 
-    private static final String NAME = "Selector"; // TODO: Get localization for it, maybe?
-    private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Select 2 blocks to make a plot.";
-    private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift right-click air to change modes.";
-    private static final String DESCRIPTION_NAME = EnumChatFormatting.DARK_AQUA + "Name: ";
-    private static final String DESCRIPTION_MODE = EnumChatFormatting.DARK_AQUA + "Height dependent: ";
+    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.name");
+    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header1");
+    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header2");
+    private static final String DESCRIPTION_NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.name")+" ";
+    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.mode")+" ";
 
     private Selection selectionFirst, selectionSecond;
     private String plotName;
@@ -80,7 +79,7 @@ public class PlotSelectionTool extends Tool {
     public void onShiftRightClick() {
         heightDependent = !heightDependent;
         updateDescription();
-        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", "heightDependent", heightDependent));
+        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.description.mode"), heightDependent));
     }
 
     public void resetSelection(boolean resetBlocks, int delay) {

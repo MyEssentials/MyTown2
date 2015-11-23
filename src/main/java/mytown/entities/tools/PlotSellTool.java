@@ -21,11 +21,11 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public class PlotSellTool extends Tool {
 
-    private static final String NAME = "Plot Sell";
-    private static final String DESCRIPTION_HEADER_1 = EnumChatFormatting.DARK_AQUA + "Right-click in a plot to place a sell sign.";
-    private static final String DESCRIPTION_HEADER_2 = EnumChatFormatting.DARK_AQUA + "Shift-right-click air to change modes.";
-    private static final String DESCRIPTION_PRICE = EnumChatFormatting.DARK_AQUA + "Price: ";
-    private static final String DESCRIPTION_MODE = EnumChatFormatting.DARK_AQUA + "Restricted to residents: ";
+    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.name");
+    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header1");
+    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header2");
+    private static final String DESCRIPTION_PRICE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.price")+" ";
+    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.mode")+" ";
 
     private int price;
     private boolean restricted = false;
@@ -64,7 +64,7 @@ public class PlotSellTool extends Tool {
     public void onShiftRightClick() {
         this.restricted = !this.restricted;
         updateDescription();
-        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", "Restricted to residents", restricted));
+        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.mode"), restricted));
     }
 
     protected boolean hasPermission(Town town, BlockPos bp) {
