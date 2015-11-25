@@ -1,21 +1,22 @@
 package mytown.commands;
 
 import myessentials.Localization;
+import myessentials.utils.ChatUtils;
 import mypermissions.api.command.CommandCompletion;
 import mytown.MyTown;
-import mytown.new_datasource.MyTownDatasource;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.new_datasource.MyTownDatasource;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.proxies.EconomyProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for all classes that hold command methods... Mostly for some utils
@@ -201,7 +202,7 @@ public abstract class Commands {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             res.sendMessage(message);
         } else {
-            sender.addChatMessage(new ChatComponentText(message));
+            ChatUtils.sendChat(sender, message);
         }
     }
 

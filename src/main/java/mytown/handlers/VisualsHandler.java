@@ -10,8 +10,10 @@ import mytown.entities.TownBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.*;
@@ -36,14 +38,14 @@ public class VisualsHandler {
                     if (!coord.packetSent) {
                         S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
                         packet.field_148883_d = coord.block;
-                        visualObject.player.playerNetServerHandler.sendPacket(packet);
+                        visualObject.sendPacketToPlayer(packet);
                         coord.packetSent = true;
                     }
                     if (coord.deleted) {
                         S23PacketBlockChange packet = new S23PacketBlockChange(coord.x, coord.y, coord.z, MinecraftServer.getServer().worldServerForDimension(coord.dim));
                         packet.field_148883_d = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlock(coord.x, coord.y, coord.z);
                         packet.field_148884_e = MinecraftServer.getServer().worldServerForDimension(coord.dim).getBlockMetadata(coord.x, coord.y, coord.z);
-                        visualObject.player.playerNetServerHandler.sendPacket(packet);
+                        visualObject.sendPacketToPlayer(packet);
                         blockCoordsIterator.remove();
                     }
                 }
@@ -350,6 +352,15 @@ public class VisualsHandler {
 
         public boolean isPlot() {
             return object != null && object instanceof Plot;
+        }
+
+        public void sendPacketToPlayer(Packet packet)
+        {
+            try {
+                this.player.playerNetServerHandler.sendPacket(packet);
+            } catch(Exception e) {
+                // Player not connected? Never mind then.
+            }
         }
     }
 }
