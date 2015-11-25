@@ -1,19 +1,17 @@
 package mytown.entities;
 
 import myessentials.entities.Volume;
-import myessentials.entities.sign.Sign;
-import myessentials.entities.sign.SignManager;
+import myessentials.entities.sign.SignType;
 import mypermissions.proxies.PermissionProxy;
 import mytown.entities.flag.Flag;
-import mytown.entities.signs.SellSign;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsHandler;
 import mytown.new_datasource.MyTownUniverse;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -82,23 +80,6 @@ public class Plot {
             }
         }
         return true;
-    }
-
-    public void checkForSellSign() {
-        World world = MinecraftServer.getServer().worldServerForDimension(dim);
-        if (world == null) {
-            return;
-        }
-        for(int i = x1; i <= x2; i++) {
-            for(int j = y1; j <= y2; j++) {
-                for(int k = z1; k <= z2; k++) {
-                    TileEntity te = world.getTileEntity(i, j, k);
-                    if(te != null && te instanceof TileEntitySign && SellSign.isTileValid((TileEntitySign) te)) {
-                        SignManager.instance.signs.add(new SellSign((TileEntitySign) te));
-                    }
-                }
-            }
-        }
     }
 
     @Override
@@ -183,6 +164,45 @@ public class Plot {
 
     public int getDbID() {
         return this.dbID;
+    }
+
+    public void deleteSignBlocks(SignType signType, World world) {
+        if(world.provider.dimensionId != dim)
+            return;
+
+        int x1 = getStartX();
+        int y1 = getStartY();
+        int z1 = getStartZ();
+        int x2 = getEndX();
+        int y2 = getEndY();
+        int z2 = getEndZ();
+        int cx1 = x1 >> 4;
+        int cz1 = z1 >> 4;
+        int cx2 = x2 >> 4;
+        int cz2 = z2 >> 4;
+        for(int cx = cx1; cx <= cx2; cx++)
+            for(int cz = cz1; cz <= cz2; cz++) {
+                Chunk chunk = world.getChunkFromChunkCoords(cx, cz);
+                if(!chunk.isChunkLoaded)
+                    chunk = world.getChunkProvider().loadChunk(cx, cz);
+
+                List<int[]> sellSigns = new ArrayList<int[]>(2);
+                for(Object obj: chunk.chunkTileEntityMap.values()) {
+                    if(obj instanceof TileEntitySign) {
+                        TileEntitySign sign = (TileEntitySign) obj;
+                        if(    sign.xCoord >= x1 && sign.xCoord <= x2
+                            && sign.yCoord >= y1 && sign.yCoord <= y2
+                            && sign.zCoord >= z1 && sign.zCoord <= z2
+                            && signType.isTileValid(sign) )
+                                sellSigns.add(new int[]{sign.xCoord, sign.yCoord, sign.zCoord});
+                    }
+                }
+
+                for(int[] sellSign: sellSigns) {
+                    world.removeTileEntity(sellSign[0], sellSign[1], sellSign[2]);
+                    world.setBlock(sellSign[0], sellSign[1], sellSign[2], Blocks.air);
+                }
+            }
     }
 
     public static class Container extends ArrayList<Plot> {

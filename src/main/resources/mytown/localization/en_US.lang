@@ -322,6 +322,7 @@ mytown.notification.resident.blocks.extra.set=&3The amount of extra claimable bl
 mytown.notification.plot.buy.failed=&cYou don't have %s
 mytown.notification.plot.buy.newOwner=&aYou have successfully bought plot %s
 mytown.notification.plot.buy.oldOwner=&aThe plot %s has been successfully sold. %s has been sent to town bank
+mytown.notification.plot.buy.alreadySold=&cThis plot was already sold and %s can't sell it again
 mytown.notification.plot.sell.start=&3Right click on a plot with the tool given to put the plot on sale
 mytown.notification.town.renamed=&3Town has been renamed
 mytown.notification.plot.enter=&2~ %s

@@ -196,7 +196,7 @@ public class ProtectionManager {
         // Bypass for SellSign
         if (block instanceof BlockSign) {
             TileEntity te = world.getTileEntity(bp.getX(), bp.getY(), bp.getZ());
-            if(te instanceof TileEntitySign && SellSign.isTileValid((TileEntitySign) te)) {
+            if(te instanceof TileEntitySign && SellSign.SellSignType.instance.isTileValid((TileEntitySign) te)) {
                 return;
             }
         }

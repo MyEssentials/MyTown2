@@ -1,7 +1,6 @@
 package mytown.entities.tools;
 
 import myessentials.entities.BlockPos;
-import myessentials.entities.sign.SignManager;
 import myessentials.entities.tool.Tool;
 import myessentials.entities.tool.ToolManager;
 import mytown.MyTown;
@@ -46,7 +45,7 @@ public class PlotSellTool extends Tool {
         if(!hasPermission(town, bp)) {
             return;
         }
-        SignManager.instance.signs.add(new SellSign(bp, face, owner, price, restricted));
+        new SellSign(bp, face, owner, price, restricted);
         ToolManager.instance.remove(this);
     }
 
