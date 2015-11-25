@@ -186,18 +186,21 @@ public class Plot {
                 if(!chunk.isChunkLoaded)
                     chunk = world.getChunkProvider().loadChunk(cx, cz);
 
+                List<int[]> sellSigns = new ArrayList<int[]>(2);
                 for(Object obj: chunk.chunkTileEntityMap.values()) {
                     if(obj instanceof TileEntitySign) {
                         TileEntitySign sign = (TileEntitySign) obj;
                         if(    sign.xCoord >= x1 && sign.xCoord <= x2
                             && sign.yCoord >= y1 && sign.yCoord <= y2
                             && sign.zCoord >= z1 && sign.zCoord <= z2
-                            && signType.isTileValid(sign) ){
-
-                            world.removeTileEntity(sign.xCoord, sign.yCoord, sign.zCoord);
-                            world.setBlock(sign.xCoord, sign.yCoord, sign.zCoord, Blocks.air);
-                        }
+                            && signType.isTileValid(sign) )
+                                sellSigns.add(new int[]{sign.xCoord, sign.yCoord, sign.zCoord});
                     }
+                }
+
+                for(int[] sellSign: sellSigns) {
+                    world.removeTileEntity(sellSign[0], sellSign[1], sellSign[2]);
+                    world.setBlock(sellSign[0], sellSign[1], sellSign[2], Blocks.air);
                 }
             }
     }
