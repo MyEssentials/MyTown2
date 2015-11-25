@@ -7,6 +7,7 @@ import myessentials.utils.StringUtils;
 import mypermissions.api.command.CommandResponse;
 import mypermissions.api.command.annotation.Command;
 import mytown.config.Config;
+import mytown.entities.signs.SellSign;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -19,6 +20,8 @@ import mytown.proxies.EconomyProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 
 import java.util.Iterator;
 import java.util.List;
@@ -513,6 +516,14 @@ public class CommandsEveryone extends Commands {
             if (!plot.ownersContainer.contains(res) && !plot.getTown().hasPermission(res, "mytown.bypass.plot")) {
                 throw new MyTownCommandException("mytown.cmd.err.plot.noPermission");
             }
+
+            World world;
+            if(sender instanceof EntityPlayer)
+                world = ((EntityPlayer) sender).worldObj;
+            else
+                world = MinecraftServer.getServer().worldServerForDimension(plot.getDim());
+
+            plot.deleteSignBlocks(SellSign.SellSignType.instance, world);
 
             getDatasource().deletePlot(plot);
             res.sendMessage(getLocal().getLocalization("mytown.notification.plot.deleted", plot.getName()));
