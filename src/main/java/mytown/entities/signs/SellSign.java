@@ -60,6 +60,11 @@ public class SellSign extends Sign {
             return;
         }
 
+        if(!plot.ownersContainer.contains(owner)) {
+            resident.sendMessage(getLocal().getLocalization("mytown.notification.plot.buy.alreadySold", owner.getPlayerName()));
+            return;
+        }
+
         if(!plot.getTown().plotsContainer.canResidentMakePlot(resident)) {
             resident.sendMessage(getLocal().getLocalization("mytown.cmd.err.plot.limit", plot.getTown().plotsContainer.getMaxPlots()));
             return;
