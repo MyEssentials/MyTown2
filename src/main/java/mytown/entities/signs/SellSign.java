@@ -1,9 +1,9 @@
 package mytown.entities.signs;
 
 import myessentials.Localization;
+import myessentials.classtransformers.SignClassTransformer;
 import myessentials.entities.BlockPos;
 import myessentials.entities.sign.Sign;
-import myessentials.entities.sign.SignClassTransformer;
 import myessentials.entities.sign.SignType;
 import mytown.MyTown;
 import mytown.entities.Plot;
