@@ -8,6 +8,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
+import myessentials.event.AE2PartPlaceEvent;
 import myessentials.event.BlockTrampleEvent;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
@@ -30,6 +31,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.HashMap;
@@ -187,7 +189,7 @@ public class ProtectionHandlers {
         } else {
             Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
             ProtectionManager.checkInteraction(ev.target, res, ev);
-            if(ev.entityPlayer.getHeldItem() != null) {
+            if(!ev.isCanceled() && ev.entityPlayer.getHeldItem() != null) {
                 BlockPos bp = new BlockPos(x, y, z, ev.target.dimension);
                 ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
             }
@@ -210,10 +212,23 @@ public class ProtectionHandlers {
             if(ev.entityPlayer.getHeldItem() != null) {
                 ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
             }
-            ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
+            if (!ev.isCanceled()) {
+                ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
+            }
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onAE2PartPlace(AE2PartPlaceEvent ev) {
+        if (ev.world.isRemote || ev.isCanceled()) {
+            return;
+        }
+
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
+        if(ev.player.getHeldItem() != null) {
+            ProtectionManager.checkUsage(ev.player.getHeldItem(), res, Action.RIGHT_CLICK_BLOCK, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.face, ev);
+        }
+    }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onBlockTrample(BlockTrampleEvent ev) {
