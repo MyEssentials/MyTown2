@@ -7,6 +7,7 @@ import mytown.protection.ProtectionManager;
 import mytown.protection.segment.enums.EntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MovingObjectPosition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,34 @@ public class SegmentEntity extends Segment {
         int x = (int) Math.floor(entity.posX);
         int y = (int) Math.floor(entity.posY);
         int z = (int) Math.floor(entity.posZ);
+
+        if(range == 0) {
+            if (!hasPermissionAtLocation(owner, dim, x, y, z)) {
+                return false;
+            }
+        } else {
+            Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
+            if (!hasPermissionAtLocation(owner, dim, rangeBox)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean shouldImpact(Entity entity, Resident owner, MovingObjectPosition mop) {
+        if(!types.contains(EntityType.IMPACT)) {
+            return true;
+        }
+
+        if(!shouldCheck(entity)) {
+            return true;
+        }
+
+        int range = getRange(entity);
+        int dim = entity.dimension;
+        int x = (int) Math.floor(mop.hitVec.xCoord);
+        int y = (int) Math.floor(mop.hitVec.yCoord);
+        int z = (int) Math.floor(mop.hitVec.zCoord);
 
         if(range == 0) {
             if (!hasPermissionAtLocation(owner, dim, x, y, z)) {
