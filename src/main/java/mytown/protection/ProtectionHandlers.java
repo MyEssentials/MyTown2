@@ -10,6 +10,7 @@ import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
 import myessentials.event.AE2PartPlaceEvent;
 import myessentials.event.BlockTrampleEvent;
+import myessentials.event.FireSpreadEvent;
 import myessentials.event.ProjectileImpactEvent;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
@@ -250,6 +251,19 @@ public class ProtectionHandlers {
         Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
         if(ev.player.getHeldItem() != null) {
             ProtectionManager.checkUsage(ev.player.getHeldItem(), res, Action.RIGHT_CLICK_BLOCK, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.face, ev);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onFireSpread(FireSpreadEvent ev) {
+        if (ev.world.isRemote || ev.isCanceled()) {
+            return;
+        }
+
+        Volume area = new Volume(ev.x-1, ev.y-1, ev.z-1, ev.x+1, ev.y+1, ev.z+1);
+        if(!ProtectionManager.hasPermission(null, FlagType.MODIFY, ev.world.provider.dimensionId, area)) {
+            ev.setCanceled(true);
+            return;
         }
     }
 
