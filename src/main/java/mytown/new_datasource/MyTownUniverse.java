@@ -229,7 +229,15 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public Resident getOrMakeResident(String username) {
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
+        if(username == null || username.isEmpty()) return null;
+        GameProfile profile;
+        try {
+            profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(username);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
         return profile == null ? null : getOrMakeResident(profile.getId(), profile.getName());
     }
 
