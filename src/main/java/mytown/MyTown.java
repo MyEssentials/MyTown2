@@ -60,7 +60,7 @@ public class MyTown {
 
         // Read Configs
         Config.instance.init(Constants.CONFIG_FOLDER + "/MyTown.cfg", Constants.MODID);
-        LOCAL = new Localization(Constants.CONFIG_FOLDER, Config.instance.localization.get(), "/mytown/localization/", MyTown.class);
+        LOCAL = new Localization(Constants.CONFIG_FOLDER+"/localization/", Config.instance.localization.get(), "/mytown/localization/", MyTown.class);
 
         registerHandlers();
 
