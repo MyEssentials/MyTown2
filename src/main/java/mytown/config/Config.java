@@ -140,10 +140,18 @@ public class Config extends ConfigTemplate {
             "defaultProtectionSize", "protection",
             "The range that it's going to check in if a protection's segment that has a tileentity does not provide getters for its area of influence.",
             32);
-    public ConfigProperty<Boolean> useExtraEvents = new ConfigProperty<Boolean>(
-            "useExtraEvents", "protection",
-            "If you have Forge 1254 or higher you can enable this feature. It provides more accurate protection.",
-            ClassUtils.isClassLoaded("net.minecraftforge.event.world.ExplosionEvent"));
+    public ConfigProperty<Boolean> fireSpreadInTowns = new ConfigProperty<Boolean>(
+            "fireSpreadInTowns", "protection",
+            "Allow fire to spread and burn up blocks in all towns and plots on the server.",
+            false);
+    public ConfigProperty<Boolean> taintSpreadInTowns = new ConfigProperty<Boolean>(
+            "taintSpreadInTowns", "protection",
+            "Allow Thaumcraft Taint biomes to spread in all towns and plots on the server.",
+            false);
+    public ConfigProperty<Boolean> mobTravelInTowns = new ConfigProperty<Boolean>(
+            "mobTravelInTowns", "protection",
+            "Allow mobs to travel into, but not spawn in a mob protected towns and plots on the server.",
+            false);
 
     //@ConfigProperty(category = "extra", name = "debug", comment = "Enables debugging output to console, use '/ta debug' to toggle ingame")
     //public static boolean debug;

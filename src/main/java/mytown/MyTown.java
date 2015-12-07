@@ -158,8 +158,7 @@ public class MyTown {
         FMLCommonHandler.instance().bus().register(ProtectionHandlers.instance);
         MinecraftForge.EVENT_BUS.register(ProtectionHandlers.instance);
 
-        if(Config.instance.useExtraEvents.get())
-            MinecraftForge.EVENT_BUS.register(ExtraEventsHandler.getInstance());
+        MinecraftForge.EVENT_BUS.register(ExtraEventsHandler.getInstance());
     }
 
     public void loadConfigs() {
@@ -195,16 +194,5 @@ public class MyTown {
                 throw new ConfigException("Field costItem has an invalid metadata. Template: (modid):(unique_name)[:meta]. Use \"minecraft\" as modid for vanilla items/blocks.");
             }
         }
-
-        if(Config.instance.useExtraEvents.get() && !checkExtraEvents()) {
-            throw new ConfigException("Extra events are enabled but you don't have the minimal forge version needed to load them.");
-        }
-    }
-
-    /**
-     * Returns whether or not ALL extra events are available.
-     */
-    private boolean checkExtraEvents() {
-        return ClassUtils.isClassLoaded("net.minecraftforge.event.world.ExplosionEvent");
     }
 }

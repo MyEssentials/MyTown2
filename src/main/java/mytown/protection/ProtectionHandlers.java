@@ -10,6 +10,7 @@ import myessentials.entities.BlockPos;
 import myessentials.entities.Volume;
 import myessentials.event.AE2PartPlaceEvent;
 import myessentials.event.BlockTrampleEvent;
+import myessentials.event.ModifyBiomeEvent;
 import myessentials.event.ModifyBlockEvent;
 import myessentials.event.ProjectileImpactEvent;
 import mytown.MyTown;
@@ -105,7 +106,7 @@ public class ProtectionHandlers {
             } else {
                 // Other entity checks
                 if(MinecraftServer.getServer().getTickCounter() % 20 == 5) {
-                    ProtectionManager.checkExist(entity);
+                    ProtectionManager.checkExist(entity, false);
                 }
             }
         }
@@ -256,7 +257,7 @@ public class ProtectionHandlers {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onModifyBlock(ModifyBlockEvent ev) {
-        if (ev.world.isRemote || ev.isCanceled()) {
+        if (ev.world.isRemote || ev.isCanceled() || Config.instance.fireSpreadInTowns.get()) {
             return;
         }
 
@@ -303,6 +304,17 @@ public class ProtectionHandlers {
                     ev.setCanceled(true);
                 }
             }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onModifyBiome(ModifyBiomeEvent ev) {
+        if (ev.world.isRemote || ev.isCanceled() || Config.instance.taintSpreadInTowns.get()) {
+            return;
+        }
+
+        if(MyTownUniverse.instance.blocks.contains(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4)) {
+            ev.setCanceled(true);
         }
     }
 
@@ -421,14 +433,14 @@ public class ProtectionHandlers {
             return;
         }
 
-        ProtectionManager.checkExist(ev.entity);
+        ProtectionManager.checkExist(ev.entity, true);
     }
 
     @SubscribeEvent
     public void specialSpawn(LivingSpawnEvent.SpecialSpawn ev) {
         if (ev.isCanceled()) return;
 
-        ProtectionManager.checkExist(ev.entity);
+        ProtectionManager.checkExist(ev.entity, true);
     }
 
     @SubscribeEvent
@@ -437,7 +449,7 @@ public class ProtectionHandlers {
             return;
         }
 
-        if(ProtectionManager.checkExist(ev.entity)) {
+        if(ProtectionManager.checkExist(ev.entity, true)) {
             ev.setResult(Event.Result.DENY);
         }
     }

@@ -7,6 +7,7 @@ import myessentials.entities.Volume;
 import myessentials.utils.PlayerUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
+import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.entities.signs.SellSign;
@@ -111,8 +112,11 @@ public class ProtectionManager {
         }
     }
 
-    public static boolean checkExist(Entity entity) {
+    public static boolean checkExist(Entity entity, boolean spawn) {
         if(entity instanceof EntityLiving) {
+            if (Config.instance.mobTravelInTowns.get() && !spawn) {
+                return false;
+            }
             if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
                 entity.setDead();
                 return true;
