@@ -241,6 +241,12 @@ public class ProtectionHandlers {
                 ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
             }
         }
+
+        // Some things (Autonomous Activator) only care about these. So always deny them if the event is canceled.
+        if (ev.isCanceled()) {
+            ev.useBlock = Event.Result.DENY;
+            ev.useItem = Event.Result.DENY;
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
