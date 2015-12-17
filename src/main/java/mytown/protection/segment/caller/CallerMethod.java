@@ -3,32 +3,32 @@ package mytown.protection.segment.caller;
 import java.lang.reflect.Method;
 
 public class CallerMethod extends Caller {
+    private Method method;
+
     @Override
     public Object invoke(Object instance, Object... parameters) throws Exception {
         try {
-            Method methodObject = instance.getClass().getMethod(name);
+            return getMethod().invoke(instance);
+        } catch (IllegalArgumentException ex) {
             try {
-                return methodObject.invoke(instance);
-            } catch (IllegalArgumentException ex) {
-                try {
-                    return methodObject.invoke(instance, parameters);
-                } catch (IllegalArgumentException ex2) {
-                    throw ex;
-                }
-            }
-        } catch (NoSuchMethodException ex) {
-            Method methodObject = instance.getClass().getDeclaredMethod(name);
-            methodObject.setAccessible(true);
-            try {
-                return methodObject.invoke(instance);
-            } catch (IllegalArgumentException ex1) {
-                try {
-                    return methodObject.invoke(instance, parameters);
-                } catch (IllegalArgumentException ex2) {
-                    // Throwing the original exception.
-                    throw ex1;
-                }
+                return getMethod().invoke(instance, parameters);
+            } catch (IllegalArgumentException ex2) {
+                throw ex;
             }
         }
+    }
+
+    private Method getMethod() throws Exception {
+        // Lazy loading ftw!
+        if (method == null) {
+            try {
+                method = checkClass.getMethod(name);
+            } catch (NoSuchMethodException ex) {
+                method = checkClass.getDeclaredMethod(name);
+                method.setAccessible(true);
+            }
+        }
+
+        return method;
     }
 }

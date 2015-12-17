@@ -3,15 +3,24 @@ package mytown.protection.segment.caller;
 import java.lang.reflect.Field;
 
 public class CallerField extends Caller {
+    private Field field;
+
     @Override
     public Object invoke(Object instance, Object... parameters) throws Exception {
-        try {
-            Field fieldObject = instance.getClass().getField(name);
-            return fieldObject.get(instance);
-        } catch (NoSuchFieldException ex) {
-            Field fieldObject = instance.getClass().getDeclaredField(name);
-            fieldObject.setAccessible(true);
-            return fieldObject.get(instance);
+        return getField().get(instance);
+    }
+
+    private Field getField() throws Exception {
+        // Lazy loading ftw!
+        if (field == null) {
+            try {
+                field = checkClass.getField(name);
+            } catch (NoSuchFieldException ex) {
+                field = checkClass.getDeclaredField(name);
+                field.setAccessible(true);
+            }
         }
+
+        return field;
     }
 }

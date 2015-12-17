@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 public abstract class Caller {
     protected String name;
     protected Class<?> valueType;
+    protected Class<?> checkClass;
 
     public abstract Object invoke(Object instance, Object... parameters) throws Exception;
 
@@ -21,6 +22,10 @@ public abstract class Caller {
 
     public String getName() {
         return name;
+    }
+
+    public void setClass(Class<?> clazz) {
+        checkClass = clazz;
     }
 
     public static class Serializer extends SerializerTemplate<Caller> {

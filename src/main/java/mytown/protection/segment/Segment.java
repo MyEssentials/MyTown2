@@ -285,6 +285,7 @@ public abstract class Segment {
                 for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
                     Getter getter = context.deserialize(entry.getValue(), Getter.class);
                     getter.setName(entry.getKey());
+                    getter.setClass(segment.checkClass);
                     segment.getters.add(getter);
                 }
             }

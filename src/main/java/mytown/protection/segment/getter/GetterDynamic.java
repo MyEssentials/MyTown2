@@ -1,6 +1,5 @@
 package mytown.protection.segment.getter;
 
-import mytown.MyTown;
 import mytown.protection.segment.caller.Caller;
 import mytown.util.exceptions.GetterException;
 
@@ -20,6 +19,13 @@ public class GetterDynamic extends Getter {
     public GetterDynamic(List<Caller> callers) {
         if(callers != null) {
             this.callers.addAll(callers);
+        }
+    }
+
+    @Override
+    public void setClass(Class<?> clazz) {
+        for (Caller caller : this.callers) {
+            caller.setClass(clazz);
         }
     }
 

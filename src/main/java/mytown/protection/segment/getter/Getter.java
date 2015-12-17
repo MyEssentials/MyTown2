@@ -23,6 +23,10 @@ public abstract class Getter {
         return this.name;
     }
 
+    public void setClass(Class<?> clazz) {
+        // Defaults to not used as it is only needed in Dynamic
+    }
+
     public abstract Object invoke(Class<?> returnType, Object instance, Object... parameters) throws GetterException;
 
     public static class Serializer extends SerializerTemplate<Getter> {
