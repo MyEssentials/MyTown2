@@ -2,6 +2,8 @@ package mytown.protection.segment.caller;
 
 import com.google.gson.*;
 import myessentials.json.SerializerTemplate;
+import mytown.protection.segment.caller.reflectasm.ASMCallerField;
+import mytown.protection.segment.caller.reflectasm.ASMCallerMethod;
 import mytown.util.exceptions.ProtectionParseException;
 
 import java.lang.reflect.Type;
@@ -74,9 +76,9 @@ public abstract class Caller {
 
         private Caller createCaller(String type) {
             if("METHOD".equals(type)) {
-                return new CallerMethod();
+                return new ASMCallerMethod();
             } else if("FIELD".equals(type)) {
-                return new CallerField();
+                return new ASMCallerField();
             } else if("FORMULA".equals(type)) {
                 return new CallerFormula();
             } else if("NBT".equals(type)) {

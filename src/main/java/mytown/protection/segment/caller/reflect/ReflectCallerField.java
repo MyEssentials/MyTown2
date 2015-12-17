@@ -1,8 +1,10 @@
-package mytown.protection.segment.caller;
+package mytown.protection.segment.caller.reflect;
+
+import mytown.protection.segment.caller.Caller;
 
 import java.lang.reflect.Field;
 
-public class CallerField extends Caller {
+public class ReflectCallerField extends Caller {
     private Field field;
 
     @Override

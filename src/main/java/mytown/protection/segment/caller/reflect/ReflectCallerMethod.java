@@ -1,8 +1,10 @@
-package mytown.protection.segment.caller;
+package mytown.protection.segment.caller.reflect;
+
+import mytown.protection.segment.caller.Caller;
 
 import java.lang.reflect.Method;
 
-public class CallerMethod extends Caller {
+public class ReflectCallerMethod extends Caller {
     private Method method;
 
     @Override
