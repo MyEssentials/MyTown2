@@ -20,6 +20,7 @@ import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import mytown.util.exceptions.ProtectionParseException;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.util.FakePlayer;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -83,18 +84,30 @@ public abstract class Segment {
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
-        for(FlagType<Boolean> flagType : flags) {
-            if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
+        if (res != null && res.getFakePlayer()) {
+            if(!ProtectionManager.hasPermission(res, FlagType.FAKERS, dim, x, y, z)) {
                 return false;
+            }
+        } else {
+            for(FlagType<Boolean> flagType : flags) {
+                if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
-        for (FlagType<Boolean> flagType : flags) {
-            if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
+        if (res != null && res.getFakePlayer()) {
+            if(!ProtectionManager.hasPermission(res, FlagType.FAKERS, dim, volume)) {
                 return false;
+            }
+        } else {
+            for (FlagType<Boolean> flagType : flags) {
+                if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
+                    return false;
+                }
             }
         }
         return true;

@@ -27,6 +27,8 @@ public class Resident {
 
     private int extraBlocks = 0;
 
+    private boolean isFakePlayer = false;
+
     public final Plot.Container plotsContainer = new Plot.Container(Config.instance.defaultMaxPlots.get());
     public final Town.Container townInvitesContainer = new Town.Container();
     public final Town.Container townsContainer = new Town.Container();
@@ -40,6 +42,15 @@ public class Resident {
         this.playerUUID = uuid;
         this.playerName = playerName;
         tryLoadPlayer();
+    }
+
+    public Resident(UUID uuid, String playerName, boolean isFakePlayer) {
+        this.playerUUID = uuid;
+        this.playerName = playerName;
+        this.isFakePlayer = isFakePlayer;
+        if (!isFakePlayer) {
+            tryLoadPlayer();
+        }
     }
 
     public Resident(UUID uuid, String playerName, long joinDate, long lastOnline) {
@@ -230,6 +241,14 @@ public class Resident {
 
     public void setExtraBlocks(int extraBlocks) {
         this.extraBlocks = extraBlocks;
+    }
+
+    public boolean getFakePlayer() {
+        return isFakePlayer;
+    }
+
+    public void setFakePlayer(boolean isFakePlayer) {
+        this.isFakePlayer = isFakePlayer;
     }
 
     public static class Container extends ArrayList<Resident> {
