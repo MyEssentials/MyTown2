@@ -261,7 +261,9 @@ public abstract class Segment {
             try {
                 segment.checkClass = Class.forName(classString);
             } catch (ClassNotFoundException ex) {
-                throw new ProtectionParseException("Invalid class identifier: " + classString);
+                //throw new ProtectionParseException("Invalid class identifier: " + classString);
+            	MyTown.instance.LOG.error("Invalid class identifier {" + classString + "}: >>> Segment Rejected <<<");
+            	return null;
             }
             jsonObject.remove("class");
 
