@@ -104,14 +104,15 @@ public class MyTown {
      * Registers all commands
      */
     private void registerCommands() {
-        CommandManager.registerCommands(CommandsEveryone.class, null, LOCAL, new RankPermissionManager());
-        CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", LOCAL, null);
+        RankPermissionManager rankPermissionManager = new RankPermissionManager();
+        CommandManager.registerCommands(CommandsEveryone.class, null, LOCAL, rankPermissionManager);
+        CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", LOCAL, rankPermissionManager);
         if (Config.instance.modifiableRanks.get())
-            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", LOCAL, null);
+            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", LOCAL, rankPermissionManager);
         CommandManager.registerCommands(CommandsAdmin.class, null, LOCAL, null);
         if(Config.instance.enablePlots.get()) {
             CommandManager.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", LOCAL, null);
-            CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", LOCAL, null);
+            CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", LOCAL, rankPermissionManager);
             CommandManager.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", LOCAL, null);
         }
 
