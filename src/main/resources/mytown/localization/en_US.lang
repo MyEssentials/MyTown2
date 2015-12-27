@@ -97,6 +97,7 @@ mytown.cmd.err.claim.tooClose=&cYou are too close to town %s. Please leave at le
 mytown.cmd.err.resident.maxTowns=&cYou cannot create/join any more towns, you have hit the maximum amount of towns you can be in
 mytown.notification.town.created=&aTown %s created
 mytown.notification.town.deleted=&cTown %s deleted
+mytown.notification.town.deleted.withplots=&cYou cannot delete towns with plots that you don't own
 mytown.notification.nation.created=Nation %s created
 mytown.notification.nation.deleted=Nation %s deleted
 

@@ -601,6 +601,13 @@ public class CommandsAssistant extends Commands {
         EntityPlayer player = (EntityPlayer) sender;
 
         if (town.residentsMap.get(res).getType() == Rank.Type.MAYOR) {
+            for(Plot plot: town.plotsContainer) {
+                if(!plot.ownersContainer.contains(res)) {
+                    res.sendMessage(getLocal().getLocalization("mytown.notification.town.delete.with-plots"));
+                    return CommandResponse.DONE;
+                }
+            }
+
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
             int refund = 0;
             for (TownBlock block : town.townBlocksContainer) {
