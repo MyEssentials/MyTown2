@@ -193,5 +193,7 @@ public class MyTownSchema extends Schema {
                 "Ranks ADD type VARCHAR(50) DEFAULT '" + Rank.Type.REGULAR + "'"));
         updates.add(new DBUpdate("11.11.2015.1", "Add 'extraFarClaims' to Towns", "ALTER TABLE " + bridge.prefix +
                 "Towns ADD extraFarClaims INTEGER DEFAULT 0"));
+        updates.add(new DBUpdate("12.16.2015.1", "Add 'fakePlayer to residents", "ALTER TABLE " + bridge.prefix +
+                "Residents ADD fakePlayer BOOLEAN DEFAULT false"));
     }
 }

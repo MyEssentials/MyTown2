@@ -278,7 +278,7 @@ public class ProtectionManager {
 
                     // Check every plot in the current TownBlock and sum all plot areas
                     for (Plot plot : townBlock.plotsContainer) {
-                        Volume plotIntersection = volume.intersect(plot.toVolume());
+                        Volume plotIntersection = rangeBox.intersect(plot.toVolume());
                         if (plotIntersection != null) {
                             if(!plot.hasPermission(res, flagType)) {
                                 return false;
