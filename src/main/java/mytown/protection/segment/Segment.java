@@ -233,6 +233,14 @@ public abstract class Segment {
                 jsonUpdate.addProperty("directional", segment.directionalClientUpdate);
                 json.add("clientUpdate", jsonUpdate);
             }
+            if(segment.inventoryUpdate != null) {
+                JsonObject jsonUpdate = new JsonObject();
+                if(segment.inventoryUpdate.getMode() == 2)
+                    jsonUpdate.addProperty("hand", true);
+                else if(segment.inventoryUpdate.getMode() == 1)
+                    jsonUpdate.addProperty("full", true);
+                json.add("inventoryUpdate", jsonUpdate);
+            }
         }
 
         private void serializeTileEntity(SegmentTileEntity segment, JsonObject json, JsonSerializationContext context) {
@@ -389,6 +397,14 @@ public abstract class Segment {
                     segment.directionalClientUpdate = jsonClientUpdate.get("directional").getAsBoolean();
                 }
                 json.remove("clientUpdate");
+            }
+
+            if(json.has("inventoryUpdate")) {
+                JsonObject jsonItemUpdate = json.get("inventoryUpdate").getAsJsonObject();
+                int mode = jsonItemUpdate.get("hand").getAsBoolean()? 2 : jsonItemUpdate.get("full").getAsBoolean()? 1 : 0;
+                if(mode > 0)
+                    segment.inventoryUpdate = new ClientInventoryUpdate(mode);
+                json.remove("inventoryUpdate");
             }
 
             return segment;

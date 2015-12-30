@@ -26,6 +26,7 @@ public class SegmentItem extends Segment {
     protected final List<ItemType> types = new ArrayList<ItemType>();
     protected boolean isAdjacent = false;
     protected ClientBlockUpdate clientUpdate;
+    protected ClientInventoryUpdate inventoryUpdate;
     protected boolean directionalClientUpdate = false;
 
     public boolean shouldInteract(ItemStack item, Resident res, PlayerInteractEvent.Action action, BlockPos bp, int face) {
@@ -52,6 +53,8 @@ public class SegmentItem extends Segment {
                     ForgeDirection direction = ForgeDirection.getOrientation(face);
                     clientUpdate.send(bp, (EntityPlayerMP)player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         } else {
@@ -61,6 +64,8 @@ public class SegmentItem extends Segment {
                     ForgeDirection direction = ForgeDirection.getOrientation(face);
                     clientUpdate.send(bp, (EntityPlayerMP)player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         }
@@ -89,6 +94,8 @@ public class SegmentItem extends Segment {
                 if(clientUpdate != null) {
                     clientUpdate.send(bp, player);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         } else {
@@ -97,6 +104,8 @@ public class SegmentItem extends Segment {
                 if(clientUpdate != null) {
                     clientUpdate.send(bp, player);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         }
