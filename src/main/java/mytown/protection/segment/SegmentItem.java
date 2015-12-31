@@ -7,10 +7,12 @@ import mytown.entities.Resident;
 import mytown.protection.segment.enums.ItemType;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class SegmentItem extends Segment {
     protected final List<ItemType> types = new ArrayList<ItemType>();
     protected boolean isAdjacent = false;
     protected ClientBlockUpdate clientUpdate;
+    protected ClientInventoryUpdate inventoryUpdate;
     protected boolean directionalClientUpdate = false;
 
     public boolean shouldInteract(ItemStack item, Resident res, PlayerInteractEvent.Action action, BlockPos bp, int face) {
@@ -37,7 +40,7 @@ public class SegmentItem extends Segment {
             return true;
         }
 
-        EntityPlayerMP player = (EntityPlayerMP) res.getPlayer();
+        EntityPlayer player = res.getPlayer();
         int range = getRange(item);
         int dim = bp.getDim();
         int x = bp.getX();
@@ -48,8 +51,10 @@ public class SegmentItem extends Segment {
             if (!hasPermissionAtLocation(res, dim, x, y, z)) {
                 if(clientUpdate != null) {
                     ForgeDirection direction = ForgeDirection.getOrientation(face);
-                    clientUpdate.send(bp, player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
+                    clientUpdate.send(bp, (EntityPlayerMP)player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         } else {
@@ -57,8 +62,10 @@ public class SegmentItem extends Segment {
             if (!hasPermissionAtLocation(res, dim, rangeBox)) {
                 if(clientUpdate != null) {
                     ForgeDirection direction = ForgeDirection.getOrientation(face);
-                    clientUpdate.send(bp, player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
+                    clientUpdate.send(bp, (EntityPlayerMP)player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         }
@@ -87,6 +94,8 @@ public class SegmentItem extends Segment {
                 if(clientUpdate != null) {
                     clientUpdate.send(bp, player);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         } else {
@@ -95,6 +104,8 @@ public class SegmentItem extends Segment {
                 if(clientUpdate != null) {
                     clientUpdate.send(bp, player);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         }

@@ -167,6 +167,7 @@ public class MyTownDatasource extends DatasourceSQL {
             while (rs.next()) {
                 Resident res = new Resident(UUID.fromString(rs.getString("uuid")), rs.getString("name"), rs.getLong("joined"), rs.getLong("lastOnline"));
                 res.setExtraBlocks(rs.getInt("extraBlocks"));
+                res.setFakePlayer(rs.getBoolean("fakePlayer"));
 
                 MyTownUniverse.instance.addResident(res);
             }
@@ -713,19 +714,21 @@ public class MyTownDatasource extends DatasourceSQL {
         LOG.debug("Saving Resident {} ({})", resident.getUUID(), resident.getPlayerName());
         try {
             if (getUniverse().residents.contains(resident.getUUID())) { // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=?, extraBlocks=? WHERE uuid=?", true);
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=?, extraBlocks=? fakePlayer=? WHERE uuid=?", true);
                 updateStatement.setString(1, resident.getPlayerName());
                 updateStatement.setLong(2, resident.getLastOnline().getTime() / 1000L); // Stupid hack...
                 updateStatement.setInt(3, resident.getExtraBlocks());
                 updateStatement.setString(4, resident.getUUID().toString());
+                updateStatement.setBoolean(5, resident.getFakePlayer());
                 updateStatement.executeUpdate();
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Residents (uuid, name, joined, lastOnline, extraBlocks) VALUES(?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Residents (uuid, name, joined, lastOnline, extraBlocks, fakePlayer) VALUES(?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setString(1, resident.getUUID().toString());
                 insertStatement.setString(2, resident.getPlayerName());
                 insertStatement.setLong(3, resident.getJoinDate().getTime() / 1000L); // Stupid hack...
                 insertStatement.setLong(4, resident.getLastOnline().getTime() / 1000L); // Stupid hack...
                 insertStatement.setInt(5, resident.getExtraBlocks());
+                insertStatement.setBoolean(6, resident.getFakePlayer());
                 insertStatement.executeUpdate();
 
                 // Put the Resident in the Map

@@ -193,17 +193,11 @@ public class ProtectionHandlers {
         int y = (int) Math.floor(ev.target.posY);
         int z = (int) Math.floor(ev.target.posZ);
 
-        if(ev.entityPlayer instanceof FakePlayer) {
-            if(!ProtectionManager.getFlagValueAtLocation(FlagType.FAKERS, ev.target.dimension, x, y, z)) {
-                ev.setCanceled(true);
-            }
-        } else {
-            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-            ProtectionManager.checkInteraction(ev.target, res, ev);
-            if(!ev.isCanceled() && ev.entityPlayer.getHeldItem() != null) {
-                BlockPos bp = new BlockPos(x, y, z, ev.target.dimension);
-                ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
-            }
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
+        ProtectionManager.checkInteraction(ev.target, res, ev);
+        if(!ev.isCanceled() && ev.entityPlayer.getHeldItem() != null) {
+            BlockPos bp = new BlockPos(x, y, z, ev.target.dimension);
+            ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
         }
     }
 
@@ -228,18 +222,12 @@ public class ProtectionHandlers {
             return;
         }
 
-        if(ev.entityPlayer instanceof FakePlayer) {
-            if(!ProtectionManager.getFlagValueAtLocation(FlagType.FAKERS, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                ev.setCanceled(true);
-            }
-        } else {
-            Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
-            if(ev.entityPlayer.getHeldItem() != null) {
-                ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
-            }
-            if (!ev.isCanceled()) {
-                ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
-            }
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
+        if(ev.entityPlayer.getHeldItem() != null) {
+            ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
+        }
+        if (!ev.isCanceled()) {
+            ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
         }
 
         // Some things (Autonomous Activator) only care about these. So always deny them if the event is canceled.
@@ -337,10 +325,24 @@ public class ProtectionHandlers {
             }
         } else {
             Resident res = MyTownUniverse.instance.getOrMakeResident(ev.getPlayer());
-            if (!ProtectionManager.checkBlockBreak(ev.block)) {
-                if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
-                    ev.setCanceled(true);
-                    return;
+
+            if (!MyTownUniverse.instance.blocks.contains(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4)) {
+                int range = Config.instance.placeProtectionRange.get();
+                Volume breakBox = new Volume(ev.x-range, ev.y-range, ev.z-range, ev.x+range, ev.y+range, ev.z+range);
+
+                if(!ProtectionManager.checkBlockBreak(ev.block)) {
+                    if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, breakBox)) {
+                        ev.setCanceled(true);
+                        return;
+                    }
+                }
+
+            } else {
+                if (!ProtectionManager.checkBlockBreak(ev.block)) {
+                    if(!ProtectionManager.hasPermission(res, FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+                        ev.setCanceled(true);
+                        return;
+                    }
                 }
             }
 

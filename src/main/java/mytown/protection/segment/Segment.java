@@ -20,6 +20,7 @@ import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import mytown.util.exceptions.ProtectionParseException;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.util.FakePlayer;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -83,18 +84,30 @@ public abstract class Segment {
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
-        for(FlagType<Boolean> flagType : flags) {
-            if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
+        if (res != null && res.getFakePlayer()) {
+            if(!ProtectionManager.hasPermission(res, FlagType.FAKERS, dim, x, y, z)) {
                 return false;
+            }
+        } else {
+            for(FlagType<Boolean> flagType : flags) {
+                if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
-        for (FlagType<Boolean> flagType : flags) {
-            if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
+        if (res != null && res.getFakePlayer()) {
+            if(!ProtectionManager.hasPermission(res, FlagType.FAKERS, dim, volume)) {
                 return false;
+            }
+        } else {
+            for (FlagType<Boolean> flagType : flags) {
+                if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -220,6 +233,14 @@ public abstract class Segment {
                 jsonUpdate.addProperty("directional", segment.directionalClientUpdate);
                 json.add("clientUpdate", jsonUpdate);
             }
+            if(segment.inventoryUpdate != null) {
+                JsonObject jsonUpdate = new JsonObject();
+                if(segment.inventoryUpdate.getMode() == 2)
+                    jsonUpdate.addProperty("hand", true);
+                else if(segment.inventoryUpdate.getMode() == 1)
+                    jsonUpdate.addProperty("full", true);
+                json.add("inventoryUpdate", jsonUpdate);
+            }
         }
 
         private void serializeTileEntity(SegmentTileEntity segment, JsonObject json, JsonSerializationContext context) {
@@ -261,7 +282,9 @@ public abstract class Segment {
             try {
                 segment.checkClass = Class.forName(classString);
             } catch (ClassNotFoundException ex) {
-                throw new ProtectionParseException("Invalid class identifier: " + classString);
+                //throw new ProtectionParseException("Invalid class identifier: " + classString);
+            	MyTown.instance.LOG.error("Invalid class identifier {" + classString + "}: >>> Segment Rejected <<<");
+            	return null;
             }
             jsonObject.remove("class");
 
@@ -375,6 +398,14 @@ public abstract class Segment {
                     segment.directionalClientUpdate = jsonClientUpdate.get("directional").getAsBoolean();
                 }
                 json.remove("clientUpdate");
+            }
+
+            if(json.has("inventoryUpdate")) {
+                JsonObject jsonItemUpdate = json.get("inventoryUpdate").getAsJsonObject();
+                int mode = jsonItemUpdate.get("hand").getAsBoolean()? 2 : jsonItemUpdate.get("full").getAsBoolean()? 1 : 0;
+                if(mode > 0)
+                    segment.inventoryUpdate = new ClientInventoryUpdate(mode);
+                json.remove("inventoryUpdate");
             }
 
             return segment;

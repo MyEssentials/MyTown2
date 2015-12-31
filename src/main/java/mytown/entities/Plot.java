@@ -72,13 +72,20 @@ public class Plot {
             return false;
         }
 
-        if(!(membersContainer.contains(res) || ownersContainer.contains(res))) {
-            boolean permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
-            if(!permissionBypass) {
-                res.protectionDenial(flagType, ownersContainer.toString());
-                return false;
-            }
+        if(membersContainer.contains(res) || ownersContainer.contains(res)) {
+            return true;
         }
+
+        if (res.getFakePlayer()) {
+            return false;
+        }
+
+        boolean permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
+        if(!permissionBypass) {
+            res.protectionDenial(flagType, ownersContainer.toString());
+            return false;
+        }
+
         return true;
     }
 

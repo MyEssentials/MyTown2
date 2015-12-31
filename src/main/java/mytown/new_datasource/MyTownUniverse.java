@@ -1,6 +1,7 @@
 package mytown.new_datasource;
 
 import com.mojang.authlib.GameProfile;
+
 import myessentials.teleport.Teleport;
 import myessentials.utils.PlayerUtils;
 import mypermissions.api.command.CommandCompletion;
@@ -17,6 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,8 +155,8 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     /**
      * Creates and returns a new Resident, or null if it couldn't be created
      */
-    public final Resident newResident(UUID uuid, String playerName) {
-        Resident resident = new Resident(uuid, playerName);
+    public final Resident newResident(UUID uuid, String playerName, boolean isFakePlayer) {
+        Resident resident = new Resident(uuid, playerName, isFakePlayer);
 
         if (ResidentEvent.fire(new ResidentEvent.ResidentCreateEvent(resident)))
             return null;
@@ -191,11 +193,11 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
         return flag;
     }
 
-    public Resident getOrMakeResident(UUID uuid, String playerName, boolean save) {
+    public Resident getOrMakeResident(UUID uuid, String playerName, boolean isFakePlayer) {
         Resident res = instance.residents.get(uuid);
         if (res == null) {
-            res = instance.newResident(uuid, playerName);
-            if (save && res != null && !getDatasource().saveResident(res)) { // Only save if a new Residen
+            res = instance.newResident(uuid, playerName, isFakePlayer);
+            if (res != null && !getDatasource().saveResident(res)) { // Only save if a new Residen
                 return null;
             }
         }
@@ -211,7 +213,7 @@ public class MyTownUniverse { // TODO Allow migrating between different Datasour
     }
 
     public Resident getOrMakeResident(EntityPlayer player) {
-        return getOrMakeResident(player.getPersistentID(), player.getDisplayName());
+        return getOrMakeResident(player.getPersistentID(), player.getDisplayName(), player instanceof FakePlayer);
     }
 
     public Resident getOrMakeResident(Entity e) {
