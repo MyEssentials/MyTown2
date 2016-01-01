@@ -11,11 +11,14 @@ import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.protection.ProtectionManager;
+import mytown.protection.segment.caller.Caller;
+import mytown.protection.segment.caller.CallerFormula;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.enums.Priority;
 import mytown.protection.segment.getter.Getter;
+import mytown.protection.segment.getter.GetterDynamic;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import mytown.util.exceptions.ProtectionParseException;
@@ -55,32 +58,27 @@ public abstract class Segment {
     }
 
     public Resident getOwner(Object object) {
+        if (!getters.contains("owner")) {
+            return null;
+        }
         try {
-            EntityPlayer player = getters.contains("owner") ? (EntityPlayer) getters.get("owner").invoke(EntityPlayer.class, object, object) : null;
-            if(player == null)
-                return null;
-            return MyTownUniverse.instance.getOrMakeResident(player);
-        } catch (GetterException ex) {
-            try {
-                String username = getters.contains("owner") ? (String) getters.get("owner").invoke(String.class, object, object) : null;
-                if (username == null)
-                    return null;
+            Object ownerObj = null;
+            ownerObj = getters.get("owner").invoke(Object.class, object, object);
+            if (ownerObj instanceof EntityPlayer) {
+                return MyTownUniverse.instance.getOrMakeResident((EntityPlayer)ownerObj);
+            } else if (ownerObj instanceof String) {
+                String username = (String)ownerObj;
                 if (username.length() == 36 && (username.split("-", -1).length - 1) == 4) {
                     UUID uuid = UUID.fromString(username);
                     return MyTownUniverse.instance.getOrMakeResident(uuid);
                 }
                 return MyTownUniverse.instance.getOrMakeResident(username);
-            } catch (GetterException ex2) {
-                try {
-                    UUID uuid = getters.contains("owner") ? (UUID) getters.get("owner").invoke(UUID.class, object, object) : null;
-                    if (uuid == null)
-                        return null;
-                    return MyTownUniverse.instance.getOrMakeResident(uuid);
-                } catch (GetterException ex3) {
-                    return null;
-                }
+            } else if (ownerObj instanceof UUID) {
+                return MyTownUniverse.instance.getOrMakeResident((UUID)ownerObj);
             }
+        } catch (GetterException ex) {
         }
+        return null;
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
@@ -131,11 +129,22 @@ public abstract class Segment {
     }
 
     protected int getRange(Object object) {
-        try {
-            return getters.contains("range") ? ((LazilyParsedNumber) getters.get("range").invoke(LazilyParsedNumber.class, object, object)).intValue() : 0;
-        } catch (GetterException ex) {
+        if (!getters.contains("range")) {
             return 0;
         }
+        try {
+            Object rangeObj = null;
+            rangeObj = getters.get("range").invoke(Object.class, object, object);
+            if (rangeObj instanceof LazilyParsedNumber) {
+                return ((LazilyParsedNumber)rangeObj).intValue();
+            } else if (rangeObj instanceof Double) {
+                return (int)((Double)rangeObj + 0.5);
+            } else if (rangeObj instanceof Integer) {
+                return (Integer)rangeObj;
+            }
+        } catch (GetterException ex) {
+        }
+        return 0;
     }
 
     protected void disable() {
@@ -310,6 +319,17 @@ public abstract class Segment {
                     getter.setName(entry.getKey());
                     getter.setClass(segment.checkClass);
                     segment.getters.add(getter);
+                }
+
+                for (Getter getter : segment.getters) {
+                    if (getter instanceof GetterDynamic) {
+                        GetterDynamic getterDymanic = (GetterDynamic)getter;
+                        for (Caller caller : getterDymanic.callers) {
+                            if (caller instanceof CallerFormula) {
+                                ((CallerFormula) caller).setGetters(segment.getters);
+                            }
+                        }
+                    }
                 }
             }
 
