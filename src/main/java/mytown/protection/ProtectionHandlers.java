@@ -486,4 +486,12 @@ public class ProtectionHandlers {
         }
         return new BlockPos(x, y, z, ev.world.provider.dimensionId);
     }
+
+    // Priority set one lower to give all other event handlers a chance to cancel first
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onEvent(Event ev) {
+        // TODO Blacklist all other events that are handled outside this?
+        if (ev.isCanceled()) return;
+        ProtectionManager.checkEvent(ev);
+    }
 }

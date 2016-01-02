@@ -46,6 +46,7 @@ public class ProtectionManager {
     public static final Segment.Container<SegmentEntity> segmentsEntity = new Segment.Container<SegmentEntity>();
     public static final Segment.Container<SegmentItem> segmentsItem = new Segment.Container<SegmentItem>();
     public static final Segment.Container<SegmentTileEntity> segmentsTile = new Segment.Container<SegmentTileEntity>();
+    public static final Segment.Container<SegmentEvent> segmentsEvent = new Segment.Container<SegmentEvent>();
     private static final Map<EntityPlayer, EntityPos> lastTickPlayerPos = new HashMap<EntityPlayer, EntityPos>();
 
     private ProtectionManager() {
@@ -68,6 +69,8 @@ public class ProtectionManager {
                 segmentsItem.add((SegmentItem) segment);
             } else if(segment instanceof SegmentTileEntity) {
                 segmentsTile.add((SegmentTileEntity) segment);
+            } else if (segment instanceof SegmentEvent) {
+                segmentsEvent.add((SegmentEvent) segment);
             }
         }
     }
@@ -345,6 +348,11 @@ public class ProtectionManager {
         return true;
     }
 
+    public static void checkEvent(Event ev) {
+        for (SegmentEvent segment : segmentsEvent.get(ev.getClass())) {
+            if (segment.check(ev)) break;
+        }
+    }
 
     public static void saveBlockOwnersToDB() {
         for(Map.Entry<TileEntity, Resident> set : ProtectionHandlers.instance.ownedTileEntities.entrySet()) {

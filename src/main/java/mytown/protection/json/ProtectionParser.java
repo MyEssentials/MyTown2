@@ -48,9 +48,12 @@ public class ProtectionParser {
         extensions[0] = "json";
 
         ProtectionManager.segmentsBlock.clear();
+        ProtectionManager.segmentsSpecialBlock.clear();
+        ProtectionManager.segmentsTrackedEntity.clear();
         ProtectionManager.segmentsEntity.clear();
         ProtectionManager.segmentsItem.clear();
         ProtectionManager.segmentsTile.clear();
+        ProtectionManager.segmentsEvent.clear();
 
         Protection vanillaProtection = null;
         for (File file : FileUtils.listFiles(folder, extensions, true)) {

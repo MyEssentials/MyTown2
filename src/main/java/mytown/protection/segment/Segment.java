@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.google.gson.internal.LazilyParsedNumber;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import myessentials.entities.Volume;
 import myessentials.json.SerializerTemplate;
 import mytown.MyTown;
@@ -184,6 +185,9 @@ public abstract class Segment {
                 } else if(segment instanceof SegmentTileEntity) {
                     json.addProperty("type", "tileEntity");
                     serializeTileEntity((SegmentTileEntity) segment, json, context);
+                } else if (segment instanceof SegmentEvent) {
+                    json.addProperty("type", "event");
+                    serializeEvent((SegmentEvent) segment, json, context);
                 }
 
                 json.add("flags", serializeAsElementOrArray(segment.flags, context));
@@ -256,6 +260,12 @@ public abstract class Segment {
             json.addProperty("retainsOwner", segment.retainsOwner);
         }
 
+        private void serializeEvent(SegmentEvent segment, JsonObject json, JsonSerializationContext context) {
+            if (segment.result != Event.Result.DEFAULT) {
+                json.addProperty("result", segment.result.toString());
+            }
+        }
+
         @Override
         public Segment deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if(!json.getAsJsonObject().has("class")) {
@@ -282,6 +292,8 @@ public abstract class Segment {
                 segment = deserializeItem(jsonObject, context);
             } else if("tileEntity".equals(type)) {
                 segment = deserializeTileEntity(jsonObject, context);
+            } else if ("event".equals(type)) {
+                segment = deserializeEvent(jsonObject, context);
             }
 
             if(segment == null) {
@@ -436,6 +448,16 @@ public abstract class Segment {
 
             segment.retainsOwner = json.getAsJsonObject().get("retainsOwner").getAsBoolean();
             json.remove("retainsOwner");
+
+            return segment;
+        }
+
+        private SegmentEvent deserializeEvent(JsonObject json, JsonDeserializationContext context) {
+            SegmentEvent segment = new SegmentEvent();
+
+            if (json.has("result")) {
+                segment.result = Event.Result.valueOf(json.get("result").getAsString());
+            }
 
             return segment;
         }
