@@ -20,23 +20,21 @@ public class SegmentEvent extends Segment {
         int x = getX(ev);
         int y = getY(ev);
         int z = getZ(ev);
+        boolean canceled = false;
 
         if (range == 0) {
-            if (!hasPermissionAtLocation(owner, dim, x, y, z)) {
-                if (ev.isCancelable()) ev.setCanceled(true);
-                if (result != Result.DEFAULT && ev.hasResult()) ev.setResult(result);
-                return true;
-            }
+            canceled = !hasPermissionAtLocation(owner, dim, x, y, z);
         } else {
             Volume rangeBox = new Volume(x-range, y-range, z-range, x+range, y+range, z+range);
-            if (!hasPermissionAtLocation(owner, dim, rangeBox)) {
-                if (ev.isCancelable()) ev.setCanceled(true);
-                if (result != Result.DEFAULT && ev.hasResult()) ev.setResult(result);
-                return true;
-            }
+            canceled = !hasPermissionAtLocation(owner, dim, rangeBox);
         }
 
-        return false;
+        if (canceled) {
+            if (ev.isCancelable()) ev.setCanceled(true);
+            if (result != Result.DEFAULT && ev.hasResult()) ev.setResult(result);
+        }
+
+        return canceled;
     }
 
     private int getInt(Event event, String getter, int def) {
