@@ -12,6 +12,11 @@ public class ReflectCallerField extends Caller {
         return getField().get(instance);
     }
 
+    @Override
+    public Class<?> nextClass() throws Exception {
+        return getField().getType();
+    }
+
     private Field getField() throws Exception {
         // Lazy loading ftw!
         if (field == null) {

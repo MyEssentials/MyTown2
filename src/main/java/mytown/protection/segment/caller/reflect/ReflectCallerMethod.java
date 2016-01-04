@@ -20,6 +20,11 @@ public class ReflectCallerMethod extends Caller {
         }
     }
 
+    @Override
+    public Class<?> nextClass() throws Exception {
+        return getMethod().getReturnType();
+    }
+
     private Method getMethod() throws Exception {
         // Lazy loading ftw!
         if (method == null) {

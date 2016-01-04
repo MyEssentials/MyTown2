@@ -19,6 +19,15 @@ public class ASMCallerMethod extends ReflectCallerMethod {
     }
 
     @Override
+    public Class<?> nextClass() throws Exception {
+        if (index != -1) {
+            return access.getReturnTypes()[index];
+        }
+
+        return super.nextClass();
+    }
+
+    @Override
     public void setClass(Class<?> clazz) {
         super.setClass(clazz);
 

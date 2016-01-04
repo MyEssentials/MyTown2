@@ -30,6 +30,10 @@ public abstract class Caller {
         checkClass = clazz;
     }
 
+    public Class<?> nextClass() throws Exception {
+        return null;
+    }
+
     public static class Serializer extends SerializerTemplate<Caller> {
 
         @Override
