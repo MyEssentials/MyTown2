@@ -24,8 +24,13 @@ public class GetterDynamic extends Getter {
 
     @Override
     public void setClass(Class<?> clazz) {
+        Class<?> currClass = clazz;
         for (Caller caller : this.callers) {
-            caller.setClass(clazz);
+            caller.setClass(currClass);
+            try {
+                currClass = caller.nextClass();
+            } catch(Exception ex) {
+            }
         }
     }
 
@@ -40,7 +45,7 @@ public class GetterDynamic extends Getter {
         for (Caller caller : callers) {
             try {
 
-                lastInstance = caller.invoke(instance, parameters);
+                lastInstance = caller.invoke(lastInstance, parameters);
 
             } catch(NoSuchFieldException nfex) {
                 throw new GetterException("Failed to get field " + caller.getName() + " in getter: " + name, nfex);
