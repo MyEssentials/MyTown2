@@ -457,6 +457,7 @@ public abstract class Segment {
 
             if (json.has("result")) {
                 segment.result = Event.Result.valueOf(json.get("result").getAsString());
+                json.remove("result");
             }
 
             return segment;
