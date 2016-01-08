@@ -328,7 +328,7 @@ public class CommandsOutsider extends Commands {
             console = true)
     public static CommandResponse helpCommand(ICommandSender sender, List<String> args) {
         int page = 1;
-        if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0))) {
+        if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0)) && Integer.parseInt(args.get(0)) > 0) {
             page = Integer.parseInt(args.get(0));
             args = args.subList(1, args.size());
         }
