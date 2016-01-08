@@ -714,7 +714,7 @@ public class MyTownDatasource extends DatasourceSQL {
         LOG.debug("Saving Resident {} ({})", resident.getUUID(), resident.getPlayerName());
         try {
             if (getUniverse().residents.contains(resident.getUUID())) { // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=?, extraBlocks=? fakePlayer=? WHERE uuid=?", true);
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=?, extraBlocks=?, fakePlayer=? WHERE uuid=?", true);
                 updateStatement.setString(1, resident.getPlayerName());
                 updateStatement.setLong(2, resident.getLastOnline().getTime() / 1000L); // Stupid hack...
                 updateStatement.setInt(3, resident.getExtraBlocks());
