@@ -718,8 +718,8 @@ public class MyTownDatasource extends DatasourceSQL {
                 updateStatement.setString(1, resident.getPlayerName());
                 updateStatement.setLong(2, resident.getLastOnline().getTime() / 1000L); // Stupid hack...
                 updateStatement.setInt(3, resident.getExtraBlocks());
-                updateStatement.setString(4, resident.getUUID().toString());
-                updateStatement.setBoolean(5, resident.getFakePlayer());
+                updateStatement.setBoolean(4, resident.getFakePlayer());
+                updateStatement.setString(5, resident.getUUID().toString());
                 updateStatement.executeUpdate();
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Residents (uuid, name, joined, lastOnline, extraBlocks, fakePlayer) VALUES(?, ?, ?, ?, ?, ?)", true);
