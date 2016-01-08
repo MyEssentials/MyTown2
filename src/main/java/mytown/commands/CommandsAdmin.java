@@ -11,6 +11,7 @@ import mypermissions.api.command.CommandResponse;
 import mypermissions.api.command.annotation.Command;
 import mypermissions.command.CommandTree;
 import mypermissions.command.CommandTreeNode;
+import mypermissions.proxies.PermissionProxy;
 import mytown.MyTown;
 import mytown.config.json.FlagsConfig;
 import mytown.new_datasource.MyTownDatasource;
@@ -839,8 +840,12 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
+        EntityPlayer playerSender = null;
+        if (sender instanceof EntityPlayer) {
+            playerSender = (EntityPlayer) sender;
+        }
 
-        if (!flag.flagType.configurable) {
+        if (!flag.flagType.configurable && (playerSender == null || !PermissionProxy.getPermissionManager().hasPermission(playerSender.getPersistentID(), "mytown.adm.cmd.perm.town.set." + flag.flagType + ".bypass"))) {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(1));
         } else {
             if (flag.setValue(args.get(2))) {
@@ -867,8 +872,12 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
+        EntityPlayer playerSender = null;
+        if (sender instanceof EntityPlayer) {
+            playerSender = (EntityPlayer) sender;
+        }
 
-        if (!flag.flagType.configurable) {
+        if (!flag.flagType.configurable && (playerSender == null || !PermissionProxy.getPermissionManager().hasPermission(playerSender.getPersistentID(), "mytown.adm.cmd.perm.town.toggle." + flag.flagType + ".bypass"))) {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(1));
         } else {
             if (flag.toggle()) {
