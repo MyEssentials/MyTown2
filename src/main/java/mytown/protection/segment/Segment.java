@@ -235,6 +235,7 @@ public abstract class Segment {
 
         private void serializeItem(SegmentItem segment, JsonObject json, JsonSerializationContext context) {
             json.add("actions", serializeAsElementOrArray(segment.types, context));
+            json.addProperty("damage", segment.getDamage());
             json.addProperty("isAdjacent", segment.isAdjacent);
             if(segment.clientUpdate != null) {
                 JsonObject jsonUpdate = new JsonObject();
@@ -405,6 +406,11 @@ public abstract class Segment {
 
             segment.types.addAll(deserializeAsArray(json.get("actions"), context, new TypeToken<ItemType>() {}, new TypeToken<List<ItemType>>() {}.getType()));
             json.remove("actions");
+
+            if(json.has("damage")) {
+                segment.damage = json.get("damage").getAsInt();
+                json.remove("damage");
+            }
 
             if(json.has("isAdjacent")) {
                 segment.isAdjacent = json.get("isAdjacent").getAsBoolean();

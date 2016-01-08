@@ -24,12 +24,17 @@ import java.util.List;
 public class SegmentItem extends Segment {
 
     protected final List<ItemType> types = new ArrayList<ItemType>();
+    protected int damage = -1;
     protected boolean isAdjacent = false;
     protected ClientBlockUpdate clientUpdate;
     protected ClientInventoryUpdate inventoryUpdate;
     protected boolean directionalClientUpdate = false;
 
     public boolean shouldInteract(ItemStack item, Resident res, PlayerInteractEvent.Action action, BlockPos bp, int face) {
+        if(damage != -1 && item.getItemDamage() != damage) {
+            return true;
+        }
+
         if(action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && (!types.contains(ItemType.RIGHT_CLICK_AIR) && !types.contains(ItemType.RIGHT_CLICK_ENTITY))
                 || action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && !types.contains(ItemType.RIGHT_CLICK_BLOCK)
                 || action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && !types.contains(ItemType.LEFT_CLICK_BLOCK)) {
@@ -74,6 +79,10 @@ public class SegmentItem extends Segment {
     }
 
     public boolean shouldBreakBlock(ItemStack item, Resident res, BlockPos bp) {
+        if(damage != -1 && item.getItemDamage() != damage) {
+            return true;
+        }
+
         if(!types.contains(ItemType.BREAK_BLOCK)) {
             return true;
         }
@@ -110,5 +119,9 @@ public class SegmentItem extends Segment {
             }
         }
         return true;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 }
