@@ -1006,7 +1006,7 @@ public class CommandsAdmin extends Commands {
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
-            if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(0)) < 0)
+            if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
             int radius = Integer.parseInt(args.get(1));
