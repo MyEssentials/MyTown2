@@ -10,10 +10,9 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.Localization;
-import myessentials.json.JsonConfig;
-import myessentials.utils.ClassUtils;
+import myessentials.json.api.JsonConfig;
 import myessentials.utils.StringUtils;
-import mypermissions.api.command.CommandManager;
+import mypermissions.command.api.CommandManager;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
@@ -104,7 +103,7 @@ public class MyTown {
      * Registers all commands
      */
     private void registerCommands() {
-        CommandManager.registerCommands(CommandsEveryone.class, null, LOCAL, new RankPermissionManager());
+        CommandManager.registerCommands(CommandsEveryone.class, null, LOCAL, new RankPermissionBridge());
         CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", LOCAL, null);
         if (Config.instance.modifiableRanks.get())
             CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", LOCAL, null);

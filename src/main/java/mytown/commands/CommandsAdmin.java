@@ -1,16 +1,16 @@
 package mytown.commands;
 
-import myessentials.entities.ChunkPos;
-import myessentials.entities.tool.ToolManager;
+import myessentials.entities.api.ChunkPos;
+import myessentials.entities.api.tool.ToolManager;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
-import mypermissions.api.command.CommandManager;
-import mypermissions.api.command.CommandResponse;
-import mypermissions.api.command.annotation.Command;
-import mypermissions.command.CommandTree;
-import mypermissions.command.CommandTreeNode;
+import mypermissions.command.api.CommandManager;
+import mypermissions.command.api.CommandResponse;
+import mypermissions.command.api.annotation.Command;
+import mypermissions.command.core.entities.CommandTree;
+import mypermissions.command.core.entities.CommandTreeNode;
 import mytown.MyTown;
 import mytown.config.json.FlagsConfig;
 import mytown.new_datasource.MyTownDatasource;

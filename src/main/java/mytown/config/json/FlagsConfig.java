@@ -1,10 +1,9 @@
 package mytown.config.json;
 
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import myessentials.MyEssentialsCore;
-import myessentials.json.JsonConfig;
+import myessentials.json.api.JsonConfig;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 

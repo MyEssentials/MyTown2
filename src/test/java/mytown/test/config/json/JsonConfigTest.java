@@ -1,7 +1,7 @@
 package mytown.test.config.json;
 
 import mytown.config.json.FlagsConfig;
-import myessentials.json.JsonConfig;
+import myessentials.json.api.JsonConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;

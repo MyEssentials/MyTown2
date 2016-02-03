@@ -1,7 +1,7 @@
 package mytown.config.json;
 
 import com.google.gson.GsonBuilder;
-import myessentials.json.JsonConfig;
+import myessentials.json.api.JsonConfig;
 import mytown.MyTown;
 import mytown.entities.Rank;
 

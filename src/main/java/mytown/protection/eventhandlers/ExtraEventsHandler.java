@@ -6,7 +6,7 @@ import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
 import mytown.entities.flag.FlagType;
-import myessentials.entities.ChunkPos;
+import myessentials.entities.api.ChunkPos;
 import net.minecraftforge.event.world.ExplosionEvent;
 
 import java.util.List;

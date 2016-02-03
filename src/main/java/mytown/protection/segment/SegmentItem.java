@@ -1,17 +1,13 @@
 package mytown.protection.segment;
 
-import myessentials.entities.BlockPos;
-import myessentials.entities.Volume;
-import mytown.MyTown;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.Volume;
 import mytown.entities.Resident;
 import mytown.protection.segment.enums.ItemType;
-import mytown.util.exceptions.ConditionException;
-import mytown.util.exceptions.GetterException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

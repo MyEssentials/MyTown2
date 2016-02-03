@@ -1,6 +1,6 @@
 package mytown.protection.segment;
 
-import myessentials.entities.BlockPos;
+import myessentials.entities.api.BlockPos;
 import mytown.entities.Resident;
 import mytown.protection.segment.enums.BlockType;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -2,7 +2,7 @@ package mytown.new_datasource;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonSyntaxException;
-import myessentials.datasource.DatasourceSQL;
+import myessentials.datasource.api.DatasourceSQL;
 import myessentials.teleport.Teleport;
 import mytown.MyTown;
 import mytown.config.Config;

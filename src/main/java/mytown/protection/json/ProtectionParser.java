@@ -2,10 +2,8 @@ package mytown.protection.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
 import mytown.MyTown;
-import myessentials.entities.Volume;
+import myessentials.entities.api.Volume;
 import mytown.entities.flag.FlagType;
 import mytown.protection.ProtectionManager;
 import mytown.protection.segment.*;

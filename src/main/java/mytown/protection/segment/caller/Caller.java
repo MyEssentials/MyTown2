@@ -1,7 +1,7 @@
 package mytown.protection.segment.caller;
 
 import com.google.gson.*;
-import myessentials.json.SerializerTemplate;
+import myessentials.json.api.SerializerTemplate;
 import mytown.util.exceptions.ProtectionParseException;
 
 import java.lang.reflect.Type;

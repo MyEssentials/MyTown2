@@ -2,7 +2,7 @@ package mytown.commands;
 
 import myessentials.Localization;
 import myessentials.utils.ChatUtils;
-import mypermissions.api.command.CommandCompletion;
+import mypermissions.command.api.CommandCompletion;
 import mytown.MyTown;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
