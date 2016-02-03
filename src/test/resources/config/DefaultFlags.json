@@ -1,0 +1,72 @@
+[
+  {
+    "flagName": "ENTER",
+    "defaultState": true,
+    "configurable": true
+  },
+  {
+    "flagName": "ACCESS",
+    "defaultState": false,
+    "configurable": true
+  },
+  {
+    "flagName": "PICKUP",
+    "defaultState": true,
+    "configurable": true
+  },
+  {
+    "flagName": "PVP",
+    "defaultState": false,
+    "configurable": true
+  },
+  {
+    "flagName": "MOBS",
+    "defaultState": false,
+    "configurable": true
+  },
+  {
+    "flagName": "ENTITIES",
+    "defaultState": true,
+    "configurable": true
+  },
+  {
+    "flagName": "PVE",
+    "defaultState": false,
+    "configurable": true
+  },
+  {
+    "flagName": "USAGE",
+    "defaultState": false,
+    "configurable": true
+  },
+  {
+    "flagName": "ACTIVATE",
+    "defaultState": false,
+    "configurable": true
+  },
+  {
+    "flagName": "FAKERS",
+    "defaultState": true,
+    "configurable": true
+  },
+  {
+    "flagName": "MODIFY",
+    "defaultState": false,
+    "configurable": true
+  },
+  {
+    "flagName": "EXPLOSIONS",
+    "defaultState": false,
+    "configurable": true
+  },
+  {
+    "flagName": "RESTRICTIONS",
+    "defaultState": false,
+    "configurable": true
+  },
+  {
+    "flagName": "NEARBY",
+    "defaultState": false,
+    "configurable": true
+  }
+]
