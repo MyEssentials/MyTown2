@@ -5,6 +5,8 @@ import com.google.gson.*;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.utils.ColorUtils;
 import mytown.entities.Town;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -57,9 +59,9 @@ public class Flag<T> implements Comparable<Flag>{
         return toString(ColorUtils.colorConfigurableFlag);
     }
 
-    public String toString(String nameColor) {
-        String description = flagType.getLocalizedDescription();
-        String valueColor = ColorUtils.colorValueRegular;
+    public String toString(EnumChatFormatting nameColor) {
+        IChatComponent description = flagType.getLocalizedDescription();
+        EnumChatFormatting valueColor = ColorUtils.colorValueRegular;
         if(value instanceof Boolean) {
             valueColor = (Boolean)value ? ColorUtils.colorValueRegular : ColorUtils.colorValueFalse;
         }

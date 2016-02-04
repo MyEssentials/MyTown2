@@ -14,6 +14,7 @@ import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,7 +198,7 @@ public abstract class Commands {
         }
     }
 
-    public static void sendMessageBackToSender(ICommandSender sender, String message) {
+    public static void sendMessageBackToSender(ICommandSender sender, IChatComponent message) {
         if (sender instanceof EntityPlayer) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             res.sendMessage(message);

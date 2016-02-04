@@ -30,6 +30,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -993,7 +994,7 @@ public class CommandsAdmin extends Commands {
             }
             TownBlock block = getUniverse().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, 0, town);
             if (block == null)
-                throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.claim.failed"));
+                throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.claim.failed").getUnformattedText());
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
@@ -1113,10 +1114,10 @@ public class CommandsAdmin extends Commands {
                     list.add(player.inventory.getCurrentItem().getItem().getClass());
                 }
 
-                sendMessageBackToSender(sender, "For item: " + player.inventory.getCurrentItem().getDisplayName());
+                sendMessageBackToSender(sender, new ChatComponentText("For item: " + player.inventory.getCurrentItem().getDisplayName()));
                 for(Class cls : list) {
                     while (cls != Object.class) {
-                        sendMessageBackToSender(sender, cls.getName());
+                        sendMessageBackToSender(sender, new ChatComponentText(cls.getName()));
                         cls = cls.getSuperclass();
                     }
                 }
@@ -1149,7 +1150,7 @@ public class CommandsAdmin extends Commands {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromName(args.get(0));
             town.plotsContainer.show(res);
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
+            ChatUtils.sendChat(sender, getLocal().getLocalization("mytown.notification.plot.showing"));
             return CommandResponse.DONE;
         }
 
@@ -1179,7 +1180,7 @@ public class CommandsAdmin extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
 
             if (flag.setValue(args.get(3))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.success");
+                ChatUtils.sendChat(sender, getLocal().getLocalization("mytown.notification.town.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -1204,7 +1205,7 @@ public class CommandsAdmin extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
 
             if (flag.toggle()) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.success");
+                ChatUtils.sendChat(sender, getLocal().getLocalization("mytown.notification.town.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }

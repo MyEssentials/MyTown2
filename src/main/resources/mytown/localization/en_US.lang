@@ -131,6 +131,7 @@ mytown.cmd.err.info.notpart=&cYou are not part of a town. &3Alternative usage: "
 mytown.notification.town.list=&6-----[[&aTowns:&6]]----- \n&f%s
 mytown.notification.town.info=&6--------[[&a%s&6]]-------- \n - &2R:%s - C:%s/%s - P:%s -  \n &2Residents:&a %s\n &2Ranks:&f %s
 
+
 # /t res
 
 # /t select
@@ -251,6 +252,10 @@ mytown.notification.town.borders.show=&3Showing borders of town %s. Use /t borde
 mytown.notification.town.borders.hide=&aBorders have been successfully hidden
 
 # /ta rename
+
+# Formatting
+
+
 
 # Notifications
 
