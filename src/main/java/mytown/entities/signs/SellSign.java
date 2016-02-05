@@ -2,9 +2,9 @@ package mytown.entities.signs;
 
 import myessentials.Localization;
 import myessentials.classtransformers.SignClassTransformer;
-import myessentials.entities.BlockPos;
-import myessentials.entities.sign.Sign;
-import myessentials.entities.sign.SignType;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.sign.Sign;
+import myessentials.entities.api.sign.SignType;
 import mytown.MyTown;
 import mytown.entities.Plot;
 import mytown.entities.Resident;

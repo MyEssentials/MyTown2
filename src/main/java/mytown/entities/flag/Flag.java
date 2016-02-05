@@ -2,7 +2,7 @@ package mytown.entities.flag;
 
 import com.google.gson.*;
 
-import myessentials.json.SerializerTemplate;
+import myessentials.json.api.SerializerTemplate;
 import myessentials.utils.ColorUtils;
 import mytown.entities.Town;
 

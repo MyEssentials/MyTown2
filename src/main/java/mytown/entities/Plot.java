@@ -1,7 +1,7 @@
 package mytown.entities;
 
-import myessentials.entities.Volume;
-import myessentials.entities.sign.SignType;
+import myessentials.entities.api.Volume;
+import myessentials.entities.api.sign.SignType;
 import mypermissions.proxies.PermissionProxy;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
