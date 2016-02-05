@@ -1,7 +1,7 @@
 package mytown.protection.segment.caller;
 
 import com.google.gson.*;
-import myessentials.json.SerializerTemplate;
+import myessentials.json.api.SerializerTemplate;
 import mytown.protection.segment.caller.reflectasm.ASMCallerField;
 import mytown.protection.segment.caller.reflectasm.ASMCallerMethod;
 import mytown.util.exceptions.ProtectionParseException;

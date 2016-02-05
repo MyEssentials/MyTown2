@@ -1,6 +1,6 @@
 package mytown.util;
 
-import myessentials.chat.JsonMessageBuilder;
+import myessentials.chat.api.JsonMessageBuilder;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Resident;

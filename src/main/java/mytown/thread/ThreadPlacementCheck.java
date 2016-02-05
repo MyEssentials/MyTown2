@@ -1,6 +1,6 @@
 package mytown.thread;
 
-import myessentials.entities.BlockPos;
+import myessentials.entities.api.BlockPos;
 import mytown.entities.Resident;
 import mytown.protection.ProtectionManager;
 import net.minecraft.server.MinecraftServer;

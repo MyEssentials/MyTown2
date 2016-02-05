@@ -2,7 +2,7 @@ package mytown.entities.flag;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
-import myessentials.json.SerializerTemplate;
+import myessentials.json.api.SerializerTemplate;
 import mytown.MyTown;
 
 import java.lang.reflect.Type;

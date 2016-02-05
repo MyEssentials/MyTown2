@@ -1,8 +1,8 @@
 package mytown.protection.segment;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import myessentials.entities.BlockPos;
-import myessentials.entities.Volume;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.Volume;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.MinecraftServer;

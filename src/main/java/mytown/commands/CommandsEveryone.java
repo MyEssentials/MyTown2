@@ -1,6 +1,7 @@
 package mytown.commands;
 
-import myessentials.entities.tool.ToolManager;
+import myessentials.entities.api.tool.Tool;
+import myessentials.entities.api.tool.ToolManager;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
@@ -14,7 +15,6 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.entities.tools.PlotSelectionTool;
 import mytown.entities.tools.PlotSellTool;
-import myessentials.entities.tool.Tool;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.proxies.EconomyProxy;
 import mytown.util.exceptions.MyTownCommandException;

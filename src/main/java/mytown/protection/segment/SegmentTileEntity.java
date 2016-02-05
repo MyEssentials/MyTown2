@@ -1,6 +1,6 @@
 package mytown.protection.segment;
 
-import myessentials.entities.Volume;
+import myessentials.entities.api.Volume;
 import mytown.config.Config;
 import mytown.entities.Resident;
 import mytown.protection.ProtectionHandlers;

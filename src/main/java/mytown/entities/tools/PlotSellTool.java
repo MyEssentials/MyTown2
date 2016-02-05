@@ -1,8 +1,8 @@
 package mytown.entities.tools;
 
-import myessentials.entities.BlockPos;
-import myessentials.entities.tool.Tool;
-import myessentials.entities.tool.ToolManager;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.tool.Tool;
+import myessentials.entities.api.tool.ToolManager;
 import mytown.MyTown;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
@@ -11,7 +11,6 @@ import mytown.entities.signs.SellSign;
 import mytown.util.MyTownUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
