@@ -8,7 +8,11 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import myessentials.entities.api.BlockPos;
 import myessentials.entities.api.Volume;
+import myessentials.event.AE2PartPlaceEvent;
 import myessentials.event.BlockTrampleEvent;
+import myessentials.event.ModifyBiomeEvent;
+import myessentials.event.ModifyBlockEvent;
+import myessentials.event.ProjectileImpactEvent;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.entities.BlockWhitelist;
@@ -21,6 +25,7 @@ import mytown.util.MyTownUtils;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -30,6 +35,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.HashMap;
@@ -86,8 +92,11 @@ public class ProtectionHandlers {
 
         // Entity check
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
-        for (int i = 0; i < ev.world.loadedEntityList.size(); i++) {
-            Entity entity = (Entity) ev.world.loadedEntityList.get(i);
+        int loadedEntityListSize = ev.world.loadedEntityList.size();
+        for (int i = 0; i < loadedEntityListSize; i++) {
+            Object item = ev.world.loadedEntityList.get(i);
+            if (item == null) continue;
+            Entity entity = (Entity) item;
             Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) Math.floor(entity.posX) >> 4, (int) Math.floor(entity.posZ) >> 4);
             //MyTown.instance.log.info("Checking player...");
             // Player check, every tick
@@ -95,17 +104,20 @@ public class ProtectionHandlers {
                 ProtectionManager.check((EntityPlayerMP) entity);
             } else {
                 // Other entity checks
-                if(MinecraftServer.getServer().getTickCounter() % 20 == 0) {
-                    ProtectionManager.check(entity);
+                if(MinecraftServer.getServer().getTickCounter() % 20 == 5) {
+                    ProtectionManager.checkExist(entity, false);
                 }
             }
         }
 
         // TileEntity check
-        if(MinecraftServer.getServer().getTickCounter() % 20 == 0) {
+        if(MinecraftServer.getServer().getTickCounter() % 20 == 15) {
             if (activePlacementThreads == 0) {
-                for (int i = 0; i < ev.world.loadedTileEntityList.size(); i++) {
-                    TileEntity te = (TileEntity) ev.world.loadedTileEntityList.get(i);
+                int loadedTileEntityListSize = ev.world.loadedTileEntityList.size();
+                for (int i = 0; i < loadedTileEntityListSize; i++) {
+                    Object item = ev.world.loadedTileEntityList.get(i);
+                    if (item == null) continue;
+                    TileEntity te = (TileEntity) item;
                     ProtectionManager.check(te);
                 }
             }
@@ -187,11 +199,25 @@ public class ProtectionHandlers {
         } else {
             Resident res = MyTownUniverse.instance.getOrMakeResident(ev.entityPlayer);
             ProtectionManager.checkInteraction(ev.target, res, ev);
-            if(ev.entityPlayer.getHeldItem() != null) {
+            if(!ev.isCanceled() && ev.entityPlayer.getHeldItem() != null) {
                 BlockPos bp = new BlockPos(x, y, z, ev.target.dimension);
                 ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, bp, -1, ev);
             }
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onProjectileImpact(ProjectileImpactEvent ev) {
+        if (ev.entity.worldObj.isRemote || ev.isCanceled()) {
+            return;
+        }
+
+        EntityLivingBase firingEntity = ev.firingEntity;
+        Resident owner = null;
+        if (firingEntity instanceof EntityPlayerMP && !(firingEntity instanceof FakePlayer)) {
+            owner = MyTownUniverse.instance.getOrMakeResident(firingEntity);
+        }
+        ProtectionManager.checkImpact(ev.entity, owner, ev.movingObjectPosition, ev);
     }
 
     @SuppressWarnings("unchecked")
@@ -210,10 +236,35 @@ public class ProtectionHandlers {
             if(ev.entityPlayer.getHeldItem() != null) {
                 ProtectionManager.checkUsage(ev.entityPlayer.getHeldItem(), res, ev.action, createBlockPos(ev), ev.face, ev);
             }
-            ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
+            if (!ev.isCanceled()) {
+                ProtectionManager.checkBlockInteraction(res, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.action, ev);
+            }
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onAE2PartPlace(AE2PartPlaceEvent ev) {
+        if (ev.world.isRemote || ev.isCanceled()) {
+            return;
+        }
+
+        Resident res = MyTownUniverse.instance.getOrMakeResident(ev.player);
+        if(ev.player.getHeldItem() != null) {
+            ProtectionManager.checkUsage(ev.player.getHeldItem(), res, Action.RIGHT_CLICK_BLOCK, new BlockPos(ev.x, ev.y, ev.z, ev.world.provider.dimensionId), ev.face, ev);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onModifyBlock(ModifyBlockEvent ev) {
+        if (ev.world.isRemote || ev.isCanceled() || Config.instance.fireSpreadInTowns.get()) {
+            return;
+        }
+
+        if(!ProtectionManager.getFlagValueAtLocation(FlagType.MODIFY, ev.world.provider.dimensionId, ev.x, ev.y, ev.z)) {
+            ev.setCanceled(true);
+            return;
+        }
+    }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onBlockTrample(BlockTrampleEvent ev) {
@@ -252,6 +303,17 @@ public class ProtectionHandlers {
                     ev.setCanceled(true);
                 }
             }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onModifyBiome(ModifyBiomeEvent ev) {
+        if (ev.world.isRemote || ev.isCanceled() || Config.instance.taintSpreadInTowns.get()) {
+            return;
+        }
+
+        if(MyTownUniverse.instance.blocks.contains(ev.world.provider.dimensionId, ev.x >> 4, ev.z >> 4)) {
+            ev.setCanceled(true);
         }
     }
 
@@ -370,14 +432,14 @@ public class ProtectionHandlers {
             return;
         }
 
-        ProtectionManager.check(ev.entity);
+        ProtectionManager.checkExist(ev.entity, true);
     }
 
     @SubscribeEvent
     public void specialSpawn(LivingSpawnEvent.SpecialSpawn ev) {
         if (ev.isCanceled()) return;
 
-        ProtectionManager.check(ev.entity);
+        ProtectionManager.checkExist(ev.entity, true);
     }
 
     @SubscribeEvent
@@ -386,7 +448,7 @@ public class ProtectionHandlers {
             return;
         }
 
-        if(ProtectionManager.check(ev.entity)) {
+        if(ProtectionManager.checkExist(ev.entity, true)) {
             ev.setResult(Event.Result.DENY);
         }
     }

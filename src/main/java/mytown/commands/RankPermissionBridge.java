@@ -11,7 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.UUID;
 
-public class RankPermissionManager implements IPermissionBridge {
+public class RankPermissionBridge implements IPermissionBridge {
 
     @Override
     public boolean hasPermission(UUID uuid, String permission) {

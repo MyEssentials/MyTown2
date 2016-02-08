@@ -12,6 +12,7 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
@@ -284,6 +285,21 @@ public class Town implements Comparable<Town> {
 
     public boolean isChunkInTown(int dim, int chunkX, int chunkZ) {
         return townBlocksContainer.contains(dim, chunkX, chunkZ);
+    }
+
+    public IChatComponent toChatMessage() {
+        /*
+        String mayorName = town.residentsMap.getMayor() != null ? ColorUtils.colorPlayer + town.residentsMap.getMayor().getPlayerName()
+                : ColorUtils.colorAdmin + "SERVER ADMINS";
+        String toAdd = ((colorMainTown && town == mainTown) ? ColorUtils.colorSelectedTown : ColorUtils.colorTown) + town.getName() + ":" + ColorUtils.colorComma +
+                " { " + Rank.Type.MAYOR.color + "Mayor: " + mayorName + ColorUtils.colorComma + " }";
+        */
+
+        ChatComponentText chat1 = new ChatComponentText("as");
+        ChatComponentText chat2 = new ChatComponentText("as");
+
+        chat1.appendSibling(chat2);
+        return null;
     }
 
     public static class Container extends ArrayList<Town> {

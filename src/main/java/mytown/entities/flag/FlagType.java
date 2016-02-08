@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
 import myessentials.json.api.SerializerTemplate;
 import mytown.MyTown;
+import net.minecraft.util.IChatComponent;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -143,15 +144,15 @@ public class FlagType<T> implements Comparable<FlagType<T>>{
         return name.compareTo(other.name);
     }
 
-    public String getLocalizedDescription() {
+    public IChatComponent getLocalizedDescription() {
         return MyTown.instance.LOCAL.getLocalization("mytown.flag." + name);
     }
 
-    public String getLocalizedProtectionDenial() {
+    public IChatComponent getLocalizedProtectionDenial() {
         return MyTown.instance.LOCAL.getLocalization("mytown.protection." + name);
     }
 
-    public String getLocalizedTownNotification() {
+    public IChatComponent getLocalizedTownNotification() {
         return MyTown.instance.LOCAL.getLocalization("mytown.protection.notify." + name);
     }
 

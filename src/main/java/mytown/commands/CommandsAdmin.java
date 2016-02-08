@@ -1,6 +1,5 @@
 package mytown.commands;
 
-
 import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.tool.ToolManager;
 import myessentials.utils.ChatUtils;
@@ -31,6 +30,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1114,10 +1114,10 @@ public class CommandsAdmin extends Commands {
                     list.add(player.inventory.getCurrentItem().getItem().getClass());
                 }
 
-                sendMessageBackToSender(sender, "For item: " + player.inventory.getCurrentItem().getDisplayName());
+                sendMessageBackToSender(sender, new ChatComponentText("For item: " + player.inventory.getCurrentItem().getDisplayName()));
                 for(Class cls : list) {
                     while (cls != Object.class) {
-                        sendMessageBackToSender(sender, cls.getName());
+                        sendMessageBackToSender(sender, new ChatComponentText(cls.getName()));
                         cls = cls.getSuperclass();
                     }
                 }

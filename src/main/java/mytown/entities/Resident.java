@@ -1,15 +1,17 @@
 package mytown.entities;
 
+import myessentials.chat.api.IChatFormat;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
+import mytown.new_datasource.MyTownUniverse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.FakePlayer;
@@ -17,7 +19,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.*;
 
-public class Resident {
+public class Resident implements IChatFormat {
     private EntityPlayer player;
     private UUID playerUUID;
     private String playerName;
@@ -234,7 +236,12 @@ public class Resident {
         this.extraBlocks = extraBlocks;
     }
 
-    public static class Container extends ArrayList<Resident> {
+    @Override
+    public IChatComponent toChatMessage() {
+        return new ChatComponentText(getPlayerName()).setChatStyle(ColorUtils.stylePlayer);
+    }
+
+    public static class Container extends ArrayList<Resident> implements IChatFormat {
 
         public Resident get(UUID uuid) {
             for (Resident res : this) {
@@ -293,20 +300,18 @@ public class Resident {
             return false;
         }
 
-        @Override
-        public String toString() {
-            String formattedList = null;
+        public IChatComponent toChatMessage() {
+            ChatComponentText formattedList = new ChatComponentText("");
 
             for (Resident res : this) {
-                String toAdd = ColorUtils.colorPlayer + res.getPlayerName();
-                if (formattedList == null) {
-                    formattedList = toAdd;
+                if (formattedList.getSiblings().size() == 0) {
+                    formattedList.appendSibling(res.toChatMessage());
                 } else {
-                    formattedList += ColorUtils.colorComma + ", " + toAdd;
+                    formattedList.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma).appendSibling(res.toChatMessage()));
                 }
             }
             if (isEmpty()) {
-                formattedList = ColorUtils.colorEmpty + "NONE";
+                formattedList.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
             }
             return formattedList;
         }

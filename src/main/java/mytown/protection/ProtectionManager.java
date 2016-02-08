@@ -7,12 +7,14 @@ import myessentials.entities.api.Volume;
 import myessentials.utils.PlayerUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
+import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.entities.signs.SellSign;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.protection.json.Protection;
 import mytown.protection.segment.*;
+import mytown.protection.segment.enums.EntityType;
 import mytown.util.MyTownUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSign;
@@ -26,6 +28,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -39,6 +42,7 @@ public class ProtectionManager {
 
     public static final Segment.Container<SegmentBlock> segmentsBlock = new Segment.Container<SegmentBlock>();
     public static final Segment.Container<SegmentSpecialBlock> segmentsSpecialBlock = new Segment.Container<SegmentSpecialBlock>();
+    public static final Segment.Container<SegmentEntity> segmentsTrackedEntity = new Segment.Container<SegmentEntity>();
     public static final Segment.Container<SegmentEntity> segmentsEntity = new Segment.Container<SegmentEntity>();
     public static final Segment.Container<SegmentItem> segmentsItem = new Segment.Container<SegmentItem>();
     public static final Segment.Container<SegmentTileEntity> segmentsTile = new Segment.Container<SegmentTileEntity>();
@@ -54,7 +58,12 @@ public class ProtectionManager {
             } else if(segment instanceof SegmentBlock) {
                 segmentsBlock.add((SegmentBlock) segment);
             } else if(segment instanceof SegmentEntity) {
-                segmentsEntity.add((SegmentEntity) segment);
+                SegmentEntity segmentEntity = (SegmentEntity) segment;
+                if (segmentEntity.types.contains(EntityType.TRACKED)) {
+                    segmentsTrackedEntity.add(segmentEntity);
+                } else {
+                    segmentsEntity.add(segmentEntity);
+                }
             } else if(segment instanceof SegmentItem) {
                 segmentsItem.add((SegmentItem) segment);
             } else if(segment instanceof SegmentTileEntity) {
@@ -103,15 +112,18 @@ public class ProtectionManager {
         }
     }
 
-    public static boolean check(Entity entity) {
+    public static boolean checkExist(Entity entity, boolean spawn) {
         if(entity instanceof EntityLiving) {
+            if (Config.instance.mobTravelInTowns.get() && !spawn) {
+                return false;
+            }
             if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
                 entity.setDead();
                 return true;
             }
         }
 
-        for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
+        for(SegmentEntity segment : segmentsTrackedEntity.get(entity.getClass())) {
             if(!segment.shouldExist(entity)) {
                 entity.setDead();
                 return true;
@@ -119,6 +131,15 @@ public class ProtectionManager {
         }
 
         return false;
+    }
+
+    public static void checkImpact(Entity entity, Resident owner, MovingObjectPosition mop, Event event) {
+        for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
+            if(!segment.shouldImpact(entity, owner, mop)) {
+                event.setCanceled(true);
+                entity.setDead();
+            }
+        }
     }
 
     public static void check(TileEntity te) {
