@@ -3,8 +3,8 @@ package mytown.entities;
 import myessentials.teleport.Teleport;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.PlayerUtils;
-import mypermissions.api.entities.PermissionLevel;
-import mypermissions.proxies.PermissionProxy;
+import mypermissions.permission.api.proxy.PermissionProxy;
+import mypermissions.permission.core.entities.PermissionLevel;
 import mytown.MyTown;
 import mytown.api.container.*;
 import mytown.config.Config;
@@ -13,6 +13,7 @@ import mytown.entities.flag.FlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,7 +52,7 @@ public class Town implements Comparable<Town> {
     /**
      * Notifies every resident in this town sending a message.
      */
-    public void notifyEveryone(String message) {
+    public void notifyEveryone(IChatComponent message) {
         for (Resident r : residentsMap.keySet()) {
             r.sendMessage(message);
         }

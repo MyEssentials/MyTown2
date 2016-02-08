@@ -3,7 +3,7 @@ package mytown.new_datasource;
 import com.mojang.authlib.GameProfile;
 import myessentials.teleport.Teleport;
 import myessentials.utils.PlayerUtils;
-import mypermissions.api.command.CommandCompletion;
+import mypermissions.command.api.CommandCompletion;
 import mytown.MyTown;
 import mytown.api.events.*;
 import mytown.config.Config;

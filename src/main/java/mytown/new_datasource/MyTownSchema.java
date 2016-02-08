@@ -1,7 +1,7 @@
 package mytown.new_datasource;
 
-import myessentials.datasource.Schema;
-import myessentials.datasource.bridge.BridgeSQL;
+import myessentials.datasource.api.Schema;
+import myessentials.datasource.api.bridge.BridgeSQL;
 import mytown.config.Config;
 import mytown.entities.Rank;
 

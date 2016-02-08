@@ -5,7 +5,7 @@ import com.google.gson.*;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-import myessentials.json.SerializerTemplate;
+import myessentials.json.api.SerializerTemplate;
 import mytown.protection.segment.*;
 import mytown.util.exceptions.ProtectionParseException;
 

@@ -1,16 +1,17 @@
 package mytown.commands;
 
-import myessentials.entities.ChunkPos;
-import myessentials.entities.tool.ToolManager;
+
+import myessentials.entities.api.ChunkPos;
+import myessentials.entities.api.tool.ToolManager;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
-import mypermissions.api.command.CommandManager;
-import mypermissions.api.command.CommandResponse;
-import mypermissions.api.command.annotation.Command;
-import mypermissions.command.CommandTree;
-import mypermissions.command.CommandTreeNode;
+import mypermissions.command.api.CommandManager;
+import mypermissions.command.api.CommandResponse;
+import mypermissions.command.api.annotation.Command;
+import mypermissions.command.core.entities.CommandTree;
+import mypermissions.command.core.entities.CommandTreeNode;
 import mytown.MyTown;
 import mytown.config.json.FlagsConfig;
 import mytown.new_datasource.MyTownDatasource;
@@ -44,7 +45,7 @@ public class CommandsAdmin extends Commands {
 
     }
 
-    @Command(
+    @Command (
             name = "mytownadmin",
             permission = "mytown.adm.cmd",
             syntax = "/townadmin <command>",
@@ -993,7 +994,7 @@ public class CommandsAdmin extends Commands {
             }
             TownBlock block = getUniverse().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, 0, town);
             if (block == null)
-                throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.claim.failed"));
+                throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.claim.failed").getUnformattedText());
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
@@ -1149,7 +1150,7 @@ public class CommandsAdmin extends Commands {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromName(args.get(0));
             town.plotsContainer.show(res);
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
+            sender.addChatMessage(getLocal().getLocalization("mytown.notification.plot.showing"));
             return CommandResponse.DONE;
         }
 
@@ -1179,7 +1180,7 @@ public class CommandsAdmin extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
 
             if (flag.setValue(args.get(3))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.success");
+                sender.addChatMessage(getLocal().getLocalization("mytown.notification.town.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -1204,7 +1205,7 @@ public class CommandsAdmin extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
 
             if (flag.toggle()) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.success");
+                sender.addChatMessage(getLocal().getLocalization("mytown.notification.town.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }

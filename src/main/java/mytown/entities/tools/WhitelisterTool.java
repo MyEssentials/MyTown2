@@ -1,8 +1,8 @@
 package mytown.entities.tools;
 
-import myessentials.entities.BlockPos;
-import myessentials.entities.tool.Tool;
-import myessentials.entities.tool.ToolManager;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.tool.Tool;
+import myessentials.entities.api.tool.ToolManager;
 import mytown.MyTown;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Plot;
@@ -10,7 +10,6 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.util.MyTownUtils;
-import net.minecraft.util.EnumChatFormatting;
 
 /**
  * A tool that selects a block to add it to whitelists for protection.

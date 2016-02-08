@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.FakePlayer;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -107,10 +108,11 @@ public class Resident {
 
     /* ----- Helpers ----- */
 
-    public void sendMessage(String msg) {
+    public void sendMessage(IChatComponent message) {
         try {
-            if (getPlayer() != null && !(getPlayer() instanceof FakePlayer))
-                ChatUtils.sendChat(getPlayer(), msg);
+            if (getPlayer() != null && !(getPlayer() instanceof FakePlayer)) {
+                getPlayer().addChatMessage(message);
+            }
         } catch (NullPointerException ex) {
             MyTown.instance.LOG.info("You are probably using a modified server that messes with order of Player joining/leaving. This crash is nothing serious.");
             MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
@@ -119,7 +121,7 @@ public class Resident {
 
     public void protectionDenial(FlagType flag) {
         if (getPlayer() != null) {
-            ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
+            getPlayer().addChatMessage(flag.getLocalizedProtectionDenial());
         }
     }
     /**
@@ -127,8 +129,8 @@ public class Resident {
      */
     public void protectionDenial(FlagType flag, String owners) {
         if (getPlayer() != null) {
-            ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
-            ChatUtils.sendChat(getPlayer(), MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
+            getPlayer().addChatMessage(flag.getLocalizedProtectionDenial());
+            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
         }
     }
 

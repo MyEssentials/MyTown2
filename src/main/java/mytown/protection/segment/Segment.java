@@ -4,8 +4,8 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.google.gson.internal.LazilyParsedNumber;
 
-import myessentials.entities.Volume;
-import myessentials.json.SerializerTemplate;
+import myessentials.entities.api.Volume;
+import myessentials.json.api.SerializerTemplate;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;

@@ -1,8 +1,8 @@
 package mytown.entities.tools;
 
-import myessentials.entities.BlockPos;
-import myessentials.entities.tool.Tool;
-import myessentials.entities.tool.ToolManager;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.tool.Tool;
+import myessentials.entities.api.tool.ToolManager;
 import mytown.MyTown;
 import mytown.config.Config;
 import myessentials.thread.DelayedThread;

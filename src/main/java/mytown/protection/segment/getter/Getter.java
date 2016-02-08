@@ -2,7 +2,7 @@ package mytown.protection.segment.getter;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import myessentials.json.SerializerTemplate;
+import myessentials.json.api.SerializerTemplate;
 import mytown.protection.segment.caller.Caller;
 import mytown.util.exceptions.GetterException;
 

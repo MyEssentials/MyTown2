@@ -1,6 +1,6 @@
 package mytown.entities;
 
-import myessentials.entities.Volume;
+import myessentials.entities.api.Volume;
 import myessentials.utils.ColorUtils;
 import mytown.config.Config;
 import mytown.handlers.VisualsHandler;

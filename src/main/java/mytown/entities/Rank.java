@@ -2,9 +2,9 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
-import myessentials.json.SerializerTemplate;
+import myessentials.json.api.SerializerTemplate;
 import myessentials.utils.ColorUtils;
-import mypermissions.api.container.PermissionsContainer;
+import mypermissions.permission.core.container.PermissionsContainer;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
