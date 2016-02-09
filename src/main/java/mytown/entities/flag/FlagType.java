@@ -144,16 +144,16 @@ public class FlagType<T> implements Comparable<FlagType<T>>{
         return name.compareTo(other.name);
     }
 
-    public IChatComponent getLocalizedDescription() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.flag." + name);
+    public String getDescriptionKey() {
+        return "mytown.flag." + name;
     }
 
-    public IChatComponent getLocalizedProtectionDenial() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.protection." + name);
+    public String getDenialKey() {
+        return "mytown.protection." + name;
     }
 
-    public IChatComponent getLocalizedTownNotification() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.protection.notify." + name);
+    public String getTownNotificationKey() {
+        return "mytown.protection.notify." + name;
     }
 
     public String getBypassPermission() {

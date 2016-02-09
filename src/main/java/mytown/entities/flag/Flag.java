@@ -2,9 +2,12 @@ package mytown.entities.flag;
 
 import com.google.gson.*;
 
+import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.utils.ColorUtils;
+import mytown.MyTown;
 import mytown.entities.Town;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
@@ -12,7 +15,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Flag<T> implements Comparable<Flag>{
+public class Flag<T> implements Comparable<Flag>, IChatFormat {
     protected Gson gson = new GsonBuilder().create();
 
     public T value;
@@ -56,21 +59,33 @@ public class Flag<T> implements Comparable<Flag>{
 
     @Override
     public String toString() {
-        return toString(ColorUtils.colorConfigurableFlag);
-    }
-
-    public String toString(EnumChatFormatting nameColor) {
-        IChatComponent description = flagType.getLocalizedDescription();
-        EnumChatFormatting valueColor = ColorUtils.colorValueRegular;
-        if(value instanceof Boolean) {
-            valueColor = (Boolean)value ? ColorUtils.colorValueRegular : ColorUtils.colorValueFalse;
-        }
-        return String.format(nameColor + "%s" + ColorUtils.colorComma + "[" + valueColor + "%s" + ColorUtils.colorComma + "]:" + ColorUtils.colorComma + " %s", flagType.name.toLowerCase(), value.toString(), description);
+        return toChatMessage().getUnformattedText();
     }
 
     @Override
     public int compareTo(Flag other) {
         return flagType.compareTo(other.flagType);
+    }
+
+    @Override
+    public IChatComponent toChatMessage() {
+        IChatComponent nameComponent = new ChatComponentText(flagType.name.toLowerCase()).setChatStyle(ColorUtils.styleConfigurableFlag);
+        IChatComponent valueComponent = new ChatComponentText(value.toString());
+        IChatComponent descriptionComponent = MyTown.instance.LOCAL.getLocalization(flagType.getDescriptionKey());
+
+
+        if (value instanceof Boolean) {
+            valueComponent.setChatStyle((Boolean) value ? ColorUtils.styleValueRegular: ColorUtils.styleValueFalse);
+        } else {
+            valueComponent.setChatStyle(ColorUtils.styleValueRegular);
+        }
+
+        return new ChatComponentText("")
+                .appendSibling(nameComponent)
+                .appendSibling(new ChatComponentText("[").setChatStyle(ColorUtils.styleComma))
+                .appendSibling(valueComponent)
+                .appendSibling(new ChatComponentText("]:").setChatStyle(ColorUtils.styleComma))
+                .appendSibling(descriptionComponent);
     }
 
     @SuppressWarnings("unchecked")
@@ -103,7 +118,7 @@ public class Flag<T> implements Comparable<Flag>{
         }
     }
 
-    public static class Container extends ArrayList<Flag> {
+    public static class Container extends ArrayList<Flag> implements IChatFormat {
 
         public boolean contains(FlagType<?> flagType) {
             for (Flag flag : this) {
@@ -140,65 +155,14 @@ public class Flag<T> implements Comparable<Flag>{
             return null;
         }
 
-        public String toStringForTowns() {
-            String formattedFlagList = "";
-
+        @Override
+        public IChatComponent toChatMessage() {
+            IChatComponent result = new ChatComponentText("");
             for (Flag flag : this) {
-                if (flag.flagType.configurable) {
-                    if (!formattedFlagList.equals("")) {
-                        formattedFlagList += "\\n";
-                    }
-                    formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
-                }
+                result.appendSibling(flag.toChatMessage());
+                result.appendSibling(new ChatComponentText("\n"));
             }
-
-            String unconfigurableFlags = "";
-            for(FlagType flagType : FlagType.values()) {
-                if(!flagType.configurable) {
-                    unconfigurableFlags += "\\n" + (new Flag(flagType, flagType.defaultValue)).toString(ColorUtils.colorUnconfigurableFlag);
-                }
-            }
-
-            formattedFlagList += unconfigurableFlags;
-
-            return formattedFlagList;
-        }
-
-        public String toStringForPlot(Town town) {
-            String formattedFlagList = "";
-
-            for (Flag flag : this) {
-                if (flag.flagType.configurable) {
-                    if (!formattedFlagList.equals("")) {
-                        formattedFlagList += "\\n";
-                    }
-                    formattedFlagList += flag.toString(ColorUtils.colorConfigurableFlag);
-                }
-            }
-
-            String unconfigurableFlags = "";
-            for(FlagType flagType : FlagType.values()) {
-                if(!flagType.configurable) {
-                    Object value = town.flagsContainer.contains(flagType) ? town.flagsContainer.getValue(flagType) : flagType.defaultValue;
-                    unconfigurableFlags += "\\n" + (new Flag(flagType, value).toString(ColorUtils.colorUnconfigurableFlag));
-                }
-            }
-
-            formattedFlagList += unconfigurableFlags;
-            return formattedFlagList;
-        }
-
-        public String toStringForWild() {
-            String formattedFlagList = "";
-
-            for (Flag flag : this) {
-                if (!formattedFlagList.equals("")) {
-                    formattedFlagList += "\\n";
-                }
-                formattedFlagList += flag.toString();
-            }
-
-            return formattedFlagList;
+            return result;
         }
     }
 }
