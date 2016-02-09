@@ -16,11 +16,11 @@ import mytown.util.MyTownUtils;
  */
 public class WhitelisterTool extends Tool {
 
-    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.name");
-    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header1");
-    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header2");
-    private static final String DESCRIPTION_FLAG = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.flag")+" ";
-    private static final String DESCRIPTION_FLAG_REMOVAL = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.removal");
+    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.name").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header1").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header2").getUnformattedTextForChat();
+    private static final String DESCRIPTION_FLAG = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.flag").getUnformattedTextForChat() + " ";
+    private static final String DESCRIPTION_FLAG_REMOVAL = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.removal").getUnformattedTextForChat();
 
     private Resident owner;
     private FlagType flagType = FlagType.ACCESS;

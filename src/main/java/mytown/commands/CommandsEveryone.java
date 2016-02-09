@@ -147,11 +147,11 @@ public class CommandsEveryone extends Commands {
 
         String blocks = town.townBlocksContainer.size() + "/" + town.getMaxBlocks();
         String extraBlocks = town.getExtraBlocks() + "\\n";
-        String dash = ColorUtils.colorInfoText + " - ";
+        String dash = " - ";
         extraBlocks += dash + "TOWN (" + town.townBlocksContainer.getExtraBlocks() + ")\\n";
         for(Iterator<Resident> it = town.residentsMap.keySet().iterator(); it.hasNext();) {
             Resident resInTown = it.next();
-            extraBlocks += dash + ColorUtils.colorInfoText + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
+            extraBlocks += dash + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
             if(it.hasNext()) {
                 extraBlocks += "\\n";
             }
@@ -181,7 +181,7 @@ public class CommandsEveryone extends Commands {
     public static CommandResponse permListCommand(ICommandSender sender, List<String> args) {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        res.sendMessage(town.flagsContainer.toStringForTowns());
+        res.sendMessage(town.flagsContainer.toChatMessage());
         return CommandResponse.DONE;
     }
 
@@ -262,7 +262,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotPermListCommand(ICommandSender sender, List<String> args) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            res.sendMessage(plot.flagsContainer.toStringForPlot(plot.getTown()));
+            res.sendMessage(plot.flagsContainer.toChatMessage());
             return CommandResponse.DONE;
         }
 
@@ -677,7 +677,7 @@ public class CommandsEveryone extends Commands {
             syntax = "/town wild perm")
     public static CommandResponse permWildListCommand(ICommandSender sender, List<String> args) {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-        res.sendMessage(Wild.instance.flagsContainer.toStringForWild());
+        res.sendMessage(Wild.instance.flagsContainer.toChatMessage());
         return CommandResponse.DONE;
     }
 }

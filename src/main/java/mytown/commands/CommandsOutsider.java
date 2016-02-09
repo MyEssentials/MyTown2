@@ -18,6 +18,7 @@ import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class CommandsOutsider extends Commands {
         if (res == null) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
         }
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.resident.info", res.getPlayerName(), res.townsContainer.toString(true), Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline()), res.getExtraBlocks()));
+        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.format.resident.long", res.getPlayerName(), res.townsContainer, Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline()), res.getExtraBlocks()));
         return CommandResponse.DONE;
     }
 
@@ -369,7 +370,7 @@ public class CommandsOutsider extends Commands {
                 else
                     formattedList += ", " + EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
             res.sendMessage(getLocal().getLocalization("mytown.notification.resident.invites"));
-            res.sendMessage(formattedList);
+            res.sendMessage(new ChatComponentText(formattedList));
         }
         return CommandResponse.DONE;
     }

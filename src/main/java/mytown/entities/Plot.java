@@ -5,6 +5,7 @@ import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.Volume;
 import myessentials.entities.api.sign.SignType;
 import mypermissions.permission.api.proxy.PermissionProxy;
+import mytown.MyTown;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsHandler;
@@ -93,7 +94,7 @@ public class Plot implements IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        return new ChatComponentText(String.format("Plot: {Name: %s, Dim: %s, Start: [%s, %s, %s], End: [%s, %s, %s]}", name, dim, x1, y1, z1, x2, y2, z2));
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.plot.long", name, dim, x1, y1, z1, x2, y2, z2);
     }
 
     public Volume toVolume() {

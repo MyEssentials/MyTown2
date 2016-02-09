@@ -1,14 +1,19 @@
 package mytown.entities;
 
+import myessentials.chat.api.IChatFormat;
+import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.Volume;
 import myessentials.utils.ColorUtils;
+import mytown.MyTown;
 import mytown.config.Config;
 import mytown.handlers.VisualsHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 
-public class TownBlock {
+public class TownBlock implements IChatFormat {
     /**
      * Used for storing in database
      */
@@ -73,11 +78,20 @@ public class TownBlock {
 
     @Override
     public String toString() {
-        return String.format("Block: {Dim: %s, X: %s, Z: %s, Town: %s, Plots: %s}", dim, x, z, town.getName(), plotsContainer.size());
+        return toChatMessage().getUnformattedText();
+    }
+
+    @Override
+    public IChatComponent toChatMessage() {
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.block.long", dim, x, z, town.getName(), plotsContainer.size());
     }
 
     public Volume toVolume() {
         return new Volume(x << 4, 0, z << 4, (x << 4) + 15, 255, (z << 4) + 15);
+    }
+
+    public ChunkPos toChunkPos() {
+        return new ChunkPos(this.dim, this.x, this.z);
     }
 
     /* ----- Helpers ----- */
@@ -96,7 +110,7 @@ public class TownBlock {
         return dim == this.dim && cx == x && cz == z;
     }
 
-    public static class Container extends ArrayList<TownBlock> {
+    public static class Container extends ArrayList<TownBlock> implements IChatFormat {
 
         private int extraBlocks = 0;
         private int extraFarClaims = 0;
@@ -168,18 +182,15 @@ public class TownBlock {
         }
 
         @Override
-        public String toString() {
-            String formattedList = "";
-            for(TownBlock block : this) {
-                String toAdd = ColorUtils.colorComma + "{"+ ColorUtils.colorCoords + (block.getX() << 4) + ColorUtils.colorComma + ", "
-                        + ColorUtils.colorCoords + (block.getZ() << 4) + ColorUtils.colorComma + "}";
-                if(formattedList.equals("")) {
-                    formattedList = toAdd;
-                } else {
-                    formattedList += ColorUtils.colorComma + "; " + toAdd;
-                }
+        public IChatComponent toChatMessage() {
+            IChatComponent result = new ChatComponentText("");
+
+            for (TownBlock block : this) {
+                result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.block.short", block.toChunkPos()));
+                result.appendSibling(new ChatComponentText(" "));
             }
-            return formattedList;
+
+            return result;
         }
     }
 }

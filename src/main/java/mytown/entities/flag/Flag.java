@@ -69,23 +69,8 @@ public class Flag<T> implements Comparable<Flag>, IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        IChatComponent nameComponent = new ChatComponentText(flagType.name.toLowerCase()).setChatStyle(ColorUtils.styleConfigurableFlag);
-        IChatComponent valueComponent = new ChatComponentText(value.toString());
-        IChatComponent descriptionComponent = MyTown.instance.LOCAL.getLocalization(flagType.getDescriptionKey());
-
-
-        if (value instanceof Boolean) {
-            valueComponent.setChatStyle((Boolean) value ? ColorUtils.styleValueRegular: ColorUtils.styleValueFalse);
-        } else {
-            valueComponent.setChatStyle(ColorUtils.styleValueRegular);
-        }
-
-        return new ChatComponentText("")
-                .appendSibling(nameComponent)
-                .appendSibling(new ChatComponentText("[").setChatStyle(ColorUtils.styleComma))
-                .appendSibling(valueComponent)
-                .appendSibling(new ChatComponentText("]:").setChatStyle(ColorUtils.styleComma))
-                .appendSibling(descriptionComponent);
+        IChatComponent description = MyTown.instance.LOCAL.getLocalization(flagType.getDescriptionKey());
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.flag", flagType.name.toLowerCase(), value.toString(), description);
     }
 
     @SuppressWarnings("unchecked")

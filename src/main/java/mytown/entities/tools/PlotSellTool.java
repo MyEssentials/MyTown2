@@ -19,11 +19,11 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public class PlotSellTool extends Tool {
 
-    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.name");
-    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header1");
-    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header2");
-    private static final String DESCRIPTION_PRICE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.price")+" ";
-    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.mode")+" ";
+    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.name").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header1").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header2").getUnformattedTextForChat();
+    private static final String DESCRIPTION_PRICE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.price").getUnformattedTextForChat() + " ";
+    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.mode").getUnformattedTextForChat() + " ";
 
     private int price;
     private boolean restricted = false;

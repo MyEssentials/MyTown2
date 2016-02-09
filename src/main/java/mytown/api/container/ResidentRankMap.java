@@ -1,13 +1,17 @@
 package mytown.api.container;
 
+import myessentials.chat.api.IChatFormat;
+import mytown.MyTown;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
 import myessentials.utils.ColorUtils;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResidentRankMap extends HashMap<Resident, Rank> {
+public class ResidentRankMap extends HashMap<Resident, Rank> implements IChatFormat {
 
     public void remove(Resident res) {
         /*
@@ -41,19 +45,23 @@ public class ResidentRankMap extends HashMap<Resident, Rank> {
 
     @Override
     public String toString() {
-        String formattedList = null;
+        return toChatMessage().getUnformattedText();
+    }
+
+    @Override
+    public IChatComponent toChatMessage() {
+        IChatComponent result = new ChatComponentText("");
 
         for (Map.Entry<Resident, Rank> entry : entrySet()) {
-            String toAdd = ColorUtils.colorPlayer + entry.getKey().getPlayerName() + ColorUtils.colorComma + " (" + entry.getValue().toString() + ColorUtils.colorComma + ")";
-            if (formattedList == null) {
-                formattedList = toAdd;
-            } else {
-                formattedList += ColorUtils.colorComma + ", " + toAdd;
-            }
+            result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.resident.withrank", entry.getKey(), entry.getValue()));
+            result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
         }
+
+        result.getSiblings().remove(result.getSiblings().size() - 1);
+
         if (isEmpty()) {
-            formattedList = ColorUtils.colorEmpty + "NONE";
+            result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
         }
-        return formattedList;
+        return result;
     }
 }

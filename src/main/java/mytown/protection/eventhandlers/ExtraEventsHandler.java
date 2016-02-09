@@ -3,6 +3,7 @@ package mytown.protection.eventhandlers;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import myessentials.entities.api.ChunkPos;
 import myessentials.utils.WorldUtils;
+import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.TownBlock;
 import mytown.entities.Wild;
@@ -43,7 +44,7 @@ public class ExtraEventsHandler {
             } else {
                 if (!(Boolean) block.getTown().flagsContainer.getValue(FlagType.EXPLOSIONS)) {
                     ev.setCanceled(true);
-                    block.getTown().notifyEveryone(FlagType.EXPLOSIONS.getLocalizedTownNotification());
+                    block.getTown().notifyEveryone(MyTown.instance.LOCAL.getLocalization(FlagType.EXPLOSIONS.getTownNotificationKey()));
                     return;
                 }
             }

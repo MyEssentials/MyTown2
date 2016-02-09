@@ -2,10 +2,12 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
+import myessentials.MyEssentialsCore;
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.utils.ColorUtils;
 import mypermissions.permission.core.container.PermissionsContainer;
+import mytown.MyTown;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
@@ -93,7 +95,7 @@ public class Rank implements IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        return new ChatComponentText(getName()).setChatStyle(new ChatStyle().setColor(type.color));
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.rank", name).setChatStyle(new ChatStyle().setColor(type.color));
     }
 
     public enum Type {
@@ -153,7 +155,7 @@ public class Rank implements IChatFormat {
         }
     }
 
-    public static class Container extends ArrayList<Rank> {
+    public static class Container extends ArrayList<Rank> implements IChatFormat {
 
         public boolean contains(String rankName) {
             for (Rank r : this) {
@@ -204,19 +206,23 @@ public class Rank implements IChatFormat {
 
         @Override
         public String toString() {
-            String res = null;
+            return toChatMessage().getUnformattedText();
+        }
+        
+        @Override
+        public IChatComponent toChatMessage() {
+            IChatComponent result = new ChatComponentText("");
+
             for (Rank rank : this) {
-                if (res == null) {
-                    res = rank.toString();
-                } else {
-                    res += ColorUtils.colorComma + ", " + rank.toString();
-                }
+                result.appendSibling(rank.toChatMessage());
+                result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
             }
 
             if (isEmpty()) {
-                res = ColorUtils.colorEmpty + "NONE";
+                result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
             }
-            return res;
+
+            return result;
         }
     }
 }

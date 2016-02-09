@@ -123,7 +123,7 @@ public class Resident implements IChatFormat {
 
     public void protectionDenial(FlagType flag) {
         if (getPlayer() != null) {
-            getPlayer().addChatMessage(flag.getLocalizedProtectionDenial());
+            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization(flag.getDenialKey()));
         }
     }
     /**
@@ -131,7 +131,7 @@ public class Resident implements IChatFormat {
      */
     public void protectionDenial(FlagType flag, String owners) {
         if (getPlayer() != null) {
-            getPlayer().addChatMessage(flag.getLocalizedProtectionDenial());
+            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization(flag.getDenialKey()));
             getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
         }
     }
@@ -238,7 +238,7 @@ public class Resident implements IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        return new ChatComponentText(getPlayerName()).setChatStyle(ColorUtils.stylePlayer);
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.resident.long", playerName, townsContainer, joinDate.toString(), lastOnline.toString(), extraBlocks);
     }
 
     public static class Container extends ArrayList<Resident> implements IChatFormat {
@@ -300,20 +300,21 @@ public class Resident implements IChatFormat {
             return false;
         }
 
+        @Override
         public IChatComponent toChatMessage() {
-            ChatComponentText formattedList = new ChatComponentText("");
+            ChatComponentText result = new ChatComponentText("");
 
             for (Resident res : this) {
-                if (formattedList.getSiblings().size() == 0) {
-                    formattedList.appendSibling(res.toChatMessage());
+                if (result.getSiblings().size() == 0) {
+                    result.appendSibling(res.toChatMessage());
                 } else {
-                    formattedList.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma).appendSibling(res.toChatMessage()));
+                    result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma).appendSibling(res.toChatMessage()));
                 }
             }
             if (isEmpty()) {
-                formattedList.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
+                result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
             }
-            return formattedList;
+            return result;
         }
     }
 }

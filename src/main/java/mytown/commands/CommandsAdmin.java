@@ -290,11 +290,11 @@ public class CommandsAdmin extends Commands {
 
         String blocks = town.townBlocksContainer.size() + "/" + town.getMaxBlocks();
         String extraBlocks = town.getExtraBlocks() + "\\n";
-        String dash = ColorUtils.colorInfoText + " - ";
+        String dash = " - ";
         extraBlocks += dash + "TOWN (" + town.townBlocksContainer.getExtraBlocks() + ")\\n";
         for(Iterator<Resident> it = town.residentsMap.keySet().iterator(); it.hasNext();) {
             Resident resInTown = it.next();
-            extraBlocks += dash + ColorUtils.colorInfoText + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
+            extraBlocks += dash + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
             if(it.hasNext()) {
                 extraBlocks += "\\n";
             }
@@ -822,7 +822,7 @@ public class CommandsAdmin extends Commands {
 
 
         Town town = getTownFromName(args.get(0));
-        sendMessageBackToSender(sender, town.flagsContainer.toStringForTowns());
+        sendMessageBackToSender(sender, town.flagsContainer.toChatMessage());
         return CommandResponse.DONE;
     }
 
@@ -915,7 +915,7 @@ public class CommandsAdmin extends Commands {
             completionKeys = {"flagCompletion"},
             console = true)
     public static CommandResponse permWildListCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, Wild.instance.flagsContainer.toStringForWild());
+        sendMessageBackToSender(sender, Wild.instance.flagsContainer.toChatMessage());
         return CommandResponse.DONE;
     }
 
@@ -1227,7 +1227,7 @@ public class CommandsAdmin extends Commands {
 
             Town town = getTownFromName(args.get(0));
             Plot plot = getPlotFromName(town, args.get(1));
-            sendMessageBackToSender(sender, plot.flagsContainer.toStringForPlot(town));
+            sendMessageBackToSender(sender, plot.flagsContainer.toChatMessage());
             return CommandResponse.DONE;
         }
 
