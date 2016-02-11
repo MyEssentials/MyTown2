@@ -5,7 +5,6 @@ import mytown.config.json.FlagsConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
-import mytown.test.TestMain;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

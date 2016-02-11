@@ -4,7 +4,6 @@ import myessentials.teleport.Teleport;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
-import mytown.test.TestMain;
 import org.junit.Assert;
 
 import java.util.UUID;
