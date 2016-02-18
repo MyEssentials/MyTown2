@@ -85,7 +85,7 @@ public class ProtectionParser {
             Protection protection = gson.fromJson(reader, Protection.class);
             reader.close();
             return protection;
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             MyTown.instance.LOG.error("Encountered error when parsing protection file: {}", file.getName());
             MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
             return null;

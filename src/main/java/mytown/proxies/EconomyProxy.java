@@ -25,6 +25,8 @@ public class EconomyProxy {
             return false;
         } else if(Config.instance.costItemName.get().equals(Economy.CURRENCY_VAULT)) {
             return false;
+        } else if(Config.instance.costItemName.get().startsWith(Economy.CURRENCY_CUSTOM)) {
+            return false;
         }
         return true;
     }

@@ -11,11 +11,14 @@ import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.FlagType;
 import mytown.protection.ProtectionManager;
+import mytown.protection.segment.caller.Caller;
+import mytown.protection.segment.caller.CallerFormula;
 import mytown.protection.segment.enums.BlockType;
 import mytown.protection.segment.enums.EntityType;
 import mytown.protection.segment.enums.ItemType;
 import mytown.protection.segment.enums.Priority;
 import mytown.protection.segment.getter.Getter;
+import mytown.protection.segment.getter.GetterDynamic;
 import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import mytown.util.exceptions.ProtectionParseException;
@@ -54,47 +57,54 @@ public abstract class Segment {
     }
 
     public Resident getOwner(Object object) {
+        if (!getters.contains("owner")) {
+            return null;
+        }
         try {
-            EntityPlayer player = getters.contains("owner") ? (EntityPlayer) getters.get("owner").invoke(EntityPlayer.class, object, object) : null;
-            if(player == null)
-                return null;
-            return MyTownUniverse.instance.getOrMakeResident(player);
-        } catch (GetterException ex) {
-            try {
-                String username = getters.contains("owner") ? (String) getters.get("owner").invoke(String.class, object, object) : null;
-                if (username == null)
-                    return null;
+            Object ownerObj = null;
+            ownerObj = getters.get("owner").invoke(Object.class, object, object);
+            if (ownerObj instanceof EntityPlayer) {
+                return MyTownUniverse.instance.getOrMakeResident((EntityPlayer)ownerObj);
+            } else if (ownerObj instanceof String) {
+                String username = (String)ownerObj;
                 if (username.length() == 36 && (username.split("-", -1).length - 1) == 4) {
                     UUID uuid = UUID.fromString(username);
                     return MyTownUniverse.instance.getOrMakeResident(uuid);
                 }
                 return MyTownUniverse.instance.getOrMakeResident(username);
-            } catch (GetterException ex2) {
-                try {
-                    UUID uuid = getters.contains("owner") ? (UUID) getters.get("owner").invoke(UUID.class, object, object) : null;
-                    if (uuid == null)
-                        return null;
-                    return MyTownUniverse.instance.getOrMakeResident(uuid);
-                } catch (GetterException ex3) {
-                    return null;
-                }
+            } else if (ownerObj instanceof UUID) {
+                return MyTownUniverse.instance.getOrMakeResident((UUID)ownerObj);
             }
+        } catch (GetterException ex) {
         }
+        return null;
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, int x, int y, int z) {
-        for(FlagType<Boolean> flagType : flags) {
-            if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
+        if (res != null && res.getFakePlayer()) {
+            if(!ProtectionManager.hasPermission(res, FlagType.FAKERS, dim, x, y, z)) {
                 return false;
+            }
+        } else {
+            for(FlagType<Boolean> flagType : flags) {
+                if(!ProtectionManager.hasPermission(res, flagType, dim, x, y, z)) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     protected boolean hasPermissionAtLocation(Resident res, int dim, Volume volume) {
-        for (FlagType<Boolean> flagType : flags) {
-            if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
+        if (res != null && res.getFakePlayer()) {
+            if(!ProtectionManager.hasPermission(res, FlagType.FAKERS, dim, volume)) {
                 return false;
+            }
+        } else {
+            for (FlagType<Boolean> flagType : flags) {
+                if(!ProtectionManager.hasPermission(res, flagType, dim, volume)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -118,11 +128,22 @@ public abstract class Segment {
     }
 
     protected int getRange(Object object) {
-        try {
-            return getters.contains("range") ? ((LazilyParsedNumber) getters.get("range").invoke(LazilyParsedNumber.class, object, object)).intValue() : 0;
-        } catch (GetterException ex) {
+        if (!getters.contains("range")) {
             return 0;
         }
+        try {
+            Object rangeObj = null;
+            rangeObj = getters.get("range").invoke(Object.class, object, object);
+            if (rangeObj instanceof LazilyParsedNumber) {
+                return ((LazilyParsedNumber)rangeObj).intValue();
+            } else if (rangeObj instanceof Double) {
+                return (int)((Double)rangeObj + 0.5);
+            } else if (rangeObj instanceof Integer) {
+                return (Integer)rangeObj;
+            }
+        } catch (GetterException ex) {
+        }
+        return 0;
     }
 
     protected void disable() {
@@ -213,12 +234,21 @@ public abstract class Segment {
 
         private void serializeItem(SegmentItem segment, JsonObject json, JsonSerializationContext context) {
             json.add("actions", serializeAsElementOrArray(segment.types, context));
+            json.addProperty("damage", segment.getDamage());
             json.addProperty("isAdjacent", segment.isAdjacent);
             if(segment.clientUpdate != null) {
                 JsonObject jsonUpdate = new JsonObject();
                 jsonUpdate.add("coords", context.serialize(segment.clientUpdate.relativeCoords));
                 jsonUpdate.addProperty("directional", segment.directionalClientUpdate);
                 json.add("clientUpdate", jsonUpdate);
+            }
+            if(segment.inventoryUpdate != null) {
+                JsonObject jsonUpdate = new JsonObject();
+                if(segment.inventoryUpdate.getMode() == 2)
+                    jsonUpdate.addProperty("hand", true);
+                else if(segment.inventoryUpdate.getMode() == 1)
+                    jsonUpdate.addProperty("full", true);
+                json.add("inventoryUpdate", jsonUpdate);
             }
         }
 
@@ -261,7 +291,9 @@ public abstract class Segment {
             try {
                 segment.checkClass = Class.forName(classString);
             } catch (ClassNotFoundException ex) {
-                throw new ProtectionParseException("Invalid class identifier: " + classString);
+                //throw new ProtectionParseException("Invalid class identifier: " + classString);
+            	MyTown.instance.LOG.error("Invalid class identifier {" + classString + "}: >>> Segment Rejected <<<");
+            	return null;
             }
             jsonObject.remove("class");
 
@@ -285,7 +317,19 @@ public abstract class Segment {
                 for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
                     Getter getter = context.deserialize(entry.getValue(), Getter.class);
                     getter.setName(entry.getKey());
+                    getter.setClass(segment.checkClass);
                     segment.getters.add(getter);
+                }
+
+                for (Getter getter : segment.getters) {
+                    if (getter instanceof GetterDynamic) {
+                        GetterDynamic getterDymanic = (GetterDynamic)getter;
+                        for (Caller caller : getterDymanic.callers) {
+                            if (caller instanceof CallerFormula) {
+                                ((CallerFormula) caller).setGetters(segment.getters);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -362,6 +406,11 @@ public abstract class Segment {
             segment.types.addAll(deserializeAsArray(json.get("actions"), context, new TypeToken<ItemType>() {}, new TypeToken<List<ItemType>>() {}.getType()));
             json.remove("actions");
 
+            if(json.has("damage")) {
+                segment.damage = json.get("damage").getAsInt();
+                json.remove("damage");
+            }
+
             if(json.has("isAdjacent")) {
                 segment.isAdjacent = json.get("isAdjacent").getAsBoolean();
                 json.remove("isAdjacent");
@@ -374,6 +423,14 @@ public abstract class Segment {
                     segment.directionalClientUpdate = jsonClientUpdate.get("directional").getAsBoolean();
                 }
                 json.remove("clientUpdate");
+            }
+
+            if(json.has("inventoryUpdate")) {
+                JsonObject jsonItemUpdate = json.get("inventoryUpdate").getAsJsonObject();
+                int mode = jsonItemUpdate.get("hand").getAsBoolean()? 2 : jsonItemUpdate.get("full").getAsBoolean()? 1 : 0;
+                if(mode > 0)
+                    segment.inventoryUpdate = new ClientInventoryUpdate(mode);
+                json.remove("inventoryUpdate");
             }
 
             return segment;

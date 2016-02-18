@@ -2,7 +2,6 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
-import myessentials.MyEssentialsCore;
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.utils.ColorUtils;

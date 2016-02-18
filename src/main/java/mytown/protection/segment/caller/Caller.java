@@ -2,6 +2,8 @@ package mytown.protection.segment.caller;
 
 import com.google.gson.*;
 import myessentials.json.api.SerializerTemplate;
+import mytown.protection.segment.caller.reflectasm.ASMCallerField;
+import mytown.protection.segment.caller.reflectasm.ASMCallerMethod;
 import mytown.util.exceptions.ProtectionParseException;
 
 import java.lang.reflect.Type;
@@ -12,6 +14,7 @@ import java.lang.reflect.Type;
 public abstract class Caller {
     protected String name;
     protected Class<?> valueType;
+    protected Class<?> checkClass;
 
     public abstract Object invoke(Object instance, Object... parameters) throws Exception;
 
@@ -21,6 +24,14 @@ public abstract class Caller {
 
     public String getName() {
         return name;
+    }
+
+    public void setClass(Class<?> clazz) {
+        checkClass = clazz;
+    }
+
+    public Class<?> nextClass() throws Exception {
+        return null;
     }
 
     public static class Serializer extends SerializerTemplate<Caller> {
@@ -69,9 +80,9 @@ public abstract class Caller {
 
         private Caller createCaller(String type) {
             if("METHOD".equals(type)) {
-                return new CallerMethod();
+                return new ASMCallerMethod();
             } else if("FIELD".equals(type)) {
-                return new CallerField();
+                return new ASMCallerField();
             } else if("FORMULA".equals(type)) {
                 return new CallerFormula();
             } else if("NBT".equals(type)) {

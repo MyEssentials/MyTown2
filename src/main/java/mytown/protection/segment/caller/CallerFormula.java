@@ -23,7 +23,7 @@ public class CallerFormula extends Caller {
 
         // Replace all the getters with proper numbers, assume getters that are invalid as being numbers
         for(int i = 0 ; i < elements.length; i++) {
-            if(!"+".equals(elements[i]) && !"-".equals(elements[i]) && !"*".equals(elements[i]) && !"/".equals(elements[i]) && !"^".equals(elements[i]) && getters.contains(elements[i])) {
+            if(!"+".equals(elements[i]) && !"-".equals(elements[i]) && !"*".equals(elements[i]) && !"/".equals(elements[i]) && !"^".equals(elements[i]) && getters != null && getters.contains(elements[i])) {
 
                 Object info = getters.get(elements[i]).invoke(Object.class, instance, parameters);
                 // Replace all occurrences with the value that it got.

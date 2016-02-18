@@ -3,7 +3,6 @@ package mytown.entities;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.Volume;
-import myessentials.utils.ColorUtils;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.handlers.VisualsHandler;

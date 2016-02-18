@@ -1,14 +1,10 @@
 package mytown.entities.flag;
 
 import com.google.gson.*;
-
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
-import myessentials.utils.ColorUtils;
 import mytown.MyTown;
-import mytown.entities.Town;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import java.lang.reflect.Type;

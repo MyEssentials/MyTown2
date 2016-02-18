@@ -1,6 +1,5 @@
 package mytown.entities;
 
-
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.Volume;
 import myessentials.entities.api.sign.SignType;
@@ -13,7 +12,6 @@ import mytown.new_datasource.MyTownUniverse;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntitySign;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -77,13 +75,20 @@ public class Plot implements IChatFormat {
             return false;
         }
 
-        if(!(membersContainer.contains(res) || ownersContainer.contains(res))) {
-            boolean permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
-            if(!permissionBypass) {
-                res.protectionDenial(flagType, ownersContainer.toString());
-                return false;
-            }
+        if(membersContainer.contains(res) || ownersContainer.contains(res)) {
+            return true;
         }
+
+        if (res.getFakePlayer()) {
+            return false;
+        }
+
+        boolean permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
+        if(!permissionBypass) {
+            res.protectionDenial(flagType, ownersContainer.toString());
+            return false;
+        }
+
         return true;
     }
 

@@ -4,6 +4,7 @@ import myessentials.entities.api.BlockPos;
 import myessentials.entities.api.Volume;
 import mytown.entities.Resident;
 import mytown.protection.segment.enums.ItemType;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -18,11 +19,17 @@ import java.util.List;
 public class SegmentItem extends Segment {
 
     protected final List<ItemType> types = new ArrayList<ItemType>();
+    protected int damage = -1;
     protected boolean isAdjacent = false;
     protected ClientBlockUpdate clientUpdate;
+    protected ClientInventoryUpdate inventoryUpdate;
     protected boolean directionalClientUpdate = false;
 
     public boolean shouldInteract(ItemStack item, Resident res, PlayerInteractEvent.Action action, BlockPos bp, int face) {
+        if(damage != -1 && item.getItemDamage() != damage) {
+            return true;
+        }
+
         if(action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR && (!types.contains(ItemType.RIGHT_CLICK_AIR) && !types.contains(ItemType.RIGHT_CLICK_ENTITY))
                 || action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && !types.contains(ItemType.RIGHT_CLICK_BLOCK)
                 || action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK && !types.contains(ItemType.LEFT_CLICK_BLOCK)) {
@@ -33,7 +40,7 @@ public class SegmentItem extends Segment {
             return true;
         }
 
-        EntityPlayerMP player = (EntityPlayerMP) res.getPlayer();
+        EntityPlayer player = res.getPlayer();
         int range = getRange(item);
         int dim = bp.getDim();
         int x = bp.getX();
@@ -44,8 +51,10 @@ public class SegmentItem extends Segment {
             if (!hasPermissionAtLocation(res, dim, x, y, z)) {
                 if(clientUpdate != null) {
                     ForgeDirection direction = ForgeDirection.getOrientation(face);
-                    clientUpdate.send(bp, player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
+                    clientUpdate.send(bp, (EntityPlayerMP)player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         } else {
@@ -53,8 +62,10 @@ public class SegmentItem extends Segment {
             if (!hasPermissionAtLocation(res, dim, rangeBox)) {
                 if(clientUpdate != null) {
                     ForgeDirection direction = ForgeDirection.getOrientation(face);
-                    clientUpdate.send(bp, player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
+                    clientUpdate.send(bp, (EntityPlayerMP)player, directionalClientUpdate ? direction : ForgeDirection.UNKNOWN);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         }
@@ -63,6 +74,10 @@ public class SegmentItem extends Segment {
     }
 
     public boolean shouldBreakBlock(ItemStack item, Resident res, BlockPos bp) {
+        if(damage != -1 && item.getItemDamage() != damage) {
+            return true;
+        }
+
         if(!types.contains(ItemType.BREAK_BLOCK)) {
             return true;
         }
@@ -83,6 +98,8 @@ public class SegmentItem extends Segment {
                 if(clientUpdate != null) {
                     clientUpdate.send(bp, player);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         } else {
@@ -91,9 +108,15 @@ public class SegmentItem extends Segment {
                 if(clientUpdate != null) {
                     clientUpdate.send(bp, player);
                 }
+                if(inventoryUpdate != null)
+                    inventoryUpdate.send(player);
                 return false;
             }
         }
         return true;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 }
