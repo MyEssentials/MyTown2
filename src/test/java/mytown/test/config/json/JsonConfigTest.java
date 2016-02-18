@@ -1,8 +1,6 @@
 package mytown.test.config.json;
 
 import myessentials.json.api.JsonConfig;
-import mytown.config.json.FlagsConfig;
-import mytown.config.json.WildPermsConfig;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
 import org.junit.Assert;
@@ -22,12 +20,12 @@ public class JsonConfigTest {
     @Before
     public void shouldInitConfigs() {
 
-        TestMain.main();
+        //TestMain.main();
 
         jsonConfigs = new ArrayList<JsonConfig>();
         //jsonConfigs.add(new RanksConfig(path + "/DefaultRanks.json"));
-        jsonConfigs.add(new WildPermsConfig(TestMain.path + "/WildPerms.json"));
-        jsonConfigs.add(new FlagsConfig(TestMain.path + "/DefaultFlags.json"));
+        //jsonConfigs.add(new WildPermsConfig(TestMain.path + "/WildPerms.json"));
+        //jsonConfigs.add(new FlagsConfig(TestMain.path + "/DefaultFlags.json"));
     }
 
     @Test

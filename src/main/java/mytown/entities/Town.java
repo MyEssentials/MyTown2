@@ -361,7 +361,7 @@ public class Town implements Comparable<Town>, IChatFormat{
             IChatComponent result = new ChatComponentText("");
 
             for (Town town : this) {
-                IChatComponent mayorComponent = town.residentsMap.getMayor() == null ? new ChatComponentText("SERVER ADMINS").setChatStyle(ColorUtils.styleAdmin) : town.residentsMap.getMayor().toChatMessage();
+                IChatComponent mayorComponent = town.residentsMap.getMayor() == null ? new ChatComponentText("SERVER ADMINS").setChatStyle(ColorUtils.styleAdmin) : MyTown.instance.LOCAL.getLocalization("mytown.format.resident.withrank", );
                 result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.town.short", town.name, town.ranksContainer.getMayorRank(), mayorComponent));
                 result.appendSibling(new ChatComponentText("\n"));
             }
