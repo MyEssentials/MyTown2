@@ -87,7 +87,7 @@ public class CommandsOutsider extends Commands {
             syntax = "/town list",
             console = true)
     public static CommandResponse listCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", getUniverse().towns.toString()));
+        sendMessageBackToSender(sender, getUniverse().towns.toChatMessage());
         return CommandResponse.DONE;
     }
 

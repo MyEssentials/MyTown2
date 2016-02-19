@@ -2,12 +2,11 @@ package mytown.entities;
 
 import myessentials.chat.api.IChatFormat;
 import myessentials.teleport.Teleport;
-import myessentials.utils.ColorUtils;
 import myessentials.utils.PlayerUtils;
 import mypermissions.permission.api.proxy.PermissionProxy;
 import mypermissions.permission.core.entities.PermissionLevel;
 import mytown.MyTown;
-import mytown.api.container.*;
+import mytown.api.container.ResidentRankMap;
 import mytown.config.Config;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
@@ -361,7 +360,13 @@ public class Town implements Comparable<Town>, IChatFormat{
             IChatComponent result = new ChatComponentText("");
 
             for (Town town : this) {
-                IChatComponent mayorComponent = town.residentsMap.getMayor() == null ? new ChatComponentText("SERVER ADMINS").setChatStyle(ColorUtils.styleAdmin) : MyTown.instance.LOCAL.getLocalization("mytown.format.resident.withrank", );
+                IChatComponent mayorComponent;
+                if (town.residentsMap.getMayor() == null) {
+                    mayorComponent = MyTown.instance.LOCAL.getLocalization("mytown.format.admins");
+                } else {
+                    mayorComponent = MyTown.instance.LOCAL.getLocalization("mytown.format.resident.short", town.residentsMap.getMayor().getPlayerName());
+                }
+
                 result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.town.short", town.name, town.ranksContainer.getMayorRank(), mayorComponent));
                 result.appendSibling(new ChatComponentText("\n"));
             }
