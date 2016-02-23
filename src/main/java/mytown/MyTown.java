@@ -9,8 +9,9 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import myessentials.Localization;
+import myessentials.localization.api.Local;
 import myessentials.json.api.JsonConfig;
+import myessentials.localization.api.LocalManager;
 import myessentials.utils.StringUtils;
 import mypermissions.command.api.CommandManager;
 import mytown.commands.*;
@@ -44,7 +45,7 @@ public class MyTown {
     @Instance
     public static MyTown instance;
     public Logger LOG;
-    public Localization LOCAL;
+    public Local LOCAL;
     public MyTownDatasource datasource;
     // ---- Configuration files ----
 
@@ -59,7 +60,8 @@ public class MyTown {
 
         // Read Configs
         Config.instance.init(Constants.CONFIG_FOLDER + "/MyTown.cfg", Constants.MODID);
-        LOCAL = new Localization(Constants.CONFIG_FOLDER+"/localization/", Config.instance.localization.get(), "/mytown/localization/", MyTown.class);
+        LOCAL = new Local(Constants.CONFIG_FOLDER+"/localization/", Config.instance.localization.get(), "/mytown/localization/", MyTown.class);
+        LocalManager.register(LOCAL, "mytown");
 
         registerHandlers();
 

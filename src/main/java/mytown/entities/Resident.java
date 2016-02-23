@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import myessentials.chat.api.IChatFormat;
+import myessentials.localization.api.LocalManager;
 import myessentials.utils.ColorUtils;
 import mytown.MyTown;
 import mytown.config.Config;
@@ -249,7 +250,7 @@ public class Resident implements IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.resident.long", playerName, townsContainer, joinDate.toString(), lastOnline.toString(), extraBlocks);
+        return LocalManager.get("mytown.format.resident.short", playerName);
     }
 
     public boolean getFakePlayer() {

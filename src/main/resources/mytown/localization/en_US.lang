@@ -211,7 +211,7 @@ mytown.adm.cmd.delete.success={c|Deleted town with name }{%s}
 # /ta kick
 mytown.adm.cmd.err.kick.resident={c|Player }{%s}{c| is not part of the town }{%s}
 mytown.notification.town.resident.remove={a|Resident }{%s}{a| has been }{c|removed}{a| from town }{%s}
-mytown.notification.town.resident.add={a|Resident }{%s}{a| has been added to town }{%s}
+mytown.notification.town.resident.add={a|Resident }{%s}{a| has been added to town }{%s}{a| with rank }{%s}
 
 # /ta add
 mytown.adm.cmd.err.add.already={c|Player }{%s}{c| is already a resident of the town }{%s}
@@ -224,22 +224,30 @@ mytown.adm.cmd.far.claim={3|You have bypassed far claims}
 mytown.notification.town.borders.show={3|Showing borders of town }{%s}{3|. Use }{3o|"/t borders hide"}{3| to hide them}
 mytown.notification.town.borders.hide={a|Borders have been successfully hidden}
 
+# /ta ranks
+mytown.notification.town.ranks.perm.add={a|Added permission to rank successfully}
+mytown.notification.town.ranks.perm.remove={a|Removed permission from rank successfully}
+
 # Formatting
 
 mytown.format.flag={7|%s}{7|[}{a|%s}{7|]:}{%s}
 mytown.format.town.short={6|%s }{7|[}{%s}{7|: }{%s}{7|]}
-mytown.format.town.long={6|--------[[}{a|%s}{6|]]--------\n}{6| - }{2|R:%s}{6| - }{2|C:%s/%s}{6| - }{2|P:%s}{6| - \n}{2| Residents: }{%s}{2|\n Ranks: }{%s}
+mytown.format.town.long={%s}{6b| - }{2|R:%s}{6| - }{2|C:%s/%s}{6b| - }{2|P:%s}{6b| - }{2| Residents: }{%s}{2b| Ranks: }{%s}
 mytown.format.rank={l|%s}
 mytown.format.plot.short={a|%s}{7|: }{%s}
-mytown.format.plot.long={6|--------[[}{2|Plot: }{a|%s}{6|]]--------\n}{2|Owners: }{f|%s\n}{2|Borders: }{%s}
+mytown.format.plot.long={%s}{2b|Owners: }{f|%s}{2b|Borders: }{%s}
 mytown.format.resident.short={a|%s}
-mytown.format.resident.long={6|--------[[}{a|%s}{6|]]--------}{2|\n Towns: }{%s}{2|\n Joined: }{a|%s}{2|\n Last online: }{a|%s}{2|\n Extra blocks: }{a|%s}
+mytown.format.resident.long={%s}{2b| Towns: }{%s}{2b| Joined: }{a|%s}{2b| Last online: }{a|%s}{2b| Extra blocks: }{a|%s}
 mytown.format.resident.withrank={%s}{7|(}{%s}{7|)}
 mytown.format.block.short={%s}
 mytown.format.admins={c|SERVER ADMINS}
-mytown.notification.blocks.info=&6--------[[&aBLOCKS&6]]--------\n&2Blocks: &7%s\n&2Extra blocks: &7%s \n&2Far blocks: &7%s
-mytown.notification.prices=&6--------[[&aPRICES&6]]--------\n&2Town creation: &7%s\n&2Claim: &7%s\n&2Additional claim: &7%s\n&2Far claim: &7%s\n&2Spawn: &7%s\n&2Set spawn: &7%s\n&2Other spawn: &7%s\n&2Town upkeep: &7%s\n&2Claim upkeep: &7%s
+mytown.notification.blocks.info={%s}{2b| Blocks: }{7|%s}{2b| Extra blocks: }{7|%s}{%s}{2b| Far blocks: }{7|%s}
+mytown.notification.blocks.info.extra={7| - }{%s}{7| ( %s )}
+mytown.notification.prices={%s}{2b| Town creation: }{7|%s}{2b| Claim: }{7|%s}{2b| Additional claim: }{7|%s}{2b| Far claim: }{7|%s}{2b| Spawn: }{7|%s}{2b| Set spawn: }{7|%s}{2b| Other spawn: }{7|%s}{2b| Town upkeep: }{%s}{2b| Claim upkeep: }{7|%s}
+mytown.format.rank.type.short={%s}
+
 mytown.notification.town.owners=&6 Owners: &c%s
+
 
 # Notifications
 

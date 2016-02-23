@@ -1,6 +1,6 @@
 package mytown.entities.signs;
 
-import myessentials.Localization;
+import myessentials.localization.api.Local;
 import myessentials.classtransformers.SignClassTransformer;
 import myessentials.entities.api.BlockPos;
 import myessentials.entities.api.sign.Sign;
@@ -115,7 +115,7 @@ public class SellSign extends Sign {
         }
     }
 
-    public Localization getLocal() {
+    public Local getLocal() {
         return MyTown.instance.LOCAL;
     }
 

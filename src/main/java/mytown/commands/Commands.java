@@ -1,7 +1,6 @@
 package mytown.commands;
 
-import myessentials.Localization;
-import myessentials.utils.ChatUtils;
+import myessentials.localization.api.Local;
 import mypermissions.command.api.CommandCompletion;
 import mytown.MyTown;
 import mytown.entities.*;
@@ -34,7 +33,7 @@ public abstract class Commands {
     public static MyTownUniverse getUniverse() {
         return MyTownUniverse.instance;
     }
-    public static Localization getLocal() {
+    public static Local getLocal() {
         return MyTown.instance.LOCAL;
     }
 

@@ -2,8 +2,10 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
+import myessentials.chat.api.ChatComponentFormatted;
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
+import myessentials.localization.api.LocalManager;
 import myessentials.utils.ColorUtils;
 import mypermissions.permission.core.container.PermissionsContainer;
 import mytown.MyTown;
@@ -97,7 +99,7 @@ public class Rank implements IChatFormat {
         return MyTown.instance.LOCAL.getLocalization("mytown.format.rank", name).setChatStyle(new ChatStyle().setColor(type.color));
     }
 
-    public enum Type {
+    public enum Type implements IChatFormat {
         /**
          * Rank that can do anything
          */
@@ -112,6 +114,12 @@ public class Rank implements IChatFormat {
          * Nothing special to this rank
          */
         REGULAR(EnumChatFormatting.WHITE, false);
+
+        @Override
+        public IChatComponent toChatMessage() {
+            IChatComponent name = new ChatComponentFormatted("{" + color.getFormattingCode() + "|%s}", name());
+            return LocalManager.get("mytown.format.rank.type.short", name);
+        }
 
         public final EnumChatFormatting color;
         public final boolean unique;

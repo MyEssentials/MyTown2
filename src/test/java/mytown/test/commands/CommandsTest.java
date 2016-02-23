@@ -1,12 +1,10 @@
 package mytown.test.commands;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import mypermissions.command.api.CommandResponse;
 import mytown.commands.CommandsAdmin;
 import mytown.test.MyTownTest;
 import org.junit.Test;
-
-import java.util.ArrayList;
 
 public class CommandsTest extends MyTownTest {
 
