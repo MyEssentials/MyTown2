@@ -1,8 +1,9 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.IChatFormat;
 import myessentials.localization.api.LocalManager;
-import myessentials.utils.ColorUtils;
 import mytown.MyTown;
 import mytown.config.Config;
 import mytown.entities.flag.FlagType;
@@ -11,7 +12,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.FakePlayer;
@@ -322,19 +322,14 @@ public class Resident implements IChatFormat {
 
         @Override
         public IChatComponent toChatMessage() {
-            ChatComponentText result = new ChatComponentText("");
+            IChatComponent root = new ChatComponentList();
 
+            root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|RESIDENTS}")));
             for (Resident res : this) {
-                if (result.getSiblings().size() == 0) {
-                    result.appendSibling(res.toChatMessage());
-                } else {
-                    result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma).appendSibling(res.toChatMessage()));
-                }
+                root.appendSibling(res.toChatMessage());
             }
-            if (isEmpty()) {
-                result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
-            }
-            return result;
+
+            return root;
         }
     }
 }

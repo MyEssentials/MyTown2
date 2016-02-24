@@ -1,25 +1,27 @@
 package mytown.commands;
 
 
+import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatManager;
+import myessentials.localization.api.LocalManager;
+import myessentials.utils.StringUtils;
 import mypermissions.command.api.CommandManager;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
 import mypermissions.command.core.entities.CommandTree;
 import mypermissions.command.core.entities.CommandTreeNode;
-import myessentials.utils.StringUtils;
 import mytown.config.Config;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.proxies.EconomyProxy;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,13 +52,15 @@ public class CommandsOutsider extends Commands {
                 towns = new ArrayList<Town>(getUniverse().towns);
                 // TODO Sort
             } else {
-                if(getTownFromName(args.get(0)) != null)
+                if(getTownFromName(args.get(0)) != null) {
                     towns.add(getTownFromName(args.get(0)));
+                }
             }
         }
 
         for (Town town : towns) {
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.info", town.getName(), town.residentsMap.size(), town.townBlocksContainer.size(), town.getMaxBlocks(), town.plotsContainer.size(), town.residentsMap.toString(), town.ranksContainer.toString()));
+            IChatComponent header = LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|%s}", town.getName()));
+            ChatManager.send(sender, "mytown.format.town.long", header, town.residentsMap.size(), town.townBlocksContainer.size(), town.getMaxBlocks(), town.plotsContainer.size(), town.residentsMap, town.ranksContainer);
         }
         return CommandResponse.DONE;
     }
@@ -76,7 +80,7 @@ public class CommandsOutsider extends Commands {
         if (res == null) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
         }
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.format.resident.long", res.getPlayerName(), res.townsContainer, Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline()), res.getExtraBlocks()));
+        ChatManager.send(sender, "mytown.format.resident.long", res, res.townsContainer, Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline()), res.getExtraBlocks());
         return CommandResponse.DONE;
     }
 
@@ -87,7 +91,7 @@ public class CommandsOutsider extends Commands {
             syntax = "/town list",
             console = true)
     public static CommandResponse listCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, getUniverse().towns.toChatMessage());
+        ChatManager.send(sender, getUniverse().towns.toChatMessage());
         return CommandResponse.DONE;
     }
 
@@ -103,29 +107,34 @@ public class CommandsOutsider extends Commands {
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender); // Attempt to get or make the Resident
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
+        ChatManager.send(sender, "mytown.notification.town.startedCreation", args.get(0));
 
-        if (res.townsContainer.size() >= Config.instance.maxTowns.get())
+        if (res.townsContainer.size() >= Config.instance.maxTowns.get()) {
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
-        if (getUniverse().towns.contains(args.get(0))) // Is the town name already in use?
+        }
+        if (getUniverse().towns.contains(args.get(0))) {
             throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
-        if (getUniverse().blocks.contains(player.dimension, (int) player.posX >> 4, (int) player.posZ >> 4)) // Is the Block already claimed?
+        }
+        if (getUniverse().blocks.contains(player.dimension, (int) player.posX >> 4, (int) player.posZ >> 4)) {
             throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
+        }
         for (int x = ((int) player.posX >> 4) - Config.instance.distanceBetweenTowns.get(); x <= ((int) player.posX >> 4) + Config.instance.distanceBetweenTowns.get(); x++) {
             for (int z = ((int) player.posZ >> 4) - Config.instance.distanceBetweenTowns.get(); z <= ((int) player.posZ >> 4) + Config.instance.distanceBetweenTowns.get(); z++) {
                 Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                if (nearbyTown != null && !(Boolean)nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
+                if (nearbyTown != null && !nearbyTown.flagsContainer.getValue(FlagType.NEARBY)) {
                     throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", nearbyTown.getName(), Config.instance.distanceBetweenTowns.get());
+                }
             }
         }
 
         makePayment(player, Config.instance.costAmountMakeTown.get() + Config.instance.costAmountClaim.get());
 
         Town town = getUniverse().newTown(args.get(0), res); // Attempt to create the Town
-        if (town == null)
+        if (town == null) {
             throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
+        }
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
+        ChatManager.send(sender, "mytown.notification.town.created", town);
         return CommandResponse.DONE;
     }
 
@@ -170,7 +179,7 @@ public class CommandsOutsider extends Commands {
         getDatasource().deleteTownInvite(res, town, true);
 
         // Notify everyone
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.accept", town.getName()));
+        ChatManager.send(sender, "mytown.notification.town.invited.accept", town);
         town.notifyResidentJoin(res);
         return CommandResponse.DONE;
     }
@@ -197,7 +206,7 @@ public class CommandsOutsider extends Commands {
 
         getDatasource().deleteTownInvite(res, town, false);
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.refuse", town.getName()));
+        ChatManager.send(sender, "mytown.notification.town.invited.refuse", town);
         return CommandResponse.DONE;
     }
 
@@ -360,17 +369,10 @@ public class CommandsOutsider extends Commands {
             syntax = "/town invites")
     public static CommandResponse invitesCommand(ICommandSender sender, List<String> args) {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-        if (res.townInvitesContainer.size() == 0)
-            res.sendMessage(getLocal().getLocalization("mytown.notification.resident.noInvites"));
-        else {
-            String formattedList = null;
-            for (Town town : res.townInvitesContainer)
-                if (formattedList == null)
-                    formattedList = EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
-                else
-                    formattedList += ", " + EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
-            res.sendMessage(getLocal().getLocalization("mytown.notification.resident.invites"));
-            res.sendMessage(new ChatComponentText(formattedList));
+        if (res.townInvitesContainer.size() == 0) {
+            ChatManager.send(sender, "mytown.notification.resident.noInvites");
+        } else {
+            ChatManager.send(sender, res.townInvitesContainer.toChatMessage());
         }
         return CommandResponse.DONE;
     }
@@ -383,7 +385,18 @@ public class CommandsOutsider extends Commands {
     public static CommandResponse pricesCommand(ICommandSender sender, List<String> args) {
         Resident res = getUniverse().getOrMakeResident(sender);
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.prices", EconomyProxy.getCurrency(Config.instance.costAmountMakeTown.get()), EconomyProxy.getCurrency(Config.instance.costAmountClaim.get()), EconomyProxy.getCurrency(Config.instance.costAdditionClaim.get()), EconomyProxy.getCurrency(Config.instance.costAmountClaimFar.get()), EconomyProxy.getCurrency(Config.instance.costAmountSpawn.get()), EconomyProxy.getCurrency(Config.instance.costAmountSetSpawn.get()), EconomyProxy.getCurrency(Config.instance.costAmountOtherSpawn.get()), EconomyProxy.getCurrency(Config.instance.costTownUpkeep.get()), EconomyProxy.getCurrency(Config.instance.costAdditionalUpkeep.get())));
+        IChatComponent header = LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|PRICES}"));
+        ChatManager.send(sender, "mytown.notification.prices",
+                header,
+                EconomyProxy.getCurrency(Config.instance.costAmountMakeTown.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountClaim.get()),
+                EconomyProxy.getCurrency(Config.instance.costAdditionClaim.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountClaimFar.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountSpawn.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountSetSpawn.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountOtherSpawn.get()),
+                EconomyProxy.getCurrency(Config.instance.costTownUpkeep.get()),
+                EconomyProxy.getCurrency(Config.instance.costAdditionalUpkeep.get()));
 
         return CommandResponse.DONE;
     }

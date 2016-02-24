@@ -3,7 +3,7 @@ package mytown.entities.flag;
 import com.google.gson.*;
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
-import mytown.MyTown;
+import myessentials.localization.api.LocalManager;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
@@ -65,8 +65,8 @@ public class Flag<T> implements Comparable<Flag>, IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        IChatComponent description = MyTown.instance.LOCAL.getLocalization(flagType.getDescriptionKey());
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.flag", flagType.name.toLowerCase(), value.toString(), description);
+        IChatComponent description = LocalManager.get(flagType.getDescriptionKey());
+        return LocalManager.get("mytown.format.flag", flagType.name.toLowerCase(), value.toString(), description);
     }
 
     @SuppressWarnings("unchecked")

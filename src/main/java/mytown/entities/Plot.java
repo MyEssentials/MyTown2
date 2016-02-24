@@ -1,10 +1,12 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.Volume;
 import myessentials.entities.api.sign.SignType;
+import myessentials.localization.api.LocalManager;
 import mypermissions.permission.api.proxy.PermissionProxy;
-import mytown.MyTown;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsHandler;
@@ -99,7 +101,7 @@ public class Plot implements IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.plot.long", name, dim, x1, y1, z1, x2, y2, z2);
+        return toVolume().toChatMessage();
     }
 
     public Volume toVolume() {
@@ -220,7 +222,7 @@ public class Plot implements IChatFormat {
             }
     }
 
-    public static class Container extends ArrayList<Plot> {
+    public static class Container extends ArrayList<Plot> implements IChatFormat {
 
         private int maxPlots;
 
@@ -324,6 +326,18 @@ public class Plot implements IChatFormat {
                     VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) res.getPlayer(), plot);
                 }
             }
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            IChatComponent root = new ChatComponentList();
+
+            root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|PLOTS}")));
+            for (Plot plot : this) {
+                root.appendSibling(plot.toChatMessage());
+            }
+
+            return root;
         }
     }
 }

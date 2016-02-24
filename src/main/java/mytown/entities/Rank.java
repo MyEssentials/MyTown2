@@ -8,9 +8,7 @@ import myessentials.json.api.SerializerTemplate;
 import myessentials.localization.api.LocalManager;
 import myessentials.utils.ColorUtils;
 import mypermissions.permission.core.container.PermissionsContainer;
-import mytown.MyTown;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
@@ -96,7 +94,7 @@ public class Rank implements IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.rank", name).setChatStyle(new ChatStyle().setColor(type.color));
+        return LocalManager.get("mytown.format.rank", name);
     }
 
     public enum Type implements IChatFormat {

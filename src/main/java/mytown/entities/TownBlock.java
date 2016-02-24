@@ -3,7 +3,6 @@ package mytown.entities;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.Volume;
-import mytown.MyTown;
 import mytown.config.Config;
 import mytown.handlers.VisualsHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -82,7 +81,7 @@ public class TownBlock implements IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.block.long", dim, x, z, town.getName(), plotsContainer.size());
+        return toChunkPos().toChatMessage();
     }
 
     public Volume toVolume() {
@@ -182,14 +181,14 @@ public class TownBlock implements IChatFormat {
 
         @Override
         public IChatComponent toChatMessage() {
-            IChatComponent result = new ChatComponentText("");
+            IChatComponent root = new ChatComponentText("");
 
             for (TownBlock block : this) {
-                result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.block.short", block.toChunkPos()));
-                result.appendSibling(new ChatComponentText(" "));
+                root.appendSibling(block.toChatMessage());
+                root.appendSibling(new ChatComponentText(" "));
             }
 
-            return result;
+            return root;
         }
     }
 }

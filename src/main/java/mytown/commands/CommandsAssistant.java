@@ -1,19 +1,19 @@
 package mytown.commands;
 
+import myessentials.chat.api.ChatManager;
 import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.tool.ToolManager;
-import myessentials.utils.ChatUtils;
 import myessentials.utils.MathUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
 import mytown.config.Config;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.entities.tools.WhitelisterTool;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.proxies.EconomyProxy;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
@@ -38,14 +38,15 @@ public class CommandsAssistant extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(player);
         Town town = getTownFromResident(res);
 
-        if (!town.isPointInTown(player.dimension, (int) player.posX, (int) player.posZ))
+        if (!town.isPointInTown(player.dimension, (int) player.posX, (int) player.posZ)) {
             throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()).getUnformattedText());
+        }
 
         makePayment(player, Config.instance.costAmountSetSpawn.get());
 
         town.getSpawn().setDim(player.dimension).setPosition((float) player.posX, (float) player.posY, (float) player.posZ).setRotation(player.cameraYaw, player.cameraPitch);
         getDatasource().saveTown(town);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.setspawn"));
+        ChatManager.send(sender, "mytown.notification.town.setspawn");
         return CommandResponse.DONE;
     }
 
@@ -62,39 +63,46 @@ public class CommandsAssistant extends Commands {
         boolean isFarClaim = false;
 
         if (args.size() < 1) {
-            if (town.townBlocksContainer.size() >= town.getMaxBlocks())
+            if (town.townBlocksContainer.size() >= town.getMaxBlocks()) {
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", 1);
-            if (getUniverse().blocks.contains(player.dimension, player.chunkCoordX, player.chunkCoordZ))
+            }
+            if (getUniverse().blocks.contains(player.dimension, player.chunkCoordX, player.chunkCoordZ)) {
                 throw new MyTownCommandException("mytown.cmd.err.claim.already");
+            }
             if (!checkNearby(player.dimension, player.chunkCoordX, player.chunkCoordZ, town)) {
-                if (town.townBlocksContainer.getFarClaims() >= town.getMaxFarClaims())
+                if (town.townBlocksContainer.getFarClaims() >= town.getMaxFarClaims()) {
                     throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
+                }
                 isFarClaim = true;
             }
             for (int x = player.chunkCoordX - Config.instance.distanceBetweenTowns.get(); x <= player.chunkCoordX + Config.instance.distanceBetweenTowns.get(); x++) {
                 for (int z = player.chunkCoordZ - Config.instance.distanceBetweenTowns.get(); z <= player.chunkCoordZ + Config.instance.distanceBetweenTowns.get(); z++) {
                     Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                    if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
+                    if (nearbyTown != null && nearbyTown != town && !nearbyTown.flagsContainer.getValue(FlagType.NEARBY)) {
                         throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.instance.distanceBetweenTowns.get());
+                    }
                 }
             }
 
-            if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.getMaxFarClaims())
+            if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.getMaxFarClaims()) {
                 throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
+            }
 
             int price = (isFarClaim ? Config.instance.costAmountClaimFar.get() : Config.instance.costAmountClaim.get()) + Config.instance.costAdditionClaim.get() * town.townBlocksContainer.size();
 
             makeBankPayment(player, town, price);
 
             TownBlock block = getUniverse().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, price, town);
-            if (block == null)
+            if (block == null) {
                 throw new MyTownCommandException("mytown.cmd.err.claim.failed");
+            }
 
             getDatasource().saveBlock(block);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+            ChatManager.send(sender, "mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town);
         } else {
-            if (!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0)
+            if (!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0) {
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
+            }
 
             int radius = Integer.parseInt(args.get(0));
             List<ChunkPos> chunks = WorldUtils.getChunksInBox(player.dimension, (int) (player.posX - radius * 16), (int) (player.posZ - radius * 16), (int) (player.posX + radius * 16), (int) (player.posZ + radius * 16));
@@ -105,23 +113,27 @@ public class CommandsAssistant extends Commands {
                 if (checkNearby(player.dimension, chunk.getX(), chunk.getZ(), town)) {
                     isFarClaim = false;
                 }
-                if (getUniverse().blocks.contains(player.dimension, chunk.getX(), chunk.getZ()))
+                if (getUniverse().blocks.contains(player.dimension, chunk.getX(), chunk.getZ())) {
                     it.remove();
+                }
 
                 for (int x = chunk.getX() - Config.instance.distanceBetweenTowns.get(); x <= chunk.getX() + Config.instance.distanceBetweenTowns.get(); x++) {
                     for (int z = chunk.getZ() - Config.instance.distanceBetweenTowns.get(); z <= chunk.getZ() + Config.instance.distanceBetweenTowns.get(); z++) {
                         Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                        if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
+                        if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(FlagType.NEARBY)) {
                             throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.instance.distanceBetweenTowns.get());
+                        }
                     }
                 }
             }
 
-            if (town.townBlocksContainer.size() + chunks.size() > town.getMaxBlocks())
+            if (town.townBlocksContainer.size() + chunks.size() > town.getMaxBlocks()) {
                 throw new MyTownCommandException("mytown.cmd.err.town.maxBlocks", chunks.size());
+            }
 
-            if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.getMaxFarClaims())
+            if (isFarClaim && town.townBlocksContainer.getFarClaims() + 1 > town.getMaxFarClaims()) {
                 throw new MyTownCommandException("mytown.cmd.err.claim.far.notAllowed");
+            }
 
             makeBankPayment(player, town, (isFarClaim ? Config.instance.costAmountClaimFar.get() + Config.instance.costAmountClaim.get() * (chunks.size() - 1) : Config.instance.costAmountClaim.get() * chunks.size())
                     + MathUtils.sumFromNtoM(town.townBlocksContainer.size(), town.townBlocksContainer.size() + chunks.size() - 1) * Config.instance.costAdditionClaim.get());
@@ -132,7 +144,7 @@ public class CommandsAssistant extends Commands {
                 // Only one of the block will be a farClaim, rest will be normal claim
                 isFarClaim = false;
                 getDatasource().saveBlock(block);
-                res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
+                ChatManager.send(sender, "mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town);
             }
         }
         return CommandResponse.DONE;
@@ -149,16 +161,18 @@ public class CommandsAssistant extends Commands {
         TownBlock block = getBlockAtResident(res);
         Town town = getTownFromResident(res);
 
-        if (town != block.getTown())
+        if (town != block.getTown()) {
             throw new MyTownCommandException("mytown.cmd.err.unclaim.notInTown");
-        if (block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ()))
+        }
+        if (block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
             throw new MyTownCommandException("mytown.cmd.err.unclaim.spawnPoint");
+        }
         if (!checkNearby(block.getDim(), block.getX(), block.getZ(), town) && town.townBlocksContainer.size() <= 1) {
             throw new MyTownCommandException("mytown.cmd.err.unclaim.lastClaim");
         }
 
         getDatasource().deleteBlock(block);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town.getName()));
+        ChatManager.send(sender, "mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, block.getX() << 4 + 15, block.getZ() << 4 + 15, town);
         makeBankRefund(player, town, block.getPricePaid());
         return CommandResponse.DONE;
     }
@@ -170,17 +184,21 @@ public class CommandsAssistant extends Commands {
             syntax = "/town invite <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse inviteCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 1) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        if (args.size() < 1)
-            return CommandResponse.SEND_SYNTAX;
+
         Resident target = getResidentFromName(args.get(0));
-        if (town.residentsMap.contains(args.get(0)))
+        if (town.residentsMap.contains(args.get(0))) {
             throw new MyTownCommandException("mytown.cmd.err.invite.already", args.get(0), town.getName());
+        }
 
         getDatasource().saveTownInvite(target, town);
-        target.sendMessage(getLocal().getLocalization("mytown.notification.town.invited", town.getName()));
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invite.sent", args.get(0)));
+        ChatManager.send(target.getPlayer(), "mytown.notification.town.invited", town);
+        ChatManager.send(sender, "mytown.notification.town.invite.sent");
         return CommandResponse.DONE;
     }
 
@@ -191,9 +209,10 @@ public class CommandsAssistant extends Commands {
             syntax = "/town perm set <flag> <value>",
             completionKeys = "flagCompletion")
     public static CommandResponse permSetCommand(ICommandSender sender, List<String> args) {
-
-        if (args.size() < 2)
+        if (args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
+        }
+
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         Flag flag = getFlagFromName(town.flagsContainer, args.get(0));
@@ -202,7 +221,7 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(0));
         } else {
             if (flag.setValue(args.get(1))) {
-                sender.addChatMessage(getLocal().getLocalization("mytown.notification.perm.success"));
+                ChatManager.send(sender, "mytown.notification.perm.success");
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -218,9 +237,10 @@ public class CommandsAssistant extends Commands {
             syntax = "/town perm toggle <flag>",
             completionKeys = "flagCompletion")
     public static CommandResponse permToggleCommand(ICommandSender sender, List<String> args) {
-
-        if (args.size() < 1)
+        if (args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
+        }
+
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
         Flag flag = getFlagFromName(town.flagsContainer, args.get(0));
@@ -229,7 +249,7 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(0));
         } else {
             if (flag.toggle()) {
-                sender.addChatMessage(getLocal().getLocalization("mytown.notification.perm.success"));
+                ChatManager.send(sender, "mytown.notification.perm.success");
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -256,22 +276,26 @@ public class CommandsAssistant extends Commands {
             syntax = "/town promote <resident> <rank>",
             completionKeys = {"residentCompletion", "rankCompletion"})
     public static CommandResponse promoteCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 2)
+        if (args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
+        }
+
         Resident resSender = MyTownUniverse.instance.getOrMakeResident(sender);
         Resident resTarget = getResidentFromName(args.get(0));
         Town town = getTownFromResident(resSender);
 
-        if (!resTarget.townsContainer.contains(town))
+        if (!resTarget.townsContainer.contains(town)) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", args.get(0), town.getName());
+        }
 
         Rank mayorRank = town.ranksContainer.getMayorRank();
-        if (args.get(1).equalsIgnoreCase(mayorRank.getName()))
+        if (args.get(1).equalsIgnoreCase(mayorRank.getName())) {
             throw new MyTownCommandException("mytown.cmd.err.promote.notMayor");
+        }
         Rank rank = getRankFromTown(town, args.get(1));
         if (getDatasource().updateResidentToTownLink(resTarget, town, rank)) {
-            resSender.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.sender", resTarget.getPlayerName(), rank.getName()));
-            resTarget.sendMessage(getLocal().getLocalization("mytown.cmd.promote.success.target", rank.getName(), town.getName()));
+            ChatManager.send(sender, "mytown.cmd.promote.success.sender", resTarget, rank);
+            ChatManager.send(resTarget.getPlayer(), "mytown.cmd.promote.success.target", rank);
         }
         return CommandResponse.DONE;
     }
@@ -288,14 +312,16 @@ public class CommandsAssistant extends Commands {
                 syntax = "/town ranks add <name> [templateRank]",
                 completionKeys = {"-", "ranksCompletion"})
         public static CommandResponse ranksAddCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 1)
+            if (args.size() < 1) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
-            if (town.ranksContainer.contains(args.get(0)))
+            if (town.ranksContainer.contains(args.get(0))) {
                 throw new MyTownCommandException("mytown.cmd.err.ranks.add.already", args.get(0));
+            }
 
             Rank rank = new Rank(args.get(0), town, Rank.Type.REGULAR);
             if(args.size() == 2) {
@@ -305,7 +331,7 @@ public class CommandsAssistant extends Commands {
 
             getDatasource().saveRank(rank);
 
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.add", args.get(0), town.getName()));
+            ChatManager.send(sender, "mytown.notification.town.ranks.add", rank, town);
             return CommandResponse.DONE;
         }
 
@@ -316,8 +342,9 @@ public class CommandsAssistant extends Commands {
                 syntax = "/town ranks remove <rank>",
                 completionKeys = {"rankCompletion"})
         public static CommandResponse ranksRemoveCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 1)
+            if (args.size() < 1) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
@@ -334,7 +361,7 @@ public class CommandsAssistant extends Commands {
             }
 
             getDatasource().deleteRank(rank);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.rem", args.get(0), town.getName()));
+            ChatManager.send(sender, "mytown.notification.town.ranks.rem", rank, town);
 
             return CommandResponse.DONE;
         }
@@ -376,7 +403,7 @@ public class CommandsAssistant extends Commands {
                 getDatasource().saveRank(rank);
             }
 
-            res.sendMessage(getLocal().getLocalization("mytown.notification.ranks.set.successful", rank.getName(), type.toString()));
+            ChatManager.send(sender, "mytown.notification.ranks.set.successful", rank, type);
             return CommandResponse.DONE;
         }
 
@@ -388,15 +415,16 @@ public class CommandsAssistant extends Commands {
                 syntax = "/town ranks perm add <rank> <perm>",
                 completionKeys = {"rankCompletion"})
         public static CommandResponse ranksPermAddCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 2)
+            if (args.size() < 2) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
 
             getDatasource().saveRankPermission(rank, args.get(1));
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.add", args.get(1), args.get(0)));
+            ChatManager.send(sender, "mytown.notification.town.ranks.perm.add");
 
             return CommandResponse.DONE;
         }
@@ -408,15 +436,16 @@ public class CommandsAssistant extends Commands {
                 syntax = "/town ranks perm remove <rank> <perm>",
                 completionKeys = {"rankCompletion"})
         public static CommandResponse ranksPermRemoveCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 2)
+            if (args.size() < 2) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             Rank rank = getRankFromTown(town, args.get(0));
 
             getDatasource().deleteRankPermission(rank, args.get(1));
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.remove", args.get(1), args.get(0)));
+            ChatManager.send(sender, "mytown.notification.town.ranks.perm.remove");
 
             return CommandResponse.DONE;
         }
@@ -448,7 +477,7 @@ public class CommandsAssistant extends Commands {
                 }
             }
 
-            res.sendMessage(getLocal().getLocalization("mytown.notification.ranks.reset"));
+            ChatManager.send(sender, "mytown.notification.ranks.reset");
 
             return CommandResponse.DONE;
         }
@@ -478,7 +507,7 @@ public class CommandsAssistant extends Commands {
             rank = getRankFromTown(town, args.get(0));
         }
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), town.getName(), rank.permissionsContainer.toString()));
+        ChatManager.send(sender, rank.permissionsContainer.toChatMessage());
         return CommandResponse.DONE;
     }
 
@@ -489,8 +518,9 @@ public class CommandsAssistant extends Commands {
             syntax = "/town pass <resident>",
             completionKeys = {"residentCompletion"})
     public static CommandResponse passCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
+        if (args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
+        }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
@@ -506,9 +536,9 @@ public class CommandsAssistant extends Commands {
         }
         if (town.residentsMap.get(res).getType() == Rank.Type.MAYOR) {
             getDatasource().updateResidentToTownLink(target, town, town.ranksContainer.getMayorRank());
-            target.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.passed"));
+            ChatManager.send(target.getPlayer(), "mytown.notification.town.mayorShip.passed");
             getDatasource().updateResidentToTownLink(res, town, town.ranksContainer.getDefaultRank());
-            res.sendMessage(getLocal().getLocalization("mytown.notification.town.mayorShip.taken"));
+            ChatManager.send(sender, "mytown.notification.town.mayorShip.taken");
         } else {
             //...
         }
@@ -533,7 +563,7 @@ public class CommandsAssistant extends Commands {
         public static CommandResponse plotLimitShowCommand(ICommandSender sender, List<String> args) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit", town.plotsContainer.getMaxPlots()));
+            ChatManager.send(sender, "mytown.notification.plot.limit", town.plotsContainer.getMaxPlots());
             return CommandResponse.DONE;
         }
 
@@ -544,8 +574,9 @@ public class CommandsAssistant extends Commands {
                 parentName = "mytown.cmd.assistant.plot.limit",
                 syntax = "/town plot limit set <limit>")
         public static CommandResponse plotLimitSetCommand(ICommandSender sender, List<String> args) {
-            if (args.size() < 1)
+            if (args.size() < 1) {
                 return CommandResponse.SEND_SYNTAX;
+            }
 
             if (!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0) {
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
@@ -555,7 +586,7 @@ public class CommandsAssistant extends Commands {
             Town town = getTownFromResident(res);
             town.plotsContainer.setMaxPlots(limit);
             getDatasource().saveTown(town);
-            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.limit.set", town.plotsContainer.getMaxPlots()));
+            ChatManager.send(sender, "mytown.notification.plot.limit.set", town.plotsContainer.getMaxPlots());
             return CommandResponse.DONE;
         }
     }
@@ -570,6 +601,7 @@ public class CommandsAssistant extends Commands {
         if (args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
         }
+
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromResident(res);
@@ -585,8 +617,8 @@ public class CommandsAssistant extends Commands {
         }
 
         getDatasource().unlinkResidentFromTown(target, town);
-        target.sendMessage(getLocal().getLocalization("mytown.notification.town.kicked", town.getName()));
-        town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.left", target.getPlayerName(), town.getName()));
+        ChatManager.send(target.getPlayer(), "mytown.notification.town.kicked", town);
+        town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.left", target, town));
         return CommandResponse.DONE;
     }
 
@@ -603,12 +635,11 @@ public class CommandsAssistant extends Commands {
         if (town.residentsMap.get(res).getType() == Rank.Type.MAYOR) {
             for(Plot plot: town.plotsContainer) {
                 if(!plot.ownersContainer.contains(res)) {
-                    res.sendMessage(getLocal().getLocalization("mytown.notification.town.delete.with-plots"));
-                    return CommandResponse.DONE;
+                    throw new MyTownCommandException("mytown.cmd.err.town.delete.withPlots");
                 }
             }
 
-            town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
+            town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town, res));
             int refund = 0;
             for (TownBlock block : town.townBlocksContainer) {
                 refund += block.getPricePaid();
@@ -626,18 +657,20 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd",
             syntax = "/town rename <name>")
     public static CommandResponse renameCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
+        if (args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
+        }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        if (getUniverse().towns.contains(args.get(0))) // Is the town name already in use?
+        if (getUniverse().towns.contains(args.get(0))) {
             throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
+        }
 
         town.rename(args.get(0));
         getDatasource().saveTown(town);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.renamed"));
+        ChatManager.send(sender, "mytown.notification.town.renamed");
         return CommandResponse.DONE;
     }
 
@@ -647,21 +680,25 @@ public class CommandsAssistant extends Commands {
             parentName = "mytown.cmd.everyone.bank",
             syntax = "/town bank withdraw <amount>")
     public static CommandResponse bankWithdrawCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1)
+        if(args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
+        }
 
-        if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1)
+        if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
+        }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        if(town instanceof AdminTown)
+        if(town instanceof AdminTown) {
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
+        }
 
         int amount = Integer.parseInt(args.get(0));
-        if(town.bank.getAmount() < amount)
+        if(town.bank.getAmount() < amount) {
             throw new MyTownCommandException("mytown.cmd.err.bank.withdraw", EconomyProxy.getCurrency(town.bank.getAmount()));
+        }
 
         makeRefund(res.getPlayer(), amount);
         town.bank.addAmount(-amount);

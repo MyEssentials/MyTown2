@@ -89,14 +89,14 @@ mytown.cmd.config.save.stop={a|Config saved}
 mytown.cmd.config.reset={a|Successfully recreated the %s file}
 
 # /t new [townname]
-mytown.cmd.err.newtown.nameinuse={c|Town name }{%s}{ already in use}
+mytown.cmd.err.newtown.nameinuse={c|Town name }{%s}{c| already in use}
 mytown.cmd.err.newtown.positionError={c|You cannot make a new town on a claimed chunk}
 mytown.cmd.err.newtown.failed={c|There was an issue with creating the town}
 mytown.cmd.err.newtown.tooClose={c|You are too close to town }{%s}{c|. Please leave at least %s chunks between the towns}
 mytown.cmd.err.claim.tooClose={c|You are too close to town }{%s}{c|. Please leave at least %s chunks between the towns}
 mytown.cmd.err.resident.maxTowns={c|You cannot create/join any more towns, you have hit the maximum amount of towns you can be in}
-mytown.notification.town.created={a|Town }{%s}{ created}
-mytown.notification.town.deleted={c|Town }{%s}{ deleted}
+mytown.notification.town.created={a|Town }{%s}{a| created}
+mytown.notification.town.deleted={c|Town }{%s}{a| deleted}
 mytown.notification.town.deleted.withplots={c|You cannot delete towns with plots that you don't own}
 
 
@@ -147,6 +147,7 @@ mytown.cmd.err.ranks.typeNotExists={c|Rank type }{%s}{c| does not exist}
 mytown.notification.ranks.reset={3|Ranks have been reset to their initial state}
 mytown.cmd.err.ranks.set.unique={c|The rank type of }{%s}{c| is unique. You must set the unique type first}
 mytown.cmd.err.ranks.assigned={c|This rank is assigned to some residents, change their rank before deleting this}
+
 
 # /t plot
 mytown.cmd.err.plot.remove.notInPlot={c|Resident is not a member/owner of this plot}
@@ -207,6 +208,7 @@ mytown.notification.admtown.created={a|Admin town }{%s}{ created!}
 
 # /ta delete
 mytown.adm.cmd.delete.success={c|Deleted town with name }{%s}
+mytown.cmd.err.town.delete.withPlots={c|This town has plots that are not owned by you}
 
 # /ta kick
 mytown.adm.cmd.err.kick.resident={c|Player }{%s}{c| is not part of the town }{%s}
@@ -232,18 +234,18 @@ mytown.notification.town.ranks.perm.remove={a|Removed permission from rank succe
 
 mytown.format.flag={7|%s}{7|[}{a|%s}{7|]:}{%s}
 mytown.format.town.short={6|%s }{7|[}{%s}{7|: }{%s}{7|]}
-mytown.format.town.long={%s}{6b| - }{2|R:%s}{6| - }{2|C:%s/%s}{6b| - }{2|P:%s}{6b| - }{2| Residents: }{%s}{2b| Ranks: }{%s}
+mytown.format.town.long={%s}{6N| - }{2|R:%s}{6| - }{2|C:%s/%s}{6| - }{2|P:%s}{6| - }{2N| Residents: }{%s}{2N| Ranks: }{%s}
 mytown.format.rank={l|%s}
 mytown.format.plot.short={a|%s}{7|: }{%s}
-mytown.format.plot.long={%s}{2b|Owners: }{f|%s}{2b|Borders: }{%s}
+mytown.format.plot.long={%s}{2N|Owners: }{f|%s}{2N|Borders: }{%s}
 mytown.format.resident.short={a|%s}
-mytown.format.resident.long={%s}{2b| Towns: }{%s}{2b| Joined: }{a|%s}{2b| Last online: }{a|%s}{2b| Extra blocks: }{a|%s}
+mytown.format.resident.long={%s}{2N| Towns: }{%s}{2N| Joined: }{a|%s}{2N| Last online: }{a|%s}{2N| Extra blocks: }{a|%s}
 mytown.format.resident.withrank={%s}{7|(}{%s}{7|)}
 mytown.format.block.short={%s}
 mytown.format.admins={c|SERVER ADMINS}
-mytown.notification.blocks.info={%s}{2b| Blocks: }{7|%s}{2b| Extra blocks: }{7|%s}{%s}{2b| Far blocks: }{7|%s}
+mytown.notification.blocks.info={%s}{2N| Blocks: }{7|%s}{2N| Extra blocks: }{7|%s}{%s}{2N| Far blocks: }{7|%s}
 mytown.notification.blocks.info.extra={7| - }{%s}{7| ( %s )}
-mytown.notification.prices={%s}{2b| Town creation: }{7|%s}{2b| Claim: }{7|%s}{2b| Additional claim: }{7|%s}{2b| Far claim: }{7|%s}{2b| Spawn: }{7|%s}{2b| Set spawn: }{7|%s}{2b| Other spawn: }{7|%s}{2b| Town upkeep: }{%s}{2b| Claim upkeep: }{7|%s}
+mytown.notification.prices={%s}{2N| Town creation: }{7|%s}{2N| Claim: }{7|%s}{2N| Additional claim: }{7|%s}{2N| Far claim: }{7|%s}{2N| Spawn: }{7|%s}{2N| Set spawn: }{7|%s}{2N| Other spawn: }{7|%s}{2N| Town upkeep: }{%s}{2N| Claim upkeep: }{7|%s}
 mytown.format.rank.type.short={%s}
 
 mytown.notification.town.owners=&6 Owners: &c%s
@@ -275,7 +277,7 @@ mytown.notification.town.left.asMayor={c|Before you leave you need to choose bet
 mytown.notification.town.mayorShip.passed={a|You have been promoted to Mayor by the old Mayor}
 mytown.notification.town.mayorShip.taken={a|Your mayorship has been taken, you've been demoted to the default rank}
 mytown.notification.town.delete={c|Town }{%s}{c| has been deleted by the Mayor}
-mytown.notification.town.startedCreation={2|Started creation of town }{%s}{2|, wait a few seconds}
+mytown.notification.town.startedCreation={2|Started creation of town }{2o|%s}{2|, wait a few seconds}
 mytown.notification.plot.renamed={a|The plot has been successfully renamed}
 mytown.notification.plot.showing={3|Plots are now showing borders.}{3| Use}{3o| "/t plot hide"}{3| in order to hide them}
 mytown.notification.plot.vanished={a|Plots have been successfully hidden}
@@ -306,7 +308,7 @@ mytown.notification.town.payment={3|%s has been taken from the bank}
 mytown.notification.town.refund={3|%s has been refunded to the bank}
 mytown.notification.plot.sender.removed={c|%s has been removed from the plot}
 mytown.notification.plot.target.removed={c|You have been removed from plot }{%s}
-mytown.notification.town.bank.info={a|Bank balance: }{7|%s }{a|Next payment: }{7|%s}
+mytown.notification.town.bank.info={a|Bank balance: }{7|%s}{ab|Next payment: }{7|%s}
 mytown.notification.town.upkeep={3|A new day is upon us, taxes have been collected}
 mytown.notification.town.upkeep.failed={c|A new day has passed but the bank is out of money. %s days before town deletion}
 mytown.notification.town.blocks.extra.set={3|The amount of extra claimable blocks has been set to %s for town }{%s}
@@ -323,6 +325,8 @@ mytown.notification.plot.enter.unassigned={c|Unassigned}
 mytown.notification.update.ranks={a|Successfully updated all ranks}
 mytown.notification.tool.mode={3|Changed '%s' to %s}
 mytown.notification.tool.gained={3|You have been given a tool}
+mytown.notification.town.ranks.rem = {3|Rank }{%s}{3| has been removed from town }{%s}
+
 
 # Help for commands
 mytown.cmd.assistant.blocks.help={|Everything related to TownBlocks (chunks in town)}

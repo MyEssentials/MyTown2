@@ -1,6 +1,9 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.IChatFormat;
+import myessentials.localization.api.LocalManager;
 import myessentials.teleport.Teleport;
 import myessentials.utils.PlayerUtils;
 import mypermissions.permission.api.proxy.PermissionProxy;
@@ -12,7 +15,6 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
@@ -294,7 +296,7 @@ public class Town implements Comparable<Town>, IChatFormat{
 
     @Override
     public IChatComponent toChatMessage() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.town.long", name, residentsMap.size(), townBlocksContainer.size(), getMaxBlocks(), plotsContainer.size(), residentsMap, ranksContainer);
+        return LocalManager.get("mytown.format.town.short", name, ranksContainer.getMayorRank(), residentsMap.getMayor());
     }
 
     public static class Container extends ArrayList<Town> implements IChatFormat {
@@ -357,20 +359,14 @@ public class Town implements Comparable<Town>, IChatFormat{
 
         @Override
         public IChatComponent toChatMessage() {
-            IChatComponent result = new ChatComponentText("");
+            IChatComponent root = new ChatComponentList();
 
+            root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|TOWNS}")));
             for (Town town : this) {
-                IChatComponent mayorComponent;
-                if (town.residentsMap.getMayor() == null) {
-                    mayorComponent = MyTown.instance.LOCAL.getLocalization("mytown.format.admins");
-                } else {
-                    mayorComponent = MyTown.instance.LOCAL.getLocalization("mytown.format.resident.short", town.residentsMap.getMayor().getPlayerName());
-                }
-
-                result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.town.short", town.name, town.ranksContainer.getMayorRank(), mayorComponent));
-                result.appendSibling(new ChatComponentText("\n"));
+                root.appendSibling(town.toChatMessage());
             }
-            return result;
+
+            return root;
         }
     }
 }
