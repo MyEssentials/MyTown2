@@ -1,17 +1,15 @@
 package mytown.util;
 
+import myessentials.chat.api.ChatManager;
 import myessentials.chat.api.JsonMessageBuilder;
-import mytown.MyTown;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Resident;
-import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.new_datasource.MyTownUniverse;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 
 
 
@@ -32,7 +30,7 @@ public class Formatter {
     public static void sendMap(Resident res, int dim, int cx, int cz) {
         int heightRad = 4, widthRad = 9;
 
-        res.sendMessage(new ChatComponentText("---------- Town Map ----------"));
+        ChatManager.send(res.getPlayer(), new ChatComponentText("---------- Town Map ----------"));
         for (int z = cz - heightRad; z <= cz + heightRad; z++) {
             JsonMessageBuilder msgBuilder = new JsonMessageBuilder();
 

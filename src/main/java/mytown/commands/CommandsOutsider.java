@@ -180,7 +180,7 @@ public class CommandsOutsider extends Commands {
 
         // Notify everyone
         ChatManager.send(sender, "mytown.notification.town.invited.accept", town);
-        town.notifyResidentJoin(res);
+        town.notifyEveryone(LocalManager.get("mytown.notification.town.joined", res, town));
         return CommandResponse.DONE;
     }
 

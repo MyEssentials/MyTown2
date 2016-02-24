@@ -2,13 +2,13 @@ package mytown.entities;
 
 import myessentials.chat.api.ChatComponentFormatted;
 import myessentials.chat.api.ChatComponentList;
+import myessentials.chat.api.ChatManager;
 import myessentials.chat.api.IChatFormat;
 import myessentials.localization.api.LocalManager;
 import myessentials.teleport.Teleport;
 import myessentials.utils.PlayerUtils;
 import mypermissions.permission.api.proxy.PermissionProxy;
 import mypermissions.permission.core.entities.PermissionLevel;
-import mytown.MyTown;
 import mytown.api.container.ResidentRankMap;
 import mytown.config.Config;
 import mytown.entities.flag.Flag;
@@ -46,18 +46,12 @@ public class Town implements Comparable<Town>, IChatFormat{
         this.name = name;
     }
 
-    public void notifyResidentJoin(Resident res) {
-        for (Resident toRes : residentsMap.keySet()) {
-            toRes.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.joined", res.getPlayerName(), getName()));
-        }
-    }
-
     /**
      * Notifies every resident in this town sending a message.
      */
     public void notifyEveryone(IChatComponent message) {
         for (Resident r : residentsMap.keySet()) {
-            r.sendMessage(message);
+            ChatManager.send(r.getPlayer(), message);
         }
     }
 
@@ -296,7 +290,8 @@ public class Town implements Comparable<Town>, IChatFormat{
 
     @Override
     public IChatComponent toChatMessage() {
-        return LocalManager.get("mytown.format.town.short", name, ranksContainer.getMayorRank(), residentsMap.getMayor());
+        IChatComponent mayorComponent = residentsMap.getMayor() == null ? new ChatComponentFormatted("{c|SERVER ADMINS}") : residentsMap.getMayor().toChatMessage();
+        return LocalManager.get("mytown.format.town.short", name, ranksContainer.getMayorRank(), mayorComponent);
     }
 
     public static class Container extends ArrayList<Town> implements IChatFormat {

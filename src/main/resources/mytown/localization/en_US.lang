@@ -89,7 +89,7 @@ mytown.cmd.config.save.stop={a|Config saved}
 mytown.cmd.config.reset={a|Successfully recreated the %s file}
 
 # /t new [townname]
-mytown.cmd.err.newtown.nameinuse={c|Town name }{%s}{c| already in use}
+mytown.cmd.err.newtown.nameinuse={c|Town name %s already in use}
 mytown.cmd.err.newtown.positionError={c|You cannot make a new town on a claimed chunk}
 mytown.cmd.err.newtown.failed={c|There was an issue with creating the town}
 mytown.cmd.err.newtown.tooClose={c|You are too close to town }{%s}{c|. Please leave at least %s chunks between the towns}
@@ -169,7 +169,7 @@ mytown.cmd.err.plot.tooSmall={c|Selection too small! Minimum area: }{3|%s}{c|. M
 mytown.cmd.err.plot.tooLarge={c|Selection too large! Maximum area: }{3|%s}{c|. Maximum height: }{3|%s}
 mytown.cmd.err.plot.outside={c|Selection is outside of town}
 mytown.cmd.err.plot.insideOther={c|Selection is inside plot }{%s}
-mytown.cmd.err.plot.name={c|Plot with name }{%s}{ already exists}
+mytown.cmd.err.plot.name={c|Plot with name %s already exists}
 
 
 # /t perm
@@ -240,7 +240,7 @@ mytown.format.plot.short={a|%s}{7|: }{%s}
 mytown.format.plot.long={%s}{2N|Owners: }{f|%s}{2N|Borders: }{%s}
 mytown.format.resident.short={a|%s}
 mytown.format.resident.long={%s}{2N| Towns: }{%s}{2N| Joined: }{a|%s}{2N| Last online: }{a|%s}{2N| Extra blocks: }{a|%s}
-mytown.format.resident.withrank={%s}{7|(}{%s}{7|)}
+mytown.format.resident.withRank={%s}{7|(}{%s}{7|)}
 mytown.format.block.short={%s}
 mytown.format.admins={c|SERVER ADMINS}
 mytown.notification.blocks.info={%s}{2N| Blocks: }{7|%s}{2N| Extra blocks: }{7|%s}{%s}{2N| Far blocks: }{7|%s}
@@ -308,7 +308,7 @@ mytown.notification.town.payment={3|%s has been taken from the bank}
 mytown.notification.town.refund={3|%s has been refunded to the bank}
 mytown.notification.plot.sender.removed={c|%s has been removed from the plot}
 mytown.notification.plot.target.removed={c|You have been removed from plot }{%s}
-mytown.notification.town.bank.info={a|Bank balance: }{7|%s}{ab|Next payment: }{7|%s}
+mytown.notification.town.bank.info={a|Bank balance: }{7|%s}{aN|Next payment: }{7|%s}
 mytown.notification.town.upkeep={3|A new day is upon us, taxes have been collected}
 mytown.notification.town.upkeep.failed={c|A new day has passed but the bank is out of money. %s days before town deletion}
 mytown.notification.town.blocks.extra.set={3|The amount of extra claimable blocks has been set to %s for town }{%s}
@@ -323,7 +323,7 @@ mytown.notification.town.renamed={3|Town has been renamed}
 mytown.notification.plot.enter={2|~ }{%s}
 mytown.notification.plot.enter.unassigned={c|Unassigned}
 mytown.notification.update.ranks={a|Successfully updated all ranks}
-mytown.notification.tool.mode={3|Changed '%s' to %s}
+mytown.notification.tool.mode={3|Changed '}{%s}{3|' to %s}
 mytown.notification.tool.gained={3|You have been given a tool}
 mytown.notification.town.ranks.rem = {3|Rank }{%s}{3| has been removed from town }{%s}
 

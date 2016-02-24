@@ -1,9 +1,11 @@
 package mytown.protection;
 
 import cpw.mods.fml.common.eventhandler.Event;
+import myessentials.chat.api.ChatManager;
 import myessentials.entities.api.BlockPos;
 import myessentials.entities.api.EntityPos;
 import myessentials.entities.api.Volume;
+import myessentials.localization.api.LocalManager;
 import myessentials.utils.PlayerUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;
@@ -103,9 +105,9 @@ public class ProtectionManager {
                 Plot lastTickPlot = town.plotsContainer.get(lastTickPos.getDim(), (int) Math.floor(lastTickPos.getX()), (int) Math.floor(lastTickPos.getY()), (int) Math.floor(lastTickPos.getZ()));
 
                 if(currentPlot != null && (lastTickPlot == null || currentPlot != lastTickPlot)) {
-                    res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.enter", currentPlot.getName()));
+                    ChatManager.send(player, "mytown.notification.plot.enter", currentPlot);
                 } else if(currentPlot == null && lastTickPlot != null) {
-                    res.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.enter", MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.enter.unassigned")));
+                    ChatManager.send(player, "mytown.notification.plot.enter", LocalManager.get("mytown.notification.plot.enter.unassigned"));
                 }
             }
             lastTickPlayerPos.put(player, new EntityPos(player.posX, player.posY, player.posZ, player.dimension));

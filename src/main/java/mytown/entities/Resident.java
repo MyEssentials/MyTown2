@@ -2,6 +2,7 @@ package mytown.entities;
 
 import myessentials.chat.api.ChatComponentFormatted;
 import myessentials.chat.api.ChatComponentList;
+import myessentials.chat.api.ChatManager;
 import myessentials.chat.api.IChatFormat;
 import myessentials.localization.api.LocalManager;
 import mytown.MyTown;
@@ -14,8 +15,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.common.util.FakePlayer;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.*;
 
@@ -92,12 +91,12 @@ public class Resident implements IChatFormat {
 
             if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
                 if (townsContainer.contains(newTownBlock.getTown())) {
-                    sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
+                    ChatManager.send(player, "mytown.notification.enter.ownTown", newTownBlock.getTown());
                 } else {
-                    sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
+                    ChatManager.send(player, "mytown.notification.enter.town", newTownBlock.getTown());
                 }
             } else if (oldTownBlock != null && newTownBlock == null) {
-                sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.wild"));
+                ChatManager.send(player, "mytown.notification.enter.wild");
             }
         }
     }
@@ -111,26 +110,15 @@ public class Resident implements IChatFormat {
         newTownBlock = MyTownUniverse.instance.blocks.get(dimension, newChunkX, newChunkZ);
 
         if (newTownBlock == null) {
-            sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.wild"));
+            ChatManager.send(player, "mytown.notification.enter.wild");
         } else if (townsContainer.contains(newTownBlock.getTown())) {
-            sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
+            ChatManager.send(player, "mytown.notification.enter.ownTown", newTownBlock.getTown());
         } else {
-            sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
+            ChatManager.send(player, "mytown.notification.enter.town", newTownBlock.getTown());
         }
     }
 
     /* ----- Helpers ----- */
-
-    public void sendMessage(IChatComponent message) {
-        try {
-            if (getPlayer() != null && !(getPlayer() instanceof FakePlayer)) {
-                getPlayer().addChatMessage(message);
-            }
-        } catch (NullPointerException ex) {
-            MyTown.instance.LOG.info("You are probably using a modified server that messes with order of Player joining/leaving. This crash is nothing serious.");
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
-    }
 
     public void protectionDenial(FlagType flag) {
         if (getPlayer() != null) {

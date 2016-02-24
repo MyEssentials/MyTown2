@@ -6,9 +6,9 @@ import myessentials.chat.api.ChatComponentFormatted;
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.localization.api.LocalManager;
-import myessentials.utils.ColorUtils;
 import mypermissions.permission.core.container.PermissionsContainer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
@@ -94,7 +94,7 @@ public class Rank implements IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        return LocalManager.get("mytown.format.rank", name);
+        return LocalManager.get("mytown.format.rank", name).setChatStyle(new ChatStyle().setColor(type.color));
     }
 
     public enum Type implements IChatFormat {
@@ -111,7 +111,7 @@ public class Rank implements IChatFormat {
         /**
          * Nothing special to this rank
          */
-        REGULAR(EnumChatFormatting.WHITE, false);
+        REGULAR(EnumChatFormatting.BLUE, false);
 
         @Override
         public IChatComponent toChatMessage() {
@@ -216,18 +216,16 @@ public class Rank implements IChatFormat {
         
         @Override
         public IChatComponent toChatMessage() {
-            IChatComponent result = new ChatComponentText("");
+            IChatComponent root = new ChatComponentText("");
 
             for (Rank rank : this) {
-                result.appendSibling(rank.toChatMessage());
-                result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
+                if (root.getSiblings().size() > 0) {
+                    root.appendSibling(new ChatComponentFormatted("{7|, }"));
+                }
+                root.appendSibling(rank.toChatMessage());
             }
 
-            if (isEmpty()) {
-                result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
-            }
-
-            return result;
+            return root;
         }
     }
 }

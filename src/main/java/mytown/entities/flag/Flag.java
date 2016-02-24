@@ -1,10 +1,11 @@
 package mytown.entities.flag;
 
 import com.google.gson.*;
+import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.localization.api.LocalManager;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.lang.reflect.Type;
@@ -138,12 +139,14 @@ public class Flag<T> implements Comparable<Flag>, IChatFormat {
 
         @Override
         public IChatComponent toChatMessage() {
-            IChatComponent result = new ChatComponentText("");
+            IChatComponent root = new ChatComponentList();
+
+            root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|FLAGS}")));
             for (Flag flag : this) {
-                result.appendSibling(flag.toChatMessage());
-                result.appendSibling(new ChatComponentText("\n"));
+                root.appendSibling(flag.toChatMessage());
             }
-            return result;
+
+            return root;
         }
     }
 }

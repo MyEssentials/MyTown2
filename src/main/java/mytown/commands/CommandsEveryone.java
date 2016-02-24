@@ -150,10 +150,6 @@ public class CommandsEveryone extends Commands {
             parentName = "mytown.cmd.everyone.blocks",
             syntax = "/town blocks info")
     public static CommandResponse blocksInfoCommand(ICommandSender sender, List<String> args) {
-        if(args.size() < 1) {
-            return CommandResponse.SEND_SYNTAX;
-        }
-
         Resident res = getUniverse().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 

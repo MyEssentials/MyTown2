@@ -1,5 +1,6 @@
 package mytown.commands;
 
+import myessentials.chat.api.ChatManager;
 import myessentials.localization.api.Local;
 import mypermissions.command.api.CommandCompletion;
 import mytown.MyTown;
@@ -13,7 +14,6 @@ import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,15 +197,6 @@ public abstract class Commands {
         }
     }
 
-    public static void sendMessageBackToSender(ICommandSender sender, IChatComponent message) {
-        if (sender instanceof EntityPlayer) {
-            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-            res.sendMessage(message);
-        } else {
-            sender.addChatMessage(message);
-        }
-    }
-
     public static void makePayment(EntityPlayer player, int amount) {
         if(amount == 0)
             return;
@@ -213,7 +204,7 @@ public abstract class Commands {
         if(!EconomyProxy.getEconomy().takeMoneyFromPlayer(player, amount)){
             throw new MyTownCommandException("mytown.cmd.err.resident.payment", EconomyProxy.getCurrency(amount));
         }
-        res.sendMessage(getLocal().getLocalization("mytown.notification.resident.payment", EconomyProxy.getCurrency(amount)));
+        ChatManager.send(player, "mytown.notification.resident.payment", EconomyProxy.getCurrency(amount));
     }
 
     public static void makeRefund(EntityPlayer player, int amount) {
@@ -221,7 +212,7 @@ public abstract class Commands {
             return;
         Resident res = MyTownUniverse.instance.getOrMakeResident(player);
         EconomyProxy.getEconomy().giveMoneyToPlayer(player, amount);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.resident.refund", EconomyProxy.getCurrency(amount)));
+        ChatManager.send(player, "mytown.notification.resident.refund", EconomyProxy.getCurrency(amount));
     }
 
     public static void makeBankPayment(ICommandSender sender, Town town, int amount) {
@@ -233,7 +224,7 @@ public abstract class Commands {
 
         town.bank.addAmount(-amount);
         getDatasource().saveTownBank(town.bank);
-        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.payment", EconomyProxy.getCurrency(amount)));
+        ChatManager.send(sender, "mytown.notification.town.payment", EconomyProxy.getCurrency(amount));
     }
 
     public static void makeBankRefund(ICommandSender sender, Town town, int amount) {
@@ -242,6 +233,6 @@ public abstract class Commands {
 
         town.bank.addAmount(amount);
         getDatasource().saveTownBank(town.bank);
-        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.refund", EconomyProxy.getCurrency(amount)));
+        ChatManager.send(sender, "mytown.notification.town.refund", EconomyProxy.getCurrency(amount));
     }
 }

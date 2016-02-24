@@ -1,10 +1,10 @@
 package mytown.api.container;
 
+import myessentials.chat.api.ChatComponentFormatted;
 import myessentials.chat.api.IChatFormat;
-import mytown.MyTown;
+import myessentials.localization.api.LocalManager;
 import mytown.entities.Rank;
 import mytown.entities.Resident;
-import myessentials.utils.ColorUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
@@ -50,18 +50,16 @@ public class ResidentRankMap extends HashMap<Resident, Rank> implements IChatFor
 
     @Override
     public IChatComponent toChatMessage() {
-        IChatComponent result = new ChatComponentText("");
+        IChatComponent root = new ChatComponentText("");
 
         for (Map.Entry<Resident, Rank> entry : entrySet()) {
-            result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.resident.withrank", entry.getKey(), entry.getValue()));
-            result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
+            IChatComponent residentComponent = LocalManager.get("mytown.format.resident.withRank", entry.getKey(), entry.getValue());
+            root.appendSibling(residentComponent);
+            if (root.getSiblings().size() < size()) {
+                root.appendSibling(new ChatComponentFormatted("{7|, }"));
+            }
         }
 
-        result.getSiblings().remove(result.getSiblings().size() - 1);
-
-        if (isEmpty()) {
-            result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
-        }
-        return result;
+        return root;
     }
 }
