@@ -1,11 +1,8 @@
 package mytown.entities;
 
-import myessentials.chat.api.ChatComponentFormatted;
-import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.Volume;
-import myessentials.localization.api.LocalManager;
 import mytown.config.Config;
 import mytown.handlers.VisualsHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -184,15 +181,12 @@ public class TownBlock implements IChatFormat {
 
         @Override
         public IChatComponent toChatMessage() {
-            IChatComponent root = new ChatComponentList();
+            IChatComponent root = new ChatComponentText("");
 
-            root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|CLAIMS}")));
-            IChatComponent blocksComponent = new ChatComponentText("");
             for (TownBlock block : this) {
-                blocksComponent.appendSibling(block.toChatMessage());
-                blocksComponent.appendSibling(new ChatComponentText(" "));
+                root.appendSibling(block.toChatMessage());
+                root.appendSibling(new ChatComponentText(" "));
             }
-            root.appendSibling(blocksComponent);
 
             return root;
         }

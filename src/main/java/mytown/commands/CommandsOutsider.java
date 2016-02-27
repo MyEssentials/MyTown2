@@ -2,6 +2,7 @@ package mytown.commands;
 
 
 import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.ChatManager;
 import myessentials.localization.api.LocalManager;
 import myessentials.utils.StringUtils;
@@ -73,8 +74,9 @@ public class CommandsOutsider extends Commands {
             completionKeys = {"residentCompletion"},
             console = true)
     public static CommandResponse resCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
+        if (args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
+        }
 
         Resident res = getResidentFromName(args.get(0));
         if (res == null) {
@@ -92,7 +94,13 @@ public class CommandsOutsider extends Commands {
             syntax = "/town list",
             console = true)
     public static CommandResponse listCommand(ICommandSender sender, List<String> args) {
-        ChatManager.send(sender, getUniverse().towns.toChatMessage());
+        IChatComponent root = new ChatComponentList();
+        root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|TOWNS}")));
+        for (Town town : getUniverse().towns) {
+            root.appendSibling(town.toChatMessage());
+        }
+
+        ChatManager.send(sender, root);
         return CommandResponse.DONE;
     }
 
@@ -102,8 +110,9 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             syntax = "/town new <name>")
     public static CommandResponse newTownCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
+        if (args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
+        }
 
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender); // Attempt to get or make the Resident

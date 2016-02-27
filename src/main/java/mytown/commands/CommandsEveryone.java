@@ -2,6 +2,7 @@ package mytown.commands;
 
 import myessentials.chat.api.ChatComponentContainer;
 import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.ChatManager;
 import myessentials.entities.api.tool.Tool;
 import myessentials.entities.api.tool.ToolManager;
@@ -139,7 +140,11 @@ public class CommandsEveryone extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        ChatManager.send(sender, town.townBlocksContainer.toChatMessage());
+        IChatComponent root = new ChatComponentList();
+        root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|CLAIMS}")));
+        root.appendSibling(town.townBlocksContainer.toChatMessage());
+
+        ChatManager.send(sender, root);
         return CommandResponse.DONE;
     }
 
@@ -576,7 +581,13 @@ public class CommandsEveryone extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        ChatManager.send(sender, town.ranksContainer.toChatMessage());
+        IChatComponent root = new ChatComponentList();
+        root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{7|RANKS}")));
+        for (Rank rank : town.ranksContainer) {
+            root.appendSibling(LocalManager.get("mytown.format.rank.long", rank.getName(), rank.getType()));
+        }
+
+        ChatManager.send(sender, root);
         return CommandResponse.DONE;
     }
 

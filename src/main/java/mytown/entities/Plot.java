@@ -1,7 +1,6 @@
 package mytown.entities;
 
 import myessentials.chat.api.ChatComponentFormatted;
-import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.Volume;
 import myessentials.entities.api.sign.SignType;
@@ -14,6 +13,7 @@ import mytown.new_datasource.MyTownUniverse;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -101,7 +101,7 @@ public class Plot implements IChatFormat {
 
     @Override
     public IChatComponent toChatMessage() {
-        return toVolume().toChatMessage();
+        return LocalManager.get("mytown.format.plot.short", name, this.toVolume());
     }
 
     public Volume toVolume() {
@@ -330,10 +330,12 @@ public class Plot implements IChatFormat {
 
         @Override
         public IChatComponent toChatMessage() {
-            IChatComponent root = new ChatComponentList();
+            IChatComponent root = new ChatComponentText("");
 
-            root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|PLOTS}")));
             for (Plot plot : this) {
+                if (root.getSiblings().size() > 0) {
+                    root.appendSibling(new ChatComponentFormatted("{7|, }"));
+                }
                 root.appendSibling(plot.toChatMessage());
             }
 

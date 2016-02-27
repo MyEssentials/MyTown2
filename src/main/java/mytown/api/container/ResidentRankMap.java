@@ -53,11 +53,10 @@ public class ResidentRankMap extends HashMap<Resident, Rank> implements IChatFor
         IChatComponent root = new ChatComponentText("");
 
         for (Map.Entry<Resident, Rank> entry : entrySet()) {
-            IChatComponent residentComponent = LocalManager.get("mytown.format.resident.withRank", entry.getKey(), entry.getValue());
-            root.appendSibling(residentComponent);
-            if (root.getSiblings().size() < size()) {
+            if (root.getSiblings().size() > 0) {
                 root.appendSibling(new ChatComponentFormatted("{7|, }"));
             }
+            root.appendSibling(LocalManager.get("mytown.format.resident.withRank", entry.getKey(), entry.getValue()));
         }
 
         return root;

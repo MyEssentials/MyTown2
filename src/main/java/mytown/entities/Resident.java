@@ -1,7 +1,6 @@
 package mytown.entities;
 
 import myessentials.chat.api.ChatComponentFormatted;
-import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.ChatManager;
 import myessentials.chat.api.IChatFormat;
 import myessentials.localization.api.LocalManager;
@@ -13,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 
@@ -310,10 +310,12 @@ public class Resident implements IChatFormat {
 
         @Override
         public IChatComponent toChatMessage() {
-            IChatComponent root = new ChatComponentList();
+            IChatComponent root = new ChatComponentText("");
 
-            root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|RESIDENTS}")));
             for (Resident res : this) {
+                if (root.getSiblings().size() > 0) {
+                    root.appendSibling(new ChatComponentFormatted("{7|, }"));
+                }
                 root.appendSibling(res.toChatMessage());
             }
 

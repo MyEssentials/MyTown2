@@ -233,6 +233,7 @@ mytown.format.flag={7|%s}{7|[}{a|%s}{7|]:}{%s}
 mytown.format.town.short={6|%s }{7|[}{%s}{7|: }{%s}{7|]}
 mytown.format.town.long={%s}{6N| - }{2|R:%s}{6| - }{2|C:%s/%s}{6| - }{2|P:%s}{6| - }{2N| Residents: }{%s}{2N| Ranks: }{%s}
 mytown.format.rank={l|%s}
+mytown.format.rank.long={l|%s}{7| (}{%s}{7|)}
 mytown.format.plot.short={a|%s}{7|: }{%s}
 mytown.format.plot.long={%s}{2N|Owners: }{f|%s}{2N|Borders: }{%s}
 mytown.format.resident.short={a|%s}

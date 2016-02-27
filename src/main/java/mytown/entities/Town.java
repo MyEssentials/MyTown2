@@ -1,7 +1,6 @@
 package mytown.entities;
 
 import myessentials.chat.api.ChatComponentFormatted;
-import myessentials.chat.api.ChatComponentList;
 import myessentials.chat.api.ChatManager;
 import myessentials.chat.api.IChatFormat;
 import myessentials.localization.api.LocalManager;
@@ -15,6 +14,7 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
@@ -354,10 +354,12 @@ public class Town implements Comparable<Town>, IChatFormat{
 
         @Override
         public IChatComponent toChatMessage() {
-            IChatComponent root = new ChatComponentList();
+            IChatComponent root = new ChatComponentText("");
 
-            root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|TOWNS}")));
             for (Town town : this) {
+                if (root.getSiblings().size() > 0) {
+                    root.appendSibling(new ChatComponentFormatted("{7|, }"));
+                }
                 root.appendSibling(town.toChatMessage());
             }
 
