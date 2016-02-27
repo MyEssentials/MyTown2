@@ -169,7 +169,7 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(1));
 
         if (town.residentsMap.containsKey(target)) {
-            throw new MyTownCommandException("mytown.adm.cmd.err.add.already", args.get(0), args.get(1));
+            throw new MyTownCommandException("mytown.adm.cmd.err.add.already", target, town);
         }
 
         Rank rank;
@@ -200,7 +200,7 @@ public class CommandsAdmin extends Commands {
 
         for (String s : args) {
             if (!getUniverse().towns.contains(s)) {
-                throw new MyTownCommandException("mytown.cmd.err.town.notexist", s);
+                throw new MyTownCommandException("mytown.cmd.err.town.missing", s);
             }
         }
         for (String s : args) {
@@ -227,15 +227,15 @@ public class CommandsAdmin extends Commands {
 
         EntityPlayer player = (EntityPlayer) sender;
         if (getUniverse().towns.contains(args.get(0))) {
-            throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
+            throw new MyTownCommandException("mytown.cmd.err.new.nameUsed", args.get(0));
         }
         if (getUniverse().blocks.contains(player.dimension, player.chunkCoordX, player.chunkCoordZ)) {
-            throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
+            throw new MyTownCommandException("mytown.cmd.err.new.position");
         }
 
         Town town = getUniverse().newAdminTown(args.get(0), res);
         if (town == null) {
-            throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
+            throw new MyTownCommandException("mytown.cmd.err.new.failed");
         }
 
         ChatManager.send(sender, "mytown.notification.town.created", town);
@@ -258,7 +258,7 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(1));
 
         if (!town.residentsMap.containsKey(target)) {
-            throw new MyTownCommandException("mytown.adm.cmd.err.kick.resident", args.get(0), args.get(1));
+            throw new MyTownCommandException("mytown.adm.cmd.err.kick.resident", target, town);
         }
 
         getDatasource().unlinkResidentFromTown(target, town);
@@ -338,9 +338,8 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        }
+
+        checkPositiveInteger(args.get(1));
 
         Town town = getTownFromName(args.get(0));
         town.townBlocksContainer.setExtraBlocks(Integer.parseInt(args.get(1)));
@@ -360,9 +359,8 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        }
+
+        checkPositiveInteger(args.get(1));
 
         Town town = getTownFromName(args.get(0));
         int amount = Integer.parseInt(args.get(1));
@@ -383,9 +381,8 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        }
+
+        checkPositiveInteger(args.get(1));
 
         Town town = getTownFromName(args.get(0));
         int amount = Integer.parseInt(args.get(1));
@@ -415,9 +412,8 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        }
+
+        checkPositiveInteger(args.get(1));
 
         Town town = getTownFromName(args.get(0));
         town.townBlocksContainer.setExtraFarClaims(Integer.parseInt(args.get(1)));
@@ -437,9 +433,8 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        }
+
+        checkPositiveInteger(args.get(1));
 
         Town town = getTownFromName(args.get(0));
         int amount = Integer.parseInt(args.get(1));
@@ -460,9 +455,8 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        }
+
+        checkPositiveInteger(args.get(1));
 
         Town town = getTownFromName(args.get(0));
         int amount = Integer.parseInt(args.get(1));
@@ -504,9 +498,8 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        }
+
+        checkPositiveInteger(args.get(1));
 
         Resident target = getResidentFromName(args.get(0));
         int amount = Integer.parseInt(args.get(1));
@@ -527,9 +520,8 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        }
+
+        checkPositiveInteger(args.get(1));
 
         Resident target = getResidentFromName(args.get(0));
         int amount = Integer.parseInt(args.get(1));
@@ -550,9 +542,8 @@ public class CommandsAdmin extends Commands {
         if(args.size() < 2) {
             return CommandResponse.SEND_SYNTAX;
         }
-        if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-        }
+
+        checkPositiveInteger(args.get(1));
 
         Resident target = getResidentFromName(args.get(0));
         int amount = Integer.parseInt(args.get(1));
@@ -586,7 +577,7 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
         if (town.ranksContainer.contains(args.get(1))) {
-            throw new MyTownCommandException("mytown.cmd.err.ranks.add.already", args.get(1));
+            throw new MyTownCommandException("mytown.cmd.err.ranks.add.already", town.ranksContainer.get(args.get(1)));
         }
 
         Rank rank = new Rank(args.get(1), town, Rank.Type.REGULAR);
@@ -650,7 +641,7 @@ public class CommandsAdmin extends Commands {
         if(type.unique) {
             Rank fromRank = town.ranksContainer.get(type);
             if(fromRank == rank) {
-                throw new MyTownCommandException("mytown.cmd.err.ranks.set.already", type.toString());
+                throw new MyTownCommandException("mytown.cmd.err.ranks.set.already", type);
             }
             fromRank.setType(Rank.Type.REGULAR);
             rank.setType(type);
@@ -878,7 +869,7 @@ public class CommandsAdmin extends Commands {
             if (flag.setValue(args.get(2))) {
                 ChatManager.send(sender, "mytown.notification.perm.success");
             } else {
-                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(2));
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
             }
         }
         getDatasource().saveFlag(flag, town);
@@ -910,7 +901,7 @@ public class CommandsAdmin extends Commands {
             if (flag.toggle()) {
                 ChatManager.send(sender, "mytown.notification.perm.success");
             } else {
-                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(2));
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
             }
         }
         getDatasource().saveFlag(flag, town);
@@ -972,7 +963,7 @@ public class CommandsAdmin extends Commands {
         if (flag.setValue(args.get(1))) {
             ChatManager.send(sender, "mytown.notification.perm.success");
         } else {
-            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
         }
 
         MyTown.instance.getWildConfig().write(Wild.instance.flagsContainer);
@@ -997,7 +988,7 @@ public class CommandsAdmin extends Commands {
         if (flag.toggle()) {
             ChatManager.send(sender, "mytown.notification.perm.success");
         } else {
-            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+            throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
         }
 
         MyTown.instance.getWildConfig().write(Wild.instance.flagsContainer);
@@ -1035,14 +1026,13 @@ public class CommandsAdmin extends Commands {
             }
             TownBlock block = getUniverse().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, 0, town);
             if (block == null) {
-                throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.claim.failed").getUnformattedText());
+                throw new MyTownCommandException("mytown.cmd.err.claim.failed");
             }
             getDatasource().saveBlock(block);
             ChatManager.send(sender, "mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town);
         } else {
-            if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0) {
-                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
-            }
+
+            checkPositiveInteger(args.get(1));
 
             int radius = Integer.parseInt(args.get(1));
             List<ChunkPos> chunks = WorldUtils.getChunksInBox(player.dimension, (int) (player.posX - radius * 16), (int) (player.posZ - radius * 16), (int) (player.posX + radius * 16), (int) (player.posZ + radius * 16));
@@ -1084,8 +1074,9 @@ public class CommandsAdmin extends Commands {
         TownBlock block = getBlockAtResident(res);
         Town town = block.getTown();
 
-        if (block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ()))
+        if (block.isPointIn(town.getSpawn().getDim(), town.getSpawn().getX(), town.getSpawn().getZ())) {
             throw new MyTownCommandException("mytown.cmd.err.unclaim.spawnPoint");
+        }
 
         getDatasource().deleteBlock(block);
         ChatManager.send(sender, "mytown.notification.block.removed", block.getX() << 4, block.getZ() << 4, (block.getX() << 4) + 15, (block.getZ() << 4) + 15, town);
@@ -1226,7 +1217,7 @@ public class CommandsAdmin extends Commands {
             if (flag.setValue(args.get(3))) {
                 ChatManager.send(sender, "mytown.notification.town.perm.success");
             } else {
-                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
             }
 
             getDatasource().saveFlag(flag, plot);
@@ -1251,7 +1242,7 @@ public class CommandsAdmin extends Commands {
             if (flag.toggle()) {
                 ChatManager.send(sender, "mytown.notification.town.perm.success");
             } else {
-                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
             }
 
             getDatasource().saveFlag(flag, plot);
@@ -1322,7 +1313,7 @@ public class CommandsAdmin extends Commands {
 
             Town town = getTownFromName(args.get(0));
             if (!target.townsContainer.contains(town)) {
-                throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", target.getPlayerName(), town.getName());
+                throw new MyTownCommandException("mytown.cmd.err.resident.notInTown", target);
             }
 
             Plot plot = getPlotFromName(town, args.get(1));
@@ -1332,7 +1323,7 @@ public class CommandsAdmin extends Commands {
             }
 
             if (!town.plotsContainer.canResidentMakePlot(target)) {
-                throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
+                throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target);
             }
 
             getDatasource().linkResidentToPlot(target, plot, true);
@@ -1502,7 +1493,7 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(0));
 
         if (getUniverse().towns.contains(args.get(1))) {
-            throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(1));
+            throw new MyTownCommandException("mytown.cmd.err.new.nameUsed", args.get(1));
         }
 
         town.rename(args.get(1));

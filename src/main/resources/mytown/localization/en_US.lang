@@ -1,11 +1,11 @@
 # Other
 mytown.cmd.unimplemented={c|%s is currently unimplemented}
 mytown.cmd.err.partOfTown={c|You need to be part of a town}
-mytown.cmd.err.town.notexist={c|The town %s does not exist}
-mytown.cmd.err.resident.notexist={c|The player %s does not exist}
-mytown.cmd.err.resident.notsametown={c|The player }{%s}{c| is not in the town you've selected}
+mytown.cmd.err.town.missing={c|The town %s does not exist}
+mytown.cmd.err.resident.missing={c|The player %s does not exist}
+mytown.cmd.err.resident.notInTown={c|The player }{%s}{c| is not in the town you've selected}
 mytown.cmd.err.resident.same={c|You can't do that to yourself}
-mytown.cmd.err.rank.notexist={c|The rank }{%s}{ does not exist in }{%s}
+mytown.cmd.err.rank.missing={c|The rank }{%s}{ does not exist in }{%s}
 mytown.cmd.err.resident.payment={c|You need %s in order to pay for this}
 mytown.cmd.err.town.payment={c|You need %s in bank to pay for this}
 mytown.cmd.err.notPositiveInteger={c|Value '%s' needs to be a positive integer}
@@ -14,6 +14,7 @@ mytown.cmd.err.notInTown={c|You are not in town }{%s}
 mytown.cmd.err.inventory={c|Your inventory is full or you already have a tool}
 mytown.cmd.err.inventory.tool.already={c|You already have a tool in your inventory, it will be replaced by the new one}
 mytown.cmd.err.rankPerm={c|You do not have the rank required to use this command}
+mytown.cmd.err.notPlayer={c|You are not a player}
 mytown.notification.enter.wild={2|You have just entered the wild}
 mytown.notification.enter.town={2|Welcome to }{%s}
 mytown.notification.enter.ownTown={2|Welcome back to }{%s}
@@ -89,10 +90,10 @@ mytown.cmd.config.save.stop={a|Config saved}
 mytown.cmd.config.reset={a|Successfully recreated the %s file}
 
 # /t new [townname]
-mytown.cmd.err.newtown.nameinuse={c|Town name %s already in use}
-mytown.cmd.err.newtown.positionError={c|You cannot make a new town on a claimed chunk}
-mytown.cmd.err.newtown.failed={c|There was an issue with creating the town}
-mytown.cmd.err.newtown.tooClose={c|You are too close to town }{%s}{c|. Please leave at least %s chunks between the towns}
+mytown.cmd.err.new.nameUsed={c|Town name %s already in use}
+mytown.cmd.err.new.position={c|You cannot make a new town on a claimed chunk}
+mytown.cmd.err.new.failed={c|There was an issue with creating the town}
+mytown.cmd.err.new.tooClose={c|You are too close to town }{%s}{c|. Please leave at least %s chunks between the towns}
 mytown.cmd.err.claim.tooClose={c|You are too close to town }{%s}{c|. Please leave at least %s chunks between the towns}
 mytown.cmd.err.resident.maxTowns={c|You cannot create/join any more towns, you have hit the maximum amount of towns you can be in}
 mytown.notification.town.created={a|Town }{%s}{a| created}
@@ -101,9 +102,9 @@ mytown.notification.town.deleted.withplots={c|You cannot delete towns with plots
 
 
 # /t invite
-mytown.cmd.err.invite.already={c|Resident }{%s}{c| already exists in town }{%s}
-mytown.cmd.err.invite.noinvitations={c|You have no invitations}
-mytown.cmd.err.resident.notexist={c|That player does not exist}
+mytown.cmd.err.invite.already={c|Resident }{%s}{c| is already a member of town }{%s}
+mytown.cmd.err.invite.missing={c|You have no invitations}
+mytown.cmd.err.resident.missing={c|That player does not exist}
 mytown.cmd.err.invite.accept={c|You have more than one invitation. }{3|Choose what invitation you want to accept: }{3o|"/t accept <townName>"}
 mytown.cmd.err.invite.refuse={c|You have more than one invitation. }{3|Choose what invitation you want to refuse: }{3o|"/t refuse <townName>"}
 
@@ -115,7 +116,7 @@ mytown.cmd.err.friends.accept={%s}{c| has not sent an invitation to you}
 # /t claim
 mytown.cmd.err.claim.failed={c|Failed to claim chunk}
 mytown.cmd.err.claim.already={c|This chunk has already been claimed}
-mytown.cmd.err.claim.notexist={c|This block is not claimed by town }{%s}
+mytown.cmd.err.claim.missing={c|This block is not claimed by town }{%s}
 mytown.cmd.err.claim.far.notAllowed={c|You cannot have anymore far claims}
 mytown.cmd.err.town.maxBlocks={c|Not enough free slots for %s chunks}
 
@@ -128,22 +129,19 @@ mytown.cmd.err.unclaim.lastClaim={c|Your town must at least have 1 chunk. Use }{
 mytown.cmd.err.info.notpart={c|You are not part of a town. }{3|Alternative usage: }{3o|"/t info <townname>"}
 
 # /t select
-mytown.cmd.err.select.notpart={c|You are not part of town }{%s}{c|. Please choose a town that you are a member of}
+mytown.cmd.err.select.notResident={c|You are not a resident of town }{%s}
 mytown.notification.town.select={3|The town }{%s}{3| has been selected as your primary town}
 
 # /t ranks
 mytown.cmd.err.ranks.add.already={c|The rank }{%s}{c| already exists}
-mytown.cmd.err.ranks.add.notexist={c|The template rank }{%s}{c| does not exist}
-mytown.cmd.err.ranks.rem.notexist={c|The rank }{%s}{c| does not exist in town }{%s}
-mytown.cmd.err.ranks.rem.notallowed={c|The rank }{%s}{c| is not allowed to be deleted}
-mytown.cmd.err.ranks.perm.notexist={c|The flag %s does not exist}
+mytown.cmd.err.ranks.add.missing={c|The template rank }{%s}{c| does not exist}
 mytown.cmd.err.ranks.perm.add.already={c|The rank }{%s}{c| already has permission %s}
 mytown.cmd.err.ranks.perm.add.failed={c|Failed to add permission}
 mytown.cmd.err.ranks.perm.remove.failed={c|Failed to remove permission}
 mytown.cmd.err.ranks.cantDelete={c|You can't delete this type of rank}
-mytown.cmd.err.ranks.set.already={c|The rank already has type }{%s}
+mytown.cmd.err.ranks.set.already={c|The rank is already set to type }{%s}
 mytown.notification.ranks.set.successful={3|Rank }{%s}{3| has been set to type }{%s}{3| successfully}
-mytown.cmd.err.ranks.typeNotExists={c|Rank type }{%s}{c| does not exist}
+mytown.cmd.err.ranks.type.missing={c|Rank type }{%s}{c| does not exist}
 mytown.notification.ranks.reset={3|Ranks have been reset to their initial state}
 mytown.cmd.err.ranks.set.unique={c|The rank type of }{%s}{c| is unique. You must set the unique type first}
 mytown.cmd.err.ranks.assigned={c|This rank is assigned to some residents, change their rank before deleting this}
@@ -152,7 +150,7 @@ mytown.cmd.err.ranks.assigned={c|This rank is assigned to some residents, change
 # /t plot
 mytown.cmd.err.plot.remove.notInPlot={c|Resident is not a member/owner of this plot}
 mytown.cmd.err.plot.remove.onlyOwner={c|You are the only owner of this plot, you can only delete the plot}
-mytown.cmd.err.plot.add.alreadyInPlot={c|Resident is already in plot}
+mytown.cmd.err.plot.add.alreadyInPlot={c|Resident is already a member of this plot}
 mytown.cmd.err.plot.start.failed={c|Your inventory is full}
 mytown.cmd.err.plot.failed={c|Creating plot failed}
 mytown.cmd.err.plot.alreadySelected={c|You already selected a volume for the plot}
@@ -178,7 +176,6 @@ mytown.cmd.err.perm.valueNotValid={c|Invalid value}
 mytown.cmd.err.flag.unconfigurable={c|That flag can not be changed}
 mytown.cmd.err.flag.notForWhitelist={c|The flag you selected is not allowed on block whitelist}
 mytown.cmd.err.flag.list={c|There's no flag in this town}
-mytown.cmd.err.perm.valueNotValid={c|Invalid value}
 mytown.cmd.err.perm.whitelist.noPermssion={c|You do not have permission to whitelist this!}
 
 # /t promote
@@ -188,10 +185,10 @@ mytown.cmd.promote.success.sender={%s}{3| has been }{a|promoted}{3| to rank }{%s
 mytown.cmd.promote.success.target={a|You have been promoted to rank }{%s}
 
 # /t setspawn
-mytown.cmd.err.setspawn.notintown={c|The position that you're at is not inside the town }{%s}
+mytown.cmd.err.setspawn.notInTown={c|The position that you're at is not inside the town }{%s}
 
 # /t spawn
-mytown.cmd.err.spawn.notexist={c|The claim that the spawn of }{%s}{ was on got deleted or the spawn wasn't set! }{3|Please use }{3o|"/t setspawn"}{3| to set another one}
+mytown.cmd.err.spawn.missing={c|The claim that the spawn of }{%s}{ was on got deleted or the spawn wasn't set! }{3|Please use }{3o|"/t setspawn"}{3| to set another one}
 mytown.cmd.err.spawn.cooldown={c|You are still on teleport cooldown please wait }{6|%s &6(}{9|%ss}{6|)}{c| more ticks before trying again}
 mytown.cmd.err.spawn.protected={c|You are not allowed to teleport to the location of }{%s}{c|'s spawn}
 
@@ -280,7 +277,7 @@ mytown.notification.town.delete={c|Town }{%s}{c| has been deleted by the Mayor}
 mytown.notification.town.startedCreation={2|Started creation of town }{2o|%s}{2|, wait a few seconds}
 mytown.notification.plot.renamed={a|The plot has been successfully renamed}
 mytown.notification.plot.showing={3|Plots are now showing borders.}{3| Use}{3o| "/t plot hide"}{3| in order to hide them}
-mytown.notification.plot.vanished={a|Plots have been successfully hidden}
+mytown.notification.plot.vanished={3|Plots have been successfully hidden}
 mytown.notification.plot.owner.sender.added={%s}{3| has been }{a|added}{3| as owner to plot }{%s}
 mytown.notification.plot.owner.target.added={a|You have been added as owner to plot }{%s}
 mytown.notification.plot.member.sender.added={%s}{3| has been }{a|added}{3| as member to plot }{%s}
@@ -301,7 +298,6 @@ mytown.notification.friends.accepted={%s}{a| has accepted your invitation to be 
 mytown.notification.friends.gotAccepted={a|You have accepted }{%s}{a|'s friend invitation}
 mytown.notification.friends.refused={%s}{a| has refused your invitation to be in the friends list of town}
 mytown.notification.friends.gotRefused={c|You have refused }{%s}{c|'s friend invitation}
-mytown.notification.resident.noInvites={c|You don't have any invitations}
 mytown.notification.resident.payment={3|You have paid %s}
 mytown.notification.resident.refund={3|You have been refunded %s}
 mytown.notification.town.payment={3|%s has been taken from the bank}

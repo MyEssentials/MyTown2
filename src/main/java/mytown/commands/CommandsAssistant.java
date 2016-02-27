@@ -4,7 +4,6 @@ import myessentials.chat.api.ChatManager;
 import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.tool.ToolManager;
 import myessentials.utils.MathUtils;
-import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
@@ -39,7 +38,7 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
 
         if (!town.isPointInTown(player.dimension, (int) player.posX, (int) player.posZ)) {
-            throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()).getUnformattedText());
+            throw new MyTownCommandException("mytown.cmd.err.setspawn.notInTown", town);
         }
 
         makePayment(player, Config.instance.costAmountSetSpawn.get());
@@ -79,7 +78,7 @@ public class CommandsAssistant extends Commands {
                 for (int z = player.chunkCoordZ - Config.instance.distanceBetweenTowns.get(); z <= player.chunkCoordZ + Config.instance.distanceBetweenTowns.get(); z++) {
                     Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
                     if (nearbyTown != null && nearbyTown != town && !nearbyTown.flagsContainer.getValue(FlagType.NEARBY)) {
-                        throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.instance.distanceBetweenTowns.get());
+                        throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown, Config.instance.distanceBetweenTowns.get());
                     }
                 }
             }
@@ -100,9 +99,8 @@ public class CommandsAssistant extends Commands {
             getDatasource().saveBlock(block);
             ChatManager.send(sender, "mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town);
         } else {
-            if (!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0) {
-                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
-            }
+
+            checkPositiveInteger(args.get(0));
 
             int radius = Integer.parseInt(args.get(0));
             List<ChunkPos> chunks = WorldUtils.getChunksInBox(player.dimension, (int) (player.posX - radius * 16), (int) (player.posZ - radius * 16), (int) (player.posX + radius * 16), (int) (player.posZ + radius * 16));
@@ -120,8 +118,8 @@ public class CommandsAssistant extends Commands {
                 for (int x = chunk.getX() - Config.instance.distanceBetweenTowns.get(); x <= chunk.getX() + Config.instance.distanceBetweenTowns.get(); x++) {
                     for (int z = chunk.getZ() - Config.instance.distanceBetweenTowns.get(); z <= chunk.getZ() + Config.instance.distanceBetweenTowns.get(); z++) {
                         Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                        if (nearbyTown != null && nearbyTown != town && !(Boolean) nearbyTown.flagsContainer.getValue(FlagType.NEARBY)) {
-                            throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown.getName(), Config.instance.distanceBetweenTowns.get());
+                        if (nearbyTown != null && nearbyTown != town && !nearbyTown.flagsContainer.getValue(FlagType.NEARBY)) {
+                            throw new MyTownCommandException("mytown.cmd.err.claim.tooClose", nearbyTown, Config.instance.distanceBetweenTowns.get());
                         }
                     }
                 }
@@ -193,7 +191,7 @@ public class CommandsAssistant extends Commands {
 
         Resident target = getResidentFromName(args.get(0));
         if (town.residentsMap.contains(args.get(0))) {
-            throw new MyTownCommandException("mytown.cmd.err.invite.already", args.get(0), town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.invite.already", target, town);
         }
 
         getDatasource().saveTownInvite(target, town);
@@ -218,12 +216,12 @@ public class CommandsAssistant extends Commands {
         Flag flag = getFlagFromName(town.flagsContainer, args.get(0));
 
         if (!flag.flagType.configurable) {
-            throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(0));
+            throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable");
         } else {
             if (flag.setValue(args.get(1))) {
                 ChatManager.send(sender, "mytown.notification.perm.success");
             } else {
-                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
             }
         }
         getDatasource().saveFlag(flag, town);
@@ -246,12 +244,12 @@ public class CommandsAssistant extends Commands {
         Flag flag = getFlagFromName(town.flagsContainer, args.get(0));
 
         if (!flag.flagType.configurable) {
-            throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(0));
+            throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable");
         } else {
             if (flag.toggle()) {
                 ChatManager.send(sender, "mytown.notification.perm.success");
             } else {
-                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
             }
         }
         getDatasource().saveFlag(flag, town);
@@ -285,7 +283,7 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(resSender);
 
         if (!resTarget.townsContainer.contains(town)) {
-            throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", args.get(0), town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.resident.notInTown", resTarget);
         }
 
         Rank mayorRank = town.ranksContainer.getMayorRank();
@@ -320,7 +318,7 @@ public class CommandsAssistant extends Commands {
             Town town = getTownFromResident(res);
 
             if (town.ranksContainer.contains(args.get(0))) {
-                throw new MyTownCommandException("mytown.cmd.err.ranks.add.already", args.get(0));
+                throw new MyTownCommandException("mytown.cmd.err.ranks.add.already", town.ranksContainer.get(args.get(0)));
             }
 
             Rank rank = new Rank(args.get(0), town, Rank.Type.REGULAR);
@@ -385,7 +383,7 @@ public class CommandsAssistant extends Commands {
             if(type.unique) {
                 Rank fromRank = town.ranksContainer.get(type);
                 if(fromRank == rank) {
-                    throw new MyTownCommandException("mytown.cmd.err.ranks.set.already", type.toString());
+                    throw new MyTownCommandException("mytown.cmd.err.ranks.set.already", type);
                 }
 
                 fromRank.setType(Rank.Type.REGULAR);
@@ -395,11 +393,10 @@ public class CommandsAssistant extends Commands {
                 getDatasource().saveRank(fromRank);
             } else {
                 if(rank.getType().unique) {
-                    throw new MyTownCommandException("mytown.cmd.err.ranks.set.unique", rank.getName());
+                    throw new MyTownCommandException("mytown.cmd.err.ranks.set.unique", rank);
                 }
 
                 rank.setType(type);
-
                 getDatasource().saveRank(rank);
             }
 
@@ -532,15 +529,13 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
 
         if (!town.residentsMap.containsKey(target)) {
-            throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", target.getPlayerName(), town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.resident.notInTown", target, town);
         }
         if (town.residentsMap.get(res).getType() == Rank.Type.MAYOR) {
             getDatasource().updateResidentToTownLink(target, town, town.ranksContainer.getMayorRank());
             ChatManager.send(target.getPlayer(), "mytown.notification.town.mayorShip.passed");
             getDatasource().updateResidentToTownLink(res, town, town.ranksContainer.getDefaultRank());
             ChatManager.send(sender, "mytown.notification.town.mayorShip.taken");
-        } else {
-            //...
         }
         return CommandResponse.DONE;
     }
@@ -578,9 +573,8 @@ public class CommandsAssistant extends Commands {
                 return CommandResponse.SEND_SYNTAX;
             }
 
-            if (!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0) {
-                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
-            }
+            checkPositiveInteger(args.get(0));
+
             int limit = Integer.parseInt(args.get(0));
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
@@ -606,7 +600,7 @@ public class CommandsAssistant extends Commands {
         Resident target = getResidentFromName(args.get(0));
         Town town = getTownFromResident(res);
         if (!target.townsContainer.contains(town)) {
-            throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", args.get(0), town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.resident.notInTown", target);
         }
         if (target == res) {
             throw new MyTownCommandException("mytown.cmd.err.kick.self");
@@ -665,7 +659,7 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
 
         if (getUniverse().towns.contains(args.get(0))) {
-            throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
+            throw new MyTownCommandException("mytown.cmd.err.new.nameUsed", args.get(0));
         }
 
         town.rename(args.get(0));
@@ -684,15 +678,13 @@ public class CommandsAssistant extends Commands {
             return CommandResponse.SEND_SYNTAX;
         }
 
-        if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
-        }
+        checkPositiveInteger(args.get(0));
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
         if(town instanceof AdminTown) {
-            throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.adminTown", town);
         }
 
         int amount = Integer.parseInt(args.get(0));

@@ -6,7 +6,6 @@ import myessentials.chat.api.ChatManager;
 import myessentials.entities.api.tool.Tool;
 import myessentials.entities.api.tool.ToolManager;
 import myessentials.localization.api.LocalManager;
-import myessentials.utils.StringUtils;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
 import mytown.config.Config;
@@ -83,11 +82,11 @@ public class CommandsEveryone extends Commands {
         }
 
         if (!town.hasSpawn()) {
-            throw new MyTownCommandException("mytown.cmd.err.spawn.notexist", town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.spawn.missing", town);
         }
 
         if(!town.hasPermission(res, FlagType.ENTER, town.getSpawn().getDim(), (int) town.getSpawn().getX(), (int) town.getSpawn().getY(), (int) town.getSpawn().getZ())) {
-            throw new MyTownCommandException("mytown.cmd.err.spawn.protected", town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.spawn.protected", town);
         }
 
         if(res.getTeleportCooldown() > 0) {
@@ -114,7 +113,7 @@ public class CommandsEveryone extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromName(args.get(0));
         if (!town.residentsMap.containsKey(res)) {
-            throw new MyTownCommandException("mytown.cmd.err.select.notpart", args.get(0));
+            throw new MyTownCommandException("mytown.cmd.err.select.notResident", town);
         }
         getDatasource().saveSelectedTown(res, town);
         ChatManager.send(sender, "mytown.notification.town.select", town);
@@ -223,7 +222,7 @@ public class CommandsEveryone extends Commands {
             if (flag.setValue(args.get(1))) {
                 ChatManager.send(sender, "mytown.notification.perm.success");
             } else {
-                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
             }
 
             getDatasource().saveFlag(flag, plot);
@@ -252,7 +251,7 @@ public class CommandsEveryone extends Commands {
             if (flag.toggle()) {
                 ChatManager.send(sender, "mytown.notification.perm.success");
             } else {
-                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
+                throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid");
             }
 
             getDatasource().saveFlag(flag, plot);
@@ -409,7 +408,7 @@ public class CommandsEveryone extends Commands {
 
             Town town = getTownFromResident(res);
             if (!target.townsContainer.contains(town)) {
-                throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", target.getPlayerName(), town.getName());
+                throw new MyTownCommandException("mytown.cmd.err.resident.notInTown", target);
             }
 
             Plot plot = getPlotAtResident(res);
@@ -423,7 +422,7 @@ public class CommandsEveryone extends Commands {
             }
 
             if (!town.plotsContainer.canResidentMakePlot(target)) {
-                throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target.getPlayerName());
+                throw new MyTownCommandException("mytown.cmd.err.plot.limit.toPlayer", target);
             }
 
             getDatasource().linkResidentToPlot(target, plot, true);
@@ -551,9 +550,7 @@ public class CommandsEveryone extends Commands {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
 
-            if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0) {
-                throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
-            }
+            checkPositiveInteger(args.get(0));
 
             int price = Integer.parseInt(args.get(0));
             ToolManager.instance.register(new PlotSellTool(res, price));
@@ -639,7 +636,7 @@ public class CommandsEveryone extends Commands {
         Town town = getTownFromResident(res);
 
         if(town instanceof AdminTown) {
-            throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.adminTown", town);
         }
 
         ChatManager.send(sender, "mytown.notification.town.bank.info", EconomyProxy.getCurrency(town.bank.getAmount()), EconomyProxy.getCurrency(town.bank.getNextPaymentAmount()));
@@ -656,15 +653,13 @@ public class CommandsEveryone extends Commands {
             return CommandResponse.SEND_SYNTAX;
         }
 
-        if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
-            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
-        }
+        checkPositiveInteger(args.get(0));
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
         if(town instanceof AdminTown) {
-            throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.adminTown", town);
         }
 
         int amount = Integer.parseInt(args.get(0));
