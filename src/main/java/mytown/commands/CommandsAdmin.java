@@ -6,11 +6,12 @@ import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
-import mypermissions.command.api.CommandManager;
-import mypermissions.command.api.CommandResponse;
-import mypermissions.command.api.annotation.Command;
-import mypermissions.command.core.entities.CommandTree;
-import mypermissions.command.core.entities.CommandTreeNode;
+import mypermissions.api.command.CommandManager;
+import mypermissions.api.command.CommandResponse;
+import mypermissions.api.command.annotation.Command;
+import mypermissions.command.CommandTree;
+import mypermissions.command.CommandTreeNode;
+import mypermissions.proxies.PermissionProxy;
 import mytown.MyTown;
 import mytown.config.json.FlagsConfig;
 import mytown.new_datasource.MyTownDatasource;
@@ -840,8 +841,12 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
+        EntityPlayer playerSender = null;
+        if (sender instanceof EntityPlayer) {
+            playerSender = (EntityPlayer) sender;
+        }
 
-        if (!flag.flagType.configurable) {
+        if (!flag.flagType.configurable && (playerSender == null || !PermissionProxy.getPermissionManager().hasPermission(playerSender.getPersistentID(), "mytown.adm.cmd.perm.town.set." + flag.flagType + ".bypass"))) {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(1));
         } else {
             if (flag.setValue(args.get(2))) {
@@ -868,8 +873,12 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
+        EntityPlayer playerSender = null;
+        if (sender instanceof EntityPlayer) {
+            playerSender = (EntityPlayer) sender;
+        }
 
-        if (!flag.flagType.configurable) {
+        if (!flag.flagType.configurable && (playerSender == null || !PermissionProxy.getPermissionManager().hasPermission(playerSender.getPersistentID(), "mytown.adm.cmd.perm.town.toggle." + flag.flagType + ".bypass"))) {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(1));
         } else {
             if (flag.toggle()) {
@@ -998,7 +1007,7 @@ public class CommandsAdmin extends Commands {
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
-            if(!StringUtils.tryParseInt(args.get(1)))
+            if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
             int radius = Integer.parseInt(args.get(1));
@@ -1057,7 +1066,7 @@ public class CommandsAdmin extends Commands {
             console = true)
     public static CommandResponse helpCommand(ICommandSender sender, List<String> args) {
         int page = 1;
-        if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0))) {
+        if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0)) && Integer.parseInt(args.get(0)) > 0) {
             page = Integer.parseInt(args.get(0));
             args = args.subList(1, args.size());
         }

@@ -2,6 +2,7 @@ package mytown.commands;
 
 import myessentials.entities.api.tool.Tool;
 import myessentials.entities.api.tool.ToolManager;
+import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
 import mypermissions.command.api.CommandResponse;
@@ -645,7 +646,7 @@ public class CommandsEveryone extends Commands {
         if(args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
 
-        if(!StringUtils.tryParseInt(args.get(0)))
+        if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);

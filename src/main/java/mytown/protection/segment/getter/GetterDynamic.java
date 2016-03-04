@@ -1,6 +1,5 @@
 package mytown.protection.segment.getter;
 
-import mytown.MyTown;
 import mytown.protection.segment.caller.Caller;
 import mytown.util.exceptions.GetterException;
 
@@ -24,6 +23,18 @@ public class GetterDynamic extends Getter {
     }
 
     @Override
+    public void setClass(Class<?> clazz) {
+        Class<?> currClass = clazz;
+        for (Caller caller : this.callers) {
+            caller.setClass(currClass);
+            try {
+                currClass = caller.nextClass();
+            } catch(Exception ex) {
+            }
+        }
+    }
+
+    @Override
     public Object invoke(Class<?> returnType, Object instance, Object... parameters) throws GetterException {
         if(instance == null) {
             return null;
@@ -34,7 +45,7 @@ public class GetterDynamic extends Getter {
         for (Caller caller : callers) {
             try {
 
-                lastInstance = caller.invoke(instance, parameters);
+                lastInstance = caller.invoke(lastInstance, parameters);
 
             } catch(NoSuchFieldException nfex) {
                 throw new GetterException("Failed to get field " + caller.getName() + " in getter: " + name, nfex);

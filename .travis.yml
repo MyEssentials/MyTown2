@@ -28,7 +28,7 @@ deploy:
     script: ./gradlew curse
     on:
       tags: true
-      repo: MyEssentials/MyEssentials-Core
+      repo: MyEssentials/MyTown2
       all_branches: true
 jdk:
  - oraclejdk8

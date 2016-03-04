@@ -3,6 +3,7 @@ package mytown.proxies;
 import myessentials.economy.api.Economy;
 import mytown.MyTown;
 import mytown.config.Config;
+import myessentials.economy.api.Economy;
 
 public class EconomyProxy {
 
@@ -24,6 +25,8 @@ public class EconomyProxy {
         if(Config.instance.costItemName.get().equals(Economy.CURRENCY_FORGE_ESSENTIALS)) {
             return false;
         } else if(Config.instance.costItemName.get().equals(Economy.CURRENCY_VAULT)) {
+            return false;
+        } else if(Config.instance.costItemName.get().startsWith(Economy.CURRENCY_CUSTOM)) {
             return false;
         }
         return true;

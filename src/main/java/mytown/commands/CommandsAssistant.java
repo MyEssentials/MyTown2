@@ -93,7 +93,7 @@ public class CommandsAssistant extends Commands {
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
-            if (!StringUtils.tryParseInt(args.get(0)))
+            if (!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0)
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
             int radius = Integer.parseInt(args.get(0));
@@ -547,7 +547,7 @@ public class CommandsAssistant extends Commands {
             if (args.size() < 1)
                 return CommandResponse.SEND_SYNTAX;
 
-            if (!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1) {
+            if (!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 0) {
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
             }
             int limit = Integer.parseInt(args.get(0));
@@ -601,6 +601,13 @@ public class CommandsAssistant extends Commands {
         EntityPlayer player = (EntityPlayer) sender;
 
         if (town.residentsMap.get(res).getType() == Rank.Type.MAYOR) {
+            for(Plot plot: town.plotsContainer) {
+                if(!plot.ownersContainer.contains(res)) {
+                    res.sendMessage(getLocal().getLocalization("mytown.notification.town.delete.with-plots"));
+                    return CommandResponse.DONE;
+                }
+            }
+
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
             int refund = 0;
             for (TownBlock block : town.townBlocksContainer) {
@@ -643,7 +650,7 @@ public class CommandsAssistant extends Commands {
         if(args.size() < 1)
             return CommandResponse.SEND_SYNTAX;
 
-        if(!StringUtils.tryParseInt(args.get(0)))
+        if(!StringUtils.tryParseInt(args.get(0)) || Integer.parseInt(args.get(0)) < 1)
             throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(0));
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);

@@ -82,15 +82,19 @@ public class Town implements Comparable<Town>, IChatFormat{
             return true;
         }
 
+        if (res == null || res.getFakePlayer()) {
+            return false;
+        }
+
         boolean rankBypass;
         boolean permissionBypass;
 
-        if(residentsMap.containsKey(res)) {
-            if(flagsContainer.getValue(FlagType.RESTRICTIONS)) {
+        if (residentsMap.containsKey(res)) {
+            if (flagsContainer.getValue(FlagType.RESTRICTIONS)) {
                 rankBypass = hasPermission(res, FlagType.RESTRICTIONS.getBypassPermission());
                 permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), FlagType.RESTRICTIONS.getBypassPermission());
 
-                if(!rankBypass && !permissionBypass) {
+                if (!rankBypass && !permissionBypass) {
                     res.protectionDenial(FlagType.RESTRICTIONS, formatOwner());
                     return false;
                 }
@@ -99,21 +103,17 @@ public class Town implements Comparable<Town>, IChatFormat{
             rankBypass = hasPermission(res, flagType.getBypassPermission());
             permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
 
-            if(!rankBypass && !permissionBypass) {
+            if (!rankBypass && !permissionBypass) {
                 res.protectionDenial(flagType, formatOwner());
                 return false;
             }
 
         } else {
-            if(res == null) {
-                return false;
-            } else {
-                permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
+            permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
 
-                if (!permissionBypass) {
-                    res.protectionDenial(flagType, formatOwner());
-                    return false;
-                }
+            if (!permissionBypass) {
+                res.protectionDenial(flagType, formatOwner());
+                return false;
             }
         }
 

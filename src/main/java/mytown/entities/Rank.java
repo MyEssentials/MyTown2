@@ -208,7 +208,7 @@ public class Rank implements IChatFormat {
         public String toString() {
             return toChatMessage().getUnformattedText();
         }
-        
+
         @Override
         public IChatComponent toChatMessage() {
             IChatComponent result = new ChatComponentText("");
