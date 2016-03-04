@@ -6,8 +6,8 @@ import myessentials.utils.ChatUtils;
 import myessentials.utils.MathUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
-import mypermissions.api.command.CommandResponse;
-import mypermissions.api.command.annotation.Command;
+import mypermissions.command.api.CommandResponse;
+import mypermissions.command.api.annotation.Command;
 import mytown.config.Config;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
@@ -39,7 +39,7 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
 
         if (!town.isPointInTown(player.dimension, (int) player.posX, (int) player.posZ))
-            throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()));
+            throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()).getUnformattedText());
 
         makePayment(player, Config.instance.costAmountSetSpawn.get());
 
@@ -202,7 +202,7 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(0));
         } else {
             if (flag.setValue(args.get(1))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.success");
+                sender.addChatMessage(getLocal().getLocalization("mytown.notification.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -229,7 +229,7 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(0));
         } else {
             if (flag.toggle()) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.success");
+                sender.addChatMessage(getLocal().getLocalization("mytown.notification.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }

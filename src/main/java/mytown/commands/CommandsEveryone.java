@@ -5,17 +5,17 @@ import myessentials.entities.api.tool.ToolManager;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
-import mypermissions.api.command.CommandResponse;
-import mypermissions.api.command.annotation.Command;
+import mypermissions.command.api.CommandResponse;
+import mypermissions.command.api.annotation.Command;
 import mytown.config.Config;
-import mytown.entities.signs.SellSign;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.entities.signs.SellSign;
 import mytown.entities.tools.PlotSelectionTool;
 import mytown.entities.tools.PlotSellTool;
 import mytown.entities.tools.WhitelisterTool;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.proxies.EconomyProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
@@ -148,11 +148,11 @@ public class CommandsEveryone extends Commands {
 
         String blocks = town.townBlocksContainer.size() + "/" + town.getMaxBlocks();
         String extraBlocks = town.getExtraBlocks() + "\\n";
-        String dash = ColorUtils.colorInfoText + " - ";
+        String dash = " - ";
         extraBlocks += dash + "TOWN (" + town.townBlocksContainer.getExtraBlocks() + ")\\n";
         for(Iterator<Resident> it = town.residentsMap.keySet().iterator(); it.hasNext();) {
             Resident resInTown = it.next();
-            extraBlocks += dash + ColorUtils.colorInfoText + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
+            extraBlocks += dash + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
             if(it.hasNext()) {
                 extraBlocks += "\\n";
             }
@@ -182,7 +182,7 @@ public class CommandsEveryone extends Commands {
     public static CommandResponse permListCommand(ICommandSender sender, List<String> args) {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
-        res.sendMessage(town.flagsContainer.toStringForTowns());
+        res.sendMessage(town.flagsContainer.toChatMessage());
         return CommandResponse.DONE;
     }
 
@@ -217,7 +217,7 @@ public class CommandsEveryone extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(0));
 
             if (flag.setValue(args.get(1))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.success");
+                sender.addChatMessage(getLocal().getLocalization("mytown.notification.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -246,7 +246,7 @@ public class CommandsEveryone extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(0));
 
             if (flag.toggle()) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.perm.success");
+                sender.addChatMessage(getLocal().getLocalization("mytown.notification.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -263,7 +263,7 @@ public class CommandsEveryone extends Commands {
         public static CommandResponse plotPermListCommand(ICommandSender sender, List<String> args) {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Plot plot = getPlotAtResident(res);
-            res.sendMessage(plot.flagsContainer.toStringForPlot(plot.getTown()));
+            res.sendMessage(plot.flagsContainer.toChatMessage());
             return CommandResponse.DONE;
         }
 
@@ -362,7 +362,7 @@ public class CommandsEveryone extends Commands {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             town.plotsContainer.show(res);
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.showing"));
             return CommandResponse.DONE;
         }
 
@@ -375,7 +375,7 @@ public class CommandsEveryone extends Commands {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromResident(res);
             town.plotsContainer.hide(res);
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.vanished");
+            res.sendMessage(getLocal().getLocalization("mytown.notification.plot.vanished"));
             return CommandResponse.DONE;
         }
 
@@ -571,7 +571,7 @@ public class CommandsEveryone extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.ranks", town.ranksContainer.toString());
+        res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks", town.ranksContainer.toString()));
         return CommandResponse.DONE;
     }
 
@@ -678,7 +678,7 @@ public class CommandsEveryone extends Commands {
             syntax = "/town wild perm")
     public static CommandResponse permWildListCommand(ICommandSender sender, List<String> args) {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-        res.sendMessage(Wild.instance.flagsContainer.toStringForWild());
+        res.sendMessage(Wild.instance.flagsContainer.toChatMessage());
         return CommandResponse.DONE;
     }
 }

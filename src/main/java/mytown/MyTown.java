@@ -12,7 +12,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.Localization;
 import myessentials.json.api.JsonConfig;
 import myessentials.utils.StringUtils;
-import mypermissions.api.command.CommandManager;
+import mypermissions.command.api.CommandManager;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.json.FlagsConfig;

@@ -2,14 +2,20 @@ package mytown.entities;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
+import myessentials.MyEssentialsCore;
+import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.utils.ColorUtils;
-import mypermissions.api.container.PermissionsContainer;
+import mypermissions.permission.core.container.PermissionsContainer;
+import mytown.MyTown;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 
-public class Rank {
+public class Rank implements IChatFormat {
 
     /**
      * All the default ranks that are added to each town on creation (except AdminTowns)
@@ -87,26 +93,31 @@ public class Rank {
         return type.color + getName();
     }
 
+    @Override
+    public IChatComponent toChatMessage() {
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.rank", name).setChatStyle(new ChatStyle().setColor(type.color));
+    }
+
     public enum Type {
         /**
          * Rank that can do anything
          */
-        MAYOR(EnumChatFormatting.RED.toString(), true),
+        MAYOR(EnumChatFormatting.RED, true),
 
         /**
          * Rank that is assigned to players on joining the town
          */
-        DEFAULT(EnumChatFormatting.GREEN.toString(), true),
+        DEFAULT(EnumChatFormatting.GREEN, true),
 
         /**
          * Nothing special to this rank
          */
-        REGULAR(EnumChatFormatting.WHITE.toString(), false);
+        REGULAR(EnumChatFormatting.WHITE, false);
 
-        public final String color;
+        public final EnumChatFormatting color;
         public final boolean unique;
 
-        Type(String color, boolean unique) {
+        Type(EnumChatFormatting color, boolean unique) {
             this.color = color;
             this.unique = unique;
         }
@@ -144,7 +155,7 @@ public class Rank {
         }
     }
 
-    public static class Container extends ArrayList<Rank> {
+    public static class Container extends ArrayList<Rank> implements IChatFormat {
 
         public boolean contains(String rankName) {
             for (Rank r : this) {
@@ -195,19 +206,23 @@ public class Rank {
 
         @Override
         public String toString() {
-            String res = null;
+            return toChatMessage().getUnformattedText();
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            IChatComponent result = new ChatComponentText("");
+
             for (Rank rank : this) {
-                if (res == null) {
-                    res = rank.toString();
-                } else {
-                    res += ColorUtils.colorComma + ", " + rank.toString();
-                }
+                result.appendSibling(rank.toChatMessage());
+                result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
             }
 
             if (isEmpty()) {
-                res = ColorUtils.colorEmpty + "NONE";
+                result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
             }
-            return res;
+
+            return result;
         }
     }
 }
