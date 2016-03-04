@@ -6,12 +6,12 @@ import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
-import mypermissions.api.command.CommandManager;
-import mypermissions.api.command.CommandResponse;
-import mypermissions.api.command.annotation.Command;
-import mypermissions.command.CommandTree;
-import mypermissions.command.CommandTreeNode;
-import mypermissions.proxies.PermissionProxy;
+import mypermissions.command.api.CommandManager;
+import mypermissions.command.api.CommandResponse;
+import mypermissions.command.api.annotation.Command;
+import mypermissions.command.core.entities.CommandTree;
+import mypermissions.command.core.entities.CommandTreeNode;
+import mypermissions.permission.api.proxy.PermissionProxy;
 import mytown.MyTown;
 import mytown.config.json.FlagsConfig;
 import mytown.new_datasource.MyTownDatasource;
@@ -46,7 +46,7 @@ public class CommandsAdmin extends Commands {
 
     }
 
-    @Command (
+    @Command(
             name = "mytownadmin",
             permission = "mytown.adm.cmd",
             syntax = "/townadmin <command>",

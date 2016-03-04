@@ -1,6 +1,7 @@
 package mytown.test.datasource;
 
 import mytown.entities.Town;
+import mytown.test.TestMain;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;

@@ -247,6 +247,11 @@ public class Resident implements IChatFormat {
         this.extraBlocks = extraBlocks;
     }
 
+    @Override
+    public IChatComponent toChatMessage() {
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.resident.long", playerName, townsContainer, joinDate.toString(), lastOnline.toString(), extraBlocks);
+    }
+
     public boolean getFakePlayer() {
         return isFakePlayer;
     }
@@ -255,7 +260,7 @@ public class Resident implements IChatFormat {
         this.isFakePlayer = isFakePlayer;
     }
 
-    public static class Container extends ArrayList<Resident> {
+    public static class Container extends ArrayList<Resident> implements IChatFormat {
 
         public Resident get(UUID uuid) {
             for (Resident res : this) {

@@ -4,6 +4,7 @@ import myessentials.entities.api.BlockPos;
 import myessentials.entities.api.Volume;
 import mytown.entities.Resident;
 import mytown.protection.segment.enums.ItemType;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
