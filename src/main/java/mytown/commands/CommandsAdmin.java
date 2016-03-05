@@ -3,7 +3,6 @@ package mytown.commands;
 import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.tool.ToolManager;
 import myessentials.utils.ChatUtils;
-import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
 import mypermissions.command.api.CommandManager;
@@ -13,6 +12,8 @@ import mypermissions.command.core.entities.CommandTree;
 import mypermissions.command.core.entities.CommandTreeNode;
 import mypermissions.permission.api.proxy.PermissionProxy;
 import mytown.MyTown;
+import mytown.commands.format.ChatComponentRankPermList;
+import mytown.commands.format.ChatComponentTownBlocks;
 import mytown.config.json.FlagsConfig;
 import mytown.new_datasource.MyTownDatasource;
 import mytown.new_datasource.MyTownUniverse;
@@ -289,21 +290,7 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
 
-        String blocks = town.townBlocksContainer.size() + "/" + town.getMaxBlocks();
-        String extraBlocks = town.getExtraBlocks() + "\\n";
-        String dash = " - ";
-        extraBlocks += dash + "TOWN (" + town.townBlocksContainer.getExtraBlocks() + ")\\n";
-        for(Iterator<Resident> it = town.residentsMap.keySet().iterator(); it.hasNext();) {
-            Resident resInTown = it.next();
-            extraBlocks += dash + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
-            if(it.hasNext()) {
-                extraBlocks += "\\n";
-            }
-        }
-
-        String farBlocks = town.townBlocksContainer.getFarClaims() + "/" + town.getMaxFarClaims();
-
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.blocks.info", blocks, extraBlocks, farBlocks));
+        new ChatComponentTownBlocks(town).send(sender);
 
         return CommandResponse.DONE;
     }
@@ -726,7 +713,7 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(0));
         Rank rank = getRankFromTown(town, args.get(1));
 
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), town.getName(), rank.permissionsContainer.toString()));
+        new ChatComponentRankPermList(rank).send(sender);
         return CommandResponse.DONE;
     }
 

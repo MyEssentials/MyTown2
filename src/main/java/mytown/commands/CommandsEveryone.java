@@ -2,11 +2,11 @@ package mytown.commands;
 
 import myessentials.entities.api.tool.Tool;
 import myessentials.entities.api.tool.ToolManager;
-import myessentials.utils.ChatUtils;
-import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
+import mytown.commands.format.ChatComponentTownBankInfo;
+import mytown.commands.format.ChatComponentTownBlocks;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -16,14 +16,12 @@ import mytown.entities.tools.PlotSelectionTool;
 import mytown.entities.tools.PlotSellTool;
 import mytown.entities.tools.WhitelisterTool;
 import mytown.new_datasource.MyTownUniverse;
-import mytown.proxies.EconomyProxy;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -146,21 +144,7 @@ public class CommandsEveryone extends Commands {
         Resident res = getUniverse().getOrMakeResident(sender);
         Town town = getTownFromResident(res);
 
-        String blocks = town.townBlocksContainer.size() + "/" + town.getMaxBlocks();
-        String extraBlocks = town.getExtraBlocks() + "\\n";
-        String dash = " - ";
-        extraBlocks += dash + "TOWN (" + town.townBlocksContainer.getExtraBlocks() + ")\\n";
-        for(Iterator<Resident> it = town.residentsMap.keySet().iterator(); it.hasNext();) {
-            Resident resInTown = it.next();
-            extraBlocks += dash + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
-            if(it.hasNext()) {
-                extraBlocks += "\\n";
-            }
-        }
-
-        String farBlocks = town.townBlocksContainer.getFarClaims() + "/" + town.getMaxFarClaims();
-
-        res.sendMessage(getLocal().getLocalization("mytown.notification.blocks.info", blocks, extraBlocks, farBlocks));
+        new ChatComponentTownBlocks(town).send(sender);
 
         return CommandResponse.DONE;
     }
@@ -633,7 +617,7 @@ public class CommandsEveryone extends Commands {
         if(town instanceof AdminTown)
             throw new MyTownCommandException("mytown.cmd.err.adminTown", town.getName());
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.bank.info", EconomyProxy.getCurrency(town.bank.getAmount()), EconomyProxy.getCurrency(town.bank.getNextPaymentAmount())));
+        new ChatComponentTownBankInfo(town.bank).send(sender);
         return CommandResponse.DONE;
     }
 

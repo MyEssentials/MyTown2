@@ -296,12 +296,8 @@ public class Town extends ChatFormat implements Comparable<Town> {
 
     @Override
     public IChatComponent toChatMessage(boolean shortened) {
-        if (shortened) {
-            IChatComponent mayorComponent = residentsMap.getMayor() == null ? new ChatComponentText("SERVER ADMINS").setChatStyle(ColorUtils.styleAdmin) : residentsMap.getMayor().toChatMessage(true);
-            return MyTown.instance.LOCAL.getLocalization("mytown.format.town.short", name, ranksContainer.getMayorRank(), mayorComponent);
-        } else {
-            return MyTown.instance.LOCAL.getLocalization("mytown.format.town.long", name, residentsMap.size(), townBlocksContainer.size(), getMaxBlocks(), plotsContainer.size(), residentsMap, ranksContainer);
-        }
+        IChatComponent mayorComponent = residentsMap.getMayor() == null ? new ChatComponentText("SERVER ADMINS").setChatStyle(ColorUtils.styleAdmin) : residentsMap.getMayor().toChatMessage(true);
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.town", name, ranksContainer.getMayorRank(), mayorComponent);
     }
 
     public static class Container extends ArrayList<Town> implements IChatFormat {
@@ -366,10 +362,16 @@ public class Town extends ChatFormat implements Comparable<Town> {
         public IChatComponent toChatMessage(boolean shortened) {
             IChatComponent result = new ChatComponentText("");
 
-            for (Town town : this) {
+            Iterator<Town> it = this.iterator();
+            while (it.hasNext()) {
+                Town town = it.next();
                 result.appendSibling(town.toChatMessage(true));
-                result.appendSibling(new ChatComponentText("\n"));
+
+                if (it.hasNext()) {
+                    result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
+                }
             }
+
             return result;
         }
 

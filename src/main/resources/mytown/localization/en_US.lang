@@ -129,9 +129,38 @@ mytown.cmd.err.unclaim.lastClaim={c|Your town must at least have 1 chunk. Use "/
 # /t info
 mytown.cmd.err.info.notpart={c|You are not part of a town. }{3|Alternative usage: "/t info <townname>"}
 
-mytown.notification.town.list={6|-----[[}{a|Towns:}{6|]]----- \n}{f|%s}
-mytown.notification.town.info={6|--------[[}{a|%s}{6|]]-------- \n - }{2|R:%s - C:%s/%s - P:%s -  \n }{2|Residents:}{a| %s\n }{2|Ranks:}{f| %s}
+mytown.notification.town.list.header={6| -----[[}{a|Towns}{6|]]----- Page %s/%s}
 
+mytown.notification.town.info.1={6|--------[[}{a|%s}{6|]]--------}
+mytown.notification.town.info.2={2|- R:%s - C:%s/%s - P:%s -}
+mytown.notification.town.info.3={2|Residents: }{a|%s}
+mytown.notification.town.info.4={2|Ranks: }{f|%s}
+
+mytown.notification.resident.info.1={6|--------[[}{a|%s}{6|]]--------}
+mytown.notification.resident.info.2={2|Towns: }{%s}
+mytown.notification.resident.info.3={2|Joined: }{a|%s}
+mytown.notification.resident.info.4={2|Last online: }{a|%s}
+mytown.notification.resident.info.5={2|Extra blocks: }{a|%s}
+
+mytown.notification.plot.info.1={6|--------[[}{2|Plot: }{a|%s}{6|]]--------}
+mytown.notification.plot.info.2={2|Owners: }{f|%s}
+mytown.notification.plot.info.3={2|Borders: }{%s}
+
+mytown.notification.blocks.info.1={6|--------[[}{a|BLOCKS}{6|]]--------}
+mytown.notification.blocks.info.2={2|Blocks: }{7|%s}
+mytown.notification.blocks.info.3={2|Extra blocks: }
+mytown.notification.blocks.info.4={2|Far blocks: }{7|%s}
+
+mytown.notification.prices.info.1={6|--------[[}{a|PRICES}{6|]]--------}
+mytown.notification.prices.info.2={2|Town creation: }{7|%s}
+mytown.notification.prices.info.3={2|Claim: }{7|%s}
+mytown.notification.prices.info.4={2|Additional claim: }{7|%s}
+mytown.notification.prices.info.5={2|Far claim: }{7|%s}
+mytown.notification.prices.info.6={2|Spawn: }{7|%s}
+mytown.notification.prices.info.7={2|Set spawn: }{7|%s}
+mytown.notification.prices.info.8={2|Other spawn: }{7|%s}
+mytown.notification.prices.info.9={2|Town upkeep: }{7|%s}
+mytown.notification.prices.info.10={2|Claim upkeep: }{7|%s}
 
 # /t res
 
@@ -252,17 +281,13 @@ mytown.notification.town.borders.hide={a|Borders have been successfully hidden}
 # Formatting
 
 mytown.format.flag={7|%s}{7|[}{a|%s}{7|]:}{%s}
-mytown.format.town.short={6|%s}{7|[}{%s}{7|: }{%s}
-mytown.format.town.long={6|--------[[}{a|%s}{6|]]--------\n}{6| - }{2|R:%s}{6| - }{2|C:%s/%s}{6| - }{2|P:%s}{6| - \n}{2| Residents: }{%s}{2|\n Ranks: }{%s}
+mytown.format.town={6|%s}{7| (}{%s}{7|: }{%s}{7|)}
 mytown.format.rank={l|%s}
-mytown.format.plot.short={a|%s}{7|: }{%s}
-mytown.format.plot.long={6|--------[[}{2|Plot: }{a|%s}{6|]]--------\n}{2|Owners: }{f|%s\n}{2|Borders: }{%s}
-mytown.format.resident.short={a|%s}
-mytown.format.resident.long={6|--------[[}{a|%s}{6|]]--------}{2|\n Towns: }{%s}{2|\n Joined: }{a|%s}{2|\n Last online: }{a|%s}{2|\n Extra blocks: }{a|%s}
+mytown.format.plot={a|%s}{7|: Dim: %s Start: (%s, %s, %s) Stop: (%s, %s, %s)}
+mytown.format.resident={a|%s}
 mytown.format.resident.withrank={%s}{7|(}{%s}{7|)}
 mytown.format.block.short={%s}
-mytown.notification.blocks.info={6|--------[[}{a|BLOCKS}{6|]]--------\n}{2|Blocks: }{7|%s\n}{2|Extra blocks: }{7|%s \n}{2|Far blocks: }{7|%s}
-mytown.notification.prices={6|--------[[}{a|PRICES}{6|]]--------\n}{2|Town creation: }{7|%s\n}{2|Claim: }{7|%s\n}{2|Additional claim: }{7|%s\n}{2|Far claim: }{7|%s\n}{2|Spawn: }{7|%s\n}{2|Set spawn: }{7|%s\n}{2|Other spawn: }{7|%s\n}{2|Town upkeep: }{7|%s\n}{2|Claim upkeep: }{7|%s}
+mytown.format.block.long={%s (%s %s) Town: %s Number of plots: %s}
 mytown.notification.town.owners={6| Owners: }{c|%s}
 
 # Notifications
@@ -270,7 +295,7 @@ mytown.notification.town.owners={6| Owners: }{c|%s}
 mytown.notification.block.added={a|Town block from (%s, %s) to (%s, %s) has been added to town %s}
 mytown.notification.block.removed={a|Town block from (%s, %s) to (%s, %s) has been removed from town %s}
 mytown.notification.block.list=Blocks in town %s: %s
-mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s: \n%s
+mytown.notification.town.ranks.perm.list=Permissions for rank %s in town %s:
 mytown.notification.plot.start={3|Right click 2 corners with the Selector to create a plot. Use "/t plot }{3|select reset" to reset selection}
 mytown.notification.plot.selectionStart={9|First}{f| corner selected}
 mytown.notification.plot.selectionEnd={9|Second}{f| corner selected}
@@ -326,7 +351,8 @@ mytown.notification.town.payment={3|%s has been taken from the bank}
 mytown.notification.town.refund={3|%s has been refunded to the bank}
 mytown.notification.plot.sender.removed={c|%s has been removed from the plot}
 mytown.notification.plot.target.removed={c|You have been removed from plot %s}
-mytown.notification.town.bank.info={a|Bank balance: }{7|%s \n}{a|Next payment: }{7|%s}
+mytown.notification.town.bank.info.balance={a|Bank balance: }{7|%s}
+mytown.notification.town.bank.info.nextPayment={a|Next payment: }{7|%s}
 mytown.notification.town.upkeep={3|A new day is upon us, taxes have been collected}
 mytown.notification.town.upkeep.failed={c|A new day has passed but the bank is out of money. %s days before town deletion}
 mytown.notification.town.blocks.extra.set={3|The amount of extra claimable blocks has been set to %s for town %s}

@@ -8,6 +8,7 @@ import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
+import mytown.commands.format.ChatComponentRankPermList;
 import mytown.config.Config;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
@@ -39,7 +40,7 @@ public class CommandsAssistant extends Commands {
         Town town = getTownFromResident(res);
 
         if (!town.isPointInTown(player.dimension, (int) player.posX, (int) player.posZ))
-            throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.setspawn.notintown", town.getName()).getUnformattedText());
+            throw new MyTownCommandException("mytown.cmd.err.setspawn.notintown", town.getName());
 
         makePayment(player, Config.instance.costAmountSetSpawn.get());
 
@@ -478,7 +479,7 @@ public class CommandsAssistant extends Commands {
             rank = getRankFromTown(town, args.get(0));
         }
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), town.getName(), rank.permissionsContainer.toString()));
+        new ChatComponentRankPermList(rank).send(sender);
         return CommandResponse.DONE;
     }
 

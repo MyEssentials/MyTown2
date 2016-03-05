@@ -15,6 +15,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Rank extends ChatFormat {
 
@@ -214,9 +215,13 @@ public class Rank extends ChatFormat {
         public IChatComponent toChatMessage(boolean shortened) {
             IChatComponent result = new ChatComponentText("");
 
-            for (Rank rank : this) {
+            Iterator<Rank> it = this.iterator();
+            while(it.hasNext()) {
+                Rank rank = it.next();
                 result.appendSibling(rank.toChatMessage());
-                result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
+                if (it.hasNext()) {
+                    result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
+                }
             }
 
             if (isEmpty()) {

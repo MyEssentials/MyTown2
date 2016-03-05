@@ -250,11 +250,7 @@ public class Resident extends ChatFormat {
 
     @Override
     public IChatComponent toChatMessage(boolean shortened) {
-        if (shortened) {
-            return MyTown.instance.LOCAL.getLocalization("mytown.format.resident.short", playerName);
-        } else {
-            return MyTown.instance.LOCAL.getLocalization("mytown.format.resident.long", playerName, townsContainer, joinDate.toString(), lastOnline.toString(), extraBlocks);
-        }
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.resident", playerName);
     }
 
     public boolean getFakePlayer() {
@@ -332,7 +328,7 @@ public class Resident extends ChatFormat {
                 if (result.getSiblings().size() == 0) {
                     result.appendSibling(res.toChatMessage());
                 } else {
-                    result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma).appendSibling(res.toChatMessage()));
+                    result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma).appendSibling(res.toChatMessage(true)));
                 }
             }
             if (isEmpty()) {

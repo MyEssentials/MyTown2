@@ -5,6 +5,7 @@ import myessentials.chat.api.ChatFormat;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.Volume;
 import myessentials.entities.api.sign.SignType;
+import myessentials.utils.ColorUtils;
 import mypermissions.permission.api.proxy.PermissionProxy;
 import mytown.MyTown;
 import mytown.entities.flag.Flag;
@@ -103,7 +104,7 @@ public class Plot extends ChatFormat {
     @Override
     public IChatComponent toChatMessage(boolean shortened) {
         // TODO Return shortened version?
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.plot.long", name, dim, x1, y1, z1, x2, y2, z2);
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.plot", name, dim, x1, y1, z1, x2, y2, z2);
     }
 
     public Volume toVolume() {
@@ -224,7 +225,7 @@ public class Plot extends ChatFormat {
             }
     }
 
-    public static class Container extends ArrayList<Plot> {
+    public static class Container extends ArrayList<Plot> implements IChatFormat {
 
         private int maxPlots;
 
@@ -328,6 +329,31 @@ public class Plot extends ChatFormat {
                     VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) res.getPlayer(), plot);
                 }
             }
+        }
+
+        @Override
+        public IChatComponent toChatMessage(boolean shortened) {
+            ChatComponentText result = new ChatComponentText("");
+
+            Iterator<Plot> it = this.iterator();
+            while(it.hasNext()) {
+                Plot p = it.next();
+                result.appendSibling(p.toChatMessage(true));
+                if (it.hasNext()) {
+                    result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
+                }
+            }
+
+            if (isEmpty()) {
+                result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
+            }
+
+            return result;
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            return toChatMessage(false);
         }
     }
 }
