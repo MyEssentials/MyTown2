@@ -2,6 +2,7 @@ package mytown.entities.flag;
 
 import com.google.gson.*;
 
+import myessentials.chat.api.ChatFormat;
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.utils.ColorUtils;
@@ -15,7 +16,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Flag<T> implements Comparable<Flag>, IChatFormat {
+public class Flag<T> extends ChatFormat implements Comparable<Flag> {
     protected Gson gson = new GsonBuilder().create();
 
     public T value;
@@ -68,7 +69,7 @@ public class Flag<T> implements Comparable<Flag>, IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
+    public IChatComponent toChatMessage(boolean shortened) {
         IChatComponent description = MyTown.instance.LOCAL.getLocalization(flagType.getDescriptionKey());
         return MyTown.instance.LOCAL.getLocalization("mytown.format.flag", flagType.name.toLowerCase(), value.toString(), description);
     }
@@ -141,13 +142,18 @@ public class Flag<T> implements Comparable<Flag>, IChatFormat {
         }
 
         @Override
-        public IChatComponent toChatMessage() {
+        public IChatComponent toChatMessage(boolean shortened) {
             IChatComponent result = new ChatComponentText("");
             for (Flag flag : this) {
                 result.appendSibling(flag.toChatMessage());
                 result.appendSibling(new ChatComponentText("\n"));
             }
             return result;
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            return toChatMessage(false);
         }
     }
 }

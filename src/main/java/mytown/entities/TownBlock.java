@@ -1,5 +1,6 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatFormat;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.Volume;
@@ -13,7 +14,7 @@ import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 
-public class TownBlock implements IChatFormat {
+public class TownBlock extends ChatFormat {
     /**
      * Used for storing in database
      */
@@ -82,8 +83,12 @@ public class TownBlock implements IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.block.long", dim, x, z, town.getName(), plotsContainer.size());
+    public IChatComponent toChatMessage(boolean shortened) {
+        if (shortened) {
+            return MyTown.instance.LOCAL.getLocalization("mytown.format.block.short", toChunkPos());
+        } else {
+            return MyTown.instance.LOCAL.getLocalization("mytown.format.block.long", dim, x, z, town.getName(), plotsContainer.size());
+        }
     }
 
     public Volume toVolume() {
@@ -182,7 +187,7 @@ public class TownBlock implements IChatFormat {
         }
 
         @Override
-        public IChatComponent toChatMessage() {
+        public IChatComponent toChatMessage(boolean shortened) {
             IChatComponent result = new ChatComponentText("");
 
             for (TownBlock block : this) {
@@ -191,6 +196,11 @@ public class TownBlock implements IChatFormat {
             }
 
             return result;
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            return toChatMessage(false);
         }
     }
 }

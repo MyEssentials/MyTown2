@@ -49,11 +49,11 @@ public class ResidentRankMap extends HashMap<Resident, Rank> implements IChatFor
     }
 
     @Override
-    public IChatComponent toChatMessage() {
+    public IChatComponent toChatMessage(boolean shortened) {
         IChatComponent result = new ChatComponentText("");
 
         for (Map.Entry<Resident, Rank> entry : entrySet()) {
-            result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.resident.withrank", entry.getKey(), entry.getValue()));
+            result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.resident.withrank", entry.getKey().toChatMessage(true), entry.getValue()));
             result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
         }
 
@@ -63,5 +63,10 @@ public class ResidentRankMap extends HashMap<Resident, Rank> implements IChatFor
             result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
         }
         return result;
+    }
+
+    @Override
+    public IChatComponent toChatMessage() {
+        return toChatMessage(false);
     }
 }

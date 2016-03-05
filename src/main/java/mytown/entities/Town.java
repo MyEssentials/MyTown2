@@ -1,5 +1,6 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatFormat;
 import myessentials.chat.api.IChatFormat;
 import myessentials.teleport.Teleport;
 import myessentials.utils.ColorUtils;
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
  */
-public class Town implements Comparable<Town>, IChatFormat{
+public class Town extends ChatFormat implements Comparable<Town> {
     private String name, oldName = null;
 
     protected int maxFarClaims = Config.instance.maxFarClaims.get();
@@ -294,8 +295,13 @@ public class Town implements Comparable<Town>, IChatFormat{
     }
 
     @Override
-    public IChatComponent toChatMessage() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.town.long", name, residentsMap.size(), townBlocksContainer.size(), getMaxBlocks(), plotsContainer.size(), residentsMap, ranksContainer);
+    public IChatComponent toChatMessage(boolean shortened) {
+        if (shortened) {
+            IChatComponent mayorComponent = residentsMap.getMayor() == null ? new ChatComponentText("SERVER ADMINS").setChatStyle(ColorUtils.styleAdmin) : residentsMap.getMayor().toChatMessage(true);
+            return MyTown.instance.LOCAL.getLocalization("mytown.format.town.short", name, ranksContainer.getMayorRank(), mayorComponent);
+        } else {
+            return MyTown.instance.LOCAL.getLocalization("mytown.format.town.long", name, residentsMap.size(), townBlocksContainer.size(), getMaxBlocks(), plotsContainer.size(), residentsMap, ranksContainer);
+        }
     }
 
     public static class Container extends ArrayList<Town> implements IChatFormat {
@@ -357,15 +363,19 @@ public class Town implements Comparable<Town>, IChatFormat{
         }
 
         @Override
-        public IChatComponent toChatMessage() {
+        public IChatComponent toChatMessage(boolean shortened) {
             IChatComponent result = new ChatComponentText("");
 
             for (Town town : this) {
-                IChatComponent mayorComponent = town.residentsMap.getMayor() == null ? new ChatComponentText("SERVER ADMINS").setChatStyle(ColorUtils.styleAdmin) : town.residentsMap.getMayor().toChatMessage();
-                result.appendSibling(MyTown.instance.LOCAL.getLocalization("mytown.format.town.short", town.name, town.ranksContainer.getMayorRank(), mayorComponent));
+                result.appendSibling(town.toChatMessage(true));
                 result.appendSibling(new ChatComponentText("\n"));
             }
             return result;
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            return toChatMessage(false);
         }
     }
 }

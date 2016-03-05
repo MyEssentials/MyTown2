@@ -1,5 +1,6 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatFormat;
 import myessentials.chat.api.IChatFormat;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
@@ -19,7 +20,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.*;
 
-public class Resident implements IChatFormat {
+public class Resident extends ChatFormat {
     private EntityPlayer player;
     private UUID playerUUID;
     private String playerName;
@@ -248,8 +249,12 @@ public class Resident implements IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
-        return MyTown.instance.LOCAL.getLocalization("mytown.format.resident.long", playerName, townsContainer, joinDate.toString(), lastOnline.toString(), extraBlocks);
+    public IChatComponent toChatMessage(boolean shortened) {
+        if (shortened) {
+            return MyTown.instance.LOCAL.getLocalization("mytown.format.resident.short", playerName);
+        } else {
+            return MyTown.instance.LOCAL.getLocalization("mytown.format.resident.long", playerName, townsContainer, joinDate.toString(), lastOnline.toString(), extraBlocks);
+        }
     }
 
     public boolean getFakePlayer() {
@@ -320,7 +325,7 @@ public class Resident implements IChatFormat {
         }
 
         @Override
-        public IChatComponent toChatMessage() {
+        public IChatComponent toChatMessage(boolean shortened) {
             ChatComponentText result = new ChatComponentText("");
 
             for (Resident res : this) {
@@ -334,6 +339,11 @@ public class Resident implements IChatFormat {
                 result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
             }
             return result;
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            return toChatMessage(false);
         }
     }
 }

@@ -1,6 +1,7 @@
 package mytown.entities;
 
 
+import myessentials.chat.api.ChatFormat;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.Volume;
 import myessentials.entities.api.sign.SignType;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Plot implements IChatFormat {
+public class Plot extends ChatFormat {
     private int dbID;
     private final int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
@@ -100,7 +101,8 @@ public class Plot implements IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
+    public IChatComponent toChatMessage(boolean shortened) {
+        // TODO Return shortened version?
         return MyTown.instance.LOCAL.getLocalization("mytown.format.plot.long", name, dim, x1, y1, z1, x2, y2, z2);
     }
 

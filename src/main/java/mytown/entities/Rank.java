@@ -3,6 +3,7 @@ package mytown.entities;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
 import myessentials.MyEssentialsCore;
+import myessentials.chat.api.ChatFormat;
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.utils.ColorUtils;
@@ -15,7 +16,7 @@ import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 
-public class Rank implements IChatFormat {
+public class Rank extends ChatFormat {
 
     /**
      * All the default ranks that are added to each town on creation (except AdminTowns)
@@ -94,7 +95,7 @@ public class Rank implements IChatFormat {
     }
 
     @Override
-    public IChatComponent toChatMessage() {
+    public IChatComponent toChatMessage(boolean shortened) {
         return MyTown.instance.LOCAL.getLocalization("mytown.format.rank", name).setChatStyle(new ChatStyle().setColor(type.color));
     }
 
@@ -210,7 +211,7 @@ public class Rank implements IChatFormat {
         }
 
         @Override
-        public IChatComponent toChatMessage() {
+        public IChatComponent toChatMessage(boolean shortened) {
             IChatComponent result = new ChatComponentText("");
 
             for (Rank rank : this) {
@@ -223,6 +224,11 @@ public class Rank implements IChatFormat {
             }
 
             return result;
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            return toChatMessage(false);
         }
     }
 }
