@@ -611,7 +611,7 @@ public class CommandsAssistant extends Commands {
 
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town.getName(), res.getPlayerName()));
             int refund = 0;
-            for (TownBlock block : town.townBlocksContainer) {
+            for (TownBlock block : town.townBlocksContainer.values()) {
                 refund += block.getPricePaid();
             }
             refund += town.bank.getAmount();
