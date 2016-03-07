@@ -125,6 +125,13 @@ public class MyTownDatasource extends DatasourceSQL {
             ResultSet rs = loadRanksStatement.executeQuery();
             while (rs.next()) {
                 Town town = getUniverse().towns.get(rs.getString("townName"));
+                if (town == null) {
+                    LOG.error("A rank from the database does not belong to any town. Deleting...");
+                    PreparedStatement ds = prepare("DELETE FROM Ranks WHERE name=? AND townName=?", false);
+                    ds.executeUpdate();
+                    continue;
+                }
+
                 Rank rank = new Rank(rs.getString("name"), town, Rank.Type.valueOf(rs.getString("type")));
 
                 LOG.debug("Loading Rank %s for Town {}", rank.getName(), town.getName());
