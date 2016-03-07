@@ -97,7 +97,7 @@ public class CommandsOutsider extends Commands {
         IChatComponent root = new ChatComponentList();
         root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|TOWNS}")));
         for (Town town : getUniverse().towns) {
-            root.appendSibling(town.toChatMessage());
+            root.appendSibling(new ChatComponentFormatted("{7| - }").appendSibling(town.toChatMessage()));
         }
 
         ChatManager.send(sender, root);

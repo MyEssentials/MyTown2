@@ -223,7 +223,7 @@ public class CommandsAdmin extends Commands {
         }
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-        ChatManager.send(res.getPlayer(), "mytown.notification.town.startedCreation", LocalManager.get("mytown.format.town.short", args.get(0)));
+        ChatManager.send(res.getPlayer(), "mytown.notification.town.startedCreation", args.get(0));
 
         EntityPlayer player = (EntityPlayer) sender;
         if (getUniverse().towns.contains(args.get(0))) {

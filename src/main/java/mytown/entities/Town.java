@@ -290,8 +290,10 @@ public class Town implements Comparable<Town>, IChatFormat{
 
     @Override
     public IChatComponent toChatMessage() {
-        IChatComponent mayorComponent = residentsMap.getMayor() == null ? new ChatComponentFormatted("{c|SERVER ADMINS}") : residentsMap.getMayor().toChatMessage();
-        return LocalManager.get("mytown.format.town.short", name, ranksContainer.getMayorRank(), mayorComponent);
+        IChatComponent header = LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|%s}", getName()));
+        IChatComponent hoverComponent = ((ChatComponentFormatted)LocalManager.get("mytown.format.town.long", header, residentsMap.size(), townBlocksContainer.size(), getMaxBlocks(), plotsContainer.size(), residentsMap, ranksContainer)).applyDelimiter("\n");
+
+        return LocalManager.get("mytown.format.town.short", name, hoverComponent);
     }
 
     public static class Container extends ArrayList<Town> implements IChatFormat {

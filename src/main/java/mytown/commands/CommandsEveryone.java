@@ -582,9 +582,9 @@ public class CommandsEveryone extends Commands {
         Town town = getTownFromResident(res);
 
         IChatComponent root = new ChatComponentList();
-        root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{7|RANKS}")));
+        root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|RANKS}")));
         for (Rank rank : town.ranksContainer) {
-            root.appendSibling(LocalManager.get("mytown.format.rank.long", rank.getName(), rank.getType()));
+            root.appendSibling(new ChatComponentFormatted("{7| - }").appendSibling(LocalManager.get("mytown.format.rank.long", rank.getName(), rank.getType())));
         }
 
         ChatManager.send(sender, root);
