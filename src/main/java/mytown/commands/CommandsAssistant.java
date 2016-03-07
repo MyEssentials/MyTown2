@@ -7,7 +7,6 @@ import myessentials.utils.MathUtils;
 import myessentials.utils.WorldUtils;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
-import mytown.commands.format.ChatComponentRankPermList;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;

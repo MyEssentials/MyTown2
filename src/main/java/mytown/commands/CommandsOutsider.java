@@ -104,7 +104,8 @@ public class CommandsOutsider extends Commands {
             page = 1;
         }
 
-        ChatComponentMultiPage townList = new ChatComponentTownList(9, getUniverse().towns);
+        // TODO: Cache this
+        ChatComponentMultiPage townList = new ChatComponentTownList(getUniverse().towns);
         townList.sendPage(sender, page);
 
         return CommandResponse.DONE;

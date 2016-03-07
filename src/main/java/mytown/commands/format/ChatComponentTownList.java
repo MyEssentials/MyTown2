@@ -11,8 +11,8 @@ import java.util.List;
 public class ChatComponentTownList extends ChatComponentMultiPage {
     private Town.Container towns;
 
-    public ChatComponentTownList(int maxComponentsPerPage, Town.Container towns) {
-        super(maxComponentsPerPage);
+    public ChatComponentTownList(Town.Container towns) {
+        super(9);
         this.towns = towns;
         this.construct();
     }

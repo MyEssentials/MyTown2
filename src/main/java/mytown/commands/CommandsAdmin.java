@@ -16,8 +16,6 @@ import mypermissions.command.core.entities.CommandTree;
 import mypermissions.command.core.entities.CommandTreeNode;
 import mypermissions.permission.api.proxy.PermissionProxy;
 import mytown.MyTown;
-import mytown.commands.format.ChatComponentRankPermList;
-import mytown.commands.format.ChatComponentTownBlocks;
 import mytown.config.json.FlagsConfig;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;

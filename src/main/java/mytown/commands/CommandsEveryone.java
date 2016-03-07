@@ -9,8 +9,6 @@ import myessentials.entities.api.tool.ToolManager;
 import myessentials.localization.api.LocalManager;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
-import mytown.commands.format.ChatComponentTownBankInfo;
-import mytown.commands.format.ChatComponentTownBlocks;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -514,7 +512,7 @@ public class CommandsEveryone extends Commands {
             Plot plot = getPlotAtResident(res);
 
             IChatComponent header = LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|%s}", plot.getName()));
-            ChatManager.send(sender, "mytown.format.plot.long", plot.ownersContainer, plot.toVolume().toChatMessage());
+            ChatManager.send(sender, "mytown.format.plot.long", header, plot.ownersContainer, plot.toVolume());
             return CommandResponse.DONE;
         }
 
