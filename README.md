@@ -1,4 +1,4 @@
-MyTown2 [![Build Status](http://img.shields.io/travis/MyEssentials/MyTown2.svg?branch=master)](https://travis-ci.org/MyEssentials/MyTown2) [![Release][release-img]][release-url]
+MyTown2 [![Build Status](http://img.shields.io/travis/MyEssentials/MyTown2/master.svg)](https://travis-ci.org/MyEssentials/MyTown2) [![Release][release-img]][release-url]
 =======
 Version 2 of MyTown - A Minecraft Server Protection Mod
 
