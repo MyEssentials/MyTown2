@@ -3,7 +3,7 @@ package mytown.protection.segment;
 import com.google.gson.internal.LazilyParsedNumber;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.Event.Result;
-import myessentials.entities.Volume;
+import myessentials.entities.api.Volume;
 import mytown.entities.Resident;
 import mytown.util.exceptions.GetterException;
 
