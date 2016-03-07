@@ -267,6 +267,8 @@ public class CommandsAssistant extends Commands {
             throw new MyTownCommandException("mytown.cmd.err.resident.notsametown", args.get(0), town.getName());
 
         Rank mayorRank = town.ranksContainer.getMayorRank();
+        if(town.residentsMap.get(resTarget) == town.ranksContainer.getMayorRank())
+            throw new MyTownCommandException("mytown.cmd.err.promote.mayor");
         if (args.get(1).equalsIgnoreCase(mayorRank.getName()))
             throw new MyTownCommandException("mytown.cmd.err.promote.notMayor");
         Rank rank = getRankFromTown(town, args.get(1));

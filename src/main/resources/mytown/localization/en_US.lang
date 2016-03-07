@@ -220,6 +220,7 @@ mytown.cmd.err.perm.whitelist.noPermssion={c|You do not have permission to white
 
 # /t promote
 mytown.cmd.err.promote.notMayor={c|You cannot have 2 Mayors in one town. Try passing mayorship with /t pass <resident>}
+mytown.cmd.err.promote.mayor={c|No, you can't change the rank of the mayor}
 mytown.cmd.promote.success.sender={3|%s has been }{a|promoted}{3| to rank }{f|%s}
 mytown.cmd.promote.success.target={a|You have been promoted to rank %s}
 
