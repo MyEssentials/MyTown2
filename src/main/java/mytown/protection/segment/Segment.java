@@ -7,8 +7,6 @@ import com.google.gson.internal.LazilyParsedNumber;
 import myessentials.entities.api.Volume;
 import myessentials.json.api.SerializerTemplate;
 import cpw.mods.fml.common.eventhandler.Event;
-import myessentials.entities.Volume;
-import myessentials.json.SerializerTemplate;
 import mytown.MyTown;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.*;
