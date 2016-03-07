@@ -307,7 +307,7 @@ mytown.notification.town.upkeep={3|A new day is upon us, taxes have been collect
 mytown.notification.town.upkeep.failed={c|A new day has passed but the bank is out of money. %s days before town deletion}
 mytown.notification.town.blocks.extra.set={3|The amount of extra claimable blocks has been set to %s for town }{%s}
 mytown.notification.town.blocks.farClaims.set={3|The amount of extra far claims has been set to %s for town }{%s}
-mytown.notification.resident.blocks.extra.set={3|The amount of extra claimable blocks has been set to %s for resident }{%s}
+mytown.notification.res.blocks.extra.set={3|The amount of extra claimable blocks has been set to %s for resident }{%s}
 mytown.notification.plot.buy.failed={c|You don't have %s}
 mytown.notification.plot.buy.newOwner={a|You have successfully bought plot }{%s}
 mytown.notification.plot.buy.oldOwner={a|The plot }{%s}{a| has been successfully sold. %s has been sent to town bank}
@@ -319,7 +319,7 @@ mytown.notification.plot.enter.unassigned={c|Unassigned}
 mytown.notification.update.ranks={a|Successfully updated all ranks}
 mytown.notification.tool.mode={3|Changed '}{%s}{3|' to %s}
 mytown.notification.tool.gained={3|You have been given a tool}
-mytown.notification.town.ranks.rem = {3|Rank }{%s}{3| has been removed from town }{%s}
+mytown.notification.town.ranks.rem={3|Rank }{%s}{3| has been removed from town }{%s}
 
 # Help for commands
 mytown.cmd.assistant.blocks.help={|Everything related to TownBlocks (chunks in town)}
