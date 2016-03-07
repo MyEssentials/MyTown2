@@ -65,6 +65,7 @@ minecraft {
 // Setup Deps
 dependencies {
     testCompile "junit:junit:4.11"
+    testCompile project(":MyEssentials-TestSuite")
 	
     // Subproject deps
     compile project(":MyEssentials-Core")

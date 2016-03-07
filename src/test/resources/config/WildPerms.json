@@ -1,0 +1,46 @@
+[
+  {
+    "flagType": "ACCESS",
+    "value": "true"
+  },
+  {
+    "flagType": "PICKUP",
+    "value": "true"
+  },
+  {
+    "flagType": "PVP",
+    "value": "true"
+  },
+  {
+    "flagType": "MOBS",
+    "value": "true"
+  },
+  {
+    "flagType": "ENTITIES",
+    "value": "true"
+  },
+  {
+    "flagType": "PVE",
+    "value": "true"
+  },
+  {
+    "flagType": "USAGE",
+    "value": "true"
+  },
+  {
+    "flagType": "ACTIVATE",
+    "value": "true"
+  },
+  {
+    "flagType": "FAKERS",
+    "value": "true"
+  },
+  {
+    "flagType": "MODIFY",
+    "value": "true"
+  },
+  {
+    "flagType": "EXPLOSIONS",
+    "value": "true"
+  }
+]

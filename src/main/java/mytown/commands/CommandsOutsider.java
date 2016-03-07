@@ -1,12 +1,16 @@
 package mytown.commands;
 
 
-import mypermissions.api.command.CommandManager;
-import mypermissions.api.command.CommandResponse;
-import mypermissions.api.command.annotation.Command;
-import mypermissions.command.CommandTree;
-import mypermissions.command.CommandTreeNode;
+import mypermissions.command.api.CommandManager;
+import mypermissions.command.api.CommandResponse;
+import mypermissions.command.api.annotation.Command;
+import mypermissions.command.core.entities.CommandTree;
+import mypermissions.command.core.entities.CommandTreeNode;
 import myessentials.utils.StringUtils;
+import mytown.commands.format.ChatComponentPriceInfo;
+import mytown.commands.format.ChatComponentResidentInfo;
+import mytown.commands.format.ChatComponentTownInfo;
+import mytown.commands.format.ChatComponentTownList;
 import mytown.config.Config;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Resident;
@@ -18,6 +22,7 @@ import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
@@ -55,7 +60,7 @@ public class CommandsOutsider extends Commands {
         }
 
         for (Town town : towns) {
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.info", town.getName(), town.residentsMap.size(), town.townBlocksContainer.size(), town.getMaxBlocks(), town.plotsContainer.size(), town.residentsMap.toString(), town.ranksContainer.toString()));
+            new ChatComponentTownInfo(town).send(sender);
         }
         return CommandResponse.DONE;
     }
@@ -75,7 +80,8 @@ public class CommandsOutsider extends Commands {
         if (res == null) {
             throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
         }
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.resident.info", res.getPlayerName(), res.townsContainer.toString(true), Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline()), res.getExtraBlocks()));
+
+        new ChatComponentResidentInfo(res).send(sender);
         return CommandResponse.DONE;
     }
 
@@ -83,10 +89,18 @@ public class CommandsOutsider extends Commands {
             name = "list",
             permission = "mytown.cmd.outsider.list",
             parentName = "mytown.cmd",
-            syntax = "/town list",
+            syntax = "/town list [page]",
             console = true)
     public static CommandResponse listCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", getUniverse().towns.toString()));
+        int page = 1;
+        if (args.size() >= 1) {
+            page = Integer.parseInt(args.get(0));
+        }
+        if (page <= 0) page = 1;
+
+        // TODO Find a way to cache this?
+        ChatComponentTownList townList = new ChatComponentTownList(9, getUniverse().towns);
+        townList.sendPage(sender, page);
         return CommandResponse.DONE;
     }
 
@@ -328,7 +342,7 @@ public class CommandsOutsider extends Commands {
             console = true)
     public static CommandResponse helpCommand(ICommandSender sender, List<String> args) {
         int page = 1;
-        if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0))) {
+        if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0)) && Integer.parseInt(args.get(0)) > 0) {
             page = Integer.parseInt(args.get(0));
             args = args.subList(1, args.size());
         }
@@ -369,7 +383,7 @@ public class CommandsOutsider extends Commands {
                 else
                     formattedList += ", " + EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
             res.sendMessage(getLocal().getLocalization("mytown.notification.resident.invites"));
-            res.sendMessage(formattedList);
+            res.sendMessage(new ChatComponentText(formattedList));
         }
         return CommandResponse.DONE;
     }
@@ -382,7 +396,7 @@ public class CommandsOutsider extends Commands {
     public static CommandResponse pricesCommand(ICommandSender sender, List<String> args) {
         Resident res = getUniverse().getOrMakeResident(sender);
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.prices", EconomyProxy.getCurrency(Config.instance.costAmountMakeTown.get()), EconomyProxy.getCurrency(Config.instance.costAmountClaim.get()), EconomyProxy.getCurrency(Config.instance.costAdditionClaim.get()), EconomyProxy.getCurrency(Config.instance.costAmountClaimFar.get()), EconomyProxy.getCurrency(Config.instance.costAmountSpawn.get()), EconomyProxy.getCurrency(Config.instance.costAmountSetSpawn.get()), EconomyProxy.getCurrency(Config.instance.costAmountOtherSpawn.get()), EconomyProxy.getCurrency(Config.instance.costTownUpkeep.get()), EconomyProxy.getCurrency(Config.instance.costAdditionalUpkeep.get())));
+        new ChatComponentPriceInfo().send(sender);
 
         return CommandResponse.DONE;
     }

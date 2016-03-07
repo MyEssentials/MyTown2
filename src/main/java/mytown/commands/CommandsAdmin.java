@@ -1,17 +1,19 @@
 package mytown.commands;
 
-import myessentials.entities.ChunkPos;
-import myessentials.entities.tool.ToolManager;
+import myessentials.entities.api.ChunkPos;
+import myessentials.entities.api.tool.ToolManager;
 import myessentials.utils.ChatUtils;
-import myessentials.utils.ColorUtils;
 import myessentials.utils.StringUtils;
 import myessentials.utils.WorldUtils;
-import mypermissions.api.command.CommandManager;
-import mypermissions.api.command.CommandResponse;
-import mypermissions.api.command.annotation.Command;
-import mypermissions.command.CommandTree;
-import mypermissions.command.CommandTreeNode;
+import mypermissions.command.api.CommandManager;
+import mypermissions.command.api.CommandResponse;
+import mypermissions.command.api.annotation.Command;
+import mypermissions.command.core.entities.CommandTree;
+import mypermissions.command.core.entities.CommandTreeNode;
+import mypermissions.permission.api.proxy.PermissionProxy;
 import mytown.MyTown;
+import mytown.commands.format.ChatComponentRankPermList;
+import mytown.commands.format.ChatComponentTownBlocks;
 import mytown.config.json.FlagsConfig;
 import mytown.new_datasource.MyTownDatasource;
 import mytown.new_datasource.MyTownUniverse;
@@ -30,6 +32,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -287,21 +290,7 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
 
-        String blocks = town.townBlocksContainer.size() + "/" + town.getMaxBlocks();
-        String extraBlocks = town.getExtraBlocks() + "\\n";
-        String dash = ColorUtils.colorInfoText + " - ";
-        extraBlocks += dash + "TOWN (" + town.townBlocksContainer.getExtraBlocks() + ")\\n";
-        for(Iterator<Resident> it = town.residentsMap.keySet().iterator(); it.hasNext();) {
-            Resident resInTown = it.next();
-            extraBlocks += dash + ColorUtils.colorInfoText + resInTown.getPlayerName() + " (" + resInTown.getExtraBlocks() + ")";
-            if(it.hasNext()) {
-                extraBlocks += "\\n";
-            }
-        }
-
-        String farBlocks = town.townBlocksContainer.getFarClaims() + "/" + town.getMaxFarClaims();
-
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.blocks.info", blocks, extraBlocks, farBlocks));
+        new ChatComponentTownBlocks(town).send(sender);
 
         return CommandResponse.DONE;
     }
@@ -724,7 +713,7 @@ public class CommandsAdmin extends Commands {
         Town town = getTownFromName(args.get(0));
         Rank rank = getRankFromTown(town, args.get(1));
 
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.ranks.perm.list", rank.getName(), town.getName(), rank.permissionsContainer.toString()));
+        new ChatComponentRankPermList(rank).send(sender);
         return CommandResponse.DONE;
     }
 
@@ -821,7 +810,7 @@ public class CommandsAdmin extends Commands {
 
 
         Town town = getTownFromName(args.get(0));
-        sendMessageBackToSender(sender, town.flagsContainer.toStringForTowns());
+        sendMessageBackToSender(sender, town.flagsContainer.toChatMessage());
         return CommandResponse.DONE;
     }
 
@@ -839,8 +828,12 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
+        EntityPlayer playerSender = null;
+        if (sender instanceof EntityPlayer) {
+            playerSender = (EntityPlayer) sender;
+        }
 
-        if (!flag.flagType.configurable) {
+        if (!flag.flagType.configurable && (playerSender == null || !PermissionProxy.getPermissionManager().hasPermission(playerSender.getPersistentID(), "mytown.adm.cmd.perm.town.set." + flag.flagType + ".bypass"))) {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(1));
         } else {
             if (flag.setValue(args.get(2))) {
@@ -867,8 +860,12 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
         Flag flag = getFlagFromName(town.flagsContainer, args.get(1));
+        EntityPlayer playerSender = null;
+        if (sender instanceof EntityPlayer) {
+            playerSender = (EntityPlayer) sender;
+        }
 
-        if (!flag.flagType.configurable) {
+        if (!flag.flagType.configurable && (playerSender == null || !PermissionProxy.getPermissionManager().hasPermission(playerSender.getPersistentID(), "mytown.adm.cmd.perm.town.toggle." + flag.flagType + ".bypass"))) {
             throw new MyTownCommandException("mytown.cmd.err.flag.unconfigurable", args.get(1));
         } else {
             if (flag.toggle()) {
@@ -914,7 +911,7 @@ public class CommandsAdmin extends Commands {
             completionKeys = {"flagCompletion"},
             console = true)
     public static CommandResponse permWildListCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, Wild.instance.flagsContainer.toStringForWild());
+        sendMessageBackToSender(sender, Wild.instance.flagsContainer.toChatMessage());
         return CommandResponse.DONE;
     }
 
@@ -993,11 +990,11 @@ public class CommandsAdmin extends Commands {
             }
             TownBlock block = getUniverse().newBlock(player.dimension, player.chunkCoordX, player.chunkCoordZ, isFarClaim, 0, town);
             if (block == null)
-                throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.claim.failed"));
+                throw new MyTownCommandException(getLocal().getLocalization("mytown.cmd.err.claim.failed").getUnformattedText());
             getDatasource().saveBlock(block);
             res.sendMessage(getLocal().getLocalization("mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town.getName()));
         } else {
-            if(!StringUtils.tryParseInt(args.get(1)))
+            if(!StringUtils.tryParseInt(args.get(1)) || Integer.parseInt(args.get(1)) < 0)
                 throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", args.get(1));
 
             int radius = Integer.parseInt(args.get(1));
@@ -1056,7 +1053,7 @@ public class CommandsAdmin extends Commands {
             console = true)
     public static CommandResponse helpCommand(ICommandSender sender, List<String> args) {
         int page = 1;
-        if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0))) {
+        if(!args.isEmpty() && StringUtils.tryParseInt(args.get(0)) && Integer.parseInt(args.get(0)) > 0) {
             page = Integer.parseInt(args.get(0));
             args = args.subList(1, args.size());
         }
@@ -1113,10 +1110,10 @@ public class CommandsAdmin extends Commands {
                     list.add(player.inventory.getCurrentItem().getItem().getClass());
                 }
 
-                sendMessageBackToSender(sender, "For item: " + player.inventory.getCurrentItem().getDisplayName());
+                sendMessageBackToSender(sender, new ChatComponentText("For item: " + player.inventory.getCurrentItem().getDisplayName()));
                 for(Class cls : list) {
                     while (cls != Object.class) {
-                        sendMessageBackToSender(sender, cls.getName());
+                        sendMessageBackToSender(sender, new ChatComponentText(cls.getName()));
                         cls = cls.getSuperclass();
                     }
                 }
@@ -1149,7 +1146,7 @@ public class CommandsAdmin extends Commands {
             Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
             Town town = getTownFromName(args.get(0));
             town.plotsContainer.show(res);
-            ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.plot.showing");
+            sender.addChatMessage(getLocal().getLocalization("mytown.notification.plot.showing"));
             return CommandResponse.DONE;
         }
 
@@ -1179,7 +1176,7 @@ public class CommandsAdmin extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
 
             if (flag.setValue(args.get(3))) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.success");
+                sender.addChatMessage(getLocal().getLocalization("mytown.notification.town.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -1204,7 +1201,7 @@ public class CommandsAdmin extends Commands {
             Flag flag = getFlagFromName(plot.flagsContainer, args.get(2));
 
             if (flag.toggle()) {
-                ChatUtils.sendLocalizedChat(sender, getLocal(), "mytown.notification.town.perm.success");
+                sender.addChatMessage(getLocal().getLocalization("mytown.notification.town.perm.success"));
             } else {
                 throw new MyTownCommandException("mytown.cmd.err.perm.valueNotValid", args.get(1));
             }
@@ -1226,7 +1223,7 @@ public class CommandsAdmin extends Commands {
 
             Town town = getTownFromName(args.get(0));
             Plot plot = getPlotFromName(town, args.get(1));
-            sendMessageBackToSender(sender, plot.flagsContainer.toStringForPlot(town));
+            sendMessageBackToSender(sender, plot.flagsContainer.toChatMessage());
             return CommandResponse.DONE;
         }
 

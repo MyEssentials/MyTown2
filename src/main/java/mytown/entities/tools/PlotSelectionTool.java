@@ -1,8 +1,8 @@
 package mytown.entities.tools;
 
-import myessentials.entities.BlockPos;
-import myessentials.entities.tool.Tool;
-import myessentials.entities.tool.ToolManager;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.tool.Tool;
+import myessentials.entities.api.tool.ToolManager;
 import mytown.MyTown;
 import mytown.config.Config;
 import myessentials.thread.DelayedThread;
@@ -20,11 +20,11 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class PlotSelectionTool extends Tool {
 
-    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.name");
-    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header1");
-    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header2");
-    private static final String DESCRIPTION_NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.name")+" ";
-    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.mode")+" ";
+    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.name").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header1").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header2").getUnformattedTextForChat();
+    private static final String DESCRIPTION_NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.name").getUnformattedTextForChat() + " ";
+    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.mode").getUnformattedTextForChat() + " ";
 
     private Selection selectionFirst, selectionSecond;
     private String plotName;

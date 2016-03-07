@@ -2,7 +2,7 @@ package mytown.new_datasource;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonSyntaxException;
-import myessentials.datasource.DatasourceSQL;
+import myessentials.datasource.api.DatasourceSQL;
 import myessentials.teleport.Teleport;
 import mytown.MyTown;
 import mytown.config.Config;
@@ -714,12 +714,12 @@ public class MyTownDatasource extends DatasourceSQL {
         LOG.debug("Saving Resident {} ({})", resident.getUUID(), resident.getPlayerName());
         try {
             if (getUniverse().residents.contains(resident.getUUID())) { // Update
-                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=?, extraBlocks=? fakePlayer=? WHERE uuid=?", true);
+                PreparedStatement updateStatement = prepare("UPDATE " + prefix + "Residents SET name=?, lastOnline=?, extraBlocks=?, fakePlayer=? WHERE uuid=?", true);
                 updateStatement.setString(1, resident.getPlayerName());
                 updateStatement.setLong(2, resident.getLastOnline().getTime() / 1000L); // Stupid hack...
                 updateStatement.setInt(3, resident.getExtraBlocks());
-                updateStatement.setString(4, resident.getUUID().toString());
-                updateStatement.setBoolean(5, resident.getFakePlayer());
+                updateStatement.setBoolean(4, resident.getFakePlayer());
+                updateStatement.setString(5, resident.getUUID().toString());
                 updateStatement.executeUpdate();
             } else { // Insert
                 PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Residents (uuid, name, joined, lastOnline, extraBlocks, fakePlayer) VALUES(?, ?, ?, ?, ?, ?)", true);
@@ -1200,7 +1200,7 @@ public class MyTownDatasource extends DatasourceSQL {
             deleteTownStatement.execute();
 
             // Remove all Blocks owned by the Town
-            for (TownBlock b : town.townBlocksContainer) {
+            for (TownBlock b : town.townBlocksContainer.values()) {
                 MyTownUniverse.instance.removeTownBlock(b);
             }
             // Remove all Plots owned by the Town

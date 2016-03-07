@@ -4,6 +4,8 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.google.gson.internal.LazilyParsedNumber;
 
+import myessentials.entities.api.Volume;
+import myessentials.json.api.SerializerTemplate;
 import cpw.mods.fml.common.eventhandler.Event;
 import myessentials.entities.Volume;
 import myessentials.json.SerializerTemplate;
@@ -24,7 +26,6 @@ import mytown.util.exceptions.ConditionException;
 import mytown.util.exceptions.GetterException;
 import mytown.util.exceptions.ProtectionParseException;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.util.FakePlayer;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -239,6 +240,7 @@ public abstract class Segment {
 
         private void serializeItem(SegmentItem segment, JsonObject json, JsonSerializationContext context) {
             json.add("actions", serializeAsElementOrArray(segment.types, context));
+            json.addProperty("damage", segment.getDamage());
             json.addProperty("isAdjacent", segment.isAdjacent);
             if(segment.clientUpdate != null) {
                 JsonObject jsonUpdate = new JsonObject();
@@ -417,6 +419,11 @@ public abstract class Segment {
 
             segment.types.addAll(deserializeAsArray(json.get("actions"), context, new TypeToken<ItemType>() {}, new TypeToken<List<ItemType>>() {}.getType()));
             json.remove("actions");
+
+            if(json.has("damage")) {
+                segment.damage = json.get("damage").getAsInt();
+                json.remove("damage");
+            }
 
             if(json.has("isAdjacent")) {
                 segment.isAdjacent = json.get("isAdjacent").getAsBoolean();

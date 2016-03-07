@@ -1,8 +1,9 @@
 package mytown.proxies;
 
+import myessentials.economy.api.Economy;
 import mytown.MyTown;
 import mytown.config.Config;
-import myessentials.economy.Economy;
+import myessentials.economy.api.Economy;
 
 public class EconomyProxy {
 

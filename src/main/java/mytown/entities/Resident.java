@@ -1,22 +1,26 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatFormat;
+import myessentials.chat.api.IChatFormat;
 import myessentials.utils.ChatUtils;
 import myessentials.utils.ColorUtils;
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
+import mytown.new_datasource.MyTownUniverse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.FakePlayer;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.*;
 
-public class Resident {
+public class Resident extends ChatFormat {
     private EntityPlayer player;
     private UUID playerUUID;
     private String playerName;
@@ -118,10 +122,11 @@ public class Resident {
 
     /* ----- Helpers ----- */
 
-    public void sendMessage(String msg) {
+    public void sendMessage(IChatComponent message) {
         try {
-            if (getPlayer() != null && !(getPlayer() instanceof FakePlayer))
-                ChatUtils.sendChat(getPlayer(), msg);
+            if (getPlayer() != null && !(getPlayer() instanceof FakePlayer)) {
+                getPlayer().addChatMessage(message);
+            }
         } catch (NullPointerException ex) {
             MyTown.instance.LOG.info("You are probably using a modified server that messes with order of Player joining/leaving. This crash is nothing serious.");
             MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
@@ -130,7 +135,7 @@ public class Resident {
 
     public void protectionDenial(FlagType flag) {
         if (getPlayer() != null) {
-            ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
+            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization(flag.getDenialKey()));
         }
     }
     /**
@@ -138,8 +143,8 @@ public class Resident {
      */
     public void protectionDenial(FlagType flag, String owners) {
         if (getPlayer() != null) {
-            ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
-            ChatUtils.sendChat(getPlayer(), MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
+            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization(flag.getDenialKey()));
+            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
         }
     }
 
@@ -243,6 +248,11 @@ public class Resident {
         this.extraBlocks = extraBlocks;
     }
 
+    @Override
+    public IChatComponent toChatMessage(boolean shortened) {
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.resident", playerName);
+    }
+
     public boolean getFakePlayer() {
         return isFakePlayer;
     }
@@ -251,7 +261,7 @@ public class Resident {
         this.isFakePlayer = isFakePlayer;
     }
 
-    public static class Container extends ArrayList<Resident> {
+    public static class Container extends ArrayList<Resident> implements IChatFormat {
 
         public Resident get(UUID uuid) {
             for (Resident res : this) {
@@ -311,21 +321,25 @@ public class Resident {
         }
 
         @Override
-        public String toString() {
-            String formattedList = null;
+        public IChatComponent toChatMessage(boolean shortened) {
+            ChatComponentText result = new ChatComponentText("");
 
             for (Resident res : this) {
-                String toAdd = ColorUtils.colorPlayer + res.getPlayerName();
-                if (formattedList == null) {
-                    formattedList = toAdd;
+                if (result.getSiblings().size() == 0) {
+                    result.appendSibling(res.toChatMessage());
                 } else {
-                    formattedList += ColorUtils.colorComma + ", " + toAdd;
+                    result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma).appendSibling(res.toChatMessage(true)));
                 }
             }
             if (isEmpty()) {
-                formattedList = ColorUtils.colorEmpty + "NONE";
+                result.appendSibling(new ChatComponentText("NONE").setChatStyle(ColorUtils.styleEmpty));
             }
-            return formattedList;
+            return result;
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            return toChatMessage(false);
         }
     }
 }

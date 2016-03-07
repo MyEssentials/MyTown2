@@ -148,7 +148,7 @@ public class VisualsHandler {
 
         List<BlockCoords> blockList = new ArrayList<BlockCoords>();
 
-        for (TownBlock block : townBlocksContainer) {
+        for (TownBlock block : townBlocksContainer.values()) {
 
             // Showing lines in borders
             for (int i = 0; i < 8; i += 2) {

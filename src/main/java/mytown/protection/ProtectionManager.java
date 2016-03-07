@@ -1,9 +1,9 @@
 package mytown.protection;
 
 import cpw.mods.fml.common.eventhandler.Event;
-import myessentials.entities.BlockPos;
-import myessentials.entities.EntityPos;
-import myessentials.entities.Volume;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.EntityPos;
+import myessentials.entities.api.Volume;
 import myessentials.utils.PlayerUtils;
 import myessentials.utils.WorldUtils;
 import mytown.MyTown;

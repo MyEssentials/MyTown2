@@ -1,10 +1,12 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatFormat;
+import myessentials.chat.api.IChatFormat;
 import myessentials.teleport.Teleport;
 import myessentials.utils.ColorUtils;
 import myessentials.utils.PlayerUtils;
-import mypermissions.api.entities.PermissionLevel;
-import mypermissions.proxies.PermissionProxy;
+import mypermissions.permission.api.proxy.PermissionProxy;
+import mypermissions.permission.core.entities.PermissionLevel;
 import mytown.MyTown;
 import mytown.api.container.*;
 import mytown.config.Config;
@@ -12,7 +14,9 @@ import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,7 +25,7 @@ import java.util.List;
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
  */
-public class Town implements Comparable<Town> {
+public class Town extends ChatFormat implements Comparable<Town> {
     private String name, oldName = null;
 
     protected int maxFarClaims = Config.instance.maxFarClaims.get();
@@ -51,7 +55,7 @@ public class Town implements Comparable<Town> {
     /**
      * Notifies every resident in this town sending a message.
      */
-    public void notifyEveryone(String message) {
+    public void notifyEveryone(IChatComponent message) {
         for (Resident r : residentsMap.keySet()) {
             r.sendMessage(message);
         }
@@ -285,7 +289,18 @@ public class Town implements Comparable<Town> {
         return townBlocksContainer.contains(dim, chunkX, chunkZ);
     }
 
-    public static class Container extends ArrayList<Town> {
+    @Override
+    public String toString() {
+        return toChatMessage().getUnformattedText();
+    }
+
+    @Override
+    public IChatComponent toChatMessage(boolean shortened) {
+        IChatComponent mayorComponent = residentsMap.getMayor() == null ? new ChatComponentText("SERVER ADMINS").setChatStyle(ColorUtils.styleAdmin) : residentsMap.getMayor().toChatMessage(true);
+        return MyTown.instance.LOCAL.getLocalization("mytown.format.town", name, ranksContainer.getMayorRank(), mayorComponent);
+    }
+
+    public static class Container extends ArrayList<Town> implements IChatFormat {
 
         private Town mainTown;
         public boolean isSelectedTownSaved = false;
@@ -344,24 +359,25 @@ public class Town implements Comparable<Town> {
         }
 
         @Override
-        public String toString() {
-            return toString(false);
-        }
+        public IChatComponent toChatMessage(boolean shortened) {
+            IChatComponent result = new ChatComponentText("");
 
-        public String toString(boolean colorMainTown) {
-            String formattedList = null;
-            for(Town town : this) {
-                String mayorName = town.residentsMap.getMayor() != null ? ColorUtils.colorPlayer + town.residentsMap.getMayor().getPlayerName()
-                        : ColorUtils.colorAdmin + "SERVER ADMINS";
-                String toAdd = ((colorMainTown && town == mainTown) ? ColorUtils.colorSelectedTown : ColorUtils.colorTown) + town.getName() + ":" + ColorUtils.colorComma +
-                        " { " + Rank.Type.MAYOR.color + "Mayor: " + mayorName + ColorUtils.colorComma + " }";
-                if(formattedList == null) {
-                    formattedList = toAdd;
-                } else {
-                    formattedList += "\\n" + toAdd;
+            Iterator<Town> it = this.iterator();
+            while (it.hasNext()) {
+                Town town = it.next();
+                result.appendSibling(town.toChatMessage(true));
+
+                if (it.hasNext()) {
+                    result.appendSibling(new ChatComponentText(", ").setChatStyle(ColorUtils.styleComma));
                 }
             }
-            return formattedList;
+
+            return result;
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            return toChatMessage(false);
         }
     }
 }

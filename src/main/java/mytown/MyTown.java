@@ -10,10 +10,9 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import myessentials.Localization;
-import myessentials.json.JsonConfig;
-import myessentials.utils.ClassUtils;
+import myessentials.json.api.JsonConfig;
 import myessentials.utils.StringUtils;
-import mypermissions.api.command.CommandManager;
+import mypermissions.command.api.CommandManager;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
@@ -167,6 +166,8 @@ public class MyTown {
 
         EconomyProxy.init();
         checkConfig();
+
+        LOCAL.reload(Constants.CONFIG_FOLDER+"/localization/", Config.instance.localization.get());
 
         for (JsonConfig jsonConfig : jsonConfigs) {
             jsonConfig.init();

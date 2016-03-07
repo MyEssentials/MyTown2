@@ -1,8 +1,8 @@
 package mytown.entities.tools;
 
-import myessentials.entities.BlockPos;
-import myessentials.entities.tool.Tool;
-import myessentials.entities.tool.ToolManager;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.tool.Tool;
+import myessentials.entities.api.tool.ToolManager;
 import mytown.MyTown;
 import mytown.entities.BlockWhitelist;
 import mytown.entities.Plot;
@@ -10,18 +10,17 @@ import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.util.MyTownUtils;
-import net.minecraft.util.EnumChatFormatting;
 
 /**
  * A tool that selects a block to add it to whitelists for protection.
  */
 public class WhitelisterTool extends Tool {
 
-    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.name");
-    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header1");
-    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header2");
-    private static final String DESCRIPTION_FLAG = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.flag")+" ";
-    private static final String DESCRIPTION_FLAG_REMOVAL = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.removal");
+    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.name").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header1").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header2").getUnformattedTextForChat();
+    private static final String DESCRIPTION_FLAG = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.flag").getUnformattedTextForChat() + " ";
+    private static final String DESCRIPTION_FLAG_REMOVAL = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.removal").getUnformattedTextForChat();
 
     private Resident owner;
     private FlagType flagType = FlagType.ACCESS;

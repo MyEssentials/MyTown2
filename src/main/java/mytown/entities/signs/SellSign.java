@@ -2,9 +2,9 @@ package mytown.entities.signs;
 
 import myessentials.Localization;
 import myessentials.classtransformers.SignClassTransformer;
-import myessentials.entities.BlockPos;
-import myessentials.entities.sign.Sign;
-import myessentials.entities.sign.SignType;
+import myessentials.entities.api.BlockPos;
+import myessentials.entities.api.sign.Sign;
+import myessentials.entities.api.sign.SignType;
 import mytown.MyTown;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
@@ -99,11 +99,12 @@ public class SellSign extends Sign {
 
     @Override
     protected String[] getText() {
+        // REF: Refactor chat components to allow formatting for this type of text
         return new String[] {
-                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.title"),
-                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.owner")+" " + owner.getPlayerName(),
-                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.price") + price,
-                restricted ? MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.restricted") : ""
+                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.title").getUnformattedText(),
+                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.owner").getUnformattedText() + " " + owner.getPlayerName(),
+                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.price").getUnformattedText() + price,
+                restricted ? MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.restricted").getUnformattedText() : ""
         };
     }
 
