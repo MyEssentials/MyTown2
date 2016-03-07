@@ -33,6 +33,7 @@ deploy:
 jdk:
  - oraclejdk8
 before_install:
-  - pip install codecov
+  - git submodule update --init --recursive
+  - pip install --user codecov
 after_success:
   - codecov

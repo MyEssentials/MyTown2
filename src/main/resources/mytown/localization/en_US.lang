@@ -19,7 +19,6 @@ mytown.notification.enter.wild={2|You have just entered the wild}
 mytown.notification.enter.town={2|Welcome to }{%s}
 mytown.notification.enter.ownTown={2|Welcome back to }{%s}
 
-
 # Flag based notifications
 
 # Protection
@@ -54,33 +53,33 @@ mytown.flag.NEARBY={3|Allows towns to be made near this town}
 
 # Tools
 mytown.tool.plot.sell.name=Plot Sell
-mytown.tool.plot.sell.description.header1=&3Right-click in a plot to place a sell sign.
-mytown.tool.plot.sell.description.header2=&3Shift-right-click air to change modes.
-mytown.tool.plot.sell.description.price=&3Price:
-mytown.tool.plot.sell.description.mode=&3Restricted to residents:
+mytown.tool.plot.sell.description.header1={3|Right-click in a plot to place a sell sign.}
+mytown.tool.plot.sell.description.header2={3|Shift-right-click air to change modes.}
+mytown.tool.plot.sell.description.price={3|Price:}
+mytown.tool.plot.sell.description.mode={3|Restricted to residents:}
 mytown.tool.plot.sell.mode=Restricted to residents
 
 mytown.tool.plot.selection.name=Selector
-mytown.tool.plot.selection.description.header1=&3Select 2 blocks to make a plot.
-mytown.tool.plot.selection.description.header2=&3Shift right-click air to change modes.
-mytown.tool.plot.selection.description.price=&3Name:
-mytown.tool.plot.selection.description.mode=&3Height dependent:
+mytown.tool.plot.selection.description.header1={3|Select 2 blocks to make a plot.}
+mytown.tool.plot.selection.description.header2={3|Shift right-click air to change modes.}
+mytown.tool.plot.selection.description.price={3|Name:}
+mytown.tool.plot.selection.description.mode={3|Height dependent:}
 mytown.tool.plot.description.mode=Height dependent
 
 mytown.tool.whitelister.name=Whitelister
-mytown.tool.whitelister.description.header1=&3Select block for bypassing protection.
-mytown.tool.whitelister.description.header2=&3Shift right-click air to change flag.
-mytown.tool.whitelister.description.flag=&3Flag:
-mytown.tool.whitelister.description.removal=&cWHITELIST REMOVAL
+mytown.tool.whitelister.description.header1=3|Select block for bypassing protection.}
+mytown.tool.whitelister.description.header2=3|Shift right-click air to change flag.}
+mytown.tool.whitelister.description.flag=3|Flag:}
+mytown.tool.whitelister.description.removal=c|WHITELIST REMOVAL}
 mytown.tool.whitelister.mode=mode
 mytown.tool.whitelister.mode.removal=WHITELIST REMOVAL
 mytown.tool.whitelister.mode.flagType=flag type
 
 # Sell Sign
 mytown.sign.sell.title=Plot Sale
-mytown.sign.sell.description.owner=&9by
-mytown.sign.sell.description.price=&6
-mytown.sign.sell.description.restricted=&cRESTRICTED
+mytown.sign.sell.description.owner={9|by}
+mytown.sign.sell.description.price={6|}
+mytown.sign.sell.description.restricted={c|RESTRICTED}
 
 # /ta config [load|save]
 mytown.cmd.config.load.start={3|Loading config...}
@@ -145,7 +144,6 @@ mytown.cmd.err.ranks.type.missing={c|Rank type }{%s}{c| does not exist}
 mytown.notification.ranks.reset={3|Ranks have been reset to their initial state}
 mytown.cmd.err.ranks.set.unique={c|The rank type of }{%s}{c| is unique. You must set the unique type first}
 mytown.cmd.err.ranks.assigned={c|This rank is assigned to some residents, change their rank before deleting this}
-
 
 # /t plot
 mytown.cmd.err.plot.remove.notInPlot={c|Resident is not a member/owner of this plot}
@@ -248,7 +246,6 @@ mytown.format.rank.type.short={%s}
 
 mytown.notification.town.owners=&6 Owners: &c%s
 
-
 # Notifications
 
 mytown.notification.block.added={a|Town block from (%s, %s) to (%s, %s) has been added to town }{%s}
@@ -323,7 +320,6 @@ mytown.notification.update.ranks={a|Successfully updated all ranks}
 mytown.notification.tool.mode={3|Changed '}{%s}{3|' to %s}
 mytown.notification.tool.gained={3|You have been given a tool}
 mytown.notification.town.ranks.rem = {3|Rank }{%s}{3| has been removed from town }{%s}
-
 
 # Help for commands
 mytown.cmd.assistant.blocks.help={|Everything related to TownBlocks (chunks in town)}

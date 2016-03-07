@@ -3,6 +3,7 @@ package mytown.commands;
 
 import myessentials.chat.api.ChatComponentFormatted;
 import myessentials.chat.api.ChatComponentList;
+import myessentials.chat.api.ChatComponentMultiPage;
 import myessentials.chat.api.ChatManager;
 import myessentials.localization.api.LocalManager;
 import myessentials.utils.StringUtils;
@@ -11,6 +12,7 @@ import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
 import mypermissions.command.core.entities.CommandTree;
 import mypermissions.command.core.entities.CommandTreeNode;
+import mytown.commands.format.ChatComponentTownList;
 import mytown.config.Config;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -91,16 +93,20 @@ public class CommandsOutsider extends Commands {
             name = "list",
             permission = "mytown.cmd.outsider.list",
             parentName = "mytown.cmd",
-            syntax = "/town list",
+            syntax = "/town list [page]",
             console = true)
     public static CommandResponse listCommand(ICommandSender sender, List<String> args) {
-        IChatComponent root = new ChatComponentList();
-        root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|TOWNS}")));
-        for (Town town : getUniverse().towns) {
-            root.appendSibling(new ChatComponentFormatted("{7| - }").appendSibling(town.toChatMessage()));
+        int page = 1;
+        if (args.size() >= 1) {
+            page = Integer.parseInt(args.get(0));
+        }
+        if (page <= 0) {
+            page = 1;
         }
 
-        ChatManager.send(sender, root);
+        ChatComponentMultiPage townList = new ChatComponentTownList(9, getUniverse().towns);
+        townList.sendPage(sender, page);
+
         return CommandResponse.DONE;
     }
 

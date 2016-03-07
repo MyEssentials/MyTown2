@@ -105,10 +105,9 @@ public class MyTown {
      * Registers all commands
      */
     private void registerCommands() {
-        RankPermissionBridge bridge = new RankPermissionBridge();
+        RankPermissionManager bridge = new RankPermissionManager();
         CommandManager.registerCommands(CommandsEveryone.class, null, LOCAL, bridge);
         CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", LOCAL, bridge);
-
         if (Config.instance.modifiableRanks.get())
             CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", LOCAL, bridge);
         CommandManager.registerCommands(CommandsAdmin.class, null, LOCAL, null);
@@ -169,6 +168,8 @@ public class MyTown {
 
         EconomyProxy.init();
         checkConfig();
+
+        LOCAL.load();
 
         for (JsonConfig jsonConfig : jsonConfigs) {
             jsonConfig.init();

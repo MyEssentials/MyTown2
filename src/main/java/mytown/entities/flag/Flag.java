@@ -3,6 +3,7 @@ package mytown.entities.flag;
 import com.google.gson.*;
 import myessentials.chat.api.ChatComponentFormatted;
 import myessentials.chat.api.ChatComponentList;
+
 import myessentials.chat.api.IChatFormat;
 import myessentials.json.api.SerializerTemplate;
 import myessentials.localization.api.LocalManager;
@@ -142,10 +143,6 @@ public class Flag<T> implements Comparable<Flag>, IChatFormat {
             IChatComponent root = new ChatComponentList();
 
             root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|FLAGS}")));
-            for (Flag flag : this) {
-                root.appendSibling(flag.toChatMessage());
-            }
-
             return root;
         }
     }

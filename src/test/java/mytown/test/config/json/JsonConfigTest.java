@@ -3,6 +3,7 @@ package mytown.test.config.json;
 import myessentials.json.api.JsonConfig;
 import mytown.entities.Wild;
 import mytown.entities.flag.Flag;
+import mytown.test.TestMain;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

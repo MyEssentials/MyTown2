@@ -235,7 +235,6 @@ public class Resident implements IChatFormat {
         this.extraBlocks = extraBlocks;
     }
 
-
     @Override
     public IChatComponent toChatMessage() {
         return LocalManager.get("mytown.format.resident.short", playerName);
@@ -318,7 +317,6 @@ public class Resident implements IChatFormat {
                 }
                 root.appendSibling(res.toChatMessage());
             }
-
             return root;
         }
     }

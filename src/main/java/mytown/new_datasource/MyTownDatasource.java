@@ -1200,7 +1200,7 @@ public class MyTownDatasource extends DatasourceSQL {
             deleteTownStatement.execute();
 
             // Remove all Blocks owned by the Town
-            for (TownBlock b : town.townBlocksContainer) {
+            for (TownBlock b : town.townBlocksContainer.values()) {
                 MyTownUniverse.instance.removeTownBlock(b);
             }
             // Remove all Plots owned by the Town

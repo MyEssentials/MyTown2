@@ -9,6 +9,8 @@ import myessentials.entities.api.tool.ToolManager;
 import myessentials.localization.api.LocalManager;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
+import mytown.commands.format.ChatComponentTownBankInfo;
+import mytown.commands.format.ChatComponentTownBlocks;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;

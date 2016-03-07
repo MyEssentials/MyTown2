@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TownBlock implements IChatFormat {
     /**
@@ -108,39 +108,33 @@ public class TownBlock implements IChatFormat {
         return dim == this.dim && cx == x && cz == z;
     }
 
-    public static class Container extends ArrayList<TownBlock> implements IChatFormat {
+    public static class Container extends HashMap<String, TownBlock> implements IChatFormat {
 
         private int extraBlocks = 0;
         private int extraFarClaims = 0;
 
         public boolean add(TownBlock block) {
-            boolean result = super.add(block);
+            super.put(block.getKey(), block);
             VisualsHandler.instance.updateTownBorders(this);
-            return result;
+            return true;
         }
 
         public boolean remove(TownBlock block) {
-            boolean result = super.remove(block);
+            boolean result = super.remove(block.getKey()) != null;
             VisualsHandler.instance.updateTownBorders(this);
             return result;
         }
 
+        public boolean contains(TownBlock block) {
+            return this.contains(block.dim, block.x, block.z);
+        }
+
         public boolean contains(int dim, int x, int z) {
-            for(TownBlock block : this) {
-                if(block.getX() == x && block.getZ() == z && block.getDim() == dim) {
-                    return true;
-                }
-            }
-            return false;
+            return super.containsKey(String.format(KEY_FORMAT, dim, x, z));
         }
 
         public TownBlock get(int dim, int x, int z) {
-            for(TownBlock block : this) {
-                if(block.getX() == x && block.getZ() == z && block.getDim() == dim) {
-                    return block;
-                }
-            }
-            return null;
+            return super.get(String.format(KEY_FORMAT, dim, x, z));
         }
 
         public int getExtraBlocks() {
@@ -157,7 +151,7 @@ public class TownBlock implements IChatFormat {
 
         public int getFarClaims() {
             int farClaims = 0;
-            for(TownBlock block : this) {
+            for(TownBlock block : this.values()) {
                 if (block.isFarClaim()) {
                     farClaims++;
                 }
@@ -183,7 +177,7 @@ public class TownBlock implements IChatFormat {
         public IChatComponent toChatMessage() {
             IChatComponent root = new ChatComponentText("");
 
-            for (TownBlock block : this) {
+            for (TownBlock block : values()) {
                 root.appendSibling(block.toChatMessage());
                 root.appendSibling(new ChatComponentText(" "));
             }

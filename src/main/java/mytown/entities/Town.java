@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
  */
-public class Town implements Comparable<Town>, IChatFormat{
+public class Town implements Comparable<Town>, IChatFormat {
     private String name, oldName = null;
 
     protected int maxFarClaims = Config.instance.maxFarClaims.get();
@@ -281,7 +281,7 @@ public class Town implements Comparable<Town>, IChatFormat{
 
     public boolean isChunkInTown(int dim, int chunkX, int chunkZ) {
         return townBlocksContainer.contains(dim, chunkX, chunkZ);
-    }
+        }
 
     @Override
     public String toString() {

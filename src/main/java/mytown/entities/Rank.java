@@ -13,6 +13,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Rank implements IChatFormat {
 
@@ -213,7 +214,7 @@ public class Rank implements IChatFormat {
         public String toString() {
             return toChatMessage().getUnformattedText();
         }
-        
+
         @Override
         public IChatComponent toChatMessage() {
             IChatComponent root = new ChatComponentText("");

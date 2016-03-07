@@ -1,6 +1,6 @@
 [submodule "MyEssentials-Core"]
 	path = MyEssentials-Core
-	url = git://github.com/MyEssentials/MyEssentials-Core.git
+	url = https://github.com/MyEssentials/MyEssentials-Core
 [submodule "MyPermissions"]
 	path = MyPermissions
 	url = http://github.com/myessentials/MyPermissions

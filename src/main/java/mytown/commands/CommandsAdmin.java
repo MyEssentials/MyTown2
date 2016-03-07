@@ -16,6 +16,8 @@ import mypermissions.command.core.entities.CommandTree;
 import mypermissions.command.core.entities.CommandTreeNode;
 import mypermissions.permission.api.proxy.PermissionProxy;
 import mytown.MyTown;
+import mytown.commands.format.ChatComponentRankPermList;
+import mytown.commands.format.ChatComponentTownBlocks;
 import mytown.config.json.FlagsConfig;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -50,7 +52,7 @@ public class CommandsAdmin extends Commands {
 
     }
 
-    @Command (
+    @Command(
             name = "mytownadmin",
             permission = "mytown.adm.cmd",
             syntax = "/townadmin <command>",
@@ -300,7 +302,6 @@ public class CommandsAdmin extends Commands {
 
         Town town = getTownFromName(args.get(0));
 
-
         IChatComponent header = LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|BLOCKS}"));
         String blocks = town.townBlocksContainer.size() + "/" + town.getMaxBlocks();
         String extraBlocks = town.getExtraBlocks() + "";
@@ -313,7 +314,6 @@ public class CommandsAdmin extends Commands {
         }
 
         ChatManager.send(sender, "mytown.notification.blocks.info", header, blocks, extraBlocks, extraBlocksSources, farBlocks);
-
         return CommandResponse.DONE;
     }
 

@@ -7,6 +7,7 @@ import myessentials.utils.MathUtils;
 import myessentials.utils.WorldUtils;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
+import mytown.commands.format.ChatComponentRankPermList;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -287,6 +288,9 @@ public class CommandsAssistant extends Commands {
         }
 
         Rank mayorRank = town.ranksContainer.getMayorRank();
+        if(town.residentsMap.get(resTarget) == mayorRank) {
+            throw new MyTownCommandException("mytown.cmd.err.promote.mayor");
+        }
         if (args.get(1).equalsIgnoreCase(mayorRank.getName())) {
             throw new MyTownCommandException("mytown.cmd.err.promote.notMayor");
         }
@@ -635,7 +639,7 @@ public class CommandsAssistant extends Commands {
 
             town.notifyEveryone(getLocal().getLocalization("mytown.notification.town.deleted", town, res));
             int refund = 0;
-            for (TownBlock block : town.townBlocksContainer) {
+            for (TownBlock block : town.townBlocksContainer.values()) {
                 refund += block.getPricePaid();
             }
             refund += town.bank.getAmount();
