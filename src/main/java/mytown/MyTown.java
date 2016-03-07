@@ -167,6 +167,8 @@ public class MyTown {
         EconomyProxy.init();
         checkConfig();
 
+        LOCAL.reload(Constants.CONFIG_FOLDER+"/localization/", Config.instance.localization.get());
+
         for (JsonConfig jsonConfig : jsonConfigs) {
             jsonConfig.init();
         }
