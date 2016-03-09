@@ -143,13 +143,16 @@ public class CommandsOutsider extends Commands {
                 }
             }
         }
-
-        makePayment(player, Config.instance.costAmountMakeTown.get() + Config.instance.costAmountClaim.get());
+        if (args.get(0).length() > 32) {
+            throw new MyTownCommandException("mytown.cmd.err.new.nameTooLong");
+        }
 
         Town town = getUniverse().newTown(args.get(0), res); // Attempt to create the Town
         if (town == null) {
             throw new MyTownCommandException("mytown.cmd.err.new.failed");
         }
+
+        makePayment(player, Config.instance.costAmountMakeTown.get() + Config.instance.costAmountClaim.get());
 
         ChatManager.send(sender, "mytown.notification.town.created", town);
         return CommandResponse.DONE;

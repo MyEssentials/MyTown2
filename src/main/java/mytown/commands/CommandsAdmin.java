@@ -232,6 +232,9 @@ public class CommandsAdmin extends Commands {
         if (getUniverse().blocks.contains(player.dimension, player.chunkCoordX, player.chunkCoordZ)) {
             throw new MyTownCommandException("mytown.cmd.err.new.position");
         }
+        if (args.get(0).length() > 32) {
+            throw new MyTownCommandException("mytown.cmd.err.new.nameTooLong");
+        }
 
         Town town = getUniverse().newAdminTown(args.get(0), res);
         if (town == null) {

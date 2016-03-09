@@ -95,6 +95,7 @@ mytown.cmd.err.new.failed={c|There was an issue with creating the town}
 mytown.cmd.err.new.tooClose={c|You are too close to town }{%s}{c|. Please leave at least %s chunks between the towns}
 mytown.cmd.err.claim.tooClose={c|You are too close to town }{%s}{c|. Please leave at least %s chunks between the towns}
 mytown.cmd.err.resident.maxTowns={c|You cannot create/join any more towns, you have hit the maximum amount of towns you can be in}
+mytown.cmd.err.new.nameTooLong={c|The name of the town is too long (32 characters maximum)}
 mytown.notification.town.created={a|Town }{%s}{a| created}
 mytown.notification.town.deleted={c|Town }{%s}{a| deleted}
 mytown.notification.town.deleted.withplots={c|You cannot delete towns with plots that you don't own}
