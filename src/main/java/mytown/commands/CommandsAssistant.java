@@ -711,6 +711,10 @@ public class CommandsAssistant extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         TownBlock block = getBlockAtResident(res);
 
+        if (!block.getTown().residentsMap.containsKey(res)) {
+            throw new MyTownCommandException("mytown.cmd.err.notInTown", block.getTown().getName());
+        }
+
         if (block.isChunkloaded()) {
             throw new MyTownCommandException("mytown.cmd.err.claim.chunkload.already");
         }
@@ -733,6 +737,10 @@ public class CommandsAssistant extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         TownBlock block = getBlockAtResident(res);
 
+        if (!block.getTown().residentsMap.containsKey(res)) {
+            throw new MyTownCommandException("mytown.cmd.err.notInTown", block.getTown().getName());
+        }
+
         if (!block.isChunkloaded()) {
             throw new MyTownCommandException("mytown.cmd.err.claim.unchunkload.missing");
         }
@@ -754,6 +762,7 @@ public class CommandsAssistant extends Commands {
 
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         Town town = getTownFromResident(res);
+
         int chunksToLoad = town.townBlocksContainer.size() - town.ticketMap.getChunkloadedAmount();
 
         makeBankPayment(sender, town, Config.instance.costAmountChunkloadedClaim.get() * chunksToLoad);
