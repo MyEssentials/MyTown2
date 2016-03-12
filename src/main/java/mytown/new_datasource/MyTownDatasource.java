@@ -106,6 +106,9 @@ public class MyTownDatasource extends DatasourceSQL {
                 TownBlock block = new TownBlock(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), rs.getBoolean("isFarClaim"), rs.getInt("pricePaid"), town);
 
                 town.townBlocksContainer.add(block);
+                if (rs.getBoolean("isChunkLoaded")) {
+                    town.ticketMap.chunkLoad(block);
+                }
 
                 MyTownUniverse.instance.addTownBlock(block);
             }
@@ -592,13 +595,14 @@ public class MyTownDatasource extends DatasourceSQL {
             if (getUniverse().blocks.contains(block)) { // Update
                 // TODO Update Block (If needed?)
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Blocks (dim, x, z, isFarClaim, pricePaid, townName) VALUES (?, ?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Blocks (dim, x, z, isFarClaim, pricePaid, townName, isChunkloaded) VALUES (?, ?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setInt(1, block.getDim());
                 insertStatement.setInt(2, block.getX());
                 insertStatement.setInt(3, block.getZ());
                 insertStatement.setBoolean(4, block.isFarClaim());
                 insertStatement.setInt(5, block.getPricePaid());
                 insertStatement.setString(6, block.getTown().getName());
+                insertStatement.setBoolean(7, block.isChunkloaded());
                 insertStatement.executeUpdate();
 
                 // Put the Block in the Map
@@ -1206,6 +1210,9 @@ public class MyTownDatasource extends DatasourceSQL {
             deleteTownStatement.setString(1, town.getName());
             deleteTownStatement.execute();
 
+            // Release all chunkloading tickets
+            town.ticketMap.releaseTickets();
+
             // Remove all Blocks owned by the Town
             for (TownBlock b : town.townBlocksContainer.values()) {
                 MyTownUniverse.instance.removeTownBlock(b);
@@ -1243,6 +1250,10 @@ public class MyTownDatasource extends DatasourceSQL {
             deleteBlockStatement.setInt(2, block.getX());
             deleteBlockStatement.setInt(3, block.getZ());
             deleteBlockStatement.execute();
+
+            if (block.isChunkloaded()) {
+                block.getTown().ticketMap.chunkUnload(block);
+            }
 
             // Delete Block from Town
             block.getTown().townBlocksContainer.remove(block);

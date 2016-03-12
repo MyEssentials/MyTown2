@@ -21,6 +21,7 @@ import mytown.config.json.RanksConfig;
 import mytown.config.json.WildPermsConfig;
 import mytown.crash.DatasourceCrashCallable;
 import mytown.entities.signs.SellSign;
+import mytown.handlers.MyTownLoadingCallback;
 import mytown.handlers.SafemodeHandler;
 import mytown.handlers.Ticker;
 import mytown.handlers.VisualsHandler;
@@ -32,6 +33,7 @@ import mytown.protection.json.ProtectionParser;
 import mytown.proxies.EconomyProxy;
 import mytown.util.Constants;
 import mytown.util.exceptions.ConfigException;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Logger;
 
@@ -161,6 +163,8 @@ public class MyTown {
         MinecraftForge.EVENT_BUS.register(ProtectionHandlers.instance);
 
         MinecraftForge.EVENT_BUS.register(ExtraEventsHandler.getInstance());
+
+        ForgeChunkManager.setForcedChunkLoadingCallback(this, new MyTownLoadingCallback());
     }
 
     public void loadConfigs() {

@@ -120,6 +120,9 @@ mytown.cmd.err.claim.missing={c|This block is not claimed by town }{%s}
 mytown.cmd.err.claim.far.notAllowed={c|You cannot have anymore far claims}
 mytown.cmd.err.town.maxBlocks={c|Not enough free slots for %s chunks}
 
+mytown.cmd.err.claim.chunkload.already={c|This chunk is already chunkloaded}
+mytown.cmd.err.claim.unchunkload.missing={c|This chunk is not chunkloaded}
+
 # /t unclaim
 mytown.cmd.err.unclaim.notInTown={c|The block you want to unclaim is not in the town you've selected}
 mytown.cmd.err.unclaim.spawnPoint={c|You cannot delete the claim containing the spawn point}

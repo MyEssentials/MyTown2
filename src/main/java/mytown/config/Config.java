@@ -96,6 +96,10 @@ public class Config extends ConfigTemplate {
     public ConfigProperty<Integer> costAdditionalUpkeep = new ConfigProperty<Integer>(
             "costAdditionalUpkeep", "cost", "The amount of the cost item towns have to pay everyday per chunk owned to maintain it.",
             0);
+    public ConfigProperty<Integer> costAdditionalChunkloadedUpkeep = new ConfigProperty<Integer>(
+            "costAdditionalChunkloadedUpkeep", "cost",
+            "The amount of the cost item towns have to pay everyday per chunkloaded claim. This should usually be higher than the normal claim",
+            0);
     public ConfigProperty<Integer> costAdditionClaim = new ConfigProperty<Integer>(
             "costAdditionClaim", "cost", "The additional amount of the cost item people need to pay for each block already claimed [Ex: if you have 3 chunks in town claiming the next one will cost costAdditionClaim*3 + costAmountClaim]. This can be used with costMultiplicativeClaim.",
             0);
@@ -103,6 +107,10 @@ public class Config extends ConfigTemplate {
             "costMultiplicativeClaim", "cost",
             "The multiplicative amount of the cost item people need to pay for each block already claimed [Ex: if you have 2 chunks the next one will cost costMultiplicativeClaim ^ 2 * costAmountClaim]. This can be used with costAdditionClaim.",
             1.0D);
+    public ConfigProperty<Integer> costAmountChunkloadedClaim = new ConfigProperty<Integer>(
+            "costAmountChunkloadedClaim", "cost",
+            "The additional amount of the cost item people need to pay to make a regular claim chunkloaded",
+            10);
     public ConfigProperty<Integer> defaultBankAmount = new ConfigProperty<Integer>(
             "defaultBankAmount", "cost",
             "The amount of the cost item that the towns are gonna start with in their banks after created.",

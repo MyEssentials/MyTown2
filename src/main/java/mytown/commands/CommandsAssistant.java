@@ -7,6 +7,7 @@ import myessentials.utils.MathUtils;
 import myessentials.utils.WorldUtils;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
+import mytown.MyTown;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -18,6 +19,8 @@ import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ForgeChunkManager;
 
 import java.util.Iterator;
 import java.util.List;
@@ -698,6 +701,46 @@ public class CommandsAssistant extends Commands {
         makeRefund(res.getPlayer(), amount);
         town.bank.addAmount(-amount);
         getDatasource().saveTownBank(town.bank);
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "chunkload",
+            permission = "mytown.cmd.assistant.claim.chunkload",
+            parentName = "mytown.cmd.assistant.claim",
+            syntax = "/town claim chunkload")
+    public static CommandResponse claimChunkloadCommand(ICommandSender sender, List<String> args) {
+
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+        TownBlock block = getBlockAtResident(res);
+
+        if (block.isChunkloaded()) {
+            throw new MyTownCommandException("mytown.cmd.err.claim.chunkload.already");
+        }
+
+        makeBankPayment(res.getPlayer(), block.getTown(), Config.instance.costAmountChunkloadedClaim.get());
+        block.getTown().ticketMap.chunkLoad(block);
+
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "chunkunload",
+            permission = "mytown.cmd.assistant.claim.chunkunload",
+            parentName = "mytown.cmd.assistant.claim",
+            syntax = "/town claim chunkunload")
+    public static CommandResponse claimUnchunkloadCommand(ICommandSender sender, List<String> args) {
+
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+        TownBlock block = getBlockAtResident(res);
+
+        if (!block.isChunkloaded()) {
+            throw new MyTownCommandException("mytown.cmd.err.claim.unchunkload.missing");
+        }
+
+        makeBankRefund(res.getPlayer(), block.getTown(), Config.instance.costAmountChunkloadedClaim.get());
+        block.getTown().ticketMap.chunkUnload(block);
+
         return CommandResponse.DONE;
     }
 

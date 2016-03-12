@@ -3,11 +3,14 @@ package mytown.entities;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.ChunkPos;
 import myessentials.entities.api.Volume;
+import mytown.MyTown;
 import mytown.config.Config;
 import mytown.handlers.VisualsHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraftforge.common.ForgeChunkManager;
 
 import java.util.HashMap;
 
@@ -74,6 +77,10 @@ public class TownBlock implements IChatFormat {
         return this.pricePaid;
     }
 
+    public boolean isChunkloaded() {
+        return town.ticketMap.get(dim).getChunkList().contains(this.toChunkCoords());
+    }
+
     @Override
     public String toString() {
         return toChatMessage().getUnformattedText();
@@ -90,6 +97,10 @@ public class TownBlock implements IChatFormat {
 
     public ChunkPos toChunkPos() {
         return new ChunkPos(this.dim, this.x, this.z);
+    }
+
+    public ChunkCoordIntPair toChunkCoords() {
+        return new ChunkCoordIntPair(x, z);
     }
 
     /* ----- Helpers ----- */
