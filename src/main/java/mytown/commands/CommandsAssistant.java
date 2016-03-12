@@ -7,7 +7,6 @@ import myessentials.utils.MathUtils;
 import myessentials.utils.WorldUtils;
 import mypermissions.command.api.CommandResponse;
 import mypermissions.command.api.annotation.Command;
-import mytown.MyTown;
 import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -19,8 +18,6 @@ import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeChunkManager;
 
 import java.util.Iterator;
 import java.util.List;
@@ -721,6 +718,8 @@ public class CommandsAssistant extends Commands {
         makeBankPayment(res.getPlayer(), block.getTown(), Config.instance.costAmountChunkloadedClaim.get());
         block.getTown().ticketMap.chunkLoad(block);
 
+        ChatManager.send(sender, "mytown.notification.claim.chunkload");
+
         return CommandResponse.DONE;
     }
 
@@ -740,6 +739,46 @@ public class CommandsAssistant extends Commands {
 
         makeBankRefund(res.getPlayer(), block.getTown(), Config.instance.costAmountChunkloadedClaim.get());
         block.getTown().ticketMap.chunkUnload(block);
+
+        ChatManager.send(sender, "mytown.notification.claim.chunkunload");
+
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "all",
+            permission = "mytown.cmd.assistant.claim.chunkload.all",
+            parentName = "mytown.cmd.assistant.claim.chunkload",
+            syntax = "/town claim chunkload all")
+    public static CommandResponse claimChunkloadAllCommand(ICommandSender sender, List<String> args) {
+
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+        int chunksToLoad = town.townBlocksContainer.size() - town.ticketMap.getChunkloadedAmount();
+
+        makeBankPayment(sender, town, Config.instance.costAmountChunkloadedClaim.get() * chunksToLoad);
+        town.ticketMap.chunkLoadAll();
+
+        ChatManager.send(sender, "mytown.notification.claim.chunkload.all", chunksToLoad);
+
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "all",
+            permission = "mytown.cmd.assistant.claim.chunkunload.all",
+            parentName = "mytown.cmd.assistant.claim.chunkunload",
+            syntax = "/town claim chunkunload all")
+    public static CommandResponse claimChunkunloadAllCommand(ICommandSender sender, List<String> args) {
+
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+        Town town = getTownFromResident(res);
+        int chunksToUnload = town.ticketMap.getChunkloadedAmount();
+
+        makeBankRefund(sender, town, Config.instance.costAmountChunkloadedClaim.get() * chunksToUnload);
+        town.ticketMap.chunkUnloadAll();
+
+        ChatManager.send(sender, "mytown.notification.claim.chunkunload.all", chunksToUnload);
 
         return CommandResponse.DONE;
     }

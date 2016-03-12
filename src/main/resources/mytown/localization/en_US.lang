@@ -324,6 +324,10 @@ mytown.notification.update.ranks={a|Successfully updated all ranks}
 mytown.notification.tool.mode={3|Changed '}{%s}{3|' to %s}
 mytown.notification.tool.gained={3|You have been given a tool}
 mytown.notification.town.ranks.rem={3|Rank }{%s}{3| has been removed from town }{%s}
+mytown.notification.claim.chunkload={3|This chunk has been successfully chunkloaded}
+mytown.notification.claim.chunkload.all={3|Successfully chunkloaded all (}{a|%s}{3| chunks) in town}
+mytown.notification.claim.chunkunload={3|Successfully removed chunkloading from this chunk}
+mytown.notification.claim.chunkunload.all={3|Successfully removed chunkloading from all (}{a|%s}{3| chunks) in this town}
 
 # Help for commands
 mytown.cmd.assistant.blocks.help={|Everything related to TownBlocks (chunks in town)}

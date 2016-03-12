@@ -71,4 +71,28 @@ public class TicketMap extends HashMap<Integer, ForgeChunkManager.Ticket> {
             ForgeChunkManager.releaseTicket(ticket);
         }
     }
+
+    public int getChunkloadedAmount() {
+        int size = 0;
+        for (ForgeChunkManager.Ticket ticket : values()) {
+            size += ticket.getChunkList().size();
+        }
+        return size;
+    }
+
+    public void chunkLoadAll() {
+        for (TownBlock block : town.townBlocksContainer.values()) {
+            if (!block.isChunkloaded()) {
+                chunkLoad(block);
+            }
+        }
+    }
+
+    public void chunkUnloadAll() {
+        for (TownBlock block : town.townBlocksContainer.values()) {
+            if (block.isChunkloaded()) {
+                chunkUnload(block);
+            }
+        }
+    }
 }

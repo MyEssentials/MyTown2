@@ -20,5 +20,5 @@ public class MyTownLoadingCallback implements ForgeChunkManager.LoadingCallback 
                 ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(chunkNBT.getInteger("x"), chunkNBT.getInteger("z")));
             }
         }
-    }
+        }
 }

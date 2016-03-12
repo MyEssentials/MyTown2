@@ -16,6 +16,7 @@ import mypermissions.command.core.entities.CommandTree;
 import mypermissions.command.core.entities.CommandTreeNode;
 import mypermissions.permission.api.proxy.PermissionProxy;
 import mytown.MyTown;
+import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -1061,6 +1062,86 @@ public class CommandsAdmin extends Commands {
                 ChatManager.send(sender, "mytown.notification.block.added", block.getX() * 16, block.getZ() * 16, block.getX() * 16 + 15, block.getZ() * 16 + 15, town);
             }
         }
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "chunkload",
+            permission = "mytown.adm.cmd.claim.chunkload",
+            parentName = "mytown.adm.cmd.claim",
+            syntax = "/townadmin claim chunkload")
+    public static CommandResponse claimChunkloadCommand(ICommandSender sender, List<String> args) {
+
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+        TownBlock block = getBlockAtResident(res);
+
+        if (block.isChunkloaded()) {
+            throw new MyTownCommandException("mytown.cmd.err.claim.chunkload.already");
+        }
+
+        block.getTown().ticketMap.chunkLoad(block);
+        ChatManager.send(sender, "mytown.notification.claim.chunkload");
+
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "chunkunload",
+            permission = "mytown.adm.cmd.claim.chunkunload",
+            parentName = "mytown.adm.cmd.claim",
+            syntax = "/townadmin claim chunkunload")
+    public static CommandResponse claimUnchunkloadCommand(ICommandSender sender, List<String> args) {
+
+        Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
+        TownBlock block = getBlockAtResident(res);
+
+        if (!block.isChunkloaded()) {
+            throw new MyTownCommandException("mytown.cmd.err.claim.unchunkload.missing");
+        }
+
+        block.getTown().ticketMap.chunkUnload(block);
+        ChatManager.send(sender, "mytown.notification.claim.chunkunload");
+
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "all",
+            permission = "mytown.adm.cmd.claim.chunkload.all",
+            parentName = "mytown.adm.cmd.claim.chunkload",
+            syntax = "/townadmin claim chunkload all <town>",
+            completionKeys = {"townCompletion"})
+    public static CommandResponse claimChunkloadAllCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 1) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+        int chunksToLoad = town.townBlocksContainer.size() - town.ticketMap.getChunkloadedAmount();
+
+        town.ticketMap.chunkLoadAll();
+        ChatManager.send(sender, "mytown.notification.claim.chunkload.all", chunksToLoad);
+
+        return CommandResponse.DONE;
+    }
+
+    @Command(
+            name = "all",
+            permission = "mytown.adm.cmd.claim.chunkunload.all",
+            parentName = "mytown.adm.cmd.claim.chunkunload",
+            syntax = "/townadmin claim chunkunload all <town>",
+            completionKeys = {"townCompletion"})
+    public static CommandResponse claimChunkunloadAllCommand(ICommandSender sender, List<String> args) {
+        if (args.size() < 1) {
+            return CommandResponse.SEND_SYNTAX;
+        }
+
+        Town town = getTownFromName(args.get(0));
+        int chunkToUnload = town.ticketMap.getChunkloadedAmount();
+
+        town.ticketMap.chunkUnloadAll();
+        ChatManager.send(sender, "mytown.notification.claim.chunkload.all", chunkToUnload);
+
         return CommandResponse.DONE;
     }
 
