@@ -698,7 +698,7 @@ public class MyTownDatasource extends DatasourceSQL {
             PreparedStatement s = prepare("INSERT INTO " + prefix + "RankPermissions (node, rank, townName) VALUES(?, ?, ?)", true);
             s.setString(1, perm);
             s.setString(2, rank.getName());
-            s.setString(2, rank.getTown().getName());
+            s.setString(3, rank.getTown().getName());
             s.execute();
 
             rank.permissionsContainer.add(perm);
