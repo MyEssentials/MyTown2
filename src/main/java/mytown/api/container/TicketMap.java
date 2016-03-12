@@ -43,7 +43,7 @@ public class TicketMap extends HashMap<Integer, ForgeChunkManager.Ticket> {
 
     public void chunkLoad(TownBlock block) {
         ForgeChunkManager.Ticket ticket = get(block.getDim());
-        NBTTagList list = ticket.getModData().getTagList("chunkCoords", Constants.NBT.TAG_LIST);
+        NBTTagList list = ticket.getModData().getTagList("chunkCoords", Constants.NBT.TAG_COMPOUND);
         list.appendTag(block.toChunkPos().toNBTTagCompound());
 
         ForgeChunkManager.forceChunk(ticket, block.toChunkCoords());
@@ -53,7 +53,7 @@ public class TicketMap extends HashMap<Integer, ForgeChunkManager.Ticket> {
         ForgeChunkManager.Ticket ticket = get(block.getDim());
         ForgeChunkManager.unforceChunk(ticket, block.toChunkCoords());
 
-        NBTTagList list = ticket.getModData().getTagList("chunkCoords", Constants.NBT.TAG_LIST);
+        NBTTagList list = ticket.getModData().getTagList("chunkCoords", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound chunkNBT = list.getCompoundTagAt(i);
             int x = chunkNBT.getInteger("x");

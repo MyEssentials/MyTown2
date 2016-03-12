@@ -195,7 +195,5 @@ public class MyTownSchema extends Schema {
                 "Towns ADD extraFarClaims INTEGER DEFAULT 0"));
         updates.add(new DBUpdate("12.16.2015.1", "Add 'fakePlayer to residents", "ALTER TABLE " + bridge.prefix +
                 "Residents ADD fakePlayer BOOLEAN DEFAULT false"));
-        updates.add(new DBUpdate("10.03.2016.1", "Add 'isChunkloaded' field to town blocks", "ALTER TABLE " + bridge.prefix +
-                "Blocks ADD isChunkLoaded BOOLEAN DEFAULT false"));
     }
 }

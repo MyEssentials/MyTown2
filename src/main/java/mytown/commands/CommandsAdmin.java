@@ -45,6 +45,7 @@ import java.util.List;
 /**
  * All commands for admins go here
  */
+@SuppressWarnings("unused")
 public class CommandsAdmin extends Commands {
 
     private CommandsAdmin() {

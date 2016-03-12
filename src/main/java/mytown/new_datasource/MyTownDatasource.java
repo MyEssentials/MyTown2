@@ -9,10 +9,12 @@ import mytown.config.Config;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
+import mytown.handlers.MyTownLoadingCallback;
 import mytown.protection.ProtectionManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeChunkManager;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.sql.PreparedStatement;
@@ -84,6 +86,12 @@ public class MyTownDatasource extends DatasourceSQL {
                 town.townBlocksContainer.setExtraFarClaims(rs.getInt("extraFarClaims"));
                 town.plotsContainer.setMaxPlots(rs.getInt("maxPlots"));
 
+                for (ForgeChunkManager.Ticket ticket : MyTownLoadingCallback.tickets) {
+                    if (ticket.getModData().getString("townName").equals(town.getName())) {
+                        town.ticketMap.put(ticket.world.provider.dimensionId, ticket);
+                    }
+                }
+
                 MyTownUniverse.instance.addTown(town);
             }
         } catch (SQLException e) {
@@ -106,9 +114,6 @@ public class MyTownDatasource extends DatasourceSQL {
                 TownBlock block = new TownBlock(rs.getInt("dim"), rs.getInt("x"), rs.getInt("z"), rs.getBoolean("isFarClaim"), rs.getInt("pricePaid"), town);
 
                 town.townBlocksContainer.add(block);
-                if (rs.getBoolean("isChunkLoaded")) {
-                    town.ticketMap.chunkLoad(block);
-                }
 
                 MyTownUniverse.instance.addTownBlock(block);
             }
@@ -595,14 +600,13 @@ public class MyTownDatasource extends DatasourceSQL {
             if (getUniverse().blocks.contains(block)) { // Update
                 // TODO Update Block (If needed?)
             } else { // Insert
-                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Blocks (dim, x, z, isFarClaim, pricePaid, townName, isChunkloaded) VALUES (?, ?, ?, ?, ?, ?, ?)", true);
+                PreparedStatement insertStatement = prepare("INSERT INTO " + prefix + "Blocks (dim, x, z, isFarClaim, pricePaid, townName) VALUES (?, ?, ?, ?, ?, ?)", true);
                 insertStatement.setInt(1, block.getDim());
                 insertStatement.setInt(2, block.getX());
                 insertStatement.setInt(3, block.getZ());
                 insertStatement.setBoolean(4, block.isFarClaim());
                 insertStatement.setInt(5, block.getPricePaid());
                 insertStatement.setString(6, block.getTown().getName());
-                insertStatement.setBoolean(7, block.isChunkloaded());
                 insertStatement.executeUpdate();
 
                 // Put the Block in the Map
