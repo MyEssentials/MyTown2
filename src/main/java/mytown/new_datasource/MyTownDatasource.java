@@ -695,9 +695,10 @@ public class MyTownDatasource extends DatasourceSQL {
     public boolean saveRankPermission(Rank rank, String perm) {
         LOG.debug("Saving RankPermission {} for Rank {} in Town {}", perm, rank.getName(), rank.getTown().getName());
         try {
-            PreparedStatement s = prepare("INSERT INTO " + prefix + "RankPermissions (node, rank) VALUES(?, ?)", true);
+            PreparedStatement s = prepare("INSERT INTO " + prefix + "RankPermissions (node, rank, townName) VALUES(?, ?, ?)", true);
             s.setString(1, perm);
             s.setString(2, rank.getName());
+            s.setString(2, rank.getTown().getName());
             s.execute();
 
             rank.permissionsContainer.add(perm);
@@ -1436,14 +1437,15 @@ public class MyTownDatasource extends DatasourceSQL {
     
     public boolean deleteRankPermission(Rank rank, String perm) {
         try {
-            PreparedStatement s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE node = ? AND rank = ?", true);
+            PreparedStatement s = prepare("DELETE FROM " + prefix + "RankPermissions WHERE node = ? AND rank = ? AND townName = ?", true);
             s.setString(1, perm);
             s.setString(2, rank.getName());
+            s.setString(3, rank.getTown().getName());
             s.execute();
 
             rank.permissionsContainer.remove(perm);
         } catch (SQLException e) {
-            LOG.error("Failed to add permission ({}) to Rank ({})", perm, rank.getName());
+            LOG.error("Failed to add permission ({}) to Rank ({}) in Town ({})", perm, rank.getName(), rank.getTown().getName());
             LOG.error(ExceptionUtils.getStackTrace(e));
             return false;
         }
