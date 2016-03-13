@@ -244,7 +244,7 @@ mytown.notification.blocks.info.extra={7| - }{%s}{7| ( %s )}
 mytown.notification.prices={%s}{2N| Town creation: }{7|%s}{2N| Claim: }{7|%s}{2N| Additional claim: }{7|%s}{2N| Far claim: }{7|%s}{2N| Spawn: }{7|%s}{2N| Set spawn: }{7|%s}{2N| Other spawn: }{7|%s}{2N| Town upkeep: }{%s}{2N| Claim upkeep: }{7|%s}
 mytown.format.rank.type.short={%s}
 
-mytown.notification.town.owners=&6 Owners: &c%s
+mytown.notification.town.owners={6| Owners: }{c|%s}
 
 # Notifications
 
