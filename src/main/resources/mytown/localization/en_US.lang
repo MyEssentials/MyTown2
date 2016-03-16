@@ -52,28 +52,18 @@ mytown.flag.FAKERS={3|Allows fake players to bypass (ex: TCGolems)}
 mytown.flag.NEARBY={3|Allows towns to be made near this town}
 
 # Tools
-mytown.tool.plot.sell.name=Plot Sell
-mytown.tool.plot.sell.description.header1={3|Right-click in a plot to place a sell sign.}
-mytown.tool.plot.sell.description.header2={3|Shift-right-click air to change modes.}
-mytown.tool.plot.sell.description.price={3|Price:}
-mytown.tool.plot.sell.description.mode={3|Restricted to residents:}
-mytown.tool.plot.sell.mode=Restricted to residents
+mytown.tool.plot.sell.name={9|Plot Seller}
+mytown.tool.plot.sell.description={7o|   Right-click in a plot to place a sell sign}{7oN|   Shift-right-click air to change modes}{7oN|   Price: }{ao|%s}{7oN|   Restricted to residents: }{ao|%s}
+mytown.tool.plot.sell.property={3|Restricted to residents}
 
-mytown.tool.plot.selection.name=Selector
-mytown.tool.plot.selection.description.header1={3|Select 2 blocks to make a plot.}
-mytown.tool.plot.selection.description.header2={3|Shift right-click air to change modes.}
-mytown.tool.plot.selection.description.price={3|Name:}
-mytown.tool.plot.selection.description.mode={3|Height dependent:}
-mytown.tool.plot.description.mode=Height dependent
+mytown.tool.plot.selection.name={9|Plot Selector}
+mytown.tool.plot.selection.description={7o|   Select 2 blocks to make a plot}{7oN|   Shift right-click air to change modes}{7oN|   Plot name: }{ao|%s}{7oN|   Height dependent: }{ao|%s}
+mytown.tool.plot.selection.property={3|Height dependent}
 
-mytown.tool.whitelister.name=Whitelister
-mytown.tool.whitelister.description.header1=3|Select block for bypassing protection.}
-mytown.tool.whitelister.description.header2=3|Shift right-click air to change flag.}
-mytown.tool.whitelister.description.flag=3|Flag:}
-mytown.tool.whitelister.description.removal=c|WHITELIST REMOVAL}
-mytown.tool.whitelister.mode=mode
-mytown.tool.whitelister.mode.removal=WHITELIST REMOVAL
-mytown.tool.whitelister.mode.flagType=flag type
+mytown.tool.whitelister.name={9|Whitelister}
+mytown.tool.whitelister.description={7o|   Select block for bypassing protection}{7oN|   Shift right-click air to change flag}{7oN|   FlagType: }{ao|%s}
+mytown.tool.whitelister.removal={c|WHITELIST REMOVAL}
+mytown.tool.whitelister.property={3|FlagType}
 
 # Sell Sign
 mytown.sign.sell.title=Plot Sale
@@ -321,8 +311,6 @@ mytown.notification.town.renamed={3|Town has been renamed}
 mytown.notification.plot.enter={2|~ }{%s}
 mytown.notification.plot.enter.unassigned={c|Unassigned}
 mytown.notification.update.ranks={a|Successfully updated all ranks}
-mytown.notification.tool.mode={3|Changed '}{%s}{3|' to %s}
-mytown.notification.tool.gained={3|You have been given a tool}
 mytown.notification.town.ranks.rem={3|Rank }{%s}{3| has been removed from town }{%s}
 mytown.notification.claim.chunkload={3|This chunk has been successfully chunkloaded}
 mytown.notification.claim.chunkload.all={3|Successfully chunkloaded all (}{a|%s}{3| chunks) in town}

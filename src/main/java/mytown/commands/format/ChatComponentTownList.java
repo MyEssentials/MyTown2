@@ -1,5 +1,6 @@
 package mytown.commands.format;
 
+import myessentials.chat.api.ChatComponentContainer;
 import myessentials.chat.api.ChatComponentMultiPage;
 import mytown.MyTown;
 import mytown.entities.Town;
@@ -24,8 +25,8 @@ public class ChatComponentTownList extends ChatComponentMultiPage {
     }
 
     @Override
-    public List<IChatComponent> getHeader(int page) {
-        List<IChatComponent> header = new ArrayList<IChatComponent>();
+    public ChatComponentContainer getHeader(int page) {
+        ChatComponentContainer header = new ChatComponentContainer();
 
         header.add(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.list.header", page, getNumberOfPages()));
 

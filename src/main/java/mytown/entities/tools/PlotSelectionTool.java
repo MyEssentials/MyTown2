@@ -22,19 +22,13 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class PlotSelectionTool extends Tool {
 
-    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.name").getUnformattedTextForChat();
-    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header1").getUnformattedTextForChat();
-    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header2").getUnformattedTextForChat();
-    private static final String DESCRIPTION_NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.name").getUnformattedTextForChat() + " ";
-    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.mode").getUnformattedTextForChat() + " ";
-
     private Selection selectionFirst, selectionSecond;
     private String plotName;
     private boolean heightDependent = true;
     private Resident owner;
 
     public PlotSelectionTool(Resident owner, String plotName) {
-        super(owner.getPlayer(), NAME);
+        super(owner.getPlayer(), LocalManager.get("myessentials.tool.name", LocalManager.get("mytown.tool.plot.selection.name")).getLegacyFormattedText()[0]);
         this.owner = owner;
         this.plotName = plotName;
     }
@@ -69,19 +63,14 @@ public class PlotSelectionTool extends Tool {
 
     @Override
     protected String[] getDescription() {
-        return new String[] {
-                DESCRIPTION_HEADER_1,
-                DESCRIPTION_HEADER_2,
-                DESCRIPTION_NAME + plotName,
-                DESCRIPTION_MODE + heightDependent
-        };
+        return LocalManager.get("mytown.tool.plot.selection.description", plotName, heightDependent).getLegacyFormattedText();
     }
 
     @Override
     public void onShiftRightClick() {
         heightDependent = !heightDependent;
         updateDescription();
-        ChatManager.send(owner.getPlayer(), "mytown.notification.tool.mode", LocalManager.get("mytown.tool.plot.description.mode"), heightDependent);
+        ChatManager.send(owner.getPlayer(), "myessentials.tool.mode", LocalManager.get("mytown.tool.plot.selection.property"), heightDependent);
     }
 
     public void resetSelection(boolean resetBlocks, int delay) {

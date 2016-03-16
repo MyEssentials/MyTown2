@@ -5,7 +5,6 @@ import myessentials.entities.api.BlockPos;
 import myessentials.entities.api.tool.Tool;
 import myessentials.entities.api.tool.ToolManager;
 import myessentials.localization.api.LocalManager;
-import mytown.MyTown;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
 import mytown.entities.Town;
@@ -21,18 +20,12 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public class PlotSellTool extends Tool {
 
-    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.name").getUnformattedTextForChat();
-    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header1").getUnformattedTextForChat();
-    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header2").getUnformattedTextForChat();
-    private static final String DESCRIPTION_PRICE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.price").getUnformattedTextForChat() + " ";
-    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.mode").getUnformattedTextForChat() + " ";
-
     private int price;
     private boolean restricted = false;
     private Resident owner;
 
     public PlotSellTool(Resident owner, int price) {
-        super(owner.getPlayer(), NAME);
+        super(owner.getPlayer(), LocalManager.get("myessentials.tool.name", LocalManager.get("mytown.tool.plot.sell.name")).getLegacyFormattedText()[0]);
         this.owner = owner;
         this.price = price;
     }
@@ -52,19 +45,14 @@ public class PlotSellTool extends Tool {
 
     @Override
     protected String[] getDescription() {
-        return new String[] {
-                DESCRIPTION_HEADER_1,
-                DESCRIPTION_HEADER_2,
-                DESCRIPTION_PRICE + price,
-                DESCRIPTION_MODE + restricted
-        };
+        return LocalManager.get("mytown.tool.plot.sell.description", price, restricted).getLegacyFormattedText();
     }
 
     @Override
     public void onShiftRightClick() {
         this.restricted = !this.restricted;
         updateDescription();
-        ChatManager.send(owner.getPlayer(), "mytown.notification.tool.mode", LocalManager.get("mytown.tool.plot.sell.mode"), restricted);
+        ChatManager.send(owner.getPlayer(), "myessentials.tool.mode", LocalManager.get("mytown.tool.plot.sell.property"), restricted);
     }
 
     protected boolean hasPermission(Town town, BlockPos bp) {

@@ -18,17 +18,11 @@ import mytown.util.MyTownUtils;
  */
 public class WhitelisterTool extends Tool {
 
-    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.name").getUnformattedTextForChat();
-    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header1").getUnformattedTextForChat();
-    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.header2").getUnformattedTextForChat();
-    private static final String DESCRIPTION_FLAG = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.flag").getUnformattedTextForChat() + " ";
-    private static final String DESCRIPTION_FLAG_REMOVAL = MyTown.instance.LOCAL.getLocalization("mytown.tool.whitelister.description.removal").getUnformattedTextForChat();
-
     private Resident owner;
     private FlagType flagType = FlagType.ACCESS;
 
     public WhitelisterTool(Resident owner) {
-        super(owner.getPlayer(), NAME);
+        super(owner.getPlayer(), LocalManager.get("myessentials.tool.name", LocalManager.get("mytown.tool.whitelister.name")).getLegacyFormattedText()[0]);
         this.owner = owner;
     }
 
@@ -50,11 +44,7 @@ public class WhitelisterTool extends Tool {
 
     @Override
     protected String[] getDescription() {
-        return new String[] {
-                DESCRIPTION_HEADER_1,
-                DESCRIPTION_HEADER_2,
-                DESCRIPTION_FLAG + (flagType == null ? DESCRIPTION_FLAG_REMOVAL : flagType.name)
-        };
+        return LocalManager.get("mytown.tool.whitelister.description", flagType == null ? LocalManager.get("mytown.tool.whitelister.removal").getUnformattedText() : flagType.toString()).getLegacyFormattedText();
     }
 
     @Override
@@ -62,24 +52,19 @@ public class WhitelisterTool extends Tool {
         if(flagType == FlagType.getWhitelistable().get(FlagType.getWhitelistable().size() - 1)) {
             flagType = null;
             updateDescription();
-            ChatManager.send(owner.getPlayer(), "mytown.notification.tool.mode",
-                    LocalManager.get("mytown.tool.whitelister.mode"),
-                    LocalManager.get("mytown.tool.whitelister.mode.removal")
-            );
-        } else if(flagType == null) {
-            flagType = FlagType.getWhitelistable().get(0);
-            updateDescription();
-            ChatManager.send(owner.getPlayer(), "mytown.notification.tool.mode",
-                    LocalManager.get("mytown.tool.whitelister.mode.flagType"),
-                    flagType.name
-            );
+            ChatManager.send(owner.getPlayer(), "myessentials.tool.mode",
+                    LocalManager.get("mytown.tool.whitelister.property"),
+                    LocalManager.get("mytown.tool.whitelister.removal").getUnformattedText());
         } else {
-            flagType = FlagType.getWhitelistable().get(FlagType.getWhitelistable().indexOf(flagType) + 1);
+            if(flagType == null) {
+                flagType = FlagType.getWhitelistable().get(0);
+            } else {
+                flagType = FlagType.getWhitelistable().get(FlagType.getWhitelistable().indexOf(flagType) + 1);
+            }
             updateDescription();
-            ChatManager.send(owner.getPlayer(), "mytown.notification.tool.mode",
-                    LocalManager.get("mytown.tool.whitelister.mode.flagType"),
-                    flagType.name
-            );
+            ChatManager.send(owner.getPlayer(), "myessentials.tool.mode",
+                    LocalManager.get("mytown.tool.whitelister.property"),
+                    flagType.name);
         }
     }
 
