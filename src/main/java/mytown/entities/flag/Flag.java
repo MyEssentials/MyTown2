@@ -143,6 +143,11 @@ public class Flag<T> implements Comparable<Flag>, IChatFormat {
             IChatComponent root = new ChatComponentList();
 
             root.appendSibling(LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|FLAGS}")));
+
+            for (Flag flag : this) {
+                root.appendSibling(flag.toChatMessage());
+            }
+            
             return root;
         }
     }
