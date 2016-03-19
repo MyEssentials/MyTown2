@@ -222,7 +222,7 @@ mytown.notification.town.ranks.perm.remove={a|Removed permission from rank succe
 
 # Formatting
 
-mytown.format.flag={7|%s}{7|[}{a|%s}{7|]}
+mytown.format.flag={7|%s << %s}{7|[}{a|%s}{7|]}
 mytown.format.town.short={6|%s << %s}
 mytown.format.town.long={%s}{6N| - }{2|R:%s}{6| - }{2|C:%s/%s}{6| - }{2|P:%s}{6| - }{2N| Residents: }{%s}{2N| Ranks: }{%s}
 mytown.format.rank={l|%s}

@@ -68,7 +68,7 @@ public class Flag<T> implements Comparable<Flag>, IChatFormat {
     @Override
     public IChatComponent toChatMessage() {
         IChatComponent description = LocalManager.get(flagType.getDescriptionKey());
-        return LocalManager.get("mytown.format.flag", flagType.name.toLowerCase(), value.toString(), description);
+        return LocalManager.get("mytown.format.flag", flagType.name.toLowerCase(), description, value);
     }
 
     @SuppressWarnings("unchecked")
