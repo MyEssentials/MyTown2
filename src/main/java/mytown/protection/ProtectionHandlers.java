@@ -21,7 +21,6 @@ import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
 import mytown.new_datasource.MyTownUniverse;
 import mytown.thread.ThreadPlacementCheck;
-import mytown.util.MyTownUtils;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -92,12 +91,9 @@ public class ProtectionHandlers {
 
         // Entity check
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
-        int loadedEntityListSize = ev.world.loadedEntityList.size();
-        for (int i = 0; i < loadedEntityListSize; i++) {
-            Object item = ev.world.loadedEntityList.get(i);
+        for (Object item: ev.world.loadedEntityList) {
             if (item == null) continue;
             Entity entity = (Entity) item;
-            Town town = MyTownUtils.getTownAtPosition(entity.dimension, (int) Math.floor(entity.posX) >> 4, (int) Math.floor(entity.posZ) >> 4);
             //MyTown.instance.log.info("Checking player...");
             // Player check, every tick
             if (entity instanceof EntityPlayerMP && !(entity instanceof FakePlayer)) {
@@ -113,9 +109,7 @@ public class ProtectionHandlers {
         // TileEntity check
         if(MinecraftServer.getServer().getTickCounter() % 20 == 15) {
             if (activePlacementThreads == 0) {
-                int loadedTileEntityListSize = ev.world.loadedTileEntityList.size();
-                for (int i = 0; i < loadedTileEntityListSize; i++) {
-                    Object item = ev.world.loadedTileEntityList.get(i);
+                for (Object item: ev.world.loadedTileEntityList) {
                     if (item == null) continue;
                     TileEntity te = (TileEntity) item;
                     ProtectionManager.check(te);
