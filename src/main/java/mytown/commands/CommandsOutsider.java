@@ -1,24 +1,30 @@
 package mytown.commands;
 
 
-import mypermissions.api.command.CommandManager;
-import mypermissions.api.command.CommandResponse;
-import mypermissions.api.command.annotation.Command;
-import mypermissions.command.CommandTree;
-import mypermissions.command.CommandTreeNode;
+import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatComponentList;
+import myessentials.chat.api.ChatComponentMultiPage;
+import myessentials.chat.api.ChatManager;
+import myessentials.localization.api.LocalManager;
 import myessentials.utils.StringUtils;
+import mypermissions.command.api.CommandManager;
+import mypermissions.command.api.CommandResponse;
+import mypermissions.command.api.annotation.Command;
+import mypermissions.command.core.entities.CommandTree;
+import mypermissions.command.core.entities.CommandTreeNode;
+import mytown.commands.format.ChatComponentTownList;
 import mytown.config.Config;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Resident;
 import mytown.entities.Town;
 import mytown.entities.flag.FlagType;
+import mytown.new_datasource.MyTownUniverse;
 import mytown.proxies.EconomyProxy;
 import mytown.util.Formatter;
 import mytown.util.MyTownUtils;
 import mytown.util.exceptions.MyTownCommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,20 +48,22 @@ public class CommandsOutsider extends Commands {
                 Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
                 towns.add(getTownFromResident(res));
             } else {
-                throw new MyTownCommandException("You are not a player!");
+                throw new MyTownCommandException("mytown.cmd.err.notPlayer");
             }
         } else {
             if ("@a".equals(args.get(0))) {
                 towns = new ArrayList<Town>(getUniverse().towns);
                 // TODO Sort
             } else {
-                if(getTownFromName(args.get(0)) != null)
+                if(getTownFromName(args.get(0)) != null) {
                     towns.add(getTownFromName(args.get(0)));
+                }
             }
         }
 
         for (Town town : towns) {
-            sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.info", town.getName(), town.residentsMap.size(), town.townBlocksContainer.size(), town.getMaxBlocks(), town.plotsContainer.size(), town.residentsMap.toString(), town.ranksContainer.toString()));
+            IChatComponent header = LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|%s}", town.getName()));
+            ChatManager.send(sender, "mytown.format.town.long", header, town.residentsMap.size(), town.townBlocksContainer.size(), town.getMaxBlocks(), town.plotsContainer.size(), town.residentsMap, town.ranksContainer);
         }
         return CommandResponse.DONE;
     }
@@ -68,14 +76,16 @@ public class CommandsOutsider extends Commands {
             completionKeys = {"residentCompletion"},
             console = true)
     public static CommandResponse resCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
+        if (args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
+        }
 
         Resident res = getResidentFromName(args.get(0));
         if (res == null) {
-            throw new MyTownCommandException("mytown.cmd.err.resident.notexist", args.get(0));
+            throw new MyTownCommandException("mytown.cmd.err.resident.missing", args.get(0));
         }
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.resident.info", res.getPlayerName(), res.townsContainer.toString(true), Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline()), res.getExtraBlocks()));
+        IChatComponent header = LocalManager.get("myessentials.format.list.header", res);
+        ChatManager.send(sender, "mytown.format.resident.long", header, res.townsContainer, Formatter.formatDate(res.getJoinDate()), Formatter.formatDate(res.getLastOnline()), res.getExtraBlocks());
         return CommandResponse.DONE;
     }
 
@@ -83,10 +93,21 @@ public class CommandsOutsider extends Commands {
             name = "list",
             permission = "mytown.cmd.outsider.list",
             parentName = "mytown.cmd",
-            syntax = "/town list",
+            syntax = "/town list [page]",
             console = true)
     public static CommandResponse listCommand(ICommandSender sender, List<String> args) {
-        sendMessageBackToSender(sender, getLocal().getLocalization("mytown.notification.town.list", getUniverse().towns.toString()));
+        int page = 1;
+        if (args.size() >= 1) {
+            page = Integer.parseInt(args.get(0));
+        }
+        if (page <= 0) {
+            page = 1;
+        }
+
+        // TODO: Cache this
+        ChatComponentMultiPage townList = new ChatComponentTownList(getUniverse().towns);
+        townList.sendPage(sender, page);
+
         return CommandResponse.DONE;
     }
 
@@ -96,35 +117,41 @@ public class CommandsOutsider extends Commands {
             parentName = "mytown.cmd",
             syntax = "/town new <name>")
     public static CommandResponse newTownCommand(ICommandSender sender, List<String> args) {
-        if (args.size() < 1)
+        if (args.size() < 1) {
             return CommandResponse.SEND_SYNTAX;
+        }
 
         EntityPlayer player = (EntityPlayer) sender;
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender); // Attempt to get or make the Resident
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.startedCreation", args.get(0)));
+        ChatManager.send(sender, "mytown.notification.town.startedCreation", args.get(0));
 
-        if (res.townsContainer.size() >= Config.instance.maxTowns.get())
+        if (res.townsContainer.size() >= Config.instance.maxTowns.get()) {
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
-        if (getUniverse().towns.contains(args.get(0))) // Is the town name already in use?
-            throw new MyTownCommandException("mytown.cmd.err.newtown.nameinuse", args.get(0));
-        if (getUniverse().blocks.contains(player.dimension, (int) player.posX >> 4, (int) player.posZ >> 4)) // Is the Block already claimed?
-            throw new MyTownCommandException("mytown.cmd.err.newtown.positionError");
+        }
+        if (getUniverse().towns.contains(args.get(0))) {
+            throw new MyTownCommandException("mytown.cmd.err.new.nameUsed", args.get(0));
+        }
+        if (getUniverse().blocks.contains(player.dimension, (int) player.posX >> 4, (int) player.posZ >> 4)) {
+            throw new MyTownCommandException("mytown.cmd.err.new.position");
+        }
         for (int x = ((int) player.posX >> 4) - Config.instance.distanceBetweenTowns.get(); x <= ((int) player.posX >> 4) + Config.instance.distanceBetweenTowns.get(); x++) {
             for (int z = ((int) player.posZ >> 4) - Config.instance.distanceBetweenTowns.get(); z <= ((int) player.posZ >> 4) + Config.instance.distanceBetweenTowns.get(); z++) {
                 Town nearbyTown = MyTownUtils.getTownAtPosition(player.dimension, x, z);
-                if (nearbyTown != null && !(Boolean)nearbyTown.flagsContainer.getValue(FlagType.NEARBY))
-                    throw new MyTownCommandException("mytown.cmd.err.newtown.tooClose", nearbyTown.getName(), Config.instance.distanceBetweenTowns.get());
+                if (nearbyTown != null && !nearbyTown.flagsContainer.getValue(FlagType.NEARBY)) {
+                    throw new MyTownCommandException("mytown.cmd.err.new.tooClose", nearbyTown, Config.instance.distanceBetweenTowns.get());
+                }
             }
         }
 
         makePayment(player, Config.instance.costAmountMakeTown.get() + Config.instance.costAmountClaim.get());
 
         Town town = getUniverse().newTown(args.get(0), res); // Attempt to create the Town
-        if (town == null)
-            throw new MyTownCommandException("mytown.cmd.err.newtown.failed");
+        if (town == null) {
+            throw new MyTownCommandException("mytown.cmd.err.new.failed");
+        }
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.created", town.getName()));
+        ChatManager.send(sender, "mytown.notification.town.created", town);
         return CommandResponse.DONE;
     }
 
@@ -154,23 +181,26 @@ public class CommandsOutsider extends Commands {
         List<Town> invites = getInvitesFromResident(res);
         Town town;
         if (args.size() == 0) {
-            if(invites.size() > 1)
+            if(invites.size() > 1) {
                 throw new MyTownCommandException("mytown.cmd.err.invite.accept");
+            }
             town = invites.get(0);
         } else {
             town = getTownFromName(args.get(0));
             // Basically true only if player specifies a town that is not in its invites
-            if (!invites.contains(town))
-                throw new MyTownCommandException("mytown.cmd.err.invite.town.noinvitations");
+            if (!invites.contains(town)) {
+                throw new MyTownCommandException("mytown.cmd.err.invite.missing");
+            }
         }
-        if (res.townsContainer.size() >= Config.instance.maxTowns.get())
+        if (res.townsContainer.size() >= Config.instance.maxTowns.get()) {
             throw new MyTownCommandException("mytown.cmd.err.resident.maxTowns");
+        }
 
         getDatasource().deleteTownInvite(res, town, true);
 
         // Notify everyone
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.accept", town.getName()));
-        town.notifyResidentJoin(res);
+        ChatManager.send(sender, "mytown.notification.town.invited.accept", town);
+        town.notifyEveryone(LocalManager.get("mytown.notification.town.joined", res, town));
         return CommandResponse.DONE;
     }
 
@@ -184,19 +214,22 @@ public class CommandsOutsider extends Commands {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
         List<Town> invites = getInvitesFromResident(res);
         Town town;
-        if(invites.size() > 1)
+        if(invites.size() > 1) {
             throw new MyTownCommandException("mytown.cmd.err.invite.refuse");
+        }
 
-        if (args.size() == 0)
+        if (args.size() == 0) {
             town = invites.get(0);
-        else
+        } else {
             town = getTownFromName(args.get(0));
-        if (!invites.contains(town))
-            throw new MyTownCommandException("mytown.cmd.err.invite.town.noinvitations");
+        }
+        if (!invites.contains(town)) {
+            throw new MyTownCommandException("mytown.cmd.err.invite.missing");
+        }
 
         getDatasource().deleteTownInvite(res, town, false);
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.town.invited.refuse", town.getName()));
+        ChatManager.send(sender, "mytown.notification.town.invited.refuse", town);
         return CommandResponse.DONE;
     }
 
@@ -359,17 +392,10 @@ public class CommandsOutsider extends Commands {
             syntax = "/town invites")
     public static CommandResponse invitesCommand(ICommandSender sender, List<String> args) {
         Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-        if (res.townInvitesContainer.size() == 0)
-            res.sendMessage(getLocal().getLocalization("mytown.notification.resident.noInvites"));
-        else {
-            String formattedList = null;
-            for (Town town : res.townInvitesContainer)
-                if (formattedList == null)
-                    formattedList = EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
-                else
-                    formattedList += ", " + EnumChatFormatting.GREEN + town.getName() + EnumChatFormatting.WHITE;
-            res.sendMessage(getLocal().getLocalization("mytown.notification.resident.invites"));
-            res.sendMessage(formattedList);
+        if (res.townInvitesContainer.size() == 0) {
+            ChatManager.send(sender, "mytown.cmd.err.invite.missing");
+        } else {
+            ChatManager.send(sender, res.townInvitesContainer.toChatMessage());
         }
         return CommandResponse.DONE;
     }
@@ -382,7 +408,18 @@ public class CommandsOutsider extends Commands {
     public static CommandResponse pricesCommand(ICommandSender sender, List<String> args) {
         Resident res = getUniverse().getOrMakeResident(sender);
 
-        res.sendMessage(getLocal().getLocalization("mytown.notification.prices", EconomyProxy.getCurrency(Config.instance.costAmountMakeTown.get()), EconomyProxy.getCurrency(Config.instance.costAmountClaim.get()), EconomyProxy.getCurrency(Config.instance.costAdditionClaim.get()), EconomyProxy.getCurrency(Config.instance.costAmountClaimFar.get()), EconomyProxy.getCurrency(Config.instance.costAmountSpawn.get()), EconomyProxy.getCurrency(Config.instance.costAmountSetSpawn.get()), EconomyProxy.getCurrency(Config.instance.costAmountOtherSpawn.get()), EconomyProxy.getCurrency(Config.instance.costTownUpkeep.get()), EconomyProxy.getCurrency(Config.instance.costAdditionalUpkeep.get())));
+        IChatComponent header = LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|PRICES}"));
+        ChatManager.send(sender, "mytown.notification.prices",
+                header,
+                EconomyProxy.getCurrency(Config.instance.costAmountMakeTown.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountClaim.get()),
+                EconomyProxy.getCurrency(Config.instance.costAdditionClaim.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountClaimFar.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountSpawn.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountSetSpawn.get()),
+                EconomyProxy.getCurrency(Config.instance.costAmountOtherSpawn.get()),
+                EconomyProxy.getCurrency(Config.instance.costTownUpkeep.get()),
+                EconomyProxy.getCurrency(Config.instance.costAdditionalUpkeep.get()));
 
         return CommandResponse.DONE;
     }

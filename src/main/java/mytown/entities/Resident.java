@@ -1,22 +1,24 @@
 package mytown.entities;
 
-import myessentials.utils.ChatUtils;
-import myessentials.utils.ColorUtils;
+import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatManager;
+import myessentials.chat.api.IChatFormat;
+import myessentials.localization.api.LocalManager;
 import mytown.MyTown;
 import mytown.config.Config;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.flag.FlagType;
+import mytown.new_datasource.MyTownUniverse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraftforge.common.util.FakePlayer;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import net.minecraft.util.IChatComponent;
 
 import java.util.*;
 
-public class Resident {
+public class Resident implements IChatFormat {
     private EntityPlayer player;
     private UUID playerUUID;
     private String playerName;
@@ -89,12 +91,12 @@ public class Resident {
 
             if (oldTownBlock == null && newTownBlock != null || oldTownBlock != null && newTownBlock != null && !oldTownBlock.getTown().getName().equals(newTownBlock.getTown().getName())) {
                 if (townsContainer.contains(newTownBlock.getTown())) {
-                    sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
+                    ChatManager.send(player, "mytown.notification.enter.ownTown", newTownBlock.getTown());
                 } else {
-                    sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
+                    ChatManager.send(player, "mytown.notification.enter.town", newTownBlock.getTown());
                 }
             } else if (oldTownBlock != null && newTownBlock == null) {
-                sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.wild"));
+                ChatManager.send(player, "mytown.notification.enter.wild");
             }
         }
     }
@@ -108,29 +110,19 @@ public class Resident {
         newTownBlock = MyTownUniverse.instance.blocks.get(dimension, newChunkX, newChunkZ);
 
         if (newTownBlock == null) {
-            sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.wild"));
+            ChatManager.send(player, "mytown.notification.enter.wild");
         } else if (townsContainer.contains(newTownBlock.getTown())) {
-            sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.ownTown", newTownBlock.getTown().getName()));
+            ChatManager.send(player, "mytown.notification.enter.ownTown", newTownBlock.getTown());
         } else {
-            sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.enter.town", newTownBlock.getTown().getName()));
+            ChatManager.send(player, "mytown.notification.enter.town", newTownBlock.getTown());
         }
     }
 
     /* ----- Helpers ----- */
 
-    public void sendMessage(String msg) {
-        try {
-            if (getPlayer() != null && !(getPlayer() instanceof FakePlayer))
-                ChatUtils.sendChat(getPlayer(), msg);
-        } catch (NullPointerException ex) {
-            MyTown.instance.LOG.info("You are probably using a modified server that messes with order of Player joining/leaving. This crash is nothing serious.");
-            MyTown.instance.LOG.error(ExceptionUtils.getStackTrace(ex));
-        }
-    }
-
     public void protectionDenial(FlagType flag) {
         if (getPlayer() != null) {
-            ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
+            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization(flag.getDenialKey()));
         }
     }
     /**
@@ -138,8 +130,8 @@ public class Resident {
      */
     public void protectionDenial(FlagType flag, String owners) {
         if (getPlayer() != null) {
-            ChatUtils.sendChat(getPlayer(), flag.getLocalizedProtectionDenial());
-            ChatUtils.sendChat(getPlayer(), MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
+            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization(flag.getDenialKey()));
+            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
         }
     }
 
@@ -243,6 +235,11 @@ public class Resident {
         this.extraBlocks = extraBlocks;
     }
 
+    @Override
+    public IChatComponent toChatMessage() {
+        return LocalManager.get("mytown.format.resident.short", playerName);
+    }
+
     public boolean getFakePlayer() {
         return isFakePlayer;
     }
@@ -251,7 +248,7 @@ public class Resident {
         this.isFakePlayer = isFakePlayer;
     }
 
-    public static class Container extends ArrayList<Resident> {
+    public static class Container extends ArrayList<Resident> implements IChatFormat {
 
         public Resident get(UUID uuid) {
             for (Resident res : this) {
@@ -311,21 +308,16 @@ public class Resident {
         }
 
         @Override
-        public String toString() {
-            String formattedList = null;
+        public IChatComponent toChatMessage() {
+            IChatComponent root = new ChatComponentText("");
 
             for (Resident res : this) {
-                String toAdd = ColorUtils.colorPlayer + res.getPlayerName();
-                if (formattedList == null) {
-                    formattedList = toAdd;
-                } else {
-                    formattedList += ColorUtils.colorComma + ", " + toAdd;
+                if (root.getSiblings().size() > 0) {
+                    root.appendSibling(new ChatComponentFormatted("{7|, }"));
                 }
+                root.appendSibling(res.toChatMessage());
             }
-            if (isEmpty()) {
-                formattedList = ColorUtils.colorEmpty + "NONE";
-            }
-            return formattedList;
+            return root;
         }
     }
 }

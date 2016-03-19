@@ -6,14 +6,16 @@ import myessentials.entities.api.Volume;
 import mytown.MyTown;
 import mytown.entities.flag.FlagType;
 import mytown.protection.ProtectionManager;
-import mytown.protection.segment.*;
+import mytown.protection.segment.Segment;
 import mytown.protection.segment.caller.Caller;
 import mytown.protection.segment.getter.Getter;
 import mytown.util.Constants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * JSON Parser used to parse protection files.

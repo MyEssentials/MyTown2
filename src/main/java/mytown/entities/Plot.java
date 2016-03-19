@@ -1,8 +1,11 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.Volume;
 import myessentials.entities.api.sign.SignType;
-import mypermissions.proxies.PermissionProxy;
+import myessentials.localization.api.LocalManager;
+import mypermissions.permission.api.proxy.PermissionProxy;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import mytown.handlers.VisualsHandler;
@@ -10,6 +13,8 @@ import mytown.new_datasource.MyTownUniverse;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -17,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Plot {
+public class Plot implements IChatFormat {
     private int dbID;
     private final int dim, x1, y1, z1, x2, y2, z2;
     private Town town;
@@ -91,7 +96,12 @@ public class Plot {
 
     @Override
     public String toString() {
-        return String.format("Plot: {Name: %s, Dim: %s, Start: [%s, %s, %s], End: [%s, %s, %s]}", name, dim, x1, y1, z1, x2, y2, z2);
+        return toChatMessage().getUnformattedText();
+    }
+
+    @Override
+    public IChatComponent toChatMessage() {
+        return LocalManager.get("mytown.format.plot.short", name, this.toVolume());
     }
 
     public Volume toVolume() {
@@ -212,7 +222,7 @@ public class Plot {
             }
     }
 
-    public static class Container extends ArrayList<Plot> {
+    public static class Container extends ArrayList<Plot> implements IChatFormat {
 
         private int maxPlots;
 
@@ -316,6 +326,20 @@ public class Plot {
                     VisualsHandler.instance.unmarkBlocks((EntityPlayerMP) res.getPlayer(), plot);
                 }
             }
+        }
+
+        @Override
+        public IChatComponent toChatMessage() {
+            IChatComponent root = new ChatComponentText("");
+
+            for (Plot plot : this) {
+                if (root.getSiblings().size() > 0) {
+                    root.appendSibling(new ChatComponentFormatted("{7|, }"));
+                }
+                root.appendSibling(plot.toChatMessage());
+            }
+
+            return root;
         }
     }
 }

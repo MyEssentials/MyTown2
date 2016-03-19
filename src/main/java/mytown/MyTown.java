@@ -9,10 +9,11 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import myessentials.Localization;
+import myessentials.localization.api.Local;
 import myessentials.json.api.JsonConfig;
+import myessentials.localization.api.LocalManager;
 import myessentials.utils.StringUtils;
-import mypermissions.api.command.CommandManager;
+import mypermissions.command.api.CommandManager;
 import mytown.commands.*;
 import mytown.config.Config;
 import mytown.config.json.FlagsConfig;
@@ -44,7 +45,7 @@ public class MyTown {
     @Instance
     public static MyTown instance;
     public Logger LOG;
-    public Localization LOCAL;
+    public Local LOCAL;
     public MyTownDatasource datasource;
     // ---- Configuration files ----
 
@@ -59,7 +60,8 @@ public class MyTown {
 
         // Read Configs
         Config.instance.init(Constants.CONFIG_FOLDER + "/MyTown.cfg", Constants.MODID);
-        LOCAL = new Localization(Constants.CONFIG_FOLDER+"/localization/", Config.instance.localization.get(), "/mytown/localization/", MyTown.class);
+        LOCAL = new Local(Constants.CONFIG_FOLDER+"/localization/", Config.instance.localization.get(), "/mytown/localization/", MyTown.class);
+        LocalManager.register(LOCAL, "mytown");
 
         registerHandlers();
 
@@ -103,15 +105,15 @@ public class MyTown {
      * Registers all commands
      */
     private void registerCommands() {
-        RankPermissionManager rankPermissionManager = new RankPermissionManager();
-        CommandManager.registerCommands(CommandsEveryone.class, null, LOCAL, rankPermissionManager);
-        CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", LOCAL, rankPermissionManager);
+        RankPermissionManager bridge = new RankPermissionManager();
+        CommandManager.registerCommands(CommandsEveryone.class, null, LOCAL, bridge);
+        CommandManager.registerCommands(CommandsAssistant.class, "mytown.cmd", LOCAL, bridge);
         if (Config.instance.modifiableRanks.get())
-            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", LOCAL, rankPermissionManager);
+            CommandManager.registerCommands(CommandsAssistant.ModifyRanks.class, "mytown.cmd", LOCAL, bridge);
         CommandManager.registerCommands(CommandsAdmin.class, null, LOCAL, null);
         if(Config.instance.enablePlots.get()) {
             CommandManager.registerCommands(CommandsEveryone.Plots.class, "mytown.cmd", LOCAL, null);
-            CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", LOCAL, rankPermissionManager);
+            CommandManager.registerCommands(CommandsAssistant.Plots.class, "mytown.cmd", LOCAL, bridge);
             CommandManager.registerCommands(CommandsAdmin.Plots.class, "mytown.adm.cmd", LOCAL, null);
         }
 
@@ -166,6 +168,8 @@ public class MyTown {
 
         EconomyProxy.init();
         checkConfig();
+
+        LOCAL.load();
 
         for (JsonConfig jsonConfig : jsonConfigs) {
             jsonConfig.init();

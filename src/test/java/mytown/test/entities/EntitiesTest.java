@@ -21,7 +21,7 @@ public class EntitiesTest {
 
     //@Before
     public void shouldLoadSomeEntities() {
-        TestMain.main();
+        //TestMain.main();
 
         Rank onCreationDefaultRank = null;
 

@@ -1,16 +1,15 @@
 package mytown.util;
 
+import myessentials.chat.api.ChatManager;
 import myessentials.chat.api.JsonMessageBuilder;
-import mytown.MyTown;
-import mytown.new_datasource.MyTownUniverse;
 import mytown.entities.Resident;
-import mytown.entities.Town;
 import mytown.entities.TownBlock;
+import mytown.new_datasource.MyTownUniverse;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 
 
 
@@ -31,7 +30,7 @@ public class Formatter {
     public static void sendMap(Resident res, int dim, int cx, int cz) {
         int heightRad = 4, widthRad = 9;
 
-        res.sendMessage("---------- Town Map ----------");
+        ChatManager.send(res.getPlayer(), new ChatComponentText("---------- Town Map ----------"));
         for (int z = cz - heightRad; z <= cz + heightRad; z++) {
             JsonMessageBuilder msgBuilder = new JsonMessageBuilder();
 
@@ -65,40 +64,6 @@ public class Formatter {
         if (res.getPlayer() == null)
             return;
         sendMap(res, res.getPlayer().dimension, res.getPlayer().chunkCoordX, res.getPlayer().chunkCoordZ);
-    }
-
-    /**
-     * Formats all the 'owners' (plot owners or town mayor) to a string that is sent when a protection is bypassed
-     * Uses localization
-     */
-    public static String formatOwnersToString(Town town, int dim, int x, int y, int z) {
-        List<Resident> residents = town.getOwnersAtPosition(dim, x, y, z);
-        String formatterList = null;
-        if (residents == null || residents.isEmpty()) {
-            formatterList = "SERVER ADMINS";
-        } else {
-            for (Resident r : residents)
-                if (formatterList == null) {
-                    formatterList = r.getPlayerName();
-                } else {
-                    formatterList += ", " + r.getPlayerName();
-                }
-        }
-        return MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", formatterList);
-    }
-
-    /**
-     * Formats the town mayor to a string that is sent when a protection is bypassed
-     * Uses localization
-     */
-    public static String formatOwnersToString(Town town) {
-        Resident owner = town.residentsMap.getMayor();
-        String ownerName;
-        if(owner == null)
-            ownerName = "SERVER ADMINS";
-        else
-            ownerName = owner.getPlayerName();
-        return MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", ownerName);
     }
 }
 

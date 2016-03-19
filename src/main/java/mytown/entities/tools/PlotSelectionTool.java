@@ -1,8 +1,10 @@
 package mytown.entities.tools;
 
+import myessentials.chat.api.ChatManager;
 import myessentials.entities.api.BlockPos;
 import myessentials.entities.api.tool.Tool;
 import myessentials.entities.api.tool.ToolManager;
+import myessentials.localization.api.LocalManager;
 import mytown.MyTown;
 import mytown.config.Config;
 import myessentials.thread.DelayedThread;
@@ -20,11 +22,11 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class PlotSelectionTool extends Tool {
 
-    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.name");
-    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header1");
-    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header2");
-    private static final String DESCRIPTION_NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.name")+" ";
-    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.mode")+" ";
+    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.name").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header1").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.header2").getUnformattedTextForChat();
+    private static final String DESCRIPTION_NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.name").getUnformattedTextForChat() + " ";
+    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.selection.description.mode").getUnformattedTextForChat() + " ";
 
     private Selection selectionFirst, selectionSecond;
     private String plotName;
@@ -47,7 +49,7 @@ public class PlotSelectionTool extends Tool {
         }
 
         if (selectionFirst != null && selectionFirst.dim != bp.getDim()) {
-            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.selection.otherDimension"));
+            ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.selection.otherDimension");
             return;
         }
 
@@ -79,7 +81,7 @@ public class PlotSelectionTool extends Tool {
     public void onShiftRightClick() {
         heightDependent = !heightDependent;
         updateDescription();
-        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.description.mode"), heightDependent));
+        ChatManager.send(owner.getPlayer(), "mytown.notification.tool.mode", LocalManager.get("mytown.tool.plot.description.mode"), heightDependent);
     }
 
     public void resetSelection(boolean resetBlocks, int delay) {
@@ -101,16 +103,16 @@ public class PlotSelectionTool extends Tool {
 
     protected boolean hasPermission(Town town) {
         if (town == null || town != owner.townsContainer.getMainTown() && selectionFirst != null || selectionFirst != null && town != selectionFirst.town) {
-            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.selection.outside"));
+            ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.selection.outside");
             return false;
         }
         if (!town.plotsContainer.canResidentMakePlot(owner)) {
-            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.limit", town.plotsContainer.getMaxPlots()));
+            ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.limit", town.plotsContainer.getMaxPlots());
             return false;
         }
         for(Plot plot : town.plotsContainer) {
             if(plot.getName().equals(plotName)) {
-                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.name", plotName));
+                ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.name", plotName);
                 return false;
             }
         }
@@ -150,7 +152,7 @@ public class PlotSelectionTool extends Tool {
                     lastZ = j >> 4;
                     TownBlock block = MyTownUniverse.instance.blocks.get(selectionFirst.dim, lastX, lastZ);
                     if (block == null || block.getTown() != selectionFirst.town) {
-                        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.outside"));
+                        ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.outside");
                         resetSelection(true, 0);
                         return;
                     }
@@ -160,7 +162,7 @@ public class PlotSelectionTool extends Tool {
                 for (int k = selectionFirst.y; k <= selectionSecond.y; k++) {
                     Plot plot = selectionFirst.town.plotsContainer.get(selectionFirst.dim, i, k, j);
                     if (plot != null) {
-                        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.insideOther", plot.getName()));
+                        ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.insideOther", plot);
                         resetSelection(true, 0);
                         return;
                     }
@@ -173,7 +175,7 @@ public class PlotSelectionTool extends Tool {
 
         MyTown.instance.datasource.savePlot(plot);
         MyTown.instance.datasource.linkResidentToPlot(owner, plot, true);
-        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.plot.created"));
+        ChatManager.send(owner.getPlayer(), "mytown.notification.plot.created");
         ToolManager.instance.remove(this);
     }
 
@@ -206,11 +208,11 @@ public class PlotSelectionTool extends Tool {
         if(!(selectionFirst.town instanceof AdminTown)) {
             if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) < Config.instance.minPlotsArea.get()
                     || Math.abs(selectionFirst.y - selectionSecond.y) + 1 < Config.instance.minPlotsHeight.get()) {
-                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.tooSmall", Config.instance.minPlotsArea.get(), Config.instance.minPlotsHeight.get()));
+                ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.tooSmall", Config.instance.minPlotsArea.get(), Config.instance.minPlotsHeight.get());
                 return false;
             } else if((Math.abs(selectionFirst.x - selectionSecond.x) + 1) * (Math.abs(selectionFirst.z - selectionSecond.z) + 1) > Config.instance.maxPlotsArea.get()
                     || Math.abs(selectionFirst.y - selectionSecond.y) + 1 > Config.instance.maxPlotsHeight.get()) {
-                owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.tooLarge", Config.instance.maxPlotsArea.get(), Config.instance.maxPlotsHeight.get()));
+                ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.tooLarge", Config.instance.maxPlotsArea.get(), Config.instance.maxPlotsHeight.get());
                 return false;
             }
         }

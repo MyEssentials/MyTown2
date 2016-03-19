@@ -1,18 +1,22 @@
 package mytown.entities;
 
+import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatManager;
+import myessentials.chat.api.IChatFormat;
+import myessentials.localization.api.LocalManager;
 import myessentials.teleport.Teleport;
-import myessentials.utils.ColorUtils;
 import myessentials.utils.PlayerUtils;
-import mypermissions.api.entities.PermissionLevel;
-import mypermissions.proxies.PermissionProxy;
-import mytown.MyTown;
-import mytown.api.container.*;
+import mypermissions.permission.api.proxy.PermissionProxy;
+import mypermissions.permission.core.entities.PermissionLevel;
+import mytown.api.container.ResidentRankMap;
 import mytown.config.Config;
 import mytown.entities.flag.Flag;
 import mytown.entities.flag.FlagType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,7 +25,7 @@ import java.util.List;
 /**
  * Defines a Town. A Town is made up of Residents, Ranks, Blocks, and Plots.
  */
-public class Town implements Comparable<Town> {
+public class Town implements Comparable<Town>, IChatFormat {
     private String name, oldName = null;
 
     protected int maxFarClaims = Config.instance.maxFarClaims.get();
@@ -42,18 +46,12 @@ public class Town implements Comparable<Town> {
         this.name = name;
     }
 
-    public void notifyResidentJoin(Resident res) {
-        for (Resident toRes : residentsMap.keySet()) {
-            toRes.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.joined", res.getPlayerName(), getName()));
-        }
-    }
-
     /**
      * Notifies every resident in this town sending a message.
      */
-    public void notifyEveryone(String message) {
+    public void notifyEveryone(IChatComponent message) {
         for (Resident r : residentsMap.keySet()) {
-            r.sendMessage(message);
+            ChatManager.send(r.getPlayer(), message);
         }
     }
 
@@ -283,9 +281,22 @@ public class Town implements Comparable<Town> {
 
     public boolean isChunkInTown(int dim, int chunkX, int chunkZ) {
         return townBlocksContainer.contains(dim, chunkX, chunkZ);
+        }
+
+    @Override
+    public String toString() {
+        return toChatMessage().getUnformattedText();
     }
 
-    public static class Container extends ArrayList<Town> {
+    @Override
+    public IChatComponent toChatMessage() {
+        IChatComponent header = LocalManager.get("myessentials.format.list.header", new ChatComponentFormatted("{9|%s}", getName()));
+        IChatComponent hoverComponent = ((ChatComponentFormatted)LocalManager.get("mytown.format.town.long", header, residentsMap.size(), townBlocksContainer.size(), getMaxBlocks(), plotsContainer.size(), residentsMap, ranksContainer)).applyDelimiter("\n");
+
+        return LocalManager.get("mytown.format.town.short", name, hoverComponent);
+    }
+
+    public static class Container extends ArrayList<Town> implements IChatFormat {
 
         private Town mainTown;
         public boolean isSelectedTownSaved = false;
@@ -344,24 +355,17 @@ public class Town implements Comparable<Town> {
         }
 
         @Override
-        public String toString() {
-            return toString(false);
-        }
+        public IChatComponent toChatMessage() {
+            IChatComponent root = new ChatComponentText("");
 
-        public String toString(boolean colorMainTown) {
-            String formattedList = null;
-            for(Town town : this) {
-                String mayorName = town.residentsMap.getMayor() != null ? ColorUtils.colorPlayer + town.residentsMap.getMayor().getPlayerName()
-                        : ColorUtils.colorAdmin + "SERVER ADMINS";
-                String toAdd = ((colorMainTown && town == mainTown) ? ColorUtils.colorSelectedTown : ColorUtils.colorTown) + town.getName() + ":" + ColorUtils.colorComma +
-                        " { " + Rank.Type.MAYOR.color + "Mayor: " + mayorName + ColorUtils.colorComma + " }";
-                if(formattedList == null) {
-                    formattedList = toAdd;
-                } else {
-                    formattedList += "\\n" + toAdd;
+            for (Town town : this) {
+                if (root.getSiblings().size() > 0) {
+                    root.appendSibling(new ChatComponentFormatted("{7|, }"));
                 }
+                root.appendSibling(town.toChatMessage());
             }
-            return formattedList;
+
+            return root;
         }
     }
 }

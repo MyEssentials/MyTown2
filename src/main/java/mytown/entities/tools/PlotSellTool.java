@@ -1,8 +1,10 @@
 package mytown.entities.tools;
 
+import myessentials.chat.api.ChatManager;
 import myessentials.entities.api.BlockPos;
 import myessentials.entities.api.tool.Tool;
 import myessentials.entities.api.tool.ToolManager;
+import myessentials.localization.api.LocalManager;
 import mytown.MyTown;
 import mytown.entities.Plot;
 import mytown.entities.Resident;
@@ -19,11 +21,11 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public class PlotSellTool extends Tool {
 
-    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.name");
-    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header1");
-    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header2");
-    private static final String DESCRIPTION_PRICE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.price")+" ";
-    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.mode")+" ";
+    private static final String NAME = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.name").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_1 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header1").getUnformattedTextForChat();
+    private static final String DESCRIPTION_HEADER_2 = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.header2").getUnformattedTextForChat();
+    private static final String DESCRIPTION_PRICE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.price").getUnformattedTextForChat() + " ";
+    private static final String DESCRIPTION_MODE = MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.description.mode").getUnformattedTextForChat() + " ";
 
     private int price;
     private boolean restricted = false;
@@ -62,7 +64,7 @@ public class PlotSellTool extends Tool {
     public void onShiftRightClick() {
         this.restricted = !this.restricted;
         updateDescription();
-        owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.tool.mode", MyTown.instance.LOCAL.getLocalization("mytown.tool.plot.sell.mode"), restricted));
+        ChatManager.send(owner.getPlayer(), "mytown.notification.tool.mode", LocalManager.get("mytown.tool.plot.sell.mode"), restricted);
     }
 
     protected boolean hasPermission(Town town, BlockPos bp) {
@@ -73,17 +75,17 @@ public class PlotSellTool extends Tool {
         }
 
         if(town == null) {
-            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.notInTown", owner.townsContainer.getMainTown().getName()));
+            ChatManager.send(owner.getPlayer(), "mytown.cmd.err.notInTown", owner.townsContainer.getMainTown());
             return false;
         }
 
         Plot plot = town.plotsContainer.get(bp.getDim(), bp.getX(), bp.getY(), bp.getZ());
         if(plot == null) {
-            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.sell.notInPlot", town.getName()));
+            ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.sell.notInPlot", town);
             return false;
         }
         if(!plot.ownersContainer.contains(owner) && !plot.getTown().hasPermission(owner, "mytown.bypass.plot")) {
-            owner.sendMessage(MyTown.instance.LOCAL.getLocalization("mytown.cmd.err.plot.noPermission"));
+            ChatManager.send(owner.getPlayer(), "mytown.cmd.err.plot.noPermission");
             return false;
         }
         return true;

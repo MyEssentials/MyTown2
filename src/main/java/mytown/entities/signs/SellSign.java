@@ -1,6 +1,7 @@
 package mytown.entities.signs;
 
-import myessentials.Localization;
+import myessentials.chat.api.ChatManager;
+import myessentials.localization.api.Local;
 import myessentials.classtransformers.SignClassTransformer;
 import myessentials.entities.api.BlockPos;
 import myessentials.entities.api.sign.Sign;
@@ -51,28 +52,28 @@ public class SellSign extends Sign {
     public void onRightClick(EntityPlayer player) {
         Resident resident = MyTownUniverse.instance.getOrMakeResident(player);
         if(restricted && !plot.getTown().residentsMap.containsKey(resident)) {
-            resident.sendMessage(getLocal().getLocalization("mytown.cmd.err.notInTown", plot.getTown().getName()));
+            ChatManager.send(player, "mytown.cmd.err.notInTown", plot.getTown());
             return;
         }
 
         if(plot.ownersContainer.contains(resident)) {
-            resident.sendMessage(getLocal().getLocalization("mytown.cmd.err.plot.sell.alreadyOwner"));
+            ChatManager.send(player, "mytown.cmd.err.plot.sell.alreadyOwner");
             return;
         }
 
         if(!plot.ownersContainer.contains(owner)) {
-            resident.sendMessage(getLocal().getLocalization("mytown.notification.plot.buy.alreadySold", owner.getPlayerName()));
+            ChatManager.send(player, "mytown.notification.plot.buy.alreadySold", owner);
             return;
         }
 
         if(!plot.getTown().plotsContainer.canResidentMakePlot(resident)) {
-            resident.sendMessage(getLocal().getLocalization("mytown.cmd.err.plot.limit", plot.getTown().plotsContainer.getMaxPlots()));
+            ChatManager.send(player, "mytown.cmd.err.plot.limit", plot.getTown().plotsContainer.getMaxPlots());
             return;
         }
 
         if (EconomyProxy.getEconomy().takeMoneyFromPlayer(resident.getPlayer(), price)) {
             for (Resident resInPlot : plot.ownersContainer) {
-                resInPlot.sendMessage(getLocal().getLocalization("mytown.notification.plot.buy.oldOwner", plot.getName(), EconomyProxy.getCurrency(price)));
+                ChatManager.send(resInPlot.getPlayer(), "mytown.notification.plot.buy.oldOwner", plot, EconomyProxy.getCurrency(price));
             }
 
             Resident.Container residentsToRemove = new Resident.Container();
@@ -88,22 +89,23 @@ public class SellSign extends Sign {
                 MyTown.instance.datasource.linkResidentToTown(resident, plot.getTown(), plot.getTown().ranksContainer.getDefaultRank());
             }
             MyTown.instance.datasource.linkResidentToPlot(resident, plot, true);
-            resident.sendMessage(getLocal().getLocalization("mytown.notification.plot.buy.newOwner", plot.getName()));
+            ChatManager.send(player, "mytown.notification.plot.buy.newOwner", plot);
             plot.getTown().bank.addAmount(price);
             deleteSignBlock();
             plot.deleteSignBlocks(signType, player.worldObj);
         } else {
-            resident.sendMessage(getLocal().getLocalization("mytown.notification.plot.buy.failed", EconomyProxy.getCurrency(price)));
+            ChatManager.send(player, "mytown.notification.plot.buy.failed", EconomyProxy.getCurrency(price));
         }
     }
 
     @Override
     protected String[] getText() {
+        // REF: Refactor chat components to allow formatting for this type of text
         return new String[] {
-                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.title"),
-                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.owner")+" " + owner.getPlayerName(),
-                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.price") + price,
-                restricted ? MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.restricted") : ""
+                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.title").getUnformattedText(),
+                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.owner").getUnformattedText() + " " + owner.getPlayerName(),
+                MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.price").getUnformattedText() + price,
+                restricted ? MyTown.instance.LOCAL.getLocalization("mytown.sign.sell.description.restricted").getUnformattedText() : ""
         };
     }
 
@@ -114,7 +116,7 @@ public class SellSign extends Sign {
         }
     }
 
-    public Localization getLocal() {
+    public Local getLocal() {
         return MyTown.instance.LOCAL;
     }
 

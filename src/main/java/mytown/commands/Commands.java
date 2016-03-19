@@ -1,8 +1,9 @@
 package mytown.commands;
 
-import myessentials.Localization;
-import myessentials.utils.ChatUtils;
-import mypermissions.api.command.CommandCompletion;
+import myessentials.chat.api.ChatManager;
+import myessentials.localization.api.Local;
+import myessentials.utils.StringUtils;
+import mypermissions.command.api.CommandCompletion;
 import mytown.MyTown;
 import mytown.entities.*;
 import mytown.entities.flag.Flag;
@@ -33,7 +34,7 @@ public abstract class Commands {
     public static MyTownUniverse getUniverse() {
         return MyTownUniverse.instance;
     }
-    public static Localization getLocal() {
+    public static Local getLocal() {
         return MyTown.instance.LOCAL;
     }
 
@@ -96,14 +97,14 @@ public abstract class Commands {
     public static Town getTownFromName(String name) {
         Town town = getUniverse().towns.get(name);
         if (town == null)
-            throw new MyTownCommandException("mytown.cmd.err.town.notexist", name);
+            throw new MyTownCommandException("mytown.cmd.err.town.missing", name);
         return town;
     }
 
     public static Resident getResidentFromName(String playerName) {
-        Resident res = MyTownUniverse.instance.getOrMakeResident(playerName);
+        Resident res = MyTownUniverse.instance.residents.get(playerName);
         if (res == null)
-            throw new MyTownCommandException("mytown.cmd.err.resident.notexist", playerName);
+            throw new MyTownCommandException("mytown.cmd.err.resident.missing", playerName);
         return res;
     }
 
@@ -117,7 +118,7 @@ public abstract class Commands {
 
     public static List<Town> getInvitesFromResident(Resident res) {
         if (res.townInvitesContainer.isEmpty())
-            throw new MyTownCommandException("mytown.cmd.err.invite.noinvitations");
+            throw new MyTownCommandException("mytown.cmd.err.invite.missing");
         return res.townInvitesContainer;
     }
 
@@ -143,14 +144,14 @@ public abstract class Commands {
     public static TownBlock getBlockAtResident(Resident res) {
         TownBlock block = getUniverse().blocks.get(res.getPlayer().dimension, ((int) res.getPlayer().posX) >> 4, ((int) res.getPlayer().posZ >> 4));
         if (block == null)
-            throw new MyTownCommandException("mytown.cmd.err.claim.notexist", res.townsContainer.getMainTown().getName());
+            throw new MyTownCommandException("mytown.cmd.err.claim.missing", res.townsContainer.getMainTown().getName());
         return block;
     }
 
     public static Rank getRankFromTown(Town town, String rankName) {
         Rank rank = town.ranksContainer.get(rankName);
         if (rank == null) {
-            throw new MyTownCommandException("mytown.cmd.err.rank.notexist", rankName, town.getName());
+            throw new MyTownCommandException("mytown.cmd.err.rank.missing", rankName, town.getName());
         }
         return rank;
     }
@@ -193,16 +194,7 @@ public abstract class Commands {
         try {
             return Rank.Type.valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new MyTownCommandException("mytown.cmd.err.ranks.typeNotExists", e, name);
-        }
-    }
-
-    public static void sendMessageBackToSender(ICommandSender sender, String message) {
-        if (sender instanceof EntityPlayer) {
-            Resident res = MyTownUniverse.instance.getOrMakeResident(sender);
-            res.sendMessage(message);
-        } else {
-            ChatUtils.sendChat(sender, message);
+            throw new MyTownCommandException("mytown.cmd.err.ranks.type.missing", e, name);
         }
     }
 
@@ -213,7 +205,7 @@ public abstract class Commands {
         if(!EconomyProxy.getEconomy().takeMoneyFromPlayer(player, amount)){
             throw new MyTownCommandException("mytown.cmd.err.resident.payment", EconomyProxy.getCurrency(amount));
         }
-        res.sendMessage(getLocal().getLocalization("mytown.notification.resident.payment", EconomyProxy.getCurrency(amount)));
+        ChatManager.send(player, "mytown.notification.resident.payment", EconomyProxy.getCurrency(amount));
     }
 
     public static void makeRefund(EntityPlayer player, int amount) {
@@ -221,7 +213,7 @@ public abstract class Commands {
             return;
         Resident res = MyTownUniverse.instance.getOrMakeResident(player);
         EconomyProxy.getEconomy().giveMoneyToPlayer(player, amount);
-        res.sendMessage(getLocal().getLocalization("mytown.notification.resident.refund", EconomyProxy.getCurrency(amount)));
+        ChatManager.send(player, "mytown.notification.resident.refund", EconomyProxy.getCurrency(amount));
     }
 
     public static void makeBankPayment(ICommandSender sender, Town town, int amount) {
@@ -233,7 +225,7 @@ public abstract class Commands {
 
         town.bank.addAmount(-amount);
         getDatasource().saveTownBank(town.bank);
-        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.payment", EconomyProxy.getCurrency(amount)));
+        ChatManager.send(sender, "mytown.notification.town.payment", EconomyProxy.getCurrency(amount));
     }
 
     public static void makeBankRefund(ICommandSender sender, Town town, int amount) {
@@ -242,6 +234,12 @@ public abstract class Commands {
 
         town.bank.addAmount(amount);
         getDatasource().saveTownBank(town.bank);
-        sendMessageBackToSender(sender, MyTown.instance.LOCAL.getLocalization("mytown.notification.town.refund", EconomyProxy.getCurrency(amount)));
+        ChatManager.send(sender, "mytown.notification.town.refund", EconomyProxy.getCurrency(amount));
+    }
+
+    public static void checkPositiveInteger(String integerString) {
+        if(!StringUtils.tryParseInt(integerString) || Integer.parseInt(integerString) < 0) {
+            throw new MyTownCommandException("mytown.cmd.err.notPositiveInteger", integerString);
+        }
     }
 }
