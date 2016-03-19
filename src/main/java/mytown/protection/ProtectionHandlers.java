@@ -94,6 +94,7 @@ public class ProtectionHandlers {
         // TODO: Rethink this system a couple million times before you come up with the best algorithm :P
         int loadedEntityListSize = ev.world.loadedEntityList.size();
         for (int i = 0; i < loadedEntityListSize; i++) {
+            if (i >= ev.world.loadedEntityList.size()) continue;
             Object item = ev.world.loadedEntityList.get(i);
             if (item == null) continue;
             Entity entity = (Entity) item;
@@ -115,6 +116,7 @@ public class ProtectionHandlers {
             if (activePlacementThreads == 0) {
                 int loadedTileEntityListSize = ev.world.loadedTileEntityList.size();
                 for (int i = 0; i < loadedTileEntityListSize; i++) {
+                    if (i >= ev.world.loadedTileEntityList.size()) continue;
                     Object item = ev.world.loadedTileEntityList.get(i);
                     if (item == null) continue;
                     TileEntity te = (TileEntity) item;
