@@ -1,6 +1,7 @@
 package mytown.entities;
 
 import myessentials.chat.api.ChatComponentFormatted;
+import myessentials.chat.api.ChatManager;
 import myessentials.chat.api.IChatFormat;
 import myessentials.entities.api.Volume;
 import myessentials.entities.api.sign.SignType;
@@ -87,7 +88,8 @@ public class Plot implements IChatFormat {
 
         boolean permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
         if(!permissionBypass) {
-            res.protectionDenial(flagType, ownersContainer.toString());
+            ChatManager.send(res.getPlayer(), flagType.getDenialKey());
+            ChatManager.send(res.getPlayer(), "mytown.notification.town.owners", ownersContainer);
             return false;
         }
 

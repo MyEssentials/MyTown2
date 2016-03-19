@@ -59,6 +59,11 @@ public class Town implements Comparable<Town>, IChatFormat {
         }
     }
 
+    public IChatComponent getOwnerComponent() {
+        Resident mayor = residentsMap.getMayor();
+        return mayor == null ? LocalManager.get("mytown.notification.town.owners.admins") : mayor.toChatMessage();
+    }
+
     /**
      * Checks if the Resident is allowed to do the action specified by the FlagType at the coordinates given.
      * This method will go through all the plots and prioritize the plot's flags over town flags.
@@ -94,7 +99,8 @@ public class Town implements Comparable<Town>, IChatFormat {
                 permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), FlagType.RESTRICTIONS.getBypassPermission());
 
                 if (!rankBypass && !permissionBypass) {
-                    res.protectionDenial(FlagType.RESTRICTIONS, formatOwner());
+                    ChatManager.send(res.getPlayer(), flagType.getDenialKey());
+                    ChatManager.send(res.getPlayer(), "mytown.notification.town.owners", getOwnerComponent());
                     return false;
                 }
             }
@@ -103,7 +109,8 @@ public class Town implements Comparable<Town>, IChatFormat {
             permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
 
             if (!rankBypass && !permissionBypass) {
-                res.protectionDenial(flagType, formatOwner());
+                ChatManager.send(res.getPlayer(), flagType.getDenialKey());
+                ChatManager.send(res.getPlayer(), "mytown.notification.town.owners", getOwnerComponent());
                 return false;
             }
 
@@ -111,7 +118,8 @@ public class Town implements Comparable<Town>, IChatFormat {
             permissionBypass = PermissionProxy.getPermissionManager().hasPermission(res.getUUID(), flagType.getBypassPermission());
 
             if (!permissionBypass) {
-                res.protectionDenial(flagType, formatOwner());
+                ChatManager.send(res.getPlayer(), flagType.getDenialKey());
+                ChatManager.send(res.getPlayer(), "mytown.notification.town.owners", getOwnerComponent());
                 return false;
             }
         }
@@ -144,22 +152,22 @@ public class Town implements Comparable<Town>, IChatFormat {
      * Used to get the owners of a plot (or a town) at the position given
      * Returns null if position is not in town
      */
-    public List<Resident> getOwnersAtPosition(int dim, int x, int y, int z) {
-        List<Resident> list = new ArrayList<Resident>();
+    public Resident.Container getOwnersAtPosition(int dim, int x, int y, int z) {
+        Resident.Container result = new Resident.Container();
         Plot plot = plotsContainer.get(dim, x, y, z);
         if (plot == null) {
             if (isPointInTown(dim, x, z) && !(this instanceof AdminTown) && !residentsMap.isEmpty()) {
             	Resident mayor = residentsMap.getMayor();
                 if (mayor != null) {
-                	list.add(mayor);
+                	result.add(mayor);
                 }
             }
         } else {
             for (Resident res : plot.ownersContainer) {
-                list.add(res);
+                result.add(res);
             }
         }
-        return list;
+        return result;
     }
 
     public void sendToSpawn(Resident res) {
@@ -192,29 +200,6 @@ public class Town implements Comparable<Town>, IChatFormat {
             residentsExtra += res.getExtraBlocks();
         }
         return residentsExtra + townBlocksContainer.getExtraBlocks();
-    }
-
-    public String formatOwners(int dim, int x, int y, int z) {
-        List<Resident> residents = getOwnersAtPosition(dim, x, y, z);
-        String formattedList = "";
-
-        for (Resident r : residents) {
-            if (formattedList.equals("")) {
-                formattedList = r.getPlayerName();
-            } else {
-                formattedList += ", " + r.getPlayerName();
-            }
-        }
-
-        if(formattedList.equals("")) {
-            formattedList = EnumChatFormatting.RED + "SERVER ADMINS";
-        }
-
-        return formattedList;
-    }
-
-    public String formatOwner() {
-        return residentsMap.getMayor() == null ? EnumChatFormatting.RED + "SERVER ADMINS" : residentsMap.getMayor().getPlayerName();
     }
 
     /* ----- Comparable ----- */

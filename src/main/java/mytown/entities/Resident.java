@@ -120,21 +120,6 @@ public class Resident implements IChatFormat {
 
     /* ----- Helpers ----- */
 
-    public void protectionDenial(FlagType flag) {
-        if (getPlayer() != null) {
-            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization(flag.getDenialKey()));
-        }
-    }
-    /**
-     * Sends a localized message and a list of owners to which the protection was bypassed
-     */
-    public void protectionDenial(FlagType flag, String owners) {
-        if (getPlayer() != null) {
-            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization(flag.getDenialKey()));
-            getPlayer().addChatMessage(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.owners", owners));
-        }
-    }
-
     /**
      * Respawns the player at town's spawn point or, if that doesn't exist, at his own spawn point.
      */
