@@ -1,6 +1,7 @@
 package mytown.commands.format;
 
 import myessentials.chat.api.ChatComponentContainer;
+import myessentials.chat.api.ChatComponentFormatted;
 import myessentials.chat.api.ChatComponentMultiPage;
 import mytown.MyTown;
 import mytown.entities.Town;
@@ -20,15 +21,15 @@ public class ChatComponentTownList extends ChatComponentMultiPage {
 
     private void construct() {
         for (Town t : towns) {
-            this.add(t.toChatMessage());
+            this.add(new ChatComponentFormatted("{7| - }{%s}", t.toChatMessage()));
         }
     }
 
     @Override
     public ChatComponentContainer getHeader(int page) {
-        ChatComponentContainer header = new ChatComponentContainer();
+        ChatComponentContainer header = super.getHeader(page);
 
-        header.add(MyTown.instance.LOCAL.getLocalization("mytown.notification.town.list.header", page, getNumberOfPages()));
+        header.add(new ChatComponentFormatted("{9| - Towns}"));
 
         return header;
     }
