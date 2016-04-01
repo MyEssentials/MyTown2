@@ -67,7 +67,7 @@ mytown.tool.whitelister.removal={c|WHITELIST REMOVAL}
 mytown.tool.whitelister.property={3|FlagType}
 
 # Sell Sign
-mytown.sign.sell.title=Plot Sale
+mytown.sign.sell.title={9|Plot Sale}
 mytown.sign.sell.description.owner={9|by}
 mytown.sign.sell.description.price={6|}
 mytown.sign.sell.description.restricted={c|RESTRICTED}
