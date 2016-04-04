@@ -24,7 +24,7 @@ public class PlotSelectionTool extends Tool {
 
     private Selection selectionFirst, selectionSecond;
     private String plotName;
-    private boolean heightDependent = true;
+    private boolean heightDependent = Config.instance.defaultPlotHightDependence.get();
     private Resident owner;
 
     public PlotSelectionTool(Resident owner, String plotName) {

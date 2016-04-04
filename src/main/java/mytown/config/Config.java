@@ -143,6 +143,11 @@ public class Config extends ConfigTemplate {
             "enablePlots", "plots",
             "Set this to false to disable all types of plot interaction.",
             true);
+    public ConfigProperty<Boolean> defaultPlotHightDependence = new ConfigProperty<Boolean>(
+            "defaultPlotHightDependence", "plots",
+            "This sets if the plot selection tool defaults to hight dependent or not",
+            true
+    );
     public ConfigProperty<Integer> defaultProtectionSize = new ConfigProperty<Integer>(
             "defaultProtectionSize", "protection",
             "The range that it's going to check in if a protection's segment that has a tileentity does not provide getters for its area of influence.",
