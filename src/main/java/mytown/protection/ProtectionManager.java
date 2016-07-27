@@ -120,6 +120,7 @@ public class ProtectionManager {
                 return false;
             }
             if(!getFlagValueAtLocation(FlagType.ENTITIES, entity.dimension, (int) Math.floor(entity.posX), (int) Math.floor(entity.posY), (int) Math.floor(entity.posZ))) {
+                entity.isDead = true;
                 entity.setDead();
                 return true;
             }
@@ -127,6 +128,7 @@ public class ProtectionManager {
 
         for(SegmentEntity segment : segmentsTrackedEntity.get(entity.getClass())) {
             if(!segment.shouldExist(entity)) {
+                entity.isDead = true;
                 entity.setDead();
                 return true;
             }
@@ -139,6 +141,7 @@ public class ProtectionManager {
         for(SegmentEntity segment : segmentsEntity.get(entity.getClass())) {
             if(!segment.shouldImpact(entity, owner, mop)) {
                 event.setCanceled(true);
+                entity.isDead = true;
                 entity.setDead();
             }
         }
