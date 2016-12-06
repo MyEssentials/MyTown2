@@ -1,5 +1,7 @@
 MyTown2 [![Build Status](http://img.shields.io/travis/MyEssentials/MyTown2/master.svg)](https://travis-ci.org/MyEssentials/MyTown2) [![Release][release-img]][release-url]
 =======
+
+[![Join the chat at https://gitter.im/MyEssentials/MyTown2](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MyEssentials/MyTown2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Version 2 of MyTown - A Minecraft Server Protection Mod
 
  - Support AfterWind: [![Support via Gittip](http://img.shields.io/gittip/AfterWind.svg)](https://www.gittip.com/AfterWind/)
