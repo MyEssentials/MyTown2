@@ -16,10 +16,10 @@ buildscript {
 }
 
 repositories {
-    maven {
-        name = "bukkit-repo"
-        url = "http://repo.bukkit.org/content/groups/public/"
-    }
+//    maven {
+//        name = "bukkit-repo"
+//        url = "http://repo.bukkit.org/content/groups/public/"
+//    }
     maven {
         name = "SpongePowered"
         url = "https://repo.spongepowered.org/maven"
@@ -58,7 +58,7 @@ group = config.group
 archivesBaseName = config.archivesBaseName
 
 minecraft {
-    version = "${config.minecraft_version}-${config.forge_version}"
+    version = "${config.minecraft_version}-${config.forge_version}-${config.minecraft_version}"
     replace "@VERSION@", "${project.version}"
 }
 
