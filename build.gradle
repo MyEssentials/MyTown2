@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -11,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
 
@@ -32,8 +33,8 @@ repositories {
 
 // Load Configs
 
-apply plugin: "curseforge"
-apply plugin: "forge"
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'idea'
 
 ext.configFile = file "build.properties"
 
@@ -56,14 +57,65 @@ if (System.env.TRAVIS_TAG != null && !System.env.TRAVIS_TAG.isEmpty()) {
 version = "${config.minecraft_version}-${config.build_number}${config.build_type}"
 group = config.group
 archivesBaseName = config.archivesBaseName
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    version = "${config.minecraft_version}-${config.forge_version}-${config.minecraft_version}"
-    replace "@VERSION@", "${project.version}"
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 // Setup Deps
 dependencies {
+    minecraft "net.minecraftforge:forge:${config.minecraft_version}-${config.forge_version}"
     testCompile "junit:junit:4.11"
     testCompile project(":MyEssentials-TestSuite")
 	
@@ -75,12 +127,12 @@ dependencies {
 // Process Resources, injecting version numbers in
 processResources {
     inputs.property "mod_version", project.version
-    inputs.property "minecraft_version", project.minecraft.version
+    inputs.property "minecraft_version", config.minecraft_version
     inputs.property "reflectasm_version", config.reflectasm_version
 
     from(sourceSets.main.resources.srcDirs) {
         include '*.info', 'plugin.yml'
-        expand 'mod_version': project.version, 'minecraft_version': project.minecraft.version, 'reflectasm_version': config.reflectasm_version
+        expand 'mod_version': project.version, 'minecraft_version': config.minecraft_version, 'reflectasm_version': config.reflectasm_version
     }
     from(sourceSets.main.resources.srcDirs) {
         exclude '*.info', 'plugin.yml'
@@ -88,9 +140,9 @@ processResources {
 }
 
 // Setup Curse Upload task
-curse {
-    apiKey = System.env.CURSEFORGEKEY
-    projectId = config.project_id
-    changelog = "" // TODO Add changelog support
-    releaseType = config.build_type.equals('a') ? "alpha" : (config.build_type.equals('b') ? "beta" : "release")
-}
+//curse {
+//    apiKey = System.env.CURSEFORGEKEY
+//    projectId = config.project_id
+//    changelog = "" // TODO Add changelog support
+//    releaseType = config.build_type.equals('a') ? "alpha" : (config.build_type.equals('b') ? "beta" : "release")
+//}
